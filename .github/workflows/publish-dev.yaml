@@ -1,0 +1,46 @@
+name: Upload Python Package to TestPyPI
+
+on:
+  workflow_call:
+    secrets:
+      test-pypi-token:
+        description: "The token for TestPyPI to publish the package."
+        required: true
+
+jobs:
+  testpypi:
+    name: TestPyPI
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+
+      - name: Install python and set up Poetry and bump version with poetry
+        id: bump_version
+        uses: bakdata/ci-templates/actions/python-poetry-bump-version@v1.5.2
+        with:
+          release-type: "minor"
+
+      - name: Get commit datetime
+        id: get_commit_datetime
+        run: |
+          # Get the hash from HEAD and save it to the hash variable
+          echo "::set-output name=datetime::$(python ./.github/scripts/get-dev-version.py)"
+        shell: bash
+
+      - name: Set version with poetry
+        id: set_poetry_version
+        run: |
+          # Update the pyproject.toml version. Versioning format for dev packages: X.Y.Z.devN
+          # For more information visit: https://www.python.org/dev/peps/pep-0440/#semantic-versioning
+          echo ${{ steps.bump_version.outputs.release-tag }}.${{ steps.get_commit_datetime.outputs.datetime }}
+          poetry version ${{ steps.bump_version.outputs.release-tag }}.${{ steps.get_commit_datetime.outputs.datetime }}
+        shell: bash
+
+      - name: Release to TestPyPI
+        uses: bakdata/ci-templates/actions/python-poetry-release@v1.5.2
+        with:
+          publish-to-test: true
+          pypi-token: ${{ secrets.test-pypi-token }}

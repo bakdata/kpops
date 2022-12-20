@@ -1,0 +1,21 @@
+environment: development
+
+topic_name_config:
+  default_error_topic_name: "${pipeline_name}-${component_name}-dead-letter-topic"
+  default_output_topic_name: "${pipeline_name}-${component_name}-topic"
+
+broker: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+
+schema_registry_url: "http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081"
+
+kafka_rest_host: "http://localhost:8082"
+
+kafka_connect_host: "http://localhost:8083"
+
+kafka_connect_resetter_config:
+  helm_config:
+    repository_name: "bakdata-kafka-connect-resetter"
+    url: "https://raw.githubusercontent.com/bakdata/kafka-connect-resetter/1.0.1/charts/"
+    namespace: "kpops"
+
+pipeline_prefix: ""

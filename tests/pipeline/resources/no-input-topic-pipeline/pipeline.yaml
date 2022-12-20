@@ -1,0 +1,26 @@
+- type: streams-app
+  from:
+    topics:
+      ".*":
+        type: input-pattern
+  app:
+    commandLine:
+      CONVERT_XML: true
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+  to:
+    topics:
+      example-output:
+        type: output
+- type: streams-app
+  to:
+    topics:
+      example-output-extra:
+        type: extra
+        role: extra
+      test-output-extra:
+        type: extra
+        role: test-output

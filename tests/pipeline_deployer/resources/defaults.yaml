@@ -1,0 +1,9 @@
+parent:
+  name: fake-name
+  value: 1.0
+child:
+  name: fake-child-name
+  nice:
+    fake-value: must-be-overwritten
+env-var-test:
+  name: $pipeline_name

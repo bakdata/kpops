@@ -1,0 +1,5 @@
+kubernetes-app:
+  name: "${component_type}-development"
+  app:
+    namespace: development-namespace
+

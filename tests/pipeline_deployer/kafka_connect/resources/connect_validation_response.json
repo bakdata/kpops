@@ -1,0 +1,121 @@
+{
+  "name": "FileStreamSinkConnector",
+  "error_count": 1,
+  "groups": [
+    "Common"
+  ],
+  "configs": [
+    {
+      "definition": {
+        "name": "topics",
+        "type": "LIST",
+        "required": true,
+        "default_value": "",
+        "importance": "HIGH",
+        "documentation": "",
+        "group": "Common",
+        "width": "LONG",
+        "display_name": "Topics",
+        "dependents": [],
+        "order": 4
+      },
+      "value": {
+        "name": "topics",
+        "value": "test-topic",
+        "recommended_values": [],
+        "errors": [],
+        "visible": true
+      }
+    },
+    {
+      "definition": {
+        "name": "file",
+        "type": "STRING",
+        "required": true,
+        "default_value": "",
+        "importance": "HIGH",
+        "documentation": "Destination filename.",
+        "group": true,
+        "width": "NONE",
+        "display_name": "file",
+        "dependents": [],
+        "order": -1
+      },
+      "value": {
+        "name": "file",
+        "value": true,
+        "recommended_values": [],
+        "errors": [
+          "Missing required configuration 'file' which has no default value."
+        ],
+        "visible": true
+      }
+    },
+    {
+      "definition": {
+        "name": "name",
+        "type": "STRING",
+        "required": true,
+        "default_value": "",
+        "importance": "HIGH",
+        "documentation": "Globally unique name to use for this connector.",
+        "group": "Common",
+        "width": "MEDIUM",
+        "display_name": "Connector name",
+        "dependents": [],
+        "order": 1
+      },
+      "value": {
+        "name": "name",
+        "value": "test",
+        "recommended_values": [],
+        "errors": [],
+        "visible": true
+      }
+    },
+    {
+      "definition": {
+        "name": "tasks.max",
+        "type": "INT",
+        "required": true,
+        "default_value": "1",
+        "importance": "HIGH",
+        "documentation": "Maximum number of tasks to use for this connector.",
+        "group": "Common",
+        "width": "SHORT",
+        "display_name": "Tasks max",
+        "dependents": [],
+        "order": 3
+      },
+      "value": {
+        "name": "tasks.max",
+        "value": "1",
+        "recommended_values": [],
+        "errors": [],
+        "visible": true
+      }
+    },
+    {
+      "definition": {
+        "name": "connector.class",
+        "type": "STRING",
+        "required": true,
+        "default_value": "",
+        "importance": "HIGH",
+        "documentation": "Name or alias of the class for this connector. Must be a subclass of org.apache.kafka.connect.connector.Connector.",
+        "group": "Common",
+        "width": "LONG",
+        "display_name": "Connector class",
+        "dependents": [],
+        "order": 2
+      },
+      "value": {
+        "name": "connector.class",
+        "value": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+        "recommended_values": [],
+        "errors": [],
+        "visible": true
+      }
+    }
+  ]
+}

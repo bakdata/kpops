@@ -1,0 +1,76 @@
+site_name: KPOps
+repo_url: https://github.com/bakdata/kpops
+site_url: https://d9p.io
+remote_branch: gh-pages
+copyright: Copyright &copy; 2022 bakdata
+
+theme:
+  name: "material"
+  custom_dir: overrides
+  language: "en"
+  palette:
+    primary: "black"
+  font:
+    text: "Roboto"
+    code: "Roboto Mono"
+  features:
+    - navigation.sections
+    - navigation.tabs
+    - navigation.indexes
+    - content.code.annotate
+    - navigation.top
+    - navigation.tracking
+    - toc.follow
+    - search.highlight
+    - search.share
+    - search.suggest
+    - content.tooltips
+
+plugins:
+  - macros
+  - search
+  - glightbox
+
+markdown_extensions:
+  - footnotes
+  - toc:
+      permalink: true
+  - def_list
+  - attr_list
+  - admonition
+  - pymdownx.highlight
+  - pymdownx.superfences
+  - pymdownx.keys
+  - pymdownx.details
+  - pymdownx.snippets
+  - pymdownx.caret
+  - pymdownx.mark
+  - pymdownx.tilde
+  - md_in_html
+  - pymdownx.tabbed:
+      alternate_style: true
+
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+
+  - pymdownx.superfences:
+      preserve_tabs: true
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
+nav:
+  - User Guide:
+    - user/index.md
+    - Getting Started:
+      - user/getting-started/index.md
+      - user/getting-started/setup.md
+      - user/getting-started/teardown.md
+    - Examples:
+      - user/examples/index.md
+      - user/examples/atm-fraud-pipeline.md
+    - References:
+      - user/references/cli-commands.md
+      - user/references/variables.md

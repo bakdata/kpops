@@ -1,0 +1,49 @@
+name: "Update documentation in gh-pages"
+description: |
+  Compile markdown documents to html and deploy to docs branch. If a semver tag is given, this action strips the patch.
+  It then pushes the <major>.<minor> as the latest alias to the documentation branch with mike.
+  In case no tag is given, it pushes to 'dev'.
+
+inputs:
+  username:
+    description: "GitHub username"
+    required: true
+  email:
+    description: "GitHub email"
+    required: true
+  token:
+    description: "GitHub Token (must be a PAT for repository dispatch)"
+    required: true
+  tag:
+    description: "Version tag"
+    required: false
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install python and set up Poetry
+      uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.2
+      with:
+        python-version: "3.10"
+
+    - name: Update documentation branch with mike
+      shell: bash
+      env:
+        USERNAME: ${{ inputs.username }}
+        EMAIL: ${{ inputs.email }}
+        TOKEN: ${{ inputs.token }}
+        NEW_TAG: ${{ inputs.tag }}
+      run: |
+        poetry install --with docs
+        git config --local user.name ${USERNAME}
+        git config --local user.email ${EMAIL}
+        git config --local user.password ${TOKEN}
+
+        git pull # make sure docs branch is up-to-date
+        if [ -z "$NEW_TAG" ]; then
+          poetry run mike deploy dev --push --rebase --config-file ./docs/mkdocs.yml
+        else
+          new_tag=${NEW_TAG%.*}
+          poetry run mike deploy "$new_tag" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
+          poetry run mike set-default latest --push  --rebase --config-file ./docs/mkdocs.yml
+        fi

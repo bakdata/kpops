@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+<!-- Render hero under tabs -->
+{% block tabs %}
+
+<!-- Additional styles for landing page -->
+<style>
+
+    /* Application header should be static for the landing page */
+    .md-header {
+        position: initial;
+    }
+
+    /* Remove spacing, as we cannot hide it completely */
+    .md-main__inner {
+        margin: 0;
+    }
+
+    /* Hide main content for now */
+    .md-content {
+        display: none;
+    }
+
+    .mdx-container {
+        position: relative;
+        min-height: 100vh;
+        min-width: 100vw;
+        background: #9BFFD8;
+    }
+
+    .mdx-hero__content {
+        margin-top: 50px;
+        position: relative;
+        z-index: 5;
+    }
+
+    /* Moves the search results to the front */
+    .md-header {
+        z-index: 10;
+    }
+
+    .mdx-hero__content h1 {
+        margin-bottom: 20px;
+        color: black;
+        font-weight: 700;
+        font-size: 40px;
+    }
+
+    .mdx-hero__content p {
+        color: black;
+        font-size: 20px;
+    }
+
+    .md-hero__image {
+        position: absolute;
+        bottom: 140px;
+        width: 100vw;
+    }
+
+    /* Hide table of contents */
+    @media screen and (min-width: 60em) {
+        .md-sidebar--secondary {
+            display: none;
+        }
+    }
+
+    /* Hide navigation */
+    @media screen and (min-width: 76.25em) {
+        .md-sidebar--primary {
+            display: none;
+        }
+    }
+
+    /* Youtube videos */
+    .video-wrapper {
+        position: relative;
+        display: block;
+        height: 0;
+        padding: 0;
+        overflow: hidden;
+        padding-bottom: 56.25%;
+    }
+    .video-wrapper > iframe {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border: 0;
+    }
+
+</style>
+
+<!-- Hero for landing page -->
+<section class="mdx-container">
+    <div class="md-typeset">
+        <div class="mdx-hero">
+
+            <img class="md-hero__image" src="assets/images/stream-expose-graphic.svg"
+                 alt="Illustration of a data stream"/>
+            <div class="md-grid mdx-hero__content">
+                <h1>Kakfa Pipe Ops Documentation</h1>
+
+                {% for nav_item in nav %}
+                {% if not nav_item.active%}
+
+                {% if nav_item.children %}
+                    {% set url = (nav_item.children | first).url | url %}
+                {% else %}
+                    {% set url = nav_item.url | url %}
+                {% endif %}
+
+                <a
+                    href="{{ url }}"
+                    title="{{ nav_item.title }}"
+                    class="md-button md-button--primary"
+                >
+                    {{ nav_item.title }}
+                </a>
+
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+<!-- Content -->
+{% block content %}{% endblock %}
+
+<!-- Application footer -->
+{% block footer %}{% endblock %}

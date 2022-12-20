@@ -1,0 +1,63 @@
+{
+    "kind": "KafkaTopicConfigList",
+    "metadata": {
+        "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/topics/topic-1/configs",
+        "next": "null"
+    },
+    "data": [
+        {
+            "kind": "KafkaTopicConfig",
+            "metadata": {
+                "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/topics/topic-1/configs/cleanup.policy",
+                "resource_name": "crn:///kafka=cluster-1/topic=topic-1/config=cleanup.policy"
+            },
+            "cluster_id": "cluster-1",
+            "topic_name": "topic-1",
+            "name": "cleanup.policy",
+            "value": "compact",
+            "is_default": "false",
+            "is_read_only": "false",
+            "is_sensitive": "false",
+            "source": "DYNAMIC_TOPIC_CONFIG",
+            "synonyms": [
+                {
+                    "name": "cleanup.policy",
+                    "value": "compact",
+                    "source": "DYNAMIC_TOPIC_CONFIG"
+                },
+                {
+                    "name": "cleanup.policy",
+                    "value": "delete",
+                    "source": "DEFAULT_CONFIG"
+                }
+            ]
+        },
+        {
+            "kind": "KafkaTopicConfig",
+            "metadata": {
+                "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/topics/topic-1/configs/compression.type",
+                "resource_name": "crn:///kafka=cluster-1/topic=topic-1/config=compression.type"
+            },
+            "cluster_id": "cluster-1",
+            "topic_name": "topic-1",
+            "name": "compression.type",
+            "value": "gzip",
+            "is_default": "false",
+            "is_read_only": "false",
+            "is_sensitive": "false",
+            "source": "DYNAMIC_TOPIC_CONFIG",
+            "synonyms": [
+                {
+                    "name": "compression.type",
+                    "value": "gzip",
+                    "source": "DYNAMIC_TOPIC_CONFIG"
+                },
+                {
+                    "name": "compression.type",
+                    "value": "producer",
+                    "source": "DEFAULT_CONFIG"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,21 @@
+{
+    "kind": "KafkaTopic",
+    "metadata": {
+        "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/topics/topic-X",
+        "resource_name": "crn:///kafka=cluster-1/topic=topic-X"
+    },
+    "cluster_id": "cluster-1",
+    "topic_name": "topic-X",
+    "is_internal": "false",
+    "replication_factor": 3,
+    "partitions_count": 10,
+    "partitions": {
+        "related": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/topics/topic-1/partitions"
+    },
+    "configs": {
+        "related": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/topics/topic-1/configs"
+    },
+    "partition_reassignments": {
+        "related": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/topics/topic-1/partitions/-/reassignments"
+    }
+}
