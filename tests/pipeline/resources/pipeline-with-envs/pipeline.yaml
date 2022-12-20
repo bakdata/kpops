@@ -1,0 +1,25 @@
+- type: scheduled-producer
+  app:
+    commandLine:
+      FAKE_ARG: "fake-arg-value"
+    schedule: "30 3/8 * * *"
+- type: converter
+  app:
+    commandLine:
+      CONVERT_XML: true
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+- type: filter
+  app:
+    commandLine:
+      TYPE: "nothing"
+    resources:
+      requests:
+        memory: 3G
+    replicaCount: 4
+    autoscaling:
+      minReplicas: 4
+      maxReplicas: 4

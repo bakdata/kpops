@@ -1,0 +1,40 @@
+kubernetes-app:
+  name: "${component_type}"
+  app:
+    namespace: example-namespace
+kafka-app:
+  app:
+    streams:
+      brokers: "${broker}"
+      schemaRegistryUrl: "${schema_registry_url}"
+
+producer: {} # inherits from kafka
+
+streams-app: # inherits from kafka
+  app:
+    streams:
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+  to:
+    topics:
+      ${error_topic_name}:
+        type: error
+        valueSchema: com.bakdata.kafka.DeadLetter
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete
+
+kafka-connect:
+  name: "sink-connector"
+  app:
+    batch.size: "2000"
+    behavior.on.malformed.documents: "warn"
+    behavior.on.null.values: "delete"
+    connection.compression: "true"
+    connector.class: "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector"
+    key.ignore: "false"
+    linger.ms: "5000"
+    max.buffered.records: "20000"
+    name: "sink-connector"
+    read.timeout.ms: "120000"
+    tasks.max: "1"

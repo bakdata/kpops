@@ -1,0 +1,4 @@
+environment: development
+broker: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+kafka_connect_host: "http://localhost:8083"
+schema_registry_url: "http://localhost:8081"

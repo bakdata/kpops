@@ -1,0 +1,53 @@
+{
+    "kind": "KafkaBrokerConfigList",
+    "metadata": {
+        "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/-/configs",
+        "next": "null"
+    },
+    "data": [
+        {
+            "kind": "KafkaBrokerConfig",
+            "metadata": {
+                "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/0/configs/default.replication.factor",
+                "resource_name": "crn:///kafka=cluster-1/broker=0/config=default.replication.factor"
+            },
+            "cluster_id": "cluster-1",
+            "broker_id": "0",
+            "name": "default.replication.factor",
+            "value": "1",
+            "is_default": "true",
+            "is_read_only": "false",
+            "is_sensitive": "false",
+            "source": "DEFAULT_CONFIG",
+            "synonyms": [
+                {
+                    "name": "default.replication.factor",
+                    "value": "1",
+                    "source": "DEFAULT_CONFIG"
+                }
+            ]
+        },
+        {
+            "kind": "KafkaBrokerConfig",
+            "metadata": {
+                "self": "https://pkc-00000.region.provider.confluent.cloud/kafka/v3/clusters/cluster-1/brokers/0/configs/num.partitions",
+                "resource_name": "crn:///kafka=cluster-1/broker=0/config=num.partitions"
+            },
+            "cluster_id": "cluster-1",
+            "broker_id": "0",
+            "name": "num.partitions",
+            "value": "1",
+            "is_default": "true",
+            "is_read_only": "false",
+            "is_sensitive": "false",
+            "source": "DEFAULT_CONFIG",
+            "synonyms": [
+                {
+                    "name": "num.partitions",
+                    "value": "1",
+                    "source": "DEFAULT_CONFIG"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,31 @@
+repos:
+  - repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+        args: ["--settings", "setup.cfg"]
+  - repo: https://github.com/psf/black
+    rev: 22.10.0
+    hooks:
+      - id: black
+        language_version: python3
+  - repo: https://github.com/pycqa/flake8
+    rev: 5.0.4
+    hooks:
+      - id: flake8
+        args: ["--config", "setup.cfg"]
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: ./run_mypy.sh
+        language: system
+        types: [python]
+        require_serial: true # run once for all files
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.1.0
+    hooks:
+      - id: pyupgrade
+        stages: [manual]
+        args: ["--py310-plus"]
+        exclude: ^tests/.*snapshots/

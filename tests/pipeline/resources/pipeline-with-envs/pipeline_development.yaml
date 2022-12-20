@@ -1,0 +1,6 @@
+- type: scheduled-producer
+  name: "$pipeline_name-scheduled-producer"
+  app:
+    commandLine:
+      FAKE_ARG: "override-arg"
+    schedule: "20 3/8 * * *"

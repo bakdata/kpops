@@ -1,0 +1,49 @@
+name: CI
+
+on: push
+
+jobs:
+  test:
+    name: Test
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11"]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install python and set up Poetry
+        uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: poetry install --no-interaction
+
+      - name: Lint (flake8)
+        run: poetry run pre-commit run flake8 --all-files --show-diff-on-failure
+
+      - name: Order of imports (isort)
+        run: poetry run pre-commit run isort --all-files --show-diff-on-failure
+
+      - name: Formatting (black)
+        run: poetry run pre-commit run black --all-files --show-diff-on-failure
+
+      - name: Typing (mypy)
+        run: poetry run pre-commit run mypy --all-files
+
+      # TODO: enable when PEP 604 incompatibilty is in typer is resolved https://github.com/tiangolo/typer/issues/348
+      # - name: Syntax (pyupgrade)
+      #   run: poetry run pre-commit run --hook-stage manual pyupgrade --all-files
+
+      - name: Test
+        run: poetry run pytest tests
+
+  publish:
+    name: Publish
+    needs: [test]
+    uses: ./.github/workflows/publish-dev.yaml
+    secrets:
+      test-pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}

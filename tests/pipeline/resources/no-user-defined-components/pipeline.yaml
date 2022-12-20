@@ -1,0 +1,11 @@
+- type: streams-app
+  from:
+    topics:
+      example-topic:
+        type: input
+  app:
+    image: fake-image
+  to:
+    topics:
+      example-output:
+        type: output
