@@ -6,14 +6,14 @@ from typing import TYPE_CHECKING, Literal
 
 from pydantic import BaseModel
 
-from kpops.pipeline_deployer.kafka_connect.connect_wrapper import ConnectWrapper
-from kpops.pipeline_deployer.kafka_connect.exception import ConnectorNotFoundException
-from kpops.pipeline_deployer.kafka_connect.model import (
+from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
+from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
+from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectConfig,
     KafkaConnectorType,
 )
-from kpops.pipeline_deployer.kafka_connect.timeout import timeout
-from kpops.pipeline_deployer.streams_bootstrap.helm_wrapper import (
+from kpops.component_handlers.kafka_connect.timeout import timeout
+from kpops.component_handlers.streams_bootstrap.helm_wrapper import (
     HelmCommandConfig,
     HelmWrapper,
 )

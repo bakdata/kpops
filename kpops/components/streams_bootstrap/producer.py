@@ -1,6 +1,7 @@
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
 
+from kpops.component_handlers.streams_bootstrap.handler import ApplicationType
 from kpops.components.base_components.kafka_app import (
     KafkaApp,
     KafkaAppConfig,
@@ -10,7 +11,6 @@ from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.pipeline_deployer.streams_bootstrap.handler import ApplicationType
 
 
 class ProducerStreamsConfig(KafkaStreamsConfig):

@@ -6,11 +6,11 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from kpops.pipeline_deployer.streams_bootstrap.helm_wrapper import (
+from kpops.component_handlers.streams_bootstrap.helm_wrapper import (
     HelmCommandConfig,
     HelmWrapper,
 )
-from kpops.pipeline_deployer.streams_bootstrap.streams_bootstrap_application_type import (
+from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
     ApplicationType,
 )
 

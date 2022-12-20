@@ -6,7 +6,9 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
-from kpops.cli.pipeline_handlers import PipelineHandlers
+from kpops.cli.pipeline_handlers import ComponentHandlers
+from kpops.component_handlers.kafka_connect.handler import KafkaConnectorType
+from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.components.base_components.kafka_connect import (
     KafkaSinkConnector,
     KafkaSourceConnector,
@@ -21,8 +23,6 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
-from kpops.pipeline_deployer.kafka_connect.handler import KafkaConnectorType
-from kpops.pipeline_deployer.kafka_connect.model import KafkaConnectConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
@@ -41,8 +41,8 @@ def config():
 
 
 @pytest.fixture
-def handlers() -> PipelineHandlers:
-    return PipelineHandlers(
+def handlers() -> ComponentHandlers:
+    return ComponentHandlers(
         schema_handler=MagicMock(),
         app_handler=MagicMock(),
         connector_handler=MagicMock(),
@@ -52,7 +52,7 @@ def handlers() -> PipelineHandlers:
 
 class TestKafkaConnectorSink:
     def test_connector_config_parsing(
-        self, config: PipelineConfig, handlers: PipelineHandlers
+        self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         topic_name = "connector-topic"
         connector = KafkaSinkConnector(
@@ -89,7 +89,7 @@ class TestKafkaConnectorSink:
         )
 
     def test_from_section_parsing_input_topic(
-        self, config: PipelineConfig, handlers: PipelineHandlers
+        self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         topic1 = "connector-topic1"
         topic2 = "connector-topic2"
@@ -112,7 +112,7 @@ class TestKafkaConnectorSink:
         assert getattr(connector.app, "topics") == f"{topic1},{topic2},{topic3}"
 
     def test_from_section_parsing_input_pattern(
-        self, config: PipelineConfig, handlers: PipelineHandlers
+        self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
@@ -129,7 +129,7 @@ class TestKafkaConnectorSink:
     def test_deploy_order(
         self,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
         connector = KafkaSinkConnector(
@@ -171,7 +171,7 @@ class TestKafkaConnectorSink:
     def test_clean(
         self,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
         connector = KafkaSinkConnector(
@@ -223,7 +223,7 @@ class TestKafkaConnectorSink:
     def test_reset(
         self,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
         connector = KafkaSinkConnector(
@@ -275,7 +275,7 @@ class TestKafkaConnectorSink:
     def test_clean_without_to(
         self,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
         connector = KafkaSinkConnector(
@@ -320,7 +320,7 @@ class TestKafkaConnectorSink:
 
 class TestKafkaConnectorSource:
     def test_from_section_raises_exception(
-        self, config: PipelineConfig, handlers: PipelineHandlers
+        self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         with pytest.raises(NotImplementedError):
             KafkaSourceConnector(
@@ -338,7 +338,7 @@ class TestKafkaConnectorSource:
     def test_deploy_order(
         self,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
         connector = KafkaSourceConnector(
@@ -381,7 +381,7 @@ class TestKafkaConnectorSource:
     def test_clean(
         self,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
         os.environ[
@@ -437,7 +437,7 @@ class TestKafkaConnectorSource:
     def test_clean_without_to(
         self,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
         os.environ[
@@ -489,7 +489,7 @@ class TestKafkaConnectorSource:
     def test_reset(
         self,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
         os.environ[
@@ -546,7 +546,7 @@ class TestKafkaConnectorSource:
     def test_destroy(
         self,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
         connector = KafkaSourceConnector(

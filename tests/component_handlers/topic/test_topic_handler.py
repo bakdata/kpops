@@ -7,18 +7,18 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.components.base_components.models.to_section import (
-    OutputTopicTypes,
-    TopicConfig,
-    ToSection,
-)
-from kpops.pipeline_deployer.topic.exception import TopicNotFoundException
-from kpops.pipeline_deployer.topic.handler import TopicHandler
-from kpops.pipeline_deployer.topic.model import (
+from kpops.component_handlers.topic.exception import TopicNotFoundException
+from kpops.component_handlers.topic.handler import TopicHandler
+from kpops.component_handlers.topic.model import (
     BrokerConfigResponse,
     TopicConfigResponse,
     TopicResponse,
     TopicSpec,
+)
+from kpops.components.base_components.models.to_section import (
+    OutputTopicTypes,
+    TopicConfig,
+    ToSection,
 )
 from kpops.utils.colorify import greenify, magentaify, yellowify
 
@@ -31,15 +31,15 @@ DEFAULTS_PATH = Path(__file__).parent.parent / "resources"
 class TestTopicHandler:
     @pytest.fixture(autouse=True)
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.pipeline_deployer.topic.handler.log.info")
+        return mocker.patch("kpops.component_handlers.topic.handler.log.info")
 
     @pytest.fixture(autouse=True)
     def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.pipeline_deployer.topic.handler.log.warning")
+        return mocker.patch("kpops.component_handlers.topic.handler.log.warning")
 
     @pytest.fixture(autouse=True)
     def log_error_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.pipeline_deployer.topic.handler.log.error")
+        return mocker.patch("kpops.component_handlers.topic.handler.log.error")
 
     @pytest.fixture(autouse=True)
     def get_topic_response_mock(self) -> MagicMock:

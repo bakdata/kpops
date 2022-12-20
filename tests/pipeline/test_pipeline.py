@@ -7,7 +7,7 @@ from pytest_mock import MockerFixture
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
-from kpops.cli.pipeline_handlers import PipelineHandlers
+from kpops.cli.pipeline_handlers import ComponentHandlers
 from kpops.utils.yaml_loading import load_yaml_file
 
 runner = CliRunner()
@@ -18,8 +18,8 @@ PIPELINE_BASE_DIR = str(RESOURCE_PATH.parent)
 
 @pytest.fixture(autouse=True)
 def pipeline_handlers(mocker: MockerFixture):
-    def mock_setup_handlers(*args, **kwargs) -> PipelineHandlers:
-        return PipelineHandlers(
+    def mock_setup_handlers(*args, **kwargs) -> ComponentHandlers:
+        return ComponentHandlers(
             schema_handler=None,
             app_handler=MagicMock(),
             connector_handler=MagicMock(),

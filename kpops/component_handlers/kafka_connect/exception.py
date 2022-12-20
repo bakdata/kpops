@@ -1,4 +1,4 @@
-from kpops.pipeline_deployer.utils.exception import RequestsException
+from kpops.component_handlers.utils.exception import RequestsException
 
 
 class ConnectorNotFoundException(Exception):

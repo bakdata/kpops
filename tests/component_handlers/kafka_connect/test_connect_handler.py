@@ -4,14 +4,14 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.pipeline_deployer.kafka_connect.connect_wrapper import ConnectWrapper
-from kpops.pipeline_deployer.kafka_connect.exception import ConnectorNotFoundException
-from kpops.pipeline_deployer.kafka_connect.handler import ConnectorHandler
-from kpops.pipeline_deployer.kafka_connect.model import (
+from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
+from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
+from kpops.component_handlers.kafka_connect.handler import ConnectorHandler
+from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectConfig,
     KafkaConnectorType,
 )
-from kpops.pipeline_deployer.streams_bootstrap.helm_wrapper import HelmCommandConfig
+from kpops.component_handlers.streams_bootstrap.helm_wrapper import HelmCommandConfig
 from kpops.utils.colorify import greenify, magentaify, yellowify
 
 CONNECTOR_NAME = "test-connector"
@@ -20,19 +20,23 @@ CONNECTOR_NAME = "test-connector"
 class TestConnectorHandler:
     @pytest.fixture(autouse=True)
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.pipeline_deployer.kafka_connect.handler.log.info")
+        return mocker.patch("kpops.component_handlers.kafka_connect.handler.log.info")
 
     @pytest.fixture(autouse=True)
     def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.pipeline_deployer.kafka_connect.handler.log.warning")
+        return mocker.patch(
+            "kpops.component_handlers.kafka_connect.handler.log.warning"
+        )
 
     @pytest.fixture(autouse=True)
     def log_error_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.pipeline_deployer.kafka_connect.handler.log.error")
+        return mocker.patch("kpops.component_handlers.kafka_connect.handler.log.error")
 
     @pytest.fixture(autouse=True)
     def renderer_diff_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.pipeline_deployer.kafka_connect.handler.render_diff")
+        return mocker.patch(
+            "kpops.component_handlers.kafka_connect.handler.render_diff"
+        )
 
     def test_should_create_connector_in_dry_run(
         self, renderer_diff_mock: MagicMock, log_info_mock: MagicMock

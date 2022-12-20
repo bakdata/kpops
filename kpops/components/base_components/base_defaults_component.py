@@ -10,7 +10,7 @@ import typer
 from pydantic import BaseConfig, BaseModel, Field
 
 from kpops.cli.pipeline_config import PipelineConfig
-from kpops.cli.pipeline_handlers import PipelineHandlers
+from kpops.cli.pipeline_handlers import ComponentHandlers
 from kpops.utils.yaml_loading import load_yaml_file
 
 log = logging.getLogger("PipelineComponentEnricher")
@@ -21,7 +21,7 @@ class BaseDefaultsComponent(BaseModel):
 
     enrich: bool = Field(default=False, exclude=True)
     config: PipelineConfig = Field(default=..., exclude=True)
-    handlers: PipelineHandlers = Field(default=..., exclude=True)
+    handlers: ComponentHandlers = Field(default=..., exclude=True)
 
     class Config(BaseConfig):
         arbitrary_types_allowed = True

@@ -13,7 +13,7 @@ from rich.console import Console
 from rich.syntax import Syntax
 
 from kpops.cli.pipeline_config import PipelineConfig
-from kpops.cli.pipeline_handlers import PipelineHandlers
+from kpops.cli.pipeline_handlers import ComponentHandlers
 from kpops.cli.registry import Registry
 from kpops.components.base_components.base_defaults_component import update_nested_pair
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -60,7 +60,7 @@ class Pipeline:
         environment_components: list[dict],
         registry: Registry,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
     ):
         self.components: list[PipelineComponent] = []
         self.handlers = handlers
@@ -117,7 +117,7 @@ class Pipeline:
         path: Path,
         registry: Registry,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
     ) -> Pipeline:
         Pipeline.set_pipeline_name_env_vars(base_dir, path)
         config.pipeline_prefix = Pipeline.substitute_pipeline_prefix(config)

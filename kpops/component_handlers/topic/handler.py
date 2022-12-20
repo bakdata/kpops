@@ -1,18 +1,18 @@
 import logging
 
-from kpops.components.base_components.models.to_section import TopicConfig, ToSection
-from kpops.pipeline_deployer.topic.exception import TopicNotFoundException
-from kpops.pipeline_deployer.topic.model import (
+from kpops.component_handlers.topic.exception import TopicNotFoundException
+from kpops.component_handlers.topic.model import (
     TopicConfigResponse,
     TopicResponse,
     TopicSpec,
 )
-from kpops.pipeline_deployer.topic.proxy_wrapper import HEADERS, ProxyWrapper
-from kpops.pipeline_deployer.topic.utils import (
+from kpops.component_handlers.topic.proxy_wrapper import HEADERS, ProxyWrapper
+from kpops.component_handlers.topic.utils import (
     get_effective_config,
     parse_and_compare_topic_configs,
     parse_rest_proxy_topic_config,
 )
+from kpops.components.base_components.models.to_section import TopicConfig, ToSection
 from kpops.utils.colorify import greenify, magentaify, yellowify
 from kpops.utils.dict_differ import Diff, DiffType, get_diff, render_diff
 

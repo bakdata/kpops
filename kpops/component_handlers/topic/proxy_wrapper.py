@@ -3,11 +3,11 @@ import logging
 import requests
 
 from kpops.cli.pipeline_config import PipelineConfig
-from kpops.pipeline_deployer.topic.exception import (
+from kpops.component_handlers.topic.exception import (
     KafkaRestProxyError,
     TopicNotFoundException,
 )
-from kpops.pipeline_deployer.topic.model import (
+from kpops.component_handlers.topic.model import (
     BrokerConfigResponse,
     TopicConfigResponse,
     TopicResponse,

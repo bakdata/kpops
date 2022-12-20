@@ -8,11 +8,11 @@ from schema_registry.client import SchemaRegistryClient
 from kpops.cli.exception import ClassNotFoundError
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import find_class
-from kpops.components.base_components.models.to_section import ToSection
-from kpops.pipeline_deployer.schema_handler.schema_provider import (
+from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,
 )
+from kpops.components.base_components.models.to_section import ToSection
 from kpops.utils.colorify import greenify, magentaify, yellowify
 
 log = logging.getLogger("SchemaHandler")

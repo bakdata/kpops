@@ -2,7 +2,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
-from kpops.pipeline_deployer.streams_bootstrap.handler import (
+from kpops.component_handlers.streams_bootstrap.handler import (
     AppHandler,
     ApplicationType,
 )
@@ -11,7 +11,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 class TestKafkaAppDeployment(unittest.TestCase):
-    @patch("kpops.pipeline_deployer.streams_bootstrap.helm_wrapper")
+    @patch("kpops.component_handlers.streams_bootstrap.helm_wrapper")
     def test_should_call_helm_upgrade_install_for_streams_app(self, wrapper):
         handler = AppHandler(helm_wrapper=wrapper)
         handler.install_app(
@@ -30,7 +30,7 @@ class TestKafkaAppDeployment(unittest.TestCase):
             local_chart_path=None,
         )
 
-    @patch("kpops.pipeline_deployer.streams_bootstrap.helm_wrapper")
+    @patch("kpops.component_handlers.streams_bootstrap.helm_wrapper")
     def test_should_call_helm_upgrade_install_for_streams_app_overriding_repo(
         self, wrapper
     ):
@@ -52,7 +52,7 @@ class TestKafkaAppDeployment(unittest.TestCase):
             local_chart_path=Path("my/fake/dir"),
         )
 
-    @patch("kpops.pipeline_deployer.streams_bootstrap.helm_wrapper")
+    @patch("kpops.component_handlers.streams_bootstrap.helm_wrapper")
     def test_should_call_helm_upgrade_install_for_producer_app(self, wrapper):
         handler = AppHandler(helm_wrapper=wrapper)
         handler.install_app(
@@ -71,7 +71,7 @@ class TestKafkaAppDeployment(unittest.TestCase):
             local_chart_path=None,
         )
 
-    @patch("kpops.pipeline_deployer.streams_bootstrap.helm_wrapper")
+    @patch("kpops.component_handlers.streams_bootstrap.helm_wrapper")
     def test_should_call_helm_upgrade_install_for_producer_overriding_repo(
         self, wrapper
     ):
@@ -93,7 +93,7 @@ class TestKafkaAppDeployment(unittest.TestCase):
             local_chart_path=Path("my/fake/dir"),
         )
 
-    @patch("kpops.pipeline_deployer.streams_bootstrap.helm_wrapper")
+    @patch("kpops.component_handlers.streams_bootstrap.helm_wrapper")
     def test_should_call_run_command_method_when_helm_uninstall(self, wrapper):
         handler = AppHandler(helm_wrapper=wrapper)
         handler.uninstall_app(

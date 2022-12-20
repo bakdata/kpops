@@ -1,13 +1,13 @@
 from pydantic import BaseConfig, BaseModel, Extra
 from typing_extensions import override
 
+from kpops.component_handlers.streams_bootstrap.handler import ApplicationType
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
     KafkaApp,
     KafkaAppConfig,
     KafkaStreamsConfig,
 )
-from kpops.pipeline_deployer.streams_bootstrap.handler import ApplicationType
 
 
 class StreamsConfig(KafkaStreamsConfig):

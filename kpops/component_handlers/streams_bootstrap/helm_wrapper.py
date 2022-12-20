@@ -12,7 +12,9 @@ from typing import Iterable
 import yaml
 from pydantic import BaseModel, BaseSettings, Field
 
-from kpops.pipeline_deployer.streams_bootstrap.exception import ReleaseNotFoundException
+from kpops.component_handlers.streams_bootstrap.exception import (
+    ReleaseNotFoundException,
+)
 from kpops.utils.dict_differ import render_diff
 
 log = logging.getLogger("Helm")

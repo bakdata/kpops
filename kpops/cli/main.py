@@ -8,13 +8,13 @@ import typer
 
 from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
-from kpops.cli.pipeline_handlers import PipelineHandlers
+from kpops.cli.pipeline_handlers import ComponentHandlers
 from kpops.cli.registry import Registry
-from kpops.pipeline_deployer.kafka_connect.handler import ConnectorHandler
-from kpops.pipeline_deployer.schema_handler.schema_handler import SchemaHandler
-from kpops.pipeline_deployer.streams_bootstrap.handler import AppHandler
-from kpops.pipeline_deployer.topic.handler import TopicHandler
-from kpops.pipeline_deployer.topic.proxy_wrapper import ProxyWrapper
+from kpops.component_handlers.kafka_connect.handler import ConnectorHandler
+from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
+from kpops.component_handlers.streams_bootstrap.handler import AppHandler
+from kpops.component_handlers.topic.handler import TopicHandler
+from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.pipeline_generator.pipeline import Pipeline
 
 if TYPE_CHECKING:
@@ -113,14 +113,14 @@ def setup_pipeline(
 
 def setup_handlers(
     components_module: str | None, config: PipelineConfig
-) -> PipelineHandlers:
+) -> ComponentHandlers:
     schema_handler = SchemaHandler.load_schema_handler(components_module, config)
     app_handler = AppHandler.from_pipeline_config(pipeline_config=config)
     connector_handler = ConnectorHandler.from_pipeline_config(pipeline_config=config)
     wrapper = ProxyWrapper(pipeline_config=config)
     topic_handler = TopicHandler(proxy_wrapper=wrapper)
 
-    return PipelineHandlers(
+    return ComponentHandlers(
         schema_handler,
         app_handler,
         connector_handler,

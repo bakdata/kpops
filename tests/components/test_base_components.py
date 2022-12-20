@@ -5,7 +5,10 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
-from kpops.cli.pipeline_handlers import PipelineHandlers
+from kpops.cli.pipeline_handlers import ComponentHandlers
+from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
+    ApplicationType,
+)
 from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
@@ -17,9 +20,6 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
-from kpops.pipeline_deployer.streams_bootstrap.streams_bootstrap_application_type import (
-    ApplicationType,
-)
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
@@ -38,8 +38,8 @@ def config() -> PipelineConfig:
 
 
 @pytest.fixture
-def handlers() -> PipelineHandlers:
-    return PipelineHandlers(
+def handlers() -> ComponentHandlers:
+    return ComponentHandlers(
         schema_handler=MagicMock(),
         app_handler=MagicMock(),
         connector_handler=MagicMock(),
@@ -48,7 +48,7 @@ def handlers() -> PipelineHandlers:
 
 
 class TestKubernetesApp:
-    def test_name_check(self, config: PipelineConfig, handlers: PipelineHandlers):
+    def test_name_check(self, config: PipelineConfig, handlers: ComponentHandlers):
         app_config = KubernetesAppConfig(namespace="test")
 
         assert KubernetesApp(
@@ -79,7 +79,7 @@ class TestKubernetesApp:
 
 
 class TestKafkaApp:
-    def test_default_brokers(self, config: PipelineConfig, handlers: PipelineHandlers):
+    def test_default_brokers(self, config: PipelineConfig, handlers: ComponentHandlers):
         kafka_app = KafkaApp(
             handlers=handlers,
             config=config,
@@ -99,7 +99,7 @@ class TestKafkaApp:
 
 
 class TestStreamsApp:
-    def test_set_topics(self, config: PipelineConfig, handlers: PipelineHandlers):
+    def test_set_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
         class AnotherType(StreamsApp):
             _type = "test"
 
@@ -141,7 +141,7 @@ class TestStreamsApp:
         }
 
     def test_no_empty_input_topic(
-        self, config: PipelineConfig, handlers: PipelineHandlers
+        self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
             handlers=handlers,
@@ -173,7 +173,7 @@ class TestStreamsApp:
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" not in streams_config
 
-    def test_should_validate(self, config: PipelineConfig, handlers: PipelineHandlers):
+    def test_should_validate(self, config: PipelineConfig, handlers: ComponentHandlers):
         with pytest.raises(ValueError):
             StreamsApp(
                 handlers=handlers,
@@ -211,7 +211,7 @@ class TestStreamsApp:
             )
 
     def test_set_streams_output_from_to(
-        self, config: PipelineConfig, handlers: PipelineHandlers
+        self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
             handlers=handlers,
@@ -253,7 +253,7 @@ class TestStreamsApp:
         assert streams_app.app.streams.error_topic == "streams-app-error-topic"
 
     def test_weave_inputs_from_prev_component(
-        self, config: PipelineConfig, handlers: PipelineHandlers
+        self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
             handlers=handlers,
@@ -288,7 +288,7 @@ class TestStreamsApp:
     def test_deploy_order(
         self,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
         streams_app = StreamsApp(
@@ -359,7 +359,7 @@ class TestStreamsApp:
 
 
 class TestProducerApp:
-    def test_output_topics(self, config: PipelineConfig, handlers: PipelineHandlers):
+    def test_output_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
             handlers=handlers,
             config=config,
@@ -393,7 +393,7 @@ class TestProducerApp:
     def test_deploy_order(
         self,
         config: PipelineConfig,
-        handlers: PipelineHandlers,
+        handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
         streams_app = ProducerApp(

@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from kpops.cli.pipeline_config import PipelineConfig
-from kpops.cli.pipeline_handlers import PipelineHandlers
+from kpops.cli.pipeline_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
     update_nested_pair,
@@ -44,8 +44,8 @@ def config() -> PipelineConfig:
 
 
 @pytest.fixture
-def handlers() -> PipelineHandlers:
-    return PipelineHandlers(
+def handlers() -> ComponentHandlers:
+    return ComponentHandlers(
         schema_handler=MagicMock(),
         app_handler=MagicMock(),
         connector_handler=MagicMock(),
@@ -54,7 +54,9 @@ def handlers() -> PipelineHandlers:
 
 
 class TestBaseDefaultsComponent:
-    def test_inherit_defaults(self, config: PipelineConfig, handlers: PipelineHandlers):
+    def test_inherit_defaults(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ):
         component = TestChildModel(
             handlers=handlers,
             config=config,
@@ -76,7 +78,7 @@ class TestBaseDefaultsComponent:
             component.hard_coded == "hard_coded_value"
         ), "Defaults in code should be kept for parents"
 
-    def test_inherit(self, config: PipelineConfig, handlers: PipelineHandlers):
+    def test_inherit(self, config: PipelineConfig, handlers: ComponentHandlers):
         component = TestChildModel(
             handlers=handlers,
             config=config,
@@ -100,7 +102,7 @@ class TestBaseDefaultsComponent:
         ), "Defaults in code should be kept for parents"
 
     def test_multiple_generations(
-        self, config: PipelineConfig, handlers: PipelineHandlers
+        self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         component = TestGrandChildModel(
             handlers=handlers,
@@ -125,7 +127,7 @@ class TestBaseDefaultsComponent:
         assert component.grand_child == "grand-child-value"
 
     def test_env_var_substitution(
-        self, config: PipelineConfig, handlers: PipelineHandlers
+        self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         class TestEnvVarModel(BaseDefaultsComponent):
             _type: str = "env-var-test"

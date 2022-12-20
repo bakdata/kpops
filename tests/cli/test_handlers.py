@@ -4,11 +4,11 @@ from pytest_mock import MockerFixture
 
 from kpops.cli.main import setup_handlers
 from kpops.cli.pipeline_config import PipelineConfig
-from kpops.cli.pipeline_handlers import PipelineHandlers
-from kpops.pipeline_deployer.kafka_connect.handler import ConnectorHandler
-from kpops.pipeline_deployer.schema_handler.schema_handler import SchemaHandler
-from kpops.pipeline_deployer.streams_bootstrap.handler import AppHandler
-from kpops.pipeline_deployer.topic.handler import TopicHandler
+from kpops.cli.pipeline_handlers import ComponentHandlers
+from kpops.component_handlers.kafka_connect.handler import ConnectorHandler
+from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
+from kpops.component_handlers.streams_bootstrap.handler import AppHandler
+from kpops.component_handlers.topic.handler import TopicHandler
 from tests.cli.resources.module import CustomSchemaProvider
 
 MODULE = CustomSchemaProvider.__module__
@@ -34,7 +34,7 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
     topic_handler = TopicHandler(wrapper)
     topic_handler_mock.return_value = topic_handler
 
-    expected = PipelineHandlers(
+    expected = ComponentHandlers(
         schema_handler=None,
         app_handler=app_handler,
         connector_handler=connector_handler,
@@ -85,7 +85,7 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     topic_handler = TopicHandler(wrapper)
     topic_handler_mock.return_value = topic_handler
 
-    expected = PipelineHandlers(
+    expected = ComponentHandlers(
         schema_handler=schema_handler,
         app_handler=app_handler,
         connector_handler=connector_handler,
