@@ -4,7 +4,6 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli import pipeline_config
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.cli.pipeline_handlers import PipelineHandlers
 from kpops.components.base_components import KafkaApp
@@ -27,7 +26,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 @pytest.fixture
 def config() -> PipelineConfig:
-    return pipeline_config.PipelineConfig(
+    return PipelineConfig(
         defaults_path=DEFAULTS_PATH,
         environment="development",
         topic_name_config=TopicNameConfig(
