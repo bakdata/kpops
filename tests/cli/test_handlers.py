@@ -43,12 +43,8 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
 
     actual_handlers = setup_handlers(MODULE, config)
 
-    app_handler_mock.from_pipeline_config.assert_called_once_with(
-        pipeline_config=config
-    )
-    connector_handler_mock.from_pipeline_config.assert_called_once_with(
-        pipeline_config=config
-    )
+    app_handler_mock.from_pipeline_config.assert_called_once_with(config)
+    connector_handler_mock.from_pipeline_config.assert_called_once_with(config)
 
     assert actual_handlers.schema_handler == expected.schema_handler
     assert actual_handlers.app_handler == expected.app_handler
@@ -96,12 +92,8 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
 
     schema_handler_mock.load_schema_handler.assert_called_once_with(MODULE, config)
 
-    app_handler_mock.from_pipeline_config.assert_called_once_with(
-        pipeline_config=config
-    )
-    connector_handler_mock.from_pipeline_config.assert_called_once_with(
-        pipeline_config=config
-    )
+    app_handler_mock.from_pipeline_config.assert_called_once_with(config)
+    connector_handler_mock.from_pipeline_config.assert_called_once_with(config)
 
     assert actual_handlers.schema_handler == expected.schema_handler
     assert actual_handlers.app_handler == expected.app_handler
