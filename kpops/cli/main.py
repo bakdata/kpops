@@ -111,10 +111,10 @@ def setup_handlers(
     components_module: str | None, config: PipelineConfig
 ) -> ComponentHandlers:
     schema_handler = SchemaHandler.load_schema_handler(components_module, config)
-    app_handler = AppHandler.from_pipeline_config(pipeline_config=config)
-    connector_handler = ConnectorHandler.from_pipeline_config(pipeline_config=config)
-    wrapper = ProxyWrapper(pipeline_config=config)
-    topic_handler = TopicHandler(proxy_wrapper=wrapper)
+    app_handler = AppHandler.from_pipeline_config(config)
+    connector_handler = ConnectorHandler.from_pipeline_config(config)
+    proxy_wrapper = ProxyWrapper(config)
+    topic_handler = TopicHandler(proxy_wrapper)
 
     return ComponentHandlers(
         schema_handler, app_handler, connector_handler, topic_handler
