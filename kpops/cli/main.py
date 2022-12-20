@@ -90,7 +90,7 @@ logger.addHandler(stream_handler)
 log = logging.getLogger("")
 
 
-def enrich_pipeline(
+def setup_pipeline(
     pipeline_base_dir: Path,
     pipeline_path: Path,
     components_module: str | None,
@@ -198,26 +198,11 @@ def run_destroy_clean_reset(
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir,
-        components_module,
-        pipeline_config,
-        pipeline_path,
+        pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
     for component in reversed(get_steps_to_apply(pipeline, steps)):
         log_action("Destroy", component)
         component.destroy(dry_run=dry_run, clean=clean, delete_outputs=delete_outputs)
-
-
-def setup_pipeline(
-    pipeline_base_dir: Path,
-    components_module: str | None,
-    pipeline_config: PipelineConfig,
-    pipeline_path: Path,
-) -> Pipeline:
-    pipeline = enrich_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
-    )
-    return pipeline
 
 
 def create_pipeline_config(
@@ -248,7 +233,7 @@ def generate(
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
-    pipeline = enrich_pipeline(
+    pipeline = setup_pipeline(
         pipeline_base_dir,
         pipeline_path,
         components_module,
@@ -277,7 +262,7 @@ def deploy(
     steps: Optional[str] = PIPELINE_STEPS,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
-    pipeline = enrich_pipeline(
+    pipeline = setup_pipeline(
         pipeline_base_dir,
         pipeline_path,
         components_module,
@@ -285,7 +270,7 @@ def deploy(
     )
 
     steps_to_apply = get_steps_to_apply(pipeline, steps)
-    # init handlers (like schema handler)
+
     for component in steps_to_apply:
         log_action("Deploy", component)
         component.deploy(dry_run=dry_run)
