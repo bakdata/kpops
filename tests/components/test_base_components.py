@@ -6,6 +6,7 @@ from pytest_mock import MockerFixture
 
 from kpops.cli import pipeline_config
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
+from kpops.cli.pipeline_handlers import PipelineHandlers
 from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
@@ -25,7 +26,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 @pytest.fixture
-def test_config() -> PipelineConfig:
+def config() -> PipelineConfig:
     return pipeline_config.PipelineConfig(
         defaults_path=DEFAULTS_PATH,
         environment="development",
@@ -37,38 +38,52 @@ def test_config() -> PipelineConfig:
     )
 
 
+@pytest.fixture
+def handlers() -> PipelineHandlers:
+    return PipelineHandlers(
+        schema_handler=MagicMock(),
+        app_handler=MagicMock(),
+        connector_handler=MagicMock(),
+        topic_handler=MagicMock(),
+    )
+
+
 class TestKubernetesApp:
-    def test_name_check(self, test_config: PipelineConfig):
+    def test_name_check(self, config: PipelineConfig, handlers: PipelineHandlers):
         app_config = KubernetesAppConfig(namespace="test")
 
         assert KubernetesApp(
             _type="test",
+            handlers=handlers,
             app=app_config,
-            config=test_config,
+            config=config,
             name="example-component-with-very-long-name-longer-than-most-of-our-kubernetes-apps",
         )
 
         with pytest.raises(ValueError):
             assert KubernetesApp(
                 _type="test",
+                handlers=handlers,
                 app=app_config,
-                config=test_config,
+                config=config,
                 name="Not-Compatible*",
             )
 
         with pytest.raises(ValueError):
             assert KubernetesApp(
                 _type="test",
+                handlers=handlers,
                 app=app_config,
-                config=test_config,
+                config=config,
                 name="snake_case",
             )
 
 
 class TestKafkaApp:
-    def test_default_brokers(self, test_config: PipelineConfig):
+    def test_default_brokers(self, config: PipelineConfig, handlers: PipelineHandlers):
         kafka_app = KafkaApp(
-            config=test_config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "streams-app",
                 "name": "example-name",
@@ -85,12 +100,13 @@ class TestKafkaApp:
 
 
 class TestStreamsApp:
-    def test_set_topics(self, test_config: PipelineConfig):
+    def test_set_topics(self, config: PipelineConfig, handlers: PipelineHandlers):
         class AnotherType(StreamsApp):
             _type = "test"
 
         streams_app = AnotherType(
-            config=test_config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "test",
                 "name": "example-name",
@@ -125,9 +141,12 @@ class TestStreamsApp:
             "another-pattern": "example.*"
         }
 
-    def test_no_empty_input_topic(self, test_config: PipelineConfig):
+    def test_no_empty_input_topic(
+        self, config: PipelineConfig, handlers: PipelineHandlers
+    ):
         streams_app = StreamsApp(
-            config=test_config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "test",
                 "name": "example-name",
@@ -155,10 +174,11 @@ class TestStreamsApp:
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" not in streams_config
 
-    def test_should_validate(self, test_config: PipelineConfig):
+    def test_should_validate(self, config: PipelineConfig, handlers: PipelineHandlers):
         with pytest.raises(ValueError):
             StreamsApp(
-                config=test_config,
+                handlers=handlers,
+                config=config,
                 **{
                     "type": "streams-app",
                     "name": "example-name",
@@ -178,7 +198,8 @@ class TestStreamsApp:
 
         with pytest.raises(ValueError):
             StreamsApp(
-                config=test_config,
+                handlers=handlers,
+                config=config,
                 **{
                     "type": "streams-app",
                     "name": "example-name",
@@ -190,9 +211,12 @@ class TestStreamsApp:
                 },
             )
 
-    def test_set_streams_output_from_to(self, test_config: PipelineConfig):
+    def test_set_streams_output_from_to(
+        self, config: PipelineConfig, handlers: PipelineHandlers
+    ):
         streams_app = StreamsApp(
-            config=test_config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "streams-app",
                 "name": "example-name",
@@ -229,9 +253,12 @@ class TestStreamsApp:
         assert streams_app.app.streams.output_topic == "streams-app-output-topic"
         assert streams_app.app.streams.error_topic == "streams-app-error-topic"
 
-    def test_weave_inputs_from_prev_component(self, test_config: PipelineConfig):
+    def test_weave_inputs_from_prev_component(
+        self, config: PipelineConfig, handlers: PipelineHandlers
+    ):
         streams_app = StreamsApp(
-            config=test_config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "streams-app",
                 "name": "example-name",
@@ -259,9 +286,15 @@ class TestStreamsApp:
 
         assert streams_app.app.streams.input_topics == ["prev-output-topic", "b", "a"]
 
-    def test_deploy_order(self, test_config: PipelineConfig, mocker: MockerFixture):
+    def test_deploy_order(
+        self,
+        config: PipelineConfig,
+        handlers: PipelineHandlers,
+        mocker: MockerFixture,
+    ):
         streams_app = StreamsApp(
-            config=test_config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "streams-app",
                 "name": "example-name",
@@ -291,13 +324,13 @@ class TestStreamsApp:
                 },
             },
         )
-        streams_app.pipeline_handlers = MagicMock()
+        streams_app.handlers = MagicMock()
 
         mock_create_topics = mocker.patch.object(
-            streams_app.pipeline_handlers.topic_handler, "create_topics"
+            streams_app.handlers.topic_handler, "create_topics"
         )
         mock_install_app = mocker.patch.object(
-            streams_app.pipeline_handlers.app_handler, "install_app"
+            streams_app.handlers.app_handler, "install_app"
         )
 
         mock = mocker.MagicMock()
@@ -327,9 +360,10 @@ class TestStreamsApp:
 
 
 class TestProducerApp:
-    def test_output_topics(self, test_config: PipelineConfig):
+    def test_output_topics(self, config: PipelineConfig, handlers: PipelineHandlers):
         producer_app = ProducerApp(
-            config=test_config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "producer-app",
                 "name": "example-name",
@@ -357,9 +391,15 @@ class TestProducerApp:
             "first-extra-topic": "extra-topic-1"
         }
 
-    def test_deploy_order(self, test_config: PipelineConfig, mocker: MockerFixture):
+    def test_deploy_order(
+        self,
+        config: PipelineConfig,
+        handlers: PipelineHandlers,
+        mocker: MockerFixture,
+    ):
         streams_app = ProducerApp(
-            config=test_config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "producer-app",
                 "name": "example-name",
@@ -381,13 +421,13 @@ class TestProducerApp:
                 },
             },
         )
-        streams_app.pipeline_handlers = MagicMock()
+        streams_app.handlers = MagicMock()
 
         mock_install_app = mocker.patch.object(
-            streams_app.pipeline_handlers.app_handler, "install_app"
+            streams_app.handlers.app_handler, "install_app"
         )
         mock_create_topics = mocker.patch.object(
-            streams_app.pipeline_handlers.topic_handler, "create_topics"
+            streams_app.handlers.topic_handler, "create_topics"
         )
 
         mock = mocker.MagicMock()

@@ -52,6 +52,7 @@ class TestProxyWrapper:
 
     def test_should_raise_exception_when_host_is_not_set(self):
         config = PipelineConfig(defaults_path=DEFAULTS_PATH, environment="development")
+        config.kafka_rest_host = None
         with pytest.raises(ValueError) as exception:
             ProxyWrapper(pipeline_config=config)
         assert (

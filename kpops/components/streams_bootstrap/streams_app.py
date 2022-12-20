@@ -1,7 +1,6 @@
 from pydantic import BaseConfig, BaseModel, Extra
 from typing_extensions import override
 
-from kpops.cli.exception import PipelineStateNotInitializedException
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
     KafkaApp,
@@ -132,19 +131,17 @@ class StreamsApp(KafkaApp):
         )
 
     def deploy(self, dry_run: bool):
-        if self.pipeline_handlers is None:
-            raise PipelineStateNotInitializedException()
         if self.to:
-            self.pipeline_handlers.topic_handler.create_topics(
+            self.handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
             )
 
-            if self.pipeline_handlers.schema_handler:
-                self.pipeline_handlers.schema_handler.submit_schemas(
+            if self.handlers.schema_handler:
+                self.handlers.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
 
-        self.pipeline_handlers.app_handler.install_app(
+        self.handlers.app_handler.install_app(
             release_name=self.helm_release_name,
             namespace=self.app.namespace,
             values=self.to_helm_values(),
@@ -153,9 +150,7 @@ class StreamsApp(KafkaApp):
         )
 
     def clean(self, delete_outputs: bool, dry_run: bool):
-        if self.pipeline_handlers is None:
-            raise PipelineStateNotInitializedException()
-        self.pipeline_handlers.app_handler.clean_app(
+        self.handlers.app_handler.clean_app(
             release_name=self.helm_release_name,
             namespace=self.app.namespace,
             values=self.to_helm_values(),
@@ -167,17 +162,15 @@ class StreamsApp(KafkaApp):
         if (
             self.to
             and delete_outputs
-            and self.pipeline_handlers.schema_handler
+            and self.handlers.schema_handler
             and self.config.clean_streams_apps_schemas
         ):
-            self.pipeline_handlers.schema_handler.delete_schemas(
+            self.handlers.schema_handler.delete_schemas(
                 to_section=self.to, dry_run=dry_run
             )
 
     def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool):
-        if self.pipeline_handlers is None:
-            raise PipelineStateNotInitializedException()
-        self.pipeline_handlers.app_handler.uninstall_app(
+        self.handlers.app_handler.uninstall_app(
             release_name=self.helm_release_name,
             namespace=self.app.namespace,
             dry_run=dry_run,

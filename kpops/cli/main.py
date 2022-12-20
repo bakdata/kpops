@@ -101,11 +101,13 @@ def enrich_pipeline(
         registry.find_components(components_module)
     registry.find_components("kpops.components")
 
+    handlers = setup_handlers(components_module, pipeline_config)
     return Pipeline.load_from_yaml(
         base_dir=pipeline_base_dir,
         path=pipeline_path,
         registry=registry,
         config=pipeline_config,
+        handlers=handlers,
     )
 
 
@@ -119,10 +121,10 @@ def setup_handlers(
     topic_handler = TopicHandler(proxy_wrapper=wrapper)
 
     return PipelineHandlers(
-        schema_handler=schema_handler,
-        app_handler=app_handler,
-        connector_handler=connector_handler,
-        topic_handler=topic_handler,
+        schema_handler,
+        app_handler,
+        connector_handler,
+        topic_handler,
     )
 
 
@@ -196,12 +198,13 @@ def run_destroy_clean_reset(
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, components_module, pipeline_config, pipeline_path
+        pipeline_base_dir,
+        components_module,
+        pipeline_config,
+        pipeline_path,
     )
-    pipeline_handlers = setup_handlers(components_module, config=pipeline_config)
     for component in reversed(get_steps_to_apply(pipeline, steps)):
         log_action("Destroy", component)
-        component.pipeline_handlers = pipeline_handlers
         component.destroy(dry_run=dry_run, clean=clean, delete_outputs=delete_outputs)
 
 
@@ -246,7 +249,10 @@ def generate(
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = enrich_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
+        pipeline_base_dir,
+        pipeline_path,
+        components_module,
+        pipeline_config,
     )
     if print_yaml:
         pipeline.print_yaml()
@@ -271,18 +277,18 @@ def deploy(
     steps: Optional[str] = PIPELINE_STEPS,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
-    pipeline = setup_pipeline(
-        pipeline_base_dir, components_module, pipeline_config, pipeline_path
+    pipeline = enrich_pipeline(
+        pipeline_base_dir,
+        pipeline_path,
+        components_module,
+        pipeline_config,
     )
 
     steps_to_apply = get_steps_to_apply(pipeline, steps)
     # init handlers (like schema handler)
-    pipeline_handlers = setup_handlers(components_module, config=pipeline_config)
     for component in steps_to_apply:
-        pipeline_component = component
-        pipeline_component.pipeline_handlers = pipeline_handlers
-        log_action("Deploy", pipeline_component)
-        pipeline_component.deploy(dry_run=dry_run)
+        log_action("Deploy", component)
+        component.deploy(dry_run=dry_run)
 
 
 @app.command(help="Destroy pipeline steps")

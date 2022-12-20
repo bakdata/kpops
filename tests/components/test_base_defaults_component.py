@@ -1,9 +1,11 @@
 import os
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 
-from kpops.cli import pipeline_config
+from kpops.cli.pipeline_config import PipelineConfig
+from kpops.cli.pipeline_handlers import PipelineHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
     update_nested_pair,
@@ -33,13 +35,29 @@ class TestGrandChildModel(TestChildModel):
     grand_child: str | None = None
 
 
+@pytest.fixture
+def config() -> PipelineConfig:
+    return PipelineConfig(
+        defaults_path=DEFAULTS_PATH,
+        environment="development",
+    )
+
+
+@pytest.fixture
+def handlers() -> PipelineHandlers:
+    return PipelineHandlers(
+        schema_handler=MagicMock(),
+        app_handler=MagicMock(),
+        connector_handler=MagicMock(),
+        topic_handler=MagicMock(),
+    )
+
+
 class TestBaseDefaultsComponent:
-    def test_inherit_defaults(self):
+    def test_inherit_defaults(self, config: PipelineConfig, handlers: PipelineHandlers):
         component = TestChildModel(
-            config=pipeline_config.PipelineConfig(
-                defaults_path=DEFAULTS_PATH,
-                environment="development",
-            )
+            handlers=handlers,
+            config=config,
         )
 
         assert (
@@ -58,12 +76,10 @@ class TestBaseDefaultsComponent:
             component.hard_coded == "hard_coded_value"
         ), "Defaults in code should be kept for parents"
 
-    def test_inherit(self):
+    def test_inherit(self, config: PipelineConfig, handlers: PipelineHandlers):
         component = TestChildModel(
-            config=pipeline_config.PipelineConfig(
-                defaults_path=DEFAULTS_PATH,
-                environment="development",
-            ),
+            handlers=handlers,
+            config=config,
             **{"name": "name-defined-in-pipeline_generator"}
         )
 
@@ -83,12 +99,12 @@ class TestBaseDefaultsComponent:
             component.hard_coded == "hard_coded_value"
         ), "Defaults in code should be kept for parents"
 
-    def test_multiple_generations(self):
+    def test_multiple_generations(
+        self, config: PipelineConfig, handlers: PipelineHandlers
+    ):
         component = TestGrandChildModel(
-            config=pipeline_config.PipelineConfig(
-                defaults_path=DEFAULTS_PATH,
-                environment="development",
-            )
+            handlers=handlers,
+            config=config,
         )
 
         assert (
@@ -108,17 +124,17 @@ class TestBaseDefaultsComponent:
         ), "Defaults in code should be kept for parents"
         assert component.grand_child == "grand-child-value"
 
-    def test_env_var_substitution(self):
+    def test_env_var_substitution(
+        self, config: PipelineConfig, handlers: PipelineHandlers
+    ):
         class TestEnvVarModel(BaseDefaultsComponent):
             _type: str = "env-var-test"
             name: str | None = None
 
         os.environ["pipeline_name"] = str(DEFAULTS_PATH)
         component = TestEnvVarModel(
-            config=pipeline_config.PipelineConfig(
-                defaults_path=DEFAULTS_PATH,
-                environment="development",
-            )
+            handlers=handlers,
+            config=config,
         )
 
         assert component.name == str(
