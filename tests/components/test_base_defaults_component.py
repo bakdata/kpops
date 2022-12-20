@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 
 from kpops.cli.pipeline_config import PipelineConfig
-from kpops.cli.pipeline_handlers import ComponentHandlers
+from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
     update_nested_pair,

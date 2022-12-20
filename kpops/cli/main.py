@@ -8,8 +8,8 @@ import typer
 
 from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
-from kpops.cli.pipeline_handlers import ComponentHandlers
 from kpops.cli.registry import Registry
+from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.handler import ConnectorHandler
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.streams_bootstrap.handler import AppHandler

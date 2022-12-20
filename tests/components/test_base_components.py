@@ -5,7 +5,7 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
-from kpops.cli.pipeline_handlers import ComponentHandlers
+from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
     ApplicationType,
 )
