@@ -103,11 +103,7 @@ def setup_pipeline(
 
     handlers = setup_handlers(components_module, pipeline_config)
     return Pipeline.load_from_yaml(
-        base_dir=pipeline_base_dir,
-        path=pipeline_path,
-        registry=registry,
-        config=pipeline_config,
-        handlers=handlers,
+        pipeline_base_dir, pipeline_path, registry, pipeline_config, handlers
     )
 
 
@@ -121,10 +117,7 @@ def setup_handlers(
     topic_handler = TopicHandler(proxy_wrapper=wrapper)
 
     return ComponentHandlers(
-        schema_handler,
-        app_handler,
-        connector_handler,
-        topic_handler,
+        schema_handler, app_handler, connector_handler, topic_handler
     )
 
 
@@ -234,10 +227,7 @@ def generate(
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir,
-        pipeline_path,
-        components_module,
-        pipeline_config,
+        pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
     if print_yaml:
         pipeline.print_yaml()
@@ -263,10 +253,7 @@ def deploy(
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir,
-        pipeline_path,
-        components_module,
-        pipeline_config,
+        pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
 
     steps_to_apply = get_steps_to_apply(pipeline, steps)
