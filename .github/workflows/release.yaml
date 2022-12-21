@@ -35,8 +35,8 @@ jobs:
         uses: bakdata/ci-templates/actions/python-poetry-bump-version@v1.5.1
         with:
           release-type: "${{ github.event.inputs.release-type }}"
-          python-version: $PYTHON_VERSION
-          poetry-version: $POETRY_VERSION
+          python-version: ${{ env.PYTHON_VERSION }}
+          poetry-version: ${{ env.POETRY_VERSION }}
 
       - name: Commit and push pyproject.toml file
         uses: bakdata/ci-templates/actions/commit-and-push@v1.3.0
@@ -50,8 +50,8 @@ jobs:
         uses: bakdata/ci-templates/actions/python-poetry-release@v1.5.1
         with:
           publish-to-test: false
-          python-version: $PYTHON_VERSION
-          poetry-version: $POETRY_VERSION
+          python-version: ${{ env.PYTHON_VERSION }}
+          poetry-version: ${{ env.POETRY_VERSION }}
           pypi-token: ${{ secrets.PYPI_TOKEN }}
 
   create-github-release-push-tag:
