@@ -3,7 +3,7 @@ from pathlib import Path
 from pydantic import BaseConfig, BaseSettings, Field
 from pydantic.env_settings import SettingsSourceCallable
 
-from kpops.component_handlers.streams_bootstrap.helm_wrapper import HelmConfig
+from kpops.component_handlers.helm_wrapper.model import HelmConfig
 from kpops.utils.yaml_loading import load_yaml_file
 
 ENV_PREFIX = "KPOPS_"

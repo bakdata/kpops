@@ -10,46 +10,15 @@ from pathlib import Path
 from typing import Iterable
 
 import yaml
-from pydantic import BaseModel, BaseSettings, Field
 
+from kpops.component_handlers.helm_wrapper.config import HelmCommandConfig
+from kpops.component_handlers.helm_wrapper.model import HelmConfig
 from kpops.component_handlers.streams_bootstrap.exception import (
     ReleaseNotFoundException,
 )
 from kpops.utils.dict_differ import render_diff
 
 log = logging.getLogger("Helm")
-
-
-class HelmDiffConfig(BaseModel):
-    enable: bool = True
-    ignore: set[str] = Field(
-        default_factory=set,
-        description="keypaths using dot-notation to exclude",
-    )
-
-
-class HelmConfig(BaseModel):
-    repository_name: str
-    url: str
-    version: str | None = None
-    context: str | None = None
-    username: str | None = None
-    password: str | None = None
-    diff: HelmDiffConfig = HelmDiffConfig()
-    namespace: str | None = None
-    ca_file: Path | None = None
-    insecure_skip_tls_verify: bool = False
-
-
-class HelmCommandConfig(BaseSettings):
-    debug: bool = False
-    force: bool = False
-    timeout: str = "5m0s"
-    wait: bool = True
-    wait_for_jobs: bool = False
-
-    class Config:
-        env_prefix = "HELM_COMMAND_CONFIG_"
 
 
 HELM_SOURCE_PREFIX = "# Source: "
@@ -108,7 +77,7 @@ def load_helm_manifest(yaml_contents: str) -> Iterator[HelmTemplate]:
             current_yaml_doc.append(line)
 
 
-class HelmWrapper:
+class Helm:
     RELEASE_NAME_MAX_LEN = 53
 
     def __init__(self, helm_config: HelmConfig) -> None:
@@ -124,22 +93,28 @@ class HelmWrapper:
             name = new_name
         return name
 
-    def helm_repo_add(self) -> None:
+    def helm_repo_add(
+        self,
+        repository_name: str,
+        repository_url: str,
+        username: str | None,
+        password: str | None,
+    ) -> None:
         bash_command = [
             "helm",
             "repo",
             "add",
-            self._helm_config.repository_name,
-            self._helm_config.url,
+            repository_name,
+            repository_url,
         ]
 
-        if self._helm_config.username and self._helm_config.password:
+        if username and password:
             bash_command.extend(
                 [
                     "--username",
-                    self._helm_config.username,
+                    username,
                     "--password",
-                    self._helm_config.password,
+                    password,
                 ]
             )
 
@@ -156,9 +131,7 @@ class HelmWrapper:
                 )
                 is not None
             ):
-                log.error(
-                    f"Could not add repository {self._helm_config.repository_name}. {e}"
-                )
+                log.error(f"Could not add repository {repository_name}. {e}")
             else:
                 raise e
 
@@ -175,7 +148,7 @@ class HelmWrapper:
             namespace,
         ]
         try:
-            stdout = HelmWrapper.__run_command(bash_command, dry_run=True)
+            stdout = Helm.__run_command(bash_command, dry_run=True)
             return load_helm_manifest(stdout)
         except ReleaseNotFoundException:
             return ()
@@ -259,7 +232,7 @@ class HelmWrapper:
             try:
                 stdout = self.__run_command(bash_command, dry_run=dry_run)
                 if dry_run and self._helm_config.diff.enable:
-                    current_release = HelmWrapper._helm_get_manifest(
+                    current_release = Helm._helm_get_manifest(
                         release_name, namespace
                     )
                     new_release = load_helm_manifest(stdout)
@@ -341,7 +314,7 @@ class HelmWrapper:
         if stdout and (not dry_run or exit_code != 0):
             log.info(stdout)
 
-        HelmWrapper.parse_helm_command_stderr_output(stderr)
+        Helm.parse_helm_command_stderr_output(stderr)
         return stdout
 
     @staticmethod

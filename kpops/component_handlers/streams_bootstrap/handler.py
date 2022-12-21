@@ -6,10 +6,9 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from kpops.component_handlers.streams_bootstrap.helm_wrapper import (
-    HelmCommandConfig,
-    HelmWrapper,
-)
+from kpops.component_handlers.helm_wrapper.config import HelmCommandConfig
+from kpops.component_handlers.helm_wrapper.helm import Helm
+from kpops.component_handlers.helm_wrapper.model import HelmConfig
 from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
     ApplicationType,
 )
@@ -21,9 +20,14 @@ log = logging.getLogger("StreamsBootstrapApp")
 
 
 class AppHandler:
-    def __init__(self, helm_wrapper: HelmWrapper):
-        self._helm_wrapper = helm_wrapper
-        helm_wrapper.helm_repo_add()
+    def __init__(self, helm_config: HelmConfig):
+        self._helm_wrapper = Helm(helm_config)
+        self._helm_wrapper.helm_repo_add(
+            helm_config.repository_name,
+            helm_config.url,
+            helm_config.username,
+            helm_config.password,
+        )
 
     def install_app(
         self,
@@ -133,8 +137,4 @@ class AppHandler:
 
     @classmethod
     def from_pipeline_config(cls, pipeline_config: PipelineConfig):
-        return cls(
-            helm_wrapper=HelmWrapper(
-                helm_config=pipeline_config.streams_bootstrap_helm_config
-            )
-        )
+        return cls(helm_config=pipeline_config.streams_bootstrap_helm_config)

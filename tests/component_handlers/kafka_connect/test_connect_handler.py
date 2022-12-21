@@ -4,6 +4,8 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
+from kpops.component_handlers.helm_wrapper.config import HelmCommandConfig
+from kpops.component_handlers.helm_wrapper.model import HelmConfig
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
 from kpops.component_handlers.kafka_connect.handler import ConnectorHandler
@@ -11,7 +13,6 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectConfig,
     KafkaConnectorType,
 )
-from kpops.component_handlers.streams_bootstrap.helm_wrapper import HelmCommandConfig
 from kpops.utils.colorify import greenify, magentaify, yellowify
 
 CONNECTOR_NAME = "test-connector"
@@ -38,15 +39,30 @@ class TestConnectorHandler:
             "kpops.component_handlers.kafka_connect.handler.render_diff"
         )
 
+    @pytest.fixture(autouse=True)
+    def helm_wrapper_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch(
+            "kpops.component_handlers.kafka_connect.handler.Helm"
+        ).return_value
+
+    @pytest.fixture(autouse=True)
+    def helm_config(self) -> HelmConfig:
+        return HelmConfig(
+            repository_name="bakdata-kafka-connect-resetter",
+            url="https://raw.githubusercontent.com/bakdata/kafka-connect-resetter/1.0.1/charts/",
+        )
+
     def test_should_create_connector_in_dry_run(
-        self, renderer_diff_mock: MagicMock, log_info_mock: MagicMock
+        self,
+        renderer_diff_mock: MagicMock,
+        log_info_mock: MagicMock,
+        helm_config: HelmConfig,
     ):
-        helm_wrapper = MagicMock()
         connector_wrapper = MagicMock()
         renderer_diff_mock.return_value = None
 
         handler = ConnectorHandler(
-            connector_wrapper, 0, helm_wrapper, "test-namespace", "broker:9092", {}
+            connector_wrapper, 0, helm_config, "test-namespace", "broker:9092", {}
         )
         config = KafkaConnectConfig()
         handler.create_connector(CONNECTOR_NAME, config, True)
@@ -69,13 +85,14 @@ class TestConnectorHandler:
         )
 
     def test_should_log_correct_message_when_create_connector_and_connector_not_exists_in_dry_run(
-        self, log_info_mock: MagicMock
+        self,
+        log_info_mock: MagicMock,
+        helm_config: HelmConfig,
     ):
-        helm_wrapper = MagicMock()
         connector_wrapper = MagicMock()
 
         handler = ConnectorHandler(
-            connector_wrapper, 0, helm_wrapper, "test-namespace", "broker:9092", {}
+            connector_wrapper, 0, helm_config, "test-namespace", "broker:9092", {}
         )
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
@@ -100,9 +117,11 @@ class TestConnectorHandler:
         )
 
     def test_should_log_invalid_config_when_create_connector_in_dry_run(
-        self, renderer_diff_mock: MagicMock, log_error_mock: MagicMock
+        self,
+        renderer_diff_mock: MagicMock,
+        log_error_mock: MagicMock,
+        helm_config: HelmConfig,
     ):
-        helm_wrapper = MagicMock()
         connector_wrapper = MagicMock()
 
         errors = [
@@ -112,7 +131,7 @@ class TestConnectorHandler:
         connector_wrapper.validate_connector_config.return_value = errors
 
         handler = ConnectorHandler(
-            connector_wrapper, 0, helm_wrapper, "test-namespace", "broker:9092", {}
+            connector_wrapper, 0, helm_config, "test-namespace", "broker:9092", {}
         )
         config = KafkaConnectConfig()
 
@@ -132,12 +151,12 @@ class TestConnectorHandler:
 
     def test_should_call_update_connector_config_when_connector_exists_not_dry_run(
         self,
+        helm_config: HelmConfig,
     ):
-        helm_wrapper = MagicMock()
         connector_wrapper = MagicMock()
 
         handler = ConnectorHandler(
-            connector_wrapper, 0, helm_wrapper, "test-namespace", "broker:9092", {}
+            connector_wrapper, 0, helm_config, "test-namespace", "broker:9092", {}
         )
         config = KafkaConnectConfig()
         handler.create_connector(CONNECTOR_NAME, config, False)
@@ -151,12 +170,12 @@ class TestConnectorHandler:
 
     def test_should_call_create_connector_when_connector_does_not_exists_not_dry_run(
         self,
+        helm_config: HelmConfig,
     ):
-        helm_wrapper = MagicMock()
         connector_wrapper = MagicMock()
 
         handler = ConnectorHandler(
-            connector_wrapper, 0, helm_wrapper, "test-namespace", "broker:9092", {}
+            connector_wrapper, 0, helm_config, "test-namespace", "broker:9092", {}
         )
         config = KafkaConnectConfig()
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
@@ -167,13 +186,14 @@ class TestConnectorHandler:
         )
 
     def test_should_print_correct_log_when_destroying_connector_in_dry_run(
-        self, log_info_mock: MagicMock
+        self,
+        log_info_mock: MagicMock,
+        helm_config: HelmConfig,
     ):
-        helm_wrapper = MagicMock()
         connector_wrapper = MagicMock()
 
         handler = ConnectorHandler(
-            connector_wrapper, 0, helm_wrapper, "test-namespace", "broker:9092", {}
+            connector_wrapper, 0, helm_config, "test-namespace", "broker:9092", {}
         )
         handler.destroy_connector(CONNECTOR_NAME, True)
 
@@ -184,14 +204,15 @@ class TestConnectorHandler:
         )
 
     def test_should_print_correct_warning_log_when_destroying_connector_and_connector_exists_in_dry_run(
-        self, log_warning_mock: MagicMock
+        self,
+        log_warning_mock: MagicMock,
+        helm_config: HelmConfig,
     ):
-        helm_wrapper = MagicMock()
         connector_wrapper = MagicMock()
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
         handler = ConnectorHandler(
-            connector_wrapper, 0, helm_wrapper, "test-namespace", "broker:9092", {}
+            connector_wrapper, 0, helm_config, "test-namespace", "broker:9092", {}
         )
         handler.destroy_connector(CONNECTOR_NAME, True)
 
@@ -201,12 +222,12 @@ class TestConnectorHandler:
 
     def test_should_call_delete_connector_when_destroying_existing_connector_not_dry_run(
         self,
+        helm_config: HelmConfig,
     ):
-        helm_wrapper = MagicMock()
         connector_wrapper = MagicMock()
 
         handler = ConnectorHandler(
-            connector_wrapper, 0, helm_wrapper, "test-namespace", "broker:9092", {}
+            connector_wrapper, 0, helm_config, "test-namespace", "broker:9092", {}
         )
         handler.destroy_connector(CONNECTOR_NAME, False)
         connector_wrapper.assert_has_calls(
@@ -217,14 +238,15 @@ class TestConnectorHandler:
         )
 
     def test_should_print_correct_warning_log_when_destroying_connector_and_connector_exists_not_dry_run(
-        self, log_warning_mock: MagicMock
+        self,
+        log_warning_mock: MagicMock,
+        helm_config: HelmConfig,
     ):
-        helm_wrapper = MagicMock()
         connector_wrapper = MagicMock()
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
         handler = ConnectorHandler(
-            connector_wrapper, 0, helm_wrapper, "test-namespace", "broker:9092", {}
+            connector_wrapper, 0, helm_config, "test-namespace", "broker:9092", {}
         )
         handler.destroy_connector(CONNECTOR_NAME, False)
 
@@ -233,9 +255,10 @@ class TestConnectorHandler:
         )
 
     def test_should_call_helm_upgrade_install_and_uninstall_when_clean_connector_with_retain_clean_jobs_true(
-        self, log_info_mock: MagicMock
+        self, log_info_mock: MagicMock,
+        helm_config: HelmConfig,
+            helm_wrapper_mock
     ):
-        helm_wrapper = MagicMock()
         values = {
             "config": {
                 "brokers": "127.0.0.1",
@@ -248,7 +271,7 @@ class TestConnectorHandler:
         handler = ConnectorHandler(
             ConnectWrapper("test"),
             0,
-            helm_wrapper,
+            helm_config,
             "test-namespace",
             "broker:9092",
             values,
@@ -276,7 +299,7 @@ class TestConnectorHandler:
             ]
         )
 
-        helm_wrapper.assert_has_calls(
+        helm_wrapper_mock.assert_has_calls(
             [
                 mock.call.helm_uninstall(
                     namespace="test-namespace",
@@ -303,9 +326,8 @@ class TestConnectorHandler:
         )
 
     def test_should_call_helm_upgrade_install_and_uninstall_when_clean_connector_with_retain_clean_jobs_false(
-        self, log_info_mock: MagicMock
+        self, log_info_mock: MagicMock, helm_config: HelmConfig, helm_wrapper_mock
     ):
-        helm_wrapper = MagicMock()
         values = {
             "config": {
                 "brokers": "127.0.0.1",
@@ -318,7 +340,7 @@ class TestConnectorHandler:
         handler = ConnectorHandler(
             ConnectWrapper("test"),
             0,
-            helm_wrapper,
+            helm_config,
             "test-namespace",
             "broker:9092",
             values,
@@ -349,7 +371,7 @@ class TestConnectorHandler:
             ]
         )
 
-        helm_wrapper.assert_has_calls(
+        helm_wrapper_mock.assert_has_calls(
             [
                 mock.call.helm_uninstall(
                     namespace="test-namespace",
