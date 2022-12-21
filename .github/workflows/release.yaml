@@ -6,6 +6,9 @@ on:
       release-type:
         description: "Scope of the release; see https://python-poetry.org/docs/cli/#version"
         required: true
+env:
+  PYTHON_VERSION: "3.10"
+  POETRY_VERSION: "1.2.2"
 
 jobs:
   release-to-pypi:
@@ -26,8 +29,8 @@ jobs:
         uses: bakdata/ci-templates/actions/python-poetry-bump-version@v1.5.1
         with:
           release-type: "${{ github.event.inputs.release-type }}"
-          python-version: "3.10"
-          poetry-version: "1.2.2"
+          python-version: $PYTHON_VERSION
+          poetry-version: $POETRY_VERSION
 
       - name: Commit and push pyproject.toml file
         uses: bakdata/ci-templates/actions/commit-and-push@v1.3.0
@@ -41,8 +44,8 @@ jobs:
         uses: bakdata/ci-templates/actions/python-poetry-release@v1.13.0
         with:
           publish-to-test: false
-          python-version: "3.10"
-          poetry-version: "1.2.2"
+          python-version: $PYTHON_VERSION
+          poetry-version: $POETRY_VERSION
           pypi-token: ${{ secrets.PYPI_TOKEN }}
 
   create-github-release-push-tag:
