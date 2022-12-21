@@ -184,7 +184,7 @@ class TestKafkaConnectorSink:
                     connector_name="test-connector",
                     connector_type=KafkaConnectorType.SINK,
                     dry_run=True,
-                    retain_clean_jobs=True,
+                    retain_clean_jobs=False,
                     delete_consumer_group=True,
                 ),
             ]
@@ -231,7 +231,7 @@ class TestKafkaConnectorSink:
                     connector_name="test-connector",
                     connector_type=KafkaConnectorType.SINK,
                     dry_run=True,
-                    retain_clean_jobs=True,
+                    retain_clean_jobs=False,
                     delete_consumer_group=False,
                 ),
             ]
@@ -272,7 +272,7 @@ class TestKafkaConnectorSink:
                     connector_name="test-connector",
                     connector_type=KafkaConnectorType.SINK,
                     dry_run=True,
-                    retain_clean_jobs=True,
+                    retain_clean_jobs=False,
                     delete_consumer_group=True,
                 ),
             ]
@@ -378,7 +378,7 @@ class TestKafkaConnectorSource:
                     connector_name="test-connector",
                     connector_type=KafkaConnectorType.SOURCE,
                     dry_run=True,
-                    retain_clean_jobs=True,
+                    retain_clean_jobs=False,
                     offset_topic="kafka-connect-offsets",
                 ),
             ]
@@ -423,7 +423,7 @@ class TestKafkaConnectorSource:
                     connector_name="test-connector",
                     connector_type=KafkaConnectorType.SOURCE,
                     dry_run=True,
-                    retain_clean_jobs=True,
+                    retain_clean_jobs=False,
                     offset_topic="kafka-connect-offsets",
                 ),
             ]
@@ -476,7 +476,7 @@ class TestKafkaConnectorSource:
                     connector_name="test-connector",
                     connector_type=KafkaConnectorType.SOURCE,
                     dry_run=True,
-                    retain_clean_jobs=True,
+                    retain_clean_jobs=False,
                     offset_topic="kafka-connect-offsets",
                 ),
             ]
