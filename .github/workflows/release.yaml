@@ -4,6 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       release-type:
+        description: "Scope of the release; see https://python-poetry.org/docs/cli/#version"
         type: choice
         required: true
         default: patch
@@ -12,72 +13,44 @@ on:
           - minor
           - major
 
-env:
-  PYTHON_VERSION: "3.10"
-  POETRY_VERSION: "1.2.2"
-
 jobs:
   release-to-pypi:
-    runs-on: ubuntu-22.04
-    # Map the job outputs to step outputs
-    outputs:
-      release-tag: ${{ steps.bump-version.outputs.release-tag }}
-      old-tag: ${{ steps.bump-version.outputs.old-tag }}
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@v1.13.2
+    with:
+      release-type: ${{ github.event.inputs.release-type }}
+      publish-to-test: false
+      python-version: "3.10"
+      poetry-version: "1.2.2"
+    secrets:
+      github-email: ${{ secrets.GH_EMAIL }}
+      github-username: ${{ secrets.GH_USERNAME }}
+      github-token: ${{ secrets.GH_TOKEN }}
+      pypi-token: ${{ secrets.PYPI_TOKEN }}
 
+  create-github-release-push-tag:
+    runs-on: ubuntu-22.04
+    needs: release-to-pypi
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
         with:
           persist-credentials: false
 
-      - name: Bump version
-        id: bump-version
-        uses: bakdata/ci-templates/actions/python-poetry-bump-version@v1.5.1
+      - name: Create tag
+        run: |
+          git config --local user.name ${{ secrets.GH_USERNAME }}
+          git config --local user.email ${{ secrets.GH_EMAIL }}
+          git tag v${{ needs.release-to-pypi.outputs.release-tag }}
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         with:
-          release-type: "${{ github.event.inputs.release-type }}"
-          python-version: ${{ env.PYTHON_VERSION }}
-          poetry-version: ${{ env.POETRY_VERSION }}
-
-      - name: Commit and push pyproject.toml file
-        uses: bakdata/ci-templates/actions/commit-and-push@v1.3.0
-        with:
-          commit-message: "Bump version ${{ steps.bump-version.outputs.old-tag }} → ${{ steps.bump-version.outputs.release-tag }}"
-          github-username: ${{ secrets.GH_USERNAME }}
-          github-email: ${{ secrets.GH_EMAIL }}
-          github-token: ${{ secrets.GH_TOKEN }}
-
-      - name: Release to PyPI
-        uses: bakdata/ci-templates/actions/python-poetry-release@v1.5.1
-        with:
-          publish-to-test: false
-          python-version: ${{ env.PYTHON_VERSION }}
-          poetry-version: ${{ env.POETRY_VERSION }}
-          pypi-token: ${{ secrets.PYPI_TOKEN }}
-
-  create-github-release-push-tag:
-    runs-on: ubuntu-22.04
-    needs: release-to-pypi
-    steps:
-    - name: Check out repository
-      uses: actions/checkout@v3
-      with:
-        persist-credentials: false
-
-    - name: Create tag
-      run: |
-        git config --local user.name ${{ secrets.GH_USERNAME }}
-        git config --local user.email ${{ secrets.GH_EMAIL }}
-        git tag v${{ needs.release-to-pypi.outputs.release-tag }}
-
-    - name: Create Release
-      uses: softprops/action-gh-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-      with:
-        tag_name: "${{ needs.release-to-pypi.outputs.release-tag }}"
-        name: Release v${{ needs.release-to-pypi.outputs.release-tag }}
-        draft: false
-        prerelease: false
+          tag_name: "${{ needs.release-to-pypi.outputs.release-tag }}"
+          name: Release v${{ needs.release-to-pypi.outputs.release-tag }}
+          draft: false
+          prerelease: false
 
   update-docs:
     runs-on: ubuntu-22.04
