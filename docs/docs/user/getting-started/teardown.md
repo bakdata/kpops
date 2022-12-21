@@ -8,7 +8,7 @@
 
 ## KPOps-deployed pipeline
 
-The `kpops` CLI can be used to destroy a pipeline that was previously deployed with `kpops`. 
+The `kpops` CLI can be used to destroy a pipeline that was previously deployed with `kpops`.
 In case that doesn't work, the pipeline can always be taken down manually 
 with `helm` (see section [Infrastructure](#infrastructure)).
 
@@ -20,7 +20,7 @@ with `helm` (see section [Infrastructure](#infrastructure)).
     ```
 
 2. Navigate to the `examples` folder. 
-   Replace the `<name-of-the-example-directory>` with the example you want to tear down. 
+   Replace the `<name-of-the-example-directory>` with the example you want to tear down.
    For example the `atm-fraud-detection`.
 
 3. Remove the pipeline
