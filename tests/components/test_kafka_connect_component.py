@@ -6,6 +6,9 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
+from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers.kafka_connect.handler import KafkaConnectorType
+from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.components.base_components.kafka_connect import (
     KafkaSinkConnector,
     KafkaSourceConnector,
@@ -20,14 +23,12 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
-from kpops.pipeline_deployer.kafka_connect.handler import KafkaConnectorType
-from kpops.pipeline_deployer.kafka_connect.model import KafkaConnectConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 @pytest.fixture
-def test_config():
+def config():
     return PipelineConfig(
         defaults_path=DEFAULTS_PATH,
         environment="development",
@@ -39,12 +40,25 @@ def test_config():
     )
 
 
+@pytest.fixture
+def handlers() -> ComponentHandlers:
+    return ComponentHandlers(
+        schema_handler=MagicMock(),
+        app_handler=MagicMock(),
+        connector_handler=MagicMock(),
+        topic_handler=MagicMock(),
+    )
+
+
 class TestKafkaConnectorSink:
-    def test_connector_config_parsing(self, test_config: PipelineConfig):
+    def test_connector_config_parsing(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ):
         topic_name = "connector-topic"
         connector = KafkaSinkConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(**{"topics": topic_name}),
         )
         assert getattr(connector.app, "topics") == topic_name
@@ -52,14 +66,16 @@ class TestKafkaConnectorSink:
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(**{"topics.regex": topic_pattern}),
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern
 
         connector = KafkaSinkConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
@@ -72,12 +88,15 @@ class TestKafkaConnectorSink:
             == "kafka-sink-connector-error-topic"
         )
 
-    def test_from_section_parsing_input_topic(self, test_config: PipelineConfig):
+    def test_from_section_parsing_input_topic(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ):
         topic1 = "connector-topic1"
         topic2 = "connector-topic2"
         connector = KafkaSinkConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(),
             from_=FromSection(
                 topics={
@@ -92,11 +111,14 @@ class TestKafkaConnectorSink:
         connector.add_input_topics([topic1, topic3])
         assert getattr(connector.app, "topics") == f"{topic1},{topic2},{topic3}"
 
-    def test_from_section_parsing_input_pattern(self, test_config: PipelineConfig):
+    def test_from_section_parsing_input_pattern(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ):
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(),
             from_=FromSection(
                 topics={topic_pattern: FromTopic(type=InputTopicTypes.INPUT_PATTERN)}
@@ -104,10 +126,16 @@ class TestKafkaConnectorSink:
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern
 
-    def test_deploy_order(self, test_config: PipelineConfig, mocker: MockerFixture):
+    def test_deploy_order(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
         connector = KafkaSinkConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
@@ -118,13 +146,11 @@ class TestKafkaConnectorSink:
             ),
         )
 
-        connector.pipeline_handlers = MagicMock()
-
         mock_create_topics = mocker.patch.object(
-            connector.pipeline_handlers.topic_handler, "create_topics"
+            connector.handlers.topic_handler, "create_topics"
         )
         mock_create_connector = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler, "create_connector"
+            connector.handlers.connector_handler, "create_connector"
         )
 
         mock = mocker.MagicMock()
@@ -142,10 +168,16 @@ class TestKafkaConnectorSink:
             ],
         )
 
-    def test_clean(self, test_config: PipelineConfig, mocker: MockerFixture):
+    def test_clean(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
         connector = KafkaSinkConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
@@ -156,16 +188,14 @@ class TestKafkaConnectorSink:
             ),
         )
 
-        connector.pipeline_handlers = MagicMock()
-
         mock_delete_topics = mocker.patch.object(
-            connector.pipeline_handlers.topic_handler, "delete_topics"
+            connector.handlers.topic_handler, "delete_topics"
         )
         mock_destroy_connector = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler, "destroy_connector"
+            connector.handlers.connector_handler, "destroy_connector"
         )
         mock_clean_connector = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler, "clean_connector"
+            connector.handlers.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
@@ -190,10 +220,16 @@ class TestKafkaConnectorSink:
             ]
         )
 
-    def test_reset(self, test_config: PipelineConfig, mocker: MockerFixture):
+    def test_reset(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
         connector = KafkaSinkConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
@@ -204,16 +240,14 @@ class TestKafkaConnectorSink:
             ),
         )
 
-        connector.pipeline_handlers = MagicMock()
-
         mock_delete_topics = mocker.patch.object(
-            connector.pipeline_handlers.topic_handler, "delete_topics"
+            connector.handlers.topic_handler, "delete_topics"
         )
         mock_destroy_connector = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler, "destroy_connector"
+            connector.handlers.connector_handler, "destroy_connector"
         )
         mock_clean_connector = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler, "clean_connector"
+            connector.handlers.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
@@ -238,23 +272,27 @@ class TestKafkaConnectorSink:
         )
         mock_delete_topics.assert_not_called()
 
-    def test_clean_without_to(self, test_config: PipelineConfig, mocker: MockerFixture):
+    def test_clean_without_to(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
         connector = KafkaSinkConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(),
         )
 
-        connector.pipeline_handlers = MagicMock()
-
         mock_delete_topics = mocker.patch.object(
-            connector.pipeline_handlers.topic_handler, "delete_topics"
+            connector.handlers.topic_handler, "delete_topics"
         )
         mock_destroy_connector = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler, "destroy_connector"
+            connector.handlers.connector_handler, "destroy_connector"
         )
         mock_clean_connector = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler, "clean_connector"
+            connector.handlers.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
@@ -281,11 +319,14 @@ class TestKafkaConnectorSink:
 
 
 class TestKafkaConnectorSource:
-    def test_from_section_raises_exception(self, test_config: PipelineConfig):
+    def test_from_section_raises_exception(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ):
         with pytest.raises(NotImplementedError):
             KafkaSourceConnector(
                 name="test-connector",
-                config=test_config,
+                handlers=handlers,
+                config=config,
                 app=KafkaConnectConfig(),
                 from_=FromSection(
                     topics={
@@ -294,10 +335,16 @@ class TestKafkaConnectorSource:
                 ),
             )
 
-    def test_deploy_order(self, test_config: PipelineConfig, mocker: MockerFixture):
+    def test_deploy_order(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
         connector = KafkaSourceConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
@@ -308,13 +355,12 @@ class TestKafkaConnectorSource:
             ),
         )
 
-        connector.pipeline_handlers = MagicMock()
         mock_create_topics = mocker.patch.object(
-            connector.pipeline_handlers.topic_handler, "create_topics"
+            connector.handlers.topic_handler, "create_topics"
         )
 
         mock_create_connector = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler, "create_connector"
+            connector.handlers.connector_handler, "create_connector"
         )
 
         mock = mocker.MagicMock()
@@ -332,13 +378,19 @@ class TestKafkaConnectorSource:
             ],
         )
 
-    def test_clean(self, test_config: PipelineConfig, mocker: MockerFixture):
+    def test_clean(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
         os.environ[
             "KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"
         ] = "kafka-connect-offsets"
         connector = KafkaSourceConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
@@ -348,18 +400,16 @@ class TestKafkaConnectorSource:
                 }
             ),
         )
-        connector.pipeline_handlers = MagicMock()
-
-        assert connector.pipeline_handlers.connector_handler
+        assert connector.handlers.connector_handler
 
         mock_delete_topics = mocker.patch.object(
-            connector.pipeline_handlers.topic_handler, "delete_topics"
+            connector.handlers.topic_handler, "delete_topics"
         )
         mock_destroy_connector = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler, "destroy_connector"
+            connector.handlers.connector_handler, "destroy_connector"
         )
         mock_clean_connector = mocker.spy(
-            connector.pipeline_handlers.connector_handler, "clean_connector"
+            connector.handlers.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
@@ -384,28 +434,33 @@ class TestKafkaConnectorSource:
             ]
         )
 
-    def test_clean_without_to(self, test_config: PipelineConfig, mocker: MockerFixture):
+    def test_clean_without_to(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
         os.environ[
             "KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"
         ] = "kafka-connect-offsets"
         connector = KafkaSourceConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(),
         )
         assert connector.to is None
 
-        connector.pipeline_handlers = MagicMock()
-        assert connector.pipeline_handlers.connector_handler
+        assert connector.handlers.connector_handler
 
         mock_delete_topics = mocker.patch.object(
-            connector.pipeline_handlers.topic_handler, "delete_topics"
+            connector.handlers.topic_handler, "delete_topics"
         )
         mock_destroy_connector = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler, "destroy_connector"
+            connector.handlers.connector_handler, "destroy_connector"
         )
         mock_clean_connector = mocker.spy(
-            connector.pipeline_handlers.connector_handler, "clean_connector"
+            connector.handlers.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
@@ -431,13 +486,19 @@ class TestKafkaConnectorSource:
 
         mock_delete_topics.assert_not_called()
 
-    def test_reset(self, test_config: PipelineConfig, mocker: MockerFixture):
+    def test_reset(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
         os.environ[
             "KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"
         ] = "kafka-connect-offsets"
         connector = KafkaSourceConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
@@ -448,17 +509,16 @@ class TestKafkaConnectorSource:
             ),
         )
 
-        connector.pipeline_handlers = MagicMock()
-        assert connector.pipeline_handlers.connector_handler
+        assert connector.handlers.connector_handler
 
         mock_delete_topics = mocker.patch.object(
-            connector.pipeline_handlers.topic_handler, "delete_topics"
+            connector.handlers.topic_handler, "delete_topics"
         )
         mock_destroy_connector = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler, "destroy_connector"
+            connector.handlers.connector_handler, "destroy_connector"
         )
         mock_clean_connector = mocker.spy(
-            connector.pipeline_handlers.connector_handler, "clean_connector"
+            connector.handlers.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
@@ -483,10 +543,16 @@ class TestKafkaConnectorSource:
         )
         mock_delete_topics.assert_not_called()
 
-    def test_destroy(self, test_config: PipelineConfig, mocker: MockerFixture):
+    def test_destroy(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
         connector = KafkaSourceConnector(
             name="test-connector",
-            config=test_config,
+            handlers=handlers,
+            config=config,
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
@@ -497,20 +563,19 @@ class TestKafkaConnectorSource:
             ),
         )
 
-        connector.pipeline_handlers = MagicMock()
-        assert connector.pipeline_handlers.connector_handler
+        assert connector.handlers.connector_handler
 
         mock_delete_topics = mocker.patch.object(
-            connector.pipeline_handlers.topic_handler, "delete_topics"
+            connector.handlers.topic_handler, "delete_topics"
         )
         mock_destroy_connector = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler, "destroy_connector"
+            connector.handlers.connector_handler, "destroy_connector"
         )
         mock_clean_connector = mocker.spy(
-            connector.pipeline_handlers.connector_handler, "clean_connector"
+            connector.handlers.connector_handler, "clean_connector"
         )
         mock_helm_upgrade_install = mocker.patch.object(
-            connector.pipeline_handlers.connector_handler._helm_wrapper,
+            connector.handlers.connector_handler._helm_wrapper,
             "helm_upgrade_install",
         )
 

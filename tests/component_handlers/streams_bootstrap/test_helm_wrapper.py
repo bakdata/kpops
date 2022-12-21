@@ -7,14 +7,16 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import HelmConfig, PipelineConfig
-from kpops.pipeline_deployer.streams_bootstrap.exception import ReleaseNotFoundException
-from kpops.pipeline_deployer.streams_bootstrap.helm_wrapper import (
+from kpops.component_handlers.streams_bootstrap.exception import (
+    ReleaseNotFoundException,
+)
+from kpops.component_handlers.streams_bootstrap.helm_wrapper import (
     HelmCommandConfig,
     HelmTemplate,
     HelmWrapper,
     load_helm_manifest,
 )
-from kpops.pipeline_deployer.streams_bootstrap.streams_bootstrap_application_type import (
+from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
     ApplicationType,
 )
 

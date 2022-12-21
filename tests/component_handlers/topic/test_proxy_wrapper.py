@@ -8,12 +8,12 @@ import responses
 from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig
-from kpops.pipeline_deployer.topic.exception import (
+from kpops.component_handlers.topic.exception import (
     KafkaRestProxyError,
     TopicNotFoundException,
 )
-from kpops.pipeline_deployer.topic.model import TopicResponse, TopicSpec
-from kpops.pipeline_deployer.topic.proxy_wrapper import ProxyWrapper
+from kpops.component_handlers.topic.model import TopicResponse, TopicSpec
+from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 
 HEADERS = {"Content-Type": "application/json"}
 HOST = "http://localhost:8082"
@@ -23,11 +23,11 @@ DEFAULTS_PATH = Path(__file__).parent.parent / "resources"
 class TestProxyWrapper:
     @pytest.fixture(autouse=True)
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.pipeline_deployer.topic.proxy_wrapper.log.info")
+        return mocker.patch("kpops.component_handlers.topic.proxy_wrapper.log.info")
 
     @pytest.fixture(autouse=True)
     def log_debug_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.pipeline_deployer.topic.proxy_wrapper.log.debug")
+        return mocker.patch("kpops.component_handlers.topic.proxy_wrapper.log.debug")
 
     @pytest.fixture(autouse=True)
     @responses.activate
@@ -52,6 +52,7 @@ class TestProxyWrapper:
 
     def test_should_raise_exception_when_host_is_not_set(self):
         config = PipelineConfig(defaults_path=DEFAULTS_PATH, environment="development")
+        config.kafka_rest_host = None
         with pytest.raises(ValueError) as exception:
             ProxyWrapper(pipeline_config=config)
         assert (

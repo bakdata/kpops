@@ -1,7 +1,9 @@
 from pathlib import Path
+from unittest.mock import MagicMock
 
 from kpops.cli import pipeline_config
 from kpops.cli.pipeline_config import TopicNameConfig
+from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -15,6 +17,12 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 class TestPipelineComponent:
     def test_topic_substitution(self):
         pipeline_component = PipelineComponent(
+            handlers=ComponentHandlers(
+                schema_handler=MagicMock(),
+                app_handler=MagicMock(),
+                connector_handler=MagicMock(),
+                topic_handler=MagicMock(),
+            ),
             config=pipeline_config.PipelineConfig(
                 defaults_path=DEFAULTS_PATH,
                 environment="development",

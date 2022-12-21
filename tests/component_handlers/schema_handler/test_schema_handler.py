@@ -8,17 +8,19 @@ from pytest_mock import MockerFixture
 from schema_registry.client.utils import SchemaVersion
 
 from kpops.cli.pipeline_config import PipelineConfig
+from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
+from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
     ToSection,
 )
-from kpops.pipeline_deployer.schema_handler.schema_handler import SchemaHandler
-from kpops.pipeline_deployer.schema_handler.schema_provider import SchemaProvider
 from kpops.utils.colorify import greenify, magentaify, yellowify
 from tests.cli.test_registry import SubComponent
+from tests.component_handlers.schema_handler.resources.module import (
+    CustomSchemaProvider,
+)
 from tests.pipeline.test_components import TestSchemaProvider
-from tests.pipeline_deployer.schema_handler.resources.module import CustomSchemaProvider
 
 NON_EXISTING_PROVIDER_MODULE = SubComponent.__module__
 SCHEMA_PROVIDER_MODULE = CustomSchemaProvider.__module__
@@ -28,21 +30,21 @@ TEST_SCHEMA_PROVIDER_MODULE = TestSchemaProvider.__module__
 @pytest.fixture(autouse=True)
 def log_info_mock(mocker: MockerFixture) -> MagicMock:
     return mocker.patch(
-        "kpops.pipeline_deployer.schema_handler.schema_handler.log.info"
+        "kpops.component_handlers.schema_handler.schema_handler.log.info"
     )
 
 
 @pytest.fixture(autouse=False)
 def find_class_mock(mocker: MockerFixture) -> MagicMock:
     return mocker.patch(
-        "kpops.pipeline_deployer.schema_handler.schema_handler.find_class"
+        "kpops.component_handlers.schema_handler.schema_handler.find_class"
     )
 
 
 @pytest.fixture(autouse=True)
 def schema_registry_mock(mocker: MockerFixture) -> MagicMock:
     schema_registry_mock = mocker.patch(
-        "kpops.pipeline_deployer.schema_handler.schema_handler.SchemaRegistryClient"
+        "kpops.component_handlers.schema_handler.schema_handler.SchemaRegistryClient"
     )
     return schema_registry_mock.return_value
 

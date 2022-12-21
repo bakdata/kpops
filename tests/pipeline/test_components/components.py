@@ -3,14 +3,14 @@ from typing import Any
 from schema_registry.client.schema import AvroSchema
 from typing_extensions import override
 
+from kpops.component_handlers.schema_handler.schema_provider import (
+    Schema,
+    SchemaProvider,
+)
 from kpops.components import KafkaSinkConnector
 from kpops.components.base_components import PipelineComponent
 from kpops.components.base_components.models.to_section import OutputTopicTypes
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
-from kpops.pipeline_deployer.schema_handler.schema_provider import (
-    Schema,
-    SchemaProvider,
-)
 
 
 class ImportProducer(ProducerApp):
@@ -42,6 +42,7 @@ class InflateStep(StreamsApp):
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
                         name="sink-connector",
+                        handlers=self.handlers,
                         config=self.config,
                         app={
                             "topics": topic_name,

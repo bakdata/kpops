@@ -1,6 +1,6 @@
 from typing import Any
 
-from kpops.pipeline_deployer.schema_handler.schema_provider import (
+from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,
 )

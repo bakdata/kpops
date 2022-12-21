@@ -7,16 +7,16 @@ import pytest
 import responses
 
 from kpops.cli.pipeline_config import PipelineConfig
-from kpops.pipeline_deployer.kafka_connect.connect_wrapper import ConnectWrapper
-from kpops.pipeline_deployer.kafka_connect.exception import (
+from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
+from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     KafkaConnectError,
 )
-from kpops.pipeline_deployer.kafka_connect.model import (
+from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectConfig,
     KafkaConnectResponse,
 )
-from kpops.pipeline_deployer.kafka_connect.timeout import timeout
+from kpops.component_handlers.kafka_connect.timeout import timeout
 
 HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 
@@ -109,7 +109,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
 
     @responses.activate
-    @patch("kpops.pipeline_deployer.kafka_connect.connect_wrapper.log.warning")
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_rais_connector_exists_exception_when_connector_exists(
         self, log_warning
     ):
@@ -143,7 +143,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         )
 
     @responses.activate
-    @patch("kpops.pipeline_deployer.kafka_connect.connect_wrapper.log.info")
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_getting_connector(self, log_info):
         connector_name = "test-connector"
 
@@ -177,7 +177,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         log_info.assert_called_once_with(f"Connector {connector_name} exists.")
 
     @responses.activate
-    @patch("kpops.pipeline_deployer.kafka_connect.connect_wrapper.log.info")
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_raise_connector_not_found_when_getting_connector(self, log_info):
         connector_name = "test-connector"
 
@@ -196,7 +196,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         )
 
     @responses.activate
-    @patch("kpops.pipeline_deployer.kafka_connect.connect_wrapper.log.warning")
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_rebalance_in_progress_when_getting_connector(
         self, log_warning
     ):
@@ -244,7 +244,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         )
 
     @responses.activate
-    @patch("kpops.pipeline_deployer.kafka_connect.connect_wrapper.log.info")
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_update_connector(self, log_info):
         connector_name = "test-connector"
 
@@ -282,7 +282,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         )
 
     @responses.activate
-    @patch("kpops.pipeline_deployer.kafka_connect.connect_wrapper.log.info")
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_update_connector_created(
         self, log_info
     ):
@@ -320,7 +320,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         log_info.assert_called_once_with(f"Connector {connector_name} created.")
 
     @responses.activate
-    @patch("kpops.pipeline_deployer.kafka_connect.connect_wrapper.log.warning")
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_connector_exists_exception_when_update_connector(
         self, log_warning
     ):
@@ -359,7 +359,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         )
 
     @responses.activate
-    @patch("kpops.pipeline_deployer.kafka_connect.connect_wrapper.log.info")
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_deleting_connector(self, log_info):
         connector_name = "test-connector"
 
@@ -393,7 +393,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         log_info.assert_called_once_with(f"Connector {connector_name} deleted.")
 
     @responses.activate
-    @patch("kpops.pipeline_deployer.kafka_connect.connect_wrapper.log.info")
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_raise_connector_not_found_when_deleting_connector(self, log_info):
         connector_name = "test-connector"
 
@@ -412,7 +412,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         )
 
     @responses.activate
-    @patch("kpops.pipeline_deployer.kafka_connect.connect_wrapper.log.warning")
+    @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_rebalance_in_progress_when_deleting_connector(
         self, log_warning
     ):

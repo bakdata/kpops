@@ -4,11 +4,11 @@ from time import sleep
 
 import requests
 
-from kpops.pipeline_deployer.kafka_connect.exception import (
+from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     KafkaConnectError,
 )
-from kpops.pipeline_deployer.kafka_connect.model import (
+from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectConfig,
     KafkaConnectConfigErrorResponse,
     KafkaConnectResponse,

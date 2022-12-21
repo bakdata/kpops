@@ -1,8 +1,8 @@
-from kpops.pipeline_deployer.topic.model import (
+from kpops.component_handlers.topic.model import (
     BrokerConfigResponse,
     TopicConfigResponse,
 )
-from kpops.pipeline_deployer.topic.utils import (
+from kpops.component_handlers.topic.utils import (
     get_effective_config,
     parse_and_compare_topic_configs,
 )

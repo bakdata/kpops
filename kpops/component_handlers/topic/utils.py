@@ -1,4 +1,4 @@
-from kpops.pipeline_deployer.topic.model import (
+from kpops.component_handlers.topic.model import (
     BrokerConfigResponse,
     KafkaTopicConfigSource,
     TopicConfigResponse,
