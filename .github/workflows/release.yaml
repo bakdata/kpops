@@ -69,12 +69,6 @@ jobs:
         git config --local user.email ${{ secrets.GH_EMAIL }}
         git tag v${{ needs.release-to-pypi.outputs.release-tag }}
 
-    - name: Push tag
-      uses: ad-m/github-push-action@v0.6.0
-      with:
-        github_token: ${{ secrets.GH_TOKEN }}
-        branch: refs/tags/v${{ needs.release-to-pypi.outputs.release-tag }}
-
     - name: Create Release
       uses: softprops/action-gh-release@v1
       env:
