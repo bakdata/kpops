@@ -94,7 +94,7 @@ class PipelineConfig(BaseSettings):
         "This is used for cleaning/resettting Kafka connectors, see https://github.com/bakdata/kafka-connect-resetter",
     )
     retain_clean_jobs: bool = Field(
-        default=True,
+        default=False,
         env=f"{ENV_PREFIX}RETAIN_CLEAN_JOBS",
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
