@@ -15,6 +15,7 @@ the [documentation](https://bakdata.github.io/kpops/latest).
 - **Manage the lifecycle of your components**: KPOps can deploy, destroy, reset, and clean your defined components from the Kubernetes cluster.
 
 ## Install KPOps
+
 KPOps comes as a [PyPI package](https://pypi.org/project/kpops/). 
 You can install it with [pip](https://github.com/pypa/pip):
 
@@ -25,7 +26,7 @@ pip install kpops
 ## Documentation
 
 - [What is KPOps?](https://bakdata.github.io/kpops/latest/user)
-- [Working with KPOps](https://bakdata.github.io/kpops/latest/user/getting-started/working-with-kpops)
+- [Getting started with KPOps](https://bakdata.github.io/kpops/latest/user/getting-started/)
 - [Examples](https://bakdata.github.io/kpops/latest/user/examples)
 
 ## Contributing
