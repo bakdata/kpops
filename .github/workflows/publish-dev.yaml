@@ -27,7 +27,7 @@ jobs:
         id: get_commit_datetime
         run: |
           # Get the hash from HEAD and save it to the hash variable
-          echo "::set-output name=datetime::$(python ./.github/scripts/get-dev-version.py)"
+          echo "datetime=$(python ./.github/scripts/get-dev-version.py)" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Set version with poetry
