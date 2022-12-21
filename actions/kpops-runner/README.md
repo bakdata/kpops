@@ -26,5 +26,5 @@ steps:
       command: deploy --execute
       working-directory: home/my-kpops-root-dir
       pipeline: pipelines/my-pipeline-file.yaml
-      kpops-version: 0.2.0
+      kpops-version: 0.3.0
 ```
