@@ -1,21 +1,27 @@
 [tool.poetry]
 name = "kpops"
-version = "0.2.1"
+version = "0.2.2"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
-authors = [
-    "Benjamin Feldmann <benjamin.feldmann@bakdata.com>",
-    "Ramin Gharib <ramin.gharib@bakdata.com>",
-    "Alejandro Jaramillo <alejandro.jaramillo@bakdata.com>",
-    "Markus Kobold <markus.kobold@bakdata.com>",
-    "Michael Kora <michael.kora@bakdata.com>",
-    "Victor Kuenstler <victor.kuenstler@outlook.com>",
-    "Torben Meyer <torben.meyer@bakdata.com>",
-    "Salomon Popp <salomon.popp@bakdata.com>",
-    "Yannick Roeder <yannick.roeder@bakdata.com>",
-    "Philipp Schirmer <philipp.schirmer@bakdata.com>",
-    "Ivan Yordanov <ivan.yordanov@bakdata.com>",
-]
+authors = ["bakdata <opensource@bakdata.com>"]
+license = "MIT"
 readme = "README.md"
+repository = "https://github.com/bakdata/kpops"
+documentation = "https://bakdata.github.io/kpops/latest"
+keywords = ["kafka", "kubernetes", "stream-processing", "pipelines"]
+classifiers = [
+    "Environment :: Console",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development",
+    "Intended Audience :: Developers",
+    "Typing :: Typed",
+]
 
 [tool.poetry.scripts]
 kpops = "kpops.cli.main:app"
