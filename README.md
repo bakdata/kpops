@@ -26,7 +26,7 @@ pip install kpops
 ## Documentation
 
 - [What is KPOps?](https://bakdata.github.io/kpops/latest/user)
-- [Working with KPOps](https://bakdata.github.io/kpops/latest/user/getting-started/)
+- [Getting started with KPOps](https://bakdata.github.io/kpops/latest/user/getting-started/)
 - [Examples](https://bakdata.github.io/kpops/latest/user/examples)
 
 ## Contributing
