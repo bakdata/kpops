@@ -36,14 +36,13 @@ class ProxyWrapper:
     @cached_property
     def cluster_id(self) -> str:
         """
-        Gets the cluster ID by sending a requests to Kafka REST proxy.
+        Gets the Kafka cluster ID by sending a requests to Kafka REST proxy.
         More information about the cluster ID can be found here:
         https://docs.confluent.io/platform/current/kafka-rest/api.html#cluster-v3
 
         Currently both Kafka and Kafka REST Proxy are only aware of the Kafka cluster pointed at by the
         bootstrap.servers configuration. Therefore, only one Kafka cluster will be returned.
-        :param host:
-        :return:
+        :return: The Kafka cluster ID.
         """
         response = requests.get(url=f"{self._host}/v3/clusters")
         if response.status_code == requests.status_codes.codes.ok:
