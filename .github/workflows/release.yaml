@@ -1,4 +1,4 @@
-name: Release Python Package to PyPi
+name: Release Python package to PyPI
 
 on:
   workflow_dispatch:
