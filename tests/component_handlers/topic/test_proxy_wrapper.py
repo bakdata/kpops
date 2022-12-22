@@ -32,7 +32,14 @@ class TestProxyWrapper:
     @pytest.fixture(autouse=True)
     @responses.activate
     def setup(self):
-        with open(DEFAULTS_PATH / "kafka_rest_proxy_responses/cluster-info.json") as f:
+        config = PipelineConfig(
+            defaults_path=DEFAULTS_PATH, environment="development", kafka_rest_host=HOST
+        )
+        self.proxy_wrapper = ProxyWrapper(pipeline_config=config)
+
+        with open(
+            DEFAULTS_PATH / "kafka_rest_proxy_responses" / "cluster-info.json"
+        ) as f:
             cluster_response = json.load(f)
 
         responses.add(
@@ -41,12 +48,6 @@ class TestProxyWrapper:
             json=cluster_response,
             status=200,
         )
-        config = PipelineConfig(
-            defaults_path=DEFAULTS_PATH, environment="development", kafka_rest_host=HOST
-        )
-        self.proxy_wrapper = ProxyWrapper(pipeline_config=config)
-
-    def test_should_get_cluster_id(self):
         assert self.proxy_wrapper.host == HOST
         assert self.proxy_wrapper.cluster_id == "cluster-1"
 
@@ -57,7 +58,7 @@ class TestProxyWrapper:
             ProxyWrapper(pipeline_config=config)
         assert (
             str(exception.value)
-            == "The Kafka Rest Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
+            == "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
         )
 
     @patch("requests.post")

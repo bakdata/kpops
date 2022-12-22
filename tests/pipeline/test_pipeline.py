@@ -1,32 +1,15 @@
 import os
 from pathlib import Path
-from unittest.mock import MagicMock
 
-import pytest
-from pytest_mock import MockerFixture
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
-from kpops.component_handlers import ComponentHandlers
 from kpops.utils.yaml_loading import load_yaml_file
 
 runner = CliRunner()
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 PIPELINE_BASE_DIR = str(RESOURCE_PATH.parent)
-
-
-@pytest.fixture(autouse=True)
-def component_handlers(mocker: MockerFixture):
-    def mock_setup_handlers(*args, **kwargs) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=None,
-            app_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
-        )
-
-    mocker.patch("kpops.cli.main.setup_handlers", mock_setup_handlers)
 
 
 class TestPipeline:
