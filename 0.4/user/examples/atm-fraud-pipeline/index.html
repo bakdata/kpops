@@ -294,10 +294,12 @@
 </li>
 <li class="md-nav__item md-nav__item--section md-nav__item--nested">
 <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_4" id="__nav_1_4" type="checkbox"/>
-<label class="md-nav__link" for="__nav_1_4">
-          References
-          <span class="md-nav__icon md-icon"></span>
+<div class="md-nav__link md-nav__link--index">
+<a href="../../references/">References</a>
+<label for="__nav_1_4">
+<span class="md-nav__icon md-icon"></span>
 </label>
+</div>
 <nav aria-label="References" class="md-nav" data-md-level="2">
 <label class="md-nav__title" for="__nav_1_4">
 <span class="md-nav__icon md-icon"></span>
@@ -429,7 +431,7 @@ The one used in this example is re-built from scratch using <a href="https://bak
 <li>Destroying a pipeline using <code>kpops</code></li>
 </ul>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">¶</a></h2>
-<p>Completed all steps in the <a href="/user/getting-started/setup">setup</a>.</p>
+<p>Completed all steps in the <a href="../../getting-started/setup/">setup</a>.</p>
 <h2 id="setup-and-deployment">Setup and deployment<a class="headerlink" href="#setup-and-deployment" title="Permanent link">¶</a></h2>
 <h3 id="postgresql">PostgreSQL<a class="headerlink" href="#postgresql" title="Permanent link">¶</a></h3>
 <p>Deploy PostgreSQL using the <a href="https://artifacthub.io/packages/helm/bitnami/postgresql">Bitnami Helm chart:</a>
@@ -497,7 +499,7 @@ To do so, port-forward the service in a separate terminal session using the comm
 After that open <a href="http://localhost:8080">http://localhost:8080</a> in your browser. 
 You should be able to see pipeline shown in the image below:</p>
 <figure>
-<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="/images/atm-fraud-pipeline_streams-explorer.png"><img alt="atm-fraud-pipeline" src="/images/atm-fraud-pipeline_streams-explorer.png"/></a>
+<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="../../../images/atm-fraud-pipeline_streams-explorer.png"><img alt="atm-fraud-pipeline" src="../../../images/atm-fraud-pipeline_streams-explorer.png"/></a>
 </p>
 <figcaption>An overview of ATM fraud pipeline shown in Streams Explorer</figcaption>
 </figure>
@@ -538,7 +540,7 @@ destroyed correctly.</p>
 </div>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
-<p>If you face any issues destroying this example see <a href="/user/getting-started/teardown">Teardown</a> for manual deletion.</p>
+<p>If you face any issues destroying this example see <a href="../../getting-started/teardown/">Teardown</a> for manual deletion.</p>
 </div>
 <h2 id="common-errors">Common errors<a class="headerlink" href="#common-errors" title="Permanent link">¶</a></h2>
 <ul>
@@ -554,7 +556,7 @@ destroyed correctly.</p>
 <li>Read the error message.</li>
 <li>Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.</li>
 <li>Run <code>clean</code>.</li>
-<li>If <code>clean</code> fails, follow the steps in <a href="/user/getting-started/teardown">teardown</a>.</li>
+<li>If <code>clean</code> fails, follow the steps in <a href="../../getting-started/teardown/">teardown</a>.</li>
 </ol>
 </li>
 </ul>
@@ -581,13 +583,13 @@ destroyed correctly.</p>
             </div>
 </div>
 </a>
-<a aria-label="Next: CLI usage" class="md-footer__link md-footer__link--next" href="../../references/cli-commands/" rel="next">
+<a aria-label="Next: References" class="md-footer__link md-footer__link--next" href="../../references/" rel="next">
 <div class="md-footer__title">
 <div class="md-ellipsis">
 <span class="md-footer__direction">
                 Next
               </span>
-              CLI usage
+              References
             </div>
 </div>
 <div class="md-footer__button md-icon">

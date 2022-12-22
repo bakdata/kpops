@@ -252,10 +252,12 @@
 </li>
 <li class="md-nav__item md-nav__item--section md-nav__item--nested">
 <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_1_4" id="__nav_1_4" type="checkbox"/>
-<label class="md-nav__link" for="__nav_1_4">
-          References
-          <span class="md-nav__icon md-icon"></span>
+<div class="md-nav__link md-nav__link--index">
+<a href="../../references/">References</a>
+<label for="__nav_1_4">
+<span class="md-nav__icon md-icon"></span>
 </label>
+</div>
 <nav aria-label="References" class="md-nav" data-md-level="2">
 <label class="md-nav__title" for="__nav_1_4">
 <span class="md-nav__icon md-icon"></span>
@@ -406,7 +408,8 @@ docker push localhost:12345/kafka-connect-jdbc:7.1.3
 </code></pre></div>
 </li>
 </ol>
-<p>Detailed instructions on building, tagging and pushing a docker image can be found in <a href="https://docs.docker.com/">Docker docs</a>.</p>
+<p>Detailed instructions on building, 
+tagging and pushing a docker image can be found in <a href="https://docs.docker.com/">Docker docs</a>.</p>
 </li>
 <li>
 <p>Add Confluent's Helm chart repository and update the index:</p>

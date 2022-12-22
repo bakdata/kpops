@@ -2,47 +2,52 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://d9p.io/0.4/</loc>
-         <lastmod>2022-12-21</lastmod>
+         <lastmod>2022-12-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://d9p.io/0.4/user/</loc>
-         <lastmod>2022-12-21</lastmod>
+         <lastmod>2022-12-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://d9p.io/0.4/user/examples/</loc>
-         <lastmod>2022-12-21</lastmod>
+         <lastmod>2022-12-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://d9p.io/0.4/user/examples/atm-fraud-pipeline/</loc>
-         <lastmod>2022-12-21</lastmod>
+         <lastmod>2022-12-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://d9p.io/0.4/user/getting-started/</loc>
-         <lastmod>2022-12-21</lastmod>
+         <lastmod>2022-12-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://d9p.io/0.4/user/getting-started/setup/</loc>
-         <lastmod>2022-12-21</lastmod>
+         <lastmod>2022-12-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://d9p.io/0.4/user/getting-started/teardown/</loc>
-         <lastmod>2022-12-21</lastmod>
+         <lastmod>2022-12-22</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://d9p.io/0.4/user/references/</loc>
+         <lastmod>2022-12-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://d9p.io/0.4/user/references/cli-commands/</loc>
-         <lastmod>2022-12-21</lastmod>
+         <lastmod>2022-12-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://d9p.io/0.4/user/references/variables/</loc>
-         <lastmod>2022-12-21</lastmod>
+         <lastmod>2022-12-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
