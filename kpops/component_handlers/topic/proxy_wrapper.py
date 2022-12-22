@@ -1,4 +1,5 @@
 import logging
+from functools import cached_property
 
 import requests
 
@@ -25,23 +26,31 @@ class ProxyWrapper:
     """
 
     def __init__(self, pipeline_config: PipelineConfig) -> None:
-        """
-        Default constructor. Sets the cluster ID by sending a requests to the rest proxy.
-        More information about the cluster ID can be found here:
-        https://docs.confluent.io/platform/current/kafka-rest/api.html#cluster-v3
-        """
         if not pipeline_config.kafka_rest_host:
             raise ValueError(
-                "The Kafka Rest Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
+                "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
             )
 
-        # TODO: Initialize the cluster id at the beginning
-        self._cluster_id = self.__get_cluster_id(host=pipeline_config.kafka_rest_host)
         self._host = pipeline_config.kafka_rest_host
 
-    @property
+    @cached_property
     def cluster_id(self) -> str:
-        return self._cluster_id
+        """
+        Gets the cluster ID by sending a requests to Kafka REST proxy.
+        More information about the cluster ID can be found here:
+        https://docs.confluent.io/platform/current/kafka-rest/api.html#cluster-v3
+
+        Currently both Kafka and Kafka REST Proxy are only aware of the Kafka cluster pointed at by the
+        bootstrap.servers configuration. Therefore, only one Kafka cluster will be returned.
+        :param host:
+        :return:
+        """
+        response = requests.get(url=f"{self._host}/v3/clusters")
+        if response.status_code == requests.status_codes.codes.ok:
+            cluster_information = response.json()
+            return cluster_information["data"][0]["cluster_id"]
+
+        raise KafkaRestProxyError(response)
 
     @property
     def host(self) -> str:
@@ -54,7 +63,7 @@ class ProxyWrapper:
         :param topic_spec: The topic specification.
         """
         response = requests.post(
-            url=f"{self._host}/v3/clusters/{self._cluster_id}/topics",
+            url=f"{self._host}/v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec.dict(exclude_unset=True, exclude_none=True),
         )
@@ -167,20 +176,5 @@ class ProxyWrapper:
             log.debug("Broker configs found.")
             log.debug(response.json())
             return BrokerConfigResponse(**response.json())
-
-        raise KafkaRestProxyError(response)
-
-    @classmethod
-    def __get_cluster_id(cls, host: str) -> str:
-        """
-        Currently both Kafka and Kafka REST Proxy are only aware of the Kafka cluster pointed at by the
-        bootstrap.servers configuration. Therefore, only one Kafka cluster will be returned.
-        :param host:
-        :return:
-        """
-        response = requests.get(url=f"{host}/v3/clusters")
-        if response.status_code == requests.status_codes.codes.ok:
-            cluster_information = response.json()
-            return cluster_information["data"][0]["cluster_id"]
 
         raise KafkaRestProxyError(response)
