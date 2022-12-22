@@ -72,5 +72,6 @@ nav:
       - user/examples/index.md
       - user/examples/atm-fraud-pipeline.md
     - References:
+      - user/references/index.md
       - user/references/cli-commands.md
       - user/references/variables.md
