@@ -32,6 +32,11 @@ class TestProxyWrapper:
     @pytest.fixture(autouse=True)
     @responses.activate
     def setup(self):
+        config = PipelineConfig(
+            defaults_path=DEFAULTS_PATH, environment="development", kafka_rest_host=HOST
+        )
+        self.proxy_wrapper = ProxyWrapper(pipeline_config=config)
+
         with open(
             DEFAULTS_PATH / "kafka_rest_proxy_responses" / "cluster-info.json"
         ) as f:
@@ -43,10 +48,6 @@ class TestProxyWrapper:
             json=cluster_response,
             status=200,
         )
-        config = PipelineConfig(
-            defaults_path=DEFAULTS_PATH, environment="development", kafka_rest_host=HOST
-        )
-        self.proxy_wrapper = ProxyWrapper(pipeline_config=config)
         assert self.proxy_wrapper.host == HOST
         assert self.proxy_wrapper.cluster_id == "cluster-1"
 
