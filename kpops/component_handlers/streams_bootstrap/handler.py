@@ -1,9 +1,6 @@
 from __future__ import annotations
 
 import logging
-
-# TODO: Move to config
-from pathlib import Path
 from typing import TYPE_CHECKING
 
 from kpops.component_handlers.helm_wrapper.config import HelmCommandConfig
@@ -22,6 +19,13 @@ log = logging.getLogger("StreamsBootstrapApp")
 class AppHandler:
     def __init__(self, helm_config: HelmConfig):
         self._helm_wrapper = Helm(helm_config)
+        self.streams_bootstrap_chart = (
+            f"{helm_config.repository_name}/{ApplicationType.STREAMS_APP.value}"
+        )
+        self.streams_bootstrap_clean_up_chart = (
+            f"{helm_config.repository_name}/{ApplicationType.CLEANUP_STREAMS_APP.value}"
+        )
+        self.repository_name = helm_config.repository_name
         self._helm_wrapper.helm_repo_add(
             helm_config.repository_name,
             helm_config.url,
@@ -32,27 +36,24 @@ class AppHandler:
     def install_app(
         self,
         release_name: str,
+        application_type: ApplicationType,
         namespace: str,
         values: dict,
-        app_type: ApplicationType,
         dry_run: bool,
-        local_chart_path: Path | None = None,
     ):
         """
         Calls helm upgrade
         :param release_name: The release name of your chart
         :param namespace: The namespace where the chart is going to be released
         :param values: The value YAML for the chart
-        :param app_type: The type of the application
         :param dry_run: sets the --dry-run flag
         """
         self._helm_wrapper.helm_upgrade_install(
             release_name=release_name,
+            chart=f"{self.repository_name}/{application_type.value}",
+            dry_run=dry_run,
             namespace=namespace,
             values=values,
-            app=app_type.value,
-            dry_run=dry_run,
-            local_chart_path=local_chart_path,
         )
 
     def uninstall_app(
@@ -102,8 +103,7 @@ class AppHandler:
         :param release_name: The release name of the chart
         :param namespace: The namespace where the cleanup job is released to
         :param values: The value YAML for the chart
-        :param app_type: The type of the application
-        :param delete_output_topics: Whether to delete output topics with the cleanup job
+        :param retain_clean_jobs: Whether to retain the cleanup job
         :return:
         """
         suffix = "-clean"
@@ -117,19 +117,19 @@ class AppHandler:
 
         log.info(f"Init cleanup job for {release_name}")
         values["streams"]["deleteOutput"] = delete_outputs
+        clean_up_release_name = f"{release_name}{suffix}"
         self._helm_wrapper.helm_upgrade_install(
-            release_name=release_name,
+            release_name=clean_up_release_name,
+            chart=f"{self.repository_name}/{app_type.value}",
+            dry_run=dry_run,
             namespace=namespace,
             values=values,
-            app=app_type.value,
-            dry_run=dry_run,
-            suffix=suffix,
             helm_command_config=HelmCommandConfig(wait=True, wait_for_jobs=True),
         )
         if not retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {release_name}")
             self.uninstall_app(
-                release_name=release_name,
+                release_name=clean_up_release_name,
                 namespace=namespace,
                 dry_run=dry_run,
                 suffix=suffix,

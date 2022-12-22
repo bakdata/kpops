@@ -8,11 +8,15 @@ from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import HelmConfig, PipelineConfig
 from kpops.component_handlers.helm_wrapper.config import HelmCommandConfig
-from kpops.component_handlers.helm_wrapper.helm import Helm, HelmTemplate, load_helm_manifest
+from kpops.component_handlers.helm_wrapper.helm import (
+    Helm,
+    HelmTemplate,
+    load_helm_manifest,
+)
+from kpops.component_handlers.helm_wrapper.utils import get_chart
 from kpops.component_handlers.streams_bootstrap.exception import (
     ReleaseNotFoundException,
 )
-
 from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
     ApplicationType,
 )
@@ -35,19 +39,14 @@ class TestHelmWrapper:
         return Helm(helm_config=helm_config)
 
     @pytest.fixture
-    def helm_wrapper_with_tls_config(self) -> Helm:
-        config = PipelineConfig(
-            defaults_path=DEFAULTS_PATH,
-            environment="development",
-            streams_bootstrap_helm_config=HelmConfig(
-                repository_name="test-repository",
-                url="fake",
-                ca_file=Path("a_file.ca"),
-                insecure_skip_tls_verify=True,
-            ),
+    def helm_config_with_tls_config(self) -> Helm:
+        helm_config = HelmConfig(
+            repository_name="test-repository",
+            url="fake",
+            ca_file=Path("a_file.ca"),
+            insecure_skip_tls_verify=True,
         )
-        helm_config = config.streams_bootstrap_helm_config
-        helm_config.diff.enable = False
+
         return Helm(helm_config=helm_config)
 
     @pytest.fixture(autouse=True)
@@ -58,7 +57,7 @@ class TestHelmWrapper:
 
     @pytest.fixture
     def run_command(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch.object(Helm, "_Helm__run_command")
+        return mocker.patch.object(Helm, "_Helm__execute")
 
     def test_should_call_run_command_method_when_helm_install_with_defaults(
         self, run_command: MagicMock
@@ -66,12 +65,13 @@ class TestHelmWrapper:
         config = PipelineConfig(defaults_path=DEFAULTS_PATH, environment="development")
         helm_wrapper = Helm(helm_config=config.streams_bootstrap_helm_config)
 
+        chart = get_chart("bakdata-streams-bootstrap", ApplicationType.STREAMS_APP)
         helm_wrapper.helm_upgrade_install(
             release_name="test-release",
+            chart=chart,
+            dry_run=False,
             namespace="test-namespace",
             values={"commandLine": "test"},
-            app=ApplicationType.STREAMS_APP.value,
-            dry_run=False,
         )
         run_command.assert_called_once_with(
             [
@@ -91,9 +91,9 @@ class TestHelmWrapper:
         )
 
     def test_should_include_configured_tls_parameters_on_add(
-        self, helm_wrapper_with_tls_config: Helm, run_command: MagicMock
+        self, helm_config_with_tls_config: Helm, run_command: MagicMock
     ):
-        helm_wrapper_with_tls_config.helm_repo_add()
+        helm_config_with_tls_config.helm_repo_add("test-repository", "fake")
         run_command.assert_has_calls(
             [
                 mock.call(
@@ -117,15 +117,15 @@ class TestHelmWrapper:
         )
 
     def test_should_include_configured_tls_parameters_on_update(
-        self, helm_wrapper_with_tls_config: Helm, run_command: MagicMock
+        self, helm_config_with_tls_config: Helm, run_command: MagicMock
     ):
 
-        helm_wrapper_with_tls_config.helm_upgrade_install(
+        helm_config_with_tls_config.helm_upgrade_install(
             release_name="test-release",
+            chart="test-repository/test-chart",
+            dry_run=False,
             namespace="test-namespace",
             values={},
-            app="test-chart",
-            dry_run=False,
         )
 
         run_command.assert_called_once_with(
@@ -148,34 +148,6 @@ class TestHelmWrapper:
             dry_run=False,
         )
 
-    def test_should_call_helm_install_overriding_repo_and_chart(
-        self, helm_wrapper: Helm, run_command: MagicMock
-    ):
-        helm_wrapper.helm_upgrade_install(
-            release_name="test-release",
-            namespace="test-namespace",
-            values={"commandLine": "test"},
-            app=ApplicationType.STREAMS_APP.value,
-            dry_run=False,
-            local_chart_path=Path("my/fake/dir/chart"),
-        )
-        run_command.assert_called_once_with(
-            [
-                "helm",
-                "upgrade",
-                "test-release",
-                os.path.join("my", "fake", "dir", "chart"),
-                "--install",
-                "--timeout=5m0s",
-                "--namespace",
-                "test-namespace",
-                "--values",
-                "values.yaml",
-                "--wait",
-            ],
-            dry_run=False,
-        )
-
     def test_should_call_run_command_method_when_helm_install_with_non_defaults(
         self,
         helm_wrapper: Helm,
@@ -183,10 +155,10 @@ class TestHelmWrapper:
     ):
         helm_wrapper.helm_upgrade_install(
             release_name="test-release",
+            chart="test-repository/streams-app",
             namespace="test-namespace",
-            values={"commandLine": "test"},
-            app=ApplicationType.STREAMS_APP.value,
             dry_run=True,
+            values={"commandLine": "test"},
             helm_command_config=HelmCommandConfig(
                 debug=True,
                 force=True,
@@ -223,10 +195,10 @@ class TestHelmWrapper:
         os.environ["HELM_COMMAND_CONFIG_timeout"] = "130s"
         helm_wrapper.helm_upgrade_install(
             release_name="test-release",
+            chart="test-repository/streams-app",
+            dry_run=True,
             namespace="test-namespace",
             values={"commandLine": "test"},
-            app=ApplicationType.STREAMS_APP.value,
-            dry_run=True,
             helm_command_config=HelmCommandConfig(),
         )
 
@@ -263,14 +235,11 @@ class TestHelmWrapper:
         )
 
     def test_should_call_run_command_method_when_installing_streams_app__with_dry_run(
-        self,
-        helm_wrapper: Helm,
-        mocker: MockerFixture,
+        self, helm_wrapper: Helm, run_command: MagicMock
     ):
         config = PipelineConfig(defaults_path=DEFAULTS_PATH, environment="development")
         helm_wrapper = Helm(helm_config=config.streams_bootstrap_helm_config)
 
-        run_command = mocker.patch.object(helm_wrapper, "_HelmWrapper__run_command")
         helm_wrapper.helm_uninstall(
             namespace="test-namespace",
             release_name="test-release",
@@ -294,21 +263,15 @@ class TestHelmWrapper:
                 "A specific\n eRrOr was found in this line"
             )
         with pytest.raises(ReleaseNotFoundException):
-            Helm.parse_helm_command_stderr_output(
-                "New \nmessage\n ReLease: noT foUnD"
-            )
+            Helm.parse_helm_command_stderr_output("New \nmessage\n ReLease: noT foUnD")
         try:
-            Helm.parse_helm_command_stderr_output(
-                "This is \njust WaRnIng nothing more"
-            )
+            Helm.parse_helm_command_stderr_output("This is \njust WaRnIng nothing more")
         except RuntimeError as e:
             pytest.fail(
                 f"validate_console_output() raised RuntimeError unexpectedly!\nError message: {e}"
             )
         try:
-            Helm.parse_helm_command_stderr_output(
-                "This is \njust WaRnIng nothing more"
-            )
+            Helm.parse_helm_command_stderr_output("This is \njust WaRnIng nothing more")
         except ReleaseNotFoundException:
             pytest.fail(
                 f"validate_console_output() raised ReleaseNotFoundException unexpectedly!\nError message: {ReleaseNotFoundException}"
@@ -455,9 +418,7 @@ data:
     - a: 1
     - b: 2
 """
-        helm_templates = list(
-            Helm._helm_get_manifest("test-release", "test-namespace")
-        )
+        helm_templates = list(Helm._helm_get_manifest("test-release", "test-namespace"))
         run_command.assert_called_once_with(
             [
                 "helm",
@@ -494,38 +455,4 @@ data:
                 "long-name-which-indicates-trimming-this-trim-is-clean",
             ],
             dry_run=False,
-        )
-
-    def test_should_call_run_command_method_when_helm_install_with_untrimmed_release_name(
-        self, helm_wrapper: Helm, run_command: MagicMock
-    ):
-        os.environ["HELM_COMMAND_CONFIG_debug"] = "True"
-        os.environ["HELM_COMMAND_CONFIG_timeout"] = "130s"
-        helm_wrapper.helm_upgrade_install(
-            release_name="long-name-which-indicates-trimming-this-trim-is-dirty-and-this-suffix-should-be-gone-after",
-            namespace="test-namespace",
-            values={"commandLine": "test"},
-            app=ApplicationType.STREAMS_APP.value,
-            dry_run=True,
-            suffix="-clean",
-            helm_command_config=HelmCommandConfig(),
-        )
-
-        run_command.assert_called_once_with(
-            [
-                "helm",
-                "upgrade",
-                "long-name-which-indicates-trimming-this-trim-is-clean",
-                "test-repository/streams-app",
-                "--install",
-                "--timeout=130s",
-                "--namespace",
-                "test-namespace",
-                "--values",
-                "values.yaml",
-                "--dry-run",
-                "--debug",
-                "--wait",
-            ],
-            dry_run=True,
         )

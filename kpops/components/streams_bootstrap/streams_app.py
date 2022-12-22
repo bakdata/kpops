@@ -1,7 +1,9 @@
 from pydantic import BaseConfig, BaseModel, Extra
 from typing_extensions import override
 
-from kpops.component_handlers.streams_bootstrap.handler import ApplicationType
+from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
+    ApplicationType,
+)
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
     KafkaApp,
@@ -143,9 +145,9 @@ class StreamsApp(KafkaApp):
 
         self.handlers.app_handler.install_app(
             release_name=self.helm_release_name,
+            application_type=ApplicationType.STREAMS_APP,
             namespace=self.app.namespace,
             values=self.to_helm_values(),
-            app_type=ApplicationType.STREAMS_APP,
             dry_run=dry_run,
         )
 

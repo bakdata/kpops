@@ -16,7 +16,9 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorType,
 )
 from kpops.component_handlers.kafka_connect.timeout import timeout
-
+from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
+    ApplicationType,
+)
 from kpops.utils.colorify import greenify, magentaify, yellowify
 from kpops.utils.dict_differ import render_diff
 from kpops.utils.pydantic import CamelCaseConfig
@@ -74,6 +76,7 @@ class ConnectorHandler:
             helm_config.password,
         )
 
+        self.kafka_connect_resseter_chart = f"{helm_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}"
         self.namespace = (
             namespace  # namespace where the re-setter jobs should be deployed to
         )
@@ -216,14 +219,14 @@ class ConnectorHandler:
         :param kwargs: Other values for the KafkaConnectResetter
         """
         suffix = "-clean"
-        release_name = connector_name + suffix
+        clean_up_release_name = connector_name + suffix
 
         log.info(
             magentaify(
                 f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {connector_name}"
             )
         )
-        self.__delete_clean_up_job_release(release_name, suffix, dry_run)
+        self.__delete_clean_up_job_release(clean_up_release_name, suffix, dry_run)
 
         log.info(
             magentaify(
@@ -231,10 +234,9 @@ class ConnectorHandler:
             )
         )
         self._helm_wrapper.helm_upgrade_install(
-            release_name=release_name,
-            suffix=suffix,
+            release_name=clean_up_release_name,
             namespace=self.namespace,
-            app="kafka-connect-resetter",
+            chart=self.kafka_connect_resseter_chart,
             dry_run=dry_run,
             helm_command_config=HelmCommandConfig(wait_for_jobs=True, wait=True),
             values={
@@ -253,7 +255,7 @@ class ConnectorHandler:
 
         if not retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall cleanup job"))
-            self.__delete_clean_up_job_release(release_name, suffix, dry_run)
+            self.__delete_clean_up_job_release(clean_up_release_name, suffix, dry_run)
 
     def __delete_clean_up_job_release(
         self, release_name: str, suffix: str, dry_run: bool

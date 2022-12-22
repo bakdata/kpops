@@ -6,7 +6,6 @@ import subprocess
 import tempfile
 from collections.abc import Iterator
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Iterable
 
 import yaml
@@ -97,8 +96,8 @@ class Helm:
         self,
         repository_name: str,
         repository_url: str,
-        username: str | None,
-        password: str | None,
+        username: str | None = None,
+        password: str | None = None,
     ) -> None:
         bash_command = [
             "helm",
@@ -121,7 +120,7 @@ class Helm:
         bash_command = self.__extend_tls_config(bash_command)
 
         try:
-            self.__run_command(bash_command, dry_run=False)
+            self.__execute(bash_command, dry_run=False)
         except Exception as e:
             if (
                 len(e.args) == 1
@@ -135,7 +134,7 @@ class Helm:
             else:
                 raise e
 
-        self.__run_command(["helm", "repo", "update"], dry_run=False)
+        self.__execute(["helm", "repo", "update"], dry_run=False)
 
     @staticmethod
     def _helm_get_manifest(release_name: str, namespace: str) -> Iterable[HelmTemplate]:
@@ -148,7 +147,7 @@ class Helm:
             namespace,
         ]
         try:
-            stdout = Helm.__run_command(bash_command, dry_run=True)
+            stdout = Helm.__execute(bash_command, dry_run=True)
             return load_helm_manifest(stdout)
         except ReleaseNotFoundException:
             return ()
@@ -190,27 +189,21 @@ class Helm:
     def helm_upgrade_install(
         self,
         release_name: str,
+        chart: str,
+        dry_run: bool,
         namespace: str,
         values: dict,
-        app: str,
-        dry_run: bool,
-        local_chart_path: Path | None = None,
-        suffix: str = "",
         helm_command_config: HelmCommandConfig = HelmCommandConfig(),
     ) -> None:
         """
         Prepares and executes the helm upgrade install command
         """
-        release_name = self.trim_release_name(release_name, suffix=suffix)
+        # TODO: Move out of the function
+        # release_name = self.trim_release_name(release_name, suffix=suffix)
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
 
             bash_command = ["helm"]
-            chart = (
-                f"{self._helm_config.repository_name}/{app}"
-                if local_chart_path is None
-                else str(local_chart_path)
-            )
             bash_command.extend(
                 [
                     "upgrade",
@@ -230,11 +223,9 @@ class Helm:
                 bash_command, dry_run, helm_command_config
             )
             try:
-                stdout = self.__run_command(bash_command, dry_run=dry_run)
+                stdout = self.__execute(bash_command, dry_run=dry_run)
                 if dry_run and self._helm_config.diff.enable:
-                    current_release = Helm._helm_get_manifest(
-                        release_name, namespace
-                    )
+                    current_release = Helm._helm_get_manifest(release_name, namespace)
                     new_release = load_helm_manifest(stdout)
                     self._helm_diff(current_release, new_release)
 
@@ -261,7 +252,7 @@ class Helm:
         if dry_run:
             bash_command.append("--dry-run")
         try:
-            self.__run_command(bash_command, dry_run=dry_run)
+            self.__execute(bash_command, dry_run=dry_run)
         except ReleaseNotFoundException:
             log.warning(f"Release not found {release_name}. Could not uninstall app.")
         except RuntimeError as runtime_error:
@@ -301,10 +292,10 @@ class Helm:
         return bash_command
 
     @classmethod
-    def __run_command(cls, bash_command: list[str], *, dry_run: bool) -> str:
-        log.debug(f"Executing {' '.join(bash_command)}")
+    def __execute(cls, command: list[str], *, dry_run: bool) -> str:
+        log.debug(f"Executing {' '.join(command)}")
         process = subprocess.Popen(
-            bash_command,
+            command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,

@@ -41,9 +41,9 @@ class TestKafkaAppDeployment:
         handler = AppHandler(helm_config=helm_config)
         handler.install_app(
             "test-release",
+            ApplicationType.STREAMS_APP,
             "test-namespace",
             {"commandLine": "test"},
-            ApplicationType.STREAMS_APP,
             False,
         )
         helm_wrapper_mock.helm_upgrade_install.assert_called_once_with(
@@ -53,27 +53,6 @@ class TestKafkaAppDeployment:
             app=ApplicationType.STREAMS_APP.value,
             dry_run=False,
             local_chart_path=None,
-        )
-
-    def test_should_call_helm_upgrade_install_for_streams_app_overriding_repo(
-        self, helm_wrapper_mock, helm_config: HelmConfig
-    ):
-        handler = AppHandler(helm_config=helm_config)
-        handler.install_app(
-            "test-release",
-            "test-namespace",
-            {"commandLine": "test"},
-            ApplicationType.STREAMS_APP,
-            False,
-            local_chart_path=Path("my/fake/dir"),
-        )
-        helm_wrapper_mock.helm_upgrade_install.assert_called_once_with(
-            release_name="test-release",
-            namespace="test-namespace",
-            values={"commandLine": "test"},
-            app=ApplicationType.STREAMS_APP.value,
-            dry_run=False,
-            local_chart_path=Path("my/fake/dir"),
         )
 
     def test_should_call_helm_upgrade_install_for_producer_app(
@@ -82,9 +61,9 @@ class TestKafkaAppDeployment:
         handler = AppHandler(helm_config=helm_config)
         handler.install_app(
             release_name="test-release",
+            application_type=ApplicationType.PRODUCER_APP,
             namespace="test-namespace",
             values={"commandLine": "test"},
-            app_type=ApplicationType.PRODUCER_APP,
             dry_run=False,
         )
         helm_wrapper_mock.helm_upgrade_install.assert_called_once_with(
@@ -94,27 +73,6 @@ class TestKafkaAppDeployment:
             app=ApplicationType.PRODUCER_APP.value,
             dry_run=False,
             local_chart_path=None,
-        )
-
-    def test_should_call_helm_upgrade_install_for_producer_overriding_repo(
-        self, helm_wrapper_mock, helm_config: HelmConfig
-    ):
-        handler = AppHandler(helm_config=helm_config)
-        handler.install_app(
-            release_name="test-release",
-            namespace="test-namespace",
-            values={"commandLine": "test"},
-            app_type=ApplicationType.PRODUCER_APP,
-            dry_run=False,
-            local_chart_path=Path("my/fake/dir"),
-        )
-        helm_wrapper_mock.helm_upgrade_install.assert_called_once_with(
-            release_name="test-release",
-            namespace="test-namespace",
-            values={"commandLine": "test"},
-            app=ApplicationType.PRODUCER_APP.value,
-            dry_run=False,
-            local_chart_path=Path("my/fake/dir"),
         )
 
     def test_should_call_run_command_method_when_helm_uninstall(

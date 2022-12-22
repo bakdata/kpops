@@ -69,9 +69,9 @@ class ProducerApp(KafkaApp):
 
         self.handlers.app_handler.install_app(
             release_name=self.helm_release_name,
+            application_type=ApplicationType.PRODUCER_APP,
             namespace=self.app.namespace,
             values=self.to_helm_values(),
-            app_type=ApplicationType.PRODUCER_APP,
             dry_run=dry_run,
         )
 
@@ -81,10 +81,10 @@ class ProducerApp(KafkaApp):
             self.handlers.app_handler.clean_app(
                 release_name=self.helm_release_name,
                 namespace=self.app.namespace,
+                values=self.to_helm_values(),
+                app_type=ApplicationType.CLEANUP_PRODUCER_APP,
                 dry_run=dry_run,
                 delete_outputs=delete_outputs,
-                app_type=ApplicationType.CLEANUP_PRODUCER_APP,
-                values=self.to_helm_values(),
                 retain_clean_jobs=self.config.retain_clean_jobs,
             )
             if (
