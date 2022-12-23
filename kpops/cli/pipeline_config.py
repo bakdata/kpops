@@ -3,7 +3,7 @@ from pathlib import Path
 from pydantic import BaseConfig, BaseSettings, Field
 from pydantic.env_settings import SettingsSourceCallable
 
-from kpops.component_handlers.helm_wrapper.model import HelmConfig
+from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmRepoConfig
 from kpops.utils.yaml_loading import load_yaml_file
 
 ENV_PREFIX = "KPOPS_"
@@ -21,8 +21,8 @@ class TopicNameConfig(BaseSettings):
 
 
 class KafkaConnectResetterConfig(BaseSettings):
-    helm_config: HelmConfig = Field(
-        default=HelmConfig(
+    helm_config: HelmRepoConfig = Field(
+        default=HelmRepoConfig(
             repository_name="bakdata-kafka-connect-resetter",
             url="https://bakdata.github.io/kafka-connect-resetter/",
             version="1.0.4",
@@ -33,6 +33,7 @@ class KafkaConnectResetterConfig(BaseSettings):
         default={},
         description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
     )
+    namespace: str = Field(default="")
 
 
 class PipelineConfig(BaseSettings):
@@ -82,8 +83,11 @@ class PipelineConfig(BaseSettings):
         env=f"{ENV_PREFIX}PIPELINE_PREFIX",
         description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
     )
-    streams_bootstrap_helm_config: HelmConfig = Field(
-        default=HelmConfig(
+
+    helm_config: HelmConfig = Field(default=HelmConfig())
+
+    streams_bootstrap_helm_config: HelmRepoConfig = Field(
+        default=HelmRepoConfig(
             repository_name="bakdata-streams-bootstrap",
             url="https://bakdata.github.io/streams-bootstrap/",
             version="2.4.2",

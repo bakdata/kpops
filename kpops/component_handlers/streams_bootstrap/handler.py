@@ -6,7 +6,9 @@ from typing import TYPE_CHECKING
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
+    HelmRepoConfig,
     HelmUpgradeInstallFlags,
+    RepoAuthFlags,
 )
 from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
     ApplicationType,
@@ -19,15 +21,16 @@ log = logging.getLogger("StreamsBootstrapApp")
 
 
 class AppHandler:
-    def __init__(self, helm_config: HelmConfig):
+    def __init__(self, helm_config: HelmConfig, helm_repo_config: HelmRepoConfig):
         self._helm_wrapper = Helm(helm_config)
-        self.repository_name = helm_config.repository_name
-        self.chart_version = helm_config.version
+        self.repository_name = helm_repo_config.repository_name
+        self.chart_version = helm_repo_config.version
         self._helm_wrapper.helm_repo_add(
-            helm_config.repository_name,
-            helm_config.url,
-            helm_config.username,
-            helm_config.password,
+            helm_repo_config.repository_name,
+            helm_repo_config.url,
+            RepoAuthFlags(
+                username=helm_repo_config.username, password=helm_repo_config.password
+            ),
         )
 
     def install_app(
@@ -138,4 +141,7 @@ class AppHandler:
 
     @classmethod
     def from_pipeline_config(cls, pipeline_config: PipelineConfig):
-        return cls(helm_config=pipeline_config.streams_bootstrap_helm_config)
+        return cls(
+            helm_config=pipeline_config.helm_config,
+            helm_repo_config=pipeline_config.streams_bootstrap_helm_config,
+        )

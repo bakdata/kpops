@@ -9,7 +9,9 @@ from pydantic import BaseModel
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
+    HelmRepoConfig,
     HelmUpgradeInstallFlags,
+    RepoAuthFlags,
 )
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
@@ -63,23 +65,25 @@ class ConnectorHandler:
         self,
         connect_wrapper: ConnectWrapper,
         timeout: int,
-        helm_config: HelmConfig,
-        namespace: str,
+        helm_repo_config: HelmRepoConfig,
         broker: str,
         values: dict,
+        namespace: str,
+        helm_config: HelmConfig = HelmConfig(),
     ):
         self._connect_wrapper = connect_wrapper
         self._timeout = timeout
         self._helm_wrapper = Helm(helm_config)
         self._helm_wrapper.helm_repo_add(
-            helm_config.repository_name,
-            helm_config.url,
-            helm_config.username,
-            helm_config.password,
+            helm_repo_config.repository_name,
+            helm_repo_config.url,
+            RepoAuthFlags(
+                username=helm_repo_config.username, password=helm_repo_config.password
+            ),
         )
 
-        self.kafka_connect_resseter_chart = f"{helm_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}"
-        self.chart_version = helm_config.version
+        self.kafka_connect_resseter_chart = f"{helm_repo_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}"
+        self.chart_version = helm_repo_config.version
         self.namespace = (
             namespace  # namespace where the re-setter jobs should be deployed to
         )
@@ -280,9 +284,9 @@ class ConnectorHandler:
         return cls(
             connect_wrapper=ConnectWrapper(host=pipeline_config.kafka_connect_host),
             timeout=pipeline_config.timeout,
-            helm_config=pipeline_config.kafka_connect_resetter_config.helm_config,
-            # TODO: why is this an optional?
-            namespace=pipeline_config.kafka_connect_resetter_config.helm_config.namespace,  # type: ignore
+            helm_repo_config=pipeline_config.kafka_connect_resetter_config.helm_config,
+            helm_config=pipeline_config.helm_config,
             broker=pipeline_config.broker,
             values=pipeline_config.kafka_connect_resetter_config.helm_values,
+            namespace=pipeline_config.kafka_connect_resetter_config.namespace,
         )

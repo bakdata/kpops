@@ -9,16 +9,14 @@ from typing import Iterable
 
 import yaml
 
+from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundException
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
     HelmTemplate,
     HelmUpgradeInstallFlags,
+    RepoAuthFlags,
     YamlReader,
 )
-from kpops.component_handlers.streams_bootstrap.exception import (
-    ReleaseNotFoundException,
-)
-from kpops.utils.dict_differ import render_diff
 
 log = logging.getLogger("Helm")
 
@@ -27,9 +25,8 @@ class Helm:
     RELEASE_NAME_MAX_LEN = 53
 
     def __init__(self, helm_config: HelmConfig) -> None:
-        self._helm_config = helm_config
-        self._context = self._helm_config.context
-        self._debug = self._helm_config.debug
+        self._context = helm_config.context
+        self._debug = helm_config.debug
 
     @classmethod
     def trim_release_name(cls, name: str, suffix: str = "") -> str:
@@ -45,8 +42,7 @@ class Helm:
         self,
         repository_name: str,
         repository_url: str,
-        username: str | None = None,
-        password: str | None = None,
+        repo_auth_flags: RepoAuthFlags = RepoAuthFlags(),
     ) -> None:
         bash_command = [
             "helm",
@@ -56,17 +52,17 @@ class Helm:
             repository_url,
         ]
 
-        if username and password:
+        if repo_auth_flags.username and repo_auth_flags.password:
             bash_command.extend(
                 [
                     "--username",
-                    username,
+                    repo_auth_flags.username,
                     "--password",
-                    password,
+                    repo_auth_flags.password,
                 ]
             )
 
-        bash_command = self.__extend_tls_config(bash_command)
+        bash_command = Helm.__extend_tls_config(bash_command, repo_auth_flags)
 
         try:
             self.__execute(bash_command, dry_run=False)
@@ -83,7 +79,7 @@ class Helm:
             else:
                 raise e
 
-        self.__execute(["helm", "repo", "update"], dry_run=False)
+        self.__execute(["helm", "repo", "update", repository_name], dry_run=False)
 
     def helm_upgrade_install(
         self,
@@ -93,7 +89,7 @@ class Helm:
         namespace: str,
         values: dict,
         flags: HelmUpgradeInstallFlags = HelmUpgradeInstallFlags(),
-    ) -> None:
+    ) -> str:
         """
         Prepares and executes the helm upgrade install command
         """
@@ -116,19 +112,19 @@ class Helm:
                     values_file.name,
                 ]
             )
-            bash_command = self.__extend_tls_config(bash_command)
+            bash_command = Helm.__extend_tls_config(bash_command, flags.repo_auth_flags)
 
-            bash_command = self.__enrich_upgrade_install_command(
+            bash_command = Helm.__enrich_upgrade_install_command(
                 bash_command, dry_run, flags
             )
             try:
-                stdout = self.__execute(bash_command, dry_run=dry_run)
+                return self.__execute(bash_command, dry_run=dry_run)
 
                 # TODO: should go out of this method
-                if dry_run and self._helm_config.diff.enable:
-                    current_release = self.helm_get_manifest(release_name, namespace)
-                    new_release = Helm.load_helm_manifest(stdout)
-                    self._helm_diff(current_release, new_release)
+                # if dry_run and self._helm_config.diff.enable:
+                #     current_release = self.helm_get_manifest(release_name, namespace)
+                #     new_release = Helm.load_helm_manifest(stdout)
+                #     self._helm_diff(current_release, new_release)
 
             except Exception as e:
                 log.error(f"Could not install chart. More details: {e}")
@@ -139,7 +135,7 @@ class Helm:
         namespace: str,
         release_name: str,
         dry_run: bool,
-    ) -> None:
+    ) -> str:
         """
         Prepares and executes the helm uninstall command
         """
@@ -153,9 +149,10 @@ class Helm:
         if dry_run:
             bash_command.append("--dry-run")
         try:
-            self.__execute(bash_command, dry_run=dry_run)
+            return self.__execute(bash_command, dry_run=dry_run)
         except ReleaseNotFoundException:
             log.warning(f"Release not found {release_name}. Could not uninstall app.")
+            exit(1)
         except RuntimeError as runtime_error:
             log.error(
                 f"Could not uninstall app {release_name}. More details: {runtime_error}"
@@ -198,49 +195,53 @@ class Helm:
             else:
                 current_yaml_doc.append(line)
 
-    def _helm_diff(
-        self,
-        current_release: Iterable[HelmTemplate],
-        new_release: Iterable[HelmTemplate],
-    ) -> list[tuple[dict, dict]]:
-        new_release_index = {
-            helm_template.filepath: helm_template for helm_template in new_release
-        }
+    # TODO: Move out of class
+    # def _helm_diff(
+    #     self,
+    #     current_release: Iterable[HelmTemplate],
+    #     new_release: Iterable[HelmTemplate],
+    # ) -> list[tuple[dict, dict]]:
+    #     new_release_index = {
+    #         helm_template.filepath: helm_template for helm_template in new_release
+    #     }
+    #
+    #     changes: list[tuple[dict, dict]] = []
+    #     # collect changed & deleted files
+    #     for current_resource in current_release:
+    #         # get corresponding dry-run release
+    #         new_resource = new_release_index.pop(current_resource.filepath, None)
+    #         changes.append(
+    #             (
+    #                 current_resource.template,
+    #                 new_resource.template if new_resource else {},
+    #             )
+    #         )
+    #
+    #     # collect added files
+    #     for new_resource in new_release_index.values():
+    #         changes.append(({}, new_resource.template))
+    #
+    #     for before, after in changes:
+    #         if diff := render_diff(
+    #             before,
+    #             after,
+    #             ignore=self._helm_config.diff.ignore,
+    #         ):
+    #             log.info("\n" + diff)
+    #     return changes
 
-        changes: list[tuple[dict, dict]] = []
-        # collect changed & deleted files
-        for current_resource in current_release:
-            # get corresponding dry-run release
-            new_resource = new_release_index.pop(current_resource.filepath, None)
-            changes.append(
-                (
-                    current_resource.template,
-                    new_resource.template if new_resource else {},
-                )
-            )
-
-        # collect added files
-        for new_resource in new_release_index.values():
-            changes.append(({}, new_resource.template))
-
-        for before, after in changes:
-            if diff := render_diff(
-                before,
-                after,
-                ignore=self._helm_config.diff.ignore,
-            ):
-                log.info("\n" + diff)
-        return changes
-
-    def __extend_tls_config(self, bash_command: list[str]) -> list[str]:
-        if self._helm_config.ca_file:
-            bash_command.extend(["--ca-file", str(self._helm_config.ca_file)])
-        if self._helm_config.insecure_skip_tls_verify:
+    @staticmethod
+    def __extend_tls_config(
+        bash_command: list[str], repo_auth_flags: RepoAuthFlags
+    ) -> list[str]:
+        if repo_auth_flags.ca_file:
+            bash_command.extend(["--ca-file", str(repo_auth_flags.ca_file)])
+        if repo_auth_flags.insecure_skip_tls_verify:
             bash_command.append("--insecure-skip-tls-verify")
         return bash_command
 
+    @staticmethod
     def __enrich_upgrade_install_command(
-        self,
         bash_command: list[str],
         dry_run: bool,
         helm_command_config: HelmUpgradeInstallFlags,
@@ -276,7 +277,7 @@ class Helm:
 
     def __set_global_flags(self, bash_command: list[str]) -> list[str]:
         if self._context:
-            log.debug(f"Changing the Kubernetes context to {self._helm_config.context}")
+            log.debug(f"Changing the Kubernetes context to {self._context}")
             bash_command.extend(["--kube-context", self._context])
         if self._debug:
             log.debug("Enabling verbose mode.")

@@ -24,26 +24,24 @@ class HelmRepoConfig(BaseModel):
     insecure_skip_tls_verify: bool = False
 
 
-class HelmConfig(BaseModel):
+@dataclass
+class HelmConfig:
     context: str | None = None
     debug: bool = False
-    namespace: str | None = None
 
-    # TODO: Remove these
-    repository_name: str
-    url: str
-    version: str | None = None
+
+@dataclass
+class RepoAuthFlags:
     username: str | None = None
     password: str | None = None
     ca_file: Path | None = None
     insecure_skip_tls_verify: bool = False
 
-    diff: HelmDiffConfig = HelmDiffConfig()
-
 
 @dataclass
 class HelmUpgradeInstallFlags:
     force: bool = False
+    repo_auth_flags: RepoAuthFlags = RepoAuthFlags()
     timeout: str = "5m0s"
     version: str | None = None
     wait: bool = True
