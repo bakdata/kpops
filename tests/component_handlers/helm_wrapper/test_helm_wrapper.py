@@ -5,6 +5,7 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
+from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundException
 from kpops.component_handlers.helm_wrapper.helm import Helm, HelmTemplate
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
@@ -12,9 +13,6 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import get_chart
-from kpops.component_handlers.streams_bootstrap.exception import (
-    ReleaseNotFoundException,
-)
 from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
     ApplicationType,
 )
@@ -63,7 +61,6 @@ class TestHelmWrapper:
                 "--version",
                 "2.4.2",
             ],
-            dry_run=False,
         )
 
     def test_should_include_configured_tls_parameters_on_add(
@@ -88,11 +85,9 @@ class TestHelmWrapper:
                         "a_file.ca",
                         "--insecure-skip-tls-verify",
                     ],
-                    dry_run=False,
                 ),
                 mock.call(
                     ["helm", "repo", "update", "test-repository"],
-                    dry_run=False,
                 ),
             ]
         )
@@ -131,7 +126,6 @@ class TestHelmWrapper:
                 "--insecure-skip-tls-verify",
                 "--wait",
             ],
-            dry_run=False,
         )
 
     def test_should_call_run_command_method_when_helm_install_with_non_defaults(
@@ -169,7 +163,6 @@ class TestHelmWrapper:
                 "--wait",
                 "--wait-for-jobs",
             ],
-            dry_run=True,
         )
 
     def test_should_call_run_command_method_when_uninstalling_streams_app(
@@ -183,7 +176,6 @@ class TestHelmWrapper:
         )
         run_command.assert_called_once_with(
             ["helm", "uninstall", "test-release", "--namespace", "test-namespace"],
-            dry_run=False,
         )
 
     def test_should_call_run_command_method_when_installing_streams_app__with_dry_run(
@@ -205,7 +197,6 @@ class TestHelmWrapper:
                 "test-namespace",
                 "--dry-run",
             ],
-            dry_run=True,
         )
 
     def test_validate_console_output(self):
@@ -227,59 +218,6 @@ class TestHelmWrapper:
             pytest.fail(
                 f"validate_console_output() raised ReleaseNotFoundException unexpectedly!\nError message: {ReleaseNotFoundException}"
             )
-
-    def test_trim_release_name_with_suffix(self):
-        helm_wrapper = Helm(helm_config=HelmConfig())
-        name = helm_wrapper.trim_release_name(
-            "example-component-name-too-long-fake-fakefakefakefakefake", suffix="-clean"
-        )
-        assert name == "example-component-name-too-long-fake-fakefakefa-clean"
-        assert len(name) == 53
-
-    @pytest.mark.skip(reason="Move to another test for helm diff")
-    def test_diff(self):
-        pass
-        # helm_wrapper = Helm(helm_config=HelmConfig())
-        # templates = [HelmTemplate("a.yaml", {})]
-        # assert helm_wrapper._helm_diff(templates, templates) == [
-        #     (
-        #         {},
-        #         {},
-        #     ),
-        # ]
-        #
-        # # test matching corresponding template files based on their filename
-        # assert helm_wrapper._helm_diff(
-        #     [
-        #         HelmTemplate("a.yaml", {"a": 1}),
-        #         HelmTemplate("b.yaml", {"b": 1}),
-        #     ],
-        #     [
-        #         HelmTemplate("a.yaml", {"a": 2}),
-        #         HelmTemplate("c.yaml", {"c": 1}),
-        #     ],
-        # ) == [
-        #     (
-        #         {"a": 1},
-        #         {"a": 2},
-        #     ),
-        #     (
-        #         {"b": 1},
-        #         {},
-        #     ),
-        #     (
-        #         {},
-        #         {"c": 1},
-        #     ),
-        # ]
-        #
-        # # test no current release
-        # assert helm_wrapper._helm_diff((), [HelmTemplate("a.yaml", {"a": 1})]) == [
-        #     (
-        #         {},
-        #         {"a": 1},
-        #     ),
-        # ]
 
     def test_load_manifest(self):
         stdout = """---
@@ -386,7 +324,6 @@ data:
                 "--namespace",
                 "test-namespace",
             ],
-            dry_run=True,
         )
         assert len(helm_templates) == 1
         assert helm_templates[0].filepath == "chart/templates/test.yaml"

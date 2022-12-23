@@ -7,7 +7,7 @@ from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.kafka_connect.handler import KafkaConnectorType
+from kpops.component_handlers.kafka_connect.connector_handler import KafkaConnectorType
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.components.base_components.kafka_connect import (
     KafkaSinkConnector,

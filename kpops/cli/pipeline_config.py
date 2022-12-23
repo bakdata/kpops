@@ -3,7 +3,11 @@ from pathlib import Path
 from pydantic import BaseConfig, BaseSettings, Field
 from pydantic.env_settings import SettingsSourceCallable
 
-from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmRepoConfig
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmConfig,
+    HelmDiffConfig,
+    HelmRepoConfig,
+)
 from kpops.utils.yaml_loading import load_yaml_file
 
 ENV_PREFIX = "KPOPS_"
@@ -85,6 +89,7 @@ class PipelineConfig(BaseSettings):
     )
 
     helm_config: HelmConfig = Field(default=HelmConfig())
+    helm_diff_config: HelmDiffConfig = Field(default=HelmDiffConfig())
 
     streams_bootstrap_helm_config: HelmRepoConfig = Field(
         default=HelmRepoConfig(

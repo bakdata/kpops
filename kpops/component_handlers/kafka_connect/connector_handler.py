@@ -7,12 +7,14 @@ from typing import TYPE_CHECKING, Literal
 from pydantic import BaseModel
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
+from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
+from kpops.component_handlers.helm_wrapper.utils import trim_release_name
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
 from kpops.component_handlers.kafka_connect.model import (
@@ -69,6 +71,7 @@ class ConnectorHandler:
         broker: str,
         values: dict,
         namespace: str,
+        helm_diff: HelmDiff,
         helm_config: HelmConfig = HelmConfig(),
     ):
         self._connect_wrapper = connect_wrapper
@@ -81,6 +84,7 @@ class ConnectorHandler:
                 username=helm_repo_config.username, password=helm_repo_config.password
             ),
         )
+        self.helm_diff = helm_diff
 
         self.kafka_connect_resseter_chart = f"{helm_repo_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}"
         self.chart_version = helm_repo_config.version
@@ -240,8 +244,9 @@ class ConnectorHandler:
                 f"Connector Cleanup: deploy Connect {connector_type.value} resetter for {connector_name}"
             )
         )
-        self._helm_wrapper.helm_upgrade_install(
-            release_name=clean_up_release_name,
+
+        stdout = self._helm_wrapper.helm_upgrade_install(
+            release_name=trim_release_name(clean_up_release_name, suffix),
             namespace=self.namespace,
             chart=self.kafka_connect_resseter_chart,
             dry_run=dry_run,
@@ -261,6 +266,13 @@ class ConnectorHandler:
                 **self.values,
             },
         )
+
+        if dry_run and self.helm_diff.config.enable:
+            current_release = self._helm_wrapper.helm_get_manifest(
+                clean_up_release_name, self.namespace
+            )
+            new_release = Helm.load_helm_manifest(stdout)
+            self.helm_diff.get_diff(current_release, new_release)
 
         if not retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall cleanup job"))
@@ -289,4 +301,5 @@ class ConnectorHandler:
             broker=pipeline_config.broker,
             values=pipeline_config.kafka_connect_resetter_config.helm_values,
             namespace=pipeline_config.kafka_connect_resetter_config.namespace,
+            helm_diff=HelmDiff(pipeline_config.helm_diff_config),
         )

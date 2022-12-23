@@ -4,13 +4,15 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
+from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
+    HelmDiffConfig,
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.component_handlers.streams_bootstrap.handler import (
+from kpops.component_handlers.streams_bootstrap.app_handler import (
     AppHandler,
     ApplicationType,
 )
@@ -22,7 +24,7 @@ class TestKafkaAppDeployment:
     @pytest.fixture(autouse=True)
     def helm_wrapper_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.component_handlers.streams_bootstrap.handler.Helm"
+            "kpops.component_handlers.streams_bootstrap.app_handler.Helm"
         ).return_value
 
     @pytest.fixture(autouse=True)
@@ -33,7 +35,7 @@ class TestKafkaAppDeployment:
             version="2.4.2",
         )
 
-        return AppHandler(HelmConfig(), helm_repo_config)
+        return AppHandler(HelmConfig(), helm_repo_config, HelmDiff(HelmDiffConfig()))
 
     def test_should_call_helm_repo_add_when_initializing_app_handler(
         self, helm_wrapper_mock, handler: AppHandler

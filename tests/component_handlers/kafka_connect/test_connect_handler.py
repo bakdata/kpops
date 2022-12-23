@@ -4,13 +4,15 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
+from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmDiffConfig,
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
+from kpops.component_handlers.kafka_connect.connector_handler import ConnectorHandler
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
-from kpops.component_handlers.kafka_connect.handler import ConnectorHandler
 from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectConfig,
     KafkaConnectorType,
@@ -26,28 +28,32 @@ CONNECTOR_NAME = "test-connector"
 class TestConnectorHandler:
     @pytest.fixture(autouse=True)
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.component_handlers.kafka_connect.handler.log.info")
+        return mocker.patch(
+            "kpops.component_handlers.kafka_connect.connector_handler.log.info"
+        )
 
     @pytest.fixture(autouse=True)
     def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.component_handlers.kafka_connect.handler.log.warning"
+            "kpops.component_handlers.kafka_connect.connector_handler.log.warning"
         )
 
     @pytest.fixture(autouse=True)
     def log_error_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.component_handlers.kafka_connect.handler.log.error")
+        return mocker.patch(
+            "kpops.component_handlers.kafka_connect.connector_handler.log.error"
+        )
 
     @pytest.fixture(autouse=True)
     def renderer_diff_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.component_handlers.kafka_connect.handler.render_diff"
+            "kpops.component_handlers.kafka_connect.connector_handler.render_diff"
         )
 
     @pytest.fixture(autouse=True)
     def helm_wrapper_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.component_handlers.kafka_connect.handler.Helm"
+            "kpops.component_handlers.kafka_connect.connector_handler.Helm"
         ).return_value
 
     @pytest.fixture(autouse=True)
@@ -67,9 +73,8 @@ class TestConnectorHandler:
         connector_wrapper = MagicMock()
         renderer_diff_mock.return_value = None
 
-        handler = ConnectorHandler(
-            connector_wrapper, 0, helm_repo_config, "broker:9092", {}, "test-namespace"
-        )
+        handler = self.create_connector_handler(connector_wrapper, helm_repo_config)
+
         config = KafkaConnectConfig()
         handler.create_connector(CONNECTOR_NAME, config, True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
@@ -97,9 +102,8 @@ class TestConnectorHandler:
     ):
         connector_wrapper = MagicMock()
 
-        handler = ConnectorHandler(
-            connector_wrapper, 0, helm_repo_config, "broker:9092", {}, "test-namespace"
-        )
+        handler = self.create_connector_handler(connector_wrapper, helm_repo_config)
+
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
         config = KafkaConnectConfig()
@@ -136,9 +140,8 @@ class TestConnectorHandler:
         ]
         connector_wrapper.validate_connector_config.return_value = errors
 
-        handler = ConnectorHandler(
-            connector_wrapper, 0, helm_repo_config, "broker:9092", {}, "test-namespace"
-        )
+        handler = self.create_connector_handler(connector_wrapper, helm_repo_config)
+
         config = KafkaConnectConfig()
 
         with pytest.raises(SystemExit):
@@ -161,9 +164,8 @@ class TestConnectorHandler:
     ):
         connector_wrapper = MagicMock()
 
-        handler = ConnectorHandler(
-            connector_wrapper, 0, helm_repo_config, "broker:9092", {}, "test-namespace"
-        )
+        handler = self.create_connector_handler(connector_wrapper, helm_repo_config)
+
         config = KafkaConnectConfig()
         handler.create_connector(CONNECTOR_NAME, config, False)
 
@@ -180,9 +182,8 @@ class TestConnectorHandler:
     ):
         connector_wrapper = MagicMock()
 
-        handler = ConnectorHandler(
-            connector_wrapper, 0, helm_repo_config, "broker:9092", {}, "test-namespace"
-        )
+        handler = self.create_connector_handler(connector_wrapper, helm_repo_config)
+
         config = KafkaConnectConfig()
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         handler.create_connector(CONNECTOR_NAME, config, False)
@@ -198,9 +199,8 @@ class TestConnectorHandler:
     ):
         connector_wrapper = MagicMock()
 
-        handler = ConnectorHandler(
-            connector_wrapper, 0, helm_repo_config, "broker:9092", {}, "test-namespace"
-        )
+        handler = self.create_connector_handler(connector_wrapper, helm_repo_config)
+
         handler.destroy_connector(CONNECTOR_NAME, True)
 
         log_info_mock.assert_called_once_with(
@@ -217,9 +217,8 @@ class TestConnectorHandler:
         connector_wrapper = MagicMock()
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
-        handler = ConnectorHandler(
-            connector_wrapper, 0, helm_repo_config, "broker:9092", {}, "test-namespace"
-        )
+        handler = self.create_connector_handler(connector_wrapper, helm_repo_config)
+
         handler.destroy_connector(CONNECTOR_NAME, True)
 
         log_warning_mock.assert_called_once_with(
@@ -231,10 +230,8 @@ class TestConnectorHandler:
         helm_repo_config,
     ):
         connector_wrapper = MagicMock()
+        handler = self.create_connector_handler(connector_wrapper, helm_repo_config)
 
-        handler = ConnectorHandler(
-            connector_wrapper, 0, helm_repo_config, "broker:9092", {}, "test-namespace"
-        )
         handler.destroy_connector(CONNECTOR_NAME, False)
         connector_wrapper.assert_has_calls(
             [
@@ -251,9 +248,8 @@ class TestConnectorHandler:
         connector_wrapper = MagicMock()
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
-        handler = ConnectorHandler(
-            connector_wrapper, 0, helm_repo_config, "broker:9092", {}, "test-namespace"
-        )
+        handler = self.create_connector_handler(connector_wrapper, helm_repo_config)
+
         handler.destroy_connector(CONNECTOR_NAME, False)
 
         log_warning_mock.assert_called_once_with(
@@ -272,13 +268,8 @@ class TestConnectorHandler:
             "connectorType": "source",
             "nameOverride": CONNECTOR_NAME,
         }
-        handler = ConnectorHandler(
-            ConnectWrapper("test"),
-            0,
-            helm_repo_config,
-            "broker:9092",
-            values,
-            "test-namespace",
+        handler = self.create_connector_handler(
+            ConnectWrapper("test"), helm_repo_config, values
         )
         handler.clean_connector(
             connector_name=CONNECTOR_NAME,
@@ -337,13 +328,8 @@ class TestConnectorHandler:
             "connectorType": "source",
             "nameOverride": CONNECTOR_NAME,
         }
-        handler = ConnectorHandler(
-            ConnectWrapper("test"),
-            0,
-            helm_repo_config,
-            "broker:9092",
-            values,
-            "test-namespace",
+        handler = self.create_connector_handler(
+            ConnectWrapper("test"), helm_repo_config, values
         )
         handler.clean_connector(
             connector_name=CONNECTOR_NAME,
@@ -396,4 +382,23 @@ class TestConnectorHandler:
                     dry_run=True,
                 ),
             ]
+        )
+
+    @staticmethod
+    def create_connector_handler(
+        connector_wrapper: MagicMock | ConnectWrapper,
+        helm_repo_config: HelmRepoConfig,
+        values=None,
+    ) -> ConnectorHandler:
+        if values is None:
+            values = {}
+        helm_diff = HelmDiff(HelmDiffConfig())
+        return ConnectorHandler(
+            connector_wrapper,
+            0,
+            helm_repo_config,
+            "broker:9092",
+            values,
+            "test-namespace",
+            helm_diff,
         )

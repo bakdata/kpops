@@ -1,7 +1,7 @@
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
 
-from kpops.component_handlers.streams_bootstrap.handler import ApplicationType
+from kpops.component_handlers.streams_bootstrap.app_handler import ApplicationType
 from kpops.components.base_components.kafka_app import (
     KafkaApp,
     KafkaAppConfig,

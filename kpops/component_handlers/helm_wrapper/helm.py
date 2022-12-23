@@ -20,23 +20,13 @@ from kpops.component_handlers.helm_wrapper.model import (
 
 log = logging.getLogger("Helm")
 
+RELEASE_NAME_MAX_LEN = 53
+
 
 class Helm:
-    RELEASE_NAME_MAX_LEN = 53
-
     def __init__(self, helm_config: HelmConfig) -> None:
         self._context = helm_config.context
         self._debug = helm_config.debug
-
-    @classmethod
-    def trim_release_name(cls, name: str, suffix: str = "") -> str:
-        if len(name) + len(suffix) > cls.RELEASE_NAME_MAX_LEN:
-            new_name = name[: (cls.RELEASE_NAME_MAX_LEN - len(suffix))] + suffix
-            log.critical(
-                f"The Helm release name {name} is invalid. We shorten it to {cls.RELEASE_NAME_MAX_LEN} characters: \n {name + suffix} --> {new_name}"
-            )
-            name = new_name
-        return name
 
     def helm_repo_add(
         self,
@@ -65,7 +55,7 @@ class Helm:
         bash_command = Helm.__extend_tls_config(bash_command, repo_auth_flags)
 
         try:
-            self.__execute(bash_command, dry_run=False)
+            self.__execute(bash_command)
         except Exception as e:
             if (
                 len(e.args) == 1
@@ -79,7 +69,7 @@ class Helm:
             else:
                 raise e
 
-        self.__execute(["helm", "repo", "update", repository_name], dry_run=False)
+        self.__execute(["helm", "repo", "update", repository_name])
 
     def helm_upgrade_install(
         self,
@@ -93,8 +83,6 @@ class Helm:
         """
         Prepares and executes the helm upgrade install command
         """
-        # TODO: Move out of the function
-        # release_name = self.trim_release_name(release_name, suffix=suffix)
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
 
@@ -118,7 +106,7 @@ class Helm:
                 bash_command, dry_run, flags
             )
             try:
-                return self.__execute(bash_command, dry_run=dry_run)
+                return self.__execute(bash_command)
 
                 # TODO: should go out of this method
                 # if dry_run and self._helm_config.diff.enable:
@@ -149,7 +137,7 @@ class Helm:
         if dry_run:
             bash_command.append("--dry-run")
         try:
-            return self.__execute(bash_command, dry_run=dry_run)
+            return self.__execute(bash_command)
         except ReleaseNotFoundException:
             log.warning(f"Release not found {release_name}. Could not uninstall app.")
             exit(1)
@@ -172,7 +160,7 @@ class Helm:
         ]
 
         try:
-            stdout = self.__execute(command=bash_command, dry_run=True)
+            stdout = self.__execute(command=bash_command)
             return Helm.load_helm_manifest(stdout)
         except ReleaseNotFoundException:
             return ()
@@ -194,41 +182,6 @@ class Helm:
                 is_beginning = False
             else:
                 current_yaml_doc.append(line)
-
-    # TODO: Move out of class
-    # def _helm_diff(
-    #     self,
-    #     current_release: Iterable[HelmTemplate],
-    #     new_release: Iterable[HelmTemplate],
-    # ) -> list[tuple[dict, dict]]:
-    #     new_release_index = {
-    #         helm_template.filepath: helm_template for helm_template in new_release
-    #     }
-    #
-    #     changes: list[tuple[dict, dict]] = []
-    #     # collect changed & deleted files
-    #     for current_resource in current_release:
-    #         # get corresponding dry-run release
-    #         new_resource = new_release_index.pop(current_resource.filepath, None)
-    #         changes.append(
-    #             (
-    #                 current_resource.template,
-    #                 new_resource.template if new_resource else {},
-    #             )
-    #         )
-    #
-    #     # collect added files
-    #     for new_resource in new_release_index.values():
-    #         changes.append(({}, new_resource.template))
-    #
-    #     for before, after in changes:
-    #         if diff := render_diff(
-    #             before,
-    #             after,
-    #             ignore=self._helm_config.diff.ignore,
-    #         ):
-    #             log.info("\n" + diff)
-    #     return changes
 
     @staticmethod
     def __extend_tls_config(
@@ -258,7 +211,7 @@ class Helm:
             bash_command.extend(["--version", helm_command_config.version])
         return bash_command
 
-    def __execute(self, command: list[str], *, dry_run: bool) -> str:
+    def __execute(self, command: list[str]) -> str:
         command = self.__set_global_flags(command)
         log.debug(f"Executing {' '.join(command)}")
         process = subprocess.Popen(
@@ -267,10 +220,10 @@ class Helm:
             stderr=subprocess.PIPE,
             text=True,
         )
-        exit_code = process.wait()
+        process.wait()
         stdout, stderr = process.communicate()
-        if stdout and (not dry_run or exit_code != 0):
-            log.info(stdout)
+
+        log.debug(stdout)
 
         Helm.parse_helm_command_stderr_output(stderr)
         return stdout
@@ -294,9 +247,3 @@ class Helm:
                 raise RuntimeError(stderr)
             elif "warning" in lower:
                 log.info(line)
-
-    @classmethod
-    def __check_release_name_length(cls, release_name: str):
-        if len(release_name) > cls.RELEASE_NAME_MAX_LEN:
-            log.error(f"Invalid value: The {release_name} is more than 52 characters.")
-            exit(1)

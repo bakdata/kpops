@@ -5,9 +5,9 @@ from pytest_mock import MockerFixture
 from kpops.cli.main import setup_handlers
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.kafka_connect.handler import ConnectorHandler
+from kpops.component_handlers.kafka_connect.connector_handler import ConnectorHandler
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
-from kpops.component_handlers.streams_bootstrap.handler import AppHandler
+from kpops.component_handlers.streams_bootstrap.app_handler import AppHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from tests.cli.resources.module import CustomSchemaProvider
 

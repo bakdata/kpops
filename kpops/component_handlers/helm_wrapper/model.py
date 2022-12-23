@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 
 class HelmDiffConfig(BaseModel):
-    enable: bool = True
+    enable: bool = False
     ignore: set[str] = Field(
         default_factory=set,
         description="keypaths using dot-notation to exclude",
