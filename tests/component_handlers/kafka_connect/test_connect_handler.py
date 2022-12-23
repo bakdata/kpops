@@ -13,6 +13,9 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectConfig,
     KafkaConnectorType,
 )
+from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
+    ApplicationType,
+)
 from kpops.utils.colorify import greenify, magentaify, yellowify
 
 CONNECTOR_NAME = "test-connector"
@@ -255,9 +258,7 @@ class TestConnectorHandler:
         )
 
     def test_should_call_helm_upgrade_install_and_uninstall_when_clean_connector_with_retain_clean_jobs_true(
-        self, log_info_mock: MagicMock,
-        helm_config: HelmConfig,
-            helm_wrapper_mock
+        self, log_info_mock: MagicMock, helm_config: HelmConfig, helm_wrapper_mock
     ):
         values = {
             "config": {
@@ -308,18 +309,14 @@ class TestConnectorHandler:
                     dry_run=True,
                 ),
                 mock.call.helm_upgrade_install(
-                    app="kafka-connect-resetter",
+                    release_name="test-connector-clean",
+                    namespace="test-namespace",
+                    chart=f"{helm_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}",
                     dry_run=True,
                     helm_command_config=HelmCommandConfig(
-                        debug=False,
-                        force=False,
-                        timeout="5m0s",
                         wait=True,
                         wait_for_jobs=True,
                     ),
-                    namespace="test-namespace",
-                    release_name="test-connector-clean",
-                    suffix="-clean",
                     values=values,
                 ),
             ]
@@ -380,18 +377,14 @@ class TestConnectorHandler:
                     dry_run=True,
                 ),
                 mock.call.helm_upgrade_install(
-                    app="kafka-connect-resetter",
+                    release_name="test-connector-clean",
+                    namespace="test-namespace",
+                    chart=f"{helm_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}",
                     dry_run=True,
                     helm_command_config=HelmCommandConfig(
-                        debug=False,
-                        force=False,
-                        timeout="5m0s",
                         wait=True,
                         wait_for_jobs=True,
                     ),
-                    namespace="test-namespace",
-                    release_name="test-connector-clean",
-                    suffix="-clean",
                     values=values,
                 ),
                 mock.call.helm_uninstall(

@@ -341,6 +341,7 @@ class TestStreamsApp:
                 mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=True),
                 mocker.call.mock_install_app(
                     release_name="example-name",
+                    application_type=ApplicationType.STREAMS_APP,
                     namespace="test-namespace",
                     values={
                         "namespace": "test-namespace",
@@ -350,7 +351,6 @@ class TestStreamsApp:
                             "errorTopic": "streams-app-error-topic",
                         },
                     },
-                    app_type=ApplicationType.STREAMS_APP,
                     dry_run=True,
                 ),
             ],
@@ -438,6 +438,7 @@ class TestProducerApp:
                 mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=True),
                 mocker.call.mock_install_app(
                     release_name="example-name",
+                    application_type=ApplicationType.PRODUCER_APP,
                     namespace="test-namespace",
                     values={
                         "namespace": "test-namespace",
@@ -446,7 +447,6 @@ class TestProducerApp:
                             "outputTopic": "producer-output-topic",
                         },
                     },
-                    app_type=ApplicationType.PRODUCER_APP,
                     dry_run=True,
                 ),
             ],

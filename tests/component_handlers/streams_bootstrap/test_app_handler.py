@@ -49,10 +49,9 @@ class TestKafkaAppDeployment:
         helm_wrapper_mock.helm_upgrade_install.assert_called_once_with(
             release_name="test-release",
             namespace="test-namespace",
+            chart=f"{helm_config.repository_name}/{ApplicationType.STREAMS_APP.value}",
             values={"commandLine": "test"},
-            app=ApplicationType.STREAMS_APP.value,
             dry_run=False,
-            local_chart_path=None,
         )
 
     def test_should_call_helm_upgrade_install_for_producer_app(
@@ -68,11 +67,10 @@ class TestKafkaAppDeployment:
         )
         helm_wrapper_mock.helm_upgrade_install.assert_called_once_with(
             release_name="test-release",
+            chart=f"{helm_config.repository_name}/{ApplicationType.PRODUCER_APP.value}",
+            dry_run=False,
             namespace="test-namespace",
             values={"commandLine": "test"},
-            app=ApplicationType.PRODUCER_APP.value,
-            dry_run=False,
-            local_chart_path=None,
         )
 
     def test_should_call_run_command_method_when_helm_uninstall(
