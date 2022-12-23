@@ -27,6 +27,15 @@ class HelmConfig(BaseModel):
     insecure_skip_tls_verify: bool = False
 
 
+@dataclass
+class HelmUpgradeInstallFlags:
+    debug: bool = False
+    force: bool = False
+    timeout: str = "5m0s"
+    wait: bool = True
+    wait_for_jobs: bool = False
+
+
 HELM_SOURCE_PREFIX = "# Source: "
 
 

@@ -9,10 +9,10 @@ from typing import Iterable
 
 import yaml
 
-from kpops.component_handlers.helm_wrapper.config import HelmCommandConfig
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
     HelmTemplate,
+    HelmUpgradeInstallFlags,
     YamlReader,
 )
 from kpops.component_handlers.streams_bootstrap.exception import (
@@ -158,7 +158,7 @@ class Helm:
         dry_run: bool,
         namespace: str,
         values: dict,
-        helm_command_config: HelmCommandConfig = HelmCommandConfig(),
+        helm_command_config: HelmUpgradeInstallFlags = HelmUpgradeInstallFlags(),
     ) -> None:
         """
         Prepares and executes the helm upgrade install command
@@ -237,7 +237,7 @@ class Helm:
         self,
         bash_command: list[str],
         dry_run: bool,
-        helm_command_config: HelmCommandConfig,
+        helm_command_config: HelmUpgradeInstallFlags,
     ) -> list[str]:
         if dry_run:
             bash_command.append("--dry-run")

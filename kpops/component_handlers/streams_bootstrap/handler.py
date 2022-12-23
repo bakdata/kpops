@@ -3,9 +3,11 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING
 
-from kpops.component_handlers.helm_wrapper.config import HelmCommandConfig
 from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.model import HelmConfig
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmConfig,
+    HelmUpgradeInstallFlags,
+)
 from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
     ApplicationType,
 )
@@ -124,7 +126,7 @@ class AppHandler:
             dry_run=dry_run,
             namespace=namespace,
             values=values,
-            helm_command_config=HelmCommandConfig(wait=True, wait_for_jobs=True),
+            helm_command_config=HelmUpgradeInstallFlags(wait=True, wait_for_jobs=True),
         )
         if not retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {release_name}")

@@ -6,9 +6,11 @@ from typing import TYPE_CHECKING, Literal
 
 from pydantic import BaseModel
 
-from kpops.component_handlers.helm_wrapper.config import HelmCommandConfig
 from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.model import HelmConfig
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmConfig,
+    HelmUpgradeInstallFlags,
+)
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
 from kpops.component_handlers.kafka_connect.model import (
@@ -238,7 +240,7 @@ class ConnectorHandler:
             namespace=self.namespace,
             chart=self.kafka_connect_resseter_chart,
             dry_run=dry_run,
-            helm_command_config=HelmCommandConfig(wait_for_jobs=True, wait=True),
+            helm_command_config=HelmUpgradeInstallFlags(wait_for_jobs=True, wait=True),
             values={
                 **KafkaConnectResetterValues(
                     config=KafkaConnectResetterConfig(

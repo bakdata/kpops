@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from unittest import mock
 from unittest.mock import MagicMock
@@ -7,8 +6,8 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import HelmConfig, PipelineConfig
-from kpops.component_handlers.helm_wrapper.config import HelmCommandConfig
 from kpops.component_handlers.helm_wrapper.helm import Helm, HelmTemplate
+from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.component_handlers.helm_wrapper.utils import get_chart
 from kpops.component_handlers.streams_bootstrap.exception import (
     ReleaseNotFoundException,
@@ -155,7 +154,7 @@ class TestHelmWrapper:
             namespace="test-namespace",
             dry_run=True,
             values={"commandLine": "test"},
-            helm_command_config=HelmCommandConfig(
+            helm_command_config=HelmUpgradeInstallFlags(
                 debug=True,
                 force=True,
                 timeout="120s",
@@ -180,39 +179,6 @@ class TestHelmWrapper:
                 "--force",
                 "--wait",
                 "--wait-for-jobs",
-            ],
-            dry_run=True,
-        )
-
-    def test_should_call_run_command_method_when_helm_install_with_non_defaults_from_env(
-        self, helm_wrapper: Helm, run_command: MagicMock
-    ):
-        os.environ["HELM_COMMAND_CONFIG_debug"] = "True"
-        os.environ["HELM_COMMAND_CONFIG_timeout"] = "130s"
-        helm_wrapper.helm_upgrade_install(
-            release_name="test-release",
-            chart="test-repository/streams-app",
-            dry_run=True,
-            namespace="test-namespace",
-            values={"commandLine": "test"},
-            helm_command_config=HelmCommandConfig(),
-        )
-
-        run_command.assert_called_once_with(
-            [
-                "helm",
-                "upgrade",
-                "test-release",
-                "test-repository/streams-app",
-                "--install",
-                "--timeout=130s",
-                "--namespace",
-                "test-namespace",
-                "--values",
-                "values.yaml",
-                "--dry-run",
-                "--debug",
-                "--wait",
             ],
             dry_run=True,
         )

@@ -4,8 +4,10 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers.helm_wrapper.config import HelmCommandConfig
-from kpops.component_handlers.helm_wrapper.model import HelmConfig
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmConfig,
+    HelmUpgradeInstallFlags,
+)
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
 from kpops.component_handlers.kafka_connect.handler import ConnectorHandler
@@ -313,7 +315,7 @@ class TestConnectorHandler:
                     namespace="test-namespace",
                     chart=f"{helm_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}",
                     dry_run=True,
-                    helm_command_config=HelmCommandConfig(
+                    helm_command_config=HelmUpgradeInstallFlags(
                         wait=True,
                         wait_for_jobs=True,
                     ),
@@ -381,7 +383,7 @@ class TestConnectorHandler:
                     namespace="test-namespace",
                     chart=f"{helm_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}",
                     dry_run=True,
-                    helm_command_config=HelmCommandConfig(
+                    helm_command_config=HelmUpgradeInstallFlags(
                         wait=True,
                         wait_for_jobs=True,
                     ),
