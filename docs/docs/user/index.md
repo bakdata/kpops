@@ -11,6 +11,6 @@ addition, Kafka apps and its resources can be reset or cleaned up again with a s
 
 The user guide is split into three parts:
 
-- [Getting Started](./getting-started/)
-- [Examples](./examples/)
-- [References](./references/)
+- [Getting Started](getting-started)
+- [Examples](examples)
+- [References](references)

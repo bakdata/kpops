@@ -81,6 +81,8 @@ class TestHelmWrapper:
                 "--values",
                 "values.yaml",
                 "--wait",
+                "--version",
+                "2.4.2",
             ],
             dry_run=False,
         )

@@ -24,7 +24,8 @@ class KafkaConnectResetterConfig(BaseSettings):
     helm_config: HelmConfig = Field(
         default=HelmConfig(
             repository_name="bakdata-kafka-connect-resetter",
-            url="https://raw.githubusercontent.com/bakdata/kafka-connect-resetter/1.0.1/charts/",
+            url="https://bakdata.github.io/kafka-connect-resetter/",
+            version="1.0.4",
         ),
         description="Configuration of Kafka connect resetter Helm Chart",
     )
@@ -84,7 +85,8 @@ class PipelineConfig(BaseSettings):
     streams_bootstrap_helm_config: HelmConfig = Field(
         default=HelmConfig(
             repository_name="bakdata-streams-bootstrap",
-            url="https://raw.githubusercontent.com/bakdata/streams-bootstrap/2.4.0/charts/",
+            url="https://bakdata.github.io/streams-bootstrap/",
+            version="2.4.2",
         ),
         description="Configuration for Streams Bootstrap Helm Charts",
     )

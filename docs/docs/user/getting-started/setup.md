@@ -78,7 +78,8 @@ To deploy Kafka, this guide uses Confluent's [Helm chart](https://github.com/con
         docker push localhost:12345/kafka-connect-jdbc:7.1.3
         ```
 
-    Detailed instructions on building, tagging and pushing a docker image can be found in [Docker docs](https://docs.docker.com/).
+    Detailed instructions on building, 
+    tagging and pushing a docker image can be found in [Docker docs](https://docs.docker.com/).
 
 2. Add Confluent's Helm chart repository and update the index:
 
