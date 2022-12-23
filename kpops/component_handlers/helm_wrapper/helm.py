@@ -5,75 +5,22 @@ import re
 import subprocess
 import tempfile
 from collections.abc import Iterator
-from dataclasses import dataclass
 from typing import Iterable
 
 import yaml
 
 from kpops.component_handlers.helm_wrapper.config import HelmCommandConfig
-from kpops.component_handlers.helm_wrapper.model import HelmConfig
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmConfig,
+    HelmTemplate,
+    YamlReader,
+)
 from kpops.component_handlers.streams_bootstrap.exception import (
     ReleaseNotFoundException,
 )
 from kpops.utils.dict_differ import render_diff
 
 log = logging.getLogger("Helm")
-
-
-HELM_SOURCE_PREFIX = "# Source: "
-
-
-@dataclass
-class HelmTemplate:
-    filepath: str
-    template: dict
-
-    @staticmethod
-    def parse_source(source: str) -> str:
-        """Parse source path from comment at the beginning of the YAML doc.
-        Example: # Source: chart/templates/serviceaccount.yaml
-        """
-        if not source.startswith(HELM_SOURCE_PREFIX):
-            raise ValueError("Not a valid Helm template source")
-        return source.removeprefix(HELM_SOURCE_PREFIX).strip()
-
-    @staticmethod
-    def load(filepath: str, content: str) -> HelmTemplate:
-        template = HelmTemplate.__load_template(content)
-        return HelmTemplate(filepath, template)
-
-    @staticmethod
-    def __load_template(content: str) -> dict:
-        return yaml.load(content, yaml.Loader)
-
-
-def load_helm_manifest(yaml_contents: str) -> Iterator[HelmTemplate]:
-    @dataclass
-    class YamlReader:
-        content: str
-
-        def __iter__(self) -> Iterator[str]:
-            # discard all output before template documents
-            index = self.content.index("---")
-            self.content = self.content[index:-1]
-            yield from self.content.splitlines()
-            yield "---"  # add final divider to make parsing easier
-
-    is_beginning: bool = False
-    template_name = None
-    current_yaml_doc: list[str] = []
-    for line in YamlReader(yaml_contents):
-        if line.startswith("---"):
-            is_beginning = True
-            if template_name and current_yaml_doc:
-                yield HelmTemplate.load(template_name, "\n".join(current_yaml_doc))
-                template_name = None
-                current_yaml_doc.clear()
-        elif is_beginning:
-            template_name = HelmTemplate.parse_source(line)
-            is_beginning = False
-        else:
-            current_yaml_doc.append(line)
 
 
 class Helm:
@@ -148,9 +95,27 @@ class Helm:
         ]
         try:
             stdout = Helm.__execute(bash_command, dry_run=True)
-            return load_helm_manifest(stdout)
+            return Helm.load_helm_manifest(stdout)
         except ReleaseNotFoundException:
             return ()
+
+    @staticmethod
+    def load_helm_manifest(yaml_contents: str) -> Iterator[HelmTemplate]:
+        is_beginning: bool = False
+        template_name = None
+        current_yaml_doc: list[str] = []
+        for line in YamlReader(yaml_contents):
+            if line.startswith("---"):
+                is_beginning = True
+                if template_name and current_yaml_doc:
+                    yield HelmTemplate.load(template_name, "\n".join(current_yaml_doc))
+                    template_name = None
+                    current_yaml_doc.clear()
+            elif is_beginning:
+                template_name = HelmTemplate.parse_source(line)
+                is_beginning = False
+            else:
+                current_yaml_doc.append(line)
 
     def _helm_diff(
         self,
@@ -226,7 +191,7 @@ class Helm:
                 stdout = self.__execute(bash_command, dry_run=dry_run)
                 if dry_run and self._helm_config.diff.enable:
                     current_release = Helm._helm_get_manifest(release_name, namespace)
-                    new_release = load_helm_manifest(stdout)
+                    new_release = Helm.load_helm_manifest(stdout)
                     self._helm_diff(current_release, new_release)
 
             except Exception as e:
@@ -318,3 +283,9 @@ class Helm:
                 raise RuntimeError(stderr)
             elif "warning" in lower:
                 log.info(line)
+
+    @classmethod
+    def __check_release_name_length(cls, release_name: str):
+        if len(release_name) > cls.RELEASE_NAME_MAX_LEN:
+            log.error(f"Invalid value: The {release_name} is more than 52 characters.")
+            exit(1)
