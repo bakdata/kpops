@@ -28,6 +28,8 @@ class Helm:
 
     def __init__(self, helm_config: HelmConfig) -> None:
         self._helm_config = helm_config
+        self._context = self._helm_config.context
+        self._debug = self._helm_config.debug
 
     @classmethod
     def trim_release_name(cls, name: str, suffix: str = "") -> str:
@@ -83,8 +85,86 @@ class Helm:
 
         self.__execute(["helm", "repo", "update"], dry_run=False)
 
-    @staticmethod
-    def _helm_get_manifest(release_name: str, namespace: str) -> Iterable[HelmTemplate]:
+    def helm_upgrade_install(
+        self,
+        release_name: str,
+        chart: str,
+        dry_run: bool,
+        namespace: str,
+        values: dict,
+        flags: HelmUpgradeInstallFlags = HelmUpgradeInstallFlags(),
+    ) -> None:
+        """
+        Prepares and executes the helm upgrade install command
+        """
+        # TODO: Move out of the function
+        # release_name = self.trim_release_name(release_name, suffix=suffix)
+        with tempfile.NamedTemporaryFile("w") as values_file:
+            yaml.safe_dump(values, values_file)
+
+            bash_command = ["helm"]
+            bash_command.extend(
+                [
+                    "upgrade",
+                    release_name,
+                    chart,
+                    "--install",
+                    f"--timeout={flags.timeout}",
+                    "--namespace",
+                    namespace,
+                    "--values",
+                    values_file.name,
+                ]
+            )
+            bash_command = self.__extend_tls_config(bash_command)
+
+            bash_command = self.__enrich_upgrade_install_command(
+                bash_command, dry_run, flags
+            )
+            try:
+                stdout = self.__execute(bash_command, dry_run=dry_run)
+
+                # TODO: should go out of this method
+                if dry_run and self._helm_config.diff.enable:
+                    current_release = self.helm_get_manifest(release_name, namespace)
+                    new_release = Helm.load_helm_manifest(stdout)
+                    self._helm_diff(current_release, new_release)
+
+            except Exception as e:
+                log.error(f"Could not install chart. More details: {e}")
+                exit(1)
+
+    def helm_uninstall(
+        self,
+        namespace: str,
+        release_name: str,
+        dry_run: bool,
+    ) -> None:
+        """
+        Prepares and executes the helm uninstall command
+        """
+        bash_command = [
+            "helm",
+            "uninstall",
+            release_name,
+            "--namespace",
+            namespace,
+        ]
+        if dry_run:
+            bash_command.append("--dry-run")
+        try:
+            self.__execute(bash_command, dry_run=dry_run)
+        except ReleaseNotFoundException:
+            log.warning(f"Release not found {release_name}. Could not uninstall app.")
+        except RuntimeError as runtime_error:
+            log.error(
+                f"Could not uninstall app {release_name}. More details: {runtime_error}"
+            )
+            exit(1)
+
+    def helm_get_manifest(
+        self, release_name: str, namespace: str
+    ) -> Iterable[HelmTemplate]:
         bash_command = [
             "helm",
             "get",
@@ -93,8 +173,9 @@ class Helm:
             "--namespace",
             namespace,
         ]
+
         try:
-            stdout = Helm.__execute(bash_command, dry_run=True)
+            stdout = self.__execute(command=bash_command, dry_run=True)
             return Helm.load_helm_manifest(stdout)
         except ReleaseNotFoundException:
             return ()
@@ -151,81 +232,6 @@ class Helm:
                 log.info("\n" + diff)
         return changes
 
-    def helm_upgrade_install(
-        self,
-        release_name: str,
-        chart: str,
-        dry_run: bool,
-        namespace: str,
-        values: dict,
-        helm_command_config: HelmUpgradeInstallFlags = HelmUpgradeInstallFlags(),
-    ) -> None:
-        """
-        Prepares and executes the helm upgrade install command
-        """
-        # TODO: Move out of the function
-        # release_name = self.trim_release_name(release_name, suffix=suffix)
-        with tempfile.NamedTemporaryFile("w") as values_file:
-            yaml.safe_dump(values, values_file)
-
-            bash_command = ["helm"]
-            bash_command.extend(
-                [
-                    "upgrade",
-                    release_name,
-                    chart,
-                    "--install",
-                    f"--timeout={helm_command_config.timeout}",
-                    "--namespace",
-                    namespace,
-                    "--values",
-                    values_file.name,
-                ]
-            )
-            bash_command = self.__extend_tls_config(bash_command)
-
-            bash_command = self.__enrich_upgrade_install_command(
-                bash_command, dry_run, helm_command_config
-            )
-            try:
-                stdout = self.__execute(bash_command, dry_run=dry_run)
-                if dry_run and self._helm_config.diff.enable:
-                    current_release = Helm._helm_get_manifest(release_name, namespace)
-                    new_release = Helm.load_helm_manifest(stdout)
-                    self._helm_diff(current_release, new_release)
-
-            except Exception as e:
-                log.error(f"Could not install chart. More details: {e}")
-                exit(1)
-
-    def helm_uninstall(
-        self, namespace: str, release_name: str, dry_run: bool, suffix: str = ""
-    ) -> None:
-        """
-        Prepares and executes the helm uninstall command
-        """
-        bash_command = [
-            "helm",
-            "uninstall",
-            "--namespace",
-            namespace,
-            self.trim_release_name(release_name, suffix=suffix),
-        ]
-        if self._helm_config.context:
-            log.info(f"Uninstalling in k8s context {self._helm_config.context}")
-            bash_command.extend(["--kube-context", self._helm_config.context])
-        if dry_run:
-            bash_command.append("--dry-run")
-        try:
-            self.__execute(bash_command, dry_run=dry_run)
-        except ReleaseNotFoundException:
-            log.warning(f"Release not found {release_name}. Could not uninstall app.")
-        except RuntimeError as runtime_error:
-            log.error(
-                f"Could not uninstall app {release_name}. More details: {runtime_error}"
-            )
-            exit(1)
-
     def __extend_tls_config(self, bash_command: list[str]) -> list[str]:
         if self._helm_config.ca_file:
             bash_command.extend(["--ca-file", str(self._helm_config.ca_file)])
@@ -241,23 +247,18 @@ class Helm:
     ) -> list[str]:
         if dry_run:
             bash_command.append("--dry-run")
-        if helm_command_config.debug:
-            bash_command.append("--debug")
         if helm_command_config.force:
             bash_command.append("--force")
         if helm_command_config.wait:
             bash_command.append("--wait")
         if helm_command_config.wait_for_jobs:
             bash_command.append("--wait-for-jobs")
-        if self._helm_config.context:
-            log.info(f"Deploying in k8s context {self._helm_config.context}")
-            bash_command.extend(["--kube-context", self._helm_config.context])
-        if self._helm_config.version:
-            bash_command.extend(["--version", self._helm_config.version])
+        if helm_command_config.version:
+            bash_command.extend(["--version", helm_command_config.version])
         return bash_command
 
-    @classmethod
-    def __execute(cls, command: list[str], *, dry_run: bool) -> str:
+    def __execute(self, command: list[str], *, dry_run: bool) -> str:
+        command = self.__set_global_flags(command)
         log.debug(f"Executing {' '.join(command)}")
         process = subprocess.Popen(
             command,
@@ -272,6 +273,15 @@ class Helm:
 
         Helm.parse_helm_command_stderr_output(stderr)
         return stdout
+
+    def __set_global_flags(self, bash_command: list[str]) -> list[str]:
+        if self._context:
+            log.debug(f"Changing the Kubernetes context to {self._helm_config.context}")
+            bash_command.extend(["--kube-context", self._context])
+        if self._debug:
+            log.debug("Enabling verbose mode.")
+            bash_command.append("--debug")
+        return bash_command
 
     @staticmethod
     def parse_helm_command_stderr_output(stderr: str) -> None:

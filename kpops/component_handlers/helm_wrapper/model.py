@@ -14,24 +14,38 @@ class HelmDiffConfig(BaseModel):
     )
 
 
-class HelmConfig(BaseModel):
+class HelmRepoConfig(BaseModel):
     repository_name: str
     url: str
     version: str | None = None
-    context: str | None = None
     username: str | None = None
     password: str | None = None
-    diff: HelmDiffConfig = HelmDiffConfig()
-    namespace: str | None = None
     ca_file: Path | None = None
     insecure_skip_tls_verify: bool = False
 
 
+class HelmConfig(BaseModel):
+    context: str | None = None
+    debug: bool = False
+    namespace: str | None = None
+
+    # TODO: Remove these
+    repository_name: str
+    url: str
+    version: str | None = None
+    username: str | None = None
+    password: str | None = None
+    ca_file: Path | None = None
+    insecure_skip_tls_verify: bool = False
+
+    diff: HelmDiffConfig = HelmDiffConfig()
+
+
 @dataclass
 class HelmUpgradeInstallFlags:
-    debug: bool = False
     force: bool = False
     timeout: str = "5m0s"
+    version: str | None = None
     wait: bool = True
     wait_for_jobs: bool = False
 

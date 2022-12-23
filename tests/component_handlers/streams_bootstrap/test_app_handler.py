@@ -4,7 +4,10 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers.helm_wrapper.model import HelmConfig
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmConfig,
+    HelmUpgradeInstallFlags,
+)
 from kpops.component_handlers.streams_bootstrap.handler import (
     AppHandler,
     ApplicationType,
@@ -52,6 +55,7 @@ class TestKafkaAppDeployment:
             chart=f"{helm_config.repository_name}/{ApplicationType.STREAMS_APP.value}",
             values={"commandLine": "test"},
             dry_run=False,
+            flags=HelmUpgradeInstallFlags(version=None),
         )
 
     def test_should_call_helm_upgrade_install_for_producer_app(
@@ -71,6 +75,7 @@ class TestKafkaAppDeployment:
             dry_run=False,
             namespace="test-namespace",
             values={"commandLine": "test"},
+            flags=HelmUpgradeInstallFlags(version=None),
         )
 
     def test_should_call_run_command_method_when_helm_uninstall(
@@ -81,11 +86,9 @@ class TestKafkaAppDeployment:
             namespace="test-namespace",
             release_name="test-release",
             dry_run=False,
-            suffix="",
         )
         helm_wrapper_mock.helm_uninstall.assert_called_once_with(
             namespace="test-namespace",
             release_name="test-release",
             dry_run=False,
-            suffix="",
         )

@@ -154,8 +154,7 @@ class TestHelmWrapper:
             namespace="test-namespace",
             dry_run=True,
             values={"commandLine": "test"},
-            helm_command_config=HelmUpgradeInstallFlags(
-                debug=True,
+            flags=HelmUpgradeInstallFlags(
                 force=True,
                 timeout="120s",
                 wait=True,
@@ -175,7 +174,6 @@ class TestHelmWrapper:
                 "--values",
                 "values.yaml",
                 "--dry-run",
-                "--debug",
                 "--force",
                 "--wait",
                 "--wait-for-jobs",
@@ -192,7 +190,7 @@ class TestHelmWrapper:
             dry_run=False,
         )
         run_command.assert_called_once_with(
-            ["helm", "uninstall", "--namespace", "test-namespace", "test-release"],
+            ["helm", "uninstall", "test-release", "--namespace", "test-namespace"],
             dry_run=False,
         )
 
@@ -211,9 +209,9 @@ class TestHelmWrapper:
             [
                 "helm",
                 "uninstall",
+                "test-release",
                 "--namespace",
                 "test-namespace",
-                "test-release",
                 "--dry-run",
             ],
             dry_run=True,
@@ -371,7 +369,7 @@ foo: bar
         assert helm_templates[1].filepath == "chart/templates/test3b.yaml"
         assert helm_templates[1].template == {"foo": "bar"}
 
-    def test_get_manifest(self, run_command: MagicMock):
+    def test_get_manifest(self, helm_wrapper: Helm, run_command: MagicMock):
         run_command.return_value = """Release "test-release" has been upgraded. Happy Helming!
 NAME: test-release
 ---
@@ -380,9 +378,11 @@ data:
     - a: 1
     - b: 2
 """
-        helm_templates = list(Helm._helm_get_manifest("test-release", "test-namespace"))
+        helm_templates = list(
+            helm_wrapper.helm_get_manifest("test-release", "test-namespace")
+        )
         run_command.assert_called_once_with(
-            [
+            command=[
                 "helm",
                 "get",
                 "manifest",
@@ -397,24 +397,4 @@ data:
         assert helm_templates[0].template == {"data": [{"a": 1}, {"b": 2}]}
 
         run_command.side_effect = ReleaseNotFoundException()
-        assert Helm._helm_get_manifest("test-release", "test-namespace") == ()
-
-    def test_should_call_run_command_method_when_helm_uninstall_with_untrimmed_release_name(
-        self, helm_wrapper: Helm, run_command: MagicMock
-    ):
-        helm_wrapper.helm_uninstall(
-            namespace="test-namespace",
-            release_name="long-name-which-indicates-trimming-this-trim-is-dirty-and-this-suffix-should-be-gone-after",
-            dry_run=False,
-            suffix="-clean",
-        )
-        run_command.assert_called_once_with(
-            [
-                "helm",
-                "uninstall",
-                "--namespace",
-                "test-namespace",
-                "long-name-which-indicates-trimming-this-trim-is-clean",
-            ],
-            dry_run=False,
-        )
+        assert helm_wrapper.helm_get_manifest("test-release", "test-namespace") == ()

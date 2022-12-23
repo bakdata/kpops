@@ -21,13 +21,8 @@ log = logging.getLogger("StreamsBootstrapApp")
 class AppHandler:
     def __init__(self, helm_config: HelmConfig):
         self._helm_wrapper = Helm(helm_config)
-        self.streams_bootstrap_chart = (
-            f"{helm_config.repository_name}/{ApplicationType.STREAMS_APP.value}"
-        )
-        self.streams_bootstrap_clean_up_chart = (
-            f"{helm_config.repository_name}/{ApplicationType.CLEANUP_STREAMS_APP.value}"
-        )
         self.repository_name = helm_config.repository_name
+        self.chart_version = helm_config.version
         self._helm_wrapper.helm_repo_add(
             helm_config.repository_name,
             helm_config.url,
@@ -56,6 +51,7 @@ class AppHandler:
             dry_run=dry_run,
             namespace=namespace,
             values=values,
+            flags=HelmUpgradeInstallFlags(version=self.chart_version),
         )
 
     def uninstall_app(
@@ -75,12 +71,13 @@ class AppHandler:
         :param suffix: Suffix to be provided to helm_uninstall()
         """
 
+        # TODO: Trim suffix here
+
         try:
             self._helm_wrapper.helm_uninstall(
                 namespace=namespace,
                 release_name=release_name,
                 dry_run=dry_run,
-                suffix=suffix,
             )
         except Exception as e:
             if len(e.args) == 1 and "release: not found" in e.args[0]:
@@ -126,7 +123,9 @@ class AppHandler:
             dry_run=dry_run,
             namespace=namespace,
             values=values,
-            helm_command_config=HelmUpgradeInstallFlags(wait=True, wait_for_jobs=True),
+            flags=HelmUpgradeInstallFlags(
+                version=self.chart_version, wait=True, wait_for_jobs=True
+            ),
         )
         if not retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {release_name}")

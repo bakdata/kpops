@@ -79,6 +79,7 @@ class ConnectorHandler:
         )
 
         self.kafka_connect_resseter_chart = f"{helm_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}"
+        self.chart_version = helm_config.version
         self.namespace = (
             namespace  # namespace where the re-setter jobs should be deployed to
         )
@@ -240,7 +241,9 @@ class ConnectorHandler:
             namespace=self.namespace,
             chart=self.kafka_connect_resseter_chart,
             dry_run=dry_run,
-            helm_command_config=HelmUpgradeInstallFlags(wait_for_jobs=True, wait=True),
+            flags=HelmUpgradeInstallFlags(
+                version=self.chart_version, wait_for_jobs=True, wait=True
+            ),
             values={
                 **KafkaConnectResetterValues(
                     config=KafkaConnectResetterConfig(
@@ -262,10 +265,11 @@ class ConnectorHandler:
     def __delete_clean_up_job_release(
         self, release_name: str, suffix: str, dry_run: bool
     ) -> None:
+
+        # TODO: trim suffix here
         self._helm_wrapper.helm_uninstall(
             namespace=self.namespace,
             release_name=release_name,
-            suffix=suffix,
             dry_run=dry_run,
         )
 

@@ -307,7 +307,6 @@ class TestConnectorHandler:
                 mock.call.helm_uninstall(
                     namespace="test-namespace",
                     release_name="test-connector-clean",
-                    suffix="-clean",
                     dry_run=True,
                 ),
                 mock.call.helm_upgrade_install(
@@ -315,7 +314,8 @@ class TestConnectorHandler:
                     namespace="test-namespace",
                     chart=f"{helm_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}",
                     dry_run=True,
-                    helm_command_config=HelmUpgradeInstallFlags(
+                    flags=HelmUpgradeInstallFlags(
+                        version=None,
                         wait=True,
                         wait_for_jobs=True,
                     ),
@@ -375,7 +375,6 @@ class TestConnectorHandler:
                 mock.call.helm_uninstall(
                     namespace="test-namespace",
                     release_name="test-connector-clean",
-                    suffix="-clean",
                     dry_run=True,
                 ),
                 mock.call.helm_upgrade_install(
@@ -383,7 +382,8 @@ class TestConnectorHandler:
                     namespace="test-namespace",
                     chart=f"{helm_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}",
                     dry_run=True,
-                    helm_command_config=HelmUpgradeInstallFlags(
+                    flags=HelmUpgradeInstallFlags(
+                        version=None,
                         wait=True,
                         wait_for_jobs=True,
                     ),
@@ -392,7 +392,6 @@ class TestConnectorHandler:
                 mock.call.helm_uninstall(
                     namespace="test-namespace",
                     release_name="test-connector-clean",
-                    suffix="-clean",
                     dry_run=True,
                 ),
             ]
