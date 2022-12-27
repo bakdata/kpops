@@ -281,18 +281,14 @@ class ConnectorHandler:
     def __delete_clean_up_job_release(
         self, release_name: str, suffix: str, dry_run: bool
     ) -> None:
-
-        # TODO: trim suffix here
         self._helm_wrapper.helm_uninstall(
             namespace=self.namespace,
-            release_name=release_name,
+            release_name=trim_release_name(release_name, suffix),
             dry_run=dry_run,
         )
 
     @classmethod
-    def from_pipeline_config(
-        cls, pipeline_config: PipelineConfig
-    ) -> ConnectorHandler:  # TODO: annotate as typing.Self once mypy supports it
+    def from_pipeline_config(cls, pipeline_config: PipelineConfig) -> ConnectorHandler:
         return cls(
             connect_wrapper=ConnectWrapper(host=pipeline_config.kafka_connect_host),
             timeout=pipeline_config.timeout,

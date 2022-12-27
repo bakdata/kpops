@@ -107,13 +107,6 @@ class Helm:
             )
             try:
                 return self.__execute(bash_command)
-
-                # TODO: should go out of this method
-                # if dry_run and self._helm_config.diff.enable:
-                #     current_release = self.helm_get_manifest(release_name, namespace)
-                #     new_release = Helm.load_helm_manifest(stdout)
-                #     self._helm_diff(current_release, new_release)
-
             except Exception as e:
                 log.error(f"Could not install chart. More details: {e}")
                 exit(1)

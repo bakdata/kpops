@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterator
 
@@ -41,7 +41,7 @@ class RepoAuthFlags:
 @dataclass
 class HelmUpgradeInstallFlags:
     force: bool = False
-    repo_auth_flags: RepoAuthFlags = RepoAuthFlags()
+    repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
     timeout: str = "5m0s"
     version: str | None = None
     wait: bool = True
