@@ -69,7 +69,8 @@ class AppHandler:
                 release_name, namespace
             )
             new_release = Helm.load_helm_manifest(stdout)
-            self.helm_diff.get_diff(current_release, new_release)
+            helm_diff = HelmDiff.get_diff(current_release, new_release)
+            self.helm_diff.log_helm_diff(helm_diff, log)
 
     def uninstall_app(
         self,
