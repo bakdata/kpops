@@ -37,7 +37,7 @@ class TestHelmWrapper:
         helm_wrapper = Helm(helm_config=HelmConfig())
 
         chart = get_chart("bakdata-streams-bootstrap", ApplicationType.STREAMS_APP)
-        helm_wrapper.helm_upgrade_install(
+        helm_wrapper.upgrade_install(
             release_name="test-release",
             chart=chart,
             dry_run=False,
@@ -67,7 +67,7 @@ class TestHelmWrapper:
         self, run_command: MagicMock
     ):
         helm = Helm(HelmConfig())
-        helm.helm_repo_add(
+        helm.repo_add(
             "test-repository",
             "fake",
             RepoAuthFlags(ca_file=Path("a_file.ca"), insecure_skip_tls_verify=True),
@@ -96,7 +96,7 @@ class TestHelmWrapper:
         self, run_command: MagicMock
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
-        helm_wrapper.helm_upgrade_install(
+        helm_wrapper.upgrade_install(
             release_name="test-release",
             chart="test-repository/test-chart",
             dry_run=False,
@@ -133,7 +133,7 @@ class TestHelmWrapper:
         run_command: MagicMock,
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
-        helm_wrapper.helm_upgrade_install(
+        helm_wrapper.upgrade_install(
             release_name="test-release",
             chart="test-repository/streams-app",
             namespace="test-namespace",
@@ -169,7 +169,7 @@ class TestHelmWrapper:
         self, run_command: MagicMock
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
-        helm_wrapper.helm_uninstall(
+        helm_wrapper.uninstall(
             namespace="test-namespace",
             release_name="test-release",
             dry_run=False,
@@ -183,7 +183,7 @@ class TestHelmWrapper:
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
 
-        helm_wrapper.helm_uninstall(
+        helm_wrapper.uninstall(
             namespace="test-namespace",
             release_name="test-release",
             dry_run=True,
@@ -313,7 +313,7 @@ data:
     - b: 2
 """
         helm_templates = list(
-            helm_wrapper.helm_get_manifest("test-release", "test-namespace")
+            helm_wrapper.get_manifest("test-release", "test-namespace")
         )
         run_command.assert_called_once_with(
             command=[
@@ -330,4 +330,4 @@ data:
         assert helm_templates[0].template == {"data": [{"a": 1}, {"b": 2}]}
 
         run_command.side_effect = ReleaseNotFoundException()
-        assert helm_wrapper.helm_get_manifest("test-release", "test-namespace") == ()
+        assert helm_wrapper.get_manifest("test-release", "test-namespace") == ()

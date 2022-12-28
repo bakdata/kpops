@@ -28,7 +28,7 @@ class Helm:
         self._context = helm_config.context
         self._debug = helm_config.debug
 
-    def helm_repo_add(
+    def repo_add(
         self,
         repository_name: str,
         repository_url: str,
@@ -71,7 +71,7 @@ class Helm:
 
         self.__execute(["helm", "repo", "update", repository_name])
 
-    def helm_upgrade_install(
+    def upgrade_install(
         self,
         release_name: str,
         chart: str,
@@ -111,7 +111,7 @@ class Helm:
                 log.error(f"Could not install chart. More details: {e}")
                 exit(1)
 
-    def helm_uninstall(
+    def uninstall(
         self,
         namespace: str,
         release_name: str,
@@ -140,9 +140,7 @@ class Helm:
             )
             exit(1)
 
-    def helm_get_manifest(
-        self, release_name: str, namespace: str
-    ) -> Iterable[HelmTemplate]:
+    def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
         bash_command = [
             "helm",
             "get",

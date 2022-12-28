@@ -77,7 +77,7 @@ class ConnectorHandler:
         self._connect_wrapper = connect_wrapper
         self._timeout = timeout
         self._helm_wrapper = Helm(helm_config)
-        self._helm_wrapper.helm_repo_add(
+        self._helm_wrapper.repo_add(
             helm_repo_config.repository_name,
             helm_repo_config.url,
             RepoAuthFlags(
@@ -245,7 +245,7 @@ class ConnectorHandler:
             )
         )
 
-        stdout = self._helm_wrapper.helm_upgrade_install(
+        stdout = self._helm_wrapper.upgrade_install(
             release_name=trim_release_name(clean_up_release_name, suffix),
             namespace=self.namespace,
             chart=self.kafka_connect_resseter_chart,
@@ -268,7 +268,7 @@ class ConnectorHandler:
         )
 
         if dry_run and self.helm_diff.config.enable:
-            current_release = self._helm_wrapper.helm_get_manifest(
+            current_release = self._helm_wrapper.get_manifest(
                 clean_up_release_name, self.namespace
             )
             new_release = Helm.load_helm_manifest(stdout)
@@ -282,14 +282,16 @@ class ConnectorHandler:
     def __delete_clean_up_job_release(
         self, release_name: str, suffix: str, dry_run: bool
     ) -> None:
-        self._helm_wrapper.helm_uninstall(
+        self._helm_wrapper.uninstall(
             namespace=self.namespace,
             release_name=trim_release_name(release_name, suffix),
             dry_run=dry_run,
         )
 
     @classmethod
-    def from_pipeline_config(cls, pipeline_config: PipelineConfig) -> ConnectorHandler:
+    def from_pipeline_config(
+        cls, pipeline_config: PipelineConfig
+    ) -> ConnectorHandler:  # TODO: annotate as typing.Self once mypy supports it
         return cls(
             connect_wrapper=ConnectWrapper(host=pipeline_config.kafka_connect_host),
             timeout=pipeline_config.timeout,

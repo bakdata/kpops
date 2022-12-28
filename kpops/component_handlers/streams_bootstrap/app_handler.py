@@ -32,7 +32,7 @@ class AppHandler:
         self._helm_wrapper = Helm(helm_config)
         self.repository_name = helm_repo_config.repository_name
         self.chart_version = helm_repo_config.version
-        self._helm_wrapper.helm_repo_add(
+        self._helm_wrapper.repo_add(
             helm_repo_config.repository_name,
             helm_repo_config.url,
             RepoAuthFlags(
@@ -56,7 +56,7 @@ class AppHandler:
         :param values: The value YAML for the chart
         :param dry_run: sets the --dry-run flag
         """
-        stdout = self._helm_wrapper.helm_upgrade_install(
+        stdout = self._helm_wrapper.upgrade_install(
             release_name=release_name,
             chart=f"{self.repository_name}/{application_type.value}",
             dry_run=dry_run,
@@ -65,9 +65,7 @@ class AppHandler:
             flags=HelmUpgradeInstallFlags(version=self.chart_version),
         )
         if dry_run and self.helm_diff.config.enable:
-            current_release = self._helm_wrapper.helm_get_manifest(
-                release_name, namespace
-            )
+            current_release = self._helm_wrapper.get_manifest(release_name, namespace)
             new_release = Helm.load_helm_manifest(stdout)
             helm_diff = HelmDiff.get_diff(current_release, new_release)
             self.helm_diff.log_helm_diff(helm_diff, log)
@@ -88,12 +86,10 @@ class AppHandler:
         :param dry_run: Sets the --dry-run flag
         :param suffix: Suffix to be provided to helm_uninstall()
         """
-
-        release_name = trim_release_name(release_name, suffix)
         try:
-            self._helm_wrapper.helm_uninstall(
+            self._helm_wrapper.uninstall(
                 namespace=namespace,
-                release_name=release_name,
+                release_name=trim_release_name(release_name, suffix),
                 dry_run=dry_run,
             )
         except Exception as e:
@@ -134,7 +130,7 @@ class AppHandler:
         log.info(f"Init cleanup job for {release_name}")
         values["streams"]["deleteOutput"] = delete_outputs
 
-        stdout = self._helm_wrapper.helm_upgrade_install(
+        stdout = self._helm_wrapper.upgrade_install(
             release_name=trim_release_name(release_name, suffix),
             chart=f"{self.repository_name}/{app_type.value}",
             dry_run=dry_run,
@@ -146,11 +142,10 @@ class AppHandler:
         )
 
         if dry_run and self.helm_diff.config.enable:
-            current_release = self._helm_wrapper.helm_get_manifest(
-                release_name, namespace
-            )
+            current_release = self._helm_wrapper.get_manifest(release_name, namespace)
             new_release = Helm.load_helm_manifest(stdout)
             self.helm_diff.get_diff(current_release, new_release)
+
         if not retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {release_name}")
             self.uninstall_app(
@@ -161,7 +156,9 @@ class AppHandler:
             )
 
     @classmethod
-    def from_pipeline_config(cls, pipeline_config: PipelineConfig):
+    def from_pipeline_config(
+        cls, pipeline_config: PipelineConfig
+    ) -> AppHandler:  # TODO: annotate as typing.Self once mypy supports it
         return cls(
             helm_config=pipeline_config.helm_config,
             helm_repo_config=pipeline_config.streams_bootstrap_helm_config,
