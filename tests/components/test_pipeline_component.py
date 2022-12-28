@@ -39,7 +39,7 @@ class TestPipelineComponent:
                     "${error_topic_name}": TopicConfig(
                         type=OutputTopicTypes.ERROR, partitions_count=10
                     ),
-                    "${topic_name}": TopicConfig(
+                    "${output_topic_name}": TopicConfig(
                         type=OutputTopicTypes.OUTPUT, partitions_count=10
                     ),
                 },
