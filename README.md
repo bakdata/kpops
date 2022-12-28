@@ -12,12 +12,21 @@ the [documentation](https://bakdata.github.io/kpops/latest).
 - **Configure multiple pipelines and steps**: KPOps comes with various abstractions that simplify configuring multiple pipelines and steps within pipelines by sharing configuration between different applications, like producers or streaming applications.
 - **Customize your components**: KPOps comes with multiple base components (Kafka connect, producer, etc.) and allows you to introduce custom components.
 - **Handle your topics and schemas**: KPOps not only creates and deletes your topics but also registers and deletes your schemas.
-- **Manage the lifecycle of your components**: KPOps can deploy, destroy, reset, and clean your defined components from the Kubernetes cluster. 
+- **Manage the lifecycle of your components**: KPOps can deploy, destroy, reset, and clean your defined components from the Kubernetes cluster.
+
+## Install KPOps
+
+KPOps comes as a [PyPI package](https://pypi.org/project/kpops/). 
+You can install it with [pip](https://github.com/pypa/pip):
+
+```shell
+pip install kpops
+```
 
 ## Documentation
 
 - [What is KPOps?](https://bakdata.github.io/kpops/latest/user)
-- [Working with KPOps](https://bakdata.github.io/kpops/latest/user/getting-started/working-with-kpops)
+- [Getting started with KPOps](https://bakdata.github.io/kpops/latest/user/getting-started/)
 - [Examples](https://bakdata.github.io/kpops/latest/user/examples)
 
 ## Contributing

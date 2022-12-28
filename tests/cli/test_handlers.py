@@ -4,11 +4,11 @@ from pytest_mock import MockerFixture
 
 from kpops.cli.main import setup_handlers
 from kpops.cli.pipeline_config import PipelineConfig
-from kpops.cli.pipeline_handlers import PipelineHandlers
-from kpops.pipeline_deployer.kafka_connect.handler import ConnectorHandler
-from kpops.pipeline_deployer.schema_handler.schema_handler import SchemaHandler
-from kpops.pipeline_deployer.streams_bootstrap.handler import AppHandler
-from kpops.pipeline_deployer.topic.handler import TopicHandler
+from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers.kafka_connect.handler import ConnectorHandler
+from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
+from kpops.component_handlers.streams_bootstrap.handler import AppHandler
+from kpops.component_handlers.topic.handler import TopicHandler
 from tests.cli.resources.module import CustomSchemaProvider
 
 MODULE = CustomSchemaProvider.__module__
@@ -34,7 +34,7 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
     topic_handler = TopicHandler(wrapper)
     topic_handler_mock.return_value = topic_handler
 
-    expected = PipelineHandlers(
+    expected = ComponentHandlers(
         schema_handler=None,
         app_handler=app_handler,
         connector_handler=connector_handler,
@@ -43,12 +43,8 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
 
     actual_handlers = setup_handlers(MODULE, config)
 
-    app_handler_mock.from_pipeline_config.assert_called_once_with(
-        pipeline_config=config
-    )
-    connector_handler_mock.from_pipeline_config.assert_called_once_with(
-        pipeline_config=config
-    )
+    app_handler_mock.from_pipeline_config.assert_called_once_with(config)
+    connector_handler_mock.from_pipeline_config.assert_called_once_with(config)
 
     assert actual_handlers.schema_handler == expected.schema_handler
     assert actual_handlers.app_handler == expected.app_handler
@@ -85,7 +81,7 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     topic_handler = TopicHandler(wrapper)
     topic_handler_mock.return_value = topic_handler
 
-    expected = PipelineHandlers(
+    expected = ComponentHandlers(
         schema_handler=schema_handler,
         app_handler=app_handler,
         connector_handler=connector_handler,
@@ -96,12 +92,8 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
 
     schema_handler_mock.load_schema_handler.assert_called_once_with(MODULE, config)
 
-    app_handler_mock.from_pipeline_config.assert_called_once_with(
-        pipeline_config=config
-    )
-    connector_handler_mock.from_pipeline_config.assert_called_once_with(
-        pipeline_config=config
-    )
+    app_handler_mock.from_pipeline_config.assert_called_once_with(config)
+    connector_handler_mock.from_pipeline_config.assert_called_once_with(config)
 
     assert actual_handlers.schema_handler == expected.schema_handler
     assert actual_handlers.app_handler == expected.app_handler

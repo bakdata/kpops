@@ -9,9 +9,10 @@
 
 1. Clone the repository
    ```shell
-   git clone git@github.com:bakdata/kops.git
+   git clone git@github.com:bakdata/kpops.git
    ```
-2. Change directory to `kops`.
+2. Change directory to `kpops`.
+
 3. Install the documentation dependencies and use `just` to serve the docs:
    ```shell
    poetry install --with docs && \

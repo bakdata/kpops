@@ -1,7 +1,7 @@
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
 
-from kpops.cli.exception import PipelineStateNotInitializedException
+from kpops.component_handlers.streams_bootstrap.handler import ApplicationType
 from kpops.components.base_components.kafka_app import (
     KafkaApp,
     KafkaAppConfig,
@@ -11,7 +11,6 @@ from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.pipeline_deployer.streams_bootstrap.handler import ApplicationType
 
 
 class ProducerStreamsConfig(KafkaStreamsConfig):
@@ -59,18 +58,16 @@ class ProducerApp(KafkaApp):
         self.app.streams.extra_output_topics[role] = topic_name
 
     def deploy(self, dry_run: bool):
-        if self.pipeline_handlers is None:
-            raise PipelineStateNotInitializedException()
         if self.to:
-            self.pipeline_handlers.topic_handler.create_topics(
+            self.handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
             )
-            if self.pipeline_handlers.schema_handler:
-                self.pipeline_handlers.schema_handler.submit_schemas(
+            if self.handlers.schema_handler:
+                self.handlers.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
 
-        self.pipeline_handlers.app_handler.install_app(
+        self.handlers.app_handler.install_app(
             release_name=self.helm_release_name,
             namespace=self.app.namespace,
             values=self.to_helm_values(),
@@ -80,10 +77,8 @@ class ProducerApp(KafkaApp):
 
     def clean(self, delete_outputs: bool, dry_run: bool):
         if delete_outputs:
-            if self.pipeline_handlers is None:
-                raise PipelineStateNotInitializedException()
             # producer clean up job will delete output topics
-            self.pipeline_handlers.app_handler.clean_app(
+            self.handlers.app_handler.clean_app(
                 release_name=self.helm_release_name,
                 namespace=self.app.namespace,
                 dry_run=dry_run,
@@ -94,17 +89,13 @@ class ProducerApp(KafkaApp):
             )
             if (
                 self.to
-                and self.pipeline_handlers.schema_handler
+                and self.handlers.schema_handler
                 and self.config.clean_producer_schemas
             ):
-                self.pipeline_handlers.schema_handler.delete_schemas(
-                    self.to, dry_run=dry_run
-                )
+                self.handlers.schema_handler.delete_schemas(self.to, dry_run=dry_run)
 
     def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool):
-        if self.pipeline_handlers is None:
-            raise PipelineStateNotInitializedException()
-        self.pipeline_handlers.app_handler.uninstall_app(
+        self.handlers.app_handler.uninstall_app(
             release_name=self.helm_release_name,
             namespace=self.app.namespace,
             dry_run=dry_run,

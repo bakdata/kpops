@@ -4,7 +4,6 @@ import os
 
 from pydantic import BaseConfig, Extra, Field
 
-from kpops.cli.pipeline_handlers import PipelineHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
 )
@@ -26,10 +25,8 @@ class PipelineComponent(BaseDefaultsComponent):
     from_: FromSection | None = Field(default=None, alias="from")
     app: object | None = None
     to: ToSection | None = None
-    pipeline_handlers: PipelineHandlers | None = None
 
     class Config(BaseConfig):
-        arbitrary_types_allowed = True
         extra = Extra.allow
 
     def __init__(self, **kwargs):

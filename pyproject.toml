@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kpops"
-version = "0.2.4"
+version = "0.4.1"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
 authors = ["bakdata <opensource@bakdata.com>"]
 license = "MIT"

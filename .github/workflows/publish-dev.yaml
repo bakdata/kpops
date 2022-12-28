@@ -1,4 +1,4 @@
-name: Upload Python Package to TestPyPI
+name: Release Python package to TestPyPI
 
 on:
   workflow_call:
@@ -17,20 +17,20 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install python and set up Poetry and bump version with poetry
+      - name: Bump version
         id: bump_version
         uses: bakdata/ci-templates/actions/python-poetry-bump-version@v1.5.2
         with:
-          release-type: "minor"
+          release-type: "patch"
 
       - name: Get commit datetime
         id: get_commit_datetime
         run: |
           # Get the hash from HEAD and save it to the hash variable
-          echo "::set-output name=datetime::$(python ./.github/scripts/get-dev-version.py)"
+          echo "datetime=$(python ./.github/scripts/get-dev-version.py)" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Set version with poetry
+      - name: Set version with Poetry
         id: set_poetry_version
         run: |
           # Update the pyproject.toml version. Versioning format for dev packages: X.Y.Z.devN

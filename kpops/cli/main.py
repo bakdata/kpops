@@ -8,13 +8,13 @@ import typer
 
 from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
-from kpops.cli.pipeline_handlers import PipelineHandlers
 from kpops.cli.registry import Registry
-from kpops.pipeline_deployer.kafka_connect.handler import ConnectorHandler
-from kpops.pipeline_deployer.schema_handler.schema_handler import SchemaHandler
-from kpops.pipeline_deployer.streams_bootstrap.handler import AppHandler
-from kpops.pipeline_deployer.topic.handler import TopicHandler
-from kpops.pipeline_deployer.topic.proxy_wrapper import ProxyWrapper
+from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers.kafka_connect.handler import ConnectorHandler
+from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
+from kpops.component_handlers.streams_bootstrap.handler import AppHandler
+from kpops.component_handlers.topic.handler import TopicHandler
+from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.pipeline_generator.pipeline import Pipeline
 
 if TYPE_CHECKING:
@@ -90,7 +90,7 @@ logger.addHandler(stream_handler)
 log = logging.getLogger("")
 
 
-def enrich_pipeline(
+def setup_pipeline(
     pipeline_base_dir: Path,
     pipeline_path: Path,
     components_module: str | None,
@@ -101,28 +101,23 @@ def enrich_pipeline(
         registry.find_components(components_module)
     registry.find_components("kpops.components")
 
+    handlers = setup_handlers(components_module, pipeline_config)
     return Pipeline.load_from_yaml(
-        base_dir=pipeline_base_dir,
-        path=pipeline_path,
-        registry=registry,
-        config=pipeline_config,
+        pipeline_base_dir, pipeline_path, registry, pipeline_config, handlers
     )
 
 
 def setup_handlers(
     components_module: str | None, config: PipelineConfig
-) -> PipelineHandlers:
+) -> ComponentHandlers:
     schema_handler = SchemaHandler.load_schema_handler(components_module, config)
-    app_handler = AppHandler.from_pipeline_config(pipeline_config=config)
-    connector_handler = ConnectorHandler.from_pipeline_config(pipeline_config=config)
-    wrapper = ProxyWrapper(pipeline_config=config)
-    topic_handler = TopicHandler(proxy_wrapper=wrapper)
+    app_handler = AppHandler.from_pipeline_config(config)
+    connector_handler = ConnectorHandler.from_pipeline_config(config)
+    proxy_wrapper = ProxyWrapper(config)
+    topic_handler = TopicHandler(proxy_wrapper)
 
-    return PipelineHandlers(
-        schema_handler=schema_handler,
-        app_handler=app_handler,
-        connector_handler=connector_handler,
-        topic_handler=topic_handler,
+    return ComponentHandlers(
+        schema_handler, app_handler, connector_handler, topic_handler
     )
 
 
@@ -196,25 +191,11 @@ def run_destroy_clean_reset(
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, components_module, pipeline_config, pipeline_path
-    )
-    pipeline_handlers = setup_handlers(components_module, config=pipeline_config)
-    for component in reversed(get_steps_to_apply(pipeline, steps)):
-        log_action("Destroy", component)
-        component.pipeline_handlers = pipeline_handlers
-        component.destroy(dry_run=dry_run, clean=clean, delete_outputs=delete_outputs)
-
-
-def setup_pipeline(
-    pipeline_base_dir: Path,
-    components_module: str | None,
-    pipeline_config: PipelineConfig,
-    pipeline_path: Path,
-) -> Pipeline:
-    pipeline = enrich_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    return pipeline
+    for component in reversed(get_steps_to_apply(pipeline, steps)):
+        log_action("Destroy", component)
+        component.destroy(dry_run=dry_run, clean=clean, delete_outputs=delete_outputs)
 
 
 def create_pipeline_config(
@@ -245,7 +226,7 @@ def generate(
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
-    pipeline = enrich_pipeline(
+    pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
     if print_yaml:
@@ -272,17 +253,14 @@ def deploy(
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, components_module, pipeline_config, pipeline_path
+        pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
 
     steps_to_apply = get_steps_to_apply(pipeline, steps)
-    # init handlers (like schema handler)
-    pipeline_handlers = setup_handlers(components_module, config=pipeline_config)
+
     for component in steps_to_apply:
-        pipeline_component = component
-        pipeline_component.pipeline_handlers = pipeline_handlers
-        log_action("Deploy", pipeline_component)
-        pipeline_component.deploy(dry_run=dry_run)
+        log_action("Deploy", component)
+        component.deploy(dry_run=dry_run)
 
 
 @app.command(help="Destroy pipeline steps")

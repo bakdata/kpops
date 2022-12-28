@@ -14,6 +14,7 @@ from rich.syntax import Syntax
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import Registry
+from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import update_nested_pair
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.yaml_loading import load_yaml_file, substitute
@@ -59,8 +60,10 @@ class Pipeline:
         environment_components: list[dict],
         registry: Registry,
         config: PipelineConfig,
+        handlers: ComponentHandlers,
     ):
         self.components: list[PipelineComponent] = []
+        self.handlers = handlers
         self.config = config
         self.registry = registry
         self.parse_components(component_list, environment_components)
@@ -114,6 +117,7 @@ class Pipeline:
         path: Path,
         registry: Registry,
         config: PipelineConfig,
+        handlers: ComponentHandlers,
     ) -> Pipeline:
         Pipeline.set_pipeline_name_env_vars(base_dir, path)
         config.pipeline_prefix = Pipeline.substitute_pipeline_prefix(config)
@@ -132,7 +136,7 @@ class Pipeline:
                     f"The pipeline definition {env_file} should contain a list of components"
                 )
 
-        pipeline = cls(main_content, env_content, registry, config)
+        pipeline = cls(main_content, env_content, registry, config, handlers)
         return pipeline
 
     def parse_components(
@@ -198,7 +202,7 @@ class Pipeline:
         env_components_index: dict[str, dict],
     ) -> PipelineComponent:
         component_object: PipelineComponent = component_class(
-            config=self.config, **component
+            handlers=self.handlers, config=self.config, **component
         )
         env_component_definition = env_components_index.get(component_object.name, {})
         pair = update_nested_pair(
@@ -209,7 +213,12 @@ class Pipeline:
         json_object = self.substitute_component_specific_variables(
             component_object, pair
         )
-        return component_class(enrich=False, config=self.config, **json_object)
+        return component_class(
+            enrich=False,
+            handlers=self.handlers,
+            config=self.config,
+            **json_object,
+        )
 
     @staticmethod
     def substitute_component_specific_variables(

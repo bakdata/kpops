@@ -5,13 +5,12 @@ from typing import NoReturn
 
 from typing_extensions import override
 
-from kpops.cli.exception import PipelineStateNotInitializedException
 from kpops.cli.pipeline_config import ENV_PREFIX
+from kpops.component_handlers.kafka_connect.handler import KafkaConnectorType
+from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.pipeline_deployer.kafka_connect.handler import KafkaConnectorType
-from kpops.pipeline_deployer.kafka_connect.model import KafkaConnectConfig
 
 
 class KafkaConnector(PipelineComponent, ABC):
@@ -34,20 +33,17 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @override
     def deploy(self, dry_run: bool) -> None:
-        if not self.pipeline_handlers:
-            raise PipelineStateNotInitializedException()
-
         if self.to:
-            self.pipeline_handlers.topic_handler.create_topics(
+            self.handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
             )
 
-            if self.pipeline_handlers.schema_handler:
-                self.pipeline_handlers.schema_handler.submit_schemas(
+            if self.handlers.schema_handler:
+                self.handlers.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
 
-        self.pipeline_handlers.connector_handler.create_connector(
+        self.handlers.connector_handler.create_connector(
             connector_name=self.name, kafka_connect_config=self.app, dry_run=dry_run
         )
 
@@ -55,25 +51,20 @@ class KafkaConnector(PipelineComponent, ABC):
     def destroy(
         self, dry_run: bool, clean: bool = False, delete_outputs: bool = False
     ) -> None:
-        if not self.pipeline_handlers:
-            raise PipelineStateNotInitializedException()
-
-        self.pipeline_handlers.connector_handler.destroy_connector(
+        self.handlers.connector_handler.destroy_connector(
             connector_name=self.name, dry_run=dry_run
         )
 
         if clean:
             if delete_outputs and self.to:
                 if (
-                    self.pipeline_handlers.schema_handler
+                    self.handlers.schema_handler
                     and self.config.clean_kafka_connect_schemas
                 ):
-                    self.pipeline_handlers.schema_handler.delete_schemas(
+                    self.handlers.schema_handler.delete_schemas(
                         to_section=self.to, dry_run=dry_run
                     )
-                self.pipeline_handlers.topic_handler.delete_topics(
-                    self.to, dry_run=dry_run
-                )
+                self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
 
 
 class KafkaSourceConnector(KafkaConnector):
@@ -87,13 +78,10 @@ class KafkaSourceConnector(KafkaConnector):
     def destroy(
         self, dry_run: bool, clean: bool = False, delete_outputs: bool = False
     ) -> None:
-        if not self.pipeline_handlers:
-            raise PipelineStateNotInitializedException()
-
         super().destroy(dry_run, clean, delete_outputs)
 
         if clean:
-            self.pipeline_handlers.connector_handler.clean_connector(
+            self.handlers.connector_handler.clean_connector(
                 connector_name=self.name,
                 connector_type=KafkaConnectorType.SOURCE,
                 dry_run=dry_run,
@@ -126,13 +114,10 @@ class KafkaSinkConnector(KafkaConnector):
     def destroy(
         self, dry_run: bool, clean: bool = False, delete_outputs: bool = False
     ) -> None:
-        if not self.pipeline_handlers:
-            raise PipelineStateNotInitializedException()
-
         super().destroy(dry_run, clean, delete_outputs)
 
         if clean:
-            self.pipeline_handlers.connector_handler.clean_connector(
+            self.handlers.connector_handler.clean_connector(
                 connector_name=self.name,
                 connector_type=KafkaConnectorType.SINK,
                 dry_run=dry_run,
