@@ -11,7 +11,7 @@ kafka-app:
 producer:
   to:
     topics:
-      ${topic_name}:
+      ${output_topic_name}:
         type: output
         partitions_count: 3
 
@@ -24,6 +24,6 @@ streams-app:
       ${error_topic_name}:
         type: error
         partitions_count: 1
-      ${topic_name}:
+      ${output_topic_name}:
         type: output
         partitions_count: 3
