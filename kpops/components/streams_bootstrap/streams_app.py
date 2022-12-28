@@ -145,7 +145,7 @@ class StreamsApp(KafkaApp):
 
         self.handlers.app_handler.install_app(
             release_name=self.helm_release_name,
-            application_type=ApplicationType.STREAMS_APP,
+            application_type=ApplicationType.STREAMS_APP.value,
             namespace=self.app.namespace,
             values=self.to_helm_values(),
             dry_run=dry_run,
@@ -156,7 +156,7 @@ class StreamsApp(KafkaApp):
             release_name=self.helm_release_name,
             namespace=self.app.namespace,
             values=self.to_helm_values(),
-            app_type=ApplicationType.CLEANUP_STREAMS_APP,
+            app_type=ApplicationType.CLEANUP_STREAMS_APP.value,
             dry_run=dry_run,
             delete_outputs=delete_outputs,
             retain_clean_jobs=self.config.retain_clean_jobs,

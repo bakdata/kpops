@@ -17,9 +17,6 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectConfig,
     KafkaConnectorType,
 )
-from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
-    ApplicationType,
-)
 from kpops.utils.colorify import greenify, magentaify, yellowify
 
 CONNECTOR_NAME = "test-connector"
@@ -296,15 +293,15 @@ class TestConnectorHandler:
 
         helm_wrapper_mock.assert_has_calls(
             [
-                mock.call.helm_uninstall(
+                mock.call.uninstall(
                     namespace="test-namespace",
                     release_name="test-connector-clean",
                     dry_run=True,
                 ),
-                mock.call.helm_upgrade_install(
+                mock.call.upgrade_install(
                     release_name="test-connector-clean",
                     namespace="test-namespace",
-                    chart=f"{helm_repo_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}",
+                    chart=f"{helm_repo_config.repository_name}/kafka-connect-resetter",
                     dry_run=True,
                     flags=HelmUpgradeInstallFlags(
                         version="1.0.4",
@@ -359,15 +356,15 @@ class TestConnectorHandler:
 
         helm_wrapper_mock.assert_has_calls(
             [
-                mock.call.helm_uninstall(
+                mock.call.uninstall(
                     namespace="test-namespace",
                     release_name="test-connector-clean",
                     dry_run=True,
                 ),
-                mock.call.helm_upgrade_install(
+                mock.call.upgrade_install(
                     release_name="test-connector-clean",
                     namespace="test-namespace",
-                    chart=f"{helm_repo_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}",
+                    chart=f"{helm_repo_config.repository_name}/kafka-connect-resetter",
                     dry_run=True,
                     flags=HelmUpgradeInstallFlags(
                         version="1.0.4",
@@ -376,7 +373,7 @@ class TestConnectorHandler:
                     ),
                     values=values,
                 ),
-                mock.call.helm_uninstall(
+                mock.call.uninstall(
                     namespace="test-namespace",
                     release_name="test-connector-clean",
                     dry_run=True,

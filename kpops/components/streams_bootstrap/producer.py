@@ -1,7 +1,9 @@
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
 
-from kpops.component_handlers.streams_bootstrap.app_handler import ApplicationType
+from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
+    ApplicationType,
+)
 from kpops.components.base_components.kafka_app import (
     KafkaApp,
     KafkaAppConfig,
@@ -69,7 +71,7 @@ class ProducerApp(KafkaApp):
 
         self.handlers.app_handler.install_app(
             release_name=self.helm_release_name,
-            application_type=ApplicationType.PRODUCER_APP,
+            application_type=ApplicationType.PRODUCER_APP.value,
             namespace=self.app.namespace,
             values=self.to_helm_values(),
             dry_run=dry_run,
@@ -82,7 +84,7 @@ class ProducerApp(KafkaApp):
                 release_name=self.helm_release_name,
                 namespace=self.app.namespace,
                 values=self.to_helm_values(),
-                app_type=ApplicationType.CLEANUP_PRODUCER_APP,
+                app_type=ApplicationType.CLEANUP_PRODUCER_APP.value,
                 dry_run=dry_run,
                 delete_outputs=delete_outputs,
                 retain_clean_jobs=self.config.retain_clean_jobs,

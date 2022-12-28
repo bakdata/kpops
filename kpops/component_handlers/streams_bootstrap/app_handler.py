@@ -12,9 +12,6 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import trim_release_name
-from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
-    ApplicationType,
-)
 
 if TYPE_CHECKING:
     from kpops.cli.pipeline_config import PipelineConfig
@@ -44,7 +41,7 @@ class AppHandler:
     def install_app(
         self,
         release_name: str,
-        application_type: ApplicationType,
+        application_type: str,
         namespace: str,
         values: dict,
         dry_run: bool,
@@ -58,7 +55,7 @@ class AppHandler:
         """
         stdout = self._helm_wrapper.upgrade_install(
             release_name=release_name,
-            chart=f"{self.repository_name}/{application_type.value}",
+            chart=f"{self.repository_name}/{application_type}",
             dry_run=dry_run,
             namespace=namespace,
             values=values,
@@ -103,7 +100,7 @@ class AppHandler:
         release_name: str,
         namespace: str,
         values: dict,
-        app_type: ApplicationType,
+        app_type: str,
         dry_run: bool,
         delete_outputs: bool = False,
         retain_clean_jobs: bool = False,
@@ -132,7 +129,7 @@ class AppHandler:
 
         stdout = self._helm_wrapper.upgrade_install(
             release_name=trim_release_name(release_name, suffix),
-            chart=f"{self.repository_name}/{app_type.value}",
+            chart=f"{self.repository_name}/{app_type}",
             dry_run=dry_run,
             namespace=namespace,
             values=values,

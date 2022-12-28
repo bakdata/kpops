@@ -12,8 +12,8 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.component_handlers.streams_bootstrap.app_handler import (
-    AppHandler,
+from kpops.component_handlers.streams_bootstrap.app_handler import AppHandler
+from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
     ApplicationType,
 )
 
@@ -40,7 +40,7 @@ class TestKafkaAppDeployment:
     def test_should_call_helm_repo_add_when_initializing_app_handler(
         self, helm_wrapper_mock, handler: AppHandler
     ):
-        helm_wrapper_mock.helm_repo_add.assert_called_once_with(
+        helm_wrapper_mock.repo_add.assert_called_once_with(
             "bakdata-streams-bootstrap",
             "https://bakdata.github.io/streams-bootstrap/",
             RepoAuthFlags(),
@@ -51,12 +51,12 @@ class TestKafkaAppDeployment:
     ):
         handler.install_app(
             "test-release",
-            ApplicationType.STREAMS_APP,
+            ApplicationType.STREAMS_APP.value,
             "test-namespace",
             {"commandLine": "test"},
             False,
         )
-        helm_wrapper_mock.helm_upgrade_install.assert_called_once_with(
+        helm_wrapper_mock.upgrade_install.assert_called_once_with(
             release_name="test-release",
             namespace="test-namespace",
             chart=f"{handler.repository_name}/{ApplicationType.STREAMS_APP.value}",
@@ -70,12 +70,12 @@ class TestKafkaAppDeployment:
     ):
         handler.install_app(
             release_name="test-release",
-            application_type=ApplicationType.PRODUCER_APP,
+            application_type=ApplicationType.PRODUCER_APP.value,
             namespace="test-namespace",
             values={"commandLine": "test"},
             dry_run=False,
         )
-        helm_wrapper_mock.helm_upgrade_install.assert_called_once_with(
+        helm_wrapper_mock.upgrade_install.assert_called_once_with(
             release_name="test-release",
             chart=f"{handler.repository_name}/{ApplicationType.PRODUCER_APP.value}",
             dry_run=False,
@@ -92,7 +92,7 @@ class TestKafkaAppDeployment:
             release_name="test-release",
             dry_run=False,
         )
-        helm_wrapper_mock.helm_uninstall.assert_called_once_with(
+        helm_wrapper_mock.uninstall.assert_called_once_with(
             namespace="test-namespace",
             release_name="test-release",
             dry_run=False,

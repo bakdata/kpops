@@ -6,4 +6,3 @@ class ApplicationType(Enum):
     PRODUCER_APP = "producer-app"
     CLEANUP_STREAMS_APP = "streams-app-cleanup-job"
     CLEANUP_PRODUCER_APP = "producer-app-cleanup-job"
-    KAFKA_CONNECT_RESETTER = "kafka-connect-resetter"

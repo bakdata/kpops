@@ -22,9 +22,6 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorType,
 )
 from kpops.component_handlers.kafka_connect.timeout import timeout
-from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
-    ApplicationType,
-)
 from kpops.utils.colorify import greenify, magentaify, yellowify
 from kpops.utils.dict_differ import render_diff
 from kpops.utils.pydantic import CamelCaseConfig
@@ -86,7 +83,9 @@ class ConnectorHandler:
         )
         self.helm_diff = helm_diff
 
-        self.kafka_connect_resseter_chart = f"{helm_repo_config.repository_name}/{ApplicationType.KAFKA_CONNECT_RESETTER.value}"
+        self.kafka_connect_resseter_chart = (
+            f"{helm_repo_config.repository_name}/kafka-connect-resetter"
+        )
         self.chart_version = helm_repo_config.version
         self.namespace = (
             namespace  # namespace where the re-setter jobs should be deployed to
