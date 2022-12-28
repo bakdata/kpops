@@ -4,7 +4,7 @@ from pydantic import BaseConfig, BaseModel, Extra
 
 
 class TopicSpec(BaseModel):
-    output_topic_name: str
+    topic_name: str
     partitions_count: int | None
     replication_factor: int | None
     configs: list[dict[str, str]] | None
@@ -17,7 +17,7 @@ class TopicResponse(BaseModel):
     kind: str = "KafkaTopic"
     metadata: dict[str, str]
     cluster_id: str
-    output_topic_name: str
+    topic_name: str
     is_internal: bool
     replication_factor: int
     partitions: dict[str, str]

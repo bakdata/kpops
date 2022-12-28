@@ -59,7 +59,7 @@ class ProxyWrapper:
             json=topic_spec.dict(exclude_unset=True, exclude_none=True),
         )
         if response.status_code == requests.status_codes.codes.created:
-            log.info(f"Topic {topic_spec. output_topic_name} created.")
+            log.info(f"Topic {topic_spec.topic_name} created.")
             log.debug(response.json())
             return
 
