@@ -21,7 +21,7 @@ jobs:
         id: bump_version
         uses: bakdata/ci-templates/actions/python-poetry-bump-version@v1.5.2
         with:
-          release-type: "minor"
+          release-type: "patch"
 
       - name: Get commit datetime
         id: get_commit_datetime
