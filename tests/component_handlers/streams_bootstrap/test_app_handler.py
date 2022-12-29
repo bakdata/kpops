@@ -40,7 +40,7 @@ class TestKafkaAppDeployment:
     def test_should_call_helm_repo_add_when_initializing_app_handler(
         self, helm_wrapper_mock, handler: AppHandler
     ):
-        helm_wrapper_mock.repo_add.assert_called_once_with(
+        helm_wrapper_mock.add_repo.assert_called_once_with(
             "bakdata-streams-bootstrap",
             "https://bakdata.github.io/streams-bootstrap/",
             RepoAuthFlags(),

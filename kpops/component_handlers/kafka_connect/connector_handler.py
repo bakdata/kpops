@@ -74,7 +74,7 @@ class ConnectorHandler:
         self._connect_wrapper = connect_wrapper
         self._timeout = timeout
         self._helm_wrapper = Helm(helm_config)
-        self._helm_wrapper.repo_add(
+        self._helm_wrapper.add_repo(
             helm_repo_config.repository_name,
             helm_repo_config.url,
             RepoAuthFlags(
@@ -153,6 +153,57 @@ class ConnectorHandler:
                     f"Connector Destruction: the connector {connector_name} does not exist. Skipping."
                 )
 
+    def clean_connector(
+        self,
+        connector_name: str,
+        connector_type: KafkaConnectorType,
+        dry_run: bool,
+        retain_clean_jobs: bool,
+        **kwargs,
+    ) -> None:
+        """
+        Cleans the connector from the cluster. At first, it deletes the previous cleanup job (connector resetter)
+        to make sure that there is no running clean job in the cluster. Then it releases a cleanup job.
+        If the retain_clean_jobs flag is set to false the cleanup job will be deleted.
+        :param connector_name: Name of the connector
+        :param connector_type: Type of the connector (SINK or SOURCE)
+        :param dry_run: If the cleanup should be run in dry run mode or not
+        :param retain_clean_jobs: If the cleanup job should be kept
+        :param kwargs: Other values for the KafkaConnectResetter
+        """
+        suffix = "-clean"
+        clean_up_release_name = connector_name + suffix
+        trimmed_name = trim_release_name(clean_up_release_name, suffix)
+
+        log.info(
+            magentaify(
+                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {connector_name}"
+            )
+        )
+        self.__delete_clean_up_job_release(trimmed_name, dry_run)
+
+        log.info(
+            magentaify(
+                f"Connector Cleanup: deploy Connect {connector_type.value} resetter for {connector_name}"
+            )
+        )
+
+        stdout = self.__install_kafka_resetter(
+            trimmed_name, connector_name, connector_type, dry_run, kwargs
+        )
+
+        if dry_run and self.helm_diff.config.enable:
+            current_release = self._helm_wrapper.get_manifest(
+                trimmed_name, self.namespace
+            )
+            new_release = Helm.load_helm_manifest(stdout)
+            helm_diff = HelmDiff.get_diff(current_release, new_release)
+            self.helm_diff.log_helm_diff(helm_diff, log)
+
+        if not retain_clean_jobs:
+            log.info(magentaify("Connector Cleanup: uninstall cleanup job"))
+            self.__delete_clean_up_job_release(trimmed_name, dry_run)
+
     def __dry_run_connector_creation(
         self, connector_name: str, kafka_connect_config: KafkaConnectConfig
     ) -> None:
@@ -210,42 +261,16 @@ class ConnectorHandler:
                 f"Connector Destruction: connector {connector_name} does not exist and cannot be deleted. Skipping."
             )
 
-    def clean_connector(
+    def __install_kafka_resetter(
         self,
+        release_name: str,
         connector_name: str,
         connector_type: KafkaConnectorType,
         dry_run: bool,
-        retain_clean_jobs: bool,
-        **kwargs,
-    ) -> None:
-        """
-        Cleans the connector from the cluster. At first, it deletes the previous cleanup job (connector resetter)
-        to make sure that there is no running clean job in the cluster. Then it releases a cleanup job.
-        If the retain_clean_jobs flag is set to false the cleanup job will be deleted.
-        :param connector_name: Name of the connector
-        :param connector_type: Type of the connector (SINK or SOURCE)
-        :param dry_run: If the cleanup should be run in dry run mode or not
-        :param retain_clean_jobs: If the cleanup job should be kept
-        :param kwargs: Other values for the KafkaConnectResetter
-        """
-        suffix = "-clean"
-        clean_up_release_name = connector_name + suffix
-
-        log.info(
-            magentaify(
-                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {connector_name}"
-            )
-        )
-        self.__delete_clean_up_job_release(clean_up_release_name, suffix, dry_run)
-
-        log.info(
-            magentaify(
-                f"Connector Cleanup: deploy Connect {connector_type.value} resetter for {connector_name}"
-            )
-        )
-
-        stdout = self._helm_wrapper.upgrade_install(
-            release_name=trim_release_name(clean_up_release_name, suffix),
+        kwargs,
+    ) -> str:
+        return self._helm_wrapper.upgrade_install(
+            release_name=release_name,
             namespace=self.namespace,
             chart=self.kafka_connect_resseter_chart,
             dry_run=dry_run,
@@ -266,24 +291,10 @@ class ConnectorHandler:
             },
         )
 
-        if dry_run and self.helm_diff.config.enable:
-            current_release = self._helm_wrapper.get_manifest(
-                clean_up_release_name, self.namespace
-            )
-            new_release = Helm.load_helm_manifest(stdout)
-            helm_diff = HelmDiff.get_diff(current_release, new_release)
-            self.helm_diff.log_helm_diff(helm_diff, log)
-
-        if not retain_clean_jobs:
-            log.info(magentaify("Connector Cleanup: uninstall cleanup job"))
-            self.__delete_clean_up_job_release(clean_up_release_name, suffix, dry_run)
-
-    def __delete_clean_up_job_release(
-        self, release_name: str, suffix: str, dry_run: bool
-    ) -> None:
+    def __delete_clean_up_job_release(self, release_name: str, dry_run: bool) -> None:
         self._helm_wrapper.uninstall(
             namespace=self.namespace,
-            release_name=trim_release_name(release_name, suffix),
+            release_name=release_name,
             dry_run=dry_run,
         )
 

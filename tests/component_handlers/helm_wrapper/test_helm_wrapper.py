@@ -12,7 +12,6 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import get_chart
 from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
     ApplicationType,
 )
@@ -36,10 +35,9 @@ class TestHelmWrapper:
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
 
-        chart = get_chart("bakdata-streams-bootstrap", ApplicationType.STREAMS_APP)
         helm_wrapper.upgrade_install(
             release_name="test-release",
-            chart=chart,
+            chart=f"bakdata-streams-bootstrap/{ApplicationType.STREAMS_APP.value}",
             dry_run=False,
             namespace="test-namespace",
             values={"commandLine": "test"},
@@ -67,7 +65,7 @@ class TestHelmWrapper:
         self, run_command: MagicMock
     ):
         helm = Helm(HelmConfig())
-        helm.repo_add(
+        helm.add_repo(
             "test-repository",
             "fake",
             RepoAuthFlags(ca_file=Path("a_file.ca"), insecure_skip_tls_verify=True),

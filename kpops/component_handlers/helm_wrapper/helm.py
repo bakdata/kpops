@@ -20,15 +20,13 @@ from kpops.component_handlers.helm_wrapper.model import (
 
 log = logging.getLogger("Helm")
 
-RELEASE_NAME_MAX_LEN = 53
-
 
 class Helm:
     def __init__(self, helm_config: HelmConfig) -> None:
         self._context = helm_config.context
         self._debug = helm_config.debug
 
-    def repo_add(
+    def add_repo(
         self,
         repository_name: str,
         repository_url: str,

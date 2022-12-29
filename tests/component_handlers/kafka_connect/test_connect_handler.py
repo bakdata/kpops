@@ -192,7 +192,7 @@ class TestConnectorHandler:
     def test_should_print_correct_log_when_destroying_connector_in_dry_run(
         self,
         log_info_mock: MagicMock,
-        helm_repo_config,
+        helm_repo_config: HelmRepoConfig,
     ):
         connector_wrapper = MagicMock()
 
@@ -314,7 +314,10 @@ class TestConnectorHandler:
         )
 
     def test_should_call_helm_upgrade_install_and_uninstall_when_clean_connector_with_retain_clean_jobs_false(
-        self, log_info_mock: MagicMock, helm_repo_config, helm_wrapper_mock
+        self,
+        log_info_mock: MagicMock,
+        helm_repo_config: HelmRepoConfig,
+        helm_wrapper_mock: MagicMock,
     ):
         values = {
             "config": {
@@ -381,15 +384,101 @@ class TestConnectorHandler:
             ]
         )
 
+    def test_should_trim_long_name_when_cleaning_connector(
+        self,
+        helm_repo_config: HelmRepoConfig,
+        helm_wrapper_mock: MagicMock,
+    ):
+        long_name = "long-name-which-indicates-trimming-this-trim-is-dirty-and-this-suffix-should-be-gone-after"
+        values = {
+            "config": {
+                "brokers": "127.0.0.1",
+                "connector": long_name,
+                "offsetTopic": "kafka-connect-offsets",
+            },
+            "connectorType": "source",
+            "nameOverride": long_name,
+        }
+        connector_wrapper = MagicMock()
+        handler = self.create_connector_handler(
+            connector_wrapper, helm_repo_config, values
+        )
+
+        handler.clean_connector(
+            connector_name=long_name,
+            connector_type=KafkaConnectorType.SOURCE,
+            dry_run=False,
+            retain_clean_jobs=False,
+        )
+        helm_wrapper_mock.assert_has_calls(
+            [
+                mock.call.uninstall(
+                    namespace="test-namespace",
+                    release_name="long-name-which-indicates-trimming-this-trim-i-clean",
+                    dry_run=False,
+                ),
+                mock.call.upgrade_install(
+                    release_name="long-name-which-indicates-trimming-this-trim-i-clean",
+                    namespace="test-namespace",
+                    chart=f"{helm_repo_config.repository_name}/kafka-connect-resetter",
+                    dry_run=False,
+                    flags=HelmUpgradeInstallFlags(
+                        version="1.0.4",
+                        wait=True,
+                        wait_for_jobs=True,
+                    ),
+                    values=values,
+                ),
+                mock.call.uninstall(
+                    namespace="test-namespace",
+                    release_name="long-name-which-indicates-trimming-this-trim-i-clean",
+                    dry_run=False,
+                ),
+            ]
+        )
+
+    def test_should_log_helm_diff_when_dry_run_and_enabled(
+        self,
+        helm_repo_config: HelmRepoConfig,
+        helm_wrapper_mock: MagicMock,
+    ):
+        values = {
+            "config": {
+                "brokers": "127.0.0.1",
+                "connector": CONNECTOR_NAME,
+                "offsetTopic": "kafka-connect-offsets",
+            },
+            "connectorType": "source",
+            "nameOverride": CONNECTOR_NAME,
+        }
+
+        connector_wrapper = MagicMock()
+        helm_diff = MagicMock()
+        handler = self.create_connector_handler(
+            connector_wrapper, helm_repo_config, values, helm_diff
+        )
+
+        handler.clean_connector(
+            connector_name=CONNECTOR_NAME,
+            connector_type=KafkaConnectorType.SOURCE,
+            dry_run=True,
+            retain_clean_jobs=False,
+        )
+
+        helm_wrapper_mock.get_manifest.assert_called_once_with(
+            "test-connector-clean", "test-namespace"
+        )
+        helm_diff.log_helm_diff.assert_called_once()
+
     @staticmethod
     def create_connector_handler(
         connector_wrapper: MagicMock | ConnectWrapper,
         helm_repo_config: HelmRepoConfig,
         values=None,
+        helm_diff: HelmDiff | MagicMock = HelmDiff(HelmDiffConfig()),
     ) -> ConnectorHandler:
         if values is None:
             values = {}
-        helm_diff = HelmDiff(HelmDiffConfig())
         return ConnectorHandler(
             connector_wrapper,
             0,

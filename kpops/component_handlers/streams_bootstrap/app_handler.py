@@ -29,7 +29,7 @@ class AppHandler:
         self._helm_wrapper = Helm(helm_config)
         self.repository_name = helm_repo_config.repository_name
         self.chart_version = helm_repo_config.version
-        self._helm_wrapper.repo_add(
+        self._helm_wrapper.add_repo(
             helm_repo_config.repository_name,
             helm_repo_config.url,
             RepoAuthFlags(
