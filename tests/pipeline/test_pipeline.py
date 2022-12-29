@@ -209,7 +209,8 @@ class TestPipeline:
         enriched_pipeline = load_yaml_file(Path(output_file_path))
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    def test_without_default_topics(self, tmpdir, snapshot):
+    def test_without_config(self, tmpdir, snapshot):
+        os.environ["KPOPS_ENVIRONMENT"] = "development"
         output_file_path = tmpdir.join("pipeline.yaml")
         result = runner.invoke(
             app,
@@ -225,15 +226,14 @@ class TestPipeline:
                 str(RESOURCE_PATH / "no-topics-defaults"),
             ],
         )
-        print(result)
+
         assert result.exit_code == 0, result.exception
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
-        print(enriched_pipeline)
-        for app_app_details in enriched_pipeline["components"]:
-            nameOverride = app_app_details["nameOverride"]
-            outup_topic = app_app_details["streams"]["outputTopic"]
-            error_topic = app_app_details["streams"]["errorTopic"]
+        for app_details in enriched_pipeline["components"]:
+            nameOverride = app_details["nameOverride"]
+            outup_topic = app_details["streams"]["outputTopic"]
+            error_topic = app_details["streams"]["errorTopic"]
 
             assert outup_topic == nameOverride
             assert error_topic == nameOverride + "-error"
@@ -258,12 +258,9 @@ class TestPipeline:
                 str(RESOURCE_PATH / "customed-config/config.yaml"),
             ],
         )
-        print(result)
-
         assert result.exit_code == 0, result.exception
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
-        print(enriched_pipeline)
         for app_details in enriched_pipeline["components"]:
             outup_topic = app_details["streams"]["outputTopic"]
             error_topic = app_details["streams"]["errorTopic"]
