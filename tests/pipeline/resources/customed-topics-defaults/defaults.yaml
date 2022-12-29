@@ -1,0 +1,9 @@
+producer:
+  to:
+    topics:
+      ${error_topic_name}:
+        type: error
+        partitions_count: 1
+      ${output_topic_name}:
+        type: output
+        partitions_count: 3

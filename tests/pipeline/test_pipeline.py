@@ -208,3 +208,61 @@ class TestPipeline:
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_without_default_topics(self, tmpdir, snapshot):
+        output_file_path = tmpdir.join("pipeline.yaml")
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "no-topics/pipeline.yaml"),
+                "--save",
+                "--out-path",
+                output_file_path,
+            ],
+        )
+
+        assert result.exit_code == 0, result.exception
+
+        enriched_pipeline = load_yaml_file(Path(output_file_path))
+        for app in enriched_pipeline["components"]:
+            nameOverride = app["nameOverride"]
+            outup_topic = app["streams"]["outputTopic"]
+            error_topic = app["streams"]["errorTopic"]
+
+            assert outup_topic == nameOverride
+            assert error_topic == nameOverride + "-error"
+
+        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def with_customed_config(self, tmpdir, snapshot):
+        output_file_path = tmpdir.join("pipeline.yaml")
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "customed-config/pipeline.yaml"),
+                "--save",
+                "--out-path",
+                output_file_path,
+                "--defaults",
+                str(RESOURCE_PATH / "customed-topics-defaults"),
+                "--config",
+                str(RESOURCE_PATH / "customed-config/config.yaml"),
+            ],
+        )
+
+        assert result.exit_code == 0, result.exception
+
+        enriched_pipeline = load_yaml_file(Path(output_file_path))
+        for app in enriched_pipeline["components"]:
+            outup_topic = app["streams"]["outputTopic"]
+            error_topic = app["streams"]["errorTopic"]
+
+            assert outup_topic == "random-topic"
+            assert error_topic == "random-error"
+        snapshot.assert_match(enriched_pipeline, "test-pipeline")
