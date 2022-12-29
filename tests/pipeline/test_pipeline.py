@@ -227,10 +227,10 @@ class TestPipeline:
         assert result.exit_code == 0, result.exception
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
-        for app in enriched_pipeline["components"]:
-            nameOverride = app["nameOverride"]
-            outup_topic = app["streams"]["outputTopic"]
-            error_topic = app["streams"]["errorTopic"]
+        for app_app_details in enriched_pipeline["components"]:
+            nameOverride = app_app_details["nameOverride"]
+            outup_topic = app_app_details["streams"]["outputTopic"]
+            error_topic = app_app_details["streams"]["errorTopic"]
 
             assert outup_topic == nameOverride
             assert error_topic == nameOverride + "-error"
@@ -259,9 +259,9 @@ class TestPipeline:
         assert result.exit_code == 0, result.exception
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
-        for app in enriched_pipeline["components"]:
-            outup_topic = app["streams"]["outputTopic"]
-            error_topic = app["streams"]["errorTopic"]
+        for app_details in enriched_pipeline["components"]:
+            outup_topic = app_details["streams"]["outputTopic"]
+            error_topic = app_details["streams"]["errorTopic"]
 
             assert outup_topic == "random-topic"
             assert error_topic == "random-error"
