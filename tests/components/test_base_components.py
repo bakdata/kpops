@@ -341,7 +341,7 @@ class TestStreamsApp:
                 mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=True),
                 mocker.call.mock_install_app(
                     release_name="example-name",
-                    application_type=ApplicationType.STREAMS_APP,
+                    application_type=ApplicationType.STREAMS_APP.value,
                     namespace="test-namespace",
                     values={
                         "namespace": "test-namespace",
@@ -438,7 +438,7 @@ class TestProducerApp:
                 mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=True),
                 mocker.call.mock_install_app(
                     release_name="example-name",
-                    application_type=ApplicationType.PRODUCER_APP,
+                    application_type=ApplicationType.PRODUCER_APP.value,
                     namespace="test-namespace",
                     values={
                         "namespace": "test-namespace",
