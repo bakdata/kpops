@@ -225,7 +225,7 @@ class TestPipeline:
                 str(RESOURCE_PATH / "no-topics-defaults"),
             ],
         )
-
+        print(result)
         assert result.exit_code == 0, result.exception
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
@@ -258,6 +258,7 @@ class TestPipeline:
                 str(RESOURCE_PATH / "customed-config/config.yaml"),
             ],
         )
+        print(result)
 
         assert result.exit_code == 0, result.exception
 
