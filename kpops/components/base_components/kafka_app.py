@@ -47,6 +47,7 @@ class KafkaApp(KubernetesApp):
                 self.app.streams.schema_registry_url,
                 {"schema_registry_url": self.config.schema_registry_url},
             )
+        self.chart_version = self.config.streams_bootstrap_helm_config.version
 
     def get_clean_up_helm_chart(self):
         raise NotImplementedError()

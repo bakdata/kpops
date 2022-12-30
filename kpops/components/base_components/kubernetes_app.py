@@ -1,7 +1,7 @@
 import logging
 import re
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
@@ -32,6 +32,8 @@ class KubernetesApp(PipelineComponent):
 
     _type = "kubernetes-app"
     app: KubernetesAppConfig
+
+    chart_version: str | None = Field(default=None, exclude=True)
 
     _helm_wrapper: Helm | None = None
     _helm_diff: HelmDiff | None = None
@@ -110,14 +112,11 @@ class KubernetesApp(PipelineComponent):
     def get_helm_repo_config(self) -> HelmRepoConfig | None:
         return None
 
-    def get_helm_chart_version(self) -> str | None:
-        helm_repo_config = self.get_helm_repo_config()
-        if helm_repo_config:
-            return helm_repo_config.version
-        return None
-
     def get_helm_chart(self) -> str:
         raise NotImplementedError()
+
+    def get_helm_chart_version(self) -> str | None:
+        return self.chart_version
 
     def __check_compatible_name(self) -> None:
         if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(self.name)):  # TODO: SMARTER
