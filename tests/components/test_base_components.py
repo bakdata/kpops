@@ -6,8 +6,9 @@ from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
-    ApplicationType,
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmUpgradeInstallFlags,
+    RepoAuthFlags,
 )
 from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.kubernetes_app import (
@@ -41,7 +42,6 @@ def config() -> PipelineConfig:
 def handlers() -> ComponentHandlers:
     return ComponentHandlers(
         schema_handler=MagicMock(),
-        app_handler=MagicMock(),
         connector_handler=MagicMock(),
         topic_handler=MagicMock(),
     )
@@ -324,24 +324,26 @@ class TestStreamsApp:
             },
         )
         streams_app.handlers = MagicMock()
-
         mock_create_topics = mocker.patch.object(
             streams_app.handlers.topic_handler, "create_topics"
         )
-        mock_install_app = mocker.patch.object(
-            streams_app.handlers.app_handler, "install_app"
+        mock_helm_upgrade_install = mocker.patch.object(
+            streams_app.helm_wrapper, "upgrade_install"
         )
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_create_topics, "mock_create_topics")
-        mock.attach_mock(mock_install_app, "mock_install_app")
+        mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
+
         streams_app.deploy(dry_run=True)
+
         mock.assert_has_calls(
             [
                 mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=True),
-                mocker.call.mock_install_app(
+                mocker.call.mock_helm_upgrade_install(
                     release_name="example-name",
-                    application_type=ApplicationType.STREAMS_APP.value,
+                    chart="bakdata-streams-bootstrap/streams-app",
+                    dry_run=True,
                     namespace="test-namespace",
                     values={
                         "namespace": "test-namespace",
@@ -351,7 +353,19 @@ class TestStreamsApp:
                             "errorTopic": "streams-app-error-topic",
                         },
                     },
-                    dry_run=True,
+                    flags=HelmUpgradeInstallFlags(
+                        force=False,
+                        repo_auth_flags=RepoAuthFlags(
+                            username=None,
+                            password=None,
+                            ca_file=None,
+                            insecure_skip_tls_verify=False,
+                        ),
+                        timeout="5m0s",
+                        version="2.4.2",
+                        wait=True,
+                        wait_for_jobs=False,
+                    ),
                 ),
             ],
             any_order=False,
@@ -396,7 +410,7 @@ class TestProducerApp:
         handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
-        streams_app = ProducerApp(
+        producer_app = ProducerApp(
             handlers=handlers,
             config=config,
             **{
@@ -420,25 +434,30 @@ class TestProducerApp:
                 },
             },
         )
-        streams_app.handlers = MagicMock()
+        producer_app.handlers = MagicMock()
 
-        mock_install_app = mocker.patch.object(
-            streams_app.handlers.app_handler, "install_app"
-        )
         mock_create_topics = mocker.patch.object(
-            streams_app.handlers.topic_handler, "create_topics"
+            producer_app.handlers.topic_handler, "create_topics"
+        )
+
+        mock_helm_upgrade_install = mocker.patch.object(
+            producer_app.helm_wrapper, "upgrade_install"
         )
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_create_topics, "mock_create_topics")
-        mock.attach_mock(mock_install_app, "mock_install_app")
-        streams_app.deploy(dry_run=True)
+        mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
+
+        producer_app.deploy(dry_run=True)
         mock.assert_has_calls(
             [
-                mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=True),
-                mocker.call.mock_install_app(
+                mocker.call.mock_create_topics(
+                    to_section=producer_app.to, dry_run=True
+                ),
+                mocker.call.mock_helm_upgrade_install(
                     release_name="example-name",
-                    application_type=ApplicationType.PRODUCER_APP.value,
+                    chart="bakdata-streams-bootstrap/producer-app",
+                    dry_run=True,
                     namespace="test-namespace",
                     values={
                         "namespace": "test-namespace",
@@ -447,7 +466,19 @@ class TestProducerApp:
                             "outputTopic": "producer-output-topic",
                         },
                     },
-                    dry_run=True,
+                    flags=HelmUpgradeInstallFlags(
+                        force=False,
+                        repo_auth_flags=RepoAuthFlags(
+                            username=None,
+                            password=None,
+                            ca_file=None,
+                            insecure_skip_tls_verify=False,
+                        ),
+                        timeout="5m0s",
+                        version="2.4.2",
+                        wait=True,
+                        wait_for_jobs=False,
+                    ),
                 ),
             ],
             any_order=False,

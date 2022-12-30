@@ -12,9 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.component_handlers.streams_bootstrap.streams_bootstrap_application_type import (
-    ApplicationType,
-)
+from kpops.components.streams_bootstrap.app_type import AppType
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
@@ -37,7 +35,7 @@ class TestHelmWrapper:
 
         helm_wrapper.upgrade_install(
             release_name="test-release",
-            chart=f"bakdata-streams-bootstrap/{ApplicationType.STREAMS_APP.value}",
+            chart=f"bakdata-streams-bootstrap/{AppType.STREAMS_APP.value}",
             dry_run=False,
             namespace="test-namespace",
             values={"commandLine": "test"},

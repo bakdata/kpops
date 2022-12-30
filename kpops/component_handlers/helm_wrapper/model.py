@@ -9,7 +9,7 @@ from pydantic import BaseModel, Field
 class HelmDiffConfig(BaseModel):
     enable: bool = False
     ignore: set[str] = Field(
-        default_factory=set,
+        default_factory=dict,
         description="keypaths using dot-notation to exclude",
     )
 
@@ -24,8 +24,7 @@ class HelmRepoConfig(BaseModel):
     insecure_skip_tls_verify: bool = False
 
 
-@dataclass
-class HelmConfig:
+class HelmConfig(BaseModel):
     context: str | None = None
     debug: bool = False
 

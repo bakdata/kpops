@@ -44,7 +44,6 @@ def config():
 def handlers() -> ComponentHandlers:
     return ComponentHandlers(
         schema_handler=MagicMock(),
-        app_handler=MagicMock(),
         connector_handler=MagicMock(),
         topic_handler=MagicMock(),
     )
