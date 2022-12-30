@@ -11,10 +11,6 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
 )
 from kpops.components.base_components import KafkaApp
-from kpops.components.base_components.kubernetes_app import (
-    KubernetesApp,
-    KubernetesAppConfig,
-)
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -45,37 +41,6 @@ def handlers() -> ComponentHandlers:
         connector_handler=MagicMock(),
         topic_handler=MagicMock(),
     )
-
-
-class TestKubernetesApp:
-    def test_name_check(self, config: PipelineConfig, handlers: ComponentHandlers):
-        app_config = KubernetesAppConfig(namespace="test")
-
-        assert KubernetesApp(
-            _type="test",
-            handlers=handlers,
-            app=app_config,
-            config=config,
-            name="example-component-with-very-long-name-longer-than-most-of-our-kubernetes-apps",
-        )
-
-        with pytest.raises(ValueError):
-            assert KubernetesApp(
-                _type="test",
-                handlers=handlers,
-                app=app_config,
-                config=config,
-                name="Not-Compatible*",
-            )
-
-        with pytest.raises(ValueError):
-            assert KubernetesApp(
-                _type="test",
-                handlers=handlers,
-                app=app_config,
-                config=config,
-                name="snake_case",
-            )
 
 
 class TestKafkaApp:

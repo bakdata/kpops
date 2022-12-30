@@ -14,27 +14,24 @@ class HelmDiffConfig(BaseModel):
     )
 
 
-class HelmRepoConfig(BaseModel):
-    repository_name: str
-    url: str
-    version: str | None = None
-    username: str | None = None
-    password: str | None = None
-    ca_file: Path | None = None
-    insecure_skip_tls_verify: bool = False
-
-
-class HelmConfig(BaseModel):
-    context: str | None = None
-    debug: bool = False
-
-
 @dataclass
 class RepoAuthFlags:
     username: str | None = None
     password: str | None = None
     ca_file: Path | None = None
     insecure_skip_tls_verify: bool = False
+
+
+class HelmRepoConfig(BaseModel):
+    repository_name: str
+    url: str
+    version: str | None = None
+    repo_auth_flags: RepoAuthFlags = RepoAuthFlags()
+
+
+class HelmConfig(BaseModel):
+    context: str | None = None
+    debug: bool = False
 
 
 @dataclass

@@ -12,7 +12,6 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
-    RepoAuthFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import trim_release_name
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
@@ -77,9 +76,7 @@ class ConnectorHandler:
         self._helm_wrapper.add_repo(
             helm_repo_config.repository_name,
             helm_repo_config.url,
-            RepoAuthFlags(
-                username=helm_repo_config.username, password=helm_repo_config.password
-            ),
+            helm_repo_config.repo_auth_flags,
         )
         self.helm_diff = helm_diff
 

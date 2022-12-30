@@ -1,6 +1,5 @@
 import logging
 import re
-from typing import NoReturn
 
 from pydantic import BaseModel
 
@@ -9,7 +8,6 @@ from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
-    RepoAuthFlags,
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.pydantic import CamelCaseConfig
@@ -46,18 +44,12 @@ class KubernetesApp(PipelineComponent):
     def helm_wrapper(self) -> Helm:
         if self._helm_wrapper is None:
             self._helm_wrapper = Helm(self.config.helm_config)
-            if self.get_helm_repo_config() is not NoReturn:
-                helm_repo_config = self.get_helm_repo_config()
-                helm_repo_auth_flags = RepoAuthFlags(
-                    helm_repo_config.username,
-                    helm_repo_config.password,
-                    helm_repo_config.ca_file,
-                    helm_repo_config.insecure_skip_tls_verify,
-                )
+            helm_repo_config = self.get_helm_repo_config()
+            if helm_repo_config is not None:
                 self._helm_wrapper.add_repo(
                     helm_repo_config.repository_name,
                     helm_repo_config.url,
-                    helm_repo_auth_flags,
+                    helm_repo_config.repo_auth_flags,
                 )
         return self._helm_wrapper
 
@@ -115,12 +107,13 @@ class KubernetesApp(PipelineComponent):
         helm_diff = HelmDiff.get_diff(current_release, new_release)
         self.helm_diff.log_helm_diff(helm_diff, log)
 
-    def get_helm_repo_config(self) -> HelmRepoConfig | NoReturn:
-        raise NotImplementedError()
+    def get_helm_repo_config(self) -> HelmRepoConfig | None:
+        return None
 
     def get_helm_chart_version(self) -> str | None:
-        if self.get_helm_repo_config():
-            return self.get_helm_repo_config().version
+        helm_repo_config = self.get_helm_repo_config()
+        if helm_repo_config:
+            return helm_repo_config.version
         return None
 
     def get_helm_chart(self) -> str:
