@@ -134,7 +134,7 @@ class KafkaApp(KubernetesApp):
             namespace=namespace,
             values=values,
             flags=HelmUpgradeInstallFlags(
-                version=self.get_helm_repo_config().version,
+                version=self.get_helm_chart_version(),
                 wait=True,
                 wait_for_jobs=True,
             ),
