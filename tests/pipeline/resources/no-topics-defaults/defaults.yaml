@@ -1,12 +1,8 @@
-kubernetes-app:
-  app:
-    namespace: ${NAMESPACE}
-
 kafka-app:
   app:
     streams:
-      brokers: ${broker}
-      schemaRegistryUrl: ${schema_registry_url}
+      brokers: "${broker}"
+      schemaRegistryUrl: "${schema_registry_url}"
 
 producer:
   to:

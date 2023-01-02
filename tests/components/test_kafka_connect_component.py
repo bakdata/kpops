@@ -139,7 +139,7 @@ class TestKafkaConnectorSink:
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
-                    "${topic_name}": TopicConfig(
+                    "${output_topic_name}": TopicConfig(
                         type=OutputTopicTypes.OUTPUT, partitions_count=10
                     ),
                 }
@@ -181,7 +181,7 @@ class TestKafkaConnectorSink:
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
-                    "${topic_name}": TopicConfig(
+                    "${output_topic_name}": TopicConfig(
                         type=OutputTopicTypes.OUTPUT, partitions_count=10
                     ),
                 }
@@ -233,7 +233,7 @@ class TestKafkaConnectorSink:
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
-                    "${topic_name}": TopicConfig(
+                    "${output_topic_name}": TopicConfig(
                         type=OutputTopicTypes.OUTPUT, partitions_count=10
                     ),
                 }
@@ -348,7 +348,7 @@ class TestKafkaConnectorSource:
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
-                    "${topic_name}": TopicConfig(
+                    "${output_topic_name}": TopicConfig(
                         type=OutputTopicTypes.OUTPUT, partitions_count=10
                     ),
                 }
@@ -394,7 +394,7 @@ class TestKafkaConnectorSource:
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
-                    "${topic_name}": TopicConfig(
+                    "${output_topic_name}": TopicConfig(
                         type=OutputTopicTypes.OUTPUT, partitions_count=10
                     ),
                 }
@@ -502,7 +502,7 @@ class TestKafkaConnectorSource:
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
-                    "${topic_name}": TopicConfig(
+                    "${output_topic_name}": TopicConfig(
                         type=OutputTopicTypes.OUTPUT, partitions_count=10
                     ),
                 }
@@ -556,7 +556,7 @@ class TestKafkaConnectorSource:
             app=KafkaConnectConfig(),
             to=ToSection(
                 topics={
-                    "${topic_name}": TopicConfig(
+                    "${output_topic_name}": TopicConfig(
                         type=OutputTopicTypes.OUTPUT, partitions_count=10
                     ),
                 }

@@ -225,7 +225,7 @@ class TestStreamsApp:
                 },
                 "to": {
                     "topics": {
-                        "${topic_name}": TopicConfig(
+                        "${output_topic_name}": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "${error_topic_name}": TopicConfig(
@@ -303,7 +303,7 @@ class TestStreamsApp:
                 },
                 "to": {
                     "topics": {
-                        "${topic_name}": TopicConfig(
+                        "${output_topic_name}": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "${error_topic_name}": TopicConfig(
@@ -372,7 +372,7 @@ class TestProducerApp:
                 },
                 "to": {
                     "topics": {
-                        "${topic_name}": TopicConfig(
+                        "${output_topic_name}": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
@@ -408,7 +408,7 @@ class TestProducerApp:
                 },
                 "to": {
                     "topics": {
-                        "${topic_name}": TopicConfig(
+                        "${output_topic_name}": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
