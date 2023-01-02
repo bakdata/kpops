@@ -201,8 +201,6 @@ class TestPipeline:
                 output_file_path,
                 "--defaults",
                 str(RESOURCE_PATH / "pipeline-with-env-defaults"),
-                "--config",
-                str(RESOURCE_PATH / "no-topics/config.yaml"),
             ],
         )
 
@@ -233,13 +231,16 @@ class TestPipeline:
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
         assert isinstance(enriched_pipeline, dict)
-        for app_details in enriched_pipeline["components"]:
-            output_topic = app_details["app"]["streams"]["outputTopic"]
-            assert output_topic == "random-topic"
-            app_type = app_details["type"]
-            if app_type == "streams-app":
-                error_topic = app_details["app"]["streams"]["errorTopic"]
-                assert error_topic == "random-error"
+
+        producer_details = enriched_pipeline["components"][0]
+        output_topic = producer_details["app"]["streams"]["outputTopic"]
+        assert output_topic == "random-topic"
+
+        streams_app_details = enriched_pipeline["components"][1]
+        output_topic = streams_app_details["app"]["streams"]["outputTopic"]
+        assert output_topic == "random-topic"
+        error_topic = streams_app_details["app"]["streams"]["errorTopic"]
+        assert error_topic == "random-error"
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
@@ -266,14 +267,15 @@ class TestPipeline:
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
         assert isinstance(enriched_pipeline, dict)
-        for app_details in enriched_pipeline["components"]:
-            nameOverride = app_details["app"]["nameOverride"]
-            output_topic = app_details["app"]["streams"]["outputTopic"]
-            assert output_topic == nameOverride
 
-            app_type = app_details["type"]
-            if app_type == "streams-app":
-                error_topic = app_details["app"]["streams"]["errorTopic"]
-                assert error_topic == nameOverride + "-error"
+        producer_details = enriched_pipeline["components"][0]
+        output_topic = producer_details["app"]["streams"]["outputTopic"]
+        assert output_topic == "resources-no-topics-app1"
+
+        streams_app_details = enriched_pipeline["components"][1]
+        output_topic = streams_app_details["app"]["streams"]["outputTopic"]
+        assert output_topic == "resources-no-topics-app2"
+        error_topic = streams_app_details["app"]["streams"]["errorTopic"]
+        assert error_topic == "resources-no-topics-app2-error"
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
