@@ -1,4 +1,20 @@
+kafka-app:
+  app:
+    streams:
+      brokers: "${broker}"
+      schemaRegistryUrl: "${schema_registry_url}"
+
 producer:
+  to:
+    topics:
+      ${output_topic_name}:
+        type: output
+        partitions_count: 3
+
+streams-app:
+  app:
+    labels:
+      pipeline: ${pipeline_name}
   to:
     topics:
       ${error_topic_name}:

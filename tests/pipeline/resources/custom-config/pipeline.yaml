@@ -1,21 +1,13 @@
 - type: producer
   name: app1
   app:
-    commandLine:
-      CONVERT_XML: true
     resources:
       limits:
         memory: 2G
       requests:
         memory: 2G
 
-- type: producer
+- type: streams-app
   name: app2
   app:
-    commandLine:
-      CONVERT_XML: true
-    resources:
-      limits:
-        memory: 2G
-      requests:
-        memory: 2G
+    image: some-image
