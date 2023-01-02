@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra
 
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
