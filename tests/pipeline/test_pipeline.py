@@ -201,6 +201,8 @@ class TestPipeline:
                 output_file_path,
                 "--defaults",
                 str(RESOURCE_PATH / "pipeline-with-env-defaults"),
+                "--config",
+                str(RESOURCE_PATH / "no-topics/config.yaml"),
             ],
         )
 
