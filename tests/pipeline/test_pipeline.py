@@ -216,3 +216,35 @@ class TestPipeline:
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_with_custom_config(self, tmpdir, snapshot):
+        output_file_path = tmpdir.join("pipeline.yaml")
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--save",
+                "--out-path",
+                output_file_path,
+                "--defaults",
+                str(RESOURCE_PATH / "no-topics-defaults"),
+                "--config",
+                str(RESOURCE_PATH / "custom-config/config.yaml"),
+            ],
+        )
+        assert result.exit_code == 0, result.exception
+
+        enriched_pipeline = load_yaml_file(Path(output_file_path))
+        assert isinstance(enriched_pipeline, dict)
+        for app_details in enriched_pipeline["components"]:
+            output_topic = app_details["app"]["streams"]["outputTopic"]
+            assert output_topic == "random-topic"
+            app_type = app_details["type"]
+            if app_type == "streams-app":
+                error_topic = app_details["app"]["streams"]["errorTopic"]
+                assert error_topic == "random-error"
+
+        snapshot.assert_match(enriched_pipeline, "test-pipeline")

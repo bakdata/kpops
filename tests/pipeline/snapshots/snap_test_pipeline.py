@@ -713,6 +713,68 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
     ]
 }
 
+snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
+    "components": [
+        {
+            "app": {
+                "nameOverride": "resources-custom-config-app1",
+                "namespace": "development-namespace",
+                "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "extraOutputTopics": {},
+                    "outputTopic": "random-topic",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-custom-config-app1",
+            "to": {
+                "models": {},
+                "topics": {
+                    "random-topic": {
+                        "configs": {},
+                        "partitions_count": 3,
+                        "type": "output",
+                    }
+                },
+            },
+            "type": "producer",
+        },
+        {
+            "app": {
+                "image": "some-image",
+                "labels": {"pipeline": "resources-custom-config"},
+                "nameOverride": "resources-custom-config-app2",
+                "namespace": "development-namespace",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "errorTopic": "random-error",
+                    "inputTopics": ["random-topic"],
+                    "outputTopic": "random-topic",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-custom-config-app2",
+            "to": {
+                "models": {},
+                "topics": {
+                    "random-error": {
+                        "configs": {},
+                        "partitions_count": 1,
+                        "type": "error",
+                    },
+                    "random-topic": {
+                        "configs": {},
+                        "partitions_count": 3,
+                        "type": "output",
+                    },
+                },
+            },
+            "type": "streams-app",
+        },
+    ]
+}
+
 snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
     "components": [
         {
