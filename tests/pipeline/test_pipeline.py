@@ -234,8 +234,9 @@ class TestPipeline:
                 "--config",
                 str(RESOURCE_PATH / "custom-config/config.yaml"),
             ],
+            catch_exceptions=False,
         )
-        assert result.exit_code == 0, result.exception
+        assert result.exit_code == 0
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
         assert isinstance(enriched_pipeline, dict)
