@@ -161,9 +161,7 @@ class Pipeline:
                 previous_component = inflated_components.pop()
             except Exception as ex:
                 raise ParsingException(
-                    f"{yaml.dump(component)}\n"
-                    f"Enriching the component above resulted in the following exception:\n"
-                    "".join(ex.args)
+                    f"Error enriching {component['type']} component {component['name']}"
                 ) from ex
 
     def populate_pipeline_component_names(
