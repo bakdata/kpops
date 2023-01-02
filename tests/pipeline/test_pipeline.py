@@ -230,6 +230,7 @@ class TestPipeline:
         assert result.exit_code == 0, result.exception
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
+        assert isinstance(enriched_pipeline, dict)
         for app_details in enriched_pipeline["components"]:
             output_topic = app_details["app"]["streams"]["outputTopic"]
             assert output_topic == "random-topic"
