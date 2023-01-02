@@ -272,7 +272,7 @@ class TestPipeline:
                 str(RESOURCE_PATH / "no-topics/config.yaml"),
             ],
         )
-        assert result.exit_code == 0, result.exception
+        assert result.exit_code == 0
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
         assert isinstance(enriched_pipeline, dict)
