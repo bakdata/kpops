@@ -1,7 +1,4 @@
 environment: development
-topic_name_config:
-  default_error_topic_name: "random-error"
-  default_output_topic_name: "random-topic"
 broker: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
 kafka_connect_host: "http://localhost:8083"
 kafka_rest_host: "http://localhost:8082"
