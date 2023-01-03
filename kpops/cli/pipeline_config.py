@@ -16,7 +16,7 @@ ENV_PREFIX = "KPOPS_"
 class TopicNameConfig(BaseSettings):
     default_output_topic_name: str = Field(
         default="${pipeline_name}-${component_type}",
-        description="Configures the value for the variable ${topic_name}",
+        description="Configures the value for the variable ${output_topic_name}",
     )
     default_error_topic_name: str = Field(
         default="${pipeline_name}-${component_type}-error",

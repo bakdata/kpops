@@ -72,7 +72,7 @@ class PipelineComponent(BaseDefaultsComponent):
             topic_name,
             self._type,
             error_topic_name=error_topic_name,
-            topic_name=output_topic_name,
+            output_topic_name=output_topic_name,
         )
 
     def add_input_topics(self, topics: list[str]) -> None:
