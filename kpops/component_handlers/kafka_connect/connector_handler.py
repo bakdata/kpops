@@ -10,7 +10,6 @@ from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
-    HelmRepoConfig,
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import trim_release_name
@@ -26,7 +25,7 @@ from kpops.utils.dict_differ import render_diff
 from kpops.utils.pydantic import CamelCaseConfig
 
 if TYPE_CHECKING:
-    from kpops.cli.pipeline_config import PipelineConfig
+    from kpops.cli.pipeline_config import KafkaConnectResetterHelmConfig, PipelineConfig
 
 log = logging.getLogger("KafkaConnect")
 
@@ -63,16 +62,15 @@ class ConnectorHandler:
         self,
         connect_wrapper: ConnectWrapper,
         timeout: int,
-        helm_repo_config: HelmRepoConfig,
+        kafka_connect_resetter_helm_config: KafkaConnectResetterHelmConfig,
         broker: str,
-        values: dict,
-        namespace: str,
         helm_diff: HelmDiff,
         helm_config: HelmConfig = HelmConfig(),
     ):
         self._connect_wrapper = connect_wrapper
         self._timeout = timeout
         self._helm_wrapper = Helm(helm_config)
+        helm_repo_config = kafka_connect_resetter_helm_config.helm_config
         self._helm_wrapper.add_repo(
             helm_repo_config.repository_name,
             helm_repo_config.url,
@@ -83,12 +81,12 @@ class ConnectorHandler:
         self.kafka_connect_resseter_chart = (
             f"{helm_repo_config.repository_name}/kafka-connect-resetter"
         )
-        self.chart_version = helm_repo_config.version
+        self.chart_version = kafka_connect_resetter_helm_config.version
         self.namespace = (
-            namespace  # namespace where the re-setter jobs should be deployed to
+            kafka_connect_resetter_helm_config.namespace  # namespace where the re-setter jobs should be deployed to
         )
         self.broker = broker
-        self.values = values
+        self.values = kafka_connect_resetter_helm_config.helm_values
 
     def create_connector(
         self,
@@ -302,10 +300,8 @@ class ConnectorHandler:
         return cls(
             connect_wrapper=ConnectWrapper(host=pipeline_config.kafka_connect_host),
             timeout=pipeline_config.timeout,
-            helm_repo_config=pipeline_config.kafka_connect_resetter_config.helm_config,
+            kafka_connect_resetter_helm_config=pipeline_config.kafka_connect_resetter_config,
             helm_config=pipeline_config.helm_config,
             broker=pipeline_config.broker,
-            values=pipeline_config.kafka_connect_resetter_config.helm_values,
-            namespace=pipeline_config.kafka_connect_resetter_config.namespace,
             helm_diff=HelmDiff(pipeline_config.helm_diff_config),
         )

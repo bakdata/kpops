@@ -25,7 +25,6 @@ class RepoAuthFlags:
 class HelmRepoConfig(BaseModel):
     repository_name: str
     url: str
-    version: str | None = None
     repo_auth_flags: RepoAuthFlags = RepoAuthFlags()
 
 

@@ -33,7 +33,7 @@ class KubernetesApp(PipelineComponent):
     _type = "kubernetes-app"
     app: KubernetesAppConfig
 
-    chart_version: str | None = Field(default=None, exclude=True)
+    version: str | None = Field(default=None, exclude=True)
 
     _helm_wrapper: Helm | None = None
     _helm_diff: HelmDiff | None = None
@@ -72,31 +72,26 @@ class KubernetesApp(PipelineComponent):
 
     def deploy(self, dry_run: bool) -> None:
         stdout = self.helm_wrapper.upgrade_install(
-            release_name=self.helm_release_name,
-            chart=self.get_helm_chart(),
-            dry_run=dry_run,
-            namespace=self.namespace,
-            values=self.to_helm_values(),
-            flags=HelmUpgradeInstallFlags(version=self.get_helm_chart_version()),
+            self.helm_release_name,
+            self.get_helm_chart(),
+            dry_run,
+            self.namespace,
+            self.to_helm_values(),
+            HelmUpgradeInstallFlags(version=self.get_helm_chart_version()),
         )
 
         if dry_run and self.helm_diff.config.enable:
             self.print_helm_diff(stdout)
 
+    # TODO: Separate destroy and clean
     def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
-        try:
-            stdout = self.helm_wrapper.uninstall(
-                namespace=self.namespace,
-                release_name=self.helm_release_name,
-                dry_run=dry_run,
-            )
-            if dry_run and self.helm_diff.config.enable:
-                self.print_helm_diff(stdout)
-        except Exception as exception:
-            if len(exception.args) == 1 and "release: not found" in exception.args[0]:
-                log.info("Could not find release, nothing to uninstall.")
-            else:
-                raise exception
+        stdout = self.helm_wrapper.uninstall(
+            self.namespace,
+            self.helm_release_name,
+            dry_run,
+        )
+        if dry_run and self.helm_diff.config.enable:
+            self.print_helm_diff(stdout)
 
     def to_helm_values(self) -> dict:
         return self.app.dict(by_alias=True, exclude_none=True, exclude_unset=True)
@@ -113,10 +108,12 @@ class KubernetesApp(PipelineComponent):
         return None
 
     def get_helm_chart(self) -> str:
-        raise NotImplementedError()
+        raise NotImplementedError(
+            f"Please implement the get_helm_chart() method of the {self.__module__} module."
+        )
 
     def get_helm_chart_version(self) -> str | None:
-        return self.chart_version
+        return self.version
 
     def __check_compatible_name(self) -> None:
         if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(self.name)):  # TODO: SMARTER

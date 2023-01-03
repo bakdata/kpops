@@ -47,7 +47,6 @@ class KafkaApp(KubernetesApp):
                 self.app.streams.schema_registry_url,
                 {"schema_registry_url": self.config.schema_registry_url},
             )
-        self.chart_version = self.config.streams_bootstrap_helm_config.version
 
     def get_clean_up_helm_chart(self):
         raise NotImplementedError()
@@ -66,10 +65,8 @@ class KafkaApp(KubernetesApp):
 
     def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
         super().destroy(dry_run, clean, delete_outputs)
-        if clean:
-            self.clean(delete_outputs, dry_run)
 
-    def clean(self, delete_outputs: bool, dry_run: bool):
+    def clean(self, dry_run: bool, delete_outputs: bool, clear_schemas: bool):
         if delete_outputs:
             # producer clean up job will delete output topics
             self.clean_app(
@@ -79,11 +76,7 @@ class KafkaApp(KubernetesApp):
                 retain_clean_jobs=self.config.retain_clean_jobs,
             )
 
-            if (
-                self.to
-                and self.handlers.schema_handler
-                and self.config.clean_producer_schemas
-            ):
+            if self.to and self.handlers.schema_handler and clear_schemas:
                 self.handlers.schema_handler.delete_schemas(self.to, dry_run=dry_run)
 
     def clean_app(
@@ -129,12 +122,12 @@ class KafkaApp(KubernetesApp):
 
     def __install_clean_up_job(self, dry_run, namespace, release_name, suffix, values):
         stdout = self.helm_wrapper.upgrade_install(
-            release_name=trim_release_name(release_name, suffix),
-            chart=self.get_clean_up_helm_chart(),
-            dry_run=dry_run,
-            namespace=namespace,
-            values=values,
-            flags=HelmUpgradeInstallFlags(
+            trim_release_name(release_name, suffix),
+            self.get_clean_up_helm_chart(),
+            dry_run,
+            namespace,
+            values,
+            HelmUpgradeInstallFlags(
                 version=self.get_helm_chart_version(),
                 wait=True,
                 wait_for_jobs=True,

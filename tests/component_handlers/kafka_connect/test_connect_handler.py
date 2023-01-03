@@ -4,6 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
+from kpops.cli.pipeline_config import KafkaConnectResetterHelmConfig
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
@@ -479,12 +480,16 @@ class TestConnectorHandler:
     ) -> ConnectorHandler:
         if values is None:
             values = {}
+        resetter_helm_config = KafkaConnectResetterHelmConfig(
+            helm_config=helm_repo_config,
+            version="1.0.4",
+            helm_values=values,
+            namespace="test-namespace",
+        )
         return ConnectorHandler(
             connector_wrapper,
             0,
-            helm_repo_config,
+            resetter_helm_config,
             "broker:9092",
-            values,
-            "test-namespace",
             helm_diff,
         )

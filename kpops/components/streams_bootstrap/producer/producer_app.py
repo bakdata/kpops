@@ -56,3 +56,8 @@ class ProducerApp(KafkaApp):
     @override
     def get_clean_up_helm_chart(self):
         return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
+
+    def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
+        super().destroy(dry_run, clean, delete_outputs)
+        if clean:
+            self.clean(dry_run, delete_outputs, self.config.clean_streams_apps_schemas)

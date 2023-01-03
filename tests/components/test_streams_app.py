@@ -10,60 +10,37 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.components.base_components import KafkaApp
+from kpops.components import StreamsApp
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
     ToSection,
 )
-from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
-@pytest.fixture
-def config() -> PipelineConfig:
-    return PipelineConfig(
-        defaults_path=DEFAULTS_PATH,
-        environment="development",
-        topic_name_config=TopicNameConfig(
-            default_error_topic_name="${component_type}-error-topic",
-            default_output_topic_name="${component_type}-output-topic",
-        ),
-        pipeline_prefix="",
-    )
-
-
-@pytest.fixture
-def handlers() -> ComponentHandlers:
-    return ComponentHandlers(
-        schema_handler=MagicMock(),
-        connector_handler=MagicMock(),
-        topic_handler=MagicMock(),
-    )
-
-
-class TestKafkaApp:
-    def test_default_brokers(self, config: PipelineConfig, handlers: ComponentHandlers):
-        kafka_app = KafkaApp(
-            handlers=handlers,
-            config=config,
-            **{
-                "type": "streams-app",
-                "name": "example-name",
-                "app": {
-                    "namespace": "test-namespace",
-                    "streams": {
-                        "outputTopic": "test",
-                        "brokers": "fake-broker:9092",
-                    },
-                },
-            },
-        )
-        assert kafka_app.app.streams.brokers
-
-
 class TestStreamsApp:
+    @pytest.fixture
+    def handlers(self) -> ComponentHandlers:
+        return ComponentHandlers(
+            schema_handler=MagicMock(),
+            connector_handler=MagicMock(),
+            topic_handler=MagicMock(),
+        )
+
+    @pytest.fixture
+    def config(self) -> PipelineConfig:
+        return PipelineConfig(
+            defaults_path=DEFAULTS_PATH,
+            environment="development",
+            topic_name_config=TopicNameConfig(
+                default_error_topic_name="${component_type}-error-topic",
+                default_output_topic_name="${component_type}-output-topic",
+            ),
+            pipeline_prefix="",
+        )
+
     def test_set_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
         class AnotherType(StreamsApp):
             _type = "test"
@@ -262,6 +239,7 @@ class TestStreamsApp:
             **{
                 "type": "streams-app",
                 "name": "example-name",
+                "version": "2.4.2",
                 "app": {
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
@@ -306,11 +284,11 @@ class TestStreamsApp:
             [
                 mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=True),
                 mocker.call.mock_helm_upgrade_install(
-                    release_name="example-name",
-                    chart="bakdata-streams-bootstrap/streams-app",
-                    dry_run=True,
-                    namespace="test-namespace",
-                    values={
+                    "example-name",
+                    "bakdata-streams-bootstrap/streams-app",
+                    True,
+                    "test-namespace",
+                    {
                         "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
@@ -318,7 +296,7 @@ class TestStreamsApp:
                             "errorTopic": "streams-app-error-topic",
                         },
                     },
-                    flags=HelmUpgradeInstallFlags(
+                    HelmUpgradeInstallFlags(
                         force=False,
                         repo_auth_flags=RepoAuthFlags(
                             username=None,
@@ -336,51 +314,19 @@ class TestStreamsApp:
             any_order=False,
         )
 
-
-class TestProducerApp:
-    def test_output_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
-        producer_app = ProducerApp(
-            handlers=handlers,
-            config=config,
-            **{
-                "type": "producer-app",
-                "name": "example-name",
-                "app": {
-                    "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "to": {
-                    "topics": {
-                        "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                        "extra-topic-1": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
-                            role="first-extra-topic",
-                            partitions_count=10,
-                        ),
-                    }
-                },
-            },
-        )
-
-        assert producer_app.app.streams.output_topic == "producer-output-topic"
-        assert producer_app.app.streams.extra_output_topics == {
-            "first-extra-topic": "extra-topic-1"
-        }
-
-    def test_deploy_order(
+    def test_destroy(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
-        producer_app = ProducerApp(
+        streams_app = StreamsApp(
             handlers=handlers,
             config=config,
             **{
-                "type": "producer-app",
+                "type": "streams-app",
                 "name": "example-name",
+                "version": "2.4.2",
                 "app": {
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
@@ -390,61 +336,90 @@ class TestProducerApp:
                         "${output_topic_name}": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
-                        "extra-topic-1": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
-                            role="first-extra-topic",
-                            partitions_count=10,
+                    }
+                },
+            },
+        )
+        streams_app.handlers = MagicMock()
+        mock_helm_uninstall = mocker.patch.object(streams_app.helm_wrapper, "uninstall")
+
+        streams_app.destroy(dry_run=True, clean=False, delete_outputs=False)
+
+        mock_helm_uninstall.assert_called_once_with(
+            "test-namespace", "example-name", True
+        )
+
+    # TODO: Assert schema deletion
+    def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
+        config.clean_streams_apps_schemas = True
+        values = {
+            "namespace": "test-namespace",
+            "streams": {"brokers": "fake-broker:9092"},
+        }
+        streams_app = StreamsApp(
+            handlers=handlers,
+            config=config,
+            **{
+                "type": "streams-app",
+                "name": "example-name",
+                "version": "2.4.2",
+                "app": values,
+                "to": {
+                    "topics": {
+                        "${output_topic_name}": TopicConfig(
+                            type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                     }
                 },
             },
         )
-        producer_app.handlers = MagicMock()
-
-        mock_create_topics = mocker.patch.object(
-            producer_app.handlers.topic_handler, "create_topics"
-        )
-
+        streams_app.handlers = MagicMock()
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app.helm_wrapper, "upgrade_install"
+            streams_app.helm_wrapper, "upgrade_install"
+        )
+        mock_helm_uninstall = mocker.patch.object(streams_app.helm_wrapper, "uninstall")
+
+        patch_object = mocker.patch.object(
+            streams_app.handlers.schema_handler.delete_shemas, "schema_handler"
         )
 
         mock = mocker.MagicMock()
-        mock.attach_mock(mock_create_topics, "mock_create_topics")
-        mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
+        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
+        mock.attach_mock(patch_object, "delete_schemas")
 
-        producer_app.deploy(dry_run=True)
+        streams_app.destroy(dry_run=True, clean=True, delete_outputs=True)
+
         mock.assert_has_calls(
             [
-                mocker.call.mock_create_topics(
-                    to_section=producer_app.to, dry_run=True
+                mocker.call.helm_uninstall("test-namespace", "example-name", True),
+                mocker.call.helm_uninstall(
+                    "test-namespace", "example-name-clean", True
                 ),
-                mocker.call.mock_helm_upgrade_install(
-                    release_name="example-name",
-                    chart="bakdata-streams-bootstrap/producer-app",
-                    dry_run=True,
-                    namespace="test-namespace",
-                    values={
+                mocker.call.helm_upgrade_install(
+                    "example-name-clean",
+                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                    True,
+                    "test-namespace",
+                    {
                         "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
-                            "outputTopic": "producer-output-topic",
+                            "outputTopic": "streams-app-output-topic",
+                            "deleteOutput": True,
                         },
                     },
-                    flags=HelmUpgradeInstallFlags(
-                        force=False,
-                        repo_auth_flags=RepoAuthFlags(
-                            username=None,
-                            password=None,
-                            ca_file=None,
-                            insecure_skip_tls_verify=False,
-                        ),
-                        timeout="5m0s",
-                        version="2.4.2",
-                        wait=True,
-                        wait_for_jobs=False,
+                    HelmUpgradeInstallFlags(
+                        version="2.4.2", wait=True, wait_for_jobs=True
                     ),
                 ),
-            ],
-            any_order=False,
+                mocker.call.helm_uninstall(
+                    "test-namespace", "example-name-clean", True
+                ),
+            ]
         )

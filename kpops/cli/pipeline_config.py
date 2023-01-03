@@ -24,15 +24,15 @@ class TopicNameConfig(BaseSettings):
     )
 
 
-class KafkaConnectResetterConfig(BaseSettings):
+class KafkaConnectResetterHelmConfig(BaseSettings):
     helm_config: HelmRepoConfig = Field(
         default=HelmRepoConfig(
             repository_name="bakdata-kafka-connect-resetter",
             url="https://bakdata.github.io/kafka-connect-resetter/",
-            version="1.0.4",
         ),
         description="Configuration of Kafka connect resetter Helm Chart",
     )
+    version = "1.0.4"
     helm_values: dict = Field(
         default={},
         description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
@@ -95,12 +95,11 @@ class PipelineConfig(BaseSettings):
         default=HelmRepoConfig(
             repository_name="bakdata-streams-bootstrap",
             url="https://bakdata.github.io/streams-bootstrap/",
-            version="2.4.2",
         ),
         description="Configuration for Streams Bootstrap Helm Charts",
     )
-    kafka_connect_resetter_config: KafkaConnectResetterConfig = Field(
-        default=KafkaConnectResetterConfig(),
+    kafka_connect_resetter_config: KafkaConnectResetterHelmConfig = Field(
+        default=KafkaConnectResetterHelmConfig(),
         description="Configuration of kafka connect resetter helm chart and values. "
         "This is used for cleaning/resettting Kafka connectors, see https://github.com/bakdata/kafka-connect-resetter",
     )

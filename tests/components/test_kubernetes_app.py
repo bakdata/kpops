@@ -6,7 +6,12 @@ from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig, RepoAuthFlags
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmDiffConfig,
+    HelmRepoConfig,
+    HelmUpgradeInstallFlags,
+    RepoAuthFlags,
+)
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
@@ -21,7 +26,7 @@ class TestKubernetesApp:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
-            pipeline_prefix="",
+            helm_diff_config=HelmDiffConfig(enable=True),
         )
 
     @pytest.fixture
@@ -32,10 +37,20 @@ class TestKubernetesApp:
             topic_handler=MagicMock(),
         )
 
+    @pytest.fixture
+    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch(
+            "kpops.components.base_components.kubernetes_app.Helm"
+        ).return_value
+
     def test_should_lazy_load_helm_wrapper_and_not_repo_add(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+        helm_mock: MagicMock,
     ):
-        app_config = KubernetesAppConfig(namespace="test")
+        app_config = KubernetesAppConfig(namespace="test-namespace")
 
         kubernetes_app = KubernetesApp(
             _type="test",
@@ -45,13 +60,31 @@ class TestKubernetesApp:
             name="test-kubernetes-apps",
         )
 
-        kubernetes_app.helm_wrapper
+        mocker.patch.object(
+            kubernetes_app, "get_helm_chart", return_value="test/test-chart"
+        )
+
+        kubernetes_app.deploy(True)
+
+        helm_mock.add_repo.assert_not_called()
+
+        helm_mock.upgrade_install.assert_called_once_with(
+            "test-kubernetes-apps",
+            "test/test-chart",
+            True,
+            "test-namespace",
+            {"namespace": "test-namespace"},
+            HelmUpgradeInstallFlags(),
+        )
 
     def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
-        self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        helm_mock: MagicMock,
+        mocker: MockerFixture,
     ):
-
-        app_config = KubernetesAppConfig(namespace="test")
+        app_config = KubernetesAppConfig(namespace="test-namespace")
 
         kubernetes_app = KubernetesApp(
             _type="test",
@@ -59,27 +92,106 @@ class TestKubernetesApp:
             app=app_config,
             config=config,
             name="test-kubernetes-apps",
+            version="3.4.5",
         )
 
         helm_repo_config_mock = mocker.patch.object(
             kubernetes_app, "get_helm_repo_config"
         )
         helm_repo_config_mock.return_value = HelmRepoConfig(
-            repository_name="test-name", url="mock://test"
+            repository_name="test-repo", url="mock://test"
         )
 
-        value = mocker.patch(
-            "kpops.components.base_components.kubernetes_app.Helm"
-        ).return_value
-
-        kubernetes_app.helm_wrapper
-        value.add_repo.assert_called_once_with(
-            "test-name",
-            "mock://test",
-            RepoAuthFlags(),
+        mocker.patch.object(
+            kubernetes_app, "get_helm_chart", return_value="test/test-chart"
         )
 
-    def test_name_check(self, config: PipelineConfig, handlers: ComponentHandlers):
+        kubernetes_app.deploy(True)
+
+        helm_mock.assert_has_calls(
+            [
+                mocker.call.add_repo(
+                    "test-repo",
+                    "mock://test",
+                    RepoAuthFlags(),
+                ),
+                mocker.call.upgrade_install(
+                    "test-kubernetes-apps",
+                    "test/test-chart",
+                    True,
+                    "test-namespace",
+                    {"namespace": "test-namespace"},
+                    HelmUpgradeInstallFlags(version="3.4.5"),
+                ),
+            ]
+        )
+
+    def should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        helm_mock: MagicMock,
+    ):
+        app_config = KubernetesAppConfig(namespace="test-namespace")
+
+        kubernetes_app = KubernetesApp(
+            _type="test",
+            handlers=handlers,
+            app=app_config,
+            config=config,
+            name="test-kubernetes-apps",
+        )
+
+        kubernetes_app.deploy(True)
+        helm_mock.get_manifest.assert_called_once_with(
+            "test-kubernetes-apps", "test-namespace"
+        )
+
+    def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ):
+        app_config = KubernetesAppConfig(namespace="test-namespace")
+
+        kubernetes_app = KubernetesApp(
+            _type="test",
+            handlers=handlers,
+            app=app_config,
+            config=config,
+            name="test-kubernetes-apps",
+        )
+
+        with pytest.raises(NotImplementedError) as error:
+            kubernetes_app.deploy(True)
+        assert (
+            "Please implement the get_helm_chart() method of the kpops.components.base_components.kubernetes_app module."
+            == str(error.value)
+        )
+
+    def test_should_call_helm_uninstall_when_destroying_kubernetes_app(
+        self, config: PipelineConfig, handlers: ComponentHandlers, helm_mock: MagicMock
+    ):
+        app_config = KubernetesAppConfig(namespace="test-namespace")
+
+        kubernetes_app = KubernetesApp(
+            _type="test",
+            handlers=handlers,
+            app=app_config,
+            config=config,
+            name="test-kubernetes-apps",
+        )
+
+        kubernetes_app.destroy(True, False, False)
+
+        helm_mock.uninstall.assert_called_once_with(
+            "test-namespace", "test-kubernetes-apps", True
+        )
+        helm_mock.get_manifest.assert_called_once_with(
+            "test-kubernetes-apps", "test-namespace"
+        )
+
+    def test_should_raise_value_error_when_name_is_not_valid(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ):
         app_config = KubernetesAppConfig(namespace="test")
 
         assert KubernetesApp(
