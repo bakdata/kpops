@@ -28,6 +28,7 @@ class TopicConfig(BaseModel):
 
     class Config(BaseConfig):
         extra = Extra.forbid
+        allow_population_by_field_name = True
         use_enum_values = True
 
     @root_validator
