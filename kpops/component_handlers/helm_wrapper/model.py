@@ -3,14 +3,13 @@ from pathlib import Path
 from typing import Iterator
 
 import yaml
-from pydantic import BaseModel, Field
 
 
-class HelmDiffConfig(BaseModel):
+@dataclass
+class HelmDiffConfig:
     enable: bool = False
-    ignore: set[str] = Field(
-        default_factory=dict,
-        description="keypaths using dot-notation to exclude",
+    ignore: set[str] = field(
+        default_factory=set,
     )
 
 
@@ -22,13 +21,15 @@ class RepoAuthFlags:
     insecure_skip_tls_verify: bool = False
 
 
-class HelmRepoConfig(BaseModel):
+@dataclass
+class HelmRepoConfig:
     repository_name: str
     url: str
-    repo_auth_flags: RepoAuthFlags = RepoAuthFlags()
+    repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
 
 
-class HelmConfig(BaseModel):
+@dataclass
+class HelmConfig:
     context: str | None = None
     debug: bool = False
 

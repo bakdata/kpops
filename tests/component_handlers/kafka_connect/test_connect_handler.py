@@ -59,7 +59,6 @@ class TestConnectorHandler:
         return HelmRepoConfig(
             repository_name="bakdata-kafka-connect-resetter",
             url="https://bakdata.github.io/kafka-connect-resetter/",
-            version="1.0.4",
         )
 
     def test_should_create_connector_in_dry_run(
