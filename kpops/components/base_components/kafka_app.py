@@ -1,6 +1,6 @@
 import logging
 
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
@@ -12,12 +12,12 @@ from kpops.components.base_components.kubernetes_app import (
 from kpops.utils.pydantic import CamelCaseConfig
 from kpops.utils.yaml_loading import substitute
 
-log = logging.getLogger("KubernetesAppComponent")
+log = logging.getLogger("KafkaApp")
 
 
 class KafkaStreamsConfig(BaseModel):
     brokers: str
-    schema_registry_url: str | None = Field(default=None, alias="schemaRegistryUrl")
+    schema_registry_url: str | None = None
 
     class Config(CamelCaseConfig):
         extra = Extra.allow
