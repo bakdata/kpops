@@ -1,5 +1,6 @@
 import logging
 import re
+from functools import cached_property
 
 from pydantic import BaseModel
 
@@ -35,31 +36,28 @@ class KubernetesApp(PipelineComponent):
 
     version: str | None = None
 
-    _helm_wrapper: Helm | None = None
-    _helm_diff: HelmDiff | None = None
+    class Config:
+        keep_untouched = (cached_property,)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.__check_compatible_name()
 
-    @property
+    @cached_property
     def helm_wrapper(self) -> Helm:
-        if self._helm_wrapper is None:
-            self._helm_wrapper = Helm(self.config.helm_config)
-            helm_repo_config = self.get_helm_repo_config()
-            if helm_repo_config is not None:
-                self._helm_wrapper.add_repo(
-                    helm_repo_config.repository_name,
-                    helm_repo_config.url,
-                    helm_repo_config.repo_auth_flags,
-                )
-        return self._helm_wrapper
+        helm_wrapper = Helm(self.config.helm_config)
+        helm_repo_config = self.get_helm_repo_config()
+        if helm_repo_config is not None:
+            helm_wrapper.add_repo(
+                helm_repo_config.repository_name,
+                helm_repo_config.url,
+                helm_repo_config.repo_auth_flags,
+            )
+        return helm_wrapper
 
-    @property
+    @cached_property
     def helm_diff(self) -> HelmDiff:
-        if self._helm_diff is None:
-            self._helm_diff = HelmDiff(self.config.helm_diff_config)
-        return self._helm_diff
+        return HelmDiff(self.config.helm_diff_config)
 
     @property
     def helm_release_name(self) -> str:
