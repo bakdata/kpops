@@ -67,7 +67,7 @@ class Helm:
             else:
                 raise e
 
-        self.__execute(["helm", "repo", "update", repository_name])
+        self.__execute(["helm", "repo", "update"])
 
     def upgrade_install(
         self,

@@ -83,7 +83,7 @@ class TestHelmWrapper:
                     ],
                 ),
                 mock.call(
-                    ["helm", "repo", "update", "test-repository"],
+                    ["helm", "repo", "update"],
                 ),
             ]
         )
