@@ -27,7 +27,7 @@ scheduled-producer:
     imageTag: "0.0.1"
   to:
     topics:
-      ${topic_name}:
+      ${output_topic_name}:
         type: output
         valueSchema: com.bakdata.fake.Produced
         partitions_count: 12
@@ -42,12 +42,12 @@ converter:
         memory: 3G
     autoscaling:
       enabled: true
-      consumergroup: converter-${topic_name}
+      consumergroup: converter-${output_topic_name}
       maxReplicas: 1
       lagThreshold: "10000"
   to:
     topics:
-      ${topic_name}:
+      ${output_topic_name}:
         type: output
         partitions_count: 50
         configs:
@@ -67,12 +67,12 @@ filter:
       enabled: true
       maxReplicas: 1
       lagThreshold: "10000"
-      consumergroup: filter-${topic_name}
+      consumergroup: filter-${output_topic_name}
       topics:
-        - "${topic_name}"
+        - "${output_topic_name}"
   to:
     topics:
-      ${topic_name}:
+      ${output_topic_name}:
         type: output
         partitions_count: 50
         configs:
@@ -85,12 +85,12 @@ should-inflate:
       enabled: true
       maxReplicas: 1
       lagThreshold: "10000"
-      consumergroup: filter-${topic_name}
+      consumergroup: filter-${output_topic_name}
       topics:
-        - "${topic_name}"
+        - "${output_topic_name}"
   to:
     topics:
-      ${topic_name}:
+      ${output_topic_name}:
         type: output
         partitions_count: 50
         configs:
