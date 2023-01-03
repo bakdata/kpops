@@ -1,5 +1,3 @@
-from typing import NoReturn
-
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
 
@@ -57,7 +55,7 @@ class StreamsApp(KafkaApp):
         return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.STREAMS_APP.value}"
 
     @override
-    def get_helm_repo_config(self) -> HelmRepoConfig | NoReturn:
+    def get_helm_repo_config(self) -> HelmRepoConfig | None:
         return self.config.streams_bootstrap_helm_config
 
     @override

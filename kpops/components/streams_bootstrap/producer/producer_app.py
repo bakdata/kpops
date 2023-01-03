@@ -1,5 +1,3 @@
-from typing import NoReturn
-
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
 
@@ -31,7 +29,7 @@ class ProducerApp(KafkaApp):
 
     @override
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:
-        match (topic.type):
+        match topic.type:
             case OutputTopicTypes.ERROR:
                 raise ValueError("Producer apps do not support error topics")
             case _:
@@ -50,7 +48,7 @@ class ProducerApp(KafkaApp):
         return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
     @override
-    def get_helm_repo_config(self) -> HelmRepoConfig | NoReturn:
+    def get_helm_repo_config(self) -> HelmRepoConfig | None:
         return self.config.streams_bootstrap_helm_config
 
     @override
