@@ -36,6 +36,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 },
             },
             "type": "scheduled-producer",
+            "version": "2.4.2",
         },
         {
             "app": {
@@ -84,6 +85,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 },
             },
             "type": "converter",
+            "version": "2.4.2",
         },
         {
             "app": {
@@ -131,6 +133,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 },
             },
             "type": "should-inflate",
+            "version": "2.4.2",
         },
         {
             "app": {
@@ -186,6 +189,7 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
                 },
             },
             "type": "streams-app",
+            "version": "2.4.2",
         },
         {
             "app": {
@@ -238,6 +242,7 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                 },
             },
             "type": "scheduled-producer",
+            "version": "2.4.2",
         },
         {
             "app": {
@@ -284,6 +289,7 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                 },
             },
             "type": "converter",
+            "version": "2.4.2",
         },
         {
             "app": {
@@ -331,6 +337,7 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                 },
             },
             "type": "filter",
+            "version": "2.4.2",
         },
     ]
 }
@@ -369,6 +376,7 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
                 },
             },
             "type": "streams-app",
+            "version": "2.4.2",
         },
         {
             "app": {
@@ -411,6 +419,7 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
                 },
             },
             "type": "streams-app",
+            "version": "2.4.2",
         },
     ]
 }
@@ -448,6 +457,7 @@ snapshots["TestPipeline.test_no_user_defined_components test-pipeline"] = {
                 },
             },
             "type": "streams-app",
+            "version": "2.4.2",
         }
     ]
 }
@@ -482,6 +492,7 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                 },
             },
             "type": "scheduled-producer",
+            "version": "2.4.2",
         },
         {
             "app": {
@@ -528,6 +539,7 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                 },
             },
             "type": "converter",
+            "version": "2.4.2",
         },
         {
             "app": {
@@ -575,6 +587,7 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                 },
             },
             "type": "filter",
+            "version": "2.4.2",
         },
     ]
 }
@@ -613,6 +626,7 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
                 },
             },
             "type": "scheduled-producer",
+            "version": "2.4.2",
         },
         {
             "app": {
@@ -661,6 +675,7 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
                 },
             },
             "type": "converter",
+            "version": "2.4.2",
         },
         {
             "app": {
@@ -709,6 +724,7 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
                 },
             },
             "type": "filter",
+            "version": "2.4.2",
         },
     ]
 }

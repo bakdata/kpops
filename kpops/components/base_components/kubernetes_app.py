@@ -1,7 +1,7 @@
 import logging
 import re
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
@@ -33,7 +33,7 @@ class KubernetesApp(PipelineComponent):
     _type = "kubernetes-app"
     app: KubernetesAppConfig
 
-    version: str | None = Field(default=None, exclude=True)
+    version: str | None = None
 
     _helm_wrapper: Helm | None = None
     _helm_diff: HelmDiff | None = None

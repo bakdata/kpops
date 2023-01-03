@@ -39,7 +39,7 @@ class TestHelmWrapper:
             dry_run=False,
             namespace="test-namespace",
             values={"commandLine": "test"},
-            flags=HelmUpgradeInstallFlags(version="2.4.2"),
+            flags=HelmUpgradeInstallFlags(),
         )
         run_command.assert_called_once_with(
             [
@@ -54,8 +54,6 @@ class TestHelmWrapper:
                 "--values",
                 "values.yaml",
                 "--wait",
-                "--version",
-                "2.4.2",
             ],
         )
 
@@ -140,6 +138,7 @@ class TestHelmWrapper:
                 timeout="120s",
                 wait=True,
                 wait_for_jobs=True,
+                version="2.4.2",
             ),
         )
         run_command.assert_called_once_with(
@@ -158,6 +157,8 @@ class TestHelmWrapper:
                 "--force",
                 "--wait",
                 "--wait-for-jobs",
+                "--version",
+                "2.4.2",
             ],
         )
 
