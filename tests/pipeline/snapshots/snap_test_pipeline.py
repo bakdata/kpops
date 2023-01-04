@@ -10,21 +10,21 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
     "components": [
         {
             "app": {
-                "nameOverride": "resources-no-topics-app1",
+                "nameOverride": "resources-custom-config-app1",
                 "namespace": "development-namespace",
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "extraOutputTopics": {},
-                    "outputTopic": "resources-no-topics-app1",
+                    "outputTopic": "resources-custom-config-app1",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "name": "resources-no-topics-app1",
+            "name": "resources-custom-config-app1",
             "to": {
                 "models": {},
                 "topics": {
-                    "resources-no-topics-app1": {
+                    "resources-custom-config-app1": {
                         "configs": {},
                         "partitions_count": 3,
                         "type": "output",
@@ -36,27 +36,27 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
         {
             "app": {
                 "image": "some-image",
-                "labels": {"pipeline": "resources-no-topics"},
-                "nameOverride": "resources-no-topics-app2",
+                "labels": {"pipeline": "resources-custom-config"},
+                "nameOverride": "resources-custom-config-app2",
                 "namespace": "development-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "errorTopic": "resources-no-topics-app2-error",
-                    "inputTopics": ["resources-no-topics-app1"],
-                    "outputTopic": "resources-no-topics-app2",
+                    "errorTopic": "resources-custom-config-app2-error",
+                    "inputTopics": ["resources-custom-config-app1"],
+                    "outputTopic": "resources-custom-config-app2",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "name": "resources-no-topics-app2",
+            "name": "resources-custom-config-app2",
             "to": {
                 "models": {},
                 "topics": {
-                    "resources-no-topics-app2": {
+                    "resources-custom-config-app2": {
                         "configs": {},
                         "partitions_count": 3,
                         "type": "output",
                     },
-                    "resources-no-topics-app2-error": {
+                    "resources-custom-config-app2-error": {
                         "configs": {},
                         "partitions_count": 1,
                         "type": "error",
