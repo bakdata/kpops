@@ -47,7 +47,6 @@ class TestKafkaApp:
         )
         assert kafka_app.app.streams.brokers == "fake-broker:9092"
         assert kafka_app.version == "1.2.3"
-        assert kafka_app.get_helm_chart_version() == "1.2.3"
 
     def test_should_deploy_kafka_app(
         self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture

@@ -28,6 +28,10 @@ class TestHelmWrapper:
     def run_command(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "_Helm__execute")
 
+    @pytest.fixture
+    def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch("kpops.component_handlers.helm_wrapper.helm.log.warning")
+
     def test_should_call_run_command_method_when_helm_install_with_defaults(
         self, run_command: MagicMock
     ):
@@ -173,6 +177,21 @@ class TestHelmWrapper:
         )
         run_command.assert_called_once_with(
             ["helm", "uninstall", "test-release", "--namespace", "test-namespace"],
+        )
+
+    def test_should_log_warning_when_release_not_found(
+        self, run_command: MagicMock, log_warning_mock: MagicMock
+    ):
+        helm_wrapper = Helm(helm_config=HelmConfig())
+        run_command.side_effect = ReleaseNotFoundException()
+        helm_wrapper.uninstall(
+            namespace="test-namespace",
+            release_name="test-release",
+            dry_run=False,
+        )
+
+        log_warning_mock.assert_called_once_with(
+            "Release with name test-release not found. Could not uninstall app."
         )
 
     def test_should_call_run_command_method_when_installing_streams_app__with_dry_run(

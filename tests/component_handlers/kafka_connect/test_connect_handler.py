@@ -254,7 +254,10 @@ class TestConnectorHandler:
         )
 
     def test_should_call_helm_upgrade_install_and_uninstall_when_clean_connector_with_retain_clean_jobs_true(
-        self, log_info_mock: MagicMock, helm_repo_config, helm_wrapper_mock
+        self,
+        log_info_mock: MagicMock,
+        helm_repo_config: HelmRepoConfig,
+        helm_wrapper_mock: MagicMock,
     ):
         values = {
             "config": {
@@ -352,7 +355,7 @@ class TestConnectorHandler:
                     )
                 ),
                 mock.call.log_info(
-                    magentaify("Connector Cleanup: uninstall cleanup job")
+                    magentaify("Connector Cleanup: uninstall Kafka Resetter.")
                 ),
             ]
         )

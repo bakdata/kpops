@@ -29,14 +29,14 @@ class SchemaHandler:
         try:
             if not self.components_module:
                 raise ValueError(
-                    "The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your SchemaProvider implementation exists."
+                    f"The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your {SchemaProvider.__name__} implementation exists."
                 )
             schema_provider_class = find_class(self.components_module, SchemaProvider)  # type: ignore[type-abstract]
             return schema_provider_class()
         except ClassNotFoundError:
             raise ValueError(
                 f"No schema provider found in components module {self.components_module}. "
-                f"Either implement it by inheriting from {SchemaProvider.__module__}.{SchemaProvider.__name__} and implementing its abstract method."
+                f"Please implement the abstract method in {SchemaProvider.__module__}.{SchemaProvider.__name__}."
             )
 
     @classmethod

@@ -103,18 +103,14 @@ class Helm:
             bash_command = Helm.__enrich_upgrade_install_command(
                 bash_command, dry_run, flags
             )
-            try:
-                return self.__execute(bash_command)
-            except Exception as e:
-                log.error(f"Could not install chart. More details: {e}")
-                exit(1)
+            return self.__execute(bash_command)
 
     def uninstall(
         self,
         namespace: str,
         release_name: str,
         dry_run: bool,
-    ) -> str:
+    ) -> str | None:
         """
         Prepares and executes the helm uninstall command
         """
@@ -130,13 +126,9 @@ class Helm:
         try:
             return self.__execute(bash_command)
         except ReleaseNotFoundException:
-            log.warning(f"Release not found {release_name}. Could not uninstall app.")
-            exit(1)
-        except RuntimeError as runtime_error:
-            log.error(
-                f"Could not uninstall app {release_name}. More details: {runtime_error}"
+            log.warning(
+                f"Release with name {release_name} not found. Could not uninstall app."
             )
-            exit(1)
 
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
         bash_command = [
@@ -235,4 +227,4 @@ class Helm:
             elif "error" in lower:
                 raise RuntimeError(stderr)
             elif "warning" in lower:
-                log.info(line)
+                log.warning(line)

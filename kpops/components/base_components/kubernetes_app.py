@@ -75,9 +75,8 @@ class KubernetesApp(PipelineComponent):
             dry_run,
             self.namespace,
             self.to_helm_values(),
-            HelmUpgradeInstallFlags(version=self.get_helm_chart_version()),
+            HelmUpgradeInstallFlags(version=self.version),
         )
-
         if dry_run and self.helm_diff.config.enable:
             self.print_helm_diff(stdout)
 
@@ -88,7 +87,7 @@ class KubernetesApp(PipelineComponent):
             self.helm_release_name,
             dry_run,
         )
-        if dry_run and self.helm_diff.config.enable:
+        if dry_run and self.helm_diff.config.enable and stdout:
             self.print_helm_diff(stdout)
 
     def to_helm_values(self) -> dict:
@@ -109,9 +108,6 @@ class KubernetesApp(PipelineComponent):
         raise NotImplementedError(
             f"Please implement the get_helm_chart() method of the {self.__module__} module."
         )
-
-    def get_helm_chart_version(self) -> str | None:
-        return self.version
 
     def __check_compatible_name(self) -> None:
         if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(self.name)):  # TODO: SMARTER
