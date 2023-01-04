@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra
 
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
@@ -10,7 +10,7 @@ from kpops.utils.yaml_loading import substitute
 
 class KafkaStreamsConfig(BaseModel):
     brokers: str
-    schema_registry_url: str | None = Field(default=None, alias="schemaRegistryUrl")
+    schema_registry_url: str | None = None
 
     class Config(CamelCaseConfig):
         extra = Extra.allow

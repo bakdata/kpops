@@ -6,7 +6,7 @@ kafka-app:
   app:
     streams:
       brokers: "${broker}"
-      schemaRegistryUrl: "${schema_registry_url}"
+      schema_registry_url: "${schema_registry_url}"
 producer: {} # inherits from kafka
 streams-app: # inherits from kafka
   app:
