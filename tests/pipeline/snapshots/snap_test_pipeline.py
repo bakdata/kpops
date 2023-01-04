@@ -6,6 +6,68 @@ from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
+snapshots["TestPipeline.test_default_config test-pipeline"] = {
+    "components": [
+        {
+            "app": {
+                "nameOverride": "resources-custom-config-app1",
+                "namespace": "development-namespace",
+                "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "extraOutputTopics": {},
+                    "outputTopic": "resources-custom-config-app1",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-custom-config-app1",
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-custom-config-app1": {
+                        "configs": {},
+                        "partitions_count": 3,
+                        "type": "output",
+                    }
+                },
+            },
+            "type": "producer",
+        },
+        {
+            "app": {
+                "image": "some-image",
+                "labels": {"pipeline": "resources-custom-config"},
+                "nameOverride": "resources-custom-config-app2",
+                "namespace": "development-namespace",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "errorTopic": "resources-custom-config-app2-error",
+                    "inputTopics": ["resources-custom-config-app1"],
+                    "outputTopic": "resources-custom-config-app2",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-custom-config-app2",
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-custom-config-app2": {
+                        "configs": {},
+                        "partitions_count": 3,
+                        "type": "output",
+                    },
+                    "resources-custom-config-app2-error": {
+                        "configs": {},
+                        "partitions_count": 1,
+                        "type": "error",
+                    },
+                },
+            },
+            "type": "streams-app",
+        },
+    ]
+}
+
 snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
     "components": [
         {
@@ -294,12 +356,14 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "filter-resources-first-pipeline-filter",
+                    "consumergroup": "filter-resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
                     "enabled": True,
                     "lagThreshold": "10000",
                     "maxReplicas": 4,
                     "minReplicas": 4,
-                    "topics": ["resources-first-pipeline-filter"],
+                    "topics": [
+                        "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name"
+                    ],
                 },
                 "commandLine": {"TYPE": "nothing"},
                 "image": "fake-registry/filter",
@@ -313,9 +377,9 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                     "config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
-                    "errorTopic": "resources-first-pipeline-filter-error",
+                    "errorTopic": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error",
                     "inputTopics": ["resources-first-pipeline-converter"],
-                    "outputTopic": "resources-first-pipeline-filter",
+                    "outputTopic": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -323,12 +387,12 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "resources-first-pipeline-filter": {
+                    "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name": {
                         "configs": {"retention.ms": "-1"},
                         "partitions_count": 50,
                         "type": "output",
                     },
-                    "resources-first-pipeline-filter-error": {
+                    "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
@@ -680,12 +744,12 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "filter-resources-component-type-substitution-filter",
+                    "consumergroup": "filter-resources-component-type-substitution-filter-app",
                     "enabled": True,
                     "lagThreshold": "10000",
                     "maxReplicas": 4,
                     "minReplicas": 4,
-                    "topics": ["resources-component-type-substitution-filter"],
+                    "topics": ["resources-component-type-substitution-filter-app"],
                 },
                 "commandLine": {"TYPE": "nothing"},
                 "image": "fake-registry/filter",
@@ -700,9 +764,9 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
                     "config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
-                    "errorTopic": "resources-component-type-substitution-filter-error",
+                    "errorTopic": "resources-component-type-substitution-filter-app-error",
                     "inputTopics": ["resources-component-type-substitution-converter"],
-                    "outputTopic": "resources-component-type-substitution-filter",
+                    "outputTopic": "resources-component-type-substitution-filter-app",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -710,12 +774,12 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "resources-component-type-substitution-filter": {
+                    "resources-component-type-substitution-filter-app": {
                         "configs": {"retention.ms": "-1"},
                         "partitions_count": 50,
                         "type": "output",
                     },
-                    "resources-component-type-substitution-filter-error": {
+                    "resources-component-type-substitution-filter-app-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
@@ -739,7 +803,7 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "extraOutputTopics": {},
-                    "outputTopic": "random-topic",
+                    "outputTopic": "app1-test-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -747,7 +811,7 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "random-topic": {
+                    "app1-test-topic": {
                         "configs": {},
                         "partitions_count": 3,
                         "type": "output",
@@ -764,9 +828,9 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
                 "namespace": "development-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "errorTopic": "random-error",
-                    "inputTopics": ["random-topic"],
-                    "outputTopic": "random-topic",
+                    "errorTopic": "app2-dead-letter-topic",
+                    "inputTopics": ["app1-test-topic"],
+                    "outputTopic": "app2-test-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -774,12 +838,12 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "random-error": {
+                    "app2-dead-letter-topic": {
                         "configs": {},
                         "partitions_count": 1,
                         "type": "error",
                     },
-                    "random-topic": {
+                    "app2-test-topic": {
                         "configs": {},
                         "partitions_count": 3,
                         "type": "output",
@@ -803,7 +867,7 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
                     "config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
-                    "errorTopic": "resources-kafka-connect-sink-streams-app-error",
+                    "errorTopic": "resources-kafka-connect-sink-streams-app-development-error",
                     "inputTopics": ["example-topic"],
                     "outputTopic": "example-output",
                     "schemaRegistryUrl": "http://localhost:8081",
@@ -815,7 +879,7 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
                 "models": {},
                 "topics": {
                     "example-output": {"configs": {}, "type": "output"},
-                    "resources-kafka-connect-sink-streams-app-error": {
+                    "resources-kafka-connect-sink-streams-app-development-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
