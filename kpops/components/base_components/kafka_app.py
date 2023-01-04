@@ -77,7 +77,7 @@ class KafkaApp(KubernetesApp):
             )
 
             if self.to and self.handlers.schema_handler and clear_schemas:
-                self.handlers.schema_handler.delete_schemas(self.to, dry_run=dry_run)
+                self.handlers.schema_handler.delete_schemas(self.to, dry_run)
 
     def clean_app(
         self,

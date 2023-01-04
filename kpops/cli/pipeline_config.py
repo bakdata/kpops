@@ -32,7 +32,7 @@ class KafkaConnectResetterHelmConfig(BaseSettings):
         ),
         description="Configuration of Kafka connect resetter Helm Chart",
     )
-    version = "1.0.4"
+    version: str = "1.0.4"
     helm_values: dict = Field(
         default={},
         description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",

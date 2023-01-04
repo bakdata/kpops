@@ -1,15 +1,17 @@
+from pathlib import Path
 from unittest import mock
 from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import KafkaConnectResetterHelmConfig
+from kpops.cli.pipeline_config import KafkaConnectResetterHelmConfig, PipelineConfig
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
+    RepoAuthFlags,
 )
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.connector_handler import ConnectorHandler
@@ -253,6 +255,70 @@ class TestConnectorHandler:
             f"Connector Destruction: the connector {CONNECTOR_NAME} does not exist. Skipping."
         )
 
+    def test_should_call_helm_upgrade_install_with_default_config(
+        self, helm_wrapper_mock: MagicMock
+    ):
+        pipeline_config = PipelineConfig(
+            defaults_path=Path("fake"),
+            environment="development",
+            broker="broker:9092",
+            kafka_connect_resetter_config=KafkaConnectResetterHelmConfig(
+                namespace="test-namespace"
+            ),
+        )
+
+        helm_repo_config = pipeline_config.kafka_connect_resetter_config.helm_config
+
+        handler = ConnectorHandler.from_pipeline_config(pipeline_config)
+
+        handler.clean_connector(
+            connector_name=CONNECTOR_NAME,
+            connector_type=KafkaConnectorType.SOURCE,
+            dry_run=True,
+            retain_clean_jobs=True,
+            offset_topic="kafka-connect-offsets",
+        )
+
+        helm_wrapper_mock.assert_has_calls(
+            [
+                mock.call.add_repo(
+                    "bakdata-kafka-connect-resetter",
+                    "https://bakdata.github.io/kafka-connect-resetter/",
+                    RepoAuthFlags(
+                        username=None,
+                        password=None,
+                        ca_file=None,
+                        insecure_skip_tls_verify=False,
+                    ),
+                ),
+                mock.call.uninstall(
+                    namespace="test-namespace",
+                    release_name="test-connector-clean",
+                    dry_run=True,
+                ),
+                mock.call.upgrade_install(
+                    release_name="test-connector-clean",
+                    namespace="test-namespace",
+                    chart=f"{helm_repo_config.repository_name}/kafka-connect-resetter",
+                    dry_run=True,
+                    flags=HelmUpgradeInstallFlags(
+                        version="1.0.4",
+                        wait=True,
+                        wait_for_jobs=True,
+                    ),
+                    values={
+                        "connectorType": "source",
+                        "config": {
+                            "brokers": "broker:9092",
+                            "connector": "test-connector",
+                            "offsetTopic": "kafka-connect-offsets",
+                        },
+                        "nameOverride": "test-connector",
+                    },
+                ),
+            ]
+        )
+
     def test_should_call_helm_upgrade_install_and_uninstall_when_clean_connector_with_retain_clean_jobs_true(
         self,
         log_info_mock: MagicMock,
@@ -307,7 +373,7 @@ class TestConnectorHandler:
                     chart=f"{helm_repo_config.repository_name}/kafka-connect-resetter",
                     dry_run=True,
                     flags=HelmUpgradeInstallFlags(
-                        version="1.0.4",
+                        version="1.2.3",
                         wait=True,
                         wait_for_jobs=True,
                     ),
@@ -373,7 +439,7 @@ class TestConnectorHandler:
                     chart=f"{helm_repo_config.repository_name}/kafka-connect-resetter",
                     dry_run=True,
                     flags=HelmUpgradeInstallFlags(
-                        version="1.0.4",
+                        version="1.2.3",
                         wait=True,
                         wait_for_jobs=True,
                     ),
@@ -426,7 +492,7 @@ class TestConnectorHandler:
                     chart=f"{helm_repo_config.repository_name}/kafka-connect-resetter",
                     dry_run=False,
                     flags=HelmUpgradeInstallFlags(
-                        version="1.0.4",
+                        version="1.2.3",
                         wait=True,
                         wait_for_jobs=True,
                     ),
@@ -484,7 +550,7 @@ class TestConnectorHandler:
             values = {}
         resetter_helm_config = KafkaConnectResetterHelmConfig(
             helm_config=helm_repo_config,
-            version="1.0.4",
+            version="1.2.3",
             helm_values=values,
             namespace="test-namespace",
         )

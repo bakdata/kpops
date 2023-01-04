@@ -58,4 +58,4 @@ class ProducerApp(KafkaApp):
     def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
         super().destroy(dry_run, clean, delete_outputs)
         if clean:
-            self.clean(dry_run, delete_outputs, self.config.clean_streams_apps_schemas)
+            self.clean(dry_run, delete_outputs, self.config.clean_producer_schemas)

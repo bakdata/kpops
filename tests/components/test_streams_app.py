@@ -357,10 +357,7 @@ class TestStreamsApp:
         mocker: MockerFixture,
     ):
         config.clean_streams_apps_schemas = True
-        values = {
-            "namespace": "test-namespace",
-            "streams": {"brokers": "fake-broker:9092"},
-        }
+
         streams_app = StreamsApp(
             handlers=handlers,
             config=config,
@@ -368,7 +365,10 @@ class TestStreamsApp:
                 "type": "streams-app",
                 "name": "example-name",
                 "version": "2.4.2",
-                "app": values,
+                "app": {
+                    "namespace": "test-namespace",
+                    "streams": {"brokers": "fake-broker:9092"},
+                },
                 "to": {
                     "topics": {
                         "${output_topic_name}": TopicConfig(
@@ -378,22 +378,23 @@ class TestStreamsApp:
                 },
             },
         )
-        streams_app.handlers = MagicMock()
         mock_helm_upgrade_install = mocker.patch.object(
             streams_app.helm_wrapper, "upgrade_install"
         )
         mock_helm_uninstall = mocker.patch.object(streams_app.helm_wrapper, "uninstall")
 
-        patch_object = mocker.patch.object(
-            streams_app.handlers.schema_handler.delete_shemas, "schema_handler"
+        mock_delete_schemas = mocker.patch.object(
+            handlers.schema_handler, "delete_schemas"
         )
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
-        mock.attach_mock(patch_object, "delete_schemas")
+        mock.attach_mock(mock_delete_schemas, "delete_schemas")
 
         streams_app.destroy(dry_run=True, clean=True, delete_outputs=True)
+
+        mock_delete_schemas.assert_called_once()
 
         mock.assert_has_calls(
             [
@@ -420,6 +421,17 @@ class TestStreamsApp:
                 ),
                 mocker.call.helm_uninstall(
                     "test-namespace", "example-name-clean", True
+                ),
+                mocker.call.delete_schemas(
+                    ToSection(
+                        topics={
+                            "streams-app-output-topic": TopicConfig(
+                                type=OutputTopicTypes.OUTPUT,
+                                partitions_count=10,
+                            )
+                        },
+                    ),
+                    True,
                 ),
             ]
         )

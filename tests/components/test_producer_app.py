@@ -14,6 +14,7 @@ from kpops.components import ProducerApp
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
+    ToSection,
 )
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
@@ -188,7 +189,6 @@ class TestProducerApp:
             "test-namespace", "example-name", True
         )
 
-    # TODO: Assert schema deletion
     def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
         config: PipelineConfig,
@@ -223,10 +223,14 @@ class TestProducerApp:
         mock_helm_uninstall = mocker.patch.object(
             producer_app.helm_wrapper, "uninstall"
         )
+        mock_delete_schemas = mocker.patch.object(
+            handlers.schema_handler, "delete_schemas"
+        )
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
+        mock.attach_mock(mock_delete_schemas, "delete_schemas")
 
         producer_app.destroy(dry_run=True, clean=True, delete_outputs=True)
 
@@ -255,6 +259,17 @@ class TestProducerApp:
                 ),
                 mocker.call.helm_uninstall(
                     "test-namespace", "example-name-clean", True
+                ),
+                mocker.call.delete_schemas(
+                    ToSection(
+                        topics={
+                            "producer-output-topic": TopicConfig(
+                                type=OutputTopicTypes.OUTPUT,
+                                partitions_count=10,
+                            )
+                        },
+                    ),
+                    True,
                 ),
             ]
         )
