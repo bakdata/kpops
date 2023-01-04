@@ -278,12 +278,12 @@ class TestPipeline:
 
         producer_details = enriched_pipeline["components"][0]
         output_topic = producer_details["app"]["streams"]["outputTopic"]
-        assert output_topic == "resources-no-topics-app1"
+        assert output_topic == "resources-custom-config-app1"
 
         streams_app_details = enriched_pipeline["components"][1]
         output_topic = streams_app_details["app"]["streams"]["outputTopic"]
-        assert output_topic == "resources-no-topics-app2"
+        assert output_topic == "resources-custom-config-app2"
         error_topic = streams_app_details["app"]["streams"]["errorTopic"]
-        assert error_topic == "resources-no-topics-app2-error"
+        assert error_topic == "resources-custom-config-app2-error"
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
