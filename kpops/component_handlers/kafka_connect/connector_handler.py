@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import logging
 import sys
-from typing import TYPE_CHECKING, Literal
-
-from pydantic import BaseModel
+from functools import cached_property
+from typing import TYPE_CHECKING
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
@@ -18,43 +17,17 @@ from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundEx
 from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectConfig,
     KafkaConnectorType,
+    KafkaConnectResetterConfig,
+    KafkaConnectResetterValues,
 )
 from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.utils.colorify import greenify, magentaify, yellowify
 from kpops.utils.dict_differ import render_diff
-from kpops.utils.pydantic import CamelCaseConfig
 
 if TYPE_CHECKING:
     from kpops.cli.pipeline_config import KafkaConnectResetterHelmConfig, PipelineConfig
 
 log = logging.getLogger("KafkaConnect")
-
-
-class KafkaConnectResetterConfig(BaseModel):
-    brokers: str
-    connector: str
-    delete_consumer_group: bool | None = None
-    offset_topic: str | None = None
-
-    class Config(CamelCaseConfig):
-        pass
-
-
-class KafkaConnectResetterValues(BaseModel):
-    connector_type: Literal["source", "sink"]
-    config: KafkaConnectResetterConfig
-    name_override: str
-
-    class Config(CamelCaseConfig):
-        pass
-
-    def dict(self, **_):
-        return super().dict(by_alias=True, exclude_none=True)
-
-
-class ConnectorHandlerNotFoundException(Exception):
-    def __init__(self, message="ConnectorHandler was not initialized correctly"):
-        super().__init__(message)
 
 
 class ConnectorHandler:
@@ -69,15 +42,11 @@ class ConnectorHandler:
     ):
         self._connect_wrapper = connect_wrapper
         self._timeout = timeout
-        self._helm_wrapper = Helm(helm_config)
-        helm_repo_config = kafka_connect_resetter_helm_config.helm_config
-        self._helm_wrapper.add_repo(
-            helm_repo_config.repository_name,
-            helm_repo_config.url,
-            helm_repo_config.repo_auth_flags,
-        )
+        self._helm_config = helm_config
+        self._helm_repo_config = kafka_connect_resetter_helm_config.helm_config
         self.helm_diff = helm_diff
 
+        helm_repo_config = kafka_connect_resetter_helm_config.helm_config
         self.kafka_connect_resseter_chart = (
             f"{helm_repo_config.repository_name}/kafka-connect-resetter"
         )
@@ -87,6 +56,16 @@ class ConnectorHandler:
         )
         self.broker = broker
         self.values = kafka_connect_resetter_helm_config.helm_values
+
+    @cached_property
+    def helm_wrapper(self):
+        helm_wrapper = Helm(self._helm_config)
+        helm_wrapper.add_repo(
+            self._helm_repo_config.repository_name,
+            self._helm_repo_config.url,
+            self._helm_repo_config.repo_auth_flags,
+        )
+        return helm_wrapper
 
     def create_connector(
         self,
@@ -188,7 +167,7 @@ class ConnectorHandler:
         )
 
         if dry_run and self.helm_diff.config.enable:
-            current_release = self._helm_wrapper.get_manifest(
+            current_release = self.helm_wrapper.get_manifest(
                 trimmed_name, self.namespace
             )
             new_release = Helm.load_helm_manifest(stdout)
@@ -264,7 +243,7 @@ class ConnectorHandler:
         dry_run: bool,
         kwargs,
     ) -> str:
-        return self._helm_wrapper.upgrade_install(
+        return self.helm_wrapper.upgrade_install(
             release_name=release_name,
             namespace=self.namespace,
             chart=self.kafka_connect_resseter_chart,
@@ -287,7 +266,7 @@ class ConnectorHandler:
         )
 
     def __uninstall_kafka_resetter(self, release_name: str, dry_run: bool) -> None:
-        self._helm_wrapper.uninstall(
+        self.helm_wrapper.uninstall(
             namespace=self.namespace,
             release_name=release_name,
             dry_run=dry_run,

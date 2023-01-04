@@ -1,6 +1,9 @@
 from enum import Enum
+from typing import Literal
 
 from pydantic import BaseConfig, BaseModel, Extra
+
+from kpops.utils.pydantic import CamelCaseConfig
 
 
 class KafkaConnectorType(str, Enum):
@@ -41,3 +44,25 @@ class KafkaConnectConfigErrorResponse(BaseModel):
     name: str
     error_count: int
     configs: list[KafkaConnectConfigDescription]
+
+
+class KafkaConnectResetterConfig(BaseModel):
+    brokers: str
+    connector: str
+    delete_consumer_group: bool | None = None
+    offset_topic: str | None = None
+
+    class Config(CamelCaseConfig):
+        pass
+
+
+class KafkaConnectResetterValues(BaseModel):
+    connector_type: Literal["source", "sink"]
+    config: KafkaConnectResetterConfig
+    name_override: str
+
+    class Config(CamelCaseConfig):
+        pass
+
+    def dict(self, **_):
+        return super().dict(by_alias=True, exclude_none=True)
