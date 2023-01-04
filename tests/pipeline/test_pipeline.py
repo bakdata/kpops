@@ -243,13 +243,13 @@ class TestPipeline:
 
         producer_details = enriched_pipeline["components"][0]
         output_topic = producer_details["app"]["streams"]["outputTopic"]
-        assert output_topic == "random-topic"
+        assert output_topic == "app1-test-topic"
 
         streams_app_details = enriched_pipeline["components"][1]
         output_topic = streams_app_details["app"]["streams"]["outputTopic"]
-        assert output_topic == "random-topic"
+        assert output_topic == "app2-test-topic"
         error_topic = streams_app_details["app"]["streams"]["errorTopic"]
-        assert error_topic == "random-error"
+        assert error_topic == "app2-dead-letter-topic"
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 

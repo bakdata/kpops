@@ -787,7 +787,7 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "extraOutputTopics": {},
-                    "outputTopic": "random-topic",
+                    "outputTopic": "app1-test-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -795,7 +795,7 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "random-topic": {
+                    "app1-test-topic": {
                         "configs": {},
                         "partitions_count": 3,
                         "type": "output",
@@ -812,9 +812,9 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
                 "namespace": "development-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "errorTopic": "random-error",
-                    "inputTopics": ["random-topic"],
-                    "outputTopic": "random-topic",
+                    "errorTopic": "app2-dead-letter-topic",
+                    "inputTopics": ["app1-test-topic"],
+                    "outputTopic": "app2-test-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -822,12 +822,12 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "random-error": {
+                    "app2-dead-letter-topic": {
                         "configs": {},
                         "partitions_count": 1,
                         "type": "error",
                     },
-                    "random-topic": {
+                    "app2-test-topic": {
                         "configs": {},
                         "partitions_count": 3,
                         "type": "output",
