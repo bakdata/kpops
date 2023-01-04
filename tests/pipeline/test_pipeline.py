@@ -240,12 +240,50 @@ class TestPipeline:
 
         enriched_pipeline = load_yaml_file(Path(output_file_path))
         assert isinstance(enriched_pipeline, dict)
-        for app_details in enriched_pipeline["components"]:
-            output_topic = app_details["app"]["streams"]["outputTopic"]
-            assert output_topic == "random-topic"
-            app_type = app_details["type"]
-            if app_type == "streams-app":
-                error_topic = app_details["app"]["streams"]["errorTopic"]
-                assert error_topic == "random-error"
+
+        producer_details = enriched_pipeline["components"][0]
+        output_topic = producer_details["app"]["streams"]["outputTopic"]
+        assert output_topic == "app1-test-topic"
+
+        streams_app_details = enriched_pipeline["components"][1]
+        output_topic = streams_app_details["app"]["streams"]["outputTopic"]
+        assert output_topic == "app2-test-topic"
+        error_topic = streams_app_details["app"]["streams"]["errorTopic"]
+        assert error_topic == "app2-dead-letter-topic"
+
+        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_default_config(self, tmpdir, snapshot):
+        os.environ["KPOPS_ENVIRONMENT"] = "development"
+        output_file_path = tmpdir.join("pipeline.yaml")
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--save",
+                "--out-path",
+                output_file_path,
+                "--defaults",
+                str(RESOURCE_PATH / "no-topics-defaults"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+
+        enriched_pipeline = load_yaml_file(Path(output_file_path))
+        assert isinstance(enriched_pipeline, dict)
+
+        producer_details = enriched_pipeline["components"][0]
+        output_topic = producer_details["app"]["streams"]["outputTopic"]
+        assert output_topic == "resources-custom-config-app1"
+
+        streams_app_details = enriched_pipeline["components"][1]
+        output_topic = streams_app_details["app"]["streams"]["outputTopic"]
+        assert output_topic == "resources-custom-config-app2"
+        error_topic = streams_app_details["app"]["streams"]["errorTopic"]
+        assert error_topic == "resources-custom-config-app2-error"
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
