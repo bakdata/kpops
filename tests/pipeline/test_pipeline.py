@@ -262,15 +262,14 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "no-topics/pipeline.yaml"),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--save",
                 "--out-path",
                 output_file_path,
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
-                "--config",
-                str(RESOURCE_PATH / "no-topics/config.yaml"),
             ],
+            catch_exceptions=False,
         )
         assert result.exit_code == 0
 
