@@ -7,7 +7,7 @@ from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.kafka_connect.handler import KafkaConnectorType
+from kpops.component_handlers.kafka_connect.connector_handler import KafkaConnectorType
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.components.base_components.kafka_connect import (
     KafkaSinkConnector,
@@ -44,7 +44,6 @@ def config():
 def handlers() -> ComponentHandlers:
     return ComponentHandlers(
         schema_handler=MagicMock(),
-        app_handler=MagicMock(),
         connector_handler=MagicMock(),
         topic_handler=MagicMock(),
     )
@@ -575,7 +574,7 @@ class TestKafkaConnectorSource:
             connector.handlers.connector_handler, "clean_connector"
         )
         mock_helm_upgrade_install = mocker.patch.object(
-            connector.handlers.connector_handler._helm_wrapper,
+            connector.handlers.connector_handler.helm,
             "helm_upgrade_install",
         )
 

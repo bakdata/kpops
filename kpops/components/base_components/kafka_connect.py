@@ -6,7 +6,7 @@ from typing import NoReturn
 from typing_extensions import override
 
 from kpops.cli.pipeline_config import ENV_PREFIX
-from kpops.component_handlers.kafka_connect.handler import KafkaConnectorType
+from kpops.component_handlers.kafka_connect.connector_handler import KafkaConnectorType
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic

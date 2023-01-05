@@ -2,12 +2,16 @@ kubernetes-app:
   name: "${component_type}"
   app:
     namespace: example-namespace
+
 kafka-app:
   app:
     streams:
       brokers: "${broker}"
       schema_registry_url: "${schema_registry_url}"
+  version: "2.4.2"
+
 producer: {} # inherits from kafka
+
 streams-app: # inherits from kafka
   app:
     streams:
@@ -21,6 +25,7 @@ streams-app: # inherits from kafka
         partitions_count: 1
         configs:
           cleanup.policy: compact,delete
+
 scheduled-producer:
   app:
     image: "example-registry/fake-image"
@@ -35,6 +40,7 @@ scheduled-producer:
           cleanup.policy: compact,delete
     models:
       "com/bakdata/kafka/fake": 1.0.0
+
 converter:
   app:
     resources:
@@ -59,6 +65,7 @@ converter:
         partitions_count: 10
         configs:
           cleanup.policy: compact,delete
+
 filter:
   app:
     image: "fake-registry/filter"
@@ -77,6 +84,7 @@ filter:
         partitions_count: 50
         configs:
           retention.ms: "-1"
+
 should-inflate:
   app:
     image: "fake-registry/filter"
@@ -95,6 +103,7 @@ should-inflate:
         partitions_count: 50
         configs:
           retention.ms: "-1"
+
 kafka-connect:
   name: "sink-connector"
   app:

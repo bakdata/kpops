@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+from functools import cached_property
 
 from schema_registry.client import SchemaRegistryClient
 
@@ -19,28 +20,24 @@ log = logging.getLogger("SchemaHandler")
 
 
 class SchemaHandler:
-    _schema_provider: SchemaProvider | None = None
-
     def __init__(self, url: str, components_module: str | None):
         self.schema_registry_client = SchemaRegistryClient(url)
         self.components_module = components_module
 
-    @property
+    @cached_property
     def schema_provider(self) -> SchemaProvider:
-        if not self._schema_provider:
-            try:
-                if not self.components_module:
-                    raise ValueError(
-                        "The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your SchemaProvider implementation exists."
-                    )
-                schema_provider_class = find_class(self.components_module, SchemaProvider)  # type: ignore[type-abstract]
-                self._schema_provider = schema_provider_class()
-            except ClassNotFoundError:
+        try:
+            if not self.components_module:
                 raise ValueError(
-                    f"No schema provider found in components module {self.components_module}. "
-                    f"Either implement it by inheriting from {SchemaProvider.__module__}.{SchemaProvider.__name__} and implementing its abstract method."
+                    f"The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your {SchemaProvider.__name__} implementation exists."
                 )
-        return self._schema_provider
+            schema_provider_class = find_class(self.components_module, SchemaProvider)  # type: ignore[type-abstract]
+            return schema_provider_class()
+        except ClassNotFoundError:
+            raise ValueError(
+                f"No schema provider found in components module {self.components_module}. "
+                f"Please implement the abstract method in {SchemaProvider.__module__}.{SchemaProvider.__name__}."
+            )
 
     @classmethod
     def load_schema_handler(

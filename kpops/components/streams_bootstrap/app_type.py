@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class ApplicationType(Enum):
+class AppType(Enum):
     STREAMS_APP = "streams-app"
     PRODUCER_APP = "producer-app"
     CLEANUP_STREAMS_APP = "streams-app-cleanup-job"

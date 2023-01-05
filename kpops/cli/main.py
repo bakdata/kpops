@@ -10,9 +10,8 @@ from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.kafka_connect.handler import ConnectorHandler
+from kpops.component_handlers.kafka_connect.connector_handler import ConnectorHandler
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
-from kpops.component_handlers.streams_bootstrap.handler import AppHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.pipeline_generator.pipeline import Pipeline
@@ -111,14 +110,11 @@ def setup_handlers(
     components_module: str | None, config: PipelineConfig
 ) -> ComponentHandlers:
     schema_handler = SchemaHandler.load_schema_handler(components_module, config)
-    app_handler = AppHandler.from_pipeline_config(config)
     connector_handler = ConnectorHandler.from_pipeline_config(config)
     proxy_wrapper = ProxyWrapper(config)
     topic_handler = TopicHandler(proxy_wrapper)
 
-    return ComponentHandlers(
-        schema_handler, app_handler, connector_handler, topic_handler
-    )
+    return ComponentHandlers(schema_handler, connector_handler, topic_handler)
 
 
 def setup_logging_level(verbose: bool):

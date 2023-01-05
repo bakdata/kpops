@@ -2,56 +2,32 @@ from __future__ import annotations
 
 import logging
 import sys
-from typing import TYPE_CHECKING, Literal
+from functools import cached_property
+from typing import TYPE_CHECKING
 
-from pydantic import BaseModel
-
+from kpops.component_handlers.helm_wrapper.helm import Helm
+from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmConfig,
+    HelmUpgradeInstallFlags,
+)
+from kpops.component_handlers.helm_wrapper.utils import trim_release_name
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
 from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectConfig,
     KafkaConnectorType,
+    KafkaConnectResetterConfig,
+    KafkaConnectResetterValues,
 )
 from kpops.component_handlers.kafka_connect.timeout import timeout
-from kpops.component_handlers.streams_bootstrap.helm_wrapper import (
-    HelmCommandConfig,
-    HelmWrapper,
-)
 from kpops.utils.colorify import greenify, magentaify, yellowify
 from kpops.utils.dict_differ import render_diff
-from kpops.utils.pydantic import CamelCaseConfig
 
 if TYPE_CHECKING:
-    from kpops.cli.pipeline_config import PipelineConfig
+    from kpops.cli.pipeline_config import KafkaConnectResetterHelmConfig, PipelineConfig
 
 log = logging.getLogger("KafkaConnect")
-
-
-class KafkaConnectResetterConfig(BaseModel):
-    brokers: str
-    connector: str
-    delete_consumer_group: bool | None = None
-    offset_topic: str | None = None
-
-    class Config(CamelCaseConfig):
-        pass
-
-
-class KafkaConnectResetterValues(BaseModel):
-    connector_type: Literal["source", "sink"]
-    config: KafkaConnectResetterConfig
-    name_override: str
-
-    class Config(CamelCaseConfig):
-        pass
-
-    def dict(self, **_):
-        return super().dict(by_alias=True, exclude_none=True)
-
-
-class ConnectorHandlerNotFoundException(Exception):
-    def __init__(self, message="ConnectorHandler was not initialized correctly"):
-        super().__init__(message)
 
 
 class ConnectorHandler:
@@ -59,20 +35,37 @@ class ConnectorHandler:
         self,
         connect_wrapper: ConnectWrapper,
         timeout: int,
-        connector_resetter_helm_wrapper: HelmWrapper,
-        namespace: str,
+        kafka_connect_resetter_helm_config: KafkaConnectResetterHelmConfig,
         broker: str,
-        values: dict,
+        helm_diff: HelmDiff,
+        helm_config: HelmConfig = HelmConfig(),
     ):
         self._connect_wrapper = connect_wrapper
         self._timeout = timeout
-        self._helm_wrapper: HelmWrapper = connector_resetter_helm_wrapper
-        self._helm_wrapper.helm_repo_add()
+        self._helm_config = helm_config
+        self._helm_repo_config = kafka_connect_resetter_helm_config.helm_config
+        self.helm_diff = helm_diff
+
+        helm_repo_config = kafka_connect_resetter_helm_config.helm_config
+        self.kafka_connect_resseter_chart = (
+            f"{helm_repo_config.repository_name}/kafka-connect-resetter"
+        )
+        self.chart_version = kafka_connect_resetter_helm_config.version
         self.namespace = (
-            namespace  # namespace where the re-setter jobs should be deployed to
+            kafka_connect_resetter_helm_config.namespace  # namespace where the re-setter jobs should be deployed to
         )
         self.broker = broker
-        self.values = values
+        self.values = kafka_connect_resetter_helm_config.helm_values
+
+    @cached_property
+    def helm(self):
+        helm = Helm(self._helm_config)
+        helm.add_repo(
+            self._helm_repo_config.repository_name,
+            self._helm_repo_config.url,
+            self._helm_repo_config.repo_auth_flags,
+        )
+        return helm
 
     def create_connector(
         self,
@@ -134,6 +127,55 @@ class ConnectorHandler:
                     f"Connector Destruction: the connector {connector_name} does not exist. Skipping."
                 )
 
+    def clean_connector(
+        self,
+        connector_name: str,
+        connector_type: KafkaConnectorType,
+        dry_run: bool,
+        retain_clean_jobs: bool,
+        **kwargs,
+    ) -> None:
+        """
+        Cleans the connector from the cluster. At first, it deletes the previous cleanup job (connector resetter)
+        to make sure that there is no running clean job in the cluster. Then it releases a cleanup job.
+        If the retain_clean_jobs flag is set to false the cleanup job will be deleted.
+        :param connector_name: Name of the connector
+        :param connector_type: Type of the connector (SINK or SOURCE)
+        :param dry_run: If the cleanup should be run in dry run mode or not
+        :param retain_clean_jobs: If the cleanup job should be kept
+        :param kwargs: Other values for the KafkaConnectResetter
+        """
+        suffix = "-clean"
+        clean_up_release_name = connector_name + suffix
+        trimmed_name = trim_release_name(clean_up_release_name, suffix)
+
+        log.info(
+            magentaify(
+                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {connector_name}"
+            )
+        )
+        self.__uninstall_kafka_resetter(trimmed_name, dry_run)
+
+        log.info(
+            magentaify(
+                f"Connector Cleanup: deploy Connect {connector_type.value} resetter for {connector_name}"
+            )
+        )
+
+        stdout = self.__install_kafka_resetter(
+            trimmed_name, connector_name, connector_type, dry_run, kwargs
+        )
+
+        if dry_run and self.helm_diff.config.enable:
+            current_release = self.helm.get_manifest(trimmed_name, self.namespace)
+            new_release = Helm.load_helm_manifest(stdout)
+            helm_diff = HelmDiff.get_diff(current_release, new_release)
+            self.helm_diff.log_helm_diff(helm_diff, log)
+
+        if not retain_clean_jobs:
+            log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
+            self.__uninstall_kafka_resetter(trimmed_name, dry_run)
+
     def __dry_run_connector_creation(
         self, connector_name: str, kafka_connect_config: KafkaConnectConfig
     ) -> None:
@@ -191,46 +233,22 @@ class ConnectorHandler:
                 f"Connector Destruction: connector {connector_name} does not exist and cannot be deleted. Skipping."
             )
 
-    def clean_connector(
+    def __install_kafka_resetter(
         self,
+        release_name: str,
         connector_name: str,
         connector_type: KafkaConnectorType,
         dry_run: bool,
-        retain_clean_jobs: bool,
-        **kwargs,
-    ) -> None:
-        """
-        Cleans the connector from the cluster. At first, it deletes the previous cleanup job (connector resetter)
-        to make sure that there is no running clean job in the cluster. Then it releases a cleanup job.
-        If the retain_clean_jobs flag is set to false the cleanup job will be deleted.
-        :param connector_name: Name of the connector
-        :param connector_type: Type of the connector (SINK or SOURCE)
-        :param dry_run: If the cleanup should be run in dry run mode or not
-        :param retain_clean_jobs: If the cleanup job should be kept
-        :param kwargs: Other values for the KafkaConnectResetter
-        """
-        suffix = "-clean"
-        release_name = connector_name + suffix
-
-        log.info(
-            magentaify(
-                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {connector_name}"
-            )
-        )
-        self.__delete_clean_up_job_release(release_name, suffix, dry_run)
-
-        log.info(
-            magentaify(
-                f"Connector Cleanup: deploy Connect {connector_type.value} resetter for {connector_name}"
-            )
-        )
-        self._helm_wrapper.helm_upgrade_install(
+        kwargs,
+    ) -> str:
+        return self.helm.upgrade_install(
             release_name=release_name,
-            suffix=suffix,
             namespace=self.namespace,
-            app="kafka-connect-resetter",
+            chart=self.kafka_connect_resseter_chart,
             dry_run=dry_run,
-            helm_command_config=HelmCommandConfig(wait_for_jobs=True, wait=True),
+            flags=HelmUpgradeInstallFlags(
+                version=self.chart_version, wait_for_jobs=True, wait=True
+            ),
             values={
                 **KafkaConnectResetterValues(
                     config=KafkaConnectResetterConfig(
@@ -245,17 +263,10 @@ class ConnectorHandler:
             },
         )
 
-        if not retain_clean_jobs:
-            log.info(magentaify("Connector Cleanup: uninstall cleanup job"))
-            self.__delete_clean_up_job_release(release_name, suffix, dry_run)
-
-    def __delete_clean_up_job_release(
-        self, release_name: str, suffix: str, dry_run: bool
-    ) -> None:
-        self._helm_wrapper.helm_uninstall(
+    def __uninstall_kafka_resetter(self, release_name: str, dry_run: bool) -> None:
+        self.helm.uninstall(
             namespace=self.namespace,
             release_name=release_name,
-            suffix=suffix,
             dry_run=dry_run,
         )
 
@@ -266,11 +277,8 @@ class ConnectorHandler:
         return cls(
             connect_wrapper=ConnectWrapper(host=pipeline_config.kafka_connect_host),
             timeout=pipeline_config.timeout,
-            connector_resetter_helm_wrapper=HelmWrapper(
-                pipeline_config.kafka_connect_resetter_config.helm_config
-            ),
-            # TODO: why is this an optional?
-            namespace=pipeline_config.kafka_connect_resetter_config.helm_config.namespace,  # type: ignore
+            kafka_connect_resetter_helm_config=pipeline_config.kafka_connect_resetter_config,
+            helm_config=pipeline_config.helm_config,
             broker=pipeline_config.broker,
-            values=pipeline_config.kafka_connect_resetter_config.helm_values,
+            helm_diff=HelmDiff(pipeline_config.helm_diff_config),
         )

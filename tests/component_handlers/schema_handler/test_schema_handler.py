@@ -108,9 +108,8 @@ def test_should_raise_value_error_if_schema_provider_class_not_found():
     assert (
         str(value_error.value)
         == "No schema provider found in components module tests.cli.test_registry. "
-        "Either implement it by inheriting from "
-        f"{SchemaProvider.__module__}.{SchemaProvider.__name__} and "
-        "implementing its abstract method."
+        "Please implement the abstract method in "
+        f"{SchemaProvider.__module__}.{SchemaProvider.__name__}."
     )
 
 
