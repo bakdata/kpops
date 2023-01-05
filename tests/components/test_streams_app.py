@@ -271,7 +271,7 @@ class TestStreamsApp:
             streams_app.handlers.topic_handler, "create_topics"
         )
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app.helm_wrapper, "upgrade_install"
+            streams_app.helm, "upgrade_install"
         )
 
         mock = mocker.MagicMock()
@@ -341,7 +341,7 @@ class TestStreamsApp:
             },
         )
         streams_app.handlers = MagicMock()
-        mock_helm_uninstall = mocker.patch.object(streams_app.helm_wrapper, "uninstall")
+        mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
         streams_app.destroy(dry_run=True, clean=False, delete_outputs=False)
 
@@ -379,9 +379,9 @@ class TestStreamsApp:
             },
         )
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app.helm_wrapper, "upgrade_install"
+            streams_app.helm, "upgrade_install"
         )
-        mock_helm_uninstall = mocker.patch.object(streams_app.helm_wrapper, "uninstall")
+        mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
         mock_delete_schemas = mocker.patch.object(
             handlers.schema_handler, "delete_schemas"

@@ -54,12 +54,13 @@ class StreamsApp(KafkaApp):
     def get_helm_chart(self) -> str:
         return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.STREAMS_APP.value}"
 
+    @property
     @override
-    def get_helm_repo_config(self) -> HelmRepoConfig | None:
+    def helm_repo_config(self) -> HelmRepoConfig | None:
         return self.config.streams_bootstrap_helm_config
 
     @override
-    def get_clean_up_helm_chart(self):
+    def get_clean_up_helm_chart(self) -> str:
         return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
     def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
@@ -67,7 +68,7 @@ class StreamsApp(KafkaApp):
         if clean:
             self.clean(dry_run, delete_outputs, self.config.clean_streams_apps_schemas)
 
-    def substitute_autoscaling_topic_names(self):
+    def substitute_autoscaling_topic_names(self) -> None:
         if not self.app.autoscaling:
             return
         self.app.autoscaling.topics = [

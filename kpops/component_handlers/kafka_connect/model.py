@@ -64,5 +64,5 @@ class KafkaConnectResetterValues(BaseModel):
     class Config(CamelCaseConfig):
         pass
 
-    def dict(self, **_):
+    def dict(self, **_) -> dict:
         return super().dict(by_alias=True, exclude_none=True)

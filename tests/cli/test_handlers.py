@@ -44,8 +44,8 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
     assert actual_handlers.topic_handler == expected.topic_handler
 
     assert actual_handlers.schema_handler is None
-    assert type(actual_handlers.connector_handler) is ConnectorHandler
-    assert type(actual_handlers.topic_handler) is TopicHandler
+    assert isinstance(actual_handlers.connector_handler, ConnectorHandler)
+    assert isinstance(actual_handlers.topic_handler, TopicHandler)
 
 
 def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
@@ -84,6 +84,6 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     assert actual_handlers.connector_handler == expected.connector_handler
     assert actual_handlers.topic_handler == expected.topic_handler
 
-    assert type(actual_handlers.schema_handler) is SchemaHandler
-    assert type(actual_handlers.connector_handler) is ConnectorHandler
-    assert type(actual_handlers.topic_handler) is TopicHandler
+    assert isinstance(actual_handlers.schema_handler, SchemaHandler)
+    assert isinstance(actual_handlers.connector_handler, ConnectorHandler)
+    assert isinstance(actual_handlers.topic_handler, TopicHandler)

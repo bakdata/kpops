@@ -110,7 +110,7 @@ class TestProducerApp:
         )
 
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app.helm_wrapper, "upgrade_install"
+            producer_app.helm, "upgrade_install"
         )
 
         mock = mocker.MagicMock()
@@ -179,9 +179,7 @@ class TestProducerApp:
             },
         )
         producer_app.handlers = MagicMock()
-        mock_helm_uninstall = mocker.patch.object(
-            producer_app.helm_wrapper, "uninstall"
-        )
+        mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
 
         producer_app.destroy(dry_run=True, clean=False, delete_outputs=False)
 
@@ -218,11 +216,9 @@ class TestProducerApp:
             },
         )
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app.helm_wrapper, "upgrade_install"
+            producer_app.helm, "upgrade_install"
         )
-        mock_helm_uninstall = mocker.patch.object(
-            producer_app.helm_wrapper, "uninstall"
-        )
+        mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
         mock_delete_schemas = mocker.patch.object(
             handlers.schema_handler, "delete_schemas"
         )

@@ -95,15 +95,18 @@ class TestKubernetesApp:
             version="3.4.5",
         )
 
-        helm_repo_config_mock = mocker.patch.object(
-            kubernetes_app, "get_helm_repo_config"
-        )
-        helm_repo_config_mock.return_value = HelmRepoConfig(
-            repository_name="test-repo", url="mock://test"
+        repo_config = HelmRepoConfig(repository_name="test-repo", url="mock://test")
+        mocker.patch(
+            "kpops.components.base_components.kubernetes_app.KubernetesApp.helm_repo_config",
+            return_value=repo_config,
+            new_callable=mocker.PropertyMock,
         )
 
         mocker.patch.object(
-            kubernetes_app, "get_helm_chart", return_value="test/test-chart"
+            kubernetes_app,
+            "get_helm_chart",
+            return_value="test/test-chart",
+            new_callable=mocker.PropertyMock,
         )
 
         kubernetes_app.deploy(True)
@@ -126,11 +129,12 @@ class TestKubernetesApp:
             ]
         )
 
-    def should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled(
+    def test_should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
+        mocker: MagicMock,
     ):
         app_config = KubernetesAppConfig(namespace="test-namespace")
 
@@ -140,6 +144,9 @@ class TestKubernetesApp:
             app=app_config,
             config=config,
             name="test-kubernetes-apps",
+        )
+        mocker.patch.object(
+            kubernetes_app, "get_helm_chart", return_value="test/test-chart"
         )
 
         kubernetes_app.deploy(True)

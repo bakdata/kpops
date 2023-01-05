@@ -51,7 +51,7 @@ class StreamsConfig(KafkaStreamsConfig):
         )
 
 
-class StreamAutoScaling(BaseModel):
+class StreamsAppAutoScaling(BaseModel):
     consumergroup: str
     topics: list[str] = []
 
@@ -67,7 +67,7 @@ class StreamsAppConfig(KafkaAppConfig):
     """
 
     streams: StreamsConfig
-    autoscaling: StreamAutoScaling | None = None
+    autoscaling: StreamsAppAutoScaling | None = None
 
     class Config(BaseConfig):
         extra = Extra.allow

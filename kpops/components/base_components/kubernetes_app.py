@@ -44,16 +44,15 @@ class KubernetesApp(PipelineComponent):
         self.__check_compatible_name()
 
     @cached_property
-    def helm_wrapper(self) -> Helm:
-        helm_wrapper = Helm(self.config.helm_config)
-        helm_repo_config = self.get_helm_repo_config()
-        if helm_repo_config is not None:
-            helm_wrapper.add_repo(
-                helm_repo_config.repository_name,
-                helm_repo_config.url,
-                helm_repo_config.repo_auth_flags,
+    def helm(self) -> Helm:
+        helm = Helm(self.config.helm_config)
+        if self.helm_repo_config is not None:
+            helm.add_repo(
+                self.helm_repo_config.repository_name,
+                self.helm_repo_config.url,
+                self.helm_repo_config.repo_auth_flags,
             )
-        return helm_wrapper
+        return helm
 
     @cached_property
     def helm_diff(self) -> HelmDiff:
@@ -68,8 +67,12 @@ class KubernetesApp(PipelineComponent):
     def namespace(self) -> str:
         return self.app.namespace
 
+    @property
+    def helm_repo_config(self) -> HelmRepoConfig | None:
+        return None
+
     def deploy(self, dry_run: bool) -> None:
-        stdout = self.helm_wrapper.upgrade_install(
+        stdout = self.helm.upgrade_install(
             self.helm_release_name,
             self.get_helm_chart(),
             dry_run,
@@ -82,7 +85,7 @@ class KubernetesApp(PipelineComponent):
 
     # TODO: Separate destroy and clean
     def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
-        stdout = self.helm_wrapper.uninstall(
+        stdout = self.helm.uninstall(
             self.namespace,
             self.helm_release_name,
             dry_run,
@@ -94,15 +97,10 @@ class KubernetesApp(PipelineComponent):
         return self.app.dict(by_alias=True, exclude_none=True, exclude_unset=True)
 
     def print_helm_diff(self, stdout: str):
-        current_release = self.helm_wrapper.get_manifest(
-            self.helm_release_name, self.namespace
-        )
+        current_release = self.helm.get_manifest(self.helm_release_name, self.namespace)
         new_release = Helm.load_helm_manifest(stdout)
         helm_diff = HelmDiff.get_diff(current_release, new_release)
         self.helm_diff.log_helm_diff(helm_diff, log)
-
-    def get_helm_repo_config(self) -> HelmRepoConfig | None:
-        return None
 
     def get_helm_chart(self) -> str:
         raise NotImplementedError(

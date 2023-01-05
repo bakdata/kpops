@@ -67,9 +67,7 @@ class TestKafkaApp:
                 "version": "1.2.3",
             },
         )
-        helm_upgrade_install = mocker.patch.object(
-            kafka_app.helm_wrapper, "upgrade_install"
-        )
+        helm_upgrade_install = mocker.patch.object(kafka_app.helm, "upgrade_install")
         mocker.patch.object(kafka_app, "get_helm_chart", return_value="test/test-chart")
 
         kafka_app.deploy(True)

@@ -110,7 +110,7 @@ class KafkaApp(KubernetesApp):
         )
 
         if dry_run and self.helm_diff.config.enable:
-            current_release = self.helm_wrapper.get_manifest(
+            current_release = self.helm.get_manifest(
                 clean_up_release_name, self.namespace
             )
             new_release = Helm.load_helm_manifest(stdout)
@@ -121,13 +121,13 @@ class KafkaApp(KubernetesApp):
             self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
 
     def __uninstall_clean_up_job(self, release_name: str, dry_run: bool) -> None:
-        self.helm_wrapper.uninstall(self.namespace, release_name, dry_run)
+        self.helm.uninstall(self.namespace, release_name, dry_run)
 
     def __install_clean_up_job(
         self, dry_run, namespace, release_name, suffix, values
     ) -> str:
         clean_up_release_name = trim_release_name(release_name, suffix)
-        return self.helm_wrapper.upgrade_install(
+        return self.helm.upgrade_install(
             clean_up_release_name,
             self.get_clean_up_helm_chart(),
             dry_run,

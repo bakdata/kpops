@@ -574,7 +574,7 @@ class TestKafkaConnectorSource:
             connector.handlers.connector_handler, "clean_connector"
         )
         mock_helm_upgrade_install = mocker.patch.object(
-            connector.handlers.connector_handler.helm_wrapper,
+            connector.handlers.connector_handler.helm,
             "helm_upgrade_install",
         )
 

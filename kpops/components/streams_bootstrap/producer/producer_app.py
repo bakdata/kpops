@@ -24,9 +24,6 @@ class ProducerApp(KafkaApp):
     class Config(BaseConfig):
         extra = Extra.allow
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     @override
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:
         match topic.type:
@@ -48,12 +45,13 @@ class ProducerApp(KafkaApp):
         return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
     @override
-    def get_helm_repo_config(self) -> HelmRepoConfig | None:
-        return self.config.streams_bootstrap_helm_config
-
-    @override
-    def get_clean_up_helm_chart(self):
+    def get_clean_up_helm_chart(self) -> str:
         return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
+
+    @property
+    @override
+    def helm_repo_config(self) -> HelmRepoConfig | None:
+        return self.config.streams_bootstrap_helm_config
 
     def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
         super().destroy(dry_run, clean, delete_outputs)
