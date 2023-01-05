@@ -32,7 +32,7 @@ class Helm:
         repository_url: str,
         repo_auth_flags: RepoAuthFlags = RepoAuthFlags(),
     ) -> None:
-        bash_command = [
+        command = [
             "helm",
             "repo",
             "add",
@@ -41,7 +41,7 @@ class Helm:
         ]
 
         if repo_auth_flags.username and repo_auth_flags.password:
-            bash_command.extend(
+            command.extend(
                 [
                     "--username",
                     repo_auth_flags.username,
@@ -50,10 +50,10 @@ class Helm:
                 ]
             )
 
-        bash_command = Helm.__extend_tls_config(bash_command, repo_auth_flags)
+        command = Helm.__extend_tls_config(command, repo_auth_flags)
 
         try:
-            self.__execute(bash_command)
+            self.__execute(command)
         except Exception as e:
             if (
                 len(e.args) == 1
@@ -84,8 +84,8 @@ class Helm:
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
 
-            bash_command = ["helm"]
-            bash_command.extend(
+            command = ["helm"]
+            command.extend(
                 [
                     "upgrade",
                     release_name,
@@ -98,12 +98,10 @@ class Helm:
                     values_file.name,
                 ]
             )
-            bash_command = Helm.__extend_tls_config(bash_command, flags.repo_auth_flags)
+            command = Helm.__extend_tls_config(command, flags.repo_auth_flags)
 
-            bash_command = Helm.__enrich_upgrade_install_command(
-                bash_command, dry_run, flags
-            )
-            return self.__execute(bash_command)
+            command = Helm.__enrich_upgrade_install_command(command, dry_run, flags)
+            return self.__execute(command)
 
     def uninstall(
         self,
@@ -114,7 +112,7 @@ class Helm:
         """
         Prepares and executes the helm uninstall command
         """
-        bash_command = [
+        command = [
             "helm",
             "uninstall",
             release_name,
@@ -122,16 +120,16 @@ class Helm:
             namespace,
         ]
         if dry_run:
-            bash_command.append("--dry-run")
+            command.append("--dry-run")
         try:
-            return self.__execute(bash_command)
+            return self.__execute(command)
         except ReleaseNotFoundException:
             log.warning(
                 f"Release with name {release_name} not found. Could not uninstall app."
             )
 
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
-        bash_command = [
+        command = [
             "helm",
             "get",
             "manifest",
@@ -141,7 +139,7 @@ class Helm:
         ]
 
         try:
-            stdout = self.__execute(command=bash_command)
+            stdout = self.__execute(command=command)
             return Helm.load_helm_manifest(stdout)
         except ReleaseNotFoundException:
             return ()
@@ -166,57 +164,53 @@ class Helm:
 
     @staticmethod
     def __extend_tls_config(
-        bash_command: list[str], repo_auth_flags: RepoAuthFlags
+        command: list[str], repo_auth_flags: RepoAuthFlags
     ) -> list[str]:
         if repo_auth_flags.ca_file:
-            bash_command.extend(["--ca-file", str(repo_auth_flags.ca_file)])
+            command.extend(["--ca-file", str(repo_auth_flags.ca_file)])
         if repo_auth_flags.insecure_skip_tls_verify:
-            bash_command.append("--insecure-skip-tls-verify")
-        return bash_command
+            command.append("--insecure-skip-tls-verify")
+        return command
 
     @staticmethod
     def __enrich_upgrade_install_command(
-        bash_command: list[str],
+        command: list[str],
         dry_run: bool,
         helm_command_config: HelmUpgradeInstallFlags,
     ) -> list[str]:
         if dry_run:
-            bash_command.append("--dry-run")
+            command.append("--dry-run")
         if helm_command_config.force:
-            bash_command.append("--force")
+            command.append("--force")
         if helm_command_config.wait:
-            bash_command.append("--wait")
+            command.append("--wait")
         if helm_command_config.wait_for_jobs:
-            bash_command.append("--wait-for-jobs")
+            command.append("--wait-for-jobs")
         if helm_command_config.version:
-            bash_command.extend(["--version", helm_command_config.version])
-        return bash_command
+            command.extend(["--version", helm_command_config.version])
+        return command
 
     def __execute(self, command: list[str]) -> str:
         command = self.__set_global_flags(command)
         log.debug(f"Executing {' '.join(command)}")
-        process = subprocess.Popen(
+        process = subprocess.run(
             command,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,
         )
-        process.wait()
-        stdout, stderr = process.communicate()
+        Helm.parse_helm_command_stderr_output(process.stderr)
+        log.debug(process.stdout)
+        return process.stdout
 
-        log.debug(stdout)
-
-        Helm.parse_helm_command_stderr_output(stderr)
-        return stdout
-
-    def __set_global_flags(self, bash_command: list[str]) -> list[str]:
+    def __set_global_flags(self, command: list[str]) -> list[str]:
         if self._context:
             log.debug(f"Changing the Kubernetes context to {self._context}")
-            bash_command.extend(["--kube-context", self._context])
+            command.extend(["--kube-context", self._context])
         if self._debug:
             log.debug("Enabling verbose mode.")
-            bash_command.append("--debug")
-        return bash_command
+            command.append("--debug")
+        return command
 
     @staticmethod
     def parse_helm_command_stderr_output(stderr: str) -> None:
