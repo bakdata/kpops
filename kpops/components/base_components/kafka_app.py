@@ -1,6 +1,7 @@
 import logging
 
 from pydantic import BaseModel, Extra
+from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
@@ -36,6 +37,7 @@ class KafkaApp(KubernetesApp):
 
     _type = "kafka-app"
     app: KafkaAppConfig
+    clean_schemas: bool = False
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -51,6 +53,7 @@ class KafkaApp(KubernetesApp):
     def get_clean_up_helm_chart(self):
         raise NotImplementedError()
 
+    @override
     def deploy(self, dry_run: bool):
         if self.to:
             self.handlers.topic_handler.create_topics(
@@ -63,23 +66,24 @@ class KafkaApp(KubernetesApp):
                 )
         super().deploy(dry_run)
 
-    def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
-        super().destroy(dry_run, clean, delete_outputs)
+    @override
+    def destroy(self, dry_run: bool) -> None:
+        super().destroy(dry_run)
 
-    def clean(self, dry_run: bool, delete_outputs: bool, clear_schemas: bool):
+    @override
+    def clean(self, dry_run: bool, delete_outputs: bool):
         if delete_outputs:
-            # producer clean up job will delete output topics
-            self.clean_app(
+            self.__clean_app(
                 values=self.to_helm_values(),
                 dry_run=dry_run,
                 delete_outputs=delete_outputs,
                 retain_clean_jobs=self.config.retain_clean_jobs,
             )
 
-            if self.to and self.handlers.schema_handler and clear_schemas:
+            if self.to and self.handlers.schema_handler and self.clean_schemas:
                 self.handlers.schema_handler.delete_schemas(self.to, dry_run)
 
-    def clean_app(
+    def __clean_app(
         self,
         values: dict,
         dry_run: bool,

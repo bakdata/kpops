@@ -167,6 +167,37 @@ class TestKafkaConnectorSink:
             ],
         )
 
+    def test_destroy(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
+        connector = KafkaSinkConnector(
+            name="test-connector",
+            handlers=handlers,
+            config=config,
+            app=KafkaConnectConfig(),
+            to=ToSection(
+                topics={
+                    "${output_topic_name}": TopicConfig(
+                        type=OutputTopicTypes.OUTPUT, partitions_count=10
+                    ),
+                }
+            ),
+        )
+
+        mock_destroy_connector = mocker.patch.object(
+            connector.handlers.connector_handler, "destroy_connector"
+        )
+
+        connector.destroy(dry_run=True)
+
+        mock_destroy_connector.assert_called_once_with(
+            connector_name="test-connector",
+            dry_run=True,
+        )
+
     def test_clean(
         self,
         config: PipelineConfig,
@@ -190,24 +221,17 @@ class TestKafkaConnectorSink:
         mock_delete_topics = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topics"
         )
-        mock_destroy_connector = mocker.patch.object(
-            connector.handlers.connector_handler, "destroy_connector"
-        )
         mock_clean_connector = mocker.patch.object(
             connector.handlers.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_delete_topics, "mock_delete_topics")
-        mock.attach_mock(mock_destroy_connector, "mock_destroy_connector")
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        connector.destroy(dry_run=True, clean=True, delete_outputs=True)
+
+        connector.clean(dry_run=True, delete_outputs=True)
         mock.assert_has_calls(
             [
-                mocker.call.mock_destroy_connector(
-                    connector_name="test-connector",
-                    dry_run=True,
-                ),
                 mocker.call.mock_delete_topics(connector.to, dry_run=True),
                 mocker.call.mock_clean_connector(
                     connector_name="test-connector",
@@ -242,32 +266,18 @@ class TestKafkaConnectorSink:
         mock_delete_topics = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topics"
         )
-        mock_destroy_connector = mocker.patch.object(
-            connector.handlers.connector_handler, "destroy_connector"
-        )
         mock_clean_connector = mocker.patch.object(
             connector.handlers.connector_handler, "clean_connector"
         )
 
-        mock = mocker.MagicMock()
-        mock.attach_mock(mock_delete_topics, "mock_delete_topics")
-        mock.attach_mock(mock_destroy_connector, "mock_destroy_connector")
-        mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        connector.destroy(dry_run=True, clean=True, delete_outputs=False)
-        mock.assert_has_calls(
-            [
-                mocker.call.mock_destroy_connector(
-                    connector_name="test-connector",
-                    dry_run=True,
-                ),
-                mocker.call.mock_clean_connector(
-                    connector_name="test-connector",
-                    connector_type=KafkaConnectorType.SINK,
-                    dry_run=True,
-                    retain_clean_jobs=False,
-                    delete_consumer_group=False,
-                ),
-            ]
+        connector.clean(dry_run=True, delete_outputs=False)
+
+        mock_clean_connector.assert_called_once_with(
+            connector_name="test-connector",
+            connector_type=KafkaConnectorType.SINK,
+            dry_run=True,
+            retain_clean_jobs=False,
+            delete_consumer_group=False,
         )
         mock_delete_topics.assert_not_called()
 
@@ -287,32 +297,18 @@ class TestKafkaConnectorSink:
         mock_delete_topics = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topics"
         )
-        mock_destroy_connector = mocker.patch.object(
-            connector.handlers.connector_handler, "destroy_connector"
-        )
         mock_clean_connector = mocker.patch.object(
             connector.handlers.connector_handler, "clean_connector"
         )
 
-        mock = mocker.MagicMock()
-        mock.attach_mock(mock_delete_topics, "mock_delete_topics")
-        mock.attach_mock(mock_destroy_connector, "mock_destroy_connector")
-        mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        connector.destroy(dry_run=True, clean=True, delete_outputs=True)
-        mock.assert_has_calls(
-            [
-                mocker.call.mock_destroy_connector(
-                    connector_name="test-connector",
-                    dry_run=True,
-                ),
-                mocker.call.mock_clean_connector(
-                    connector_name="test-connector",
-                    connector_type=KafkaConnectorType.SINK,
-                    dry_run=True,
-                    retain_clean_jobs=False,
-                    delete_consumer_group=True,
-                ),
-            ]
+        connector.clean(dry_run=True, delete_outputs=True)
+
+        mock_clean_connector.assert_called_once_with(
+            connector_name="test-connector",
+            connector_type=KafkaConnectorType.SINK,
+            dry_run=True,
+            retain_clean_jobs=False,
+            delete_consumer_group=True,
         )
         mock_delete_topics.assert_not_called()
 
@@ -377,6 +373,41 @@ class TestKafkaConnectorSource:
             ],
         )
 
+    def test_destroy(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
+        os.environ[
+            "KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"
+        ] = "kafka-connect-offsets"
+        connector = KafkaSourceConnector(
+            name="test-connector",
+            handlers=handlers,
+            config=config,
+            app=KafkaConnectConfig(),
+            to=ToSection(
+                topics={
+                    "${output_topic_name}": TopicConfig(
+                        type=OutputTopicTypes.OUTPUT, partitions_count=10
+                    ),
+                }
+            ),
+        )
+        assert connector.handlers.connector_handler
+
+        mock_destroy_connector = mocker.patch.object(
+            connector.handlers.connector_handler, "destroy_connector"
+        )
+
+        connector.destroy(dry_run=True)
+
+        mock_destroy_connector.assert_called_once_with(
+            connector_name="test-connector",
+            dry_run=True,
+        )
+
     def test_clean(
         self,
         config: PipelineConfig,
@@ -404,24 +435,18 @@ class TestKafkaConnectorSource:
         mock_delete_topics = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topics"
         )
-        mock_destroy_connector = mocker.patch.object(
-            connector.handlers.connector_handler, "destroy_connector"
-        )
         mock_clean_connector = mocker.spy(
             connector.handlers.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_delete_topics, "mock_delete_topics")
-        mock.attach_mock(mock_destroy_connector, "mock_destroy_connector")
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        connector.destroy(dry_run=True, clean=True, delete_outputs=True)
+
+        connector.clean(dry_run=True, delete_outputs=True)
+
         mock.assert_has_calls(
             [
-                mocker.call.mock_destroy_connector(
-                    connector_name="test-connector",
-                    dry_run=True,
-                ),
                 mocker.call.mock_delete_topics(connector.to, dry_run=True),
                 mocker.call.mock_clean_connector(
                     connector_name="test-connector",
@@ -455,32 +480,17 @@ class TestKafkaConnectorSource:
         mock_delete_topics = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topics"
         )
-        mock_destroy_connector = mocker.patch.object(
-            connector.handlers.connector_handler, "destroy_connector"
-        )
         mock_clean_connector = mocker.spy(
             connector.handlers.connector_handler, "clean_connector"
         )
 
-        mock = mocker.MagicMock()
-        mock.attach_mock(mock_delete_topics, "mock_delete_topics")
-        mock.attach_mock(mock_destroy_connector, "mock_destroy_connector")
-        mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        connector.destroy(dry_run=True, clean=True, delete_outputs=True)
-        mock.assert_has_calls(
-            [
-                mocker.call.mock_destroy_connector(
-                    connector_name="test-connector",
-                    dry_run=True,
-                ),
-                mocker.call.mock_clean_connector(
-                    connector_name="test-connector",
-                    connector_type=KafkaConnectorType.SOURCE,
-                    dry_run=True,
-                    retain_clean_jobs=False,
-                    offset_topic="kafka-connect-offsets",
-                ),
-            ]
+        connector.clean(dry_run=True, delete_outputs=True)
+        mock_clean_connector.assert_called_once_with(
+            connector_name="test-connector",
+            connector_type=KafkaConnectorType.SOURCE,
+            dry_run=True,
+            retain_clean_jobs=False,
+            offset_topic="kafka-connect-offsets",
         )
 
         mock_delete_topics.assert_not_called()
@@ -513,83 +523,17 @@ class TestKafkaConnectorSource:
         mock_delete_topics = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topics"
         )
-        mock_destroy_connector = mocker.patch.object(
-            connector.handlers.connector_handler, "destroy_connector"
-        )
         mock_clean_connector = mocker.spy(
             connector.handlers.connector_handler, "clean_connector"
         )
 
-        mock = mocker.MagicMock()
-        mock.attach_mock(mock_delete_topics, "mock_delete_topics")
-        mock.attach_mock(mock_destroy_connector, "mock_destroy_connector")
-        mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        connector.destroy(dry_run=True, clean=True, delete_outputs=False)
-        mock.assert_has_calls(
-            [
-                mocker.call.mock_destroy_connector(
-                    connector_name="test-connector",
-                    dry_run=True,
-                ),
-                mocker.call.mock_clean_connector(
-                    connector_name="test-connector",
-                    connector_type=KafkaConnectorType.SOURCE,
-                    dry_run=True,
-                    retain_clean_jobs=False,
-                    offset_topic="kafka-connect-offsets",
-                ),
-            ]
+        connector.clean(dry_run=True, delete_outputs=False)
+
+        mock_clean_connector.assert_called_once_with(
+            connector_name="test-connector",
+            connector_type=KafkaConnectorType.SOURCE,
+            dry_run=True,
+            retain_clean_jobs=False,
+            offset_topic="kafka-connect-offsets",
         )
         mock_delete_topics.assert_not_called()
-
-    def test_destroy(
-        self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
-        mocker: MockerFixture,
-    ):
-        connector = KafkaSourceConnector(
-            name="test-connector",
-            handlers=handlers,
-            config=config,
-            app=KafkaConnectConfig(),
-            to=ToSection(
-                topics={
-                    "${output_topic_name}": TopicConfig(
-                        type=OutputTopicTypes.OUTPUT, partitions_count=10
-                    ),
-                }
-            ),
-        )
-
-        assert connector.handlers.connector_handler
-
-        mock_delete_topics = mocker.patch.object(
-            connector.handlers.topic_handler, "delete_topics"
-        )
-        mock_destroy_connector = mocker.patch.object(
-            connector.handlers.connector_handler, "destroy_connector"
-        )
-        mock_clean_connector = mocker.spy(
-            connector.handlers.connector_handler, "clean_connector"
-        )
-        mock_helm_upgrade_install = mocker.patch.object(
-            connector.handlers.connector_handler.helm,
-            "helm_upgrade_install",
-        )
-
-        mock = mocker.MagicMock()
-        mock.attach_mock(mock_delete_topics, "mock_delete_topics")
-        mock.attach_mock(mock_destroy_connector, "mock_destroy_connector")
-        mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        connector.destroy(dry_run=True, clean=False, delete_outputs=False)
-        mock.assert_has_calls(
-            [
-                mocker.call.mock_destroy_connector(
-                    connector_name="test-connector",
-                    dry_run=True,
-                ),
-            ]
-        )
-        mock_delete_topics.assert_not_called()
-        mock_helm_upgrade_install.assert_not_called()

@@ -187,7 +187,7 @@ class TestKubernetesApp:
             name="test-kubernetes-apps",
         )
 
-        kubernetes_app.destroy(True, False, False)
+        kubernetes_app.destroy(True)
 
         helm_mock.uninstall.assert_called_once_with(
             "test-namespace", "test-kubernetes-apps", True

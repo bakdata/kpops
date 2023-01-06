@@ -16,6 +16,7 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 class KafkaConnector(PipelineComponent, ABC):
     _type = "kafka-connect"
     app: KafkaConnectConfig
+    clean_schemas: bool = True
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -48,23 +49,19 @@ class KafkaConnector(PipelineComponent, ABC):
         )
 
     @override
-    def destroy(
-        self, dry_run: bool, clean: bool = False, delete_outputs: bool = False
-    ) -> None:
+    def destroy(self, dry_run: bool) -> None:
         self.handlers.connector_handler.destroy_connector(
             connector_name=self.name, dry_run=dry_run
         )
 
-        if clean:
-            if delete_outputs and self.to:
-                if (
-                    self.handlers.schema_handler
-                    and self.config.clean_kafka_connect_schemas
-                ):
-                    self.handlers.schema_handler.delete_schemas(
-                        to_section=self.to, dry_run=dry_run
-                    )
-                self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
+    @override
+    def clean(self, dry_run: bool, delete_outputs: bool) -> None:
+        if delete_outputs and self.to:
+            if self.handlers.schema_handler and self.clean_schemas:
+                self.handlers.schema_handler.delete_schemas(
+                    to_section=self.to, dry_run=dry_run
+                )
+            self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
 
 
 class KafkaSourceConnector(KafkaConnector):
@@ -75,21 +72,15 @@ class KafkaSourceConnector(KafkaConnector):
         raise NotImplementedError("Kafka source connector doesn't support FromSection")
 
     @override
-    def destroy(
-        self, dry_run: bool, clean: bool = False, delete_outputs: bool = False
-    ) -> None:
-        super().destroy(dry_run, clean, delete_outputs)
-
-        if clean:
-            self.handlers.connector_handler.clean_connector(
-                connector_name=self.name,
-                connector_type=KafkaConnectorType.SOURCE,
-                dry_run=dry_run,
-                retain_clean_jobs=self.config.retain_clean_jobs,
-                offset_topic=os.environ[
-                    f"{ENV_PREFIX}KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"
-                ],
-            )
+    def clean(self, dry_run: bool, delete_outputs: bool) -> None:
+        super().clean(dry_run, delete_outputs)
+        self.handlers.connector_handler.clean_connector(
+            connector_name=self.name,
+            connector_type=KafkaConnectorType.SOURCE,
+            dry_run=dry_run,
+            retain_clean_jobs=self.config.retain_clean_jobs,
+            offset_topic=os.environ[f"{ENV_PREFIX}KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"],
+        )
 
 
 class KafkaSinkConnector(KafkaConnector):
@@ -111,16 +102,12 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "errors.deadletterqueue.topic.name", topic_name)
 
     @override
-    def destroy(
-        self, dry_run: bool, clean: bool = False, delete_outputs: bool = False
-    ) -> None:
-        super().destroy(dry_run, clean, delete_outputs)
-
-        if clean:
-            self.handlers.connector_handler.clean_connector(
-                connector_name=self.name,
-                connector_type=KafkaConnectorType.SINK,
-                dry_run=dry_run,
-                retain_clean_jobs=self.config.retain_clean_jobs,
-                delete_consumer_group=delete_outputs,
-            )
+    def clean(self, dry_run: bool, delete_outputs: bool) -> None:
+        super().clean(dry_run, delete_outputs)
+        self.handlers.connector_handler.clean_connector(
+            connector_name=self.name,
+            connector_type=KafkaConnectorType.SINK,
+            dry_run=dry_run,
+            retain_clean_jobs=self.config.retain_clean_jobs,
+            delete_consumer_group=delete_outputs,
+        )

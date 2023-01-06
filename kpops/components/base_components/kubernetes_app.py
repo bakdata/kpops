@@ -3,6 +3,7 @@ import re
 from functools import cached_property
 
 from pydantic import BaseModel
+from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
@@ -71,6 +72,7 @@ class KubernetesApp(PipelineComponent):
     def helm_repo_config(self) -> HelmRepoConfig | None:
         return None
 
+    @override
     def deploy(self, dry_run: bool) -> None:
         stdout = self.helm.upgrade_install(
             self.helm_release_name,
@@ -83,8 +85,8 @@ class KubernetesApp(PipelineComponent):
         if dry_run and self.helm_diff.config.enable:
             self.print_helm_diff(stdout)
 
-    # TODO: Separate destroy and clean
-    def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
+    @override
+    def destroy(self, dry_run: bool) -> None:
         stdout = self.helm.uninstall(
             self.namespace,
             self.helm_release_name,

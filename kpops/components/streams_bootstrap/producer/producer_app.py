@@ -52,8 +52,3 @@ class ProducerApp(KafkaApp):
     @override
     def helm_repo_config(self) -> HelmRepoConfig | None:
         return self.config.streams_bootstrap_helm_config
-
-    def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
-        super().destroy(dry_run, clean, delete_outputs)
-        if clean:
-            self.clean(dry_run, delete_outputs, self.config.clean_producer_schemas)

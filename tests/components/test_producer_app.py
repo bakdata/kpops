@@ -103,8 +103,6 @@ class TestProducerApp:
                 },
             },
         )
-        producer_app.handlers = MagicMock()
-
         mock_create_topics = mocker.patch.object(
             producer_app.handlers.topic_handler, "create_topics"
         )
@@ -152,7 +150,7 @@ class TestProducerApp:
             ],
         )
 
-    def test_destroy(
+    def test_should_destroy_producer_app(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -178,10 +176,9 @@ class TestProducerApp:
                 },
             },
         )
-        producer_app.handlers = MagicMock()
         mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
 
-        producer_app.destroy(dry_run=True, clean=False, delete_outputs=False)
+        producer_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
             "test-namespace", "example-name", True
@@ -193,8 +190,6 @@ class TestProducerApp:
         handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
-        config.clean_producer_schemas = True
-
         producer_app = ProducerApp(
             handlers=handlers,
             config=config,
@@ -206,6 +201,7 @@ class TestProducerApp:
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
+                "clean_schemas": True,
                 "to": {
                     "topics": {
                         "${output_topic_name}": TopicConfig(
@@ -228,11 +224,10 @@ class TestProducerApp:
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
         mock.attach_mock(mock_delete_schemas, "delete_schemas")
 
-        producer_app.destroy(dry_run=True, clean=True, delete_outputs=True)
+        producer_app.clean(dry_run=True, delete_outputs=True)
 
         mock.assert_has_calls(
             [
-                mocker.call.helm_uninstall("test-namespace", "example-name", True),
                 mocker.call.helm_uninstall(
                     "test-namespace", "example-name-clean", True
                 ),

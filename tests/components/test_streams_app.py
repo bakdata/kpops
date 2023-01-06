@@ -266,7 +266,6 @@ class TestStreamsApp:
                 },
             },
         )
-        streams_app.handlers = MagicMock()
         mock_create_topics = mocker.patch.object(
             streams_app.handlers.topic_handler, "create_topics"
         )
@@ -314,11 +313,8 @@ class TestStreamsApp:
             any_order=False,
         )
 
-    def test_destroy(
-        self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
-        mocker: MockerFixture,
+    def test_should_destroy_streams_app(
+        self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
     ):
         streams_app = StreamsApp(
             handlers=handlers,
@@ -340,24 +336,20 @@ class TestStreamsApp:
                 },
             },
         )
-        streams_app.handlers = MagicMock()
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
-        streams_app.destroy(dry_run=True, clean=False, delete_outputs=False)
+        streams_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
             "test-namespace", "example-name", True
         )
 
-    # TODO: Assert schema deletion
     def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
-        config.clean_streams_apps_schemas = True
-
         streams_app = StreamsApp(
             handlers=handlers,
             config=config,
@@ -369,6 +361,7 @@ class TestStreamsApp:
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
+                "clean_schemas": True,
                 "to": {
                     "topics": {
                         "${output_topic_name}": TopicConfig(
@@ -392,13 +385,12 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
         mock.attach_mock(mock_delete_schemas, "delete_schemas")
 
-        streams_app.destroy(dry_run=True, clean=True, delete_outputs=True)
+        streams_app.clean(dry_run=True, delete_outputs=True)
 
         mock_delete_schemas.assert_called_once()
 
         mock.assert_has_calls(
             [
-                mocker.call.helm_uninstall("test-namespace", "example-name", True),
                 mocker.call.helm_uninstall(
                     "test-namespace", "example-name-clean", True
                 ),
