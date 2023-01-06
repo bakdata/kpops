@@ -376,18 +376,11 @@ class TestStreamsApp:
         )
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
-        mock_delete_schemas = mocker.patch.object(
-            handlers.schema_handler, "delete_schemas"
-        )
-
         mock = mocker.MagicMock()
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
-        mock.attach_mock(mock_delete_schemas, "delete_schemas")
 
         streams_app.clean(dry_run=True, delete_outputs=True)
-
-        mock_delete_schemas.assert_called_once()
 
         mock.assert_has_calls(
             [
@@ -413,17 +406,6 @@ class TestStreamsApp:
                 ),
                 mocker.call.helm_uninstall(
                     "test-namespace", "example-name-clean", True
-                ),
-                mocker.call.delete_schemas(
-                    ToSection(
-                        topics={
-                            "streams-app-output-topic": TopicConfig(
-                                type=OutputTopicTypes.OUTPUT,
-                                partitions_count=10,
-                            )
-                        },
-                    ),
-                    True,
                 ),
             ]
         )

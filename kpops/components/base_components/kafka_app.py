@@ -37,7 +37,6 @@ class KafkaApp(KubernetesApp):
 
     _type = "kafka-app"
     app: KafkaAppConfig
-    clean_schemas: bool = False
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -79,9 +78,6 @@ class KafkaApp(KubernetesApp):
                 delete_outputs=delete_outputs,
                 retain_clean_jobs=self.config.retain_clean_jobs,
             )
-
-            if self.to and self.handlers.schema_handler and self.clean_schemas:
-                self.handlers.schema_handler.delete_schemas(self.to, dry_run)
 
     def __clean_app(
         self,
