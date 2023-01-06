@@ -14,7 +14,6 @@ from kpops.component_handlers.kafka_connect.connector_handler import ConnectorHa
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
-from kpops.components import KafkaApp
 from kpops.pipeline_generator.pipeline import Pipeline
 
 if TYPE_CHECKING:
@@ -193,7 +192,7 @@ def run_destroy_clean_reset(
     for component in reversed(get_steps_to_apply(pipeline, steps)):
         log_action("Destroy", component)
         component.destroy(dry_run=dry_run)
-        if clean and isinstance(component, KafkaApp):
+        if clean:
             component.clean(dry_run, delete_outputs)
 
 
