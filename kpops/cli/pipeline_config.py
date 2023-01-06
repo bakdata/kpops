@@ -108,11 +108,6 @@ class PipelineConfig(BaseSettings):
         env=f"{ENV_PREFIX}RETAIN_CLEAN_JOBS",
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
-    clean_kafka_connect_schemas: bool = Field(
-        default=True,
-        env=f"{ENV_PREFIX}CLEAN_KAFKA_CONNECT_SCHEMAS",
-        description="Whether delete_schemas of your schema handler is called when Kafka connectors should be cleaned.",
-    )
     schema_registry_url: str | None = Field(
         default=None,
         example="http://localhost:8081",
