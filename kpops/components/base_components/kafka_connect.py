@@ -16,7 +16,6 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 class KafkaConnector(PipelineComponent, ABC):
     _type = "kafka-connect"
     app: KafkaConnectConfig
-    clean_schemas: bool = True
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -57,7 +56,7 @@ class KafkaConnector(PipelineComponent, ABC):
     @override
     def clean(self, dry_run: bool, delete_outputs: bool) -> None:
         if delete_outputs and self.to:
-            if self.handlers.schema_handler and self.clean_schemas:
+            if self.handlers.schema_handler:
                 self.handlers.schema_handler.delete_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
