@@ -172,8 +172,8 @@ class Pipeline:
             with suppress(
                 AttributeError  # Some components like kafka connect do not have a nameOverride attribute
             ):
-                if component.app and getattr(component.app, "nameOverride") is None:
-                    setattr(component.app, "nameOverride", component.name)
+                if component.app and getattr(component.app, "name_override") is None:
+                    setattr(component.app, "name_override", component.name)
 
     def apply_component(
         self,

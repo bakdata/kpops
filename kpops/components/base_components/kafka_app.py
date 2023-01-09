@@ -28,7 +28,7 @@ class KafkaStreamsConfig(BaseModel):
 
 class KafkaAppConfig(KubernetesAppConfig):
     streams: KafkaStreamsConfig
-    nameOverride: str | None
+    name_override: str | None
 
 
 class KafkaApp(KubernetesApp):
