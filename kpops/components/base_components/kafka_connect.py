@@ -112,21 +112,18 @@ class KafkaSinkConnector(KafkaConnector):
 
     @override
     def reset(self, dry_run: bool) -> None:
-        self.handlers.connector_handler.clean_connector(
-            connector_name=self.name,
-            connector_type=KafkaConnectorType.SINK,
-            dry_run=dry_run,
-            retain_clean_jobs=self.config.retain_clean_jobs,
-            delete_consumer_group=False,
-        )
+        self.clean_sink_connector(dry_run, False)
 
     @override
     def clean(self, dry_run: bool) -> None:
         super().clean(dry_run)
+        self.clean_sink_connector(dry_run, True)
+
+    def clean_sink_connector(self, dry_run: bool, delete_consumer_group: bool) -> None:
         self.handlers.connector_handler.clean_connector(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SINK,
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
-            delete_consumer_group=True,
+            delete_consumer_group=delete_consumer_group,
         )
