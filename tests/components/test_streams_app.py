@@ -316,26 +316,7 @@ class TestStreamsApp:
     def test_destroy(
         self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
     ):
-        streams_app = StreamsApp(
-            handlers=handlers,
-            config=config,
-            **{
-                "type": "streams-app",
-                "name": "example-name",
-                "version": "2.4.2",
-                "app": {
-                    "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "to": {
-                    "topics": {
-                        "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                    }
-                },
-            },
-        )
+        streams_app = self.__create_streams_app(config, handlers)
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
         streams_app.destroy(dry_run=True)
@@ -344,33 +325,55 @@ class TestStreamsApp:
             "test-namespace", "example-name", True
         )
 
+    def test_reset(
+        self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
+    ):
+        streams_app = self.__create_streams_app(config, handlers)
+        mock_helm_upgrade_install = mocker.patch.object(
+            streams_app.helm, "upgrade_install"
+        )
+        mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
+
+        mock = mocker.MagicMock()
+        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
+
+        streams_app.clean(dry_run=True, delete_outputs=False)
+
+        mock.assert_has_calls(
+            [
+                mocker.call.helm_uninstall(
+                    "test-namespace", "example-name-clean", True
+                ),
+                mocker.call.helm_upgrade_install(
+                    "example-name-clean",
+                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                    True,
+                    "test-namespace",
+                    {
+                        "namespace": "test-namespace",
+                        "streams": {
+                            "brokers": "fake-broker:9092",
+                            "outputTopic": "streams-app-output-topic",
+                        },
+                    },
+                    HelmUpgradeInstallFlags(
+                        version="2.4.2", wait=True, wait_for_jobs=True
+                    ),
+                ),
+                mocker.call.helm_uninstall(
+                    "test-namespace", "example-name-clean", True
+                ),
+            ]
+        )
+
     def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
-        streams_app = StreamsApp(
-            handlers=handlers,
-            config=config,
-            **{
-                "type": "streams-app",
-                "name": "example-name",
-                "version": "2.4.2",
-                "app": {
-                    "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "clean_schemas": True,
-                "to": {
-                    "topics": {
-                        "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                    }
-                },
-            },
-        )
+        streams_app = self.__create_streams_app(config, handlers)
         mock_helm_upgrade_install = mocker.patch.object(
             streams_app.helm, "upgrade_install"
         )
@@ -408,4 +411,27 @@ class TestStreamsApp:
                     "test-namespace", "example-name-clean", True
                 ),
             ]
+        )
+
+    @staticmethod
+    def __create_streams_app(config: PipelineConfig, handlers: ComponentHandlers):
+        return StreamsApp(
+            handlers=handlers,
+            config=config,
+            **{
+                "type": "streams-app",
+                "name": "example-name",
+                "version": "2.4.2",
+                "app": {
+                    "namespace": "test-namespace",
+                    "streams": {"brokers": "fake-broker:9092"},
+                },
+                "to": {
+                    "topics": {
+                        "${output_topic_name}": TopicConfig(
+                            type=OutputTopicTypes.OUTPUT, partitions_count=10
+                        ),
+                    }
+                },
+            },
         )

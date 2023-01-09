@@ -77,31 +77,7 @@ class TestProducerApp:
         handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
-        producer_app = ProducerApp(
-            handlers=handlers,
-            config=config,
-            **{
-                "type": "producer-app",
-                "name": "example-name",
-                "version": "2.4.2",
-                "app": {
-                    "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "to": {
-                    "topics": {
-                        "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                        "extra-topic-1": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
-                            role="first-extra-topic",
-                            partitions_count=10,
-                        ),
-                    }
-                },
-            },
-        )
+        producer_app = self.__create_producer_app(config, handlers)
         mock_create_topics = mocker.patch.object(
             producer_app.handlers.topic_handler, "create_topics"
         )
@@ -155,26 +131,7 @@ class TestProducerApp:
         handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
-        producer_app = ProducerApp(
-            handlers=handlers,
-            config=config,
-            **{
-                "type": "producer-app",
-                "name": "example-name",
-                "version": "2.4.2",
-                "app": {
-                    "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "to": {
-                    "topics": {
-                        "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                    }
-                },
-            },
-        )
+        producer_app = self.__create_producer_app(config, handlers)
         mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
 
         producer_app.destroy(dry_run=True)
@@ -183,33 +140,13 @@ class TestProducerApp:
             "test-namespace", "example-name", True
         )
 
-    def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
+    def should_not_reset_producer_app(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
-        producer_app = ProducerApp(
-            handlers=handlers,
-            config=config,
-            **{
-                "type": "producer-app",
-                "name": "example-name",
-                "version": "2.4.2",
-                "app": {
-                    "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "clean_schemas": True,
-                "to": {
-                    "topics": {
-                        "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                    }
-                },
-            },
-        )
+        producer_app = self.__create_producer_app(config, handlers)
         mock_helm_upgrade_install = mocker.patch.object(
             producer_app.helm, "upgrade_install"
         )
@@ -219,7 +156,7 @@ class TestProducerApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
-        producer_app.clean(dry_run=True, delete_outputs=True)
+        producer_app.clean(dry_run=True, delete_outputs=False)
 
         mock.assert_has_calls(
             [
@@ -247,4 +184,73 @@ class TestProducerApp:
                     "test-namespace", "example-name-clean", True
                 ),
             ]
+        )
+
+    def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
+        producer_app = self.__create_producer_app(config, handlers)
+        mock_helm_upgrade_install = mocker.patch.object(
+            producer_app.helm, "upgrade_install"
+        )
+        mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
+
+        mock = mocker.MagicMock()
+        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
+
+        producer_app.clean(dry_run=True, delete_outputs=True)
+
+        mock.assert_has_calls(
+            [
+                mocker.call.helm_uninstall(
+                    "test-namespace", "example-name-clean", True
+                ),
+                mocker.call.helm_upgrade_install(
+                    "example-name-clean",
+                    "bakdata-streams-bootstrap/producer-app-cleanup-job",
+                    True,
+                    "test-namespace",
+                    {
+                        "namespace": "test-namespace",
+                        "streams": {
+                            "brokers": "fake-broker:9092",
+                            "outputTopic": "producer-output-topic",
+                        },
+                    },
+                    HelmUpgradeInstallFlags(
+                        version="2.4.2", wait=True, wait_for_jobs=True
+                    ),
+                ),
+                mocker.call.helm_uninstall(
+                    "test-namespace", "example-name-clean", True
+                ),
+            ]
+        )
+
+    @staticmethod
+    def __create_producer_app(config: PipelineConfig, handlers: ComponentHandlers):
+        return ProducerApp(
+            handlers=handlers,
+            config=config,
+            **{
+                "type": "producer-app",
+                "name": "example-name",
+                "version": "2.4.2",
+                "app": {
+                    "namespace": "test-namespace",
+                    "streams": {"brokers": "fake-broker:9092"},
+                },
+                "clean_schemas": True,
+                "to": {
+                    "topics": {
+                        "${output_topic_name}": TopicConfig(
+                            type=OutputTopicTypes.OUTPUT, partitions_count=10
+                        ),
+                    }
+                },
+            },
         )

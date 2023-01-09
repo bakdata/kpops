@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 
 from pydantic import BaseModel, Extra
@@ -71,25 +73,21 @@ class KafkaApp(KubernetesApp):
 
     @override
     def clean(self, dry_run: bool, delete_outputs: bool):
-        if delete_outputs:
-            self.__clean_app(
-                values=self.to_helm_values(),
-                dry_run=dry_run,
-                delete_outputs=delete_outputs,
-                retain_clean_jobs=self.config.retain_clean_jobs,
-            )
+        self.clean_app(
+            values=self.to_helm_values(),
+            dry_run=dry_run,
+            retain_clean_jobs=self.config.retain_clean_jobs,
+        )
 
-    def __clean_app(
+    def clean_app(
         self,
         values: dict,
         dry_run: bool,
-        delete_outputs: bool = False,
         retain_clean_jobs: bool = False,
     ):
         """
         Cleans an app using the respective cleanup job
         :param dry_run: Dry run command
-        :param delete_outputs: Whether output topics should be deleted
         :param values: The value YAML for the chart
         :param retain_clean_jobs: Whether to retain the cleanup job
         :return:
@@ -103,7 +101,6 @@ class KafkaApp(KubernetesApp):
         self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
 
         log.info(f"Init cleanup job for {clean_up_release_name}")
-        values["streams"]["deleteOutput"] = delete_outputs
 
         stdout = self.__install_clean_up_job(
             dry_run, self.namespace, clean_up_release_name, suffix, values

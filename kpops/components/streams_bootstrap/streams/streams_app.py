@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
 
@@ -62,6 +64,17 @@ class StreamsApp(KafkaApp):
     @override
     def get_clean_up_helm_chart(self) -> str:
         return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
+
+    @override
+    def clean(self, dry_run: bool, delete_outputs: bool):
+        values = self.to_helm_values()
+        if delete_outputs:
+            values["streams"]["deleteOutput"] = delete_outputs
+        self.clean_app(
+            values=values,
+            dry_run=dry_run,
+            retain_clean_jobs=self.config.retain_clean_jobs,
+        )
 
     def substitute_autoscaling_topic_names(self) -> None:
         if not self.app.autoscaling:
