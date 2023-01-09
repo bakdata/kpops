@@ -51,7 +51,8 @@ class KafkaApp(KubernetesApp):
                 {"schema_registry_url": self.config.schema_registry_url},
             )
 
-    def get_clean_up_helm_chart(self):
+    @property
+    def clean_up_helm_chart(self) -> str:
         raise NotImplementedError()
 
     @override
@@ -122,7 +123,7 @@ class KafkaApp(KubernetesApp):
         clean_up_release_name = trim_release_name(release_name, suffix)
         return self.helm.upgrade_install(
             clean_up_release_name,
-            self.get_clean_up_helm_chart(),
+            self.clean_up_helm_chart,
             dry_run,
             namespace,
             values,

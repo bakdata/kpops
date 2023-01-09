@@ -61,8 +61,9 @@ class StreamsApp(KafkaApp):
     def helm_repo_config(self) -> HelmRepoConfig | None:
         return self.config.streams_bootstrap_helm_config
 
+    @property
     @override
-    def get_clean_up_helm_chart(self) -> str:
+    def clean_up_helm_chart(self) -> str:
         return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
     @override
