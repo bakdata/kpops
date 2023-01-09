@@ -13,9 +13,6 @@ kafka_rest_host: "http://localhost:8082"
 kafka_connect_host: "http://localhost:8083"
 
 kafka_connect_resetter_config:
-  helm_config:
-    repository_name: "bakdata-kafka-connect-resetter"
-    url: "https://raw.githubusercontent.com/bakdata/kafka-connect-resetter/1.0.1/charts/"
     namespace: "kpops"
 
 pipeline_prefix: ""

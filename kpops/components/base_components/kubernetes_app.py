@@ -12,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.utils.colorify import magentaify
 from kpops.utils.pydantic import CamelCaseConfig
 
 log = logging.getLogger("KubernetesAppComponent")
@@ -92,7 +93,9 @@ class KubernetesApp(PipelineComponent):
             self.helm_release_name,
             dry_run,
         )
+
         if dry_run and self.helm_diff.config.enable and stdout:
+            log.info(magentaify(stdout))
             self.print_helm_diff(stdout)
 
     def to_helm_values(self) -> dict:
