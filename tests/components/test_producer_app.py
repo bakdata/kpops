@@ -149,7 +149,7 @@ class TestProducerApp:
             ],
         )
 
-    def test_should_destroy_producer_app(
+    def test_destroy(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,

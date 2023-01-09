@@ -313,7 +313,7 @@ class TestStreamsApp:
             any_order=False,
         )
 
-    def test_should_destroy_streams_app(
+    def test_destroy(
         self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
     ):
         streams_app = StreamsApp(
