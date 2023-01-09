@@ -16,6 +16,7 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
 )
+from kpops.utils.colorify import magentaify
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
@@ -42,6 +43,10 @@ class TestKubernetesApp:
         return mocker.patch(
             "kpops.components.base_components.kubernetes_app.Helm"
         ).return_value
+
+    @pytest.fixture
+    def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch("kpops.components.base_components.kubernetes_app.log.info")
 
     def test_should_lazy_load_helm_wrapper_and_not_repo_add(
         self,
@@ -175,7 +180,11 @@ class TestKubernetesApp:
         )
 
     def test_should_call_helm_uninstall_when_destroying_kubernetes_app(
-        self, config: PipelineConfig, handlers: ComponentHandlers, helm_mock: MagicMock
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        helm_mock: MagicMock,
+        log_info_mock: MagicMock,
     ):
         app_config = KubernetesAppConfig(namespace="test-namespace")
 
@@ -187,14 +196,16 @@ class TestKubernetesApp:
             name="test-kubernetes-apps",
         )
 
+        stdout = 'KubernetesAppComponent - release "test-kubernetes-apps" uninstalled'
+        helm_mock.uninstall.return_value = stdout
+
         kubernetes_app.destroy(True)
 
         helm_mock.uninstall.assert_called_once_with(
             "test-namespace", "test-kubernetes-apps", True
         )
-        helm_mock.get_manifest.assert_called_once_with(
-            "test-kubernetes-apps", "test-namespace"
-        )
+
+        log_info_mock.assert_called_once_with(magentaify(stdout))
 
     def test_should_raise_value_error_when_name_is_not_valid(
         self, config: PipelineConfig, handlers: ComponentHandlers
