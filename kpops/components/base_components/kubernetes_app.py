@@ -96,7 +96,7 @@ class KubernetesApp(PipelineComponent):
             dry_run,
         )
 
-        if dry_run and stdout:
+        if stdout:
             log.info(magentaify(stdout))
 
     def to_helm_values(self) -> dict:

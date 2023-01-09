@@ -41,7 +41,9 @@ class TestProducerApp:
         )
 
     @pytest.fixture
-    def producer_app(self, config: PipelineConfig, handlers: ComponentHandlers):
+    def producer_app(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ) -> ProducerApp:
         return ProducerApp(
             handlers=handlers,
             config=config,

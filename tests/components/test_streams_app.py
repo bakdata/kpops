@@ -42,7 +42,9 @@ class TestStreamsApp:
         )
 
     @pytest.fixture
-    def streams_app(self, config: PipelineConfig, handlers: ComponentHandlers):
+    def streams_app(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ) -> StreamsApp:
         return StreamsApp(
             handlers=handlers,
             config=config,
