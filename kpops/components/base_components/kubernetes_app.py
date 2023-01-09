@@ -94,9 +94,8 @@ class KubernetesApp(PipelineComponent):
             dry_run,
         )
 
-        if dry_run and self.helm_diff.config.enable and stdout:
+        if dry_run and stdout:
             log.info(magentaify(stdout))
-            self.print_helm_diff(stdout)
 
     def to_helm_values(self) -> dict:
         return self.app.dict(by_alias=True, exclude_none=True, exclude_unset=True)

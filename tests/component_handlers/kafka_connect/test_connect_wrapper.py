@@ -224,7 +224,6 @@ class TestConnectorApiWrapper(unittest.TestCase):
         connector_name = "test-connector"
         configs = {
             "batch.size": "50",
-            "clean_schemas"
             "value.converter": "com.bakdata.kafka.LargeMessageConverter",
             "connection.username": "fake-user",
             "value.converter.large.message.converter": "io.confluent.connect.avro.AvroConverter",
