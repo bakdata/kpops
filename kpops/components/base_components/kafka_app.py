@@ -100,7 +100,7 @@ class KafkaApp(KubernetesApp):
         log.info(f"Init cleanup job for {clean_up_release_name}")
 
         stdout = self.__install_clean_up_job(
-            dry_run, self.namespace, clean_up_release_name, suffix, values
+            clean_up_release_name, suffix, values, dry_run
         )
 
         if dry_run and self.helm_diff.config.enable:
@@ -119,18 +119,17 @@ class KafkaApp(KubernetesApp):
 
     def __install_clean_up_job(
         self,
-        dry_run: bool,
-        namespace: str,
         release_name: str,
         suffix: str,
         values: dict,
+        dry_run: bool,
     ) -> str:
         clean_up_release_name = trim_release_name(release_name, suffix)
         return self.helm.upgrade_install(
             clean_up_release_name,
             self.clean_up_helm_chart,
             dry_run,
-            namespace,
+            self.namespace,
             values,
             HelmUpgradeInstallFlags(
                 version=self.version,
