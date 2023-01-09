@@ -66,10 +66,19 @@ class StreamsApp(KafkaApp):
         return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
     @override
-    def clean(self, dry_run: bool, delete_outputs: bool):
+    def reset(self, dry_run: bool) -> None:
         values = self.to_helm_values()
-        if delete_outputs:
-            values["streams"]["deleteOutput"] = delete_outputs
+        values["streams"]["deleteOutput"] = False
+        self.clean_app(
+            values=values,
+            dry_run=dry_run,
+            retain_clean_jobs=self.config.retain_clean_jobs,
+        )
+
+    @override
+    def clean(self, dry_run: bool):
+        values = self.to_helm_values()
+        values["streams"]["deleteOutput"] = True
         self.clean_app(
             values=values,
             dry_run=dry_run,

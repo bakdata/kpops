@@ -229,7 +229,7 @@ class TestKafkaConnectorSink:
         mock.attach_mock(mock_delete_topics, "mock_delete_topics")
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
 
-        connector.clean(dry_run=True, delete_outputs=True)
+        connector.clean(dry_run=True)
         mock.assert_has_calls(
             [
                 mocker.call.mock_delete_topics(connector.to, dry_run=True),
@@ -270,7 +270,7 @@ class TestKafkaConnectorSink:
             connector.handlers.connector_handler, "clean_connector"
         )
 
-        connector.clean(dry_run=True, delete_outputs=False)
+        connector.reset(dry_run=True)
 
         mock_clean_connector.assert_called_once_with(
             connector_name="test-connector",
@@ -301,7 +301,7 @@ class TestKafkaConnectorSink:
             connector.handlers.connector_handler, "clean_connector"
         )
 
-        connector.clean(dry_run=True, delete_outputs=True)
+        connector.clean(dry_run=True)
 
         mock_clean_connector.assert_called_once_with(
             connector_name="test-connector",
@@ -443,7 +443,7 @@ class TestKafkaConnectorSource:
         mock.attach_mock(mock_delete_topics, "mock_delete_topics")
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
 
-        connector.clean(dry_run=True, delete_outputs=True)
+        connector.clean(dry_run=True)
 
         mock.assert_has_calls(
             [
@@ -484,7 +484,7 @@ class TestKafkaConnectorSource:
             connector.handlers.connector_handler, "clean_connector"
         )
 
-        connector.clean(dry_run=True, delete_outputs=True)
+        connector.clean(dry_run=True)
         mock_clean_connector.assert_called_once_with(
             connector_name="test-connector",
             connector_type=KafkaConnectorType.SOURCE,
@@ -527,7 +527,7 @@ class TestKafkaConnectorSource:
             connector.handlers.connector_handler, "clean_connector"
         )
 
-        connector.clean(dry_run=True, delete_outputs=False)
+        connector.reset(dry_run=True)
 
         mock_clean_connector.assert_called_once_with(
             connector_name="test-connector",

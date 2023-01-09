@@ -338,7 +338,7 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
-        streams_app.clean(dry_run=True, delete_outputs=False)
+        streams_app.reset(dry_run=True)
 
         mock.assert_has_calls(
             [
@@ -355,6 +355,7 @@ class TestStreamsApp:
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
+                            "deleteOutput": False,
                         },
                     },
                     HelmUpgradeInstallFlags(
@@ -383,7 +384,7 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
-        streams_app.clean(dry_run=True, delete_outputs=True)
+        streams_app.clean(dry_run=True)
 
         mock.assert_has_calls(
             [

@@ -156,7 +156,7 @@ class TestProducerApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
-        producer_app.clean(dry_run=True, delete_outputs=False)
+        producer_app.clean(dry_run=True)
 
         mock.assert_has_calls(
             [
@@ -202,7 +202,7 @@ class TestProducerApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
-        producer_app.clean(dry_run=True, delete_outputs=True)
+        producer_app.clean(dry_run=True)
 
         mock.assert_has_calls(
             [

@@ -54,8 +54,8 @@ class KafkaConnector(PipelineComponent, ABC):
         )
 
     @override
-    def clean(self, dry_run: bool, delete_outputs: bool) -> None:
-        if delete_outputs and self.to:
+    def clean(self, dry_run: bool) -> None:
+        if self.to:
             if self.handlers.schema_handler:
                 self.handlers.schema_handler.delete_schemas(
                     to_section=self.to, dry_run=dry_run
@@ -71,8 +71,18 @@ class KafkaSourceConnector(KafkaConnector):
         raise NotImplementedError("Kafka source connector doesn't support FromSection")
 
     @override
-    def clean(self, dry_run: bool, delete_outputs: bool) -> None:
-        super().clean(dry_run, delete_outputs)
+    def reset(self, dry_run: bool) -> None:
+        self.handlers.connector_handler.clean_connector(
+            connector_name=self.name,
+            connector_type=KafkaConnectorType.SOURCE,
+            dry_run=dry_run,
+            retain_clean_jobs=self.config.retain_clean_jobs,
+            offset_topic=os.environ[f"{ENV_PREFIX}KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"],
+        )
+
+    @override
+    def clean(self, dry_run: bool) -> None:
+        super().clean(dry_run)
         self.handlers.connector_handler.clean_connector(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SOURCE,
@@ -101,12 +111,22 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "errors.deadletterqueue.topic.name", topic_name)
 
     @override
-    def clean(self, dry_run: bool, delete_outputs: bool) -> None:
-        super().clean(dry_run, delete_outputs)
+    def reset(self, dry_run: bool) -> None:
         self.handlers.connector_handler.clean_connector(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SINK,
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
-            delete_consumer_group=delete_outputs,
+            delete_consumer_group=False,
+        )
+
+    @override
+    def clean(self, dry_run: bool) -> None:
+        super().clean(dry_run)
+        self.handlers.connector_handler.clean_connector(
+            connector_name=self.name,
+            connector_type=KafkaConnectorType.SINK,
+            dry_run=dry_run,
+            retain_clean_jobs=self.config.retain_clean_jobs,
+            delete_consumer_group=True,
         )

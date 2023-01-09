@@ -173,33 +173,19 @@ def log_action(action: str, pipeline_component: PipelineComponent):
     log.info("\n")
 
 
-def run_destroy_clean_reset(
-    pipeline_base_dir: Path,
-    components_module: str | None,
-    config: Path,
-    defaults,
-    dry_run: bool,
-    pipeline_path: Path,
-    steps: str | None,
-    verbose,
-    clean: bool,
-    delete_outputs: bool,
+def get_pipeline(
+    components_module, config, defaults, pipeline_base_dir, pipeline_path, verbose
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
-    pipeline = setup_pipeline(
+    return setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    for component in reversed(get_steps_to_apply(pipeline, steps)):
-        log_action("Destroy", component)
-        component.destroy(dry_run=dry_run)
-        if clean:
-            component.clean(dry_run, delete_outputs)
 
 
 def create_pipeline_config(
     config: Path, defaults: Path, verbose: bool
 ) -> PipelineConfig:
-    setup_logging_level(verbose=verbose)
+    setup_logging_level(verbose)
     PipelineConfig.Config.config_path = config
     pipeline_config = PipelineConfig(defaults_path=defaults)
     return pipeline_config
@@ -258,7 +244,7 @@ def deploy(
 
     for component in steps_to_apply:
         log_action("Deploy", component)
-        component.deploy(dry_run=dry_run)
+        component.deploy(dry_run)
 
 
 @app.command(help="Destroy pipeline steps")
@@ -272,18 +258,12 @@ def destroy(
     dry_run: bool = DRY_RUN,
     verbose: bool = False,
 ):
-    run_destroy_clean_reset(
-        pipeline_base_dir,
-        components_module,
-        config,
-        defaults,
-        dry_run,
-        pipeline_path,
-        steps,
-        verbose,
-        clean=False,
-        delete_outputs=False,
+    pipeline = get_pipeline(
+        components_module, config, defaults, pipeline_base_dir, pipeline_path, verbose
     )
+    for component in reversed(get_steps_to_apply(pipeline, steps)):
+        log_action("Destroy", component)
+        component.destroy(dry_run)
 
 
 @app.command(help="Reset pipeline steps")
@@ -297,18 +277,13 @@ def reset(
     dry_run: bool = DRY_RUN,
     verbose: bool = False,
 ):
-    run_destroy_clean_reset(
-        pipeline_base_dir,
-        components_module,
-        config,
-        defaults,
-        dry_run,
-        pipeline_path,
-        steps,
-        verbose,
-        clean=True,
-        delete_outputs=False,
+    pipeline = get_pipeline(
+        components_module, config, defaults, pipeline_base_dir, pipeline_path, verbose
     )
+    for component in reversed(get_steps_to_apply(pipeline, steps)):
+        log_action("Destroy", component)
+        component.destroy(dry_run)
+        component.reset(dry_run)
 
 
 @app.command(help="Clean pipeline steps")
@@ -322,18 +297,13 @@ def clean(
     dry_run: bool = DRY_RUN,
     verbose: bool = False,
 ):
-    run_destroy_clean_reset(
-        pipeline_base_dir,
-        components_module,
-        config,
-        defaults,
-        dry_run,
-        pipeline_path,
-        steps,
-        verbose,
-        clean=True,
-        delete_outputs=True,
+    pipeline = get_pipeline(
+        components_module, config, defaults, pipeline_base_dir, pipeline_path, verbose
     )
+    for component in reversed(get_steps_to_apply(pipeline, steps)):
+        log_action("Destroy", component)
+        component.destroy(dry_run)
+        component.clean(dry_run)
 
 
 if __name__ == "__main__":
