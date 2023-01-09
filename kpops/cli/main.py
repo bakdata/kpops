@@ -93,8 +93,11 @@ def setup_pipeline(
     pipeline_base_dir: Path,
     pipeline_path: Path,
     components_module: str | None,
-    pipeline_config: PipelineConfig,
+    defaults: Path,
+    config: Path,
+    verbose: bool,
 ) -> Pipeline:
+    pipeline_config = create_pipeline_config(config, defaults, verbose)
     registry = Registry()
     if components_module:
         registry.find_components(components_module)
@@ -173,15 +176,6 @@ def log_action(action: str, pipeline_component: PipelineComponent):
     log.info("\n")
 
 
-def get_pipeline(
-    components_module, config, defaults, pipeline_base_dir, pipeline_path, verbose
-):
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
-    return setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
-    )
-
-
 def create_pipeline_config(
     config: Path, defaults: Path, verbose: bool
 ) -> PipelineConfig:
@@ -209,9 +203,8 @@ def generate(
     ),
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
 ):
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
+        pipeline_base_dir, pipeline_path, components_module, defaults, config, verbose
     )
     if print_yaml:
         pipeline.print_yaml()
@@ -235,9 +228,8 @@ def deploy(
     dry_run: bool = DRY_RUN,
     steps: Optional[str] = PIPELINE_STEPS,
 ):
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
+        pipeline_base_dir, pipeline_path, components_module, defaults, config, verbose
     )
 
     steps_to_apply = get_steps_to_apply(pipeline, steps)
@@ -258,8 +250,8 @@ def destroy(
     dry_run: bool = DRY_RUN,
     verbose: bool = False,
 ):
-    pipeline = get_pipeline(
-        components_module, config, defaults, pipeline_base_dir, pipeline_path, verbose
+    pipeline = setup_pipeline(
+        pipeline_base_dir, pipeline_path, components_module, defaults, config, verbose
     )
     for component in reversed(get_steps_to_apply(pipeline, steps)):
         log_action("Destroy", component)
@@ -277,8 +269,8 @@ def reset(
     dry_run: bool = DRY_RUN,
     verbose: bool = False,
 ):
-    pipeline = get_pipeline(
-        components_module, config, defaults, pipeline_base_dir, pipeline_path, verbose
+    pipeline = setup_pipeline(
+        pipeline_base_dir, pipeline_path, components_module, defaults, config, verbose
     )
     for component in reversed(get_steps_to_apply(pipeline, steps)):
         log_action("Destroy", component)
@@ -297,8 +289,8 @@ def clean(
     dry_run: bool = DRY_RUN,
     verbose: bool = False,
 ):
-    pipeline = get_pipeline(
-        components_module, config, defaults, pipeline_base_dir, pipeline_path, verbose
+    pipeline = setup_pipeline(
+        pipeline_base_dir, pipeline_path, components_module, defaults, config, verbose
     )
     for component in reversed(get_steps_to_apply(pipeline, steps)):
         log_action("Destroy", component)

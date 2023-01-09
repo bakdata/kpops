@@ -72,17 +72,14 @@ class KafkaSourceConnector(KafkaConnector):
 
     @override
     def reset(self, dry_run: bool) -> None:
-        self.handlers.connector_handler.clean_connector(
-            connector_name=self.name,
-            connector_type=KafkaConnectorType.SOURCE,
-            dry_run=dry_run,
-            retain_clean_jobs=self.config.retain_clean_jobs,
-            offset_topic=os.environ[f"{ENV_PREFIX}KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"],
-        )
+        self.__clean_source_connector(dry_run)
 
     @override
     def clean(self, dry_run: bool) -> None:
         super().clean(dry_run)
+        self.__clean_source_connector(dry_run)
+
+    def __clean_source_connector(self, dry_run: bool) -> None:
         self.handlers.connector_handler.clean_connector(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SOURCE,
@@ -112,14 +109,16 @@ class KafkaSinkConnector(KafkaConnector):
 
     @override
     def reset(self, dry_run: bool) -> None:
-        self.clean_sink_connector(dry_run, False)
+        self.__clean_sink_connector(dry_run, delete_consumer_group=False)
 
     @override
     def clean(self, dry_run: bool) -> None:
         super().clean(dry_run)
-        self.clean_sink_connector(dry_run, True)
+        self.__clean_sink_connector(dry_run, delete_consumer_group=True)
 
-    def clean_sink_connector(self, dry_run: bool, delete_consumer_group: bool) -> None:
+    def __clean_sink_connector(
+        self, dry_run: bool, delete_consumer_group: bool
+    ) -> None:
         self.handlers.connector_handler.clean_connector(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SINK,
