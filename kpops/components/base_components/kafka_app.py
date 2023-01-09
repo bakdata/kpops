@@ -40,7 +40,7 @@ class KafkaApp(KubernetesApp):
     _type = "kafka-app"
     app: KafkaAppConfig
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.app.streams.brokers = substitute(
             self.app.streams.brokers, {"broker": self.config.broker}
@@ -56,7 +56,7 @@ class KafkaApp(KubernetesApp):
         raise NotImplementedError()
 
     @override
-    def deploy(self, dry_run: bool):
+    def deploy(self, dry_run: bool) -> None:
         if self.to:
             self.handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
@@ -69,7 +69,7 @@ class KafkaApp(KubernetesApp):
         super().deploy(dry_run)
 
     @override
-    def clean(self, dry_run: bool):
+    def clean(self, dry_run: bool) -> None:
         self._clean_app(
             values=self.to_helm_values(),
             dry_run=dry_run,
@@ -81,7 +81,7 @@ class KafkaApp(KubernetesApp):
         values: dict,
         dry_run: bool,
         retain_clean_jobs: bool = False,
-    ):
+    ) -> None:
         """
         Cleans an app using the respective cleanup job
         :param dry_run: Dry run command
