@@ -76,7 +76,7 @@ class StreamsApp(KafkaApp):
         )
 
     @override
-    def clean(self, dry_run: bool):
+    def clean(self, dry_run: bool) -> None:
         values = self.to_helm_values()
         values["streams"]["deleteOutput"] = True
         self._clean_app(

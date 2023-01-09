@@ -55,7 +55,7 @@ class KafkaApp(KubernetesApp):
         raise NotImplementedError()
 
     @override
-    def deploy(self, dry_run: bool):
+    def deploy(self, dry_run: bool) -> None:
         if self.to:
             self.handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
@@ -68,7 +68,7 @@ class KafkaApp(KubernetesApp):
         super().deploy(dry_run)
 
     @override
-    def clean(self, dry_run: bool):
+    def clean(self, dry_run: bool) -> None:
         self._clean_app(
             values=self.to_helm_values(),
             dry_run=dry_run,
@@ -80,7 +80,7 @@ class KafkaApp(KubernetesApp):
         values: dict,
         dry_run: bool,
         retain_clean_jobs: bool = False,
-    ):
+    ) -> None:
         """
         Cleans an app using the respective cleanup job
         :param dry_run: Dry run command
