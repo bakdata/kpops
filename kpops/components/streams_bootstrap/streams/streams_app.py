@@ -22,7 +22,7 @@ class StreamsApp(KafkaApp):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.substitute_autoscaling_topic_names()
+        self.__substitute_autoscaling_topic_names()
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
@@ -67,25 +67,22 @@ class StreamsApp(KafkaApp):
 
     @override
     def reset(self, dry_run: bool) -> None:
-        values = self.to_helm_values()
-        values["streams"]["deleteOutput"] = False
-        self._clean_app(
-            values=values,
-            dry_run=dry_run,
-            retain_clean_jobs=self.config.retain_clean_jobs,
-        )
+        self.__run_streams_clean_up_job(dry_run, delete_output=False)
 
     @override
     def clean(self, dry_run: bool) -> None:
+        self.__run_streams_clean_up_job(dry_run, delete_output=True)
+
+    def __run_streams_clean_up_job(self, dry_run: bool, delete_output: bool):
         values = self.to_helm_values()
-        values["streams"]["deleteOutput"] = True
-        self._clean_app(
+        values["streams"]["deleteOutput"] = delete_output
+        self._run_clean_up_job(
             values=values,
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
         )
 
-    def substitute_autoscaling_topic_names(self) -> None:
+    def __substitute_autoscaling_topic_names(self) -> None:
         if not self.app.autoscaling:
             return
         self.app.autoscaling.topics = [

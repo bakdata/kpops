@@ -40,6 +40,30 @@ class TestProducerApp:
             pipeline_prefix="",
         )
 
+    @pytest.fixture
+    def producer_app(self, config: PipelineConfig, handlers: ComponentHandlers):
+        return ProducerApp(
+            handlers=handlers,
+            config=config,
+            **{
+                "type": "producer-app",
+                "name": "example-name",
+                "version": "2.4.2",
+                "app": {
+                    "namespace": "test-namespace",
+                    "streams": {"brokers": "fake-broker:9092"},
+                },
+                "clean_schemas": True,
+                "to": {
+                    "topics": {
+                        "${output_topic_name}": TopicConfig(
+                            type=OutputTopicTypes.OUTPUT, partitions_count=10
+                        ),
+                    }
+                },
+            },
+        )
+
     def test_output_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
             handlers=handlers,
@@ -73,11 +97,9 @@ class TestProducerApp:
 
     def test_deploy_order(
         self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        producer_app: ProducerApp,
         mocker: MockerFixture,
     ):
-        producer_app = self.__create_producer_app(config, handlers)
         mock_create_topics = mocker.patch.object(
             producer_app.handlers.topic_handler, "create_topics"
         )
@@ -127,11 +149,9 @@ class TestProducerApp:
 
     def test_destroy(
         self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        producer_app: ProducerApp,
         mocker: MockerFixture,
     ):
-        producer_app = self.__create_producer_app(config, handlers)
         mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
 
         producer_app.destroy(dry_run=True)
@@ -142,11 +162,9 @@ class TestProducerApp:
 
     def should_not_reset_producer_app(
         self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        producer_app: ProducerApp,
         mocker: MockerFixture,
     ):
-        producer_app = self.__create_producer_app(config, handlers)
         mock_helm_upgrade_install = mocker.patch.object(
             producer_app.helm, "upgrade_install"
         )
@@ -187,12 +205,8 @@ class TestProducerApp:
         )
 
     def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up(
-        self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
-        mocker: MockerFixture,
+        self, mocker: MockerFixture, producer_app: ProducerApp
     ):
-        producer_app = self.__create_producer_app(config, handlers)
         mock_helm_upgrade_install = mocker.patch.object(
             producer_app.helm, "upgrade_install"
         )
@@ -229,28 +243,4 @@ class TestProducerApp:
                     "test-namespace", "example-name-clean", True
                 ),
             ]
-        )
-
-    @staticmethod
-    def __create_producer_app(config: PipelineConfig, handlers: ComponentHandlers):
-        return ProducerApp(
-            handlers=handlers,
-            config=config,
-            **{
-                "type": "producer-app",
-                "name": "example-name",
-                "version": "2.4.2",
-                "app": {
-                    "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "clean_schemas": True,
-                "to": {
-                    "topics": {
-                        "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                    }
-                },
-            },
         )

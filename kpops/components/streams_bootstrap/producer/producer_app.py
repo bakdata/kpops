@@ -52,3 +52,11 @@ class ProducerApp(KafkaApp):
     @override
     def helm_repo_config(self) -> HelmRepoConfig | None:
         return self.config.streams_bootstrap_helm_config
+
+    @override
+    def clean(self, dry_run: bool) -> None:
+        self._run_clean_up_job(
+            values=self.to_helm_values(),
+            dry_run=dry_run,
+            retain_clean_jobs=self.config.retain_clean_jobs,
+        )

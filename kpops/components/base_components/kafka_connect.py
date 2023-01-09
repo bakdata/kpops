@@ -72,14 +72,14 @@ class KafkaSourceConnector(KafkaConnector):
 
     @override
     def reset(self, dry_run: bool) -> None:
-        self.__clean_source_connector(dry_run)
+        self.__run_kafka_connect_resetter(dry_run)
 
     @override
     def clean(self, dry_run: bool) -> None:
         super().clean(dry_run)
-        self.__clean_source_connector(dry_run)
+        self.__run_kafka_connect_resetter(dry_run)
 
-    def __clean_source_connector(self, dry_run: bool) -> None:
+    def __run_kafka_connect_resetter(self, dry_run: bool) -> None:
         self.handlers.connector_handler.clean_connector(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SOURCE,

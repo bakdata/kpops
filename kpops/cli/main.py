@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Iterator, Optional
 
 import typer
 
@@ -93,11 +93,8 @@ def setup_pipeline(
     pipeline_base_dir: Path,
     pipeline_path: Path,
     components_module: str | None,
-    defaults: Path,
-    config: Path,
-    verbose: bool,
+    pipeline_config: PipelineConfig,
 ) -> Pipeline:
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
     registry = Registry()
     if components_module:
         registry.find_components(components_module)
@@ -168,6 +165,10 @@ def get_steps_to_apply(
     )
 
 
+def reverse_pipeline_steps(pipeline, steps) -> Iterator[PipelineComponent]:
+    return reversed(get_steps_to_apply(pipeline, steps))
+
+
 def log_action(action: str, pipeline_component: PipelineComponent):
     log.info("\n")
     log.info(LOG_DIVIDER)
@@ -203,8 +204,9 @@ def generate(
     ),
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
 ):
+    pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, defaults, config, verbose
+        pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
     if print_yaml:
         pipeline.print_yaml()
@@ -228,12 +230,12 @@ def deploy(
     dry_run: bool = DRY_RUN,
     steps: Optional[str] = PIPELINE_STEPS,
 ):
+    pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, defaults, config, verbose
+        pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
 
     steps_to_apply = get_steps_to_apply(pipeline, steps)
-
     for component in steps_to_apply:
         log_action("Deploy", component)
         component.deploy(dry_run)
@@ -250,10 +252,12 @@ def destroy(
     dry_run: bool = DRY_RUN,
     verbose: bool = False,
 ):
+    pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, defaults, config, verbose
+        pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    for component in reversed(get_steps_to_apply(pipeline, steps)):
+    pipeline_steps = reverse_pipeline_steps(pipeline, steps)
+    for component in pipeline_steps:
         log_action("Destroy", component)
         component.destroy(dry_run)
 
@@ -269,10 +273,12 @@ def reset(
     dry_run: bool = DRY_RUN,
     verbose: bool = False,
 ):
+    pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, defaults, config, verbose
+        pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    for component in reversed(get_steps_to_apply(pipeline, steps)):
+    pipeline_steps = reverse_pipeline_steps(pipeline, steps)
+    for component in pipeline_steps:
         log_action("Reset", component)
         component.destroy(dry_run)
         component.reset(dry_run)
@@ -289,10 +295,12 @@ def clean(
     dry_run: bool = DRY_RUN,
     verbose: bool = False,
 ):
+    pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, defaults, config, verbose
+        pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    for component in reversed(get_steps_to_apply(pipeline, steps)):
+    pipeline_steps = reverse_pipeline_steps(pipeline, steps)
+    for component in pipeline_steps:
         log_action("Clean", component)
         component.destroy(dry_run)
         component.clean(dry_run)
