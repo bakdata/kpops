@@ -273,7 +273,7 @@ def reset(
         pipeline_base_dir, pipeline_path, components_module, defaults, config, verbose
     )
     for component in reversed(get_steps_to_apply(pipeline, steps)):
-        log_action("Destroy", component)
+        log_action("Reset", component)
         component.destroy(dry_run)
         component.reset(dry_run)
 
@@ -293,7 +293,7 @@ def clean(
         pipeline_base_dir, pipeline_path, components_module, defaults, config, verbose
     )
     for component in reversed(get_steps_to_apply(pipeline, steps)):
-        log_action("Destroy", component)
+        log_action("Clean", component)
         component.destroy(dry_run)
         component.clean(dry_run)
 
