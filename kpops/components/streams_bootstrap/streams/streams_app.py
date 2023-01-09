@@ -69,7 +69,7 @@ class StreamsApp(KafkaApp):
     def reset(self, dry_run: bool) -> None:
         values = self.to_helm_values()
         values["streams"]["deleteOutput"] = False
-        self.clean_app(
+        self._clean_app(
             values=values,
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
@@ -79,7 +79,7 @@ class StreamsApp(KafkaApp):
     def clean(self, dry_run: bool):
         values = self.to_helm_values()
         values["streams"]["deleteOutput"] = True
-        self.clean_app(
+        self._clean_app(
             values=values,
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,

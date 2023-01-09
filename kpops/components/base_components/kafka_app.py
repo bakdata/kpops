@@ -68,18 +68,14 @@ class KafkaApp(KubernetesApp):
         super().deploy(dry_run)
 
     @override
-    def destroy(self, dry_run: bool) -> None:
-        super().destroy(dry_run)
-
-    @override
     def clean(self, dry_run: bool):
-        self.clean_app(
+        self._clean_app(
             values=self.to_helm_values(),
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
         )
 
-    def clean_app(
+    def _clean_app(
         self,
         values: dict,
         dry_run: bool,
