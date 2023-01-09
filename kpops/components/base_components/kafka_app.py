@@ -118,7 +118,12 @@ class KafkaApp(KubernetesApp):
         self.helm.uninstall(self.namespace, release_name, dry_run)
 
     def __install_clean_up_job(
-        self, dry_run, namespace, release_name, suffix, values
+        self,
+        dry_run: bool,
+        namespace: str,
+        release_name: str,
+        suffix: str,
+        values: dict,
     ) -> str:
         clean_up_release_name = trim_release_name(release_name, suffix)
         return self.helm.upgrade_install(
