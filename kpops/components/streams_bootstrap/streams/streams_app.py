@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
 
@@ -20,7 +22,7 @@ class StreamsApp(KafkaApp):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.substitute_autoscaling_topic_names()
+        self.__substitute_autoscaling_topic_names()
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
@@ -63,12 +65,24 @@ class StreamsApp(KafkaApp):
     def get_clean_up_helm_chart(self) -> str:
         return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
-    def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
-        super().destroy(dry_run, clean, delete_outputs)
-        if clean:
-            self.clean(dry_run, delete_outputs, self.config.clean_streams_apps_schemas)
+    @override
+    def reset(self, dry_run: bool) -> None:
+        self.__run_streams_clean_up_job(dry_run, delete_output=False)
 
-    def substitute_autoscaling_topic_names(self) -> None:
+    @override
+    def clean(self, dry_run: bool) -> None:
+        self.__run_streams_clean_up_job(dry_run, delete_output=True)
+
+    def __run_streams_clean_up_job(self, dry_run: bool, delete_output: bool) -> None:
+        values = self.to_helm_values()
+        values["streams"]["deleteOutput"] = delete_output
+        self._run_clean_up_job(
+            values=values,
+            dry_run=dry_run,
+            retain_clean_jobs=self.config.retain_clean_jobs,
+        )
+
+    def __substitute_autoscaling_topic_names(self) -> None:
         if not self.app.autoscaling:
             return
         self.app.autoscaling.topics = [

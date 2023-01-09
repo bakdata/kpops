@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, Iterator, Optional
 
 import typer
 
@@ -165,6 +165,10 @@ def get_steps_to_apply(
     )
 
 
+def reverse_pipeline_steps(pipeline, steps) -> Iterator[PipelineComponent]:
+    return reversed(get_steps_to_apply(pipeline, steps))
+
+
 def log_action(action: str, pipeline_component: PipelineComponent):
     log.info("\n")
     log.info(LOG_DIVIDER)
@@ -173,31 +177,10 @@ def log_action(action: str, pipeline_component: PipelineComponent):
     log.info("\n")
 
 
-def run_destroy_clean_reset(
-    pipeline_base_dir: Path,
-    components_module: str | None,
-    config: Path,
-    defaults,
-    dry_run: bool,
-    pipeline_path: Path,
-    steps: str | None,
-    verbose,
-    clean: bool,
-    delete_outputs: bool,
-):
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
-    pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
-    )
-    for component in reversed(get_steps_to_apply(pipeline, steps)):
-        log_action("Destroy", component)
-        component.destroy(dry_run=dry_run, clean=clean, delete_outputs=delete_outputs)
-
-
 def create_pipeline_config(
     config: Path, defaults: Path, verbose: bool
 ) -> PipelineConfig:
-    setup_logging_level(verbose=verbose)
+    setup_logging_level(verbose)
     PipelineConfig.Config.config_path = config
     pipeline_config = PipelineConfig(defaults_path=defaults)
     return pipeline_config
@@ -253,10 +236,9 @@ def deploy(
     )
 
     steps_to_apply = get_steps_to_apply(pipeline, steps)
-
     for component in steps_to_apply:
         log_action("Deploy", component)
-        component.deploy(dry_run=dry_run)
+        component.deploy(dry_run)
 
 
 @app.command(help="Destroy pipeline steps")
@@ -270,18 +252,14 @@ def destroy(
     dry_run: bool = DRY_RUN,
     verbose: bool = False,
 ):
-    run_destroy_clean_reset(
-        pipeline_base_dir,
-        components_module,
-        config,
-        defaults,
-        dry_run,
-        pipeline_path,
-        steps,
-        verbose,
-        clean=False,
-        delete_outputs=False,
+    pipeline_config = create_pipeline_config(config, defaults, verbose)
+    pipeline = setup_pipeline(
+        pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
+    pipeline_steps = reverse_pipeline_steps(pipeline, steps)
+    for component in pipeline_steps:
+        log_action("Destroy", component)
+        component.destroy(dry_run)
 
 
 @app.command(help="Reset pipeline steps")
@@ -295,18 +273,15 @@ def reset(
     dry_run: bool = DRY_RUN,
     verbose: bool = False,
 ):
-    run_destroy_clean_reset(
-        pipeline_base_dir,
-        components_module,
-        config,
-        defaults,
-        dry_run,
-        pipeline_path,
-        steps,
-        verbose,
-        clean=True,
-        delete_outputs=False,
+    pipeline_config = create_pipeline_config(config, defaults, verbose)
+    pipeline = setup_pipeline(
+        pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
+    pipeline_steps = reverse_pipeline_steps(pipeline, steps)
+    for component in pipeline_steps:
+        log_action("Reset", component)
+        component.destroy(dry_run)
+        component.reset(dry_run)
 
 
 @app.command(help="Clean pipeline steps")
@@ -320,18 +295,15 @@ def clean(
     dry_run: bool = DRY_RUN,
     verbose: bool = False,
 ):
-    run_destroy_clean_reset(
-        pipeline_base_dir,
-        components_module,
-        config,
-        defaults,
-        dry_run,
-        pipeline_path,
-        steps,
-        verbose,
-        clean=True,
-        delete_outputs=True,
+    pipeline_config = create_pipeline_config(config, defaults, verbose)
+    pipeline = setup_pipeline(
+        pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
+    pipeline_steps = reverse_pipeline_steps(pipeline, steps)
+    for component in pipeline_steps:
+        log_action("Clean", component)
+        component.destroy(dry_run)
+        component.clean(dry_run)
 
 
 if __name__ == "__main__":

@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import logging
 
 from pydantic import BaseModel, Extra
+from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
@@ -51,7 +54,8 @@ class KafkaApp(KubernetesApp):
     def get_clean_up_helm_chart(self):
         raise NotImplementedError()
 
-    def deploy(self, dry_run: bool):
+    @override
+    def deploy(self, dry_run: bool) -> None:
         if self.to:
             self.handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
@@ -63,34 +67,16 @@ class KafkaApp(KubernetesApp):
                 )
         super().deploy(dry_run)
 
-    def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
-        super().destroy(dry_run, clean, delete_outputs)
-
-    def clean(self, dry_run: bool, delete_outputs: bool, clear_schemas: bool):
-        if delete_outputs:
-            # producer clean up job will delete output topics
-            self.clean_app(
-                values=self.to_helm_values(),
-                dry_run=dry_run,
-                delete_outputs=delete_outputs,
-                retain_clean_jobs=self.config.retain_clean_jobs,
-            )
-
-            if self.to and self.handlers.schema_handler and clear_schemas:
-                self.handlers.schema_handler.delete_schemas(self.to, dry_run)
-
-    def clean_app(
+    def _run_clean_up_job(
         self,
         values: dict,
         dry_run: bool,
-        delete_outputs: bool = False,
         retain_clean_jobs: bool = False,
-    ):
+    ) -> None:
         """
         Cleans an app using the respective cleanup job
-        :param dry_run: Dry run command
-        :param delete_outputs: Whether output topics should be deleted
         :param values: The value YAML for the chart
+        :param dry_run: Dry run command
         :param retain_clean_jobs: Whether to retain the cleanup job
         :return:
         """
@@ -103,7 +89,6 @@ class KafkaApp(KubernetesApp):
         self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
 
         log.info(f"Init cleanup job for {clean_up_release_name}")
-        values["streams"]["deleteOutput"] = delete_outputs
 
         stdout = self.__install_clean_up_job(
             dry_run, self.namespace, clean_up_release_name, suffix, values

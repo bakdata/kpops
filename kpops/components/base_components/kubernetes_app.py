@@ -1,8 +1,11 @@
+from __future__ import annotations
+
 import logging
 import re
 from functools import cached_property
 
 from pydantic import BaseModel
+from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
@@ -11,6 +14,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.utils.colorify import magentaify
 from kpops.utils.pydantic import CamelCaseConfig
 
 log = logging.getLogger("KubernetesAppComponent")
@@ -71,6 +75,7 @@ class KubernetesApp(PipelineComponent):
     def helm_repo_config(self) -> HelmRepoConfig | None:
         return None
 
+    @override
     def deploy(self, dry_run: bool) -> None:
         stdout = self.helm.upgrade_install(
             self.helm_release_name,
@@ -83,15 +88,16 @@ class KubernetesApp(PipelineComponent):
         if dry_run and self.helm_diff.config.enable:
             self.print_helm_diff(stdout)
 
-    # TODO: Separate destroy and clean
-    def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
+    @override
+    def destroy(self, dry_run: bool) -> None:
         stdout = self.helm.uninstall(
             self.namespace,
             self.helm_release_name,
             dry_run,
         )
-        if dry_run and self.helm_diff.config.enable and stdout:
-            self.print_helm_diff(stdout)
+
+        if stdout:
+            log.info(magentaify(stdout))
 
     def to_helm_values(self) -> dict:
         return self.app.dict(by_alias=True, exclude_none=True, exclude_unset=True)

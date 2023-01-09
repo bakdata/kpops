@@ -161,5 +161,11 @@ class PipelineComponent(BaseDefaultsComponent):
     def deploy(self, dry_run: bool) -> None:
         pass
 
-    def destroy(self, dry_run: bool, clean: bool, delete_outputs: bool) -> None:
+    def destroy(self, dry_run: bool) -> None:
+        pass
+
+    def reset(self, dry_run: bool) -> None:
+        pass
+
+    def clean(self, dry_run: bool) -> None:
         pass
