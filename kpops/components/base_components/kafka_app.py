@@ -68,15 +68,7 @@ class KafkaApp(KubernetesApp):
                 )
         super().deploy(dry_run)
 
-    @override
-    def clean(self, dry_run: bool) -> None:
-        self._clean_app(
-            values=self.to_helm_values(),
-            dry_run=dry_run,
-            retain_clean_jobs=self.config.retain_clean_jobs,
-        )
-
-    def _clean_app(
+    def _run_clean_up_job(
         self,
         values: dict,
         dry_run: bool,
@@ -84,8 +76,8 @@ class KafkaApp(KubernetesApp):
     ) -> None:
         """
         Cleans an app using the respective cleanup job
-        :param dry_run: Dry run command
         :param values: The value YAML for the chart
+        :param dry_run: Dry run command
         :param retain_clean_jobs: Whether to retain the cleanup job
         :return:
         """

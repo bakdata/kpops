@@ -41,6 +41,31 @@ class TestStreamsApp:
             pipeline_prefix="",
         )
 
+    @pytest.fixture
+    def streams_app(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ) -> StreamsApp:
+        return StreamsApp(
+            handlers=handlers,
+            config=config,
+            **{
+                "type": "streams-app",
+                "name": "example-name",
+                "version": "2.4.2",
+                "app": {
+                    "namespace": "test-namespace",
+                    "streams": {"brokers": "fake-broker:9092"},
+                },
+                "to": {
+                    "topics": {
+                        "${output_topic_name}": TopicConfig(
+                            type=OutputTopicTypes.OUTPUT, partitions_count=10
+                        ),
+                    }
+                },
+            },
+        )
+
     def test_set_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
         class AnotherType(StreamsApp):
             _type = "test"
@@ -313,10 +338,7 @@ class TestStreamsApp:
             any_order=False,
         )
 
-    def test_destroy(
-        self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
-    ):
-        streams_app = self.__create_streams_app(config, handlers)
+    def test_destroy(self, streams_app: StreamsApp, mocker: MockerFixture):
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
         streams_app.destroy(dry_run=True)
@@ -325,10 +347,7 @@ class TestStreamsApp:
             "test-namespace", "example-name", True
         )
 
-    def test_reset(
-        self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
-    ):
-        streams_app = self.__create_streams_app(config, handlers)
+    def test_reset(self, streams_app: StreamsApp, mocker: MockerFixture):
         mock_helm_upgrade_install = mocker.patch.object(
             streams_app.helm, "upgrade_install"
         )
@@ -370,11 +389,9 @@ class TestStreamsApp:
 
     def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        streams_app: StreamsApp,
         mocker: MockerFixture,
     ):
-        streams_app = self.__create_streams_app(config, handlers)
         mock_helm_upgrade_install = mocker.patch.object(
             streams_app.helm, "upgrade_install"
         )
@@ -412,27 +429,4 @@ class TestStreamsApp:
                     "test-namespace", "example-name-clean", True
                 ),
             ]
-        )
-
-    @staticmethod
-    def __create_streams_app(config: PipelineConfig, handlers: ComponentHandlers):
-        return StreamsApp(
-            handlers=handlers,
-            config=config,
-            **{
-                "type": "streams-app",
-                "name": "example-name",
-                "version": "2.4.2",
-                "app": {
-                    "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "to": {
-                    "topics": {
-                        "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                    }
-                },
-            },
         )
