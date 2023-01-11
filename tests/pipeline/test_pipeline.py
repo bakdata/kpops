@@ -1,4 +1,5 @@
 import os
+from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
@@ -15,13 +16,17 @@ PIPELINE_BASE_DIR = str(RESOURCE_PATH.parent)
 
 
 class TestPipeline:
+    @pytest.fixture(autouse=True)
+    def setup_teardown(self) -> Iterator[None]:
+        # setup
+        os.environ["KPOPS_ENVIRONMENT"] = "development"
+        yield  # testing
+        # teardown
+        del os.environ["KPOPS_ENVIRONMENT"]
+
     @pytest.fixture
     def output_file_path(self, tmp_path: Path) -> Path:
         return tmp_path / "pipeline.yaml"
-
-    @pytest.fixture(autouse=True)
-    def kpops_env(self) -> None:
-        os.environ["KPOPS_ENVIRONMENT"] = "development"
 
     def test_load_pipeline(self, output_file_path: Path, snapshot: SnapshotTest):
         result = runner.invoke(
