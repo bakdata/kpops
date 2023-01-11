@@ -102,7 +102,7 @@ class KubernetesApp(PipelineComponent):
     def to_helm_values(self) -> dict:
         return self.app.dict(by_alias=True, exclude_none=True, exclude_unset=True)
 
-    def print_helm_diff(self, stdout: str):
+    def print_helm_diff(self, stdout: str) -> None:
         current_release = self.helm.get_manifest(self.helm_release_name, self.namespace)
         new_release = Helm.load_helm_manifest(stdout)
         helm_diff = HelmDiff.get_diff(current_release, new_release)
