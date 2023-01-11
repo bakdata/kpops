@@ -13,6 +13,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
 )
+from kpops.component_handlers.helm_wrapper.utils import trim_release_name
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 from kpops.utils.pydantic import CamelCaseConfig
@@ -65,7 +66,7 @@ class KubernetesApp(PipelineComponent):
     @property
     def helm_release_name(self) -> str:
         """The name for the Helm release. Can be overridden."""
-        return self.name
+        return trim_release_name(self.name)
 
     @property
     def namespace(self) -> str:
