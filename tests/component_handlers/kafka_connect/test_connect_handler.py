@@ -22,7 +22,8 @@ from kpops.component_handlers.kafka_connect.model import (
 )
 from kpops.utils.colorify import greenify, magentaify, yellowify
 
-CONNECTOR_NAME = "test-connector"
+CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
+CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
 
 
 class TestConnectorHandler:
@@ -293,11 +294,11 @@ class TestConnectorHandler:
                 ),
                 mock.call.uninstall(
                     namespace="test-namespace",
-                    release_name="test-connector-clean",
+                    release_name=CONNECTOR_CLEAN_NAME,
                     dry_run=True,
                 ),
                 mock.call.upgrade_install(
-                    release_name="test-connector-clean",
+                    release_name=CONNECTOR_CLEAN_NAME,
                     namespace="test-namespace",
                     chart=f"{helm_repo_config.repository_name}/kafka-connect-resetter",
                     dry_run=True,
@@ -310,10 +311,10 @@ class TestConnectorHandler:
                         "connectorType": "source",
                         "config": {
                             "brokers": "broker:9092",
-                            "connector": "test-connector",
+                            "connector": CONNECTOR_NAME,
                             "offsetTopic": "kafka-connect-offsets",
                         },
-                        "nameOverride": "test-connector",
+                        "nameOverride": CONNECTOR_NAME,
                     },
                 ),
             ]
@@ -364,11 +365,11 @@ class TestConnectorHandler:
             [
                 mock.call.uninstall(
                     namespace="test-namespace",
-                    release_name="test-connector-clean",
+                    release_name=CONNECTOR_CLEAN_NAME,
                     dry_run=True,
                 ),
                 mock.call.upgrade_install(
-                    release_name="test-connector-clean",
+                    release_name=CONNECTOR_CLEAN_NAME,
                     namespace="test-namespace",
                     chart=f"{helm_repo_config.repository_name}/kafka-connect-resetter",
                     dry_run=True,
@@ -430,11 +431,11 @@ class TestConnectorHandler:
             [
                 mock.call.uninstall(
                     namespace="test-namespace",
-                    release_name="test-connector-clean",
+                    release_name=CONNECTOR_CLEAN_NAME,
                     dry_run=True,
                 ),
                 mock.call.upgrade_install(
-                    release_name="test-connector-clean",
+                    release_name=CONNECTOR_CLEAN_NAME,
                     namespace="test-namespace",
                     chart=f"{helm_repo_config.repository_name}/kafka-connect-resetter",
                     dry_run=True,
@@ -447,7 +448,7 @@ class TestConnectorHandler:
                 ),
                 mock.call.uninstall(
                     namespace="test-namespace",
-                    release_name="test-connector-clean",
+                    release_name=CONNECTOR_CLEAN_NAME,
                     dry_run=True,
                 ),
             ]
@@ -535,7 +536,7 @@ class TestConnectorHandler:
         )
 
         helm_wrapper_mock.get_manifest.assert_called_once_with(
-            "test-connector-clean", "test-namespace"
+            CONNECTOR_CLEAN_NAME, "test-namespace"
         )
         helm_diff.log_helm_diff.assert_called_once()
 
