@@ -1,8 +1,9 @@
 from enum import Enum
 from typing import Literal
 
-from pydantic import BaseConfig, BaseModel, Extra
+from pydantic import BaseConfig, BaseModel, Extra, Field
 
+from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.utils.pydantic import CamelCaseConfig
 
 
@@ -44,6 +45,22 @@ class KafkaConnectConfigErrorResponse(BaseModel):
     name: str
     error_count: int
     configs: list[KafkaConnectConfigDescription]
+
+
+class KafkaConnectResetterHelmConfig(BaseModel):
+    helm_config: HelmRepoConfig = Field(
+        default=HelmRepoConfig(
+            repository_name="bakdata-kafka-connect-resetter",
+            url="https://bakdata.github.io/kafka-connect-resetter/",
+        ),
+        description="Configuration of Kafka connect resetter Helm Chart",
+    )
+    version: str = "1.0.4"
+    helm_values: dict = Field(
+        default_factory=dict,
+        description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+    )
+    namespace: str = Field("")
 
 
 class KafkaConnectResetterConfig(BaseModel):

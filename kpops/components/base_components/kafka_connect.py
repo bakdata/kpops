@@ -1,25 +1,73 @@
+from __future__ import annotations
+
 import json
+import logging
 import os
 from abc import ABC
+from functools import cached_property
 from typing import NoReturn
 
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.cli.pipeline_config import ENV_PREFIX
-from kpops.component_handlers.kafka_connect.connector_handler import KafkaConnectorType
-from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
+from kpops.component_handlers.helm_wrapper.helm import Helm
+from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
+from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
+from kpops.component_handlers.helm_wrapper.utils import trim_release_name
+from kpops.component_handlers.kafka_connect.model import (
+    KafkaConnectConfig,
+    KafkaConnectorType,
+    KafkaConnectResetterConfig,
+    KafkaConnectResetterHelmConfig,
+    KafkaConnectResetterValues,
+)
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.utils.colorify import magentaify
+
+log = logging.getLogger("KafkaConnectHandler")
 
 
 class KafkaConnector(PipelineComponent, ABC):
     _type = "kafka-connect"
     app: KafkaConnectConfig
 
+    resetter_config: KafkaConnectResetterHelmConfig = Field(
+        default=KafkaConnectResetterHelmConfig(),
+        description="Configuration of kafka connect resetter helm chart and values. "
+        "This is used for cleaning/resettting Kafka connectors, see https://github.com/bakdata/kafka-connect-resetter",
+    )
+
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.prepare_connector_config()
+
+    @cached_property
+    def helm(self) -> Helm:
+        helm_repo_config = self.resetter_config.helm_config
+        helm = Helm(self.config.helm_config)
+        helm.add_repo(
+            helm_repo_config.repository_name,
+            helm_repo_config.url,
+            helm_repo_config.repo_auth_flags,
+        )
+        return helm
+
+    @cached_property
+    def helm_diff(self) -> HelmDiff:
+        return HelmDiff(self.config.helm_diff_config)
+
+    @property
+    def namespace(self) -> str:
+        return self.resetter_config.namespace
+
+    @property
+    def kafka_connect_resetter_chart(self) -> str:
+        return (
+            f"{self.resetter_config.helm_config.repository_name}/kafka-connect-resetter"
+        )
 
     def prepare_connector_config(self) -> None:
         """
@@ -62,6 +110,92 @@ class KafkaConnector(PipelineComponent, ABC):
                 )
             self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
 
+    def _clean_connector(
+        self,
+        connector_name: str,
+        connector_type: KafkaConnectorType,
+        dry_run: bool,
+        retain_clean_jobs: bool,
+        **kwargs,
+    ) -> None:
+        """
+        Cleans the connector from the cluster. At first, it deletes the previous cleanup job (connector resetter)
+        to make sure that there is no running clean job in the cluster. Then it releases a cleanup job.
+        If the retain_clean_jobs flag is set to false the cleanup job will be deleted.
+        :param connector_name: Name of the connector
+        :param connector_type: Type of the connector (SINK or SOURCE)
+        :param dry_run: If the cleanup should be run in dry run mode or not
+        :param retain_clean_jobs: If the cleanup job should be kept
+        :param kwargs: Other values for the KafkaConnectResetter
+        """
+        suffix = "-clean"
+        clean_up_release_name = connector_name + suffix
+        trimmed_name = trim_release_name(clean_up_release_name, suffix)
+
+        log.info(
+            magentaify(
+                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {connector_name}"
+            )
+        )
+        self.__uninstall_connect_resetter(trimmed_name, dry_run)
+
+        log.info(
+            magentaify(
+                f"Connector Cleanup: deploy Connect {connector_type.value} resetter for {connector_name}"
+            )
+        )
+
+        stdout = self.__install_connect_resetter(
+            trimmed_name, connector_name, connector_type, dry_run, kwargs
+        )
+
+        if dry_run and self.helm_diff.config.enable:
+            current_release = self.helm.get_manifest(trimmed_name, self.namespace)
+            new_release = Helm.load_helm_manifest(stdout)
+            helm_diff = HelmDiff.get_diff(current_release, new_release)
+            self.helm_diff.log_helm_diff(helm_diff, log)
+
+        if not retain_clean_jobs:
+            log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
+            self.__uninstall_connect_resetter(trimmed_name, dry_run)
+
+    def __install_connect_resetter(
+        self,
+        release_name: str,
+        connector_name: str,
+        connector_type: KafkaConnectorType,
+        dry_run: bool,
+        kwargs,
+    ) -> str:
+        return self.helm.upgrade_install(
+            release_name=release_name,
+            namespace=self.namespace,
+            chart=self.kafka_connect_resetter_chart,
+            dry_run=dry_run,
+            flags=HelmUpgradeInstallFlags(
+                version=self.resetter_config.version, wait_for_jobs=True, wait=True
+            ),
+            values={
+                **KafkaConnectResetterValues(
+                    config=KafkaConnectResetterConfig(
+                        connector=connector_name,
+                        brokers=self.config.broker,
+                        **kwargs,
+                    ),
+                    connector_type=connector_type.value,
+                    name_override=connector_name,
+                ).dict(),
+                **self.resetter_config.helm_values,
+            },
+        )
+
+    def __uninstall_connect_resetter(self, release_name: str, dry_run: bool) -> None:
+        self.helm.uninstall(
+            namespace=self.namespace,
+            release_name=release_name,
+            dry_run=dry_run,
+        )
+
 
 class KafkaSourceConnector(KafkaConnector):
     _type = "kafka-source-connector"
@@ -80,7 +214,7 @@ class KafkaSourceConnector(KafkaConnector):
         self.__run_kafka_connect_resetter(dry_run)
 
     def __run_kafka_connect_resetter(self, dry_run: bool) -> None:
-        self.handlers.connector_handler.clean_connector(
+        self._clean_connector(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SOURCE,
             dry_run=dry_run,
@@ -119,7 +253,7 @@ class KafkaSinkConnector(KafkaConnector):
     def __clean_sink_connector(
         self, dry_run: bool, delete_consumer_group: bool
     ) -> None:
-        self.handlers.connector_handler.clean_connector(
+        self._clean_connector(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SINK,
             dry_run=dry_run,

@@ -10,6 +10,7 @@
     topics:
       example-output:
         type: output
+
 - type: kafka-sink-connector
   name: es-sink-connector
   app:

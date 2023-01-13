@@ -3,11 +3,7 @@ from pathlib import Path
 from pydantic import BaseConfig, BaseSettings, Field
 from pydantic.env_settings import SettingsSourceCallable
 
-from kpops.component_handlers.helm_wrapper.model import (
-    HelmConfig,
-    HelmDiffConfig,
-    HelmRepoConfig,
-)
+from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.yaml_loading import load_yaml_file
 
 ENV_PREFIX = "KPOPS_"
@@ -22,22 +18,6 @@ class TopicNameConfig(BaseSettings):
         default="${pipeline_name}-${component_name}-error",
         description="Configures the value for the variable ${error_topic_name}",
     )
-
-
-class KafkaConnectResetterHelmConfig(BaseSettings):
-    helm_config: HelmRepoConfig = Field(
-        default=HelmRepoConfig(
-            repository_name="bakdata-kafka-connect-resetter",
-            url="https://bakdata.github.io/kafka-connect-resetter/",
-        ),
-        description="Configuration of Kafka connect resetter Helm Chart",
-    )
-    version: str = "1.0.4"
-    helm_values: dict = Field(
-        default={},
-        description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
-    )
-    namespace: str = Field(default="")
 
 
 class PipelineConfig(BaseSettings):
@@ -91,11 +71,6 @@ class PipelineConfig(BaseSettings):
     helm_config: HelmConfig = Field(default=HelmConfig())
     helm_diff_config: HelmDiffConfig = Field(default=HelmDiffConfig())
 
-    kafka_connect_resetter_config: KafkaConnectResetterHelmConfig = Field(
-        default=KafkaConnectResetterHelmConfig(),
-        description="Configuration of kafka connect resetter helm chart and values. "
-        "This is used for cleaning/resettting Kafka connectors, see https://github.com/bakdata/kafka-connect-resetter",
-    )
     retain_clean_jobs: bool = Field(
         default=False,
         env=f"{ENV_PREFIX}RETAIN_CLEAN_JOBS",

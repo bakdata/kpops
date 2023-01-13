@@ -41,9 +41,6 @@ class KubernetesApp(PipelineComponent):
 
     version: str | None = None
 
-    class Config:
-        keep_untouched = (cached_property,)
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.__check_compatible_name()
