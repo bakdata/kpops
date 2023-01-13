@@ -2,11 +2,14 @@ from __future__ import annotations
 
 import logging
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmRepoConfig,
+    HelmUpgradeInstallFlags,
+)
 from kpops.component_handlers.helm_wrapper.utils import trim_release_name
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
@@ -39,6 +42,14 @@ class KafkaApp(KubernetesApp):
 
     _type = "kafka-app"
     app: KafkaAppConfig
+    helm_repo_config: HelmRepoConfig = Field(
+        default=HelmRepoConfig(
+            repository_name="bakdata-streams-bootstrap",
+            url="https://bakdata.github.io/streams-bootstrap/",
+        ),
+        description="Configuration for Streams Bootstrap Helm Charts",
+    )
+    version = "2.7.0"
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)

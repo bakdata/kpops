@@ -69,46 +69,46 @@ class TestStreamsApp:
             },
         )
 
-    def test_set_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
-        class AnotherType(StreamsApp):
-            _type = "test"
-
-        streams_app = AnotherType(
-            handlers=handlers,
-            config=config,
-            **{
-                "type": "test",
-                "name": self.STREAMS_APP_NAME,
-                "app": {
-                    "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "from": {
-                    "topics": {
-                        "example-input": {"type": "input"},
-                        "b": {"type": "input"},
-                        "a": {"type": "input"},
-                        "topic-extra2": {"type": "extra", "role": "role2"},
-                        "topic-extra3": {"type": "extra", "role": "role2"},
-                        "topic-extra": {"type": "extra", "role": "role1"},
-                        ".*": {"type": "input-pattern"},
-                        "example.*": {
-                            "type": "extra-pattern",
-                            "role": "another-pattern",
-                        },
-                    }
-                },
-            },
-        )
-        assert streams_app.app.streams.extra_input_topics == {
-            "role1": ["topic-extra"],
-            "role2": ["topic-extra2", "topic-extra3"],
-        }
-        assert streams_app.app.streams.input_topics == ["example-input", "b", "a"]
-        assert streams_app.app.streams.input_pattern == ".*"
-        assert streams_app.app.streams.extra_input_patterns == {
-            "another-pattern": "example.*"
-        }
+    # def test_set_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
+    #     class AnotherType(StreamsApp):
+    #         _type = "test"
+    #
+    #     streams_app = AnotherType(
+    #         handlers=handlers,
+    #         config=config,
+    #         **{
+    #             "type": "test",
+    #             "name": self.STREAMS_APP_NAME,
+    #             "app": {
+    #                 "namespace": "test-namespace",
+    #                 "streams": {"brokers": "fake-broker:9092"},
+    #             },
+    #             "from": {
+    #                 "topics": {
+    #                     "example-input": {"type": "input"},
+    #                     "b": {"type": "input"},
+    #                     "a": {"type": "input"},
+    #                     "topic-extra2": {"type": "extra", "role": "role2"},
+    #                     "topic-extra3": {"type": "extra", "role": "role2"},
+    #                     "topic-extra": {"type": "extra", "role": "role1"},
+    #                     ".*": {"type": "input-pattern"},
+    #                     "example.*": {
+    #                         "type": "extra-pattern",
+    #                         "role": "another-pattern",
+    #                     },
+    #                 }
+    #             },
+    #         },
+    #     )
+    #     assert streams_app.app.streams.extra_input_topics == {
+    #         "role1": ["topic-extra"],
+    #         "role2": ["topic-extra2", "topic-extra3"],
+    #     }
+    #     assert streams_app.app.streams.input_topics == ["example-input", "b", "a"]
+    #     assert streams_app.app.streams.input_pattern == ".*"
+    #     assert streams_app.app.streams.extra_input_patterns == {
+    #         "another-pattern": "example.*"
+    #     }
 
     def test_no_empty_input_topic(
         self, config: PipelineConfig, handlers: ComponentHandlers

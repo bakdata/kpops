@@ -37,6 +37,7 @@ class KubernetesApp(PipelineComponent):
 
     _type = "kubernetes-app"
     app: KubernetesAppConfig
+    helm_repo_config: HelmRepoConfig | None = None
 
     version: str | None = None
 
@@ -70,10 +71,6 @@ class KubernetesApp(PipelineComponent):
     @property
     def namespace(self) -> str:
         return self.app.namespace
-
-    @property
-    def helm_repo_config(self) -> HelmRepoConfig | None:
-        return None
 
     @override
     def deploy(self, dry_run: bool) -> None:

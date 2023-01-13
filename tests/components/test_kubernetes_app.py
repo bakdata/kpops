@@ -91,20 +91,15 @@ class TestKubernetesApp:
     ):
         app_config = KubernetesAppConfig(namespace="test-namespace")
 
+        repo_config = HelmRepoConfig(repository_name="test-repo", url="mock://test")
         kubernetes_app = KubernetesApp(
             _type="test",
             handlers=handlers,
             app=app_config,
             config=config,
             name="test-kubernetes-apps",
+            helm_repo_config=repo_config,
             version="3.4.5",
-        )
-
-        repo_config = HelmRepoConfig(repository_name="test-repo", url="mock://test")
-        mocker.patch(
-            "kpops.components.base_components.kubernetes_app.KubernetesApp.helm_repo_config",
-            return_value=repo_config,
-            new_callable=mocker.PropertyMock,
         )
 
         mocker.patch.object(

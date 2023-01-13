@@ -91,13 +91,6 @@ class PipelineConfig(BaseSettings):
     helm_config: HelmConfig = Field(default=HelmConfig())
     helm_diff_config: HelmDiffConfig = Field(default=HelmDiffConfig())
 
-    streams_bootstrap_helm_config: HelmRepoConfig = Field(
-        default=HelmRepoConfig(
-            repository_name="bakdata-streams-bootstrap",
-            url="https://bakdata.github.io/streams-bootstrap/",
-        ),
-        description="Configuration for Streams Bootstrap Helm Charts",
-    )
     kafka_connect_resetter_config: KafkaConnectResetterHelmConfig = Field(
         default=KafkaConnectResetterHelmConfig(),
         description="Configuration of kafka connect resetter helm chart and values. "
