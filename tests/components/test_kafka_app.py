@@ -6,7 +6,10 @@ from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmRepoConfig,
+    HelmUpgradeInstallFlags,
+)
 from kpops.components.base_components import KafkaApp
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
@@ -28,7 +31,11 @@ class TestKafkaApp:
             topic_handler=MagicMock(),
         )
 
-    def test_default_brokers(self, config: PipelineConfig, handlers: ComponentHandlers):
+    @pytest.fixture
+    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch("")
+
+    def test_default_configs(self, config: PipelineConfig, handlers: ComponentHandlers):
         kafka_app = KafkaApp(
             handlers=handlers,
             config=config,
@@ -42,11 +49,15 @@ class TestKafkaApp:
                         "brokers": "fake-broker:9092",
                     },
                 },
-                "version": "1.2.3",
             },
         )
         assert kafka_app.app.streams.brokers == "fake-broker:9092"
-        assert kafka_app.version == "1.2.3"
+
+        assert kafka_app.helm_repo_config == HelmRepoConfig(
+            repository_name="bakdata-streams-bootstrap",
+            url="https://bakdata.github.io/streams-bootstrap/",
+        )
+        assert kafka_app.version == "2.7.0"
 
     def test_should_deploy_kafka_app(
         self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
