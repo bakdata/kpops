@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 from abc import ABC
 from functools import cached_property
 from typing import NoReturn
@@ -10,7 +9,6 @@ from typing import NoReturn
 from pydantic import Field
 from typing_extensions import override
 
-from kpops.cli.pipeline_config import ENV_PREFIX
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
@@ -27,7 +25,7 @@ from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 
-log = logging.getLogger("KafkaConnectHandler")
+log = logging.getLogger("KafkaConnect")
 
 
 class KafkaConnector(PipelineComponent, ABC):
@@ -110,7 +108,7 @@ class KafkaConnector(PipelineComponent, ABC):
                 )
             self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
 
-    def _clean_connector(
+    def _run_connect_resetter(
         self,
         connector_name: str,
         connector_type: KafkaConnectorType,
@@ -214,12 +212,12 @@ class KafkaSourceConnector(KafkaConnector):
         self.__run_kafka_connect_resetter(dry_run)
 
     def __run_kafka_connect_resetter(self, dry_run: bool) -> None:
-        self._clean_connector(
+        self._run_connect_resetter(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SOURCE,
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
-            offset_topic=os.environ[f"{ENV_PREFIX}KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"],
+            offset_topic=self.resetter_config.offset_topic,
         )
 
 
@@ -243,17 +241,17 @@ class KafkaSinkConnector(KafkaConnector):
 
     @override
     def reset(self, dry_run: bool) -> None:
-        self.__clean_sink_connector(dry_run, delete_consumer_group=False)
+        self.__run_kafka_connect_resetter(dry_run, delete_consumer_group=False)
 
     @override
     def clean(self, dry_run: bool) -> None:
         super().clean(dry_run)
-        self.__clean_sink_connector(dry_run, delete_consumer_group=True)
+        self.__run_kafka_connect_resetter(dry_run, delete_consumer_group=True)
 
-    def __clean_sink_connector(
+    def __run_kafka_connect_resetter(
         self, dry_run: bool, delete_consumer_group: bool
     ) -> None:
-        self._clean_connector(
+        self._run_connect_resetter(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SINK,
             dry_run=dry_run,

@@ -166,15 +166,14 @@ class TestKafkaConnectorSource:
         helm_mock: MagicMock,
         mocker: MockerFixture,
     ):
-        os.environ[
-            "KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"
-        ] = "kafka-connect-offsets"
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            resetter_config=KafkaConnectResetterHelmConfig(
+                namespace="test-namespace", offset_topic="kafka-connect-offsets"
+            ),
             to=ToSection(
                 topics={
                     "${output_topic_name}": TopicConfig(
@@ -247,15 +246,14 @@ class TestKafkaConnectorSource:
         helm_mock: MagicMock,
         mocker: MockerFixture,
     ):
-        os.environ[
-            "KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"
-        ] = "kafka-connect-offsets"
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            resetter_config=KafkaConnectResetterHelmConfig(
+                namespace="test-namespace", offset_topic="kafka-connect-offsets"
+            ),
             to=ToSection(
                 topics={
                     "${output_topic_name}": TopicConfig(
@@ -328,15 +326,14 @@ class TestKafkaConnectorSource:
         helm_mock: MagicMock,
         mocker: MockerFixture,
     ):
-        os.environ[
-            "KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"
-        ] = "kafka-connect-offsets"
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            resetter_config=KafkaConnectResetterHelmConfig(
+                namespace="test-namespace", offset_topic="kafka-connect-offsets"
+            ),
         )
         assert connector.to is None
 

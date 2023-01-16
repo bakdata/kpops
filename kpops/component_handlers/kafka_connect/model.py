@@ -60,7 +60,8 @@ class KafkaConnectResetterHelmConfig(BaseModel):
         default_factory=dict,
         description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
     )
-    namespace: str = Field("")
+    namespace: str = Field(default="")
+    offset_topic: str | None = Field(default=None)
 
 
 class KafkaConnectResetterConfig(BaseModel):
