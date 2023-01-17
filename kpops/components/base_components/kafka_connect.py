@@ -44,7 +44,6 @@ class KafkaConnector(PipelineComponent, ABC):
         default_factory=dict,
         description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
     )
-    offset_topic: str | None = None
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -199,6 +198,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
 class KafkaSourceConnector(KafkaConnector):
     _type = "kafka-source-connector"
+    offset_topic: str | None = None
 
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
