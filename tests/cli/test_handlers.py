@@ -20,7 +20,7 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
         kafka_rest_host="https://testhost:8082",
         schema_registry_url=None,
     )
-    connector_handler_mock = mocker.patch("kpops.cli.main.ConnectorHandler")
+    connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
     connector_handler = KafkaConnectHandler.from_pipeline_config(pipeline_config=config)
     connector_handler_mock.from_pipeline_config.return_value = connector_handler
 
@@ -59,7 +59,7 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     schema_handler = SchemaHandler.load_schema_handler(MODULE, config)
     schema_handler_mock.load_schema_handler.return_value = schema_handler
 
-    connector_handler_mock = mocker.patch("kpops.cli.main.ConnectorHandler")
+    connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
     connector_handler = KafkaConnectHandler.from_pipeline_config(pipeline_config=config)
     connector_handler_mock.from_pipeline_config.return_value = connector_handler
 
