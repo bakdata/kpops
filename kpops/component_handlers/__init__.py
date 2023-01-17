@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from kpops.component_handlers.kafka_connect.connector_handler import ConnectorHandler
+from kpops.component_handlers.kafka_connect.connector_handler import KafkaConnectHandler
 
 if TYPE_CHECKING:
     from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
@@ -13,7 +13,7 @@ class ComponentHandlers:
     def __init__(
         self,
         schema_handler: SchemaHandler | None,
-        connector_handler: ConnectorHandler,
+        connector_handler: KafkaConnectHandler,
         topic_handler: TopicHandler,
     ) -> None:
         self.schema_handler = schema_handler

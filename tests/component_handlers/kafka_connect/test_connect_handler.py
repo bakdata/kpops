@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers.kafka_connect.connector_handler import ConnectorHandler
+from kpops.component_handlers.kafka_connect.connector_handler import KafkaConnectHandler
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.utils.colorify import greenify, magentaify, yellowify
@@ -39,8 +39,8 @@ class TestConnectorHandler:
         )
 
     @staticmethod
-    def connector_handler(connect_wrapper: MagicMock) -> ConnectorHandler:
-        return ConnectorHandler(
+    def connector_handler(connect_wrapper: MagicMock) -> KafkaConnectHandler:
+        return KafkaConnectHandler(
             connect_wrapper=connect_wrapper,
             timeout=0,
         )

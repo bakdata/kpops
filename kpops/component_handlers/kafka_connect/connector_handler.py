@@ -17,7 +17,7 @@ if TYPE_CHECKING:
 log = logging.getLogger("KafkaConnectHandler")
 
 
-class ConnectorHandler:
+class KafkaConnectHandler:
     def __init__(
         self,
         connect_wrapper: ConnectWrapper,
@@ -146,7 +146,7 @@ class ConnectorHandler:
     @classmethod
     def from_pipeline_config(
         cls, pipeline_config: PipelineConfig
-    ) -> ConnectorHandler:  # TODO: annotate as typing.Self once mypy supports it
+    ) -> KafkaConnectHandler:  # TODO: annotate as typing.Self once mypy supports it
         return cls(
             connect_wrapper=ConnectWrapper(host=pipeline_config.kafka_connect_host),
             timeout=pipeline_config.timeout,
