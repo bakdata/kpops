@@ -11,10 +11,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.component_handlers.kafka_connect.model import (
-    KafkaConnectConfig,
-    KafkaConnectResetterHelmConfig,
-)
+from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.components.base_components.kafka_connect import KafkaSourceConnector
 from kpops.components.base_components.models.from_section import (
     FromSection,
@@ -69,9 +66,7 @@ class TestKafkaConnectorSource:
                 handlers=handlers,
                 config=config,
                 app=KafkaConnectConfig(),
-                resetter_config=KafkaConnectResetterHelmConfig(
-                    namespace="test-namespace"
-                ),
+                namespace="test-namespace",
                 from_=FromSection(
                     topics={
                         "connector-topic": FromTopic(type=InputTopicTypes.INPUT),
@@ -90,7 +85,7 @@ class TestKafkaConnectorSource:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            namespace="test-namespace",
             to=ToSection(
                 topics={
                     "${output_topic_name}": TopicConfig(
@@ -137,7 +132,7 @@ class TestKafkaConnectorSource:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            namespace="test-namespace",
             to=ToSection(
                 topics={
                     "${output_topic_name}": TopicConfig(
@@ -171,9 +166,8 @@ class TestKafkaConnectorSource:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(
-                namespace="test-namespace", offset_topic="kafka-connect-offsets"
-            ),
+            namespace="test-namespace",
+            offset_topic="kafka-connect-offsets",
             to=ToSection(
                 topics={
                     "${output_topic_name}": TopicConfig(
@@ -251,9 +245,8 @@ class TestKafkaConnectorSource:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(
-                namespace="test-namespace", offset_topic="kafka-connect-offsets"
-            ),
+            namespace="test-namespace",
+            offset_topic="kafka-connect-offsets",
             to=ToSection(
                 topics={
                     "${output_topic_name}": TopicConfig(
@@ -331,9 +324,8 @@ class TestKafkaConnectorSource:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(
-                namespace="test-namespace", offset_topic="kafka-connect-offsets"
-            ),
+            namespace="test-namespace",
+            offset_topic="kafka-connect-offsets",
         )
         assert connector.to is None
 

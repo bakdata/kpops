@@ -54,8 +54,8 @@ class TestStreamsApp:
             **{
                 "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "to": {
@@ -75,8 +75,8 @@ class TestStreamsApp:
             **{
                 "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "from": {
@@ -115,8 +115,8 @@ class TestStreamsApp:
             **{
                 "type": "test",
                 "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "from": {
@@ -147,8 +147,8 @@ class TestStreamsApp:
                 **{
                     "type": "streams-app",
                     "name": self.STREAMS_APP_NAME,
+                    "namespace": "test-namespace",
                     "app": {
-                        "namespace": "test-namespace",
                         "streams": {"brokers": "fake-broker:9092"},
                     },
                     "from": {
@@ -168,8 +168,8 @@ class TestStreamsApp:
                 **{
                     "type": "streams-app",
                     "name": self.STREAMS_APP_NAME,
+                    "namespace": "test-namespace",
                     "app": {
-                        "namespace": "test-namespace",
                         "streams": {"brokers": "fake-broker:9092"},
                     },
                     "from": {"topics": {"example.*": {"type": "extra-pattern"}}},
@@ -185,8 +185,8 @@ class TestStreamsApp:
             **{
                 "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "to": {
@@ -227,8 +227,8 @@ class TestStreamsApp:
             **{
                 "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
             },
@@ -263,8 +263,8 @@ class TestStreamsApp:
             **{
                 "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "to": {
@@ -311,7 +311,6 @@ class TestStreamsApp:
                     True,
                     "test-namespace",
                     {
-                        "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -368,7 +367,6 @@ class TestStreamsApp:
                     True,
                     "test-namespace",
                     {
-                        "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -412,7 +410,6 @@ class TestStreamsApp:
                     True,
                     "test-namespace",
                     {
-                        "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",

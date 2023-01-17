@@ -21,6 +21,10 @@ from kpops.utils.colorify import magentaify
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
+class KubernetesTestValue(KubernetesAppConfig):
+    name_override: str
+
+
 class TestKubernetesApp:
     @pytest.fixture
     def config(self) -> PipelineConfig:
@@ -48,21 +52,26 @@ class TestKubernetesApp:
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kubernetes_app.log.info")
 
+    @pytest.fixture
+    def app_value(self) -> KubernetesTestValue:
+        return KubernetesTestValue(**{"name_override": "test-value"})
+
     def test_should_lazy_load_helm_wrapper_and_not_repo_add(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
         mocker: MockerFixture,
         helm_mock: MagicMock,
+        app_value: KubernetesTestValue,
     ):
-        app_config = KubernetesAppConfig(namespace="test-namespace")
 
         kubernetes_app = KubernetesApp(
             _type="test",
+            app=app_value,
             handlers=handlers,
-            app=app_config,
             config=config,
             name="test-kubernetes-apps",
+            namespace="test-namespace",
         )
 
         mocker.patch.object(
@@ -78,7 +87,7 @@ class TestKubernetesApp:
             "test/test-chart",
             True,
             "test-namespace",
-            {"namespace": "test-namespace"},
+            {"nameOverride": "test-value"},
             HelmUpgradeInstallFlags(),
         )
 
@@ -88,17 +97,17 @@ class TestKubernetesApp:
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         mocker: MockerFixture,
+        app_value: KubernetesTestValue,
     ):
-        app_config = KubernetesAppConfig(namespace="test-namespace")
-
         repo_config = HelmRepoConfig(repository_name="test-repo", url="mock://test")
         kubernetes_app = KubernetesApp(
             _type="test",
+            app=app_value,
             handlers=handlers,
-            app=app_config,
             config=config,
             name="test-kubernetes-apps",
-            helm_repo_config=repo_config,
+            namespace="test-namespace",
+            repo_config=repo_config,
             version="3.4.5",
         )
 
@@ -123,7 +132,7 @@ class TestKubernetesApp:
                     "test/test-chart",
                     True,
                     "test-namespace",
-                    {"namespace": "test-namespace"},
+                    {"nameOverride": "test-value"},
                     HelmUpgradeInstallFlags(version="3.4.5"),
                 ),
             ]
@@ -135,15 +144,16 @@ class TestKubernetesApp:
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         mocker: MagicMock,
+        app_value: KubernetesTestValue,
     ):
-        app_config = KubernetesAppConfig(namespace="test-namespace")
 
         kubernetes_app = KubernetesApp(
             _type="test",
+            app=app_value,
             handlers=handlers,
-            app=app_config,
             config=config,
             name="test-kubernetes-apps",
+            namespace="test-namespace",
         )
         mocker.patch.object(
             kubernetes_app, "get_helm_chart", return_value="test/test-chart"
@@ -155,16 +165,19 @@ class TestKubernetesApp:
         )
 
     def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        app_value: KubernetesTestValue,
     ):
-        app_config = KubernetesAppConfig(namespace="test-namespace")
 
         kubernetes_app = KubernetesApp(
             _type="test",
+            app=app_value,
             handlers=handlers,
-            app=app_config,
             config=config,
             name="test-kubernetes-apps",
+            namespace="test-namespace",
         )
 
         with pytest.raises(NotImplementedError) as error:
@@ -180,15 +193,16 @@ class TestKubernetesApp:
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         log_info_mock: MagicMock,
+        app_value: KubernetesTestValue,
     ):
-        app_config = KubernetesAppConfig(namespace="test-namespace")
 
         kubernetes_app = KubernetesApp(
             _type="test",
+            app=app_value,
             handlers=handlers,
-            app=app_config,
             config=config,
             name="test-kubernetes-apps",
+            namespace="test-namespace",
         )
 
         stdout = 'KubernetesAppComponent - release "test-kubernetes-apps" uninstalled'
@@ -203,23 +217,25 @@ class TestKubernetesApp:
         log_info_mock.assert_called_once_with(magentaify(stdout))
 
     def test_should_raise_value_error_when_name_is_not_valid(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        app_value: KubernetesTestValue,
     ):
-        app_config = KubernetesAppConfig(namespace="test")
 
         assert KubernetesApp(
             _type="test",
+            app=app_value,
             handlers=handlers,
-            app=app_config,
             config=config,
             name="example-component-with-very-long-name-longer-than-most-of-our-kubernetes-apps",
+            namespace="test-namespace",
         )
 
         with pytest.raises(ValueError):
             assert KubernetesApp(
                 _type="test",
                 handlers=handlers,
-                app=app_config,
                 config=config,
                 name="Not-Compatible*",
             )
@@ -228,7 +244,6 @@ class TestKubernetesApp:
             assert KubernetesApp(
                 _type="test",
                 handlers=handlers,
-                app=app_config,
                 config=config,
                 name="snake_case",
             )

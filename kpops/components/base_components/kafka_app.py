@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -42,12 +42,9 @@ class KafkaApp(KubernetesApp):
 
     _type = "kafka-app"
     app: KafkaAppConfig
-    helm_repo_config: HelmRepoConfig = Field(
-        default=HelmRepoConfig(
-            repository_name="bakdata-streams-bootstrap",
-            url="https://bakdata.github.io/streams-bootstrap/",
-        ),
-        description="Configuration for Streams Bootstrap Helm Charts",
+    repo_config = HelmRepoConfig(
+        repository_name="bakdata-streams-bootstrap",
+        url="https://bakdata.github.io/streams-bootstrap/",
     )
     version = "2.7.0"
 

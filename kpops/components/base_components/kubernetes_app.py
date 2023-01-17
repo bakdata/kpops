@@ -4,7 +4,7 @@ import logging
 import re
 from functools import cached_property
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Extra
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -25,10 +25,8 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 
 
 class KubernetesAppConfig(BaseModel):
-    namespace: str
-
     class Config(CamelCaseConfig):
-        pass
+        extra = Extra.allow
 
 
 # TODO: label and annotations
@@ -37,8 +35,8 @@ class KubernetesApp(PipelineComponent):
 
     _type = "kubernetes-app"
     app: KubernetesAppConfig
-    helm_repo_config: HelmRepoConfig | None = None
-
+    repo_config: HelmRepoConfig | None = None
+    namespace: str
     version: str | None = None
 
     def __init__(self, **kwargs):
@@ -48,11 +46,11 @@ class KubernetesApp(PipelineComponent):
     @cached_property
     def helm(self) -> Helm:
         helm = Helm(self.config.helm_config)
-        if self.helm_repo_config is not None:
+        if self.repo_config is not None:
             helm.add_repo(
-                self.helm_repo_config.repository_name,
-                self.helm_repo_config.url,
-                self.helm_repo_config.repo_auth_flags,
+                self.repo_config.repository_name,
+                self.repo_config.url,
+                self.repo_config.repo_auth_flags,
             )
         return helm
 
@@ -64,10 +62,6 @@ class KubernetesApp(PipelineComponent):
     def helm_release_name(self) -> str:
         """The name for the Helm release. Can be overridden."""
         return self.name
-
-    @property
-    def namespace(self) -> str:
-        return self.app.namespace
 
     @override
     def deploy(self, dry_run: bool) -> None:

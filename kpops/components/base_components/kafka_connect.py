@@ -11,13 +11,15 @@ from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
-from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmRepoConfig,
+    HelmUpgradeInstallFlags,
+)
 from kpops.component_handlers.helm_wrapper.utils import trim_release_name
 from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectConfig,
     KafkaConnectorType,
     KafkaConnectResetterConfig,
-    KafkaConnectResetterHelmConfig,
     KafkaConnectResetterValues,
 )
 from kpops.components.base_components.base_defaults_component import deduplicate
@@ -32,11 +34,17 @@ class KafkaConnector(PipelineComponent, ABC):
     _type = "kafka-connect"
     app: KafkaConnectConfig
 
-    resetter_config: KafkaConnectResetterHelmConfig = Field(
-        default=KafkaConnectResetterHelmConfig(),
-        description="Configuration of kafka connect resetter helm chart and values. "
-        "This is used for cleaning/resettting Kafka connectors, see https://github.com/bakdata/kafka-connect-resetter",
+    repo_config: HelmRepoConfig = HelmRepoConfig(
+        repository_name="bakdata-kafka-connect-resetter",
+        url="https://bakdata.github.io/kafka-connect-resetter/",
     )
+    namespace: str
+    version: str = "1.0.4"
+    resetter_values: dict = Field(
+        default_factory=dict,
+        description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+    )
+    offset_topic: str | None = None
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -44,7 +52,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @cached_property
     def helm(self) -> Helm:
-        helm_repo_config = self.resetter_config.helm_config
+        helm_repo_config = self.repo_config
         helm = Helm(self.config.helm_config)
         helm.add_repo(
             helm_repo_config.repository_name,
@@ -58,14 +66,8 @@ class KafkaConnector(PipelineComponent, ABC):
         return HelmDiff(self.config.helm_diff_config)
 
     @property
-    def namespace(self) -> str:
-        return self.resetter_config.namespace
-
-    @property
     def kafka_connect_resetter_chart(self) -> str:
-        return (
-            f"{self.resetter_config.helm_config.repository_name}/kafka-connect-resetter"
-        )
+        return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
     def prepare_connector_config(self) -> None:
         """
@@ -171,7 +173,7 @@ class KafkaConnector(PipelineComponent, ABC):
             chart=self.kafka_connect_resetter_chart,
             dry_run=dry_run,
             flags=HelmUpgradeInstallFlags(
-                version=self.resetter_config.version, wait_for_jobs=True, wait=True
+                version=self.version, wait_for_jobs=True, wait=True
             ),
             values={
                 **KafkaConnectResetterValues(
@@ -183,7 +185,7 @@ class KafkaConnector(PipelineComponent, ABC):
                     connector_type=connector_type.value,
                     name_override=connector_name,
                 ).dict(),
-                **self.resetter_config.helm_values,
+                **self.resetter_values,
             },
         )
 
@@ -217,7 +219,7 @@ class KafkaSourceConnector(KafkaConnector):
             connector_type=KafkaConnectorType.SOURCE,
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
-            offset_topic=self.resetter_config.offset_topic,
+            offset_topic=self.offset_topic,
         )
 
 

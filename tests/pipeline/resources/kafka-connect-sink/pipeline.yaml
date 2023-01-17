@@ -12,6 +12,7 @@
         type: output
 
 - type: kafka-sink-connector
+  namespace: example-namespace
   name: es-sink-connector
   app:
     connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector

@@ -13,7 +13,6 @@ from kpops.component_handlers.helm_wrapper.model import (
 from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectConfig,
     KafkaConnectorType,
-    KafkaConnectResetterHelmConfig,
 )
 from kpops.components import KafkaSinkConnector
 from kpops.components.base_components.models.from_section import (
@@ -72,8 +71,8 @@ class TestKafkaConnectorSink:
             name="test-connector",
             handlers=handlers,
             config=config,
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
             app=KafkaConnectConfig(**{"topics": topic_name}),
+            namespace="test-namespace",
         )
         assert getattr(connector.app, "topics") == topic_name
 
@@ -83,7 +82,7 @@ class TestKafkaConnectorSink:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(**{"topics.regex": topic_pattern}),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            namespace="test-namespace",
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern
 
@@ -92,7 +91,7 @@ class TestKafkaConnectorSink:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            namespace="test-namespace",
             to=ToSection(
                 topics={
                     "${error_topic_name}": TopicConfig(type=OutputTopicTypes.ERROR),
@@ -114,7 +113,7 @@ class TestKafkaConnectorSink:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            namespace="test-namespace",
             from_=FromSection(
                 topics={
                     topic1: FromTopic(type=InputTopicTypes.INPUT),
@@ -137,7 +136,7 @@ class TestKafkaConnectorSink:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            namespace="test-namespace",
             from_=FromSection(
                 topics={topic_pattern: FromTopic(type=InputTopicTypes.INPUT_PATTERN)}
             ),
@@ -155,7 +154,7 @@ class TestKafkaConnectorSink:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            namespace="test-namespace",
             to=ToSection(
                 topics={
                     "${output_topic_name}": TopicConfig(
@@ -198,7 +197,7 @@ class TestKafkaConnectorSink:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            namespace="test-namespace",
             to=ToSection(
                 topics={
                     "${output_topic_name}": TopicConfig(
@@ -231,7 +230,7 @@ class TestKafkaConnectorSink:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            namespace="test-namespace",
             to=ToSection(
                 topics={
                     "${output_topic_name}": TopicConfig(
@@ -308,7 +307,7 @@ class TestKafkaConnectorSink:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            namespace="test-namespace",
             to=ToSection(
                 topics={
                     "${output_topic_name}": TopicConfig(
@@ -403,7 +402,7 @@ class TestKafkaConnectorSink:
             handlers=handlers,
             config=config,
             app=KafkaConnectConfig(),
-            resetter_config=KafkaConnectResetterHelmConfig(namespace="test-namespace"),
+            namespace="test-namespace",
         )
 
         mock_delete_topics = mocker.patch.object(

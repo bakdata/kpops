@@ -43,12 +43,14 @@ class ProducerApp(KafkaApp):
 
     @override
     def get_helm_chart(self) -> str:
-        return f"{self.helm_repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
+        return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
     @property
     @override
     def clean_up_helm_chart(self) -> str:
-        return f"{self.helm_repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
+        return (
+            f"{self.repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
+        )
 
     @override
     def clean(self, dry_run: bool) -> None:

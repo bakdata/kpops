@@ -48,7 +48,7 @@ class KafkaConnectConfigErrorResponse(BaseModel):
 
 
 class KafkaConnectResetterHelmConfig(BaseModel):
-    helm_config: HelmRepoConfig = Field(
+    helm_repo_config: HelmRepoConfig = Field(
         default=HelmRepoConfig(
             repository_name="bakdata-kafka-connect-resetter",
             url="https://bakdata.github.io/kafka-connect-resetter/",

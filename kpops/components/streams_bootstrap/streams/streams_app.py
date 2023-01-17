@@ -53,12 +53,12 @@ class StreamsApp(KafkaApp):
 
     @override
     def get_helm_chart(self) -> str:
-        return f"{self.helm_repo_config.repository_name}/{AppType.STREAMS_APP.value}"
+        return f"{self.repo_config.repository_name}/{AppType.STREAMS_APP.value}"
 
     @property
     @override
     def clean_up_helm_chart(self) -> str:
-        return f"{self.helm_repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
+        return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
     @override
     def reset(self, dry_run: bool) -> None:
