@@ -3,29 +3,25 @@ from pathlib import Path
 from typing import Iterator
 
 import yaml
+from pydantic import BaseModel, Field
 
 
-@dataclass
-class HelmDiffConfig:
+class HelmDiffConfig(BaseModel):
     enable: bool = False
-    ignore: set[str] = field(
-        default_factory=set,
-    )
+    ignore: set[str] = Field(default_factory=set)
 
 
-@dataclass
-class RepoAuthFlags:
+class RepoAuthFlags(BaseModel):
     username: str | None = None
     password: str | None = None
     ca_file: Path | None = None
     insecure_skip_tls_verify: bool = False
 
 
-@dataclass
-class HelmRepoConfig:
+class HelmRepoConfig(BaseModel):
     repository_name: str
     url: str
-    repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
+    repo_auth_flags: RepoAuthFlags = Field(default=RepoAuthFlags())
 
 
 @dataclass

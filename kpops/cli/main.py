@@ -10,7 +10,9 @@ from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.kafka_connect.connector_handler import KafkaConnectHandler
+from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
+    KafkaConnectHandler,
+)
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import dataclasses
 import json
 import logging
 import os
@@ -29,18 +28,6 @@ class ParsingException(Exception):
 
 class PipelineComponents(BaseModel):
     components: list[PipelineComponent]
-
-
-class EnhancedJSONEncoder(json.JSONEncoder):
-    """
-    This class makes python dataclasses JSON serializable.
-    https://stackoverflow.com/a/51286749
-    """
-
-    def default(self, o):
-        if dataclasses.is_dataclass(o):
-            return dataclasses.asdict(o)
-        return super().default(o)
 
 
 def create_env_components_index(
@@ -241,7 +228,7 @@ class Pipeline:
         # Override component config with component config in pipeline environment definition
         json_object: dict = json.loads(
             substitute(
-                json.dumps(pair, cls=EnhancedJSONEncoder),
+                json.dumps(pair),
                 {
                     "component_type": component_object._type,
                     "component_name": component_object.name,

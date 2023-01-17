@@ -27,7 +27,7 @@ from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 
-log = logging.getLogger("KafkaConnect")
+log = logging.getLogger("KafkaConnector")
 
 
 class KafkaConnector(PipelineComponent, ABC):

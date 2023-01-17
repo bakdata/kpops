@@ -4,8 +4,10 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers.kafka_connect.connector_handler import KafkaConnectHandler
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
+from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
+    KafkaConnectHandler,
+)
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.utils.colorify import greenify, magentaify, yellowify
 
@@ -17,25 +19,25 @@ class TestConnectorHandler:
     @pytest.fixture
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.component_handlers.kafka_connect.connector_handler.log.info"
+            "kpops.component_handlers.kafka_connect.kafka_connect_handler.log.info"
         )
 
     @pytest.fixture
     def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.component_handlers.kafka_connect.connector_handler.log.warning"
+            "kpops.component_handlers.kafka_connect.kafka_connect_handler.log.warning"
         )
 
     @pytest.fixture
     def log_error_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.component_handlers.kafka_connect.connector_handler.log.error"
+            "kpops.component_handlers.kafka_connect.kafka_connect_handler.log.error"
         )
 
     @pytest.fixture
     def renderer_diff_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.component_handlers.kafka_connect.connector_handler.render_diff"
+            "kpops.component_handlers.kafka_connect.kafka_connect_handler.render_diff"
         )
 
     @staticmethod

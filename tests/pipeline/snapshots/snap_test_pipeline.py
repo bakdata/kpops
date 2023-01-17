@@ -2,7 +2,7 @@
 # snapshottest: v1 - https://goo.gl/zC4yUc
 from __future__ import unicode_literals
 
-from snapshottest import GenericRepr, Snapshot
+from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
@@ -21,9 +21,11 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
             },
             "name": "resources-custom-config-app1",
             "namespace": "development-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -52,9 +54,11 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
             },
             "name": "resources-custom-config-app2",
             "namespace": "development-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -94,9 +98,11 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             },
             "name": "resources-pipeline-with-inflate-scheduled-producer",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {"com/bakdata/kafka/fake": "1.0.0"},
                 "topics": {
@@ -138,9 +144,11 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             },
             "name": "resources-pipeline-with-inflate-converter",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -192,9 +200,11 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             },
             "name": "resources-pipeline-with-inflate-should-inflate",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -256,9 +266,11 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
             "from": {"topics": {"example-topic": {"type": "input"}}},
             "name": "resources-kafka-connect-sink-streams-app",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -291,9 +303,11 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
             },
             "name": "resources-kafka-connect-sink-es-sink-connector",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-kafka-connect-resetter', url='https://bakdata.github.io/kafka-connect-resetter/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-kafka-connect-resetter",
+                "url": "https://bakdata.github.io/kafka-connect-resetter/",
+            },
             "resetter_values": {},
             "type": "kafka-sink-connector",
             "version": "1.0.4",
@@ -319,9 +333,11 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
             },
             "name": "resources-first-pipeline-scheduled-producer",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {"com/bakdata/kafka/fake": "1.0.0"},
                 "topics": {
@@ -361,9 +377,11 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
             },
             "name": "resources-first-pipeline-converter",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -417,9 +435,11 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
             },
             "name": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -463,9 +483,11 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
             "from": {"topics": {".*": {"type": "input-pattern"}}},
             "name": "resources-no-input-topic-pipeline-streams-app",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -500,9 +522,11 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
             },
             "name": "resources-no-input-topic-pipeline-streams-app",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -550,9 +574,11 @@ snapshots["TestPipeline.test_no_user_defined_components test-pipeline"] = {
             "from": {"topics": {"example-topic": {"type": "input"}}},
             "name": "resources-no-user-defined-components-streams-app",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -589,9 +615,11 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
             },
             "name": "resources-pipeline-with-envs-scheduled-producer",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {"com/bakdata/kafka/fake": "1.0.0"},
                 "topics": {
@@ -631,9 +659,11 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
             },
             "name": "resources-pipeline-with-envs-converter",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -685,9 +715,11 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
             },
             "name": "resources-pipeline-with-envs-filter",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -732,9 +764,11 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
             },
             "name": "resources-component-type-substitution-scheduled-producer",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {"com/bakdata/kafka/fake": "1.0.0"},
                 "topics": {
@@ -776,9 +810,11 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
             },
             "name": "resources-component-type-substitution-converter",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -831,9 +867,11 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
             },
             "name": "resources-component-type-substitution-filter-app",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -871,9 +909,11 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
             },
             "name": "resources-custom-config-app1",
             "namespace": "development-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -902,9 +942,11 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
             },
             "name": "resources-custom-config-app2",
             "namespace": "development-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -946,9 +988,11 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
             "from": {"topics": {"example-topic": {"type": "input"}}},
             "name": "resources-kafka-connect-sink-streams-app-development",
             "namespace": "development-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-streams-bootstrap', url='https://bakdata.github.io/streams-bootstrap/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -981,9 +1025,11 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
             },
             "name": "resources-kafka-connect-sink-es-sink-connector",
             "namespace": "example-namespace",
-            "repo_config": GenericRepr(
-                "HelmRepoConfig(repository_name='bakdata-kafka-connect-resetter', url='https://bakdata.github.io/kafka-connect-resetter/', repo_auth_flags=RepoAuthFlags(username=None, password=None, ca_file=None, insecure_skip_tls_verify=False))"
-            ),
+            "repo_config": {
+                "repo_auth_flags": {"insecure_skip_tls_verify": False},
+                "repository_name": "bakdata-kafka-connect-resetter",
+                "url": "https://bakdata.github.io/kafka-connect-resetter/",
+            },
             "resetter_values": {},
             "type": "kafka-sink-connector",
             "version": "1.0.4",
