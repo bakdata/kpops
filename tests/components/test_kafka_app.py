@@ -30,8 +30,8 @@ class TestKafkaApp:
 
     def test_default_brokers(self, config: PipelineConfig, handlers: ComponentHandlers):
         kafka_app = KafkaApp(
-            handlers=handlers,
-            config=config,
+            _handlers=handlers,
+            _config=config,
             **{
                 "type": "streams-app",
                 "name": "example-name",
@@ -52,8 +52,8 @@ class TestKafkaApp:
         self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
     ):
         kafka_app = KafkaApp(
-            handlers=handlers,
-            config=config,
+            _handlers=handlers,
+            _config=config,
             **{
                 "type": "streams-app",
                 "name": "example-name",

@@ -48,8 +48,8 @@ class TestProducerApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ) -> ProducerApp:
         return ProducerApp(
-            handlers=handlers,
-            config=config,
+            _handlers=handlers,
+            _config=config,
             **{
                 "type": "producer-app",
                 "name": self.PRODUCER_APP_NAME,
@@ -71,8 +71,8 @@ class TestProducerApp:
 
     def test_output_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
-            handlers=handlers,
-            config=config,
+            _handlers=handlers,
+            _config=config,
             **{
                 "type": "producer-app",
                 "name": self.PRODUCER_APP_NAME,
@@ -106,7 +106,7 @@ class TestProducerApp:
         mocker: MockerFixture,
     ):
         mock_create_topics = mocker.patch.object(
-            producer_app.handlers.topic_handler, "create_topics"
+            producer_app._handlers.topic_handler, "create_topics"
         )
 
         mock_helm_upgrade_install = mocker.patch.object(

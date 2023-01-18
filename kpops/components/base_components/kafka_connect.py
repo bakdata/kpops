@@ -1,7 +1,7 @@
 import json
 import os
 from abc import ABC
-from typing import NoReturn
+from typing import Literal, NoReturn
 
 from typing_extensions import override
 
@@ -34,37 +34,38 @@ class KafkaConnector(PipelineComponent, ABC):
     @override
     def deploy(self, dry_run: bool) -> None:
         if self.to:
-            self.handlers.topic_handler.create_topics(
+            self._handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
             )
 
-            if self.handlers.schema_handler:
-                self.handlers.schema_handler.submit_schemas(
+            if self._handlers.schema_handler:
+                self._handlers.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
 
-        self.handlers.connector_handler.create_connector(
+        self._handlers.connector_handler.create_connector(
             connector_name=self.name, kafka_connect_config=self.app, dry_run=dry_run
         )
 
     @override
     def destroy(self, dry_run: bool) -> None:
-        self.handlers.connector_handler.destroy_connector(
+        self._handlers.connector_handler.destroy_connector(
             connector_name=self.name, dry_run=dry_run
         )
 
     @override
     def clean(self, dry_run: bool) -> None:
         if self.to:
-            if self.handlers.schema_handler:
-                self.handlers.schema_handler.delete_schemas(
+            if self._handlers.schema_handler:
+                self._handlers.schema_handler.delete_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
-            self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
+            self._handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
 
 
 class KafkaSourceConnector(KafkaConnector):
     _type = "kafka-source-connector"
+    type: Literal["kafka-source-connector"] = "kafka-source-connector"
 
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
@@ -80,17 +81,18 @@ class KafkaSourceConnector(KafkaConnector):
         self.__run_kafka_connect_resetter(dry_run)
 
     def __run_kafka_connect_resetter(self, dry_run: bool) -> None:
-        self.handlers.connector_handler.clean_connector(
+        self._handlers.connector_handler.clean_connector(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SOURCE,
             dry_run=dry_run,
-            retain_clean_jobs=self.config.retain_clean_jobs,
+            retain_clean_jobs=self._config.retain_clean_jobs,
             offset_topic=os.environ[f"{ENV_PREFIX}KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"],
         )
 
 
 class KafkaSinkConnector(KafkaConnector):
     _type = "kafka-sink-connector"
+    type: Literal["kafka-sink-connector"] = "kafka-sink-connector"
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
@@ -119,10 +121,10 @@ class KafkaSinkConnector(KafkaConnector):
     def __clean_sink_connector(
         self, dry_run: bool, delete_consumer_group: bool
     ) -> None:
-        self.handlers.connector_handler.clean_connector(
+        self._handlers.connector_handler.clean_connector(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SINK,
             dry_run=dry_run,
-            retain_clean_jobs=self.config.retain_clean_jobs,
+            retain_clean_jobs=self._config.retain_clean_jobs,
             delete_consumer_group=delete_consumer_group,
         )

@@ -200,7 +200,7 @@ class Pipeline:
         env_components_index: dict[str, dict],
     ) -> PipelineComponent:
         component_object: PipelineComponent = component_class(
-            handlers=self.handlers, config=self.config, **component
+            _handlers=self.handlers, _config=self.config, **component
         )
         env_component_definition = env_components_index.get(component_object.name, {})
         pair = update_nested_pair(
@@ -212,9 +212,9 @@ class Pipeline:
             component_object, pair
         )
         return component_class(
-            enrich=False,
-            handlers=self.handlers,
-            config=self.config,
+            _enrich=False,
+            _handlers=self.handlers,
+            _config=self.config,
             **json_object,
         )
 

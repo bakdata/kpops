@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -20,7 +20,7 @@ log = logging.getLogger("KafkaApp")
 
 class KafkaStreamsConfig(BaseModel):
     brokers: str
-    schema_registry_url: str | None = None
+    schema_registry_url: str | None = Field(None, title="Schema Registry URL")
 
     class Config(CamelCaseConfig):
         extra = Extra.allow
@@ -43,12 +43,12 @@ class KafkaApp(KubernetesApp):
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.app.streams.brokers = substitute(
-            self.app.streams.brokers, {"broker": self.config.broker}
+            self.app.streams.brokers, {"broker": self._config.broker}
         )
         if self.app.streams.schema_registry_url:
             self.app.streams.schema_registry_url = substitute(
                 self.app.streams.schema_registry_url,
-                {"schema_registry_url": self.config.schema_registry_url},
+                {"schema_registry_url": self._config.schema_registry_url},
             )
 
     @property
@@ -58,12 +58,12 @@ class KafkaApp(KubernetesApp):
     @override
     def deploy(self, dry_run: bool) -> None:
         if self.to:
-            self.handlers.topic_handler.create_topics(
+            self._handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
             )
 
-            if self.handlers.schema_handler:
-                self.handlers.schema_handler.submit_schemas(
+            if self._handlers.schema_handler:
+                self._handlers.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
         super().deploy(dry_run)

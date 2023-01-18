@@ -23,7 +23,7 @@ class TopicConfig(BaseModel):
     value_schema: str | None = Field(default=None, alias="valueSchema")
     partitions_count: int | None = None
     replication_factor: int | None = None
-    configs: dict[str, str] = {}
+    configs: dict[str, str | int] = {}
     role: str | None = None
 
     class Config(BaseConfig):

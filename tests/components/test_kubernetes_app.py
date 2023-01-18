@@ -59,9 +59,9 @@ class TestKubernetesApp:
 
         kubernetes_app = KubernetesApp(
             _type="test",
-            handlers=handlers,
+            _handlers=handlers,
             app=app_config,
-            config=config,
+            _config=config,
             name="test-kubernetes-apps",
         )
 
@@ -93,9 +93,9 @@ class TestKubernetesApp:
 
         kubernetes_app = KubernetesApp(
             _type="test",
-            handlers=handlers,
+            _handlers=handlers,
             app=app_config,
-            config=config,
+            _config=config,
             name="test-kubernetes-apps",
             version="3.4.5",
         )
@@ -145,9 +145,9 @@ class TestKubernetesApp:
 
         kubernetes_app = KubernetesApp(
             _type="test",
-            handlers=handlers,
+            _handlers=handlers,
             app=app_config,
-            config=config,
+            _config=config,
             name="test-kubernetes-apps",
         )
         mocker.patch.object(
@@ -166,9 +166,9 @@ class TestKubernetesApp:
 
         kubernetes_app = KubernetesApp(
             _type="test",
-            handlers=handlers,
+            _handlers=handlers,
             app=app_config,
-            config=config,
+            _config=config,
             name="test-kubernetes-apps",
         )
 
@@ -190,9 +190,9 @@ class TestKubernetesApp:
 
         kubernetes_app = KubernetesApp(
             _type="test",
-            handlers=handlers,
+            _handlers=handlers,
             app=app_config,
-            config=config,
+            _config=config,
             name="test-kubernetes-apps",
         )
 
@@ -214,26 +214,26 @@ class TestKubernetesApp:
 
         assert KubernetesApp(
             _type="test",
-            handlers=handlers,
+            _handlers=handlers,
             app=app_config,
-            config=config,
+            _config=config,
             name="example-component-with-very-long-name-longer-than-most-of-our-kubernetes-apps",
         )
 
         with pytest.raises(ValueError):
             assert KubernetesApp(
                 _type="test",
-                handlers=handlers,
+                _handlers=handlers,
                 app=app_config,
-                config=config,
+                _config=config,
                 name="Not-Compatible*",
             )
 
         with pytest.raises(ValueError):
             assert KubernetesApp(
                 _type="test",
-                handlers=handlers,
+                _handlers=handlers,
                 app=app_config,
-                config=config,
+                _config=config,
                 name="snake_case",
             )
