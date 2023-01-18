@@ -1,0 +1,464 @@
+{
+    "title": "kpops pipeline schema",
+    "type": "array",
+    "items": {
+        "discriminator": {
+            "propertyName": "type",
+            "mapping": {
+                "streams-app": "#/definitions/StreamsApp",
+                "producer": "#/definitions/ProducerApp",
+                "kafka-source-connector": "#/definitions/KafkaSourceConnector",
+                "kafka-sink-connector": "#/definitions/KafkaSinkConnector"
+            }
+        },
+        "oneOf": [
+            {
+                "$ref": "#/definitions/StreamsApp"
+            },
+            {
+                "$ref": "#/definitions/ProducerApp"
+            },
+            {
+                "$ref": "#/definitions/KafkaSourceConnector"
+            },
+            {
+                "$ref": "#/definitions/KafkaSinkConnector"
+            }
+        ]
+    },
+    "definitions": {
+        "InputTopicTypes": {
+            "title": "InputTopicTypes",
+            "description": "An enumeration.",
+            "enum": [
+                "input",
+                "extra",
+                "input-pattern",
+                "extra-pattern"
+            ],
+            "type": "string"
+        },
+        "FromTopic": {
+            "title": "FromTopic",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "$ref": "#/definitions/InputTopicTypes"
+                },
+                "role": {
+                    "title": "Role",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "additionalProperties": false
+        },
+        "FromSection": {
+            "title": "FromSection",
+            "type": "object",
+            "properties": {
+                "topics": {
+                    "title": "Topics",
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FromTopic"
+                    }
+                }
+            },
+            "required": [
+                "topics"
+            ],
+            "additionalProperties": false
+        },
+        "StreamsConfig": {
+            "title": "StreamsConfig",
+            "description": "Streams Bootstrap streams section",
+            "type": "object",
+            "properties": {
+                "brokers": {
+                    "title": "Brokers",
+                    "type": "string"
+                },
+                "schemaRegistryUrl": {
+                    "title": "Schema Registry URL",
+                    "type": "string"
+                },
+                "inputTopics": {
+                    "title": "Inputtopics",
+                    "default": [],
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "inputPattern": {
+                    "title": "Inputpattern",
+                    "type": "string"
+                },
+                "extraInputTopics": {
+                    "title": "Extrainputtopics",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "extraInputPatterns": {
+                    "title": "Extrainputpatterns",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "extraOutputTopics": {
+                    "title": "Extraoutputtopics",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "outputTopic": {
+                    "title": "Outputtopic",
+                    "type": "string"
+                },
+                "errorTopic": {
+                    "title": "Errortopic",
+                    "type": "string"
+                },
+                "config": {
+                    "title": "Config",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "brokers"
+            ]
+        },
+        "StreamsAppAutoScaling": {
+            "title": "StreamsAppAutoScaling",
+            "type": "object",
+            "properties": {
+                "consumergroup": {
+                    "title": "Consumergroup",
+                    "type": "string"
+                },
+                "topics": {
+                    "title": "Topics",
+                    "default": [],
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "consumergroup"
+            ]
+        },
+        "StreamsAppConfig": {
+            "title": "StreamsAppConfig",
+            "description": "StreamsBoostrap app configurations.\n\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "type": "object",
+            "properties": {
+                "namespace": {
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "streams": {
+                    "$ref": "#/definitions/StreamsConfig"
+                },
+                "nameOverride": {
+                    "title": "Nameoverride",
+                    "type": "string"
+                },
+                "autoscaling": {
+                    "$ref": "#/definitions/StreamsAppAutoScaling"
+                }
+            },
+            "required": [
+                "namespace",
+                "streams"
+            ]
+        },
+        "OutputTopicTypes": {
+            "title": "OutputTopicTypes",
+            "description": "\n    Types of output topic\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\n    ",
+            "enum": [
+                "error",
+                "output",
+                "extra"
+            ],
+            "type": "string"
+        },
+        "TopicConfig": {
+            "title": "TopicConfig",
+            "description": "Configures a topic",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "$ref": "#/definitions/OutputTopicTypes"
+                },
+                "keySchema": {
+                    "title": "Keyschema",
+                    "type": "string"
+                },
+                "valueSchema": {
+                    "title": "Valueschema",
+                    "type": "string"
+                },
+                "partitions_count": {
+                    "title": "Partitions Count",
+                    "type": "integer"
+                },
+                "replication_factor": {
+                    "title": "Replication Factor",
+                    "type": "integer"
+                },
+                "configs": {
+                    "title": "Configs",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer"
+                            }
+                        ]
+                    }
+                },
+                "role": {
+                    "title": "Role",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "additionalProperties": false
+        },
+        "ToSection": {
+            "title": "ToSection",
+            "type": "object",
+            "properties": {
+                "models": {
+                    "title": "Models",
+                    "default": {},
+                    "type": "object"
+                },
+                "topics": {
+                    "title": "Topics",
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/TopicConfig"
+                    }
+                }
+            },
+            "required": [
+                "topics"
+            ]
+        },
+        "StreamsApp": {
+            "title": "StreamsApp",
+            "description": "StreamsApp component that configures a streams bootstrap app",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "from": {
+                    "$ref": "#/definitions/FromSection"
+                },
+                "app": {
+                    "$ref": "#/definitions/StreamsAppConfig"
+                },
+                "to": {
+                    "$ref": "#/definitions/ToSection"
+                },
+                "version": {
+                    "title": "Version",
+                    "type": "string"
+                },
+                "type": {
+                    "title": "Type",
+                    "default": "streams-app",
+                    "enum": [
+                        "streams-app"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app"
+            ]
+        },
+        "ProducerStreamsConfig": {
+            "title": "ProducerStreamsConfig",
+            "type": "object",
+            "properties": {
+                "brokers": {
+                    "title": "Brokers",
+                    "type": "string"
+                },
+                "schemaRegistryUrl": {
+                    "title": "Schema Registry URL",
+                    "type": "string"
+                },
+                "extraOutputTopics": {
+                    "title": "Extraoutputtopics",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "outputTopic": {
+                    "title": "Outputtopic",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "brokers"
+            ]
+        },
+        "ProducerValues": {
+            "title": "ProducerValues",
+            "type": "object",
+            "properties": {
+                "namespace": {
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "streams": {
+                    "$ref": "#/definitions/ProducerStreamsConfig"
+                },
+                "nameOverride": {
+                    "title": "Nameoverride",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "namespace",
+                "streams"
+            ]
+        },
+        "ProducerApp": {
+            "title": "ProducerApp",
+            "description": "Producer component\n\nThis producer holds configuration to use as values for the streams bootstrap produce helm chart.",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "from": {
+                    "$ref": "#/definitions/FromSection"
+                },
+                "app": {
+                    "$ref": "#/definitions/ProducerValues"
+                },
+                "to": {
+                    "$ref": "#/definitions/ToSection"
+                },
+                "version": {
+                    "title": "Version",
+                    "type": "string"
+                },
+                "type": {
+                    "title": "Type",
+                    "default": "producer",
+                    "enum": [
+                        "producer"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app"
+            ]
+        },
+        "KafkaConnectConfig": {
+            "title": "KafkaConnectConfig",
+            "type": "object",
+            "properties": {}
+        },
+        "KafkaSourceConnector": {
+            "title": "KafkaSourceConnector",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "from": {
+                    "$ref": "#/definitions/FromSection"
+                },
+                "app": {
+                    "$ref": "#/definitions/KafkaConnectConfig"
+                },
+                "to": {
+                    "$ref": "#/definitions/ToSection"
+                },
+                "type": {
+                    "title": "Type",
+                    "default": "kafka-source-connector",
+                    "enum": [
+                        "kafka-source-connector"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app"
+            ]
+        },
+        "KafkaSinkConnector": {
+            "title": "KafkaSinkConnector",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "from": {
+                    "$ref": "#/definitions/FromSection"
+                },
+                "app": {
+                    "$ref": "#/definitions/KafkaConnectConfig"
+                },
+                "to": {
+                    "$ref": "#/definitions/ToSection"
+                },
+                "type": {
+                    "title": "Type",
+                    "default": "kafka-sink-connector",
+                    "enum": [
+                        "kafka-sink-connector"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app"
+            ]
+        }
+    }
+}
