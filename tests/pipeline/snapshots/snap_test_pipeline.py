@@ -115,7 +115,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-pipeline-with-inflate-converter-error",
@@ -168,7 +168,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 "resources": {"requests": {"memory": "3G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-pipeline-with-inflate-should-inflate-error",
@@ -227,7 +227,7 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
                 "namespace": "example-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-kafka-connect-sink-streams-app-error",
@@ -321,7 +321,7 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-first-pipeline-converter-error",
@@ -374,7 +374,7 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                 "resources": {"requests": {"memory": "3G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error",
@@ -416,7 +416,7 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-no-input-topic-pipeline-streams-app-error",
@@ -448,7 +448,7 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
                 "namespace": "example-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-no-input-topic-pipeline-streams-app-error",
@@ -497,7 +497,7 @@ snapshots["TestPipeline.test_no_user_defined_components test-pipeline"] = {
                 "namespace": "example-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-no-user-defined-components-streams-app-error",
@@ -573,7 +573,7 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-pipeline-with-envs-converter-error",
@@ -624,7 +624,7 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                 "resources": {"requests": {"memory": "3G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-pipeline-with-envs-filter-error",
@@ -707,7 +707,7 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-component-type-substitution-converter-error",
@@ -761,7 +761,7 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
                 "resources": {"requests": {"memory": "3G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-component-type-substitution-filter-app-error",
@@ -864,7 +864,7 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
                 "namespace": "development-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "config": {
+                    "_config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-kafka-connect-sink-streams-app-development-error",

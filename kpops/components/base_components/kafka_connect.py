@@ -65,7 +65,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
 class KafkaSourceConnector(KafkaConnector):
     _type = "kafka-source-connector"
-    type: Literal["kafka-source-connector"] = "kafka-source-connector"
+    dicriminator: Literal["kafka-source-connector"] = "kafka-source-connector"
 
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
@@ -92,7 +92,7 @@ class KafkaSourceConnector(KafkaConnector):
 
 class KafkaSinkConnector(KafkaConnector):
     _type = "kafka-sink-connector"
-    type: Literal["kafka-sink-connector"] = "kafka-sink-connector"
+    dicriminator: Literal["kafka-sink-connector"] = "kafka-sink-connector"
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
