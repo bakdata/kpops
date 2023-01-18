@@ -26,6 +26,7 @@ from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
+from kpops.utils.pydantic import CamelCaseConfig
 
 log = logging.getLogger("KafkaConnector")
 
@@ -44,6 +45,9 @@ class KafkaConnector(PipelineComponent, ABC):
         default_factory=dict,
         description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
     )
+
+    class Config(CamelCaseConfig):
+        pass
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)

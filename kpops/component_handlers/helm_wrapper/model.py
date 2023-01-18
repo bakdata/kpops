@@ -5,6 +5,8 @@ from typing import Iterator
 import yaml
 from pydantic import BaseModel, Field
 
+from kpops.utils.pydantic import CamelCaseConfig
+
 
 class HelmDiffConfig(BaseModel):
     enable: bool = False
@@ -17,11 +19,17 @@ class RepoAuthFlags(BaseModel):
     ca_file: Path | None = None
     insecure_skip_tls_verify: bool = False
 
+    class Config(CamelCaseConfig):
+        pass
+
 
 class HelmRepoConfig(BaseModel):
     repository_name: str
     url: str
     repo_auth_flags: RepoAuthFlags = Field(default=RepoAuthFlags())
+
+    class Config(CamelCaseConfig):
+        pass
 
 
 @dataclass

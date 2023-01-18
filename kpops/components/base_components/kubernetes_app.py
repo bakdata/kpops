@@ -39,6 +39,9 @@ class KubernetesApp(PipelineComponent):
     namespace: str
     version: str | None = None
 
+    class Config(CamelCaseConfig):
+        pass
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.__check_compatible_name()
