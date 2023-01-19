@@ -1,0 +1,30 @@
+{
+  "title": "FromTopic",
+  "type": "object",
+  "properties": {
+    "type": {
+      "$ref": "#/definitions/InputTopicTypes"
+    },
+    "role": {
+      "title": "Role",
+      "type": "string"
+    }
+  },
+  "required": [
+    "type"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "InputTopicTypes": {
+      "title": "InputTopicTypes",
+      "description": "An enumeration.",
+      "enum": [
+        "input",
+        "extra",
+        "input-pattern",
+        "extra-pattern"
+      ],
+      "type": "string"
+    }
+  }
+}

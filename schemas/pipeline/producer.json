@@ -1,0 +1,614 @@
+{
+  "title": "ProducerApp",
+  "description": "Producer component\n\nThis producer holds configuration to use as values for the streams bootstrap produce helm chart.",
+  "type": "object",
+  "properties": {
+    "enrich": {
+      "title": "Enrich",
+      "default": false,
+      "type": "boolean"
+    },
+    "config": {
+      "$ref": "#/definitions/PipelineConfig"
+    },
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "from": {
+      "$ref": "#/definitions/FromSection"
+    },
+    "app": {
+      "$ref": "#/definitions/ProducerValues"
+    },
+    "to": {
+      "$ref": "#/definitions/ToSection"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
+    }
+  },
+  "required": [
+    "config",
+    "name",
+    "app"
+  ],
+  "definitions": {
+    "TopicNameConfig": {
+      "title": "TopicNameConfig",
+      "description": "Base class for settings, allowing values to be overridden by environment variables.\n\nThis is useful in production for secrets you do not wish to save in code, it plays nicely with docker(-compose),\nHeroku and any 12 factor app design.",
+      "type": "object",
+      "properties": {
+        "default_output_topic_name": {
+          "title": "Default Output Topic Name",
+          "description": "Configures the value for the variable ${output_topic_name}",
+          "default": "${pipeline_name}-${component_name}",
+          "env_names": [
+            "default_output_topic_name"
+          ],
+          "type": "string"
+        },
+        "default_error_topic_name": {
+          "title": "Default Error Topic Name",
+          "description": "Configures the value for the variable ${error_topic_name}",
+          "default": "${pipeline_name}-${component_name}-error",
+          "env_names": [
+            "default_error_topic_name"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "HelmConfig": {
+      "title": "HelmConfig",
+      "type": "object",
+      "properties": {
+        "context": {
+          "title": "Context",
+          "env_names": [
+            "context"
+          ],
+          "type": "string"
+        },
+        "debug": {
+          "title": "Debug",
+          "default": false,
+          "env_names": [
+            "debug"
+          ],
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "HelmDiffConfig": {
+      "title": "HelmDiffConfig",
+      "type": "object",
+      "properties": {
+        "enable": {
+          "title": "Enable",
+          "default": false,
+          "env_names": [
+            "enable"
+          ],
+          "type": "boolean"
+        },
+        "ignore": {
+          "title": "Ignore",
+          "env_names": [
+            "ignore"
+          ],
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "RepoAuthFlags": {
+      "title": "RepoAuthFlags",
+      "type": "object",
+      "properties": {
+        "username": {
+          "title": "Username",
+          "env_names": [
+            "username"
+          ],
+          "type": "string"
+        },
+        "password": {
+          "title": "Password",
+          "env_names": [
+            "password"
+          ],
+          "type": "string"
+        },
+        "ca_file": {
+          "title": "Ca File",
+          "env_names": [
+            "ca_file"
+          ],
+          "type": "string",
+          "format": "path"
+        },
+        "insecure_skip_tls_verify": {
+          "title": "Insecure Skip Tls Verify",
+          "default": false,
+          "env_names": [
+            "insecure_skip_tls_verify"
+          ],
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
+    },
+    "HelmRepoConfig": {
+      "title": "HelmRepoConfig",
+      "type": "object",
+      "properties": {
+        "repository_name": {
+          "title": "Repository Name",
+          "env_names": [
+            "repository_name"
+          ],
+          "type": "string"
+        },
+        "url": {
+          "title": "Url",
+          "env_names": [
+            "url"
+          ],
+          "type": "string"
+        },
+        "repo_auth_flags": {
+          "title": "Repo Auth Flags",
+          "env_names": [
+            "repo_auth_flags"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions/RepoAuthFlags"
+            }
+          ]
+        }
+      },
+      "required": [
+        "repository_name",
+        "url"
+      ],
+      "additionalProperties": false
+    },
+    "KafkaConnectResetterHelmConfig": {
+      "title": "KafkaConnectResetterHelmConfig",
+      "description": "Base class for settings, allowing values to be overridden by environment variables.\n\nThis is useful in production for secrets you do not wish to save in code, it plays nicely with docker(-compose),\nHeroku and any 12 factor app design.",
+      "type": "object",
+      "properties": {
+        "helm_config": {
+          "title": "Helm Config",
+          "description": "Configuration of Kafka connect resetter Helm Chart",
+          "default": {
+            "repository_name": "bakdata-kafka-connect-resetter",
+            "url": "https://bakdata.github.io/kafka-connect-resetter/",
+            "repo_auth_flags": {
+              "username": null,
+              "password": null,
+              "ca_file": null,
+              "insecure_skip_tls_verify": false
+            }
+          },
+          "env_names": [
+            "helm_config"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions/HelmRepoConfig"
+            }
+          ]
+        },
+        "version": {
+          "title": "Version",
+          "default": "1.0.4",
+          "env_names": [
+            "version"
+          ],
+          "type": "string"
+        },
+        "helm_values": {
+          "title": "Helm Values",
+          "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+          "default": {},
+          "env_names": [
+            "helm_values"
+          ],
+          "type": "object"
+        },
+        "namespace": {
+          "title": "Namespace",
+          "default": "",
+          "env_names": [
+            "namespace"
+          ],
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "PipelineConfig": {
+      "title": "PipelineConfig",
+      "description": "Base class for settings, allowing values to be overridden by environment variables.\n\nThis is useful in production for secrets you do not wish to save in code, it plays nicely with docker(-compose),\nHeroku and any 12 factor app design.",
+      "type": "object",
+      "properties": {
+        "defaults_path": {
+          "title": "Defaults Path",
+          "description": "The path to the folder containing the defaults file and the environment defaults files.",
+          "env_names": [
+            "defaults_path"
+          ],
+          "type": "string",
+          "format": "path"
+        },
+        "environment": {
+          "title": "Environment",
+          "description": "The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
+          "env": "KPOPS_ENVIRONMENT",
+          "example": "development",
+          "env_names": [
+            "kpops_environment"
+          ],
+          "type": "string"
+        },
+        "broker": {
+          "title": "Broker",
+          "description": "The kafka broker address.",
+          "env": "KPOPS_KAFKA_BROKER",
+          "env_names": [
+            "kpops_kafka_broker"
+          ],
+          "type": "string"
+        },
+        "defaults_filename_prefix": {
+          "title": "Defaults Filename Prefix",
+          "description": "The name of the defaults file and the prefix of the defaults environment file.",
+          "default": "defaults",
+          "env_names": [
+            "defaults_filename_prefix"
+          ],
+          "type": "string"
+        },
+        "topic_name_config": {
+          "title": "Topic Name Config",
+          "description": "Configure the topic name variables you can use in the pipeline definition.",
+          "default": {
+            "default_output_topic_name": "${pipeline_name}-${component_name}",
+            "default_error_topic_name": "${pipeline_name}-${component_name}-error"
+          },
+          "env_names": [
+            "topic_name_config"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions/TopicNameConfig"
+            }
+          ]
+        },
+        "kafka_rest_host": {
+          "title": "Kafka Rest Host",
+          "description": "Address to the rest proxy REST API.",
+          "env": "KPOPS_REST_PROXY_HOST",
+          "example": "http://localhost:8082",
+          "env_names": [
+            "kpops_rest_proxy_host"
+          ],
+          "type": "string"
+        },
+        "kafka_connect_host": {
+          "title": "Kafka Connect Host",
+          "description": "Address to the kafka connect REST API.",
+          "env": "KPOPS_CONNECT_HOST",
+          "example": "http://localhost:8083",
+          "env_names": [
+            "kpops_connect_host"
+          ],
+          "type": "string"
+        },
+        "timeout": {
+          "title": "Timeout",
+          "description": "The timeout in seconds that specifies when actions like deletion or deploy timeout.",
+          "default": 300,
+          "env": "KPOPS_TIMEOUT",
+          "env_names": [
+            "kpops_timeout"
+          ],
+          "type": "integer"
+        },
+        "pipeline_prefix": {
+          "title": "Pipeline Prefix",
+          "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+          "default": "${pipeline_name}-",
+          "env": "KPOPS_PIPELINE_PREFIX",
+          "env_names": [
+            "kpops_pipeline_prefix"
+          ],
+          "type": "string"
+        },
+        "helm_config": {
+          "title": "Helm Config",
+          "default": {
+            "context": null,
+            "debug": false
+          },
+          "env_names": [
+            "helm_config"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions/HelmConfig"
+            }
+          ]
+        },
+        "helm_diff_config": {
+          "title": "Helm Diff Config",
+          "default": {
+            "enable": false,
+            "ignore": []
+          },
+          "env_names": [
+            "helm_diff_config"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions/HelmDiffConfig"
+            }
+          ]
+        },
+        "streams_bootstrap_helm_config": {
+          "title": "Streams Bootstrap Helm Config",
+          "description": "Configuration for Streams Bootstrap Helm Charts",
+          "default": {
+            "repository_name": "bakdata-streams-bootstrap",
+            "url": "https://bakdata.github.io/streams-bootstrap/",
+            "repo_auth_flags": {
+              "username": null,
+              "password": null,
+              "ca_file": null,
+              "insecure_skip_tls_verify": false
+            }
+          },
+          "env_names": [
+            "streams_bootstrap_helm_config"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions/HelmRepoConfig"
+            }
+          ]
+        },
+        "kafka_connect_resetter_config": {
+          "title": "Kafka Connect Resetter Config",
+          "description": "Configuration of kafka connect resetter helm chart and values. This is used for cleaning/resettting Kafka connectors, see https://github.com/bakdata/kafka-connect-resetter",
+          "default": {
+            "helm_config": {
+              "repository_name": "bakdata-kafka-connect-resetter",
+              "url": "https://bakdata.github.io/kafka-connect-resetter/",
+              "repo_auth_flags": {
+                "username": null,
+                "password": null,
+                "ca_file": null,
+                "insecure_skip_tls_verify": false
+              }
+            },
+            "version": "1.0.4",
+            "helm_values": {},
+            "namespace": ""
+          },
+          "env_names": [
+            "kafka_connect_resetter_config"
+          ],
+          "allOf": [
+            {
+              "$ref": "#/definitions/KafkaConnectResetterHelmConfig"
+            }
+          ]
+        },
+        "retain_clean_jobs": {
+          "title": "Retain Clean Jobs",
+          "description": "Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
+          "default": false,
+          "env": "KPOPS_RETAIN_CLEAN_JOBS",
+          "env_names": [
+            "kpops_retain_clean_jobs"
+          ],
+          "type": "boolean"
+        },
+        "schema_registry_url": {
+          "title": "Schema Registry Url",
+          "description": "The URL to schema registry.",
+          "example": "http://localhost:8081",
+          "env": "KPOPS_SCHEMA_REGISTRY_URL",
+          "env_names": [
+            "kpops_schema_registry_url"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "defaults_path",
+        "environment",
+        "broker"
+      ],
+      "additionalProperties": false
+    },
+    "InputTopicTypes": {
+      "title": "InputTopicTypes",
+      "description": "An enumeration.",
+      "enum": [
+        "input",
+        "extra",
+        "input-pattern",
+        "extra-pattern"
+      ],
+      "type": "string"
+    },
+    "FromTopic": {
+      "title": "FromTopic",
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/InputTopicTypes"
+        },
+        "role": {
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "FromSection": {
+      "title": "FromSection",
+      "type": "object",
+      "properties": {
+        "topics": {
+          "title": "Topics",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/FromTopic"
+          }
+        }
+      },
+      "required": [
+        "topics"
+      ],
+      "additionalProperties": false
+    },
+    "ProducerStreamsConfig": {
+      "title": "ProducerStreamsConfig",
+      "type": "object",
+      "properties": {
+        "brokers": {
+          "title": "Brokers",
+          "type": "string"
+        },
+        "schemaRegistryUrl": {
+          "title": "Schemaregistryurl",
+          "type": "string"
+        },
+        "extraOutputTopics": {
+          "title": "Extraoutputtopics",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "outputTopic": {
+          "title": "Outputtopic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brokers"
+      ]
+    },
+    "ProducerValues": {
+      "title": "ProducerValues",
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "streams": {
+          "$ref": "#/definitions/ProducerStreamsConfig"
+        },
+        "nameOverride": {
+          "title": "Nameoverride",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "streams"
+      ]
+    },
+    "OutputTopicTypes": {
+      "title": "OutputTopicTypes",
+      "description": "\n    Types of output topic\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\n    ",
+      "enum": [
+        "error",
+        "output",
+        "extra"
+      ],
+      "type": "string"
+    },
+    "TopicConfig": {
+      "title": "TopicConfig",
+      "description": "Configures a topic",
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/OutputTopicTypes"
+        },
+        "keySchema": {
+          "title": "Keyschema",
+          "type": "string"
+        },
+        "valueSchema": {
+          "title": "Valueschema",
+          "type": "string"
+        },
+        "partitions_count": {
+          "title": "Partitions Count",
+          "type": "integer"
+        },
+        "replication_factor": {
+          "title": "Replication Factor",
+          "type": "integer"
+        },
+        "configs": {
+          "title": "Configs",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "role": {
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "ToSection": {
+      "title": "ToSection",
+      "type": "object",
+      "properties": {
+        "models": {
+          "title": "Models",
+          "default": {},
+          "type": "object"
+        },
+        "topics": {
+          "title": "Topics",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/TopicConfig"
+          }
+        }
+      },
+      "required": [
+        "topics"
+      ]
+    }
+  }
+}

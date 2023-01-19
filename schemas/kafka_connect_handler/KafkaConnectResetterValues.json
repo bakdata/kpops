@@ -1,0 +1,54 @@
+{
+  "title": "KafkaConnectResetterValues",
+  "type": "object",
+  "properties": {
+    "connectorType": {
+      "title": "Connectortype",
+      "enum": [
+        "source",
+        "sink"
+      ],
+      "type": "string"
+    },
+    "config": {
+      "$ref": "#/definitions/KafkaConnectResetterConfig"
+    },
+    "nameOverride": {
+      "title": "Nameoverride",
+      "type": "string"
+    }
+  },
+  "required": [
+    "connectorType",
+    "config",
+    "nameOverride"
+  ],
+  "definitions": {
+    "KafkaConnectResetterConfig": {
+      "title": "KafkaConnectResetterConfig",
+      "type": "object",
+      "properties": {
+        "brokers": {
+          "title": "Brokers",
+          "type": "string"
+        },
+        "connector": {
+          "title": "Connector",
+          "type": "string"
+        },
+        "deleteConsumerGroup": {
+          "title": "Deleteconsumergroup",
+          "type": "boolean"
+        },
+        "offsetTopic": {
+          "title": "Offsettopic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brokers",
+        "connector"
+      ]
+    }
+  }
+}

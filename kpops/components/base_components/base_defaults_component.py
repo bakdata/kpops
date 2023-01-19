@@ -21,10 +21,14 @@ class BaseDefaultsComponent(BaseModel):
 
     enrich: bool = Field(default=False, exclude=True)
     config: PipelineConfig = Field(default=..., exclude=True)
-    handlers: ComponentHandlers = Field(default=..., exclude=True)
+    _handlers: ComponentHandlers = Field(default=..., exclude=True)
 
     class Config(BaseConfig):
         arbitrary_types_allowed = True
+
+    @property
+    def handlers(self) -> ComponentHandlers:
+        return self._handlers
 
     def __init__(self, **kwargs):
         if kwargs.get("enrich", True):

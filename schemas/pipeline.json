@@ -1,0 +1,23 @@
+{
+  "anyOf":
+  [
+    {
+      "$ref": "./pipeline/kafka-app.json"
+    },
+    {
+      "$ref": "./pipeline/kafka-sink-connector.json"
+    },
+    {
+      "$ref": "./pipeline/kafka-source-connector.json"
+    },
+    {
+      "$ref": "./pipeline/kubernetes-app.json"
+    },
+    {
+      "$ref": "./pipeline/producer.json"
+    },
+    {
+      "$ref": "./pipeline/streams-app.json"
+    }
+  ]
+}

@@ -1,0 +1,75 @@
+{
+  "title": "ToSection",
+  "type": "object",
+  "properties": {
+    "models": {
+      "title": "Models",
+      "default": {},
+      "type": "object"
+    },
+    "topics": {
+      "title": "Topics",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/TopicConfig"
+      }
+    }
+  },
+  "required": [
+    "topics"
+  ],
+  "definitions": {
+    "OutputTopicTypes": {
+      "title": "OutputTopicTypes",
+      "description": "\n    Types of output topic\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\n    ",
+      "enum": [
+        "error",
+        "output",
+        "extra"
+      ],
+      "type": "string"
+    },
+    "TopicConfig": {
+      "title": "TopicConfig",
+      "description": "Configures a topic",
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/OutputTopicTypes"
+        },
+        "keySchema": {
+          "title": "Keyschema",
+          "type": "string"
+        },
+        "valueSchema": {
+          "title": "Valueschema",
+          "type": "string"
+        },
+        "partitions_count": {
+          "title": "Partitions Count",
+          "type": "integer"
+        },
+        "replication_factor": {
+          "title": "Replication Factor",
+          "type": "integer"
+        },
+        "configs": {
+          "title": "Configs",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "role": {
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -135,6 +135,10 @@ class PipelineConfig(BaseSettings):
             )
 
 
+# class GenSchema():
+#     print(PipelineConfig.schema_json(indent=2))
+
+
 def yaml_config_settings_source(settings: PipelineConfig) -> dict | list:
     path_to_config = settings.Config.config_path
     if path_to_config.exists():

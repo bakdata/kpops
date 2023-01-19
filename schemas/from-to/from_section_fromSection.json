@@ -1,0 +1,47 @@
+{
+  "title": "FromSection",
+  "type": "object",
+  "properties": {
+    "topics": {
+      "title": "Topics",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/FromTopic"
+      }
+    }
+  },
+  "required": [
+    "topics"
+  ],
+  "additionalProperties": false,
+  "definitions": {
+    "InputTopicTypes": {
+      "title": "InputTopicTypes",
+      "description": "An enumeration.",
+      "enum": [
+        "input",
+        "extra",
+        "input-pattern",
+        "extra-pattern"
+      ],
+      "type": "string"
+    },
+    "FromTopic": {
+      "title": "FromTopic",
+      "type": "object",
+      "properties": {
+        "type": {
+          "$ref": "#/definitions/InputTopicTypes"
+        },
+        "role": {
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "title": "KafkaConnectConfigErrorResponse",
+  "type": "object",
+  "properties": {
+    "name": {
+      "title": "Name",
+      "type": "string"
+    },
+    "error_count": {
+      "title": "Error Count",
+      "type": "integer"
+    },
+    "configs": {
+      "title": "Configs",
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/KafkaConnectConfigDescription"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "error_count",
+    "configs"
+  ],
+  "definitions": {
+    "KafkaConnectConfigError": {
+      "title": "KafkaConnectConfigError",
+      "type": "object",
+      "properties": {
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "errors": {
+          "title": "Errors",
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "errors"
+      ]
+    },
+    "KafkaConnectConfigDescription": {
+      "title": "KafkaConnectConfigDescription",
+      "type": "object",
+      "properties": {
+        "value": {
+          "$ref": "#/definitions/KafkaConnectConfigError"
+        }
+      },
+      "required": [
+        "value"
+      ]
+    }
+  }
+}
