@@ -11,7 +11,6 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
         {
             "app": {
                 "nameOverride": "resources-custom-config-app1",
-                "namespace": "development-namespace",
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
@@ -21,6 +20,12 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
                 },
             },
             "name": "resources-custom-config-app1",
+            "namespace": "development-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -32,13 +37,13 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
                 },
             },
             "type": "producer",
+            "version": "2.7.0",
         },
         {
             "app": {
                 "image": "some-image",
                 "labels": {"pipeline": "resources-custom-config"},
                 "nameOverride": "resources-custom-config-app2",
-                "namespace": "development-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "errorTopic": "resources-custom-config-app2-error",
@@ -48,6 +53,12 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
                 },
             },
             "name": "resources-custom-config-app2",
+            "namespace": "development-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -64,6 +75,7 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
                 },
             },
             "type": "streams-app",
+            "version": "2.7.0",
         },
     ]
 }
@@ -76,7 +88,6 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 "image": "example-registry/fake-image",
                 "imageTag": "0.0.1",
                 "nameOverride": "resources-pipeline-with-inflate-scheduled-producer",
-                "namespace": "example-namespace",
                 "schedule": "30 3/8 * * *",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
@@ -86,6 +97,12 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 },
             },
             "name": "resources-pipeline-with-inflate-scheduled-producer",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {"com/bakdata/kafka/fake": "1.0.0"},
                 "topics": {
@@ -111,7 +128,6 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 },
                 "commandLine": {"CONVERT_XML": True},
                 "nameOverride": "resources-pipeline-with-inflate-converter",
-                "namespace": "example-namespace",
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
@@ -127,6 +143,12 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 },
             },
             "name": "resources-pipeline-with-inflate-converter",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -163,7 +185,6 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 "image": "fake-registry/filter",
                 "imageTag": "2.4.1",
                 "nameOverride": "resources-pipeline-with-inflate-should-inflate",
-                "namespace": "example-namespace",
                 "replicaCount": 4,
                 "resources": {"requests": {"memory": "3G"}},
                 "streams": {
@@ -178,6 +199,12 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 },
             },
             "name": "resources-pipeline-with-inflate-should-inflate",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -214,6 +241,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 "transforms.changeTopic.replacement": "resources-pipeline-with-inflate-should-inflate-index-v1",
             },
             "name": "resources-pipeline-with-inflate-sink-connector",
+            "namespace": "example-namespace",
         },
     ]
 }
@@ -224,7 +252,6 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
             "app": {
                 "image": "fake-image",
                 "nameOverride": "resources-kafka-connect-sink-streams-app",
-                "namespace": "example-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "config": {
@@ -238,6 +265,12 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
             },
             "from": {"topics": {"example-topic": {"type": "input"}}},
             "name": "resources-kafka-connect-sink-streams-app",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -269,7 +302,15 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
                 "topics": "example-output",
             },
             "name": "resources-kafka-connect-sink-es-sink-connector",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-kafka-connect-resetter",
+                "url": "https://bakdata.github.io/kafka-connect-resetter/",
+            },
+            "resetterValues": {},
             "type": "kafka-sink-connector",
+            "version": "1.0.4",
         },
     ]
 }
@@ -282,7 +323,6 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                 "image": "example-registry/fake-image",
                 "imageTag": "0.0.1",
                 "nameOverride": "resources-first-pipeline-scheduled-producer",
-                "namespace": "example-namespace",
                 "schedule": "30 3/8 * * *",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
@@ -292,6 +332,12 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                 },
             },
             "name": "resources-first-pipeline-scheduled-producer",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {"com/bakdata/kafka/fake": "1.0.0"},
                 "topics": {
@@ -317,7 +363,6 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                 },
                 "commandLine": {"CONVERT_XML": True},
                 "nameOverride": "resources-first-pipeline-converter",
-                "namespace": "example-namespace",
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
@@ -331,6 +376,12 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                 },
             },
             "name": "resources-first-pipeline-converter",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -369,7 +420,6 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                 "image": "fake-registry/filter",
                 "imageTag": "2.4.1",
                 "nameOverride": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
-                "namespace": "example-namespace",
                 "replicaCount": 4,
                 "resources": {"requests": {"memory": "3G"}},
                 "streams": {
@@ -384,6 +434,12 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                 },
             },
             "name": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -412,7 +468,6 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
             "app": {
                 "commandLine": {"CONVERT_XML": True},
                 "nameOverride": "resources-no-input-topic-pipeline-streams-app",
-                "namespace": "example-namespace",
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
@@ -427,6 +482,12 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
             },
             "from": {"topics": {".*": {"type": "input-pattern"}}},
             "name": "resources-no-input-topic-pipeline-streams-app",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -445,7 +506,6 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
         {
             "app": {
                 "nameOverride": "resources-no-input-topic-pipeline-streams-app",
-                "namespace": "example-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "config": {
@@ -461,6 +521,12 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
                 },
             },
             "name": "resources-no-input-topic-pipeline-streams-app",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -494,7 +560,6 @@ snapshots["TestPipeline.test_no_user_defined_components test-pipeline"] = {
             "app": {
                 "image": "fake-image",
                 "nameOverride": "resources-no-user-defined-components-streams-app",
-                "namespace": "example-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "config": {
@@ -508,6 +573,12 @@ snapshots["TestPipeline.test_no_user_defined_components test-pipeline"] = {
             },
             "from": {"topics": {"example-topic": {"type": "input"}}},
             "name": "resources-no-user-defined-components-streams-app",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -534,7 +605,6 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                 "image": "example-registry/fake-image",
                 "imageTag": "0.0.1",
                 "nameOverride": "resources-pipeline-with-envs-scheduled-producer",
-                "namespace": "example-namespace",
                 "schedule": "30 3/8 * * *",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
@@ -544,6 +614,12 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                 },
             },
             "name": "resources-pipeline-with-envs-scheduled-producer",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {"com/bakdata/kafka/fake": "1.0.0"},
                 "topics": {
@@ -569,7 +645,6 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                 },
                 "commandLine": {"CONVERT_XML": True},
                 "nameOverride": "resources-pipeline-with-envs-converter",
-                "namespace": "example-namespace",
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
@@ -583,6 +658,12 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                 },
             },
             "name": "resources-pipeline-with-envs-converter",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -619,7 +700,6 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                 "image": "fake-registry/filter",
                 "imageTag": "2.4.1",
                 "nameOverride": "resources-pipeline-with-envs-filter",
-                "namespace": "example-namespace",
                 "replicaCount": 4,
                 "resources": {"requests": {"memory": "3G"}},
                 "streams": {
@@ -634,6 +714,12 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                 },
             },
             "name": "resources-pipeline-with-envs-filter",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -668,7 +754,6 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
                     "app_type": "scheduled-producer",
                 },
                 "nameOverride": "resources-component-type-substitution-scheduled-producer",
-                "namespace": "example-namespace",
                 "schedule": "30 3/8 * * *",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
@@ -678,6 +763,12 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
                 },
             },
             "name": "resources-component-type-substitution-scheduled-producer",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {"com/bakdata/kafka/fake": "1.0.0"},
                 "topics": {
@@ -703,7 +794,6 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
                 },
                 "commandLine": {"CONVERT_XML": True},
                 "nameOverride": "resources-component-type-substitution-converter",
-                "namespace": "example-namespace",
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
@@ -719,6 +809,12 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
                 },
             },
             "name": "resources-component-type-substitution-converter",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -756,7 +852,6 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
                 "imageTag": "2.4.1",
                 "label": {"app_name": "filter-app", "app_type": "filter"},
                 "nameOverride": "resources-component-type-substitution-filter-app",
-                "namespace": "example-namespace",
                 "replicaCount": 4,
                 "resources": {"requests": {"memory": "3G"}},
                 "streams": {
@@ -771,6 +866,12 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
                 },
             },
             "name": "resources-component-type-substitution-filter-app",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -798,7 +899,6 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
         {
             "app": {
                 "nameOverride": "resources-custom-config-app1",
-                "namespace": "development-namespace",
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
@@ -808,6 +908,12 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
                 },
             },
             "name": "resources-custom-config-app1",
+            "namespace": "development-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -819,13 +925,13 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
                 },
             },
             "type": "producer",
+            "version": "2.7.0",
         },
         {
             "app": {
                 "image": "some-image",
                 "labels": {"pipeline": "resources-custom-config"},
                 "nameOverride": "resources-custom-config-app2",
-                "namespace": "development-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "errorTopic": "app2-dead-letter-topic",
@@ -835,6 +941,12 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
                 },
             },
             "name": "resources-custom-config-app2",
+            "namespace": "development-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -851,6 +963,7 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
                 },
             },
             "type": "streams-app",
+            "version": "2.7.0",
         },
     ]
 }
@@ -861,7 +974,6 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
             "app": {
                 "image": "fake-image",
                 "nameOverride": "resources-kafka-connect-sink-streams-app-development",
-                "namespace": "development-namespace",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "config": {
@@ -875,6 +987,12 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
             },
             "from": {"topics": {"example-topic": {"type": "input"}}},
             "name": "resources-kafka-connect-sink-streams-app-development",
+            "namespace": "development-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
             "to": {
                 "models": {},
                 "topics": {
@@ -888,6 +1006,7 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
                 },
             },
             "type": "streams-app",
+            "version": "2.7.0",
         },
         {
             "app": {
@@ -905,7 +1024,15 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
                 "topics": "example-output",
             },
             "name": "resources-kafka-connect-sink-es-sink-connector",
+            "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-kafka-connect-resetter",
+                "url": "https://bakdata.github.io/kafka-connect-resetter/",
+            },
+            "resetterValues": {},
             "type": "kafka-sink-connector",
+            "version": "1.0.4",
         },
     ]
 }

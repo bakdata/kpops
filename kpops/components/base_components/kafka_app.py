@@ -6,7 +6,10 @@ from pydantic import BaseModel, Extra
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmRepoConfig,
+    HelmUpgradeInstallFlags,
+)
 from kpops.component_handlers.helm_wrapper.utils import trim_release_name
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
@@ -28,7 +31,7 @@ class KafkaStreamsConfig(BaseModel):
 
 class KafkaAppConfig(KubernetesAppConfig):
     streams: KafkaStreamsConfig
-    nameOverride: str | None
+    name_override: str | None
 
 
 class KafkaApp(KubernetesApp):
@@ -39,8 +42,13 @@ class KafkaApp(KubernetesApp):
 
     _type = "kafka-app"
     app: KafkaAppConfig
+    repo_config: HelmRepoConfig = HelmRepoConfig(
+        repository_name="bakdata-streams-bootstrap",
+        url="https://bakdata.github.io/streams-bootstrap/",
+    )
+    version = "2.7.0"
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.app.streams.brokers = substitute(
             self.app.streams.brokers, {"broker": self.config.broker}
@@ -51,7 +59,8 @@ class KafkaApp(KubernetesApp):
                 {"schema_registry_url": self.config.schema_registry_url},
             )
 
-    def get_clean_up_helm_chart(self):
+    @property
+    def clean_up_helm_chart(self) -> str:
         raise NotImplementedError()
 
     @override
@@ -91,7 +100,7 @@ class KafkaApp(KubernetesApp):
         log.info(f"Init cleanup job for {clean_up_release_name}")
 
         stdout = self.__install_clean_up_job(
-            dry_run, self.namespace, clean_up_release_name, suffix, values
+            clean_up_release_name, suffix, values, dry_run
         )
 
         if dry_run and self.helm_diff.config.enable:
@@ -109,14 +118,18 @@ class KafkaApp(KubernetesApp):
         self.helm.uninstall(self.namespace, release_name, dry_run)
 
     def __install_clean_up_job(
-        self, dry_run, namespace, release_name, suffix, values
+        self,
+        release_name: str,
+        suffix: str,
+        values: dict,
+        dry_run: bool,
     ) -> str:
         clean_up_release_name = trim_release_name(release_name, suffix)
         return self.helm.upgrade_install(
             clean_up_release_name,
-            self.get_clean_up_helm_chart(),
+            self.clean_up_helm_chart,
             dry_run,
-            namespace,
+            self.namespace,
             values,
             HelmUpgradeInstallFlags(
                 version=self.version,

@@ -3,7 +3,6 @@ from __future__ import annotations
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import StreamsAppConfig
@@ -54,16 +53,12 @@ class StreamsApp(KafkaApp):
 
     @override
     def get_helm_chart(self) -> str:
-        return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.STREAMS_APP.value}"
+        return f"{self.repo_config.repository_name}/{AppType.STREAMS_APP.value}"
 
     @property
     @override
-    def helm_repo_config(self) -> HelmRepoConfig | None:
-        return self.config.streams_bootstrap_helm_config
-
-    @override
-    def get_clean_up_helm_chart(self) -> str:
-        return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
+    def clean_up_helm_chart(self) -> str:
+        return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
     @override
     def reset(self, dry_run: bool) -> None:

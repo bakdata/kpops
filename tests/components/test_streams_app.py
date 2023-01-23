@@ -21,6 +21,9 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 class TestStreamsApp:
+    STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
+    STREAMS_APP_CLEAN_NAME = "test-streams-app-with-long-name-0123456789abcd-clean"
+
     @pytest.fixture
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
@@ -50,10 +53,9 @@ class TestStreamsApp:
             config=config,
             **{
                 "type": "streams-app",
-                "name": "example-name",
-                "version": "2.4.2",
+                "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "to": {
@@ -67,17 +69,14 @@ class TestStreamsApp:
         )
 
     def test_set_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
-        class AnotherType(StreamsApp):
-            _type = "test"
-
-        streams_app = AnotherType(
+        streams_app = StreamsApp(
             handlers=handlers,
             config=config,
             **{
-                "type": "test",
-                "name": "example-name",
+                "type": "streams-app",
+                "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "from": {
@@ -115,9 +114,9 @@ class TestStreamsApp:
             config=config,
             **{
                 "type": "test",
-                "name": "example-name",
+                "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "from": {
@@ -147,9 +146,9 @@ class TestStreamsApp:
                 config=config,
                 **{
                     "type": "streams-app",
-                    "name": "example-name",
+                    "name": self.STREAMS_APP_NAME,
+                    "namespace": "test-namespace",
                     "app": {
-                        "namespace": "test-namespace",
                         "streams": {"brokers": "fake-broker:9092"},
                     },
                     "from": {
@@ -168,9 +167,9 @@ class TestStreamsApp:
                 config=config,
                 **{
                     "type": "streams-app",
-                    "name": "example-name",
+                    "name": self.STREAMS_APP_NAME,
+                    "namespace": "test-namespace",
                     "app": {
-                        "namespace": "test-namespace",
                         "streams": {"brokers": "fake-broker:9092"},
                     },
                     "from": {"topics": {"example.*": {"type": "extra-pattern"}}},
@@ -185,9 +184,9 @@ class TestStreamsApp:
             config=config,
             **{
                 "type": "streams-app",
-                "name": "example-name",
+                "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "to": {
@@ -227,9 +226,9 @@ class TestStreamsApp:
             config=config,
             **{
                 "type": "streams-app",
-                "name": "example-name",
+                "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
             },
@@ -263,10 +262,9 @@ class TestStreamsApp:
             config=config,
             **{
                 "type": "streams-app",
-                "name": "example-name",
-                "version": "2.4.2",
+                "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "to": {
@@ -308,12 +306,11 @@ class TestStreamsApp:
             [
                 mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=True),
                 mocker.call.mock_helm_upgrade_install(
-                    "example-name",
+                    self.STREAMS_APP_NAME,
                     "bakdata-streams-bootstrap/streams-app",
                     True,
                     "test-namespace",
                     {
-                        "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -329,7 +326,7 @@ class TestStreamsApp:
                             insecure_skip_tls_verify=False,
                         ),
                         timeout="5m0s",
-                        version="2.4.2",
+                        version="2.7.0",
                         wait=True,
                         wait_for_jobs=False,
                     ),
@@ -344,7 +341,7 @@ class TestStreamsApp:
         streams_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
-            "test-namespace", "example-name", True
+            "test-namespace", self.STREAMS_APP_NAME, True
         )
 
     def test_reset(self, streams_app: StreamsApp, mocker: MockerFixture):
@@ -362,15 +359,14 @@ class TestStreamsApp:
         mock.assert_has_calls(
             [
                 mocker.call.helm_uninstall(
-                    "test-namespace", "example-name-clean", True
+                    "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
                 ),
                 mocker.call.helm_upgrade_install(
-                    "example-name-clean",
+                    self.STREAMS_APP_CLEAN_NAME,
                     "bakdata-streams-bootstrap/streams-app-cleanup-job",
                     True,
                     "test-namespace",
                     {
-                        "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -378,11 +374,11 @@ class TestStreamsApp:
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="2.4.2", wait=True, wait_for_jobs=True
+                        version="2.7.0", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.helm_uninstall(
-                    "test-namespace", "example-name-clean", True
+                    "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
                 ),
             ]
         )
@@ -406,15 +402,14 @@ class TestStreamsApp:
         mock.assert_has_calls(
             [
                 mocker.call.helm_uninstall(
-                    "test-namespace", "example-name-clean", True
+                    "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
                 ),
                 mocker.call.helm_upgrade_install(
-                    "example-name-clean",
+                    self.STREAMS_APP_CLEAN_NAME,
                     "bakdata-streams-bootstrap/streams-app-cleanup-job",
                     True,
                     "test-namespace",
                     {
-                        "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -422,11 +417,11 @@ class TestStreamsApp:
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="2.4.2", wait=True, wait_for_jobs=True
+                        version="2.7.0", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.helm_uninstall(
-                    "test-namespace", "example-name-clean", True
+                    "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
                 ),
             ]
         )

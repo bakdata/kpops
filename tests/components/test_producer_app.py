@@ -20,6 +20,9 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 class TestProducerApp:
+    PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
+    PRODUCER_APP_CLEAN_NAME = "test-producer-app-with-long-name-0123456789abc-clean"
+
     @pytest.fixture
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
@@ -49,10 +52,10 @@ class TestProducerApp:
             config=config,
             **{
                 "type": "producer-app",
-                "name": "example-name",
+                "name": self.PRODUCER_APP_NAME,
                 "version": "2.4.2",
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "clean_schemas": True,
@@ -72,7 +75,8 @@ class TestProducerApp:
             config=config,
             **{
                 "type": "producer-app",
-                "name": "example-name",
+                "name": self.PRODUCER_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
@@ -121,12 +125,11 @@ class TestProducerApp:
                     to_section=producer_app.to, dry_run=True
                 ),
                 mocker.call.mock_helm_upgrade_install(
-                    "example-name",
+                    self.PRODUCER_APP_NAME,
                     "bakdata-streams-bootstrap/producer-app",
                     True,
                     "test-namespace",
                     {
-                        "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "producer-output-topic",
@@ -159,7 +162,7 @@ class TestProducerApp:
         producer_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
-            "test-namespace", "example-name", True
+            "test-namespace", self.PRODUCER_APP_NAME, True
         )
 
     def should_not_reset_producer_app(
@@ -181,10 +184,10 @@ class TestProducerApp:
         mock.assert_has_calls(
             [
                 mocker.call.helm_uninstall(
-                    "test-namespace", "example-name-clean", True
+                    "test-namespace", self.PRODUCER_APP_CLEAN_NAME, True
                 ),
                 mocker.call.helm_upgrade_install(
-                    "example-name-clean",
+                    self.PRODUCER_APP_CLEAN_NAME,
                     "bakdata-streams-bootstrap/producer-app-cleanup-job",
                     True,
                     "test-namespace",
@@ -201,7 +204,7 @@ class TestProducerApp:
                     ),
                 ),
                 mocker.call.helm_uninstall(
-                    "test-namespace", "example-name-clean", True
+                    "test-namespace", self.PRODUCER_APP_CLEAN_NAME, True
                 ),
             ]
         )
@@ -223,15 +226,14 @@ class TestProducerApp:
         mock.assert_has_calls(
             [
                 mocker.call.helm_uninstall(
-                    "test-namespace", "example-name-clean", True
+                    "test-namespace", self.PRODUCER_APP_CLEAN_NAME, True
                 ),
                 mocker.call.helm_upgrade_install(
-                    "example-name-clean",
+                    self.PRODUCER_APP_CLEAN_NAME,
                     "bakdata-streams-bootstrap/producer-app-cleanup-job",
                     True,
                     "test-namespace",
                     {
-                        "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "producer-output-topic",
@@ -242,7 +244,7 @@ class TestProducerApp:
                     ),
                 ),
                 mocker.call.helm_uninstall(
-                    "test-namespace", "example-name-clean", True
+                    "test-namespace", self.PRODUCER_APP_CLEAN_NAME, True
                 ),
             ]
         )
