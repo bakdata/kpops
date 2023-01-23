@@ -1,6 +1,5 @@
 {
-  "title": "ProducerApp",
-  "description": "Producer component\n\nThis producer holds configuration to use as values for the streams bootstrap produce helm chart.",
+  "title": "BaseDefaultsComponent",
   "type": "object",
   "properties": {
     "enrich": {
@@ -10,29 +9,10 @@
     },
     "config": {
       "$ref": "#/definitions/PipelineConfig"
-    },
-    "name": {
-      "title": "Name",
-      "type": "string"
-    },
-    "from": {
-      "$ref": "#/definitions/FromSection"
-    },
-    "app": {
-      "$ref": "#/definitions/ProducerValues"
-    },
-    "to": {
-      "$ref": "#/definitions/ToSection"
-    },
-    "version": {
-      "title": "Version",
-      "type": "string"
     }
   },
   "required": [
-    "config",
-    "name",
-    "app"
+    "config"
   ],
   "definitions": {
     "TopicNameConfig": {
@@ -441,174 +421,6 @@
         "broker"
       ],
       "additionalProperties": false
-    },
-    "InputTopicTypes": {
-      "title": "InputTopicTypes",
-      "description": "An enumeration.",
-      "enum": [
-        "input",
-        "extra",
-        "input-pattern",
-        "extra-pattern"
-      ],
-      "type": "string"
-    },
-    "FromTopic": {
-      "title": "FromTopic",
-      "type": "object",
-      "properties": {
-        "type": {
-          "$ref": "#/definitions/InputTopicTypes"
-        },
-        "role": {
-          "title": "Role",
-          "type": "string"
-        }
-      },
-      "required": [
-        "type"
-      ],
-      "additionalProperties": false
-    },
-    "FromSection": {
-      "title": "FromSection",
-      "type": "object",
-      "properties": {
-        "topics": {
-          "title": "Topics",
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/FromTopic"
-          }
-        }
-      },
-      "required": [
-        "topics"
-      ],
-      "additionalProperties": false
-    },
-    "ProducerStreamsConfig": {
-      "title": "ProducerStreamsConfig",
-      "type": "object",
-      "properties": {
-        "brokers": {
-          "title": "Brokers",
-          "type": "string"
-        },
-        "schemaRegistryUrl": {
-          "title": "Schemaregistryurl",
-          "type": "string"
-        },
-        "extraOutputTopics": {
-          "title": "Extraoutputtopics",
-          "default": {},
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "outputTopic": {
-          "title": "Outputtopic",
-          "type": "string"
-        }
-      },
-      "required": [
-        "brokers"
-      ]
-    },
-    "ProducerValues": {
-      "title": "ProducerValues",
-      "type": "object",
-      "properties": {
-        "namespace": {
-          "title": "Namespace",
-          "type": "string"
-        },
-        "streams": {
-          "$ref": "#/definitions/ProducerStreamsConfig"
-        },
-        "nameOverride": {
-          "title": "Nameoverride",
-          "type": "string"
-        }
-      },
-      "required": [
-        "namespace",
-        "streams"
-      ]
-    },
-    "OutputTopicTypes": {
-      "title": "OutputTopicTypes",
-      "description": "\n    Types of output topic\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\n    ",
-      "enum": [
-        "error",
-        "output",
-        "extra"
-      ],
-      "type": "string"
-    },
-    "TopicConfig": {
-      "title": "TopicConfig",
-      "description": "Configures a topic",
-      "type": "object",
-      "properties": {
-        "type": {
-          "$ref": "#/definitions/OutputTopicTypes"
-        },
-        "keySchema": {
-          "title": "Keyschema",
-          "type": "string"
-        },
-        "valueSchema": {
-          "title": "Valueschema",
-          "type": "string"
-        },
-        "partitions_count": {
-          "title": "Partitions Count",
-          "type": "integer"
-        },
-        "replication_factor": {
-          "title": "Replication Factor",
-          "type": "integer"
-        },
-        "configs": {
-          "title": "Configs",
-          "default": {},
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          }
-        },
-        "role": {
-          "title": "Role",
-          "type": "string"
-        }
-      },
-      "required": [
-        "type"
-      ],
-      "additionalProperties": false
-    },
-    "ToSection": {
-      "title": "ToSection",
-      "type": "object",
-      "properties": {
-        "models": {
-          "title": "Models",
-          "default": {},
-          "type": "object"
-        },
-        "topics": {
-          "title": "Topics",
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/TopicConfig"
-          }
-        }
-      },
-      "required": [
-        "topics"
-      ]
     }
   }
 }

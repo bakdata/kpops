@@ -1,6 +1,6 @@
 {
-  "title": "KafkaApp",
-  "description": "Base component for kafka-based components.\nProducer or streaming apps should inherit from this class.",
+  "title": "StreamsApp",
+  "description": "StreamsApp component that configures a streams bootstrap app",
   "type": "object",
   "properties": {
     "enrich": {
@@ -19,7 +19,7 @@
       "$ref": "#/definitions/FromSection"
     },
     "app": {
-      "$ref": "#/definitions/KafkaAppConfig"
+      "$ref": "#/definitions/StreamsAppConfig"
     },
     "to": {
       "$ref": "#/definitions/ToSection"
@@ -487,8 +487,9 @@
       ],
       "additionalProperties": false
     },
-    "KafkaStreamsConfig": {
-      "title": "KafkaStreamsConfig",
+    "StreamsConfig": {
+      "title": "StreamsConfig",
+      "description": "Streams Bootstrap streams section",
       "type": "object",
       "properties": {
         "brokers": {
@@ -498,14 +499,91 @@
         "schemaRegistryUrl": {
           "title": "Schemaregistryurl",
           "type": "string"
+        },
+        "inputTopics": {
+          "title": "Inputtopics",
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "inputPattern": {
+          "title": "Inputpattern",
+          "type": "string"
+        },
+        "extraInputTopics": {
+          "title": "Extrainputtopics",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "extraInputPatterns": {
+          "title": "Extrainputpatterns",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "extraOutputTopics": {
+          "title": "Extraoutputtopics",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "outputTopic": {
+          "title": "Outputtopic",
+          "type": "string"
+        },
+        "errorTopic": {
+          "title": "Errortopic",
+          "type": "string"
+        },
+        "config": {
+          "title": "Config",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       },
       "required": [
         "brokers"
       ]
     },
-    "KafkaAppConfig": {
-      "title": "KafkaAppConfig",
+    "StreamsAppAutoScaling": {
+      "title": "StreamsAppAutoScaling",
+      "type": "object",
+      "properties": {
+        "consumergroup": {
+          "title": "Consumergroup",
+          "type": "string"
+        },
+        "topics": {
+          "title": "Topics",
+          "default": [],
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "consumergroup"
+      ]
+    },
+    "StreamsAppConfig": {
+      "title": "StreamsAppConfig",
+      "description": "StreamsBoostrap app configurations.\n\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
       "type": "object",
       "properties": {
         "namespace": {
@@ -513,11 +591,14 @@
           "type": "string"
         },
         "streams": {
-          "$ref": "#/definitions/KafkaStreamsConfig"
+          "$ref": "#/definitions/StreamsConfig"
         },
         "nameOverride": {
           "title": "Nameoverride",
           "type": "string"
+        },
+        "autoscaling": {
+          "$ref": "#/definitions/StreamsAppAutoScaling"
         }
       },
       "required": [
@@ -527,7 +608,7 @@
     },
     "OutputTopicTypes": {
       "title": "OutputTopicTypes",
-      "description": "\n    Types of output topic\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\n    ",
+      "description": "Types of output topic\nerror (error topic), output (output topic), and extra topics. Every extra topic must have a role.",
       "enum": [
         "error",
         "output",

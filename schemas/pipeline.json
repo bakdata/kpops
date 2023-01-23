@@ -1,23 +1,24 @@
 {
-  "anyOf":
-  [
-    {
-      "$ref": "./pipeline/kafka-app.json"
-    },
-    {
-      "$ref": "./pipeline/kafka-sink-connector.json"
-    },
-    {
-      "$ref": "./pipeline/kafka-source-connector.json"
-    },
-    {
-      "$ref": "./pipeline/kubernetes-app.json"
-    },
-    {
-      "$ref": "./pipeline/producer.json"
-    },
-    {
-      "$ref": "./pipeline/streams-app.json"
-    }
-  ]
+  "title": "Pipeline",
+  "type": "array",
+  "items": {
+    "anyOf":
+    [
+      {
+        "$ref": "./pipeline_test/kafka_app.json"
+      },
+      {
+        "$ref": "./pipeline_test/kafka_sink_connector.json"
+      },
+      {
+        "$ref": "./pipeline_test/kafka_source_connector.json"
+      },
+      {
+        "$ref": "./pipeline_test/producer_app.json"
+      },
+      {
+        "$ref": "./pipeline_test/streams_app.json"
+      }
+    ]
+  }
 }

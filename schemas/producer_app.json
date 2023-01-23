@@ -1,5 +1,6 @@
 {
-  "title": "KafkaSinkConnector",
+  "title": "ProducerApp",
+  "description": "Producer component\n\nThis producer holds configuration to use as values for the streams bootstrap produce helm chart.",
   "type": "object",
   "properties": {
     "enrich": {
@@ -18,10 +19,14 @@
       "$ref": "#/definitions/FromSection"
     },
     "app": {
-      "$ref": "#/definitions/KafkaConnectConfig"
+      "$ref": "#/definitions/ProducerValues"
     },
     "to": {
       "$ref": "#/definitions/ToSection"
+    },
+    "version": {
+      "title": "Version",
+      "type": "string"
     }
   },
   "required": [
@@ -482,14 +487,59 @@
       ],
       "additionalProperties": false
     },
-    "KafkaConnectConfig": {
-      "title": "KafkaConnectConfig",
+    "ProducerStreamsConfig": {
+      "title": "ProducerStreamsConfig",
       "type": "object",
-      "properties": {}
+      "properties": {
+        "brokers": {
+          "title": "Brokers",
+          "type": "string"
+        },
+        "schemaRegistryUrl": {
+          "title": "Schemaregistryurl",
+          "type": "string"
+        },
+        "extraOutputTopics": {
+          "title": "Extraoutputtopics",
+          "default": {},
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "outputTopic": {
+          "title": "Outputtopic",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brokers"
+      ]
+    },
+    "ProducerValues": {
+      "title": "ProducerValues",
+      "type": "object",
+      "properties": {
+        "namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "streams": {
+          "$ref": "#/definitions/ProducerStreamsConfig"
+        },
+        "nameOverride": {
+          "title": "Nameoverride",
+          "type": "string"
+        }
+      },
+      "required": [
+        "namespace",
+        "streams"
+      ]
     },
     "OutputTopicTypes": {
       "title": "OutputTopicTypes",
-      "description": "\n    Types of output topic\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\n    ",
+      "description": "Types of output topic\nerror (error topic), output (output topic), and extra topics. Every extra topic must have a role.",
       "enum": [
         "error",
         "output",

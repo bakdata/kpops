@@ -1,6 +1,5 @@
 {
-  "title": "KubernetesApp",
-  "description": "Base kubernetes app",
+  "title": "PipelineComponent",
   "type": "object",
   "properties": {
     "enrich": {
@@ -19,20 +18,15 @@
       "$ref": "#/definitions/FromSection"
     },
     "app": {
-      "$ref": "#/definitions/KubernetesAppConfig"
+      "title": "App"
     },
     "to": {
       "$ref": "#/definitions/ToSection"
-    },
-    "version": {
-      "title": "Version",
-      "type": "string"
     }
   },
   "required": [
     "config",
-    "name",
-    "app"
+    "name"
   ],
   "definitions": {
     "TopicNameConfig": {
@@ -487,22 +481,9 @@
       ],
       "additionalProperties": false
     },
-    "KubernetesAppConfig": {
-      "title": "KubernetesAppConfig",
-      "type": "object",
-      "properties": {
-        "namespace": {
-          "title": "Namespace",
-          "type": "string"
-        }
-      },
-      "required": [
-        "namespace"
-      ]
-    },
     "OutputTopicTypes": {
       "title": "OutputTopicTypes",
-      "description": "\n    Types of output topic\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\n    ",
+      "description": "Types of output topic\nerror (error topic), output (output topic), and extra topics. Every extra topic must have a role.",
       "enum": [
         "error",
         "output",

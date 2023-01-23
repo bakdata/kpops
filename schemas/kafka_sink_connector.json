@@ -1,5 +1,5 @@
 {
-  "title": "KafkaSourceConnector",
+  "title": "KafkaSinkConnector",
   "type": "object",
   "properties": {
     "enrich": {
@@ -489,7 +489,7 @@
     },
     "OutputTopicTypes": {
       "title": "OutputTopicTypes",
-      "description": "\n    Types of output topic\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\n    ",
+      "description": "Types of output topic\nerror (error topic), output (output topic), and extra topics. Every extra topic must have a role.",
       "enum": [
         "error",
         "output",
