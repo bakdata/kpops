@@ -2,20 +2,25 @@ import os
 
 import humps
 
+from kpops.cli.pipeline_config import PipelineConfig
+from kpops.components.base_components.base_defaults_component import (
+    BaseDefaultsComponent,
+)
 from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.base_components.kafka_connect import (
     KafkaSinkConnector,
     KafkaSourceConnector,
 )
 from kpops.components.base_components.kubernetes_app import KubernetesApp
-from kpops.components.base_components.base_defaults_component import BaseDefaultsComponent
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
-from kpops.cli.pipeline_config import PipelineConfig
+
 
 class GenSchema:
-    ROOT_DIR = os.path.realpath(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
+    ROOT_DIR = os.path.realpath(
+        os.path.join(os.path.dirname(__file__), "..", "..", "..")
+    )
     models = {
         KafkaApp,
         KafkaSinkConnector,
