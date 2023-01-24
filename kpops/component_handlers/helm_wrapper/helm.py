@@ -128,21 +128,14 @@ class Helm:
                 f"Release with name {release_name} not found. Could not uninstall app."
             )
 
-    def template(
-        self, release_name: str, chart: str, api_versions: str = None
-    ) -> str | None:
+    def template(self, release_name: str, chart: str, api_versions: str = "") -> str:
         """
         Render chart templates locally and display the output.
         """
-        if api_versions is None:
-            api_versions = ""
         command = ["helm", "template", release_name, chart]
         if not api_versions == "":
             command.extend(["--api-versions", api_versions])
-        try:
-            return self.__execute(command=command)
-        except ReleaseNotFoundException:
-            return ()
+        return self.__execute(command=command)
 
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
         command = [
