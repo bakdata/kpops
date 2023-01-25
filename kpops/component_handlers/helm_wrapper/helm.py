@@ -141,31 +141,20 @@ class Helm:
         """
         command = [
             "helm",
-            "template",
-            release_name,
-            chart,
         ]
-        if api_versions:
-            command.extend(
-                [
-                    "--api-versions",
-                    api_versions,
-                ]
-            )
-        if ca_file:
-            command.extend(
-                [
-                    "--ca-file",
-                    ca_file,
-                ]
-            )
-        if cert_file:
-            command.extend(
-                [
-                    "--cert-file",
-                    cert_file,
-                ]
-            )
+        command.extend(
+            [
+                "template",
+                release_name,
+                chart,
+            ]
+        )
+        opt_flags = {
+            "--api-versions": api_versions,
+            "--ca-file": ca_file,
+            "--cert-file": cert_file,
+        }
+        command = Helm.__enrich_command_with_opt_flags(command, opt_flags)
         return self.__execute(command=command)
 
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
@@ -201,6 +190,19 @@ class Helm:
                 is_beginning = False
             else:
                 current_yaml_doc.append(line)
+
+    @staticmethod
+    def __enrich_command_with_opt_flags(
+        command: list[str],
+        flags: dict[str, str],
+    ) -> list[str]:
+        """
+        Add flags to a helm command.
+        """
+        for key in flags:
+            if flags[key]:
+                command.extend([key, flags[key]])
+        return command
 
     @staticmethod
     def __extend_tls_config(
