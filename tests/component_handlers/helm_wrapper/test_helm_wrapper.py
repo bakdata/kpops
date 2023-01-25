@@ -348,7 +348,7 @@ data:
         run_command.side_effect = ReleaseNotFoundException()
         assert helm_wrapper.get_manifest("test-release", "test-namespace") == ()
 
-    def test_should_call_run_command_method_when_helm_template_with_api_versions(
+    def test_should_call_run_command_method_when_helm_template_with_optional_args(
         self, run_command: MagicMock
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
@@ -357,18 +357,25 @@ data:
             release_name="test-release",
             chart="bakdata-streams-bootstrap/streams-app",
             api_versions="2.1.1",
+            ca_file="a_file.ca",
+            cert_file="a_file.pem",
         )
         run_command.assert_called_once_with(
-            [
+            command=[
                 "helm",
                 "template",
                 "test-release",
                 "bakdata-streams-bootstrap/streams-app",
-                "--api-versions" "2.1.1",
+                "--api-versions",
+                "2.1.1",
+                "--ca-file",
+                "a_file.ca",
+                "--cert-file",
+                "a_file.pem",
             ],
         )
 
-    def test_should_call_run_command_method_when_helm_template_without_api_versions(
+    def test_should_call_run_command_method_when_helm_template_without_optional_args(
         self, run_command: MagicMock
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
@@ -378,138 +385,10 @@ data:
             chart="bakdata-streams-bootstrap/streams-app",
         )
         run_command.assert_called_once_with(
-            [
+            command=[
                 "helm",
                 "template",
                 "test-release",
                 "bakdata-streams-bootstrap/streams-app",
             ],
         )
-
-    def test_helm_template_without_api_versions(self, run_command: MagicMock):
-        helm_wrapper = Helm(helm_config=HelmConfig())
-
-        helm_wrapper.template(
-            release_name="test-release",
-            chart="bakdata-streams-bootstrap/streams-app",
-        )
-
-        run_command.return_value = """
----
-# Source: streams-app/templates/jmx-configmap.yaml
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: bakdata-streams-app-jmx-configmap
-  labels:
-    app: bakdata-streams-app
-    chart: streams-app-0.1.0
-    release: stream-bootstrap
-    heritage: Helm
-data:
-  jmx-kafka-streams-app-prometheus.yml: |+
-    jmxUrl: service:jmx:rmi:///jndi/rmi://localhost:5555/jmxrmi
-    lowercaseOutputName: true
-    lowercaseOutputLabelNames: true
-    ssl: false
-    rules:
-      - pattern: ".*"
----
-# Source: streams-app/templates/deployment.yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: bakdata-streams-app
-  labels:
-    app: bakdata-streams-app
-    chart: streams-app-0.1.0
-    release: stream-bootstrap
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: bakdata-streams-app
-      release: stream-bootstrap
-  template:
-    metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/port: "5556"
-      labels:
-        app: bakdata-streams-app
-        release: stream-bootstrap
-    spec:
-      affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - weight: 1
-            podAffinityTerm:
-              topologyKey: "kubernetes.io/hostname"
-              labelSelector:
-                matchExpressions:
-                  - key: app
-                    operator: In
-                    values:
-                      - bakdata-streams-app
-      containers:
-        - name: bakdata-streams-app
-          image: "streamsApp:latest"
-          imagePullPolicy: "Always"
-          resources:
-            limits:
-              cpu: 500m
-              memory: 2G
-            requests:
-              cpu: 200m
-              memory: 300Mi
-          env:
-            - name: ENV_PREFIX
-              value: APP_
-            - name: KAFKA_JMX_PORT
-              value: "5555"
-            - name: "APP_BROKERS"
-              value:
-            - name: "APP_SCHEMA_REGISTRY_URL"
-              value:
-            - name: "APP_DEBUG"
-              value: "false"
-            - name: "APP_INPUT_TOPICS"
-              value: ""
-            - name: JAVA_TOOL_OPTIONS
-              value: '-Dcom.sun.management.jmxremote.port=5555
-                -Dcom.sun.management.jmxremote.authenticate=false
-                -Dcom.sun.management.jmxremote.ssl=false
-                -XX:MaxRAMPercentage=75.0
-                '
-          ports:
-            - containerPort: 5555
-              name: jmx
-        - name: prometheus-jmx-exporter
-          image: "solsson/kafka-prometheus-jmx-exporter@sha256:6f82e2b0464f50da8104acd7363fb9b995001ddff77d248379f8788e78946143"
-          command:
-            - java
-            - -XX:+UnlockExperimentalVMOptions
-            - -XX:+UseCGroupMemoryLimitForHeap
-            - -XX:MaxRAMFraction=1
-            - -XshowSettings:vm
-            - -jar
-            - jmx_prometheus_httpserver.jar
-            - "5556"
-            - /etc/jmx-streams-app/jmx-kafka-streams-app-prometheus.yml
-          ports:
-            - containerPort: 5556
-          resources:
-            limits:
-              cpu: 300m
-              memory: 2G
-            requests:
-              cpu: 100m
-              memory: 500Mi
-          volumeMounts:
-            - name: jmx-config
-              mountPath: /etc/jmx-streams-app
-      volumes:
-        - name: jmx-config
-          configMap:
-            name: bakdata-streams-app-jmx-configmap
-"""
