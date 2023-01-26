@@ -17,7 +17,7 @@ class StreamsApp(KafkaApp):
     """
 
     _type = "streams-app"
-    dicriminator: Literal["streams-app"] = "streams-app"
+    type: Literal["streams-app"] = "streams-app"
     app: StreamsAppConfig
 
     class Config(BaseConfig):

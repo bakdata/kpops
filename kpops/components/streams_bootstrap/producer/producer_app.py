@@ -21,7 +21,7 @@ class ProducerApp(KafkaApp):
     """
 
     _type = "producer"
-    dicriminator: Literal["producer"] = "producer"
+    type: Literal["producer"] = "producer"
     app: ProducerValues
 
     class Config(BaseConfig):

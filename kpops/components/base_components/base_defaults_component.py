@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import TypeVar
 
 import typer
-from pydantic import BaseConfig, BaseModel, Field
+from pydantic import BaseConfig, BaseModel, Field, PrivateAttr
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
@@ -19,12 +19,11 @@ log = logging.getLogger("PipelineComponentEnricher")
 class BaseDefaultsComponent(BaseModel):
     _type: str = Field(..., alias="type")
 
-    _enrich: bool = Field(default=False, alias="enrich", exclude=True)
-    _config: PipelineConfig = Field(default=..., alias="config", exclude=True)
-    _handlers: ComponentHandlers = Field(default=..., alias="handlers", exclude=True)
+    _enrich: bool = PrivateAttr(default=False)
+    _config: PipelineConfig = PrivateAttr(default=...)
+    _handlers: ComponentHandlers = PrivateAttr(default=...)
 
     class Config(BaseConfig):
-        # exclude = {"_enrich", "_config", "_handlers"}
         arbitrary_types_allowed = True
 
     def __init__(self, **kwargs):
@@ -40,7 +39,7 @@ class BaseDefaultsComponent(BaseModel):
         :return: enriched kwargs with tmp_defaults
         """
 
-        config: PipelineConfig = kwargs["_config"]
+        config: PipelineConfig = kwargs["config"]
         log.debug(
             typer.style(
                 "Enriching component of type ", fg=typer.colors.GREEN, bold=False

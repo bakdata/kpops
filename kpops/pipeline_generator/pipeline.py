@@ -145,24 +145,24 @@ class Pipeline:
         env_components_index = create_env_components_index(environment_components)
         previous_component: PipelineComponent | None = None
         for component in component_list:
-            # try:
             try:
-                component_type: str = component["type"]
-            except KeyError:
-                raise ValueError(
-                    "Every component must have a type defined, this component does not have one."
+                try:
+                    component_type: str = component["type"]
+                except KeyError:
+                    raise ValueError(
+                        "Every component must have a type defined, this component does not have one."
+                    )
+                component_class = self.registry[component_type]
+                inflated_components = self.apply_component(
+                    component, component_class, env_components_index, previous_component
                 )
-            component_class = self.registry[component_type]
-            inflated_components = self.apply_component(
-                component, component_class, env_components_index, previous_component
-            )
-            self.populate_pipeline_component_names(inflated_components)
-            self.components.extend(inflated_components)
-            previous_component = inflated_components.pop()
-        # except Exception as ex:
-        #     raise ParsingException(
-        #         f"Error enriching {component['type']} component {component['name']}"
-        #     ) from ex
+                self.populate_pipeline_component_names(inflated_components)
+                self.components.extend(inflated_components)
+                previous_component = inflated_components.pop()
+            except Exception as ex:
+                raise ParsingException(
+                    f"Error enriching {component['type']} component {component['name']}"
+                ) from ex
 
     def populate_pipeline_component_names(
         self, inflated_components: list[PipelineComponent]
