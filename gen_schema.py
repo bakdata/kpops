@@ -24,11 +24,11 @@ def field_schema(field: ModelField, **kwargs: Any) -> Any:
 
 schema.field_schema = field_schema
 
-ComponentType = StreamsApp | ProducerApp | KafkaSourceConnector | KafkaSinkConnector
+PipelineComponent = StreamsApp | ProducerApp | KafkaSourceConnector | KafkaSinkConnector
 
 
 AnnotatedPipelineComponent = Annotated[
-    ComponentType, Field(discriminator="schema_type")
+    PipelineComponent, Field(discriminator="schema_type")
 ]
 
 schema = schema_json_of(
