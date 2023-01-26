@@ -28,14 +28,16 @@ class InflateStep(StreamsApp):
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
                         name="sink-connector",
-                        handlers=self.handlers,
-                        config=self.config,
                         app=KafkaConnectConfig(
                             **{
                                 "topics": topic_name,
                                 "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                             }
                         ),
+                        **{
+                            "config": self._config,
+                            "handlers": self._handlers,
+                        },
                     )
                     inflate_steps.append(kafka_connector)
 

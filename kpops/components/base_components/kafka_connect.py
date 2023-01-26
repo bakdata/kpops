@@ -85,7 +85,7 @@ class KafkaSourceConnector(KafkaConnector):
             connector_name=self.name,
             connector_type=KafkaConnectorType.SOURCE,
             dry_run=dry_run,
-            retain_clean_jobs=self.config.retain_clean_jobs,
+            retain_clean_jobs=self._config.retain_clean_jobs,
             offset_topic=os.environ[f"{ENV_PREFIX}KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"],
         )
 
@@ -125,6 +125,6 @@ class KafkaSinkConnector(KafkaConnector):
             connector_name=self.name,
             connector_type=KafkaConnectorType.SINK,
             dry_run=dry_run,
-            retain_clean_jobs=self.config.retain_clean_jobs,
+            retain_clean_jobs=self._config.retain_clean_jobs,
             delete_consumer_group=delete_consumer_group,
         )

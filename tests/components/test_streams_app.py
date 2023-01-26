@@ -75,10 +75,10 @@ class TestStreamsApp:
             type: ClassVar[str] = "test"
 
         streams_app = AnotherType(
-            config=config,
             **{
                 "type": "test",
                 "name": self.STREAMS_APP_NAME,
+                "config": config,
                 "handlers": handlers,
                 "app": {
                     "namespace": "test-namespace",

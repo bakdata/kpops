@@ -59,12 +59,12 @@ class PipelineComponent(BaseDefaultsComponent):
         :return: final topic name
         """
         error_topic_name = self.substitute_component_names(
-            self.config.topic_name_config.default_error_topic_name,
+            self._config.topic_name_config.default_error_topic_name,
             self.type,
             **os.environ,
         )
         output_topic_name = self.substitute_component_names(
-            self.config.topic_name_config.default_output_topic_name,
+            self._config.topic_name_config.default_output_topic_name,
             self.type,
             **os.environ,
         )

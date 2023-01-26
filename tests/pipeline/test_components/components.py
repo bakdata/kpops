@@ -3,6 +3,7 @@ from typing import Any, ClassVar
 from schema_registry.client.schema import AvroSchema
 from typing_extensions import override
 
+from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,
@@ -42,11 +43,15 @@ class InflateStep(StreamsApp):
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
                         name="sink-connector",
-                        handlers=self.handlers,
-                        config=self.config,
-                        app={
-                            "topics": topic_name,
-                            "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
+                        app=KafkaConnectConfig(
+                            **{
+                                "topics": topic_name,
+                                "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
+                            }
+                        ),
+                        **{
+                            "config": self._config,
+                            "handlers": self._handlers,
                         },
                     )
                     inflate_steps.append(kafka_connector)

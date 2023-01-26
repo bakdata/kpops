@@ -50,7 +50,7 @@ class KubernetesApp(PipelineComponent):
 
     @cached_property
     def helm(self) -> Helm:
-        helm = Helm(self.config.helm_config)
+        helm = Helm(self._config.helm_config)
         if self.helm_repo_config is not None:
             helm.add_repo(
                 self.helm_repo_config.repository_name,
@@ -61,7 +61,7 @@ class KubernetesApp(PipelineComponent):
 
     @cached_property
     def helm_diff(self) -> HelmDiff:
-        return HelmDiff(self.config.helm_diff_config)
+        return HelmDiff(self._config.helm_diff_config)
 
     @property
     def helm_release_name(self) -> str:

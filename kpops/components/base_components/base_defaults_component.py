@@ -32,10 +32,6 @@ class BaseDefaultsComponent(BaseModel):
         super().__init__(**kwargs)
 
     @property
-    def config(self) -> PipelineConfig:
-        return self._config
-
-    @property
     def handlers(self) -> ComponentHandlers:
         return self._handlers
 
