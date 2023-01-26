@@ -228,7 +228,7 @@ class Pipeline:
             substitute(
                 json.dumps(pair),
                 {
-                    "component_type": component_object._type,
+                    "component_type": component_object.type,
                     "component_name": component_object.name,
                 },
             )

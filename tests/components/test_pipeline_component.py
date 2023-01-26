@@ -31,7 +31,7 @@ class TestPipelineComponent:
                 ),
             ),
             name="test-pipeline-component",
-            _type="plane-pipeline-component",
+            type="plane-pipeline-component",
             to=ToSection(
                 models={},
                 topics={

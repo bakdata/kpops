@@ -58,7 +58,7 @@ class TestKubernetesApp:
         app_config = KubernetesAppConfig(namespace="test-namespace")
 
         kubernetes_app = KubernetesApp(
-            _type="test",
+            type="test",
             handlers=handlers,
             app=app_config,
             config=config,
@@ -92,7 +92,7 @@ class TestKubernetesApp:
         app_config = KubernetesAppConfig(namespace="test-namespace")
 
         kubernetes_app = KubernetesApp(
-            _type="test",
+            type="test",
             handlers=handlers,
             app=app_config,
             config=config,
@@ -144,7 +144,7 @@ class TestKubernetesApp:
         app_config = KubernetesAppConfig(namespace="test-namespace")
 
         kubernetes_app = KubernetesApp(
-            _type="test",
+            type="test",
             handlers=handlers,
             app=app_config,
             config=config,
@@ -165,7 +165,7 @@ class TestKubernetesApp:
         app_config = KubernetesAppConfig(namespace="test-namespace")
 
         kubernetes_app = KubernetesApp(
-            _type="test",
+            type="test",
             handlers=handlers,
             app=app_config,
             config=config,
@@ -189,7 +189,7 @@ class TestKubernetesApp:
         app_config = KubernetesAppConfig(namespace="test-namespace")
 
         kubernetes_app = KubernetesApp(
-            _type="test",
+            type="test",
             handlers=handlers,
             app=app_config,
             config=config,
@@ -213,7 +213,7 @@ class TestKubernetesApp:
         app_config = KubernetesAppConfig(namespace="test")
 
         assert KubernetesApp(
-            _type="test",
+            type="test",
             handlers=handlers,
             app=app_config,
             config=config,
@@ -222,7 +222,7 @@ class TestKubernetesApp:
 
         with pytest.raises(ValueError):
             assert KubernetesApp(
-                _type="test",
+                type="test",
                 handlers=handlers,
                 app=app_config,
                 config=config,
@@ -231,7 +231,7 @@ class TestKubernetesApp:
 
         with pytest.raises(ValueError):
             assert KubernetesApp(
-                _type="test",
+                type="test",
                 handlers=handlers,
                 app=app_config,
                 config=config,

@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import ClassVar, Literal
 
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
@@ -20,8 +20,7 @@ class ProducerApp(KafkaApp):
     This producer holds configuration to use as values for the streams bootstrap produce helm chart.
     """
 
-    _type = "producer"
-    discriminator: Literal["producer"] = "producer"
+    type: ClassVar[Literal["producer"]] = "producer"
     app: ProducerValues
 
     class Config(BaseConfig):

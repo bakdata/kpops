@@ -3,10 +3,12 @@
     "type": "array",
     "items": {
         "discriminator": {
-            "propertyName": "discriminator",
+            "propertyName": "type",
             "mapping": {
                 "streams-app": "#/definitions/StreamsApp",
-                "producer": "#/definitions/ProducerApp"
+                "producer": "#/definitions/ProducerApp",
+                "kafka-source-connector": "#/definitions/KafkaSourceConnector",
+                "kafka-sink-connector": "#/definitions/KafkaSinkConnector"
             }
         },
         "oneOf": [
@@ -15,6 +17,12 @@
             },
             {
                 "$ref": "#/definitions/ProducerApp"
+            },
+            {
+                "$ref": "#/definitions/KafkaSourceConnector"
+            },
+            {
+                "$ref": "#/definitions/KafkaSinkConnector"
             }
         ]
     },
@@ -668,6 +676,14 @@
             "description": "StreamsApp component that configures a streams bootstrap app",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "streams-app",
+                    "enum": [
+                        "streams-app"
+                    ],
+                    "type": "string"
+                },
                 "enrich": {
                     "title": "Enrich",
                     "default": false,
@@ -763,6 +779,14 @@
             "description": "Producer component\n\nThis producer holds configuration to use as values for the streams bootstrap produce helm chart.",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "producer",
+                    "enum": [
+                        "producer"
+                    ],
+                    "type": "string"
+                },
                 "enrich": {
                     "title": "Enrich",
                     "default": false,
@@ -787,14 +811,91 @@
                 "version": {
                     "title": "Version",
                     "type": "string"
-                },
-                "discriminator": {
-                    "title": "Discriminator",
-                    "default": "producer",
+                }
+            },
+            "required": [
+                "config",
+                "name",
+                "app"
+            ]
+        },
+        "KafkaConnectConfig": {
+            "title": "KafkaConnectConfig",
+            "type": "object",
+            "properties": {}
+        },
+        "KafkaSourceConnector": {
+            "title": "KafkaSourceConnector",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "kafka-source-connector",
                     "enum": [
-                        "producer"
+                        "kafka-source-connector"
                     ],
                     "type": "string"
+                },
+                "enrich": {
+                    "title": "Enrich",
+                    "default": false,
+                    "type": "boolean"
+                },
+                "config": {
+                    "$ref": "#/definitions/PipelineConfig"
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "from": {
+                    "$ref": "#/definitions/FromSection"
+                },
+                "app": {
+                    "$ref": "#/definitions/KafkaConnectConfig"
+                },
+                "to": {
+                    "$ref": "#/definitions/ToSection"
+                }
+            },
+            "required": [
+                "config",
+                "name",
+                "app"
+            ]
+        },
+        "KafkaSinkConnector": {
+            "title": "KafkaSinkConnector",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "kafka-sink-connector",
+                    "enum": [
+                        "kafka-sink-connector"
+                    ],
+                    "type": "string"
+                },
+                "enrich": {
+                    "title": "Enrich",
+                    "default": false,
+                    "type": "boolean"
+                },
+                "config": {
+                    "$ref": "#/definitions/PipelineConfig"
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "from": {
+                    "$ref": "#/definitions/FromSection"
+                },
+                "app": {
+                    "$ref": "#/definitions/KafkaConnectConfig"
+                },
+                "to": {
+                    "$ref": "#/definitions/ToSection"
                 }
             },
             "required": [

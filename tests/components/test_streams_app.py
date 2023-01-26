@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import ClassVar, Literal
 from unittest.mock import MagicMock
 
 import pytest
@@ -71,14 +72,14 @@ class TestStreamsApp:
 
     def test_set_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
         class AnotherType(StreamsApp):
-            _type = "test"
+            type: ClassVar[Literal["test"]] = "test"
 
         streams_app = AnotherType(
-            handlers=handlers,
             config=config,
             **{
                 "type": "test",
                 "name": self.STREAMS_APP_NAME,
+                "handlers": handlers,
                 "app": {
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
