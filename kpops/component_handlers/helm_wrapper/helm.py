@@ -13,6 +13,7 @@ from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundExcep
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
     HelmTemplate,
+    HelmTemplateFlags,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
     YamlReader,
@@ -132,9 +133,7 @@ class Helm:
         self,
         release_name: str,
         chart: str,
-        api_versions: str = "",
-        ca_file: str = "",
-        cert_file: str = "",
+        flags: HelmTemplateFlags = HelmTemplateFlags(),
     ) -> str:
         """
         Render chart templates locally and display the output.
@@ -149,12 +148,7 @@ class Helm:
                 chart,
             ]
         )
-        opt_flags = {
-            "--api-versions": api_versions,
-            "--ca-file": ca_file,
-            "--cert-file": cert_file,
-        }
-        command = Helm.__enrich_command_with_opt_flags(command, opt_flags)
+        command = Helm.__enrich_template_command(command, flags)
         return self.__execute(command=command)
 
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
@@ -192,16 +186,19 @@ class Helm:
                 current_yaml_doc.append(line)
 
     @staticmethod
-    def __enrich_command_with_opt_flags(
+    def __enrich_template_command(
         command: list[str],
-        flags: dict[str, str],
+        helm_command_config: HelmTemplateFlags,
     ) -> list[str]:
         """
-        Add flags to a helm command.
+        Add flags to `helm template`.
         """
-        for key in flags:
-            if flags[key]:
-                command.extend([key, flags[key]])
+        if helm_command_config.api_versions:
+            command.extend(["--api-versions", helm_command_config.api_versions])
+        if helm_command_config.ca_file:
+            command.extend(["--ca-file", helm_command_config.ca_file])
+        if helm_command_config.cert_file:
+            command.extend(["--cert-file", helm_command_config.cert_file])
         return command
 
     @staticmethod

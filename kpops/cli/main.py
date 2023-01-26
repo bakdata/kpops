@@ -205,12 +205,27 @@ def generate(
         None, help="Path to file the yaml pipeline should be saved to"
     ),
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
+    template: bool = typer.Option(
+        False, help="Run `helm template` instead of `helm upgrade`"
+    ),
+    api_versions: str = typer.Option(
+        "", help="Kubernetes api version used for Capabilities.APIVersions"
+    ),
+    ca_file: str = typer.Option(
+        "", help="Verify certificates of HTTPS-enabled servers using this CA bundle"
+    ),
+    cert_file: str = typer.Option(
+        "", help="Identify HTTPS client using this SSL certificate file"
+    ),
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    if print_yaml:
+    if template:
+        # Call `helm template` here
+        pass
+    elif print_yaml:
         pipeline.print_yaml()
 
     if save:
@@ -218,7 +233,11 @@ def generate(
             raise ValueError(
                 "Please provide a output path if you want to save the generated deployment."
             )
-        pipeline.save(out_path)
+        elif print_yaml:
+            pipeline.save(out_path)
+        else:
+            # write `helm template` to a file
+            pass
 
 
 @app.command(help="Deploy pipeline steps")

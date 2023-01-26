@@ -9,6 +9,7 @@ from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundExcep
 from kpops.component_handlers.helm_wrapper.helm import Helm, HelmTemplate
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
+    HelmTemplateFlags,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
@@ -356,9 +357,11 @@ data:
         helm_wrapper.template(
             release_name="test-release",
             chart="bakdata-streams-bootstrap/streams-app",
-            api_versions="2.1.1",
-            ca_file="a_file.ca",
-            cert_file="a_file.pem",
+            flags=HelmTemplateFlags(
+                api_versions="2.1.1",
+                ca_file="a_file.ca",
+                cert_file="a_file.pem",
+            ),
         )
         run_command.assert_called_once_with(
             command=[
@@ -383,6 +386,11 @@ data:
         helm_wrapper.template(
             release_name="test-release",
             chart="bakdata-streams-bootstrap/streams-app",
+            flags=HelmTemplateFlags(
+                api_versions="",
+                ca_file="",
+                cert_file="",
+            ),
         )
         run_command.assert_called_once_with(
             command=[
