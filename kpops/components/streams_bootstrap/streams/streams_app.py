@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import ClassVar, Literal
 
-from pydantic import BaseConfig, Extra
+from pydantic import BaseConfig, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
@@ -17,7 +17,7 @@ class StreamsApp(KafkaApp):
     """
 
     type: ClassVar[str] = "streams-app"
-    schema_type: Literal["streams-app"] = "streams-app"
+    schema_type: Literal["streams-app"] = Field("streams-app", exclude=True)
     app: StreamsAppConfig
 
     class Config(BaseConfig):

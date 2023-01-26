@@ -3,6 +3,7 @@ import os
 from abc import ABC
 from typing import ClassVar, Literal, NoReturn
 
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.cli.pipeline_config import ENV_PREFIX
@@ -65,7 +66,9 @@ class KafkaConnector(PipelineComponent, ABC):
 
 class KafkaSourceConnector(KafkaConnector):
     type: ClassVar[str] = "kafka-source-connector"
-    schema_type: Literal["kafka-source-connector"] = "kafka-source-connector"
+    schema_type: Literal["kafka-source-connector"] = Field(
+        "kafka-source-connector", exclude=True
+    )
 
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
@@ -92,7 +95,9 @@ class KafkaSourceConnector(KafkaConnector):
 
 class KafkaSinkConnector(KafkaConnector):
     type: ClassVar[str] = "kafka-sink-connector"
-    schema_type: Literal["kafka-sink-connector"] = "kafka-sink-connector"
+    schema_type: Literal["kafka-sink-connector"] = Field(
+        "kafka-sink-connector", exclude=True
+    )
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:

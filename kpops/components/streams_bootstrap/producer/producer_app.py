@@ -1,6 +1,6 @@
 from typing import ClassVar, Literal
 
-from pydantic import BaseConfig, Extra
+from pydantic import BaseConfig, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
@@ -21,7 +21,7 @@ class ProducerApp(KafkaApp):
     """
 
     type: ClassVar[str] = "producer"
-    schema_type: Literal["producer"] = "producer"
+    schema_type: Literal["producer"] = Field("producer", exclude=True)
     app: ProducerValues
 
     class Config(BaseConfig):

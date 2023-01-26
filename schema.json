@@ -285,14 +285,6 @@
                 "version": {
                     "title": "Version",
                     "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "streams-app",
-                    "enum": [
-                        "streams-app"
-                    ],
-                    "type": "string"
                 }
             },
             "required": [
@@ -371,14 +363,6 @@
                 "version": {
                     "title": "Version",
                     "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "producer",
-                    "enum": [
-                        "producer"
-                    ],
-                    "type": "string"
                 }
             },
             "required": [
@@ -407,14 +391,6 @@
                 },
                 "to": {
                     "$ref": "#/definitions/ToSection"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-source-connector",
-                    "enum": [
-                        "kafka-source-connector"
-                    ],
-                    "type": "string"
                 }
             },
             "required": [
@@ -438,14 +414,6 @@
                 },
                 "to": {
                     "$ref": "#/definitions/ToSection"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-sink-connector",
-                    "enum": [
-                        "kafka-sink-connector"
-                    ],
-                    "type": "string"
                 }
             },
             "required": [
