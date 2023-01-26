@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
 
@@ -15,6 +17,7 @@ class StreamsApp(KafkaApp):
     """
 
     _type = "streams-app"
+    discriminator: Literal["streams-app"] = "streams-app"
     app: StreamsAppConfig
 
     class Config(BaseConfig):

@@ -223,6 +223,7 @@ class Pipeline:
         component_object: PipelineComponent, pair: dict
     ) -> dict:
         # Override component config with component config in pipeline environment definition
+        pair.pop("handlers")
         json_object: dict = json.loads(
             substitute(
                 json.dumps(pair),

@@ -1,3 +1,5 @@
+from typing import Literal
+
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
 
@@ -19,6 +21,7 @@ class ProducerApp(KafkaApp):
     """
 
     _type = "producer"
+    discriminator: Literal["producer"] = "producer"
     app: ProducerValues
 
     class Config(BaseConfig):
