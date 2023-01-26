@@ -16,7 +16,7 @@ original_field_schema = schema.field_schema
 
 # adapted from https://github.com/tiangolo/fastapi/issues/1378#issuecomment-764966955
 def field_schema(field: ModelField, **kwargs: Any) -> Any:
-    if field.field_info.exclude:
+    if field.field_info.extra.get("hidden_from_schema"):
         raise SkipField(f"{field.name} field is being hidden")
     else:
         return original_field_schema(field, **kwargs)
