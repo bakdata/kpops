@@ -66,10 +66,10 @@ class TestKubernetesApp:
     ):
 
         kubernetes_app = KubernetesApp(
-            app=app_value,
+            name="test-kubernetes-apps",
             config=config,
             handlers=handlers,
-            name="test-kubernetes-apps",
+            app=app_value,
             namespace="test-namespace",
         )
 
@@ -100,10 +100,10 @@ class TestKubernetesApp:
     ):
         repo_config = HelmRepoConfig(repository_name="test-repo", url="mock://test")
         kubernetes_app = KubernetesApp(
-            app=app_value,
+            name="test-kubernetes-apps",
             config=config,
             handlers=handlers,
-            name="test-kubernetes-apps",
+            app=app_value,
             namespace="test-namespace",
             repo_config=repo_config,
             version="3.4.5",
@@ -146,10 +146,10 @@ class TestKubernetesApp:
     ):
 
         kubernetes_app = KubernetesApp(
-            app=app_value,
+            name="test-kubernetes-apps",
             config=config,
             handlers=handlers,
-            name="test-kubernetes-apps",
+            app=app_value,
             namespace="test-namespace",
         )
         mocker.patch.object(
@@ -169,10 +169,10 @@ class TestKubernetesApp:
     ):
 
         kubernetes_app = KubernetesApp(
-            app=app_value,
+            name="test-kubernetes-apps",
             config=config,
             handlers=handlers,
-            name="test-kubernetes-apps",
+            app=app_value,
             namespace="test-namespace",
         )
 
@@ -193,10 +193,10 @@ class TestKubernetesApp:
     ):
 
         kubernetes_app = KubernetesApp(
-            app=app_value,
+            name="test-kubernetes-apps",
             config=config,
             handlers=handlers,
-            name="test-kubernetes-apps",
+            app=app_value,
             namespace="test-namespace",
         )
 
@@ -219,25 +219,23 @@ class TestKubernetesApp:
     ):
 
         assert KubernetesApp(
-            app=app_value,
+            name="example-component-with-very-long-name-longer-than-most-of-our-kubernetes-apps",
             config=config,
             handlers=handlers,
-            name="example-component-with-very-long-name-longer-than-most-of-our-kubernetes-apps",
+            app=app_value,
             namespace="test-namespace",
         )
 
         with pytest.raises(ValueError):
             assert KubernetesApp(
-                type="test",
+                name="Not-Compatible*",
                 config=config,
                 handlers=handlers,
-                name="Not-Compatible*",
             )
 
         with pytest.raises(ValueError):
             assert KubernetesApp(
-                type="test",
+                name="snake_case",
                 config=config,
                 handlers=handlers,
-                name="snake_case",
             )
