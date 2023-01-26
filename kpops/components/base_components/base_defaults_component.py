@@ -4,7 +4,7 @@ import os
 from collections import deque
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import ClassVar, TypeVar
+from typing import Any, ClassVar, TypeVar
 
 import typer
 from pydantic import BaseConfig, BaseModel, Field
@@ -31,7 +31,7 @@ class BaseDefaultsComponent(BaseModel):
             kwargs = self.extend_with_defaults(kwargs)
         super().__init__(**kwargs)
 
-    def extend_with_defaults(self, kwargs) -> dict:
+    def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
         """
         Merges tmp_defaults with all tmp_defaults for parent classes
 
