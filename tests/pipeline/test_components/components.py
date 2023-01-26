@@ -45,7 +45,7 @@ class InflateStep(StreamsApp):
                         config=self.config,
                         handlers=self.handlers,
                         namespace="example-namespace",
-                        app={  # type: ignore
+                        app={  # type: ignore # FIXME
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },
