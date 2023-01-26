@@ -6,7 +6,10 @@ from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmRepoConfig,
+    HelmUpgradeInstallFlags,
+)
 from kpops.components.base_components import KafkaApp
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
@@ -28,24 +31,29 @@ class TestKafkaApp:
             topic_handler=MagicMock(),
         )
 
-    def test_default_brokers(self, config: PipelineConfig, handlers: ComponentHandlers):
+    def test_default_configs(self, config: PipelineConfig, handlers: ComponentHandlers):
         kafka_app = KafkaApp(
             handlers=handlers,
             config=config,
             **{
                 "name": "example-name",
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {
                         "outputTopic": "test",
                         "brokers": "fake-broker:9092",
                     },
                 },
-                "version": "1.2.3",
             },
         )
         assert kafka_app.app.streams.brokers == "fake-broker:9092"
-        assert kafka_app.version == "1.2.3"
+
+        assert kafka_app.repo_config == HelmRepoConfig(
+            repository_name="bakdata-streams-bootstrap",
+            url="https://bakdata.github.io/streams-bootstrap/",
+        )
+        assert kafka_app.version == "2.7.0"
+        assert kafka_app.namespace == "test-namespace"
 
     def test_should_deploy_kafka_app(
         self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
@@ -55,8 +63,8 @@ class TestKafkaApp:
             config=config,
             **{
                 "name": "example-name",
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {
                         "outputTopic": "test",
                         "brokers": "fake-broker:9092",
@@ -76,7 +84,6 @@ class TestKafkaApp:
             True,
             "test-namespace",
             {
-                "namespace": "test-namespace",
                 "streams": {"brokers": "fake-broker:9092", "outputTopic": "test"},
             },
             HelmUpgradeInstallFlags(version="1.2.3"),

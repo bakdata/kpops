@@ -1,5 +1,4 @@
 from pathlib import Path
-from typing import ClassVar
 from unittest.mock import MagicMock
 
 import pytest
@@ -54,9 +53,8 @@ class TestStreamsApp:
             handlers=handlers,
             **{
                 "name": self.STREAMS_APP_NAME,
-                "version": "2.4.2",
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "to": {
@@ -70,16 +68,13 @@ class TestStreamsApp:
         )
 
     def test_set_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
-        class AnotherType(StreamsApp):
-            type: ClassVar[str] = "test"
-
-        streams_app = AnotherType(
+        streams_app = StreamsApp(
             config=config,
             handlers=handlers,
             **{
                 "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "from": {
@@ -117,8 +112,8 @@ class TestStreamsApp:
             handlers=handlers,
             **{
                 "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "from": {
@@ -148,8 +143,8 @@ class TestStreamsApp:
                 handlers=handlers,
                 **{
                     "name": self.STREAMS_APP_NAME,
+                    "namespace": "test-namespace",
                     "app": {
-                        "namespace": "test-namespace",
                         "streams": {"brokers": "fake-broker:9092"},
                     },
                     "from": {
@@ -168,8 +163,8 @@ class TestStreamsApp:
                 handlers=handlers,
                 **{
                     "name": self.STREAMS_APP_NAME,
+                    "namespace": "test-namespace",
                     "app": {
-                        "namespace": "test-namespace",
                         "streams": {"brokers": "fake-broker:9092"},
                     },
                     "from": {"topics": {"example.*": {"type": "extra-pattern"}}},
@@ -184,8 +179,8 @@ class TestStreamsApp:
             handlers=handlers,
             **{
                 "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "to": {
@@ -225,8 +220,8 @@ class TestStreamsApp:
             handlers=handlers,
             **{
                 "name": self.STREAMS_APP_NAME,
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
             },
@@ -260,9 +255,8 @@ class TestStreamsApp:
             handlers=handlers,
             **{
                 "name": self.STREAMS_APP_NAME,
-                "version": "2.4.2",
+                "namespace": "test-namespace",
                 "app": {
-                    "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "to": {
@@ -309,7 +303,6 @@ class TestStreamsApp:
                     True,
                     "test-namespace",
                     {
-                        "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -325,7 +318,7 @@ class TestStreamsApp:
                             insecure_skip_tls_verify=False,
                         ),
                         timeout="5m0s",
-                        version="2.4.2",
+                        version="2.7.0",
                         wait=True,
                         wait_for_jobs=False,
                     ),
@@ -366,7 +359,6 @@ class TestStreamsApp:
                     True,
                     "test-namespace",
                     {
-                        "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -374,7 +366,7 @@ class TestStreamsApp:
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="2.4.2", wait=True, wait_for_jobs=True
+                        version="2.7.0", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.helm_uninstall(
@@ -410,7 +402,6 @@ class TestStreamsApp:
                     True,
                     "test-namespace",
                     {
-                        "namespace": "test-namespace",
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -418,7 +409,7 @@ class TestStreamsApp:
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="2.4.2", wait=True, wait_for_jobs=True
+                        version="2.7.0", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.helm_uninstall(

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from functools import cached_property
 
 from pydantic import BaseConfig, Extra, Field
 
@@ -28,6 +29,7 @@ class PipelineComponent(BaseDefaultsComponent):
 
     class Config(BaseConfig):
         extra = Extra.allow
+        keep_untouched = (cached_property,)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

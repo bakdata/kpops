@@ -1,7 +1,6 @@
 kubernetes-app:
   name: "${component_type}"
-  app:
-    namespace: example-namespace
+  namespace: example-namespace
 
 kafka-app:
   app:
@@ -106,6 +105,7 @@ should-inflate:
 
 kafka-connect:
   name: "sink-connector"
+  namespace: "example-namespace"
   app:
     batch.size: "2000"
     behavior.on.malformed.documents: "warn"

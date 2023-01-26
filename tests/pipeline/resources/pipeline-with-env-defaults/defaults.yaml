@@ -1,7 +1,6 @@
 kubernetes-app:
   name: "${component_type}"
-  app:
-    namespace: example-namespace
+  namespace: example-namespace
 kafka-app:
   app:
     streams:
