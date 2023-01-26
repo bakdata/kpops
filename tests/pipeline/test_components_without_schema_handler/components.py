@@ -31,7 +31,7 @@ class InflateStep(StreamsApp):
                         config=self.config,
                         handlers=self.handlers,
                         namespace="example-namespace",
-                        app=KafkaConnectConfig(  # TODO
+                        app=KafkaConnectConfig(
                             **{
                                 "topics": topic_name,
                                 "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
