@@ -49,7 +49,6 @@ class TestProducerApp:
     ) -> ProducerApp:
         return ProducerApp(
             **{
-                "type": "producer-app",
                 "name": self.PRODUCER_APP_NAME,
                 "config": config,
                 "handlers": handlers,
@@ -72,7 +71,6 @@ class TestProducerApp:
     def test_output_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
             **{
-                "type": "producer-app",
                 "name": self.PRODUCER_APP_NAME,
                 "config": config,
                 "handlers": handlers,
