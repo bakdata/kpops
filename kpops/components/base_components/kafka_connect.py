@@ -203,7 +203,7 @@ class KafkaConnector(PipelineComponent, ABC):
 class KafkaSourceConnector(KafkaConnector):
     type: ClassVar[str] = "kafka-source-connector"
     schema_type: Literal["kafka-source-connector"] = Field(
-        default="kafka-source-connector", exclude=True
+        default="kafka-source-connector", alias="schema_type", exclude=True
     )
     offset_topic: str | None = None
 
@@ -233,7 +233,7 @@ class KafkaSourceConnector(KafkaConnector):
 class KafkaSinkConnector(KafkaConnector):
     type: ClassVar[str] = "kafka-sink-connector"
     schema_type: Literal["kafka-sink-connector"] = Field(
-        default="kafka-sink-connector", exclude=True
+        default="kafka-sink-connector", alias="schema_type", exclude=True
     )
 
     @override

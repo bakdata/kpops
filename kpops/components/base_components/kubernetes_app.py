@@ -32,7 +32,7 @@ class KubernetesAppConfig(BaseModel):
 
 # TODO: label and annotations
 class KubernetesApp(PipelineComponent):
-    """Base kubernetes app"""
+    """Base Kubernetes app"""
 
     type: ClassVar[str] = "kubernetes-app"
     app: KubernetesAppConfig

@@ -171,10 +171,6 @@
             "description": "StreamsBoostrap app configurations.\n\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
             "type": "object",
             "properties": {
-                "namespace": {
-                    "title": "Namespace",
-                    "type": "string"
-                },
                 "streams": {
                     "$ref": "#/definitions/StreamsConfig"
                 },
@@ -187,7 +183,6 @@
                 }
             },
             "required": [
-                "namespace",
                 "streams"
             ]
         },
@@ -264,6 +259,62 @@
                 "topics"
             ]
         },
+        "RepoAuthFlags": {
+            "title": "RepoAuthFlags",
+            "type": "object",
+            "properties": {
+                "username": {
+                    "title": "Username",
+                    "type": "string"
+                },
+                "password": {
+                    "title": "Password",
+                    "type": "string"
+                },
+                "caFile": {
+                    "title": "Cafile",
+                    "type": "string",
+                    "format": "path"
+                },
+                "insecureSkipTlsVerify": {
+                    "title": "Insecureskiptlsverify",
+                    "default": false,
+                    "type": "boolean"
+                }
+            }
+        },
+        "HelmRepoConfig": {
+            "title": "HelmRepoConfig",
+            "type": "object",
+            "properties": {
+                "repositoryName": {
+                    "title": "Repositoryname",
+                    "type": "string"
+                },
+                "url": {
+                    "title": "Url",
+                    "type": "string"
+                },
+                "repoAuthFlags": {
+                    "title": "Repoauthflags",
+                    "default": {
+                        "username": null,
+                        "password": null,
+                        "ca_file": null,
+                        "insecure_skip_tls_verify": false
+                    },
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/RepoAuthFlags"
+                        }
+                    ]
+                }
+            },
+            "required": [
+                "repositoryName",
+                "url"
+            ]
+        },
         "StreamsApp": {
             "title": "StreamsApp",
             "description": "StreamsApp component that configures a streams bootstrap app",
@@ -282,8 +333,31 @@
                 "to": {
                     "$ref": "#/definitions/ToSection"
                 },
+                "repoConfig": {
+                    "title": "Repoconfig",
+                    "default": {
+                        "repository_name": "bakdata-streams-bootstrap",
+                        "url": "https://bakdata.github.io/streams-bootstrap/",
+                        "repo_auth_flags": {
+                            "username": null,
+                            "password": null,
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ]
+                },
+                "namespace": {
+                    "title": "Namespace",
+                    "type": "string"
+                },
                 "version": {
                     "title": "Version",
+                    "default": "2.7.0",
                     "type": "string"
                 },
                 "type": {
@@ -297,7 +371,8 @@
             },
             "required": [
                 "name",
-                "app"
+                "app",
+                "namespace"
             ]
         },
         "ProducerStreamsConfig": {
@@ -333,10 +408,6 @@
             "title": "ProducerValues",
             "type": "object",
             "properties": {
-                "namespace": {
-                    "title": "Namespace",
-                    "type": "string"
-                },
                 "streams": {
                     "$ref": "#/definitions/ProducerStreamsConfig"
                 },
@@ -346,7 +417,6 @@
                 }
             },
             "required": [
-                "namespace",
                 "streams"
             ]
         },
@@ -368,8 +438,31 @@
                 "to": {
                     "$ref": "#/definitions/ToSection"
                 },
+                "repoConfig": {
+                    "title": "Repoconfig",
+                    "default": {
+                        "repository_name": "bakdata-streams-bootstrap",
+                        "url": "https://bakdata.github.io/streams-bootstrap/",
+                        "repo_auth_flags": {
+                            "username": null,
+                            "password": null,
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ]
+                },
+                "namespace": {
+                    "title": "Namespace",
+                    "type": "string"
+                },
                 "version": {
                     "title": "Version",
+                    "default": "2.7.0",
                     "type": "string"
                 },
                 "type": {
@@ -383,7 +476,8 @@
             },
             "required": [
                 "name",
-                "app"
+                "app",
+                "namespace"
             ]
         },
         "KafkaConnectConfig": {
@@ -408,6 +502,38 @@
                 "to": {
                     "$ref": "#/definitions/ToSection"
                 },
+                "repoConfig": {
+                    "title": "Repoconfig",
+                    "default": {
+                        "repository_name": "bakdata-kafka-connect-resetter",
+                        "url": "https://bakdata.github.io/kafka-connect-resetter/",
+                        "repo_auth_flags": {
+                            "username": null,
+                            "password": null,
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ]
+                },
+                "namespace": {
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "version": {
+                    "title": "Version",
+                    "default": "1.0.4",
+                    "type": "string"
+                },
+                "resetterValues": {
+                    "title": "Resettervalues",
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "type": "object"
+                },
                 "type": {
                     "title": "Schema Type",
                     "default": "kafka-source-connector",
@@ -415,11 +541,16 @@
                         "kafka-source-connector"
                     ],
                     "type": "string"
+                },
+                "offsetTopic": {
+                    "title": "Offsettopic",
+                    "type": "string"
                 }
             },
             "required": [
                 "name",
-                "app"
+                "app",
+                "namespace"
             ]
         },
         "KafkaSinkConnector": {
@@ -439,6 +570,38 @@
                 "to": {
                     "$ref": "#/definitions/ToSection"
                 },
+                "repoConfig": {
+                    "title": "Repoconfig",
+                    "default": {
+                        "repository_name": "bakdata-kafka-connect-resetter",
+                        "url": "https://bakdata.github.io/kafka-connect-resetter/",
+                        "repo_auth_flags": {
+                            "username": null,
+                            "password": null,
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ]
+                },
+                "namespace": {
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "version": {
+                    "title": "Version",
+                    "default": "1.0.4",
+                    "type": "string"
+                },
+                "resetterValues": {
+                    "title": "Resettervalues",
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "type": "object"
+                },
                 "type": {
                     "title": "Schema Type",
                     "default": "kafka-sink-connector",
@@ -450,7 +613,8 @@
             },
             "required": [
                 "name",
-                "app"
+                "app",
+                "namespace"
             ]
         }
     }
