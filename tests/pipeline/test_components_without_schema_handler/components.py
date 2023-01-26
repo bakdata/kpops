@@ -1,4 +1,4 @@
-from typing import Literal
+from typing import ClassVar, Literal
 
 from typing_extensions import override
 
@@ -10,15 +10,15 @@ from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
 class ImportProducer(ProducerApp):
-    type: Literal["scheduled-producer"] = "scheduled-producer"
+    type: ClassVar[Literal["scheduled-producer"]] = "scheduled-producer"
 
 
 class Converter(StreamsApp):
-    type: Literal["converter"] = "converter"
+    type: ClassVar[Literal["converter"]] = "converter"
 
 
 class InflateStep(StreamsApp):
-    type: Literal["should-inflate"] = "should-inflate"
+    type: ClassVar[Literal["should-inflate"]] = "should-inflate"
 
     @override
     def inflate(self) -> list[PipelineComponent]:

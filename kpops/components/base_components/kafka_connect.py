@@ -1,7 +1,7 @@
 import json
 import os
 from abc import ABC
-from typing import Literal, NoReturn
+from typing import ClassVar, Literal, NoReturn
 
 from typing_extensions import override
 
@@ -14,7 +14,7 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 
 
 class KafkaConnector(PipelineComponent, ABC):
-    type: Literal["kafka-connect"] = "kafka-connect"
+    type: ClassVar[Literal["kafka-connect"]] = "kafka-connect"
     app: KafkaConnectConfig
 
     def __init__(self, **kwargs) -> None:
@@ -64,7 +64,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
 
 class KafkaSourceConnector(KafkaConnector):
-    type: Literal["kafka-source-connector"] = "kafka-source-connector"
+    type: ClassVar[Literal["kafka-source-connector"]] = "kafka-source-connector"
 
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
@@ -90,7 +90,7 @@ class KafkaSourceConnector(KafkaConnector):
 
 
 class KafkaSinkConnector(KafkaConnector):
-    type: Literal["kafka-sink-connector"] = "kafka-sink-connector"
+    type: ClassVar[Literal["kafka-sink-connector"]] = "kafka-sink-connector"
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
