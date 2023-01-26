@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Literal
+from typing import Any, Literal
 
 from schema_registry.client.schema import AvroSchema
 from typing_extensions import override
@@ -14,11 +14,11 @@ from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
 class ImportProducer(ProducerApp):
-    type: ClassVar[Literal["scheduled-producer"]] = "scheduled-producer"
+    type: Literal["scheduled-producer"] = "scheduled-producer"
 
 
 class Converter(StreamsApp):
-    type: ClassVar[Literal["converter"]] = "converter"
+    type: Literal["converter"] = "converter"
 
 
 class SubStreamsApp(StreamsApp):
@@ -28,11 +28,11 @@ class SubStreamsApp(StreamsApp):
 class Filter(SubStreamsApp):
     """Subsubclass of StreamsApp to test inheritance."""
 
-    type: ClassVar[Literal["filter"]] = "filter"
+    type: Literal["filter"] = "filter"
 
 
 class InflateStep(StreamsApp):
-    type: ClassVar[Literal["should-inflate"]] = "should-inflate"
+    type: Literal["should-inflate"] = "should-inflate"
 
     @override
     def inflate(self) -> list[PipelineComponent]:

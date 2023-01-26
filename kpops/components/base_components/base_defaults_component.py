@@ -4,7 +4,7 @@ import os
 from collections import deque
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import ClassVar, TypeVar
+from typing import TypeVar
 
 import typer
 from pydantic import BaseConfig, BaseModel, Field, PrivateAttr
@@ -17,7 +17,7 @@ log = logging.getLogger("PipelineComponentEnricher")
 
 
 class BaseDefaultsComponent(BaseModel):
-    type: ClassVar[str] = Field(..., const=True)  # component type discriminator
+    type: str = Field(..., const=True)  # component type discriminator
 
     enrich: bool = Field(default=False, exclude=True)
     config: PipelineConfig = Field(default=..., exclude=True)

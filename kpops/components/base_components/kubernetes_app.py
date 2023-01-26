@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from functools import cached_property
-from typing import ClassVar, Literal
+from typing import Literal
 
 from pydantic import BaseModel
 from typing_extensions import override
@@ -36,7 +36,7 @@ class KubernetesAppConfig(BaseModel):
 class KubernetesApp(PipelineComponent):
     """Base kubernetes app"""
 
-    type: ClassVar[Literal["kubernetes-app"]] = "kubernetes-app"
+    type: Literal["kubernetes-app"] = "kubernetes-app"
     app: KubernetesAppConfig
 
     version: str | None = None

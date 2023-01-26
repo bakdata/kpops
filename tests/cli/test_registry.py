@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar, Literal
+from typing import Literal
 
 import pytest
 from pydantic import BaseModel
@@ -10,12 +10,12 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 
 
 class SubComponent(PipelineComponent):
-    type: ClassVar[Literal["sub-component"]] = "sub-component"
+    type: Literal["sub-component"] = "sub-component"
     pass
 
 
 class SubSubComponent(SubComponent):
-    type: ClassVar[Literal["sub-sub-component"]] = "sub-sub-component"
+    type: Literal["sub-sub-component"] = "sub-sub-component"
     pass
 
 

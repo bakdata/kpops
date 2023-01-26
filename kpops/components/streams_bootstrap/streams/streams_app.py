@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar, Literal
+from typing import Literal
 
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
@@ -16,7 +16,7 @@ class StreamsApp(KafkaApp):
     StreamsApp component that configures a streams bootstrap app
     """
 
-    type: ClassVar[Literal["streams-app"]] = "streams-app"
+    type: Literal["streams-app"] = "streams-app"
     app: StreamsAppConfig
 
     class Config(BaseConfig):
