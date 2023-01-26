@@ -24,13 +24,7 @@ def field_schema(field: ModelField, **kwargs: Any) -> Any:
 
 schema.field_schema = field_schema
 
-ComponentType = (
-    StreamsApp
-    | ProducerApp
-    | KafkaSourceConnector
-    | KafkaSinkConnector
-    # | PipelineComponent
-)
+ComponentType = StreamsApp | ProducerApp | KafkaSourceConnector | KafkaSinkConnector
 
 
 AnnotatedPipelineComponent = Annotated[
