@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Literal
-
 from pydantic import BaseConfig, Extra
 from typing_extensions import override
 
@@ -17,7 +15,6 @@ class StreamsApp(KafkaApp):
     """
 
     _type = "streams-app"
-    type: Literal["streams-app"] = "streams-app"
     app: StreamsAppConfig
 
     class Config(BaseConfig):
@@ -57,17 +54,17 @@ class StreamsApp(KafkaApp):
 
     @override
     def get_helm_chart(self) -> str:
-        return f"{self._config.streams_bootstrap_helm_config.repository_name}/{AppType.STREAMS_APP.value}"
+        return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.STREAMS_APP.value}"
 
     @property
     @override
     def helm_repo_config(self) -> HelmRepoConfig | None:
-        return self._config.streams_bootstrap_helm_config
+        return self.config.streams_bootstrap_helm_config
 
     @property
     @override
     def clean_up_helm_chart(self) -> str:
-        return f"{self._config.streams_bootstrap_helm_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
+        return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
     @override
     def reset(self, dry_run: bool) -> None:
@@ -83,7 +80,7 @@ class StreamsApp(KafkaApp):
         self._run_clean_up_job(
             values=values,
             dry_run=dry_run,
-            retain_clean_jobs=self._config.retain_clean_jobs,
+            retain_clean_jobs=self.config.retain_clean_jobs,
         )
 
     def __substitute_autoscaling_topic_names(self) -> None:

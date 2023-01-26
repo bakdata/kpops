@@ -57,8 +57,8 @@ class TestBaseDefaultsComponent:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         component = TestChildModel(
-            _handlers=handlers,
-            _config=config,
+            handlers=handlers,
+            config=config,
         )
 
         assert (
@@ -79,8 +79,8 @@ class TestBaseDefaultsComponent:
 
     def test_inherit(self, config: PipelineConfig, handlers: ComponentHandlers):
         component = TestChildModel(
-            _handlers=handlers,
-            _config=config,
+            handlers=handlers,
+            config=config,
             **{"name": "name-defined-in-pipeline_generator"}
         )
 
@@ -104,8 +104,8 @@ class TestBaseDefaultsComponent:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         component = TestGrandChildModel(
-            _handlers=handlers,
-            _config=config,
+            handlers=handlers,
+            config=config,
         )
 
         assert (
@@ -134,8 +134,8 @@ class TestBaseDefaultsComponent:
 
         os.environ["pipeline_name"] = str(DEFAULTS_PATH)
         component = TestEnvVarModel(
-            _handlers=handlers,
-            _config=config,
+            handlers=handlers,
+            config=config,
         )
 
         assert component.name == str(

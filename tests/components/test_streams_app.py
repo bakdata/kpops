@@ -49,8 +49,8 @@ class TestStreamsApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
-            _handlers=handlers,
-            _config=config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
@@ -74,8 +74,8 @@ class TestStreamsApp:
             _type = "test"
 
         streams_app = AnotherType(
-            _handlers=handlers,
-            _config=config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "test",
                 "name": self.STREAMS_APP_NAME,
@@ -114,8 +114,8 @@ class TestStreamsApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            _handlers=handlers,
-            _config=config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "test",
                 "name": self.STREAMS_APP_NAME,
@@ -146,8 +146,8 @@ class TestStreamsApp:
     def test_should_validate(self, config: PipelineConfig, handlers: ComponentHandlers):
         with pytest.raises(ValueError):
             StreamsApp(
-                _handlers=handlers,
-                _config=config,
+                handlers=handlers,
+                config=config,
                 **{
                     "type": "streams-app",
                     "name": self.STREAMS_APP_NAME,
@@ -167,8 +167,8 @@ class TestStreamsApp:
 
         with pytest.raises(ValueError):
             StreamsApp(
-                _handlers=handlers,
-                _config=config,
+                handlers=handlers,
+                config=config,
                 **{
                     "type": "streams-app",
                     "name": self.STREAMS_APP_NAME,
@@ -184,8 +184,8 @@ class TestStreamsApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            _handlers=handlers,
-            _config=config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
@@ -226,8 +226,8 @@ class TestStreamsApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            _handlers=handlers,
-            _config=config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
@@ -262,8 +262,8 @@ class TestStreamsApp:
         mocker: MockerFixture,
     ):
         streams_app = StreamsApp(
-            _handlers=handlers,
-            _config=config,
+            handlers=handlers,
+            config=config,
             **{
                 "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
@@ -295,7 +295,7 @@ class TestStreamsApp:
             },
         )
         mock_create_topics = mocker.patch.object(
-            streams_app._handlers.topic_handler, "create_topics"
+            streams_app.handlers.topic_handler, "create_topics"
         )
         mock_helm_upgrade_install = mocker.patch.object(
             streams_app.helm, "upgrade_install"

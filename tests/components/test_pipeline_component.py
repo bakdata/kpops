@@ -17,12 +17,12 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 class TestPipelineComponent:
     def test_topic_substitution(self):
         pipeline_component = PipelineComponent(
-            _handlers=ComponentHandlers(
+            handlers=ComponentHandlers(
                 schema_handler=MagicMock(),
                 connector_handler=MagicMock(),
                 topic_handler=MagicMock(),
             ),
-            _config=pipeline_config.PipelineConfig(
+            config=pipeline_config.PipelineConfig(
                 defaults_path=DEFAULTS_PATH,
                 environment="development",
                 topic_name_config=TopicNameConfig(

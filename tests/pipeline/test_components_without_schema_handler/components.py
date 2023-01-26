@@ -26,8 +26,8 @@ class InflateStep(StreamsApp):
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
                         name="sink-connector",
-                        _handlers=self._handlers,
-                        _config=self._config,
+                        handlers=self.handlers,
+                        config=self.config,
                         app=KafkaConnectConfig(
                             **{
                                 "topics": topic_name,
