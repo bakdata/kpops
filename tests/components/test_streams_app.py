@@ -1,5 +1,5 @@
 from pathlib import Path
-from typing import ClassVar, Literal
+from typing import ClassVar
 from unittest.mock import MagicMock
 
 import pytest
@@ -72,7 +72,7 @@ class TestStreamsApp:
 
     def test_set_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
         class AnotherType(StreamsApp):
-            type: ClassVar[Literal["test"]] = "test"
+            type: ClassVar[str] = "test"
 
         streams_app = AnotherType(
             config=config,

@@ -14,7 +14,7 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 
 
 class KafkaConnector(PipelineComponent, ABC):
-    type: ClassVar[Literal["kafka-connect"]] = "kafka-connect"
+    type: ClassVar[str] = "kafka-connect"
     app: KafkaConnectConfig
 
     def __init__(self, **kwargs) -> None:
@@ -64,7 +64,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
 
 class KafkaSourceConnector(KafkaConnector):
-    type: ClassVar[Literal["kafka-source-connector"]] = "kafka-source-connector"
+    type: ClassVar[str] = "kafka-source-connector"
     schema_type: Literal["kafka-source-connector"] = "kafka-source-connector"
 
     @override
@@ -91,7 +91,7 @@ class KafkaSourceConnector(KafkaConnector):
 
 
 class KafkaSinkConnector(KafkaConnector):
-    type: ClassVar[Literal["kafka-sink-connector"]] = "kafka-sink-connector"
+    type: ClassVar[str] = "kafka-sink-connector"
     schema_type: Literal["kafka-sink-connector"] = "kafka-sink-connector"
 
     @override

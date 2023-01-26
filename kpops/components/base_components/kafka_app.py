@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import ClassVar, Literal
+from typing import ClassVar
 
 from pydantic import BaseModel, Extra
 from typing_extensions import override
@@ -38,7 +38,7 @@ class KafkaApp(KubernetesApp):
     Producer or streaming apps should inherit from this class.
     """
 
-    type: ClassVar[Literal["kafka-app"]] = "kafka-app"
+    type: ClassVar[str] = "kafka-app"
     app: KafkaAppConfig
 
     def __init__(self, **kwargs) -> None:

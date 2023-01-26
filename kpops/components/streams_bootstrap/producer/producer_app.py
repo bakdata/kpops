@@ -20,7 +20,7 @@ class ProducerApp(KafkaApp):
     This producer holds configuration to use as values for the streams bootstrap produce helm chart.
     """
 
-    type: ClassVar[Literal["producer"]] = "producer"
+    type: ClassVar[str] = "producer"
     schema_type: Literal["producer"] = "producer"
     app: ProducerValues
 
