@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import ClassVar, TypeVar
 
 import typer
-from pydantic import BaseConfig, BaseModel, Field, PrivateAttr
+from pydantic import BaseConfig, BaseModel, PrivateAttr
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
@@ -19,15 +19,14 @@ log = logging.getLogger("PipelineComponentEnricher")
 class BaseDefaultsComponent(BaseModel):
     type: ClassVar[str]  # component type
 
-    enrich: bool = Field(default=False, exclude=True)
-    config: PipelineConfig = Field(default=..., exclude=True)
+    _config: PipelineConfig = PrivateAttr()
     _handlers: ComponentHandlers = PrivateAttr()
 
     class Config(BaseConfig):
         arbitrary_types_allowed = True
 
     def __init__(self, **kwargs) -> None:
-        self._handlers = kwargs["handlers"]
+        self._handlers: ComponentHandlers = kwargs["handlers"]
         if kwargs.get("enrich", True):
             kwargs = self.extend_with_defaults(kwargs)
         super().__init__(**kwargs)
