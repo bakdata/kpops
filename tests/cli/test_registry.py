@@ -46,10 +46,10 @@ def test_registry():
     assert registry._classes == {}
     registry.find_components(MODULE)
     assert registry._classes == {
-        SubComponent.type: SubComponent,
-        SubSubComponent.type: SubSubComponent,
+        "sub-component": SubComponent,
+        "sub-sub-component": SubSubComponent,
     }
-    assert registry[SubComponent.type] == SubComponent
-    assert registry[SubSubComponent.type] == SubSubComponent
+    assert registry["sub-component"] == SubComponent
+    assert registry["sub-sub-component"] == SubSubComponent
     with pytest.raises(ClassNotFoundError):
         registry["doesnt-exist"]

@@ -708,14 +708,6 @@
                 "version": {
                     "title": "Version",
                     "type": "string"
-                },
-                "discriminator": {
-                    "title": "Discriminator",
-                    "default": "streams-app",
-                    "enum": [
-                        "streams-app"
-                    ],
-                    "type": "string"
                 }
             },
             "required": [
