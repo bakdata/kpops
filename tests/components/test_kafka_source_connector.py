@@ -63,8 +63,8 @@ class TestKafkaSourceConnector:
         with pytest.raises(NotImplementedError):
             KafkaSourceConnector(
                 name="test-connector",
-                handlers=handlers,
                 config=config,
+                handlers=handlers,
                 app=KafkaConnectConfig(),
                 namespace="test-namespace",
                 from_=FromSection(
@@ -82,8 +82,8 @@ class TestKafkaSourceConnector:
     ):
         connector = KafkaSourceConnector(
             name="test-connector",
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             to=ToSection(
@@ -129,8 +129,8 @@ class TestKafkaSourceConnector:
         ] = "kafka-connect-offsets"
         connector = KafkaSourceConnector(
             name="test-connector",
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             to=ToSection(
@@ -163,8 +163,8 @@ class TestKafkaSourceConnector:
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             offset_topic="kafka-connect-offsets",
@@ -242,8 +242,8 @@ class TestKafkaSourceConnector:
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             offset_topic="kafka-connect-offsets",
@@ -321,8 +321,8 @@ class TestKafkaSourceConnector:
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             offset_topic="kafka-connect-offsets",
