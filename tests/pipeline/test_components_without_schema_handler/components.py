@@ -35,8 +35,8 @@ class InflateStep(StreamsApp):
                             }
                         ),
                         **{
-                            "config": self._config,
-                            "handlers": self._handlers,
+                            "config": self.config,
+                            "handlers": self.handlers,
                         },
                     )
                     inflate_steps.append(kafka_connector)
