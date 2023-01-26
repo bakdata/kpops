@@ -50,10 +50,9 @@ class TestStreamsApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             **{
-                "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
                 "version": "2.4.2",
                 "app": {
@@ -75,11 +74,10 @@ class TestStreamsApp:
             type: ClassVar[str] = "test"
 
         streams_app = AnotherType(
+            config=config,
+            handlers=handlers,
             **{
-                "type": "test",
                 "name": self.STREAMS_APP_NAME,
-                "config": config,
-                "handlers": handlers,
                 "app": {
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
@@ -115,10 +113,9 @@ class TestStreamsApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             **{
-                "type": "test",
                 "name": self.STREAMS_APP_NAME,
                 "app": {
                     "namespace": "test-namespace",
@@ -147,10 +144,9 @@ class TestStreamsApp:
     def test_should_validate(self, config: PipelineConfig, handlers: ComponentHandlers):
         with pytest.raises(ValueError):
             StreamsApp(
-                handlers=handlers,
                 config=config,
+                handlers=handlers,
                 **{
-                    "type": "streams-app",
                     "name": self.STREAMS_APP_NAME,
                     "app": {
                         "namespace": "test-namespace",
@@ -168,10 +164,9 @@ class TestStreamsApp:
 
         with pytest.raises(ValueError):
             StreamsApp(
-                handlers=handlers,
                 config=config,
+                handlers=handlers,
                 **{
-                    "type": "streams-app",
                     "name": self.STREAMS_APP_NAME,
                     "app": {
                         "namespace": "test-namespace",
@@ -185,10 +180,9 @@ class TestStreamsApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             **{
-                "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
                 "app": {
                     "namespace": "test-namespace",
@@ -227,10 +221,9 @@ class TestStreamsApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             **{
-                "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
                 "app": {
                     "namespace": "test-namespace",
@@ -263,10 +256,9 @@ class TestStreamsApp:
         mocker: MockerFixture,
     ):
         streams_app = StreamsApp(
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             **{
-                "type": "streams-app",
                 "name": self.STREAMS_APP_NAME,
                 "version": "2.4.2",
                 "app": {

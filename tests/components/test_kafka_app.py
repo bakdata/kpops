@@ -33,7 +33,6 @@ class TestKafkaApp:
             handlers=handlers,
             config=config,
             **{
-                "type": "streams-app",
                 "name": "example-name",
                 "app": {
                     "namespace": "test-namespace",
@@ -55,7 +54,6 @@ class TestKafkaApp:
             handlers=handlers,
             config=config,
             **{
-                "type": "streams-app",
                 "name": "example-name",
                 "app": {
                     "namespace": "test-namespace",

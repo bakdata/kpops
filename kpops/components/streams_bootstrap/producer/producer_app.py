@@ -21,7 +21,7 @@ class ProducerApp(KafkaApp):
     """
 
     type: ClassVar[str] = "producer"
-    schema_type: Literal["producer"] = Field("producer", exclude=True)
+    schema_type: Literal["producer"] = Field(default="producer", exclude=True)
     app: ProducerValues
 
     class Config(BaseConfig):

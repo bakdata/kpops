@@ -57,7 +57,8 @@ class TestKafkaConnectorSink:
         connector = KafkaSinkConnector(
             name="test-connector",
             app=KafkaConnectConfig(**{"topics": topic_name}),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
         assert getattr(connector.app, "topics") == topic_name
 
@@ -65,7 +66,8 @@ class TestKafkaConnectorSink:
         connector = KafkaSinkConnector(
             name="test-connector",
             app=KafkaConnectConfig(**{"topics.regex": topic_pattern}),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern
 
@@ -77,7 +79,8 @@ class TestKafkaConnectorSink:
                     "${error_topic_name}": TopicConfig(type=OutputTopicTypes.ERROR),
                 }
             ),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
         assert (
             getattr(connector.app, "errors.deadletterqueue.topic.name")
@@ -98,7 +101,8 @@ class TestKafkaConnectorSink:
                     topic2: FromTopic(type=InputTopicTypes.INPUT),
                 }
             ),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
         assert getattr(connector.app, "topics") == f"{topic1},{topic2}"
 
@@ -116,7 +120,8 @@ class TestKafkaConnectorSink:
             from_=FromSection(
                 topics={topic_pattern: FromTopic(type=InputTopicTypes.INPUT_PATTERN)}
             ),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern
 
@@ -136,7 +141,8 @@ class TestKafkaConnectorSink:
                     ),
                 }
             ),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
 
         mock_create_topics = mocker.patch.object(
@@ -177,7 +183,8 @@ class TestKafkaConnectorSink:
                     ),
                 }
             ),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
 
         mock_destroy_connector = mocker.patch.object(
@@ -207,7 +214,8 @@ class TestKafkaConnectorSink:
                     ),
                 }
             ),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
 
         mock_delete_topics = mocker.patch.object(
@@ -251,7 +259,8 @@ class TestKafkaConnectorSink:
                     ),
                 }
             ),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
 
         mock_delete_topics = mocker.patch.object(
@@ -281,7 +290,8 @@ class TestKafkaConnectorSink:
         connector = KafkaSinkConnector(
             name="test-connector",
             app=KafkaConnectConfig(),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
 
         mock_delete_topics = mocker.patch.object(
@@ -316,7 +326,8 @@ class TestKafkaConnectorSource:
                         "connector-topic": FromTopic(type=InputTopicTypes.INPUT),
                     }
                 ),
-                **{"config": config, "handlers": handlers},
+                config=config,
+                handlers=handlers,
             )
 
     def test_deploy_order(
@@ -335,7 +346,8 @@ class TestKafkaConnectorSource:
                     ),
                 }
             ),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
 
         mock_create_topics = mocker.patch.object(
@@ -380,7 +392,8 @@ class TestKafkaConnectorSource:
                     ),
                 }
             ),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
         assert connector.handlers.connector_handler
 
@@ -414,7 +427,8 @@ class TestKafkaConnectorSource:
                     ),
                 }
             ),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
         assert connector.handlers.connector_handler
 
@@ -456,7 +470,8 @@ class TestKafkaConnectorSource:
         connector = KafkaSourceConnector(
             name="test-connector",
             app=KafkaConnectConfig(),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
         assert connector.to is None
 
@@ -499,7 +514,8 @@ class TestKafkaConnectorSource:
                     ),
                 }
             ),
-            **{"config": config, "handlers": handlers},
+            config=config,
+            handlers=handlers,
         )
 
         assert connector.handlers.connector_handler

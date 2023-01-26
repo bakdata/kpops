@@ -46,10 +46,8 @@ class InflateStep(StreamsApp):
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },
-                        **{
-                            "config": self.config,
-                            "handlers": self.handlers,
-                        },
+                        config=self.config,
+                        handlers=self.handlers,
                     )
                     inflate_steps.append(kafka_connector)
 

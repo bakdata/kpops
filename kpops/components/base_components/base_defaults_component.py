@@ -17,11 +17,11 @@ log = logging.getLogger("PipelineComponentEnricher")
 
 
 class BaseDefaultsComponent(BaseModel):
-    type: ClassVar[str] = Field(..., const=True)
+    type: ClassVar[str] = Field(default=..., const=True)
 
     enrich: bool = Field(default=False, exclude=True)
-    config: PipelineConfig = Field(..., exclude=True)
-    handlers: ComponentHandlers = Field(..., exclude=True)
+    config: PipelineConfig = Field(default=..., exclude=True)
+    handlers: ComponentHandlers = Field(default=..., exclude=True)
 
     class Config(BaseConfig):
         arbitrary_types_allowed = True
