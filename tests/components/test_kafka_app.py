@@ -33,10 +33,10 @@ class TestKafkaApp:
 
     def test_default_configs(self, config: PipelineConfig, handlers: ComponentHandlers):
         kafka_app = KafkaApp(
-            handlers=handlers,
+            name="example-name",
             config=config,
+            handlers=handlers,
             **{
-                "name": "example-name",
                 "namespace": "test-namespace",
                 "app": {
                     "streams": {
@@ -59,10 +59,10 @@ class TestKafkaApp:
         self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
     ):
         kafka_app = KafkaApp(
-            handlers=handlers,
+            name="example-name",
             config=config,
+            handlers=handlers,
             **{
-                "name": "example-name",
                 "namespace": "test-namespace",
                 "app": {
                     "streams": {
