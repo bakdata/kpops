@@ -79,9 +79,7 @@ class TestBaseDefaultsComponent:
         component = TestChildModel(
             config=config,
             handlers=handlers,
-            **{
-                "name": "name-defined-in-pipeline_generator",
-            },
+            **{"name": "name-defined-in-pipeline_generator"},
         )
 
         assert (
