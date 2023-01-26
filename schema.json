@@ -676,14 +676,6 @@
             "description": "StreamsApp component that configures a streams bootstrap app",
             "type": "object",
             "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "streams-app",
-                    "enum": [
-                        "streams-app"
-                    ],
-                    "type": "string"
-                },
                 "enrich": {
                     "title": "Enrich",
                     "default": false,
@@ -707,6 +699,14 @@
                 },
                 "version": {
                     "title": "Version",
+                    "type": "string"
+                },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "streams-app",
+                    "enum": [
+                        "streams-app"
+                    ],
                     "type": "string"
                 }
             },
@@ -771,14 +771,6 @@
             "description": "Producer component\n\nThis producer holds configuration to use as values for the streams bootstrap produce helm chart.",
             "type": "object",
             "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "producer",
-                    "enum": [
-                        "producer"
-                    ],
-                    "type": "string"
-                },
                 "enrich": {
                     "title": "Enrich",
                     "default": false,
@@ -803,6 +795,14 @@
                 "version": {
                     "title": "Version",
                     "type": "string"
+                },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "producer",
+                    "enum": [
+                        "producer"
+                    ],
+                    "type": "string"
                 }
             },
             "required": [
@@ -820,14 +820,6 @@
             "title": "KafkaSourceConnector",
             "type": "object",
             "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "kafka-source-connector",
-                    "enum": [
-                        "kafka-source-connector"
-                    ],
-                    "type": "string"
-                },
                 "enrich": {
                     "title": "Enrich",
                     "default": false,
@@ -848,6 +840,14 @@
                 },
                 "to": {
                     "$ref": "#/definitions/ToSection"
+                },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-source-connector",
+                    "enum": [
+                        "kafka-source-connector"
+                    ],
+                    "type": "string"
                 }
             },
             "required": [
@@ -860,14 +860,6 @@
             "title": "KafkaSinkConnector",
             "type": "object",
             "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "kafka-sink-connector",
-                    "enum": [
-                        "kafka-sink-connector"
-                    ],
-                    "type": "string"
-                },
                 "enrich": {
                     "title": "Enrich",
                     "default": false,
@@ -888,6 +880,14 @@
                 },
                 "to": {
                     "$ref": "#/definitions/ToSection"
+                },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-sink-connector",
+                    "enum": [
+                        "kafka-sink-connector"
+                    ],
+                    "type": "string"
                 }
             },
             "required": [

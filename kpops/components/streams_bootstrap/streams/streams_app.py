@@ -17,6 +17,7 @@ class StreamsApp(KafkaApp):
     """
 
     type: ClassVar[Literal["streams-app"]] = "streams-app"
+    schema_type: Literal["streams-app"] = "streams-app"
     app: StreamsAppConfig
 
     class Config(BaseConfig):

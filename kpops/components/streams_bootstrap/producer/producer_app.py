@@ -21,6 +21,7 @@ class ProducerApp(KafkaApp):
     """
 
     type: ClassVar[Literal["producer"]] = "producer"
+    schema_type: Literal["producer"] = "producer"
     app: ProducerValues
 
     class Config(BaseConfig):

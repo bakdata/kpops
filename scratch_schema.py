@@ -18,11 +18,15 @@ ComponentType = (
 )
 
 
-AnnotatedPipelineComponent = Annotated[ComponentType, Field(discriminator="type")]
+AnnotatedPipelineComponent = Annotated[
+    ComponentType, Field(discriminator="schema_type")
+]
+
 schema = schema_json_of(
     Sequence[AnnotatedPipelineComponent],
     title="kpops pipeline schema",
     by_alias=True,
     indent=4,
-)
+).replace("schema_type", "type")
+
 print(schema)
