@@ -29,7 +29,7 @@ CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
 
 
-class TestKafkaConnectorSource:
+class TestKafkaSourceConnector:
     @pytest.fixture
     def config(slef) -> PipelineConfig:
         return PipelineConfig(
