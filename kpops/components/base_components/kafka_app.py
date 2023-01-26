@@ -37,7 +37,7 @@ class KafkaAppConfig(KubernetesAppConfig):
 
 class KafkaApp(KubernetesApp):
     """
-    Base component for kafka-based components.
+    Base component for Kafka-based components.
     Producer or streaming apps should inherit from this class.
     """
 
