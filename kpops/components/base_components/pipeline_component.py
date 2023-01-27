@@ -5,6 +5,7 @@ from functools import cached_property
 
 from pydantic import BaseConfig, Extra, Field
 
+from kpops.component_handlers.helm_wrapper.model import HelmTemplateFlags
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
 )
@@ -159,6 +160,9 @@ class PipelineComponent(BaseDefaultsComponent):
         The order of the components is the order the components will be deployed
         """
         return [self]
+
+    def template(self, flags: HelmTemplateFlags) -> None:
+        pass
 
     def deploy(self, dry_run: bool) -> None:
         pass

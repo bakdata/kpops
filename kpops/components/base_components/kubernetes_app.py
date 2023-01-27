@@ -5,12 +5,14 @@ import re
 from functools import cached_property
 
 from pydantic import BaseModel, Extra
+from rich.console import Console
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
+    HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -65,6 +67,13 @@ class KubernetesApp(PipelineComponent):
     def helm_release_name(self) -> str:
         """The name for the Helm release. Can be overridden."""
         return self.name
+
+    @override
+    def template(self, flags: HelmTemplateFlags) -> None:
+        stdout = self.helm.template(
+            self.helm_release_name, self.get_helm_chart(), flags
+        )
+        Console().print(stdout)
 
     @override
     def deploy(self, dry_run: bool) -> None:

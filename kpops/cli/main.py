@@ -10,6 +10,7 @@ from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers.helm_wrapper.model import HelmTemplateFlags
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
 )
@@ -197,6 +198,7 @@ def generate(
     components_module: Optional[str] = COMPONENTS_MODULES,
     defaults: Path = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
+    steps: Optional[str] = PIPELINE_STEPS,
     print_yaml: bool = typer.Option(
         True, help="Print enriched pipeline yaml definition"
     ),
@@ -223,9 +225,14 @@ def generate(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
     if template:
-        # Call `helm template` here
-        pass
-    elif print_yaml:
+        flags = HelmTemplateFlags(
+            api_versions=api_versions, ca_file=ca_file, cert_file=cert_file
+        )
+        steps_to_apply = get_steps_to_apply(pipeline, steps)
+        for component in steps_to_apply:
+            log_action("Template", component)
+            component.template(flags)
+    if print_yaml:
         pipeline.print_yaml()
 
     if save:
@@ -233,11 +240,11 @@ def generate(
             raise ValueError(
                 "Please provide a output path if you want to save the generated deployment."
             )
-        elif print_yaml:
-            pipeline.save(out_path)
-        else:
+        if template:
             # write `helm template` to a file
             pass
+        if print_yaml:
+            pipeline.save(out_path)
 
 
 @app.command(help="Deploy pipeline steps")
