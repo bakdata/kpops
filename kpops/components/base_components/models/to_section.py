@@ -5,8 +5,7 @@ from pydantic import BaseConfig, BaseModel, Extra, Field, root_validator
 
 
 class OutputTopicTypes(str, Enum):
-    """
-    Types of output topic
+    """Types of output topic.
     error (error topic), output (output topic), and extra topics. Every extra topic must have a role.
     """
 

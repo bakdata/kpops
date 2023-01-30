@@ -48,11 +48,10 @@ class TestProducerApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ) -> ProducerApp:
         return ProducerApp(
-            handlers=handlers,
+            name=self.PRODUCER_APP_NAME,
             config=config,
+            handlers=handlers,
             **{
-                "type": "producer-app",
-                "name": self.PRODUCER_APP_NAME,
                 "version": "2.4.2",
                 "namespace": "test-namespace",
                 "app": {
@@ -71,11 +70,10 @@ class TestProducerApp:
 
     def test_output_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
-            handlers=handlers,
+            name=self.PRODUCER_APP_NAME,
             config=config,
+            handlers=handlers,
             **{
-                "type": "producer-app",
-                "name": self.PRODUCER_APP_NAME,
                 "namespace": "test-namespace",
                 "app": {
                     "namespace": "test-namespace",

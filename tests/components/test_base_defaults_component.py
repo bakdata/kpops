@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from typing import ClassVar
 from unittest.mock import MagicMock
 
 import pytest
@@ -16,7 +17,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 class TestParentModel(BaseDefaultsComponent):
     __test__ = False
-    _type: str = "parent"
+    type: ClassVar[str] = "parent"
     name: str | None = None
     value: float | None = None
     hard_coded: str = "hard_coded_value"
@@ -24,14 +25,14 @@ class TestParentModel(BaseDefaultsComponent):
 
 class TestChildModel(TestParentModel):
     __test__ = False
-    _type: str = "child"
+    type: ClassVar[str] = "child"
     nice: dict | None = None
     another_hard_coded: str = "another_hard_coded_value"
 
 
 class TestGrandChildModel(TestChildModel):
     __test__ = False
-    _type: str = "grand-child"
+    type: ClassVar[str] = "grand-child"
     grand_child: str | None = None
 
 
@@ -56,10 +57,7 @@ class TestBaseDefaultsComponent:
     def test_inherit_defaults(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
-        component = TestChildModel(
-            handlers=handlers,
-            config=config,
-        )
+        component = TestChildModel(config=config, handlers=handlers)
 
         assert (
             component.name == "fake-child-name"
@@ -79,9 +77,9 @@ class TestBaseDefaultsComponent:
 
     def test_inherit(self, config: PipelineConfig, handlers: ComponentHandlers):
         component = TestChildModel(
-            handlers=handlers,
             config=config,
-            **{"name": "name-defined-in-pipeline_generator"}
+            handlers=handlers,
+            **{"name": "name-defined-in-pipeline_generator"},
         )
 
         assert (
@@ -103,10 +101,7 @@ class TestBaseDefaultsComponent:
     def test_multiple_generations(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
-        component = TestGrandChildModel(
-            handlers=handlers,
-            config=config,
-        )
+        component = TestGrandChildModel(config=config, handlers=handlers)
 
         assert (
             component.name == "fake-child-name"
@@ -129,14 +124,11 @@ class TestBaseDefaultsComponent:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         class TestEnvVarModel(BaseDefaultsComponent):
-            _type: str = "env-var-test"
+            type: ClassVar[str] = "env-var-test"
             name: str | None = None
 
         os.environ["pipeline_name"] = str(DEFAULTS_PATH)
-        component = TestEnvVarModel(
-            handlers=handlers,
-            config=config,
-        )
+        component = TestEnvVarModel(config=config, handlers=handlers)
 
         assert component.name == str(
             DEFAULTS_PATH

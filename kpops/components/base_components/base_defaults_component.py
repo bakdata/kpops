@@ -4,7 +4,7 @@ import os
 from collections import deque
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import TypeVar
+from typing import Any, ClassVar, TypeVar
 
 import typer
 from pydantic import BaseConfig, BaseModel, Field
@@ -17,21 +17,23 @@ log = logging.getLogger("PipelineComponentEnricher")
 
 
 class BaseDefaultsComponent(BaseModel):
-    _type: str = Field(..., alias="type")
+    type: ClassVar[str] = Field(default=..., const=True)
 
-    enrich: bool = Field(default=False, exclude=True)
-    config: PipelineConfig = Field(default=..., exclude=True)
-    handlers: ComponentHandlers = Field(default=..., exclude=True)
+    enrich: bool = Field(default=False, exclude=True, hidden_from_schema=True)
+    config: PipelineConfig = Field(default=..., exclude=True, hidden_from_schema=True)
+    handlers: ComponentHandlers = Field(
+        default=..., exclude=True, hidden_from_schema=True
+    )
 
     class Config(BaseConfig):
         arbitrary_types_allowed = True
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         if kwargs.get("enrich", True):
             kwargs = self.extend_with_defaults(kwargs)
         super().__init__(**kwargs)
 
-    def extend_with_defaults(self, kwargs) -> dict:
+    def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
         """
         Merges tmp_defaults with all tmp_defaults for parent classes
 
@@ -60,13 +62,13 @@ class BaseDefaultsComponent(BaseModel):
                 if not environment_default_file_path.exists():
                     kwargs = update_nested(
                         kwargs,
-                        defaults_from_yaml(main_default_file_path, base._type),
+                        defaults_from_yaml(main_default_file_path, base.type),
                     )
                 else:
                     kwargs = update_nested(
                         kwargs,
-                        defaults_from_yaml(environment_default_file_path, base._type),
-                        defaults_from_yaml(main_default_file_path, base._type),
+                        defaults_from_yaml(environment_default_file_path, base.type),
+                        defaults_from_yaml(main_default_file_path, base.type),
                     )
         return kwargs
 

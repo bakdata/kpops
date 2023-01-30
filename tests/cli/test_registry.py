@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import ClassVar
+
 import pytest
 from pydantic import BaseModel
 
@@ -8,12 +10,12 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 
 
 class SubComponent(PipelineComponent):
-    _type: str = "sub_component"
+    type: ClassVar[str] = "sub-component"
     pass
 
 
 class SubSubComponent(SubComponent):
-    _type: str = "sub_sub_component"
+    type: ClassVar[str] = "sub-sub-component"
     pass
 
 
@@ -44,10 +46,10 @@ def test_registry():
     assert registry._classes == {}
     registry.find_components(MODULE)
     assert registry._classes == {
-        SubComponent._type: SubComponent,
-        SubSubComponent._type: SubSubComponent,
+        "sub-component": SubComponent,
+        "sub-sub-component": SubSubComponent,
     }
-    assert registry[SubComponent._type] == SubComponent
-    assert registry[SubSubComponent._type] == SubSubComponent
+    assert registry["sub-component"] == SubComponent
+    assert registry["sub-sub-component"] == SubSubComponent
     with pytest.raises(ClassNotFoundError):
         registry["doesnt-exist"]

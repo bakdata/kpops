@@ -32,7 +32,7 @@ CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
 
 
-class TestKafkaConnectorSink:
+class TestKafkaSinkConnector:
     @pytest.fixture
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kafka_connect.log.info")
@@ -69,8 +69,8 @@ class TestKafkaConnectorSink:
         topic_name = "connector-topic"
         connector = KafkaSinkConnector(
             name="test-connector",
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(**{"topics": topic_name}),
             namespace="test-namespace",
         )
@@ -79,8 +79,8 @@ class TestKafkaConnectorSink:
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
             name="test-connector",
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(**{"topics.regex": topic_pattern}),
             namespace="test-namespace",
         )
@@ -88,8 +88,8 @@ class TestKafkaConnectorSink:
 
         connector = KafkaSinkConnector(
             name="test-connector",
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             to=ToSection(
@@ -110,8 +110,8 @@ class TestKafkaConnectorSink:
         topic2 = "connector-topic2"
         connector = KafkaSinkConnector(
             name="test-connector",
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             from_=FromSection(
@@ -133,8 +133,8 @@ class TestKafkaConnectorSink:
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
             name="test-connector",
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             from_=FromSection(
@@ -151,8 +151,8 @@ class TestKafkaConnectorSink:
     ):
         connector = KafkaSinkConnector(
             name="test-connector",
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             to=ToSection(
@@ -194,8 +194,8 @@ class TestKafkaConnectorSink:
     ):
         connector = KafkaSinkConnector(
             name="test-connector",
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             to=ToSection(
@@ -227,8 +227,8 @@ class TestKafkaConnectorSink:
     ):
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             to=ToSection(
@@ -304,8 +304,8 @@ class TestKafkaConnectorSink:
     ):
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             to=ToSection(
@@ -399,8 +399,8 @@ class TestKafkaConnectorSink:
     ):
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
         )

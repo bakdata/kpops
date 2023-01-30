@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from typing_extensions import override
 
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
@@ -8,15 +10,15 @@ from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
 class ImportProducer(ProducerApp):
-    _type = "scheduled-producer"
+    type: ClassVar[str] = "scheduled-producer"
 
 
 class Converter(StreamsApp):
-    _type = "converter"
+    type: ClassVar[str] = "converter"
 
 
 class InflateStep(StreamsApp):
-    _type = "should-inflate"
+    type: ClassVar[str] = "should-inflate"
 
     @override
     def inflate(self) -> list[PipelineComponent]:
@@ -26,9 +28,9 @@ class InflateStep(StreamsApp):
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
                         name="sink-connector",
-                        namespace="example-namespace",
-                        handlers=self.handlers,
                         config=self.config,
+                        handlers=self.handlers,
+                        namespace="example-namespace",
                         app=KafkaConnectConfig(
                             **{
                                 "topics": topic_name,
