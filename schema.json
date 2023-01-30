@@ -5,6 +5,8 @@
         "discriminator": {
             "propertyName": "type",
             "mapping": {
+                "kubernetes-app": "#/definitions/KubernetesApp",
+                "kafka-app": "#/definitions/KafkaApp",
                 "streams-app": "#/definitions/StreamsApp",
                 "producer": "#/definitions/ProducerApp",
                 "kafka-source-connector": "#/definitions/KafkaSourceConnector",
@@ -12,6 +14,12 @@
             }
         },
         "oneOf": [
+            {
+                "$ref": "#/definitions/KubernetesApp"
+            },
+            {
+                "$ref": "#/definitions/KafkaApp"
+            },
             {
                 "$ref": "#/definitions/StreamsApp"
             },
@@ -72,123 +80,14 @@
             ],
             "additionalProperties": false
         },
-        "StreamsConfig": {
-            "title": "StreamsConfig",
-            "description": "Streams Bootstrap streams section",
+        "KubernetesAppConfig": {
+            "title": "KubernetesAppConfig",
             "type": "object",
-            "properties": {
-                "brokers": {
-                    "title": "Brokers",
-                    "type": "string"
-                },
-                "schemaRegistryUrl": {
-                    "title": "Schemaregistryurl",
-                    "type": "string"
-                },
-                "inputTopics": {
-                    "title": "Inputtopics",
-                    "default": [],
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "inputPattern": {
-                    "title": "Inputpattern",
-                    "type": "string"
-                },
-                "extraInputTopics": {
-                    "title": "Extrainputtopics",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "extraInputPatterns": {
-                    "title": "Extrainputpatterns",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "extraOutputTopics": {
-                    "title": "Extraoutputtopics",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "outputTopic": {
-                    "title": "Outputtopic",
-                    "type": "string"
-                },
-                "errorTopic": {
-                    "title": "Errortopic",
-                    "type": "string"
-                },
-                "config": {
-                    "title": "Config",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                }
-            },
-            "required": [
-                "brokers"
-            ]
-        },
-        "StreamsAppAutoScaling": {
-            "title": "StreamsAppAutoScaling",
-            "type": "object",
-            "properties": {
-                "consumergroup": {
-                    "title": "Consumergroup",
-                    "type": "string"
-                },
-                "topics": {
-                    "title": "Topics",
-                    "default": [],
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            },
-            "required": [
-                "consumergroup"
-            ]
-        },
-        "StreamsAppConfig": {
-            "title": "StreamsAppConfig",
-            "description": "StreamsBoostrap app configurations.\n\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
-            "type": "object",
-            "properties": {
-                "streams": {
-                    "$ref": "#/definitions/StreamsConfig"
-                },
-                "nameOverride": {
-                    "title": "Nameoverride",
-                    "type": "string"
-                },
-                "autoscaling": {
-                    "$ref": "#/definitions/StreamsAppAutoScaling"
-                }
-            },
-            "required": [
-                "streams"
-            ]
+            "properties": {}
         },
         "OutputTopicTypes": {
             "title": "OutputTopicTypes",
-            "description": "Types of output topic\nerror (error topic), output (output topic), and extra topics. Every extra topic must have a role.",
+            "description": "Types of output topic.\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\n    ",
             "enum": [
                 "error",
                 "output",
@@ -315,9 +214,9 @@
                 "url"
             ]
         },
-        "StreamsApp": {
-            "title": "StreamsApp",
-            "description": "StreamsApp component that configures a streams bootstrap app",
+        "KubernetesApp": {
+            "title": "KubernetesApp",
+            "description": "Base Kubernetes app",
             "type": "object",
             "properties": {
                 "name": {
@@ -328,10 +227,95 @@
                     "$ref": "#/definitions/FromSection"
                 },
                 "app": {
-                    "$ref": "#/definitions/StreamsAppConfig"
+                    "$ref": "#/definitions/KubernetesAppConfig"
                 },
                 "to": {
                     "$ref": "#/definitions/ToSection"
+                },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kubernetes-app",
+                    "enum": [
+                        "kubernetes-app"
+                    ],
+                    "type": "string"
+                },
+                "repoConfig": {
+                    "$ref": "#/definitions/HelmRepoConfig"
+                },
+                "namespace": {
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "version": {
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app",
+                "namespace"
+            ]
+        },
+        "KafkaStreamsConfig": {
+            "title": "KafkaStreamsConfig",
+            "type": "object",
+            "properties": {
+                "brokers": {
+                    "title": "Brokers",
+                    "type": "string"
+                },
+                "schemaRegistryUrl": {
+                    "title": "Schemaregistryurl",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "brokers"
+            ]
+        },
+        "KafkaAppConfig": {
+            "title": "KafkaAppConfig",
+            "type": "object",
+            "properties": {
+                "streams": {
+                    "$ref": "#/definitions/KafkaStreamsConfig"
+                },
+                "nameOverride": {
+                    "title": "Nameoverride",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "streams"
+            ]
+        },
+        "KafkaApp": {
+            "title": "KafkaApp",
+            "description": "Base component for Kafka-based components.\nProducer or streaming apps should inherit from this class.",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "from": {
+                    "$ref": "#/definitions/FromSection"
+                },
+                "app": {
+                    "$ref": "#/definitions/KafkaAppConfig"
+                },
+                "to": {
+                    "$ref": "#/definitions/ToSection"
+                },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-app",
+                    "enum": [
+                        "kafka-app"
+                    ],
+                    "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
@@ -359,6 +343,145 @@
                     "title": "Version",
                     "default": "2.7.0",
                     "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app",
+                "namespace"
+            ]
+        },
+        "StreamsConfig": {
+            "title": "StreamsConfig",
+            "description": "Streams Bootstrap streams section",
+            "type": "object",
+            "properties": {
+                "brokers": {
+                    "title": "Brokers",
+                    "type": "string"
+                },
+                "schemaRegistryUrl": {
+                    "title": "Schemaregistryurl",
+                    "type": "string"
+                },
+                "inputTopics": {
+                    "title": "Inputtopics",
+                    "default": [],
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "inputPattern": {
+                    "title": "Inputpattern",
+                    "type": "string"
+                },
+                "extraInputTopics": {
+                    "title": "Extrainputtopics",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "extraInputPatterns": {
+                    "title": "Extrainputpatterns",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "extraOutputTopics": {
+                    "title": "Extraoutputtopics",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "outputTopic": {
+                    "title": "Outputtopic",
+                    "type": "string"
+                },
+                "errorTopic": {
+                    "title": "Errortopic",
+                    "type": "string"
+                },
+                "config": {
+                    "title": "Config",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "brokers"
+            ]
+        },
+        "StreamsAppAutoScaling": {
+            "title": "StreamsAppAutoScaling",
+            "type": "object",
+            "properties": {
+                "consumergroup": {
+                    "title": "Consumergroup",
+                    "type": "string"
+                },
+                "topics": {
+                    "title": "Topics",
+                    "default": [],
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "consumergroup"
+            ]
+        },
+        "StreamsAppConfig": {
+            "title": "StreamsAppConfig",
+            "description": "StreamsBoostrap app configurations.\n\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "type": "object",
+            "properties": {
+                "streams": {
+                    "$ref": "#/definitions/StreamsConfig"
+                },
+                "nameOverride": {
+                    "title": "Nameoverride",
+                    "type": "string"
+                },
+                "autoscaling": {
+                    "$ref": "#/definitions/StreamsAppAutoScaling"
+                }
+            },
+            "required": [
+                "streams"
+            ]
+        },
+        "StreamsApp": {
+            "title": "StreamsApp",
+            "description": "StreamsApp component that configures a streams bootstrap app",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "from": {
+                    "$ref": "#/definitions/FromSection"
+                },
+                "app": {
+                    "$ref": "#/definitions/StreamsAppConfig"
+                },
+                "to": {
+                    "$ref": "#/definitions/ToSection"
                 },
                 "type": {
                     "title": "Schema Type",
@@ -366,6 +489,33 @@
                     "enum": [
                         "streams-app"
                     ],
+                    "type": "string"
+                },
+                "repoConfig": {
+                    "title": "Repoconfig",
+                    "default": {
+                        "repository_name": "bakdata-streams-bootstrap",
+                        "url": "https://bakdata.github.io/streams-bootstrap/",
+                        "repo_auth_flags": {
+                            "username": null,
+                            "password": null,
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ]
+                },
+                "namespace": {
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "version": {
+                    "title": "Version",
+                    "default": "2.7.0",
                     "type": "string"
                 }
             },
@@ -438,6 +588,14 @@
                 "to": {
                     "$ref": "#/definitions/ToSection"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "producer",
+                    "enum": [
+                        "producer"
+                    ],
+                    "type": "string"
+                },
                 "repoConfig": {
                     "title": "Repoconfig",
                     "default": {
@@ -463,14 +621,6 @@
                 "version": {
                     "title": "Version",
                     "default": "2.7.0",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "producer",
-                    "enum": [
-                        "producer"
-                    ],
                     "type": "string"
                 }
             },

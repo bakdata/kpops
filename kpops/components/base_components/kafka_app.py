@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import logging
-from typing import ClassVar
+from typing import ClassVar, Literal
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -42,6 +42,9 @@ class KafkaApp(KubernetesApp):
     """
 
     type: ClassVar[str] = "kafka-app"
+    schema_type: Literal["kafka-app"] = Field(  # type: ignore[assignment]
+        default="kafka-app", exclude=True
+    )
     app: KafkaAppConfig
     repo_config: HelmRepoConfig = HelmRepoConfig(
         repository_name="bakdata-streams-bootstrap",

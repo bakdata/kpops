@@ -3,9 +3,9 @@ from __future__ import annotations
 import logging
 import re
 from functools import cached_property
-from typing import ClassVar
+from typing import ClassVar, Literal
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -35,6 +35,9 @@ class KubernetesApp(PipelineComponent):
     """Base Kubernetes app"""
 
     type: ClassVar[str] = "kubernetes-app"
+    schema_type: Literal["kubernetes-app"] = Field(  # type: ignore[assignment]
+        default="kubernetes-app", exclude=True
+    )
     app: KubernetesAppConfig
     repo_config: HelmRepoConfig | None = None
     namespace: str

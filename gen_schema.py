@@ -4,10 +4,12 @@ from pydantic import Field, schema, schema_json_of
 from pydantic.fields import ModelField
 from pydantic.schema import SkipField
 
+from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.base_components.kafka_connect import (
     KafkaSinkConnector,
     KafkaSourceConnector,
 )
+from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
 
@@ -24,7 +26,14 @@ def field_schema(field: ModelField, **kwargs: Any) -> Any:
 
 schema.field_schema = field_schema
 
-PipelineComponent = StreamsApp | ProducerApp | KafkaSourceConnector | KafkaSinkConnector
+PipelineComponent = (
+    KubernetesApp
+    | KafkaApp
+    | StreamsApp
+    | ProducerApp
+    | KafkaSourceConnector
+    | KafkaSinkConnector
+)
 
 
 AnnotatedPipelineComponent = Annotated[
