@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+from functools import cached_property
 
 from pydantic import BaseConfig, Extra, Field
 
@@ -28,6 +29,7 @@ class PipelineComponent(BaseDefaultsComponent):
 
     class Config(BaseConfig):
         extra = Extra.allow
+        keep_untouched = (cached_property,)
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -60,17 +62,17 @@ class PipelineComponent(BaseDefaultsComponent):
         """
         error_topic_name = self.substitute_component_names(
             self.config.topic_name_config.default_error_topic_name,
-            self._type,
+            self.type,
             **os.environ,
         )
         output_topic_name = self.substitute_component_names(
             self.config.topic_name_config.default_output_topic_name,
-            self._type,
+            self.type,
             **os.environ,
         )
         return self.substitute_component_names(
             topic_name,
-            self._type,
+            self.type,
             error_topic_name=error_topic_name,
             output_topic_name=output_topic_name,
         )
@@ -147,7 +149,7 @@ class PipelineComponent(BaseDefaultsComponent):
 
     def substitute_name(self):
         if self.name:
-            self.name = self.substitute_component_names(self.name, self._type)
+            self.name = self.substitute_component_names(self.name, self.type)
         else:
             raise ValueError("Every component must have a name in the end.")
 

@@ -138,6 +138,7 @@ To deploy Kafka, this guide uses Confluent's [Helm chart](https://github.com/con
             "offsets.topic.replication.factor": 1
             "transaction.state.log.replication.factor": 1
             "transaction.state.log.min.isr": 1
+            "confluent.metrics.reporter.topic.replicas": 1
           resources:
             requests:
               cpu: 50m
@@ -168,7 +169,7 @@ To deploy Kafka, this guide uses Confluent's [Helm chart](https://github.com/con
           prometheus:
             jmx:
               enabled: false
-        
+
         cp-kafka-connect:
           enabled: true
           replicaCount: 1
@@ -178,7 +179,7 @@ To deploy Kafka, this guide uses Confluent's [Helm chart](https://github.com/con
           overrideGroupId: k8kafka
           kafka:
             bootstrapServers: "PLAINTEXT://k8kafka-cp-kafka-headless:9092"
-          heapOptions: "-Xms256M -Xmx256"
+          heapOptions: "-Xms256M -Xmx256M"
           resources:
             requests:
               cpu: 500m
@@ -191,27 +192,27 @@ To deploy Kafka, this guide uses Confluent's [Helm chart](https://github.com/con
             "consumer.max.poll.interval.ms": "900000"
             "config.storage.replication.factor": "1"
             "offset.storage.replication.factor": "1"
-            "status.storage.replication.factor": "1"  
+            "status.storage.replication.factor": "1"
           cp-schema-registry:
-            url: http://k8kafka-cp-schema-registry:8081  
+            url: http://k8kafka-cp-schema-registry:8081
           prometheus:
             jmx:
               enabled: false
 
         cp-kafka-rest:
-         enabled: true
-         imageTag: 7.1.3
-         fullnameOverride: "k8kafka-cp-rest"
-         heapOptions: "-Xms256M -Xmx256M"
-         resources:
-           requests:
-             cpu: 50m
-             memory: 0.25G
-           limits:
-             cpu: 250m
-             memory: 0.5G
-         prometheus:
-           jmx:
+          enabled: true
+          imageTag: 7.1.3
+          fullnameOverride: "k8kafka-cp-rest"
+          heapOptions: "-Xms256M -Xmx256M"
+          resources:
+            requests:
+              cpu: 50m
+              memory: 0.25G
+            limits:
+              cpu: 250m
+              memory: 0.5G
+          prometheus:
+            jmx:
               enabled: false
 
         cp-ksql-server:

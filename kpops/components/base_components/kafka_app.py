@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import logging
+from typing import ClassVar, Literal
 
-from pydantic import BaseModel, Extra
+from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmRepoConfig,
+    HelmUpgradeInstallFlags,
+)
 from kpops.component_handlers.helm_wrapper.utils import trim_release_name
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
@@ -33,12 +37,20 @@ class KafkaAppConfig(KubernetesAppConfig):
 
 class KafkaApp(KubernetesApp):
     """
-    Base component for kafka-based components.
+    Base component for Kafka-based components.
     Producer or streaming apps should inherit from this class.
     """
 
-    _type = "kafka-app"
+    type: ClassVar[str] = "kafka-app"
+    schema_type: Literal["kafka-app"] = Field(  # type: ignore[assignment]
+        default="kafka-app", exclude=True
+    )
     app: KafkaAppConfig
+    repo_config: HelmRepoConfig = HelmRepoConfig(
+        repository_name="bakdata-streams-bootstrap",
+        url="https://bakdata.github.io/streams-bootstrap/",
+    )
+    version = "2.7.0"
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)

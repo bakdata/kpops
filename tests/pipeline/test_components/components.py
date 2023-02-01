@@ -1,4 +1,4 @@
-from typing import Any
+from typing import Any, ClassVar
 
 from schema_registry.client.schema import AvroSchema
 from typing_extensions import override
@@ -14,11 +14,11 @@ from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
 class ImportProducer(ProducerApp):
-    _type = "scheduled-producer"
+    type: ClassVar[str] = "scheduled-producer"
 
 
 class Converter(StreamsApp):
-    _type = "converter"
+    type: ClassVar[str] = "converter"
 
 
 class SubStreamsApp(StreamsApp):
@@ -28,11 +28,11 @@ class SubStreamsApp(StreamsApp):
 class Filter(SubStreamsApp):
     """Subsubclass of StreamsApp to test inheritance."""
 
-    _type = "filter"
+    type: ClassVar[str] = "filter"
 
 
 class InflateStep(StreamsApp):
-    _type = "should-inflate"
+    type: ClassVar[str] = "should-inflate"
 
     @override
     def inflate(self) -> list[PipelineComponent]:
@@ -42,9 +42,10 @@ class InflateStep(StreamsApp):
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
                         name="sink-connector",
-                        handlers=self.handlers,
                         config=self.config,
-                        app={
+                        handlers=self.handlers,
+                        namespace="example-namespace",
+                        app={  # type: ignore # FIXME
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },
