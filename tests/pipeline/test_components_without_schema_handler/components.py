@@ -22,7 +22,7 @@ class InflateStep(StreamsApp):
 
     @override
     def inflate(self) -> list[PipelineComponent]:
-        inflate_steps: list[PipelineComponent] = [self]
+        inflate_steps = super().inflate()
         if self.to:
             for topic_name, topic_config in self.to.topics.items():
                 if topic_config.type == OutputTopicTypes.OUTPUT:

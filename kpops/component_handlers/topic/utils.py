@@ -57,10 +57,10 @@ def parse_rest_proxy_topic_config(
     comparable_in_cluster_config_dict = {}
     default_configs = {}
     for config in topic_config_in_cluster.data:
-        if config.source == KafkaTopicConfigSource.DYNAMIC_TOPIC_CONFIG:
+        if config.source is KafkaTopicConfigSource.DYNAMIC_TOPIC_CONFIG:
             comparable_in_cluster_config_dict[config.name] = config.value
         for synonym in config.synonyms:
-            if synonym.source == KafkaTopicConfigSource.DEFAULT_CONFIG:
+            if synonym.source is KafkaTopicConfigSource.DEFAULT_CONFIG:
                 default_configs[config.name] = synonym.value
                 continue  # we only expect one default value here
     return comparable_in_cluster_config_dict, default_configs

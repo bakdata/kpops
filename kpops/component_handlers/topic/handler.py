@@ -42,7 +42,7 @@ class TopicHandler:
                     if differences:
                         json_body = []
                         for difference in differences:
-                            if difference.diff_type == DiffType.REMOVE:
+                            if difference.diff_type is DiffType.REMOVE:
                                 json_body.append(
                                     {"name": difference.key, "operation": "DELETE"}
                                 )

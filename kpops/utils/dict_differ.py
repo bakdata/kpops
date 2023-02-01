@@ -47,7 +47,7 @@ def get_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> list[Diff]:
     differences = list(diff(d1, d2, ignore=ignore))
     diff_list = []
     for difference in differences:
-        if difference[0] == DiffType.ADD.value:
+        if difference[0] == DiffType.ADD:
             for key, change in difference[2]:
                 diff_object = Diff(
                     diff_type=DiffType[difference[0].upper()],
@@ -56,7 +56,7 @@ def get_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> list[Diff]:
                 )
                 diff_list.append(diff_object)
 
-        elif difference[0] == DiffType.REMOVE.value:
+        elif difference[0] == DiffType.REMOVE:
             for key, change in difference[2]:
                 diff_object = Diff(
                     diff_type=DiffType[difference[0].upper()],
@@ -65,7 +65,7 @@ def get_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> list[Diff]:
                 )
                 diff_list.append(diff_object)
 
-        elif difference[0] == DiffType.CHANGE.value:
+        elif difference[0] == DiffType.CHANGE:
             diff_object = Diff(
                 diff_type=DiffType[difference[0].upper()],
                 key=__get_key(difference[1], ""),
