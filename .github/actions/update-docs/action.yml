@@ -45,6 +45,6 @@ runs:
           poetry run mike deploy dev --push --rebase --config-file ./docs/mkdocs.yml
         else
           new_tag=${NEW_TAG%.*}
-          poetry run mike deploy "$new_tag" --push latest --update-aliases --rebase --config-file ./docs/mkdocs.yml
+          poetry run mike deploy "$new_tag" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
           poetry run mike set-default latest --rebase --config-file ./docs/mkdocs.yml
         fi
