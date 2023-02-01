@@ -1,4 +1,4 @@
-name: Release Python package to TestPyPI
+name: Release to TestPyPI
 
 on:
   workflow_call:
