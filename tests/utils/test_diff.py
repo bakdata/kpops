@@ -1,6 +1,6 @@
 import pytest
 
-from kpops.utils.dict_differ import Change, Diff, DiffType, get_diff, render_diff
+from kpops.utils.dict_differ import Change, Diff, DiffType, render_diff
 
 
 @pytest.mark.parametrize(
@@ -192,4 +192,4 @@ def test_render_diff(d1: dict, d2: dict, ignore: set[str] | None, output: str | 
     ],
 )
 def test_get_diff(d1: dict, d2: dict, output: list[Diff]):
-    assert list(get_diff(d1, d2)) == output
+    assert list(Diff.from_dicts(d1, d2)) == output

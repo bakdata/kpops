@@ -14,7 +14,7 @@ from kpops.component_handlers.topic.utils import (
 )
 from kpops.components.base_components.models.to_section import TopicConfig, ToSection
 from kpops.utils.colorify import greenify, magentaify, yellowify
-from kpops.utils.dict_differ import Diff, DiffType, get_diff, render_diff
+from kpops.utils.dict_differ import Diff, DiffType, render_diff
 
 log = logging.getLogger("KafkaTopic")
 
@@ -86,7 +86,7 @@ class TopicHandler:
             cluster_config
         )
 
-        return list(get_diff(comparable_in_cluster_config_dict, current_config))
+        return list(Diff.from_dicts(comparable_in_cluster_config_dict, current_config))
 
     def __dry_run_topic_creation(
         self,
