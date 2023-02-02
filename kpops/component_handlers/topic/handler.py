@@ -42,16 +42,14 @@ class TopicHandler:
                     if differences:
                         json_body = []
                         for difference in differences:
-                            if difference.diff_type == DiffType.REMOVE:
+                            if difference.diff_type is DiffType.REMOVE:
                                 json_body.append(
                                     {"name": difference.key, "operation": "DELETE"}
                                 )
-                            else:
-                                config_value = difference.change.new_value
-                                if config_value:
-                                    json_body.append(
-                                        {"name": difference.key, "value": config_value}
-                                    )
+                            elif config_value := difference.change.new_value:
+                                json_body.append(
+                                    {"name": difference.key, "value": config_value}
+                                )
                         self.proxy_wrapper.batch_alter_topic_config(
                             topic_name=topic_name,
                             json_body=json_body,

@@ -43,10 +43,10 @@ class Change(NamedTuple, Generic[T]):
 
 
 @dataclass
-class Diff:
+class Diff(Generic[T]):
     diff_type: DiffType
     key: str
-    change: Change
+    change: Change[T]
 
     @staticmethod
     def from_dicts(
