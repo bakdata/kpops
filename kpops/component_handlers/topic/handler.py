@@ -86,7 +86,7 @@ class TopicHandler:
             cluster_config
         )
 
-        return get_diff(comparable_in_cluster_config_dict, current_config)
+        return list(get_diff(comparable_in_cluster_config_dict, current_config))
 
     def __dry_run_topic_creation(
         self,

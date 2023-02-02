@@ -192,4 +192,4 @@ def test_render_diff(d1: dict, d2: dict, ignore: set[str] | None, output: str | 
     ],
 )
 def test_get_diff(d1: dict, d2: dict, output: list[Diff]):
-    assert get_diff(d1, d2) == output
+    assert list(get_diff(d1, d2)) == output
