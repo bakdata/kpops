@@ -9,6 +9,7 @@ from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
     HelmRepoConfig,
+    HelmTemplate,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
@@ -64,7 +65,6 @@ class TestKubernetesApp:
         helm_mock: MagicMock,
         app_value: KubernetesTestValue,
     ):
-
         kubernetes_app = KubernetesApp(
             name="test-kubernetes-apps",
             config=config,
@@ -141,10 +141,10 @@ class TestKubernetesApp:
         config: PipelineConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
-        mocker: MagicMock,
+        mocker: MockerFixture,
+        log_info_mock: MagicMock,
         app_value: KubernetesTestValue,
     ):
-
         kubernetes_app = KubernetesApp(
             name="test-kubernetes-apps",
             config=config,
@@ -155,11 +155,20 @@ class TestKubernetesApp:
         mocker.patch.object(
             kubernetes_app, "get_helm_chart", return_value="test/test-chart"
         )
+        mock_load_manifest = mocker.patch(
+            "kpops.components.base_components.kubernetes_app.Helm.load_helm_manifest",
+            return_value=iter([HelmTemplate("path.yaml", {"a": 1})]),
+        )
+        spy_helm_diff = mocker.spy(kubernetes_app, "print_helm_diff")
 
-        kubernetes_app.deploy(True)
+        kubernetes_app.deploy(dry_run=True)
+
+        spy_helm_diff.assert_called_once()
         helm_mock.get_manifest.assert_called_once_with(
             "test-kubernetes-apps", "test-namespace"
         )
+        mock_load_manifest.assert_called_once()
+        assert log_info_mock.mock_calls == [mocker.call("\n\x1b[32m+ a: 1\n\x1b[0m")]
 
     def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
         self,
@@ -167,7 +176,6 @@ class TestKubernetesApp:
         handlers: ComponentHandlers,
         app_value: KubernetesTestValue,
     ):
-
         kubernetes_app = KubernetesApp(
             name="test-kubernetes-apps",
             config=config,
@@ -191,7 +199,6 @@ class TestKubernetesApp:
         log_info_mock: MagicMock,
         app_value: KubernetesTestValue,
     ):
-
         kubernetes_app = KubernetesApp(
             name="test-kubernetes-apps",
             config=config,
@@ -217,7 +224,6 @@ class TestKubernetesApp:
         handlers: ComponentHandlers,
         app_value: KubernetesTestValue,
     ):
-
         assert KubernetesApp(
             name="example-component-with-very-long-name-longer-than-most-of-our-kubernetes-apps",
             config=config,
