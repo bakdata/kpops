@@ -111,7 +111,7 @@ class KafkaApp(KubernetesApp):
             current_release = self.helm.get_manifest(
                 clean_up_release_name, self.namespace
             )
-            new_release = Helm.load_helm_manifest(stdout)
+            new_release = Helm.load_manifest(stdout)
             self.helm_diff.log_helm_diff(log, current_release, new_release)
 
         if not retain_clean_jobs:

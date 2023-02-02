@@ -99,7 +99,7 @@ class KubernetesApp(PipelineComponent):
 
     def print_helm_diff(self, stdout: str) -> None:
         current_release = self.helm.get_manifest(self.helm_release_name, self.namespace)
-        new_release = Helm.load_helm_manifest(stdout)
+        new_release = Helm.load_manifest(stdout)
         self.helm_diff.log_helm_diff(log, current_release, new_release)
 
     def get_helm_chart(self) -> str:
