@@ -1,6 +1,6 @@
 from difflib import Differ
 from enum import Enum
-from typing import Any, Iterable, Iterator, NamedTuple, Sequence
+from typing import Any, Generic, Iterable, Iterator, NamedTuple, Sequence, TypeVar
 
 import typer
 import yaml
@@ -16,9 +16,12 @@ class DiffType(str, Enum):
     REMOVE = "remove"
 
 
-class Change(NamedTuple):
-    old_value: Any
-    new_value: Any
+T = TypeVar("T")
+
+
+class Change(NamedTuple, Generic[T]):
+    old_value: T
+    new_value: T
 
 
 class Diff(BaseModel):
@@ -45,7 +48,7 @@ def render_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> str | Non
 
 def get_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> list[Diff]:
     differences = list(diff(d1, d2, ignore=ignore))
-    diff_list = []
+    diff_list: list[Diff] = []
     for difference in differences:
         if difference[0] == DiffType.ADD.value:
             for key, change in difference[2]:

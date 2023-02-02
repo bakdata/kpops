@@ -9,14 +9,14 @@ log = logging.getLogger("HelmDiff")
 
 
 class HelmDiff:
-    def __init__(self, config: HelmDiffConfig):
-        self.config = config
+    def __init__(self, config: HelmDiffConfig) -> None:
+        self.config: HelmDiffConfig = config
 
     @staticmethod
     def get_diff(
         current_release: Iterable[HelmTemplate],
         new_release: Iterable[HelmTemplate],
-    ) -> list[Change]:
+    ) -> list[Change[dict]]:
         new_release_index = {
             helm_template.filepath: helm_template for helm_template in new_release
         }
@@ -39,7 +39,9 @@ class HelmDiff:
 
         return changes
 
-    def log_helm_diff(self, changes: Sequence[Change], logger: logging.Logger):
+    def log_helm_diff(
+        self, changes: Sequence[Change[dict]], logger: logging.Logger
+    ) -> None:
         for change in changes:
             if diff := render_diff(
                 *change,
