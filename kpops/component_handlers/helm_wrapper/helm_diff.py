@@ -44,7 +44,8 @@ class HelmDiff:
     ) -> None:
         for change in changes:
             if diff := render_diff(
-                *change,
+                change.old_value,
+                change.new_value,
                 ignore=self.config.ignore,
             ):
                 logger.info("\n" + diff)

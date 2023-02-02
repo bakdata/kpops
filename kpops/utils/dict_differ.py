@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from difflib import Differ
 from enum import Enum
-from typing import Generic, Iterable, Iterator, NamedTuple, Sequence, TypeVar
+from typing import Generic, Iterable, Iterator, Sequence, TypeVar
 
 import typer
 import yaml
@@ -25,7 +25,8 @@ class DiffType(str, Enum):
 T = TypeVar("T")
 
 
-class Change(NamedTuple, Generic[T]):
+@dataclass
+class Change(Generic[T]):  # Generic NamedTuple requires Python 3.11+
     old_value: T
     new_value: T
 
