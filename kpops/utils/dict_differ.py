@@ -27,7 +27,7 @@ class Change(NamedTuple, Generic[T]):
 class Diff(BaseModel):
     diff_type: DiffType
     key: str
-    change: Change
+    change: Change[Any]
 
 
 def render_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> str | None:
