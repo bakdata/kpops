@@ -283,21 +283,19 @@ class TestTopicHandler:
 
         topic_handler.create_topics(to_section=to_section, dry_run=True)
         wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
-        log_info_mock.assert_has_calls(
-            [
-                mock.call("Topic Creation: topic-X already exists in cluster."),
-                mock.call(
-                    yellowify(
-                        "Topic Creation: partition count of topic topic-X did not change. Current partitions count 10. Updating configs."
-                    )
-                ),
-                mock.call(
-                    yellowify(
-                        "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 3. Updating configs."
-                    )
-                ),
-            ]
-        )
+        assert log_info_mock.mock_calls == [
+            mock.call("Topic Creation: topic-X already exists in cluster."),
+            mock.call(
+                yellowify(
+                    "Topic Creation: partition count of topic topic-X did not change. Current partitions count 10. Updating configs."
+                )
+            ),
+            mock.call(
+                yellowify(
+                    "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 3. Updating configs."
+                )
+            ),
+        ]
 
     def test_should_print_message_if_dry_run_and_topic_exists_with_default_partition_count_and_replication_factor(
         self, log_info_mock: MagicMock, get_default_topic_response_mock: MagicMock
@@ -313,21 +311,19 @@ class TestTopicHandler:
 
         topic_handler.create_topics(to_section=to_section, dry_run=True)
         wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
-        log_info_mock.assert_has_calls(
-            [
-                mock.call("Topic Creation: topic-X already exists in cluster."),
-                mock.call(
-                    yellowify(
-                        "Topic Creation: partition count of topic topic-X did not change. Current partitions count 1. Updating configs."
-                    )
-                ),
-                mock.call(
-                    yellowify(
-                        "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 1. Updating configs."
-                    )
-                ),
-            ]
-        )
+        assert log_info_mock.mock_calls == [
+            mock.call("Topic Creation: topic-X already exists in cluster."),
+            mock.call(
+                yellowify(
+                    "Topic Creation: partition count of topic topic-X did not change. Current partitions count 1. Updating configs."
+                )
+            ),
+            mock.call(
+                yellowify(
+                    "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 1. Updating configs."
+                )
+            ),
+        ]
 
     def test_should_exit_if_dry_run_and_topic_exists_different_partition_count(
         self, log_error_mock: MagicMock, get_topic_response_mock: MagicMock
@@ -436,12 +432,10 @@ class TestTopicHandler:
 
         topic_handler.delete_topics(to_section, False)
 
-        wrapper.assert_has_calls(
-            [
-                mock.call.get_topic(topic_name="topic-X"),
-                mock.call.delete_topic(topic_name="topic-X"),
-            ]
-        )
+        assert wrapper.mock_calls == [
+            mock.call.get_topic(topic_name="topic-X"),
+            mock.call.delete_topic(topic_name="topic-X"),
+        ]
 
     def test_should_print_correct_warning_when_deleting_topic_that_does_not_exists_not_dry_run(
         self, log_warning_mock: MagicMock
