@@ -1,6 +1,6 @@
 from difflib import Differ
 from enum import Enum
-from typing import Any, Iterable, Iterator, Sequence
+from typing import Any, Iterable, Iterator, NamedTuple, Sequence
 
 import typer
 import yaml
@@ -16,7 +16,7 @@ class DiffType(str, Enum):
     REMOVE = "remove"
 
 
-class Change(BaseModel):
+class Change(NamedTuple):
     old_value: Any
     new_value: Any
 
