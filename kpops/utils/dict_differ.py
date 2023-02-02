@@ -40,7 +40,7 @@ class Change(NamedTuple, Generic[T]):
                 assert isinstance(change, tuple)
                 return Change(*change)
             case _:
-                raise ValueError()
+                raise ValueError(f"{type} is not part of {DiffType}")
 
 
 @dataclass
