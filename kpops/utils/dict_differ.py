@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
 from difflib import Differ
 from enum import Enum
 from typing import Generic, Iterable, Iterator, NamedTuple, Sequence, TypeVar
@@ -14,6 +17,10 @@ class DiffType(str, Enum):
     CHANGE = "change"
     REMOVE = "remove"
 
+    @staticmethod
+    def from_str(label: str) -> DiffType:
+        return DiffType[label.upper()]
+
 
 T = TypeVar("T")
 
@@ -22,8 +29,21 @@ class Change(NamedTuple, Generic[T]):
     old_value: T
     new_value: T
 
+    @staticmethod
+    def factory(type: DiffType, arg) -> Change:
+        match type:
+            case DiffType.ADD:
+                return Change(None, arg)
+            case DiffType.REMOVE:
+                return Change(arg, None)
+            case DiffType.CHANGE:
+                return Change(*arg)
+            case _:
+                raise ValueError()
 
-class Diff(NamedTuple):
+
+@dataclass
+class Diff:
     diff_type: DiffType
     key: str
     change: Change
@@ -46,19 +66,14 @@ def render_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> str | Non
 
 
 def get_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> Iterator[Diff]:
-    for type_of_change, keys, changes in diff(d1, d2, ignore=ignore):
-        match type_of_change:
-            case DiffType.ADD:
-                for key, change in changes:
-                    key = __get_key(keys, key)
-                    yield Diff(DiffType.ADD, key, Change(None, change))
-            case DiffType.REMOVE:
-                for key, change in changes:
-                    key = __get_key(keys, key)
-                    yield Diff(DiffType.REMOVE, key, Change(change, None))
-            case DiffType.CHANGE:
-                key = __get_key(keys)
-                yield Diff(DiffType.CHANGE, key, Change(*changes))
+    for diff_type, keys, changes in diff(d1, d2, ignore=ignore):
+        diff_type = DiffType.from_str(diff_type)
+        if isinstance(changes, list):
+            for key, change in changes:
+                key = __get_key(keys, key)
+                yield Diff(diff_type, key, Change.factory(diff_type, change))
+        else:
+            yield Diff(diff_type, __get_key(keys), Change.factory(diff_type, changes))
 
 
 def __get_key(key_1: list | str, key_2: str = "") -> str:
