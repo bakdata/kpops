@@ -63,7 +63,7 @@ class Diff(Generic[T]):
                 )
 
     @staticmethod
-    def __find_changed_key(key_1: list | str, key_2: str = "") -> str:
+    def __find_changed_key(key_1: list[str] | str, key_2: str = "") -> str:
         """
         Generates a string that points to the changed key in the dictionary.
         """
