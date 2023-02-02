@@ -131,6 +131,8 @@ class TestKubernetesApp:
                 {"nameOverride": "test-value"},
                 HelmUpgradeInstallFlags(version="3.4.5"),
             ),
+            mocker.call.get_manifest("test-kubernetes-apps", "test-namespace"),
+            mocker.call.get_manifest().__iter__(),
         ]
 
     def test_should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled(

@@ -312,6 +312,10 @@ class TestTopicHandler:
         topic_handler.create_topics(to_section=to_section, dry_run=True)
         wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
         assert log_info_mock.mock_calls == [
+            mock.call("Config changes for topic topic-X:"),
+            mock.call(
+                "\n\x1b[32m+ cleanup.policy: compact\n\x1b[0m\x1b[32m+ compression.type: gzip\n\x1b[0m"
+            ),
             mock.call("Topic Creation: topic-X already exists in cluster."),
             mock.call(
                 yellowify(
