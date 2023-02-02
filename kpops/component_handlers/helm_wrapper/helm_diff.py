@@ -1,5 +1,5 @@
 import logging
-from collections.abc import Sequence
+from collections.abc import Iterator
 from typing import Iterable
 
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
@@ -13,36 +13,34 @@ class HelmDiff:
         self.config: HelmDiffConfig = config
 
     @staticmethod
-    def get_diff(
+    def calc_changes(
         current_release: Iterable[HelmTemplate],
         new_release: Iterable[HelmTemplate],
-    ) -> list[Change[dict]]:
+    ) -> Iterator[Change[dict]]:
         new_release_index = {
             helm_template.filepath: helm_template for helm_template in new_release
         }
 
-        changes: list[Change] = []
         # collect changed & deleted files
         for current_resource in current_release:
             # get corresponding dry-run release
             new_resource = new_release_index.pop(current_resource.filepath, None)
-            changes.append(
-                Change(
-                    current_resource.template,
-                    new_resource.template if new_resource else {},
-                )
+            yield Change(
+                current_resource.template,
+                new_resource.template if new_resource else {},
             )
 
         # collect added files
         for new_resource in new_release_index.values():
-            changes.append(Change({}, new_resource.template))
-
-        return changes
+            yield Change({}, new_resource.template)
 
     def log_helm_diff(
-        self, changes: Sequence[Change[dict]], logger: logging.Logger
+        self,
+        logger: logging.Logger,
+        current_release: Iterable[HelmTemplate],
+        new_release: Iterable[HelmTemplate],
     ) -> None:
-        for change in changes:
+        for change in self.calc_changes(current_release, new_release):
             if diff := render_diff(
                 change.old_value,
                 change.new_value,
