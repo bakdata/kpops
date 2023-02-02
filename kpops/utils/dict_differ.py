@@ -30,14 +30,15 @@ class Change(NamedTuple, Generic[T]):
     new_value: T
 
     @staticmethod
-    def factory(type: DiffType, arg) -> Change:
+    def factory(type: DiffType, change: T | tuple[T, T]) -> Change:
         match type:
             case DiffType.ADD:
-                return Change(None, arg)
+                return Change(None, change)
             case DiffType.REMOVE:
-                return Change(arg, None)
+                return Change(change, None)
             case DiffType.CHANGE:
-                return Change(*arg)
+                assert isinstance(change, tuple)
+                return Change(*change)
             case _:
                 raise ValueError()
 
