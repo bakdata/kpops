@@ -36,11 +36,9 @@ class Change(NamedTuple, Generic[T]):
                 return Change(None, change)
             case DiffType.REMOVE:
                 return Change(change, None)
-            case DiffType.CHANGE:
-                assert isinstance(change, tuple)
+            case DiffType.CHANGE if isinstance(change, tuple):
                 return Change(*change)
-            case _:
-                raise ValueError(f"{type} is not part of {DiffType}")
+        raise ValueError(f"{type} is not part of {DiffType}")
 
 
 @dataclass
