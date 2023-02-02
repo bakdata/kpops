@@ -13,7 +13,7 @@ class HelmDiff:
         self.config: HelmDiffConfig = config
 
     @staticmethod
-    def calc_changes(
+    def calculate_changes(
         current_release: Iterable[HelmTemplate],
         new_release: Iterable[HelmTemplate],
     ) -> Iterator[Change[dict]]:
@@ -40,7 +40,7 @@ class HelmDiff:
         current_release: Iterable[HelmTemplate],
         new_release: Iterable[HelmTemplate],
     ) -> None:
-        for change in self.calc_changes(current_release, new_release):
+        for change in self.calculate_changes(current_release, new_release):
             if diff := render_diff(
                 change.old_value,
                 change.new_value,
