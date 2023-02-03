@@ -198,7 +198,6 @@ def generate(
     components_module: Optional[str] = COMPONENTS_MODULES,
     defaults: Path = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    steps: Optional[str] = PIPELINE_STEPS,
     print_yaml: bool = typer.Option(
         True, help="Print enriched pipeline yaml definition"
     ),
@@ -207,8 +206,12 @@ def generate(
         None, help="Path to file the yaml pipeline should be saved to"
     ),
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
-    template: bool = typer.Option(
-        False, help="Run `helm template` instead of `helm upgrade`"
+    template: bool = typer.Option(False, help="Run helm template"),
+    steps: Optional[str] = PIPELINE_STEPS,
+    print_template: bool = typer.Option(True, help="Print the renderred charts templates."),
+    save_template: bool = typer.Option(False, help="Save template to a yaml file"),
+    out_path_template: Optional[Path] = typer.Option(
+        None, help="Path to file the yaml pipeline should be saved to"
     ),
     api_versions: str = typer.Option(
         "", help="Kubernetes api version used for Capabilities.APIVersions"
@@ -219,19 +222,12 @@ def generate(
     cert_file: str = typer.Option(
         "", help="Identify HTTPS client using this SSL certificate file"
     ),
+
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    if template:
-        flags = HelmTemplateFlags(
-            api_versions=api_versions, ca_file=ca_file, cert_file=cert_file
-        )
-        steps_to_apply = get_steps_to_apply(pipeline, steps)
-        for component in steps_to_apply:
-            log_action("Template", component)
-            component.template(flags)
     if print_yaml:
         pipeline.print_yaml()
 
@@ -240,11 +236,31 @@ def generate(
             raise ValueError(
                 "Please provide a output path if you want to save the generated deployment."
             )
-        if template:
-            # write `helm template` to a file
-            pass
-        if print_yaml:
-            pipeline.save(out_path)
+        pipeline.save(out_path)
+
+    if template:
+        flags = HelmTemplateFlags(
+        api_versions=api_versions, ca_file=ca_file, cert_file=cert_file
+    )
+        steps_to_apply = get_steps_to_apply(pipeline, steps)
+        for component in steps_to_apply:
+            log_action("Template", component)
+            component.template(flags)
+            # if save_template:
+            #     if not out_path_template:
+            #         raise ValueError(
+            #             "Please provide a output path if you want to save the generated deployment."
+            #         )
+            #     else:
+            #         # save template to a file
+            #         with open(path, mode="w") as file:
+            #             file.write(substitute(str(self), substitution))
+            # else:
+            #     print(helm_template)
+    elif cert_file or ca_file or api_versions or out_path_template or save_template or print_template or steps:
+        raise TypeError(
+            "The following flags can "
+        )
 
 
 @app.command(help="Deploy pipeline steps")
