@@ -49,11 +49,10 @@ class TestStreamsApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
-            handlers=handlers,
+            name=self.STREAMS_APP_NAME,
             config=config,
+            handlers=handlers,
             **{
-                "type": "streams-app",
-                "name": self.STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "app": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -70,11 +69,10 @@ class TestStreamsApp:
 
     def test_set_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
         streams_app = StreamsApp(
-            handlers=handlers,
+            name=self.STREAMS_APP_NAME,
             config=config,
+            handlers=handlers,
             **{
-                "type": "streams-app",
-                "name": self.STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "app": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -110,11 +108,10 @@ class TestStreamsApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            handlers=handlers,
+            name=self.STREAMS_APP_NAME,
             config=config,
+            handlers=handlers,
             **{
-                "type": "test",
-                "name": self.STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "app": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -142,11 +139,10 @@ class TestStreamsApp:
     def test_should_validate(self, config: PipelineConfig, handlers: ComponentHandlers):
         with pytest.raises(ValueError):
             StreamsApp(
-                handlers=handlers,
+                name=self.STREAMS_APP_NAME,
                 config=config,
+                handlers=handlers,
                 **{
-                    "type": "streams-app",
-                    "name": self.STREAMS_APP_NAME,
                     "namespace": "test-namespace",
                     "app": {
                         "streams": {"brokers": "fake-broker:9092"},
@@ -163,11 +159,10 @@ class TestStreamsApp:
 
         with pytest.raises(ValueError):
             StreamsApp(
-                handlers=handlers,
+                name=self.STREAMS_APP_NAME,
                 config=config,
+                handlers=handlers,
                 **{
-                    "type": "streams-app",
-                    "name": self.STREAMS_APP_NAME,
                     "namespace": "test-namespace",
                     "app": {
                         "streams": {"brokers": "fake-broker:9092"},
@@ -180,11 +175,10 @@ class TestStreamsApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            handlers=handlers,
+            name=self.STREAMS_APP_NAME,
             config=config,
+            handlers=handlers,
             **{
-                "type": "streams-app",
-                "name": self.STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "app": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -222,11 +216,10 @@ class TestStreamsApp:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            handlers=handlers,
+            name=self.STREAMS_APP_NAME,
             config=config,
+            handlers=handlers,
             **{
-                "type": "streams-app",
-                "name": self.STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "app": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -258,11 +251,10 @@ class TestStreamsApp:
         mocker: MockerFixture,
     ):
         streams_app = StreamsApp(
-            handlers=handlers,
+            name=self.STREAMS_APP_NAME,
             config=config,
+            handlers=handlers,
             **{
-                "type": "streams-app",
-                "name": self.STREAMS_APP_NAME,
                 "namespace": "test-namespace",
                 "app": {
                     "streams": {"brokers": "fake-broker:9092"},

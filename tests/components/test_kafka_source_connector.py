@@ -29,7 +29,7 @@ CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
 
 
-class TestKafkaConnectorSource:
+class TestKafkaSourceConnector:
     @pytest.fixture
     def config(slef) -> PipelineConfig:
         return PipelineConfig(
@@ -63,8 +63,8 @@ class TestKafkaConnectorSource:
         with pytest.raises(NotImplementedError):
             KafkaSourceConnector(
                 name="test-connector",
-                handlers=handlers,
                 config=config,
+                handlers=handlers,
                 app=KafkaConnectConfig(),
                 namespace="test-namespace",
                 from_=FromSection(
@@ -82,8 +82,8 @@ class TestKafkaConnectorSource:
     ):
         connector = KafkaSourceConnector(
             name="test-connector",
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             to=ToSection(
@@ -129,8 +129,8 @@ class TestKafkaConnectorSource:
         ] = "kafka-connect-offsets"
         connector = KafkaSourceConnector(
             name="test-connector",
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             to=ToSection(
@@ -163,8 +163,8 @@ class TestKafkaConnectorSource:
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             offset_topic="kafka-connect-offsets",
@@ -242,8 +242,8 @@ class TestKafkaConnectorSource:
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             offset_topic="kafka-connect-offsets",
@@ -321,8 +321,8 @@ class TestKafkaConnectorSource:
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
-            handlers=handlers,
             config=config,
+            handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             offset_topic="kafka-connect-offsets",

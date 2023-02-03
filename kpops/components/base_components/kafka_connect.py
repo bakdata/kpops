@@ -4,7 +4,7 @@ import json
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import NoReturn
+from typing import ClassVar, Literal, NoReturn
 
 from pydantic import Field
 from typing_extensions import override
@@ -32,7 +32,7 @@ log = logging.getLogger("KafkaConnector")
 
 
 class KafkaConnector(PipelineComponent, ABC):
-    _type = "kafka-connect"
+    type: ClassVar[str] = "kafka-connect"
     app: KafkaConnectConfig
 
     repo_config: HelmRepoConfig = HelmRepoConfig(
@@ -201,7 +201,10 @@ class KafkaConnector(PipelineComponent, ABC):
 
 
 class KafkaSourceConnector(KafkaConnector):
-    _type = "kafka-source-connector"
+    type: ClassVar[str] = "kafka-source-connector"
+    schema_type: Literal["kafka-source-connector"] = Field(
+        default="kafka-source-connector", exclude=True
+    )
     offset_topic: str | None = None
 
     @override
@@ -228,7 +231,10 @@ class KafkaSourceConnector(KafkaConnector):
 
 
 class KafkaSinkConnector(KafkaConnector):
-    _type = "kafka-sink-connector"
+    type: ClassVar[str] = "kafka-sink-connector"
+    schema_type: Literal["kafka-sink-connector"] = Field(
+        default="kafka-sink-connector", exclude=True
+    )
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
