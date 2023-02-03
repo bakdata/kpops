@@ -176,7 +176,10 @@ class KafkaConnector(PipelineComponent, ABC):
             chart=self.kafka_connect_resetter_chart,
             dry_run=dry_run,
             flags=HelmUpgradeInstallFlags(
-                version=self.version, wait_for_jobs=True, wait=True
+                create_namespace=self.config.create_namespace,
+                version=self.version,
+                wait_for_jobs=True,
+                wait=True,
             ),
             values={
                 **KafkaConnectResetterValues(

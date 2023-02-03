@@ -136,6 +136,7 @@ class KafkaApp(KubernetesApp):
             self.namespace,
             values,
             HelmUpgradeInstallFlags(
+                create_namespace=self.config.create_namespace,
                 version=self.version,
                 wait=True,
                 wait_for_jobs=True,

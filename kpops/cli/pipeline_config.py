@@ -68,6 +68,7 @@ class PipelineConfig(BaseSettings):
         description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
     )
 
+    create_namespace: bool = Field(default=False)
     helm_config: HelmConfig = Field(default=HelmConfig())
     helm_diff_config: HelmDiffConfig = Field(default=HelmDiffConfig())
 

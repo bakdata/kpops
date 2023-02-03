@@ -138,6 +138,7 @@ class TestHelmWrapper:
             dry_run=True,
             values={"commandLine": "test"},
             flags=HelmUpgradeInstallFlags(
+                create_namespace=True,
                 force=True,
                 timeout="120s",
                 wait=True,
@@ -157,6 +158,7 @@ class TestHelmWrapper:
                 "test-namespace",
                 "--values",
                 "values.yaml",
+                "--create-namespace",
                 "--dry-run",
                 "--force",
                 "--wait",
