@@ -9,9 +9,6 @@ from kpops.utils.yaml_loading import load_yaml_file
 
 runner = CliRunner()
 
-RESOURCE_PATH = Path(__file__).parent / "resources"
-PIPELINE_BASE_DIR = str(RESOURCE_PATH.parent)
-
 
 class TestExample:
     @pytest.fixture
