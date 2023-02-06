@@ -287,3 +287,24 @@ class TestPipeline:
         assert error_topic == "resources-custom-config-app2-error"
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_default_config_template(self, tmpdir, snapshot):
+        os.environ["KPOPS_ENVIRONMENT"] = "development"
+        output_file_path = tmpdir.join("template.yaml")
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH / "no-topics-defaults"),
+                "--template",
+                output_file_path,
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+
+        print(result.stdout)

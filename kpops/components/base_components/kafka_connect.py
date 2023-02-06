@@ -186,11 +186,11 @@ class KafkaConnector(PipelineComponent, ABC):
             flags=HelmUpgradeInstallFlags(
                 version=self.version, wait_for_jobs=True, wait=True
             ),
-            values = self._get_kafka_connect_resetter_values(
+            values=self._get_kafka_connect_resetter_values(
                 connector_name,
                 connector_type,
                 kwargs,
-            )
+            ),
         )
 
     def _get_kafka_connect_resetter_values(
@@ -200,17 +200,17 @@ class KafkaConnector(PipelineComponent, ABC):
         kwargs,
     ) -> dict:
         return {
-                **KafkaConnectResetterValues(
-                    config=KafkaConnectResetterConfig(
-                        connector=connector_name,
-                        brokers=self.config.broker,
-                        **kwargs,
-                    ),
-                    connector_type=connector_type.value,
-                    name_override=connector_name,
-                ).dict(),
-                **self.resetter_values,
-            }
+            **KafkaConnectResetterValues(
+                config=KafkaConnectResetterConfig(
+                    connector=connector_name,
+                    brokers=self.config.broker,
+                    **kwargs,
+                ),
+                connector_type=connector_type.value,
+                name_override=connector_name,
+            ).dict(),
+            **self.resetter_values,
+        }
 
     def __uninstall_connect_resetter(self, release_name: str, dry_run: bool) -> None:
         self.helm.uninstall(
@@ -235,10 +235,10 @@ class KafkaSourceConnector(KafkaConnector):
     def template(self, api_version: str, ca_file: str, cert_file: str) -> None:
         flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
         values = self._get_kafka_connect_resetter_values(
-                self.name,
-                KafkaConnectorType.SOURCE,
-                offset_topic=self.offset_topic,
-            )
+            self.name,
+            KafkaConnectorType.SOURCE,
+            offset_topic=self.offset_topic,
+        )
         stdout = self.helm.template(
             self._get_release_name(), self._get_resetter_helm_chart(), values, flags
         )
@@ -280,12 +280,13 @@ class KafkaSinkConnector(KafkaConnector):
     def template(self, api_version: str, ca_file: str, cert_file: str) -> None:
         flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
         values = self._get_kafka_connect_resetter_values(
-                self.name,
-                KafkaConnectorType.SINK,
-                {}
-            )
+            self.name, KafkaConnectorType.SINK, {}
+        )
         stdout = self.helm.template(
-            self._get_release_name(self.name), self._get_resetter_helm_chart(), values, flags
+            self._get_release_name(self.name),
+            self._get_resetter_helm_chart(),
+            values,
+            flags,
         )
         print(stdout)
 

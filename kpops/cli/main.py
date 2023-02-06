@@ -237,12 +237,7 @@ def generate(
         steps_to_apply = get_steps_to_apply(pipeline, steps)
         for component in steps_to_apply:
             component.template(api_versions, ca_file, cert_file)
-    elif (
-        cert_file
-        or ca_file
-        or api_versions
-        or steps
-    ):
+    elif cert_file or ca_file or api_versions or steps:
         raise TypeError(
             "The following flags can only be used in conjuction with `--template`: \n \
                 '--cert-file'\n \
