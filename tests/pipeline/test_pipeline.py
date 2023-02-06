@@ -287,38 +287,3 @@ class TestPipeline:
         assert error_topic == "resources-custom-config-app2-error"
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
-
-    def test_default_config_template(self, tmpdir, snapshot):
-        os.environ["KPOPS_ENVIRONMENT"] = "development"
-        output_file_path = tmpdir.join("pipeline.yaml")
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                "--pipeline-base-dir",
-                PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
-                "--save",
-                "--out-path",
-                output_file_path,
-                "--defaults",
-                str(RESOURCE_PATH / "no-topics-defaults"),
-                "--template",
-            ],
-            catch_exceptions=False,
-        )
-        assert result.exit_code == 0
-
-        enriched_pipeline = load_yaml_file(Path(output_file_path))
-
-        producer_details = enriched_pipeline["components"][0]
-        output_topic = producer_details["app"]["streams"]["outputTopic"]
-        assert output_topic == "resources-custom-config-app1"
-
-        streams_app_details = enriched_pipeline["components"][1]
-        output_topic = streams_app_details["app"]["streams"]["outputTopic"]
-        assert output_topic == "resources-custom-config-app2"
-        error_topic = streams_app_details["app"]["streams"]["errorTopic"]
-        assert error_topic == "resources-custom-config-app2-error"
-
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")

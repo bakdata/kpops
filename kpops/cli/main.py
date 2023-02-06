@@ -209,13 +209,6 @@ def generate(
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
     template: bool = typer.Option(False, help="Run helm template"),
     steps: Optional[str] = PIPELINE_STEPS,
-    print_template: bool = typer.Option(
-        True, help="Print the renderred charts templates."
-    ),
-    save_template: bool = typer.Option(False, help="Save template to a yaml file"),
-    out_path_template: Optional[Path] = typer.Option(
-        None, help="Path to file the yaml pipeline should be saved to"
-    ),
     api_versions: str = typer.Option(
         "", help="Kubernetes api version used for Capabilities.APIVersions"
     ),
@@ -241,36 +234,16 @@ def generate(
         pipeline.save(out_path)
 
     if template:
-        if out_path_template and not save_template:
-            raise TypeError(
-                "'--out-path-template' can only be raised in conjunction with '--save-template'"
-            )
-        if save_template:
-            if not out_path_template:
-                raise TypeError(
-                    "'--save-template' can only be raised in conjunction with '--out-path-template'"
-                )
-            with open(out_path_template, mode="w") as file:
-                file.write("")
         flags = HelmTemplateFlags(
             api_versions=api_versions, ca_file=ca_file, cert_file=cert_file
         )
         steps_to_apply = get_steps_to_apply(pipeline, steps)
         for component in steps_to_apply:
-            log_action("Template", component)
-            if print_template:
-                component.template(flags)
-            if save_template:
-                with open(out_path_template, mode="a") as file:
-                    with contextlib.redirect_stdout(file):
-                        component.template(flags)
+            component.template(flags)
     elif (
         cert_file
         or ca_file
         or api_versions
-        or out_path_template
-        or save_template
-        or not print_template
         or steps
     ):
         raise TypeError(
@@ -278,9 +251,6 @@ def generate(
                 '--cert-file'\n \
                 '--ca-file'\n \
                 '--api-version'\n \
-                '--out-path-template' \n \
-                '--save-template' \n \
-                '--no-print-template' \n \
                 '--steps'"
         )
 
