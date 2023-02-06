@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterator, Optional
@@ -240,6 +241,17 @@ def generate(
         pipeline.save(out_path)
 
     if template:
+        if out_path_template and not save_template:
+            raise TypeError(
+                "'--out-path-template' can only be raised in conjunction with '--save-template'"
+            )
+        if save_template:
+            if not out_path_template:
+                raise TypeError(
+                    "'--save-template' can only be raised in conjunction with '--out-path-template'"
+                )
+            with open(out_path_template, mode="w") as file:
+                file.write("")
         flags = HelmTemplateFlags(
             api_versions=api_versions, ca_file=ca_file, cert_file=cert_file
         )
@@ -249,15 +261,9 @@ def generate(
             if print_template:
                 component.template(flags)
             if save_template:
-                if not out_path_template:
-                    raise ValueError(
-                        "Please provide a output path if you want to save the generated deployment."
-                    )
-                else:
-                    # save template to a file
-                    pass
-                    # with open(path, mode="w") as file:
-                    #     file.write(substitute(str(self), substitution))
+                with open(out_path_template, mode="a") as file:
+                    with contextlib.redirect_stdout(file):
+                        component.template(flags)
     elif (
         cert_file
         or ca_file
