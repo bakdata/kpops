@@ -234,12 +234,9 @@ def generate(
         pipeline.save(out_path)
 
     if template:
-        flags = HelmTemplateFlags(
-            api_versions=api_versions, ca_file=ca_file, cert_file=cert_file
-        )
         steps_to_apply = get_steps_to_apply(pipeline, steps)
         for component in steps_to_apply:
-            component.template(flags)
+            component.template(api_versions, ca_file, cert_file)
     elif (
         cert_file
         or ca_file

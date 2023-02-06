@@ -141,20 +141,20 @@ class Helm:
         """
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
-        command = [
-            "helm",
-        ]
-        command.extend(
-            [
-                "template",
-                release_name,
-                chart,
-                "--values",
-                values_file.name,
+            command = [
+                "helm",
             ]
-        )
-        command = Helm.__enrich_template_command(command, flags)
-        return self.__execute(command=command)
+            command.extend(
+                [
+                    "template",
+                    release_name,
+                    chart,
+                    "--values",
+                    values_file.name,
+                ]
+            )
+            command = Helm.__enrich_template_command(command, flags)
+            return self.__execute(command=command)
 
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
         command = [
@@ -204,6 +204,8 @@ class Helm:
             command.extend(["--ca-file", helm_command_config.ca_file])
         if helm_command_config.cert_file:
             command.extend(["--cert-file", helm_command_config.cert_file])
+        if helm_command_config.version:
+            command.extend(["--version", helm_command_config.version])
         return command
 
     @staticmethod

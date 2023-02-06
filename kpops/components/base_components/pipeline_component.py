@@ -161,7 +161,7 @@ class PipelineComponent(BaseDefaultsComponent):
         """
         return [self]
 
-    def template(self, flags: HelmTemplateFlags) -> None:
+    def template(self, api_version: str, ca_file: str, cert_file: str) -> None:
         pass
 
     def deploy(self, dry_run: bool) -> None:

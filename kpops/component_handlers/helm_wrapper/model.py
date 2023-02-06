@@ -56,6 +56,7 @@ class HelmTemplateFlags:
     api_versions: str = ""
     ca_file: str = ""
     cert_file: str = ""
+    version: str = ""
 
 
 @dataclass
