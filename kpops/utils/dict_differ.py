@@ -17,8 +17,8 @@ class DiffType(str, Enum):
 
 
 class Change(BaseModel):
-    old_value: Any | None
-    new_value: Any | None
+    old_value: Any
+    new_value: Any
 
 
 class Diff(BaseModel):

@@ -41,10 +41,9 @@ class HelmDiff:
 
     def log_helm_diff(self, changes: list[Change], logger: logging.Logger):
         for change in changes:
-            if change.old_value and change.new_value:
-                if diff := render_diff(
-                    change.old_value,
-                    change.new_value,
-                    ignore=self.config.ignore,
-                ):
-                    logger.info("\n" + diff)
+            if diff := render_diff(
+                change.old_value,
+                change.new_value,
+                ignore=self.config.ignore,
+            ):
+                logger.info("\n" + diff)
