@@ -171,7 +171,9 @@ class Pipeline:
         self, inflated_components: list[PipelineComponent]
     ) -> None:
         for component in inflated_components:
-            component.name = (component.get_component_prefix() or self.config.pipeline_prefix) + component.name
+            component.name = (
+                component.get_component_prefix() or self.config.pipeline_prefix
+            ) + component.name
             with suppress(
                 AttributeError  # Some components like Kafka Connect do not have a name_override attribute
             ):
