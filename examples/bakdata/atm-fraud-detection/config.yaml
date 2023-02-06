@@ -12,7 +12,4 @@ kafka_rest_host: "http://localhost:8082"
 
 kafka_connect_host: "http://localhost:8083"
 
-kafka_connect_resetter_config:
-    namespace: "kpops"
-
 pipeline_prefix: ""
