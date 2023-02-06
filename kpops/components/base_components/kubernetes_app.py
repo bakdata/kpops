@@ -78,7 +78,9 @@ class KubernetesApp(PipelineComponent):
             dry_run,
             self.namespace,
             self.to_helm_values(),
-            HelmUpgradeInstallFlags(version=self.version),
+            HelmUpgradeInstallFlags(
+                create_namespace=self.config.create_namespace, version=self.version
+            ),
         )
         if dry_run and self.helm_diff.config.enable:
             self.print_helm_diff(stdout)
