@@ -208,7 +208,9 @@ def generate(
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
     template: bool = typer.Option(False, help="Run helm template"),
     steps: Optional[str] = PIPELINE_STEPS,
-    print_template: bool = typer.Option(True, help="Print the renderred charts templates."),
+    print_template: bool = typer.Option(
+        True, help="Print the renderred charts templates."
+    ),
     save_template: bool = typer.Option(False, help="Save template to a yaml file"),
     out_path_template: Optional[Path] = typer.Option(
         None, help="Path to file the yaml pipeline should be saved to"
@@ -222,7 +224,6 @@ def generate(
     cert_file: str = typer.Option(
         "", help="Identify HTTPS client using this SSL certificate file"
     ),
-
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
@@ -240,26 +241,41 @@ def generate(
 
     if template:
         flags = HelmTemplateFlags(
-        api_versions=api_versions, ca_file=ca_file, cert_file=cert_file
-    )
+            api_versions=api_versions, ca_file=ca_file, cert_file=cert_file
+        )
         steps_to_apply = get_steps_to_apply(pipeline, steps)
         for component in steps_to_apply:
             log_action("Template", component)
-            component.template(flags)
-            # if save_template:
-            #     if not out_path_template:
-            #         raise ValueError(
-            #             "Please provide a output path if you want to save the generated deployment."
-            #         )
-            #     else:
-            #         # save template to a file
-            #         with open(path, mode="w") as file:
-            #             file.write(substitute(str(self), substitution))
-            # else:
-            #     print(helm_template)
-    elif cert_file or ca_file or api_versions or out_path_template or save_template or print_template or steps:
+            if print_template:
+                component.template(flags)
+            if save_template:
+                if not out_path_template:
+                    raise ValueError(
+                        "Please provide a output path if you want to save the generated deployment."
+                    )
+                else:
+                    # save template to a file
+                    pass
+                    # with open(path, mode="w") as file:
+                    #     file.write(substitute(str(self), substitution))
+    elif (
+        cert_file
+        or ca_file
+        or api_versions
+        or out_path_template
+        or save_template
+        or not print_template
+        or steps
+    ):
         raise TypeError(
-            "The following flags can "
+            "The following flags can only be used in conjuction with `--template`: \n \
+                '--cert-file'\n \
+                '--ca-file'\n \
+                '--api-version'\n \
+                '--out-path-template' \n \
+                '--save-template' \n \
+                '--no-print-template' \n \
+                '--steps'"
         )
 
 
