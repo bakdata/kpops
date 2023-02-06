@@ -242,6 +242,7 @@ class TestPipeline:
             ],
             catch_exceptions=False,
         )
+
         assert result.exit_code == 0
 
         enriched_pipeline = load_yaml_file(output_file_path)
@@ -275,6 +276,7 @@ class TestPipeline:
             ],
             catch_exceptions=False,
         )
+
         assert result.exit_code == 0
 
         enriched_pipeline = load_yaml_file(output_file_path)
@@ -292,9 +294,7 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    def test_atm_fraud_example(self, tmpdir, snapshot):
-        os.environ["KPOPS_ENVIRONMENT"] = "development"
-        output_file_path = tmpdir.join("pipeline.yaml")
+    def test_atm_fraud_example(self, output_file_path: Path, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
@@ -308,12 +308,12 @@ class TestPipeline:
                 "./examples/bakdata/atm-fraud-detection/config.yaml",
                 "--save",
                 "--out-path",
-                output_file_path,
+                str(output_file_path),
             ],
             catch_exceptions=False,
         )
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml_file(Path(output_file_path))
+        enriched_pipeline = load_yaml_file(output_file_path)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
