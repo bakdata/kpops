@@ -75,9 +75,9 @@ class KubernetesApp(PipelineComponent):
     @override
     def template(self, flags: HelmTemplateFlags) -> None:
         stdout = self.helm.template(
-            self.helm_release_name, self.get_helm_chart(), flags
+            self.helm_release_name, self.get_helm_chart(), self.to_helm_values(), flags
         )
-        Console().print(stdout)
+        print(stdout)
 
     @override
     def deploy(self, dry_run: bool) -> None:

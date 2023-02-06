@@ -133,11 +133,14 @@ class Helm:
         self,
         release_name: str,
         chart: str,
+        values: dict,
         flags: HelmTemplateFlags = HelmTemplateFlags(),
     ) -> str:
         """
         Render chart templates locally and display the output.
         """
+        with tempfile.NamedTemporaryFile("w") as values_file:
+            yaml.safe_dump(values, values_file)
         command = [
             "helm",
         ]
@@ -146,6 +149,8 @@ class Helm:
                 "template",
                 release_name,
                 chart,
+                "--values",
+                values_file.name,
             ]
         )
         command = Helm.__enrich_template_command(command, flags)
