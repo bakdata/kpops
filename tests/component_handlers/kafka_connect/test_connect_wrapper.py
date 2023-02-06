@@ -26,7 +26,6 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 class TestConnectorApiWrapper(unittest.TestCase):
     @pytest.fixture(autouse=True)
-    @responses.activate
     def setup(self):
         config = PipelineConfig(
             defaults_path=DEFAULTS_PATH,
@@ -111,7 +110,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_rais_connector_exists_exception_when_connector_exists(
-        self, log_warning
+        self, log_warning: MagicMock
     ):
         responses.add(
             responses.POST,
@@ -144,7 +143,9 @@ class TestConnectorApiWrapper(unittest.TestCase):
 
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    def test_should_return_correct_response_when_getting_connector(self, log_info):
+    def test_should_return_correct_response_when_getting_connector(
+        self, log_info: MagicMock
+    ):
         connector_name = "test-connector"
 
         actual_response = {
@@ -178,7 +179,9 @@ class TestConnectorApiWrapper(unittest.TestCase):
 
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    def test_should_raise_connector_not_found_when_getting_connector(self, log_info):
+    def test_should_raise_connector_not_found_when_getting_connector(
+        self, log_info: MagicMock
+    ):
         connector_name = "test-connector"
 
         responses.add(
@@ -198,7 +201,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_rebalance_in_progress_when_getting_connector(
-        self, log_warning
+        self, log_warning: MagicMock
     ):
         connector_name = "test-connector"
 
@@ -245,7 +248,9 @@ class TestConnectorApiWrapper(unittest.TestCase):
 
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    def test_should_return_correct_response_when_update_connector(self, log_info):
+    def test_should_return_correct_response_when_update_connector(
+        self, log_info: MagicMock
+    ):
         connector_name = "test-connector"
 
         actual_response = {
@@ -284,7 +289,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_update_connector_created(
-        self, log_info
+        self, log_info: MagicMock
     ):
         connector_name = "test-connector"
 
@@ -322,7 +327,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_connector_exists_exception_when_update_connector(
-        self, log_warning
+        self, log_warning: MagicMock
     ):
         connector_name = "test-connector"
 
@@ -360,7 +365,9 @@ class TestConnectorApiWrapper(unittest.TestCase):
 
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    def test_should_return_correct_response_when_deleting_connector(self, log_info):
+    def test_should_return_correct_response_when_deleting_connector(
+        self, log_info: MagicMock
+    ):
         connector_name = "test-connector"
 
         actual_response = {
@@ -394,7 +401,9 @@ class TestConnectorApiWrapper(unittest.TestCase):
 
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    def test_should_raise_connector_not_found_when_deleting_connector(self, log_info):
+    def test_should_raise_connector_not_found_when_deleting_connector(
+        self, log_info: MagicMock
+    ):
         connector_name = "test-connector"
 
         responses.add(
@@ -414,7 +423,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_rebalance_in_progress_when_deleting_connector(
-        self, log_warning
+        self, log_warning: MagicMock
     ):
         connector_name = "test-connector"
 

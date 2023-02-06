@@ -291,3 +291,29 @@ class TestPipeline:
         assert error_topic == "resources-custom-config-app2-error"
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_atm_fraud_example(self, tmpdir, snapshot):
+        os.environ["KPOPS_ENVIRONMENT"] = "development"
+        output_file_path = tmpdir.join("pipeline.yaml")
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "./examples/bakdata/atm-fraud-detection/pipeline.yaml",
+                "--pipeline-base-dir",
+                "examples",
+                "--defaults",
+                "./examples/bakdata/atm-fraud-detection/defaults",
+                "--config",
+                "./examples/bakdata/atm-fraud-detection/config.yaml",
+                "--save",
+                "--out-path",
+                output_file_path,
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0
+
+        enriched_pipeline = load_yaml_file(Path(output_file_path))
+        snapshot.assert_match(enriched_pipeline, "test-pipeline")

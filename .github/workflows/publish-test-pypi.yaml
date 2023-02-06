@@ -1,4 +1,4 @@
-name: Release Python package to TestPyPI
+name: Release to TestPyPI
 
 on:
   workflow_call:
@@ -19,7 +19,7 @@ jobs:
 
       - name: Bump version
         id: bump_version
-        uses: bakdata/ci-templates/actions/python-poetry-bump-version@v1.5.2
+        uses: bakdata/ci-templates/actions/python-poetry-bump-version@v1.5.3
         with:
           release-type: "patch"
 
@@ -40,7 +40,9 @@ jobs:
         shell: bash
 
       - name: Release to TestPyPI
-        uses: bakdata/ci-templates/actions/python-poetry-release@v1.5.2
+        uses: bakdata/ci-templates/actions/python-poetry-release@v1.5.3
         with:
+          python-version: "3.10"
+          poetry-version: "1.3.2"
           publish-to-test: true
           pypi-token: ${{ secrets.test-pypi-token }}

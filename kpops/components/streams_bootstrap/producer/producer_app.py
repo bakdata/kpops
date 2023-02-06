@@ -1,7 +1,10 @@
-from pydantic import BaseConfig, Extra
+from __future__ import annotations
+
+from typing import ClassVar, Literal
+
+from pydantic import BaseConfig, Extra, Field
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
@@ -18,7 +21,10 @@ class ProducerApp(KafkaApp):
     This producer holds configuration to use as values for the streams bootstrap produce helm chart.
     """
 
-    _type = "producer"
+    type: ClassVar[str] = "producer"
+    schema_type: Literal["producer"] = Field(  # type: ignore[assignment]
+        default="producer", exclude=True
+    )
     app: ProducerValues
 
     class Config(BaseConfig):
@@ -42,16 +48,14 @@ class ProducerApp(KafkaApp):
 
     @override
     def get_helm_chart(self) -> str:
-        return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.PRODUCER_APP.value}"
-
-    @override
-    def get_clean_up_helm_chart(self) -> str:
-        return f"{self.config.streams_bootstrap_helm_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
+        return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
     @property
     @override
-    def helm_repo_config(self) -> HelmRepoConfig | None:
-        return self.config.streams_bootstrap_helm_config
+    def clean_up_helm_chart(self) -> str:
+        return (
+            f"{self.repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
+        )
 
     @override
     def clean(self, dry_run: bool) -> None:

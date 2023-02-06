@@ -3,8 +3,9 @@ from __future__ import annotations
 import logging
 import re
 from functools import cached_property
+from typing import ClassVar, Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -25,23 +26,25 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 
 
 class KubernetesAppConfig(BaseModel):
-    namespace: str
-
     class Config(CamelCaseConfig):
-        pass
+        extra = Extra.allow
 
 
 # TODO: label and annotations
 class KubernetesApp(PipelineComponent):
-    """Base kubernetes app"""
+    """Base Kubernetes app"""
 
-    _type = "kubernetes-app"
+    type: ClassVar[str] = "kubernetes-app"
+    schema_type: Literal["kubernetes-app"] = Field(  # type: ignore[assignment]
+        default="kubernetes-app", exclude=True
+    )
     app: KubernetesAppConfig
-
+    repo_config: HelmRepoConfig | None = None
+    namespace: str
     version: str | None = None
 
-    class Config:
-        keep_untouched = (cached_property,)
+    class Config(CamelCaseConfig):
+        pass
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -50,11 +53,11 @@ class KubernetesApp(PipelineComponent):
     @cached_property
     def helm(self) -> Helm:
         helm = Helm(self.config.helm_config)
-        if self.helm_repo_config is not None:
+        if self.repo_config is not None:
             helm.add_repo(
-                self.helm_repo_config.repository_name,
-                self.helm_repo_config.url,
-                self.helm_repo_config.repo_auth_flags,
+                self.repo_config.repository_name,
+                self.repo_config.url,
+                self.repo_config.repo_auth_flags,
             )
         return helm
 
@@ -67,14 +70,6 @@ class KubernetesApp(PipelineComponent):
         """The name for the Helm release. Can be overridden."""
         return self.name
 
-    @property
-    def namespace(self) -> str:
-        return self.app.namespace
-
-    @property
-    def helm_repo_config(self) -> HelmRepoConfig | None:
-        return None
-
     @override
     def deploy(self, dry_run: bool) -> None:
         stdout = self.helm.upgrade_install(
@@ -83,7 +78,9 @@ class KubernetesApp(PipelineComponent):
             dry_run,
             self.namespace,
             self.to_helm_values(),
-            HelmUpgradeInstallFlags(version=self.version),
+            HelmUpgradeInstallFlags(
+                create_namespace=self.config.create_namespace, version=self.version
+            ),
         )
         if dry_run and self.helm_diff.config.enable:
             self.print_helm_diff(stdout)
@@ -102,7 +99,7 @@ class KubernetesApp(PipelineComponent):
     def to_helm_values(self) -> dict:
         return self.app.dict(by_alias=True, exclude_none=True, exclude_unset=True)
 
-    def print_helm_diff(self, stdout: str):
+    def print_helm_diff(self, stdout: str) -> None:
         current_release = self.helm.get_manifest(self.helm_release_name, self.namespace)
         new_release = Helm.load_helm_manifest(stdout)
         helm_diff = HelmDiff.get_diff(current_release, new_release)

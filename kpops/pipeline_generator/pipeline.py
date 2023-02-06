@@ -160,9 +160,12 @@ class Pipeline:
                 self.components.extend(inflated_components)
                 previous_component = inflated_components.pop()
             except Exception as ex:
-                raise ParsingException(
-                    f"Error enriching {component['type']} component {component['name']}"
-                ) from ex
+                if "name" in component:
+                    raise ParsingException(
+                        f"Error enriching {component['type']} component {component['name']}"
+                    ) from ex
+                else:
+                    raise ParsingException() from ex
 
     def populate_pipeline_component_names(
         self, inflated_components: list[PipelineComponent]
@@ -170,10 +173,10 @@ class Pipeline:
         for component in inflated_components:
             component.name = self.config.pipeline_prefix + component.name
             with suppress(
-                AttributeError  # Some components like kafka connect do not have a nameOverride attribute
+                AttributeError  # Some components like Kafka Connect do not have a name_override attribute
             ):
-                if component.app and getattr(component.app, "nameOverride") is None:
-                    setattr(component.app, "nameOverride", component.name)
+                if component.app and getattr(component.app, "name_override") is None:
+                    setattr(component.app, "name_override", component.name)
 
     def apply_component(
         self,
@@ -227,7 +230,7 @@ class Pipeline:
             substitute(
                 json.dumps(pair),
                 {
-                    "component_type": component_object._type,
+                    "component_type": component_object.type,
                     "component_name": component_object.name,
                 },
             )

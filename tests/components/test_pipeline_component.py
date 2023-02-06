@@ -17,11 +17,8 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 class TestPipelineComponent:
     def test_topic_substitution(self):
         pipeline_component = PipelineComponent(
-            handlers=ComponentHandlers(
-                schema_handler=MagicMock(),
-                connector_handler=MagicMock(),
-                topic_handler=MagicMock(),
-            ),
+            type="plain-pipeline-component",
+            name="test-pipeline-component",
             config=pipeline_config.PipelineConfig(
                 defaults_path=DEFAULTS_PATH,
                 environment="development",
@@ -30,8 +27,11 @@ class TestPipelineComponent:
                     default_output_topic_name="output-${component_type}",
                 ),
             ),
-            name="test-pipeline-component",
-            _type="plane-pipeline-component",
+            handlers=ComponentHandlers(
+                schema_handler=MagicMock(),
+                connector_handler=MagicMock(),
+                topic_handler=MagicMock(),
+            ),
             to=ToSection(
                 models={},
                 topics={
@@ -46,6 +46,6 @@ class TestPipelineComponent:
         )
 
         assert pipeline_component.to
-        assert "error-plane-pipeline-component" in pipeline_component.to.topics
-        assert "output-plane-pipeline-component" in pipeline_component.to.topics
+        assert "error-plain-pipeline-component" in pipeline_component.to.topics
+        assert "output-plain-pipeline-component" in pipeline_component.to.topics
         assert len(pipeline_component.to.topics.keys()) == 2

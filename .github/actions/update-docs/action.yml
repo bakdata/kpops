@@ -24,6 +24,7 @@ runs:
     - name: Install python and set up Poetry
       uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.2
       with:
+        poetry-version: "1.3.2"
         python-version: "3.10"
 
     - name: Update documentation branch with mike
@@ -44,6 +45,5 @@ runs:
           poetry run mike deploy dev --push --rebase --config-file ./docs/mkdocs.yml
         else
           new_tag=${NEW_TAG%.*}
-          poetry run mike deploy "$new_tag" latest --update-aliases --rebase --config-file ./docs/mkdocs.yml
-          poetry run mike set-default latest --push  --rebase --config-file ./docs/mkdocs.yml
+          poetry run mike deploy "$new_tag" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
         fi
