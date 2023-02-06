@@ -1,8 +1,6 @@
 kubernetes-app:
-  namespace: ${NAMESPACE}
-
-kafka-connect:
-  namespace: ${NAMESPACE}
+  app:
+    namespace: ${NAMESPACE}
 
 kafka-app:
   app:
