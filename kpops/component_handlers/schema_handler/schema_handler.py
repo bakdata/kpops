@@ -142,10 +142,8 @@ class SchemaHandler:
                     f"Schema is not compatible for {subject} and model {schema_class}. \n {json.dumps(schema.flat_schema, indent=4)}"
                 )
         else:
-            log.info(
-                yellowify(
+            log.debug(
                     f"Schema Submission: schema was already submitted for the subject {subject} as version {registered_version.schema}. Therefore, the specified schema must be compatible."
-                )
             )
 
         log.info(

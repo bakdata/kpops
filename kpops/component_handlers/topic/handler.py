@@ -146,16 +146,14 @@ class TopicHandler:
         if partition_count == (
             topic_spec.partitions_count or int(broker_config["num.partitions"])
         ):
-            log.info(
-                yellowify(
+            log.debug(
                     f"Topic Creation: partition count of topic {topic_name} did not change. Current partitions count {partition_count}. Updating configs."
-                )
             )
         else:
             log.error(
                 f"Topic Creation: partition count of topic {topic_name} changed! Partitions count of topic {topic_name} is {partition_count}. The given partitions count {topic_spec.partitions_count}."
             )
-            exit(1)
+            exit(1)  # TODO shouldn't we raise instead of exiting?
 
     @staticmethod
     def __check_replication_factor(
@@ -169,16 +167,14 @@ class TopicHandler:
             topic_spec.replication_factor
             or int(broker_config["default.replication.factor"])
         ):
-            log.info(
-                yellowify(
+            log.debug(
                     f"Topic Creation: replication factor of topic {topic_name} did not change. Current replication factor {replication_factor}. Updating configs."
-                )
             )
         else:
             log.error(
                 f"Topic Creation: replication factor of topic {topic_name} changed! Replication factor of topic {topic_name} is {replication_factor}. The given replication count {topic_spec.replication_factor}."
             )
-            exit(1)
+            exit(1)  # TODO shouldn't we raise instead of exiting?
 
     def __dry_run_topic_deletion(self, topic_name: str) -> None:
         try:

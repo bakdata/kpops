@@ -92,11 +92,7 @@ class KafkaConnectHandler:
         try:
             connector_config = self._connect_wrapper.get_connector(connector_name)
 
-            log.info(
-                yellowify(
-                    f"Connector Creation: connector {connector_name} already exists."
-                )
-            )
+            log.info(f"Connector Creation: connector {connector_name} already exists.")
             if diff := render_diff(
                 connector_config.config, kafka_connect_config.dict()
             ):
@@ -108,7 +104,7 @@ class KafkaConnectHandler:
         except ConnectorNotFoundException:
             log.info(
                 greenify(
-                    f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n {kafka_connect_config}"
+                    f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n {kafka_connect_config}"  # FIXME line by line print
                 )
             )
             log.debug("POST /connectors HTTP/1.1")
@@ -122,11 +118,7 @@ class KafkaConnectHandler:
             log.error("\n".join(errors))
             sys.exit(1)
         else:
-            log.info(
-                greenify(
-                    f"Connector Creation: connector config for {connector_name} is valid!"
-                )
-            )
+            log.info(f"Connector Creation: connector config for {connector_name} is valid!")
 
     def __dry_run_connector_deletion(self, connector_name: str) -> None:
         try:
