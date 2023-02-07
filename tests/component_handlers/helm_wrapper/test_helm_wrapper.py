@@ -357,6 +357,7 @@ data:
         helm_wrapper.template(
             release_name="test-release",
             chart="bakdata-streams-bootstrap/streams-app",
+            values={"commandLine": "test"},
             flags=HelmTemplateFlags(
                 api_versions="2.1.1",
                 ca_file="a_file.ca",
@@ -369,7 +370,8 @@ data:
                 "template",
                 "test-release",
                 "bakdata-streams-bootstrap/streams-app",
-                "--api-versions",
+                "--values",
+                "values.yaml" "--api-versions",
                 "2.1.1",
                 "--ca-file",
                 "a_file.ca",
@@ -386,6 +388,7 @@ data:
         helm_wrapper.template(
             release_name="test-release",
             chart="bakdata-streams-bootstrap/streams-app",
+            values={"commandLine": "test"},
             flags=HelmTemplateFlags(
                 api_versions="",
                 ca_file="",
@@ -398,5 +401,7 @@ data:
                 "template",
                 "test-release",
                 "bakdata-streams-bootstrap/streams-app",
+                "--values",
+                "values.yaml",
             ],
         )

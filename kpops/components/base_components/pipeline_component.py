@@ -5,7 +5,6 @@ from functools import cached_property
 
 from pydantic import BaseConfig, Extra, Field
 
-from kpops.component_handlers.helm_wrapper.model import HelmTemplateFlags
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
 )

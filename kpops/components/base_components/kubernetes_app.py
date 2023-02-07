@@ -6,7 +6,6 @@ from functools import cached_property
 from typing import ClassVar, Literal
 
 from pydantic import BaseModel, Extra, Field
-from rich.console import Console
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm

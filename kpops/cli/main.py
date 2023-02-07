@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import contextlib
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterator, Optional
@@ -11,7 +10,6 @@ from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.helm_wrapper.model import HelmTemplateFlags
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
 )
