@@ -26,7 +26,6 @@ class PipelineComponent(BaseDefaultsComponent):
     from_: FromSection | None = Field(default=None, alias="from")
     app: object | None = None
     to: ToSection | None = None
-    prefix: str | None = None
 
     class Config(BaseConfig):
         extra = Extra.allow
@@ -77,9 +76,6 @@ class PipelineComponent(BaseDefaultsComponent):
             error_topic_name=error_topic_name,
             output_topic_name=output_topic_name,
         )
-
-    def get_component_prefix(self):
-        return self.prefix
 
     def add_input_topics(self, topics: list[str]) -> None:
         pass

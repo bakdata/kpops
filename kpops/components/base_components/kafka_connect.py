@@ -34,7 +34,6 @@ log = logging.getLogger("KafkaConnector")
 class KafkaConnector(PipelineComponent, ABC):
     type: ClassVar[str] = "kafka-connect"
     app: KafkaConnectConfig
-
     repo_config: HelmRepoConfig = HelmRepoConfig(
         repository_name="bakdata-kafka-connect-resetter",
         url="https://bakdata.github.io/kafka-connect-resetter/",
@@ -72,6 +71,12 @@ class KafkaConnector(PipelineComponent, ABC):
     def kafka_connect_resetter_chart(self) -> str:
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
+    def verify_name_config(self, config: dict):
+        if config["name"] and config["name"] != self.name:
+            raise ValueError("Config name and connector name should match")
+        else:
+            config["name"] = self.name
+
     def prepare_connector_config(self) -> None:
         """
         Substitute component related variables in config
@@ -79,7 +84,11 @@ class KafkaConnector(PipelineComponent, ABC):
         substituted_config = self.substitute_component_variables(
             json.dumps(self.app.dict())
         )
+
         out: dict = json.loads(substituted_config)
+
+        self.verify_name_config(out)
+
         self.app = KafkaConnectConfig(**out)
 
     @override
