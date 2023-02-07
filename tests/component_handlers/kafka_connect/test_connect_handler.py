@@ -59,7 +59,9 @@ class TestConnectorHandler:
         config = KafkaConnectConfig()
         handler.create_connector(CONNECTOR_NAME, config, True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
-        connector_wrapper.validate_connector_config.assert_called_once_with(config)
+        connector_wrapper.validate_connector_config.assert_called_once_with(
+            CONNECTOR_NAME, config
+        )
 
         log_info_mock.assert_has_calls(
             [
@@ -88,7 +90,9 @@ class TestConnectorHandler:
         config = KafkaConnectConfig()
         handler.create_connector(CONNECTOR_NAME, config, True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
-        connector_wrapper.validate_connector_config.assert_called_once_with(config)
+        connector_wrapper.validate_connector_config.assert_called_once_with(
+            CONNECTOR_NAME, config
+        )
 
         log_info_mock.assert_has_calls(
             [
@@ -125,7 +129,9 @@ class TestConnectorHandler:
         with pytest.raises(SystemExit):
             handler.create_connector(CONNECTOR_NAME, config, True)
 
-        connector_wrapper.validate_connector_config.assert_called_once_with(config)
+        connector_wrapper.validate_connector_config.assert_called_once_with(
+            CONNECTOR_NAME, config
+        )
 
         log_error_mock.assert_has_calls(
             [
