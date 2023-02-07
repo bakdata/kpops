@@ -109,7 +109,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
 
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
-    def test_should_rais_connector_exists_exception_when_connector_exists(
+    def test_should_raise_connector_exists_exception_when_connector_exists(
         self, log_warning: MagicMock
     ):
         responses.add(
@@ -452,6 +452,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
             "tasks.max": "1",
             "topics": "test-topic",
+            "name": "FileStreamSinkConnector"
         }
         with pytest.raises(KafkaConnectError):
             self.connect_wrapper.validate_connector_config(
