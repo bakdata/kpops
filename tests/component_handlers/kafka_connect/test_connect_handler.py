@@ -81,7 +81,12 @@ class TestConnectorHandler:
 
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
-        config = KafkaConnectConfig()
+        configs = {
+            "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+            "tasks.max": "1",
+            "topics": "test-topic",
+        }
+        config = KafkaConnectConfig(**configs)
         handler.create_connector(CONNECTOR_NAME, config, True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(config)
@@ -89,9 +94,7 @@ class TestConnectorHandler:
         log_info_mock.assert_has_calls(
             [
                 mock.call.log_info(
-                    greenify(
-                        f"Connector Creation: connector {CONNECTOR_NAME} does not exist. Creating connector with config:\n {config}"
-                    )
+                    f"Connector Creation: connector {CONNECTOR_NAME} does not exist. Creating connector with config:\n\x1b[32m+ connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n\x1b[0m\x1b[32m+ tasks.max: '1'\n\x1b[0m\x1b[32m+ topics: test-topic\n\x1b[0m"
                 ),
                 mock.call.log_info(
                     f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"

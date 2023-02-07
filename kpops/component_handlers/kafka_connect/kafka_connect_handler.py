@@ -102,10 +102,9 @@ class KafkaConnectHandler:
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
         except ConnectorNotFoundException:
+            diff = render_diff({}, kafka_connect_config.dict())
             log.info(
-                greenify(
-                    f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n {kafka_connect_config}"  # FIXME line by line print
-                )
+                f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n{diff}"
             )
             log.debug("POST /connectors HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
