@@ -1,21 +1,14 @@
-from pathlib import Path
-
-import pytest
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
-from kpops.utils.yaml_loading import load_yaml_file
+from kpops.utils.yaml_loading import load_yaml
 
 runner = CliRunner()
 
 
 class TestExample:
-    @pytest.fixture
-    def output_file_path(self, tmp_path: Path) -> Path:
-        return tmp_path / "pipeline.yaml"
-
-    def test_atm_fraud(self, output_file_path: Path, snapshot: SnapshotTest):
+    def test_atm_fraud(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
@@ -27,14 +20,11 @@ class TestExample:
                 "./examples/bakdata/atm-fraud-detection/defaults",
                 "--config",
                 "./examples/bakdata/atm-fraud-detection/config.yaml",
-                "--save",
-                "--out-path",
-                str(output_file_path),
             ],
             catch_exceptions=False,
         )
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml_file(output_file_path)
+        enriched_pipeline = load_yaml(result.stdout)
         snapshot.assert_match(enriched_pipeline, "atm-fraud-pipeline")

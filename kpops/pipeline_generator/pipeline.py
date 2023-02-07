@@ -250,9 +250,5 @@ class Pipeline:
         )
         Console().print(syntax)
 
-    def save(self, path: Path, substitution: dict | None = None) -> None:
-        with open(path, mode="w") as file:
-            file.write(substitute(str(self), substitution))
-
     def __iter__(self) -> Iterator[PipelineComponent]:
         return iter(self.components)

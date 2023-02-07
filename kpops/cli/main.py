@@ -200,10 +200,6 @@ def generate(
     print_yaml: bool = typer.Option(
         True, help="Print enriched pipeline yaml definition"
     ),
-    save: bool = typer.Option(False, help="Save pipeline to yaml file"),
-    out_path: Optional[Path] = typer.Option(
-        None, help="Path to file the yaml pipeline should be saved to"
-    ),
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
@@ -212,13 +208,6 @@ def generate(
     )
     if print_yaml:
         pipeline.print_yaml()
-
-    if save:
-        if not out_path:
-            raise ValueError(
-                "Please provide a output path if you want to save the generated deployment."
-            )
-        pipeline.save(out_path)
 
 
 @app.command(help="Deploy pipeline steps")
