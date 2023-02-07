@@ -8,7 +8,7 @@ from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrappe
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.component_handlers.kafka_connect.timeout import timeout
-from kpops.utils.colorify import greenify, magentaify
+from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
 
 if TYPE_CHECKING:

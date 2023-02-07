@@ -9,7 +9,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
 )
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
-from kpops.utils.colorify import greenify, magentaify
+from kpops.utils.colorify import magentaify
 
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
