@@ -64,14 +64,10 @@ class TestConnectorHandler:
         log_info_mock.assert_has_calls(
             [
                 mock.call.log_info(
-                    yellowify(
                         f"Connector Creation: connector {CONNECTOR_NAME} already exists."
-                    )
                 ),
                 mock.call.log_info(
-                    greenify(
                         f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
-                    )
                 ),
             ]
         )
@@ -98,9 +94,7 @@ class TestConnectorHandler:
                     )
                 ),
                 mock.call.log_info(
-                    greenify(
                         f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
-                    )
                 ),
             ]
         )

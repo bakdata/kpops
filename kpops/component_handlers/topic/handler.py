@@ -13,7 +13,7 @@ from kpops.component_handlers.topic.utils import (
     parse_rest_proxy_topic_config,
 )
 from kpops.components.base_components.models.to_section import TopicConfig, ToSection
-from kpops.utils.colorify import greenify, magentaify, yellowify
+from kpops.utils.colorify import greenify, magentaify
 from kpops.utils.dict_differ import Diff, DiffType, get_diff, render_diff
 
 log = logging.getLogger("KafkaTopic")
@@ -147,7 +147,7 @@ class TopicHandler:
             topic_spec.partitions_count or int(broker_config["num.partitions"])
         ):
             log.debug(
-                    f"Topic Creation: partition count of topic {topic_name} did not change. Current partitions count {partition_count}. Updating configs."
+                f"Topic Creation: partition count of topic {topic_name} did not change. Current partitions count {partition_count}. Updating configs."
             )
         else:
             log.error(
@@ -168,7 +168,7 @@ class TopicHandler:
             or int(broker_config["default.replication.factor"])
         ):
             log.debug(
-                    f"Topic Creation: replication factor of topic {topic_name} did not change. Current replication factor {replication_factor}. Updating configs."
+                f"Topic Creation: replication factor of topic {topic_name} did not change. Current replication factor {replication_factor}. Updating configs."
             )
         else:
             log.error(

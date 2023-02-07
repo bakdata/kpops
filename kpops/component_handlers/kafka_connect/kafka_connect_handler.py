@@ -8,7 +8,7 @@ from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrappe
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.component_handlers.kafka_connect.timeout import timeout
-from kpops.utils.colorify import greenify, magentaify, yellowify
+from kpops.utils.colorify import greenify, magentaify
 from kpops.utils.dict_differ import render_diff
 
 if TYPE_CHECKING:
@@ -118,7 +118,9 @@ class KafkaConnectHandler:
             log.error("\n".join(errors))
             sys.exit(1)
         else:
-            log.info(f"Connector Creation: connector config for {connector_name} is valid!")
+            log.info(
+                f"Connector Creation: connector config for {connector_name} is valid!"
+            )
 
     def __dry_run_connector_deletion(self, connector_name: str) -> None:
         try:

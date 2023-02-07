@@ -14,7 +14,7 @@ from kpops.component_handlers.schema_handler.schema_provider import (
     SchemaProvider,
 )
 from kpops.components.base_components.models.to_section import ToSection
-from kpops.utils.colorify import greenify, magentaify, yellowify
+from kpops.utils.colorify import greenify, magentaify
 
 log = logging.getLogger("SchemaHandler")
 
@@ -143,7 +143,7 @@ class SchemaHandler:
                 )
         else:
             log.debug(
-                    f"Schema Submission: schema was already submitted for the subject {subject} as version {registered_version.schema}. Therefore, the specified schema must be compatible."
+                f"Schema Submission: schema was already submitted for the subject {subject} as version {registered_version.schema}. Therefore, the specified schema must be compatible."
             )
 
         log.info(

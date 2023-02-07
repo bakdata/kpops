@@ -243,10 +243,8 @@ def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_ve
 
     log_info_mock.assert_has_calls(
         [
-            mock.call.log_info(
-                yellowify(
+            mock.call.log_debug(
                     f"Schema Submission: schema was already submitted for the subject topic-X-value as version {registered_version.schema}. Therefore, the specified schema must be compatible."
-                )
             ),
             mock.call.log_info(
                 f"Schema Submission: compatible schema for topic-X-value with model {topic_config.value_schema}."

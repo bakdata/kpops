@@ -34,6 +34,10 @@ class TestTopicHandler:
         return mocker.patch("kpops.component_handlers.topic.handler.log.info")
 
     @pytest.fixture(autouse=True)
+    def log_debug_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch("kpops.component_handlers.topic.handler.log.debug")
+
+    @pytest.fixture(autouse=True)
     def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.component_handlers.topic.handler.log.warning")
 
@@ -268,7 +272,7 @@ class TestTopicHandler:
         )
 
     def test_should_print_message_if_dry_run_and_topic_exists_with_same_partition_count_and_replication_factor(
-        self, log_info_mock: MagicMock, get_topic_response_mock: MagicMock
+        self, log_info_mock: MagicMock, log_debug_mock: MagicMock, get_topic_response_mock: MagicMock
     ):
         wrapper = get_topic_response_mock
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -286,21 +290,21 @@ class TestTopicHandler:
         log_info_mock.assert_has_calls(
             [
                 mock.call("Topic Creation: topic-X already exists in cluster."),
+            ]
+        )
+        log_debug_mock.assert_has_calls(
+            [
                 mock.call(
-                    yellowify(
                         "Topic Creation: partition count of topic topic-X did not change. Current partitions count 10. Updating configs."
-                    )
                 ),
                 mock.call(
-                    yellowify(
                         "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 3. Updating configs."
-                    )
                 ),
             ]
         )
 
     def test_should_print_message_if_dry_run_and_topic_exists_with_default_partition_count_and_replication_factor(
-        self, log_info_mock: MagicMock, get_default_topic_response_mock: MagicMock
+        self, log_info_mock: MagicMock, log_debug_mock: MagicMock, get_default_topic_response_mock: MagicMock
     ):
         wrapper = get_default_topic_response_mock
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -316,15 +320,15 @@ class TestTopicHandler:
         log_info_mock.assert_has_calls(
             [
                 mock.call("Topic Creation: topic-X already exists in cluster."),
+            ]
+        )
+        log_debug_mock.assert_has_calls(
+            [
                 mock.call(
-                    yellowify(
                         "Topic Creation: partition count of topic topic-X did not change. Current partitions count 1. Updating configs."
-                    )
                 ),
                 mock.call(
-                    yellowify(
                         "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 1. Updating configs."
-                    )
                 ),
             ]
         )
