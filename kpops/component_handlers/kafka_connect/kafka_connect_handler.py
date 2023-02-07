@@ -114,9 +114,7 @@ class KafkaConnectHandler:
             log.debug("POST /connectors HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
 
-        errors = self._connect_wrapper.validate_connector_config(
-            kafka_connect_config
-        )
+        errors = self._connect_wrapper.validate_connector_config(kafka_connect_config)
         if len(errors) > 0:
             log.error(
                 f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors:"
