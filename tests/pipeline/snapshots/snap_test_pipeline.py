@@ -230,7 +230,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 "behavior.on.malformed.documents": "warn",
                 "behavior.on.null.values": "delete",
                 "connection.compression": "true",
-                "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+                "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnect",
                 "key.ignore": "false",
                 "linger.ms": "5000",
                 "max.buffered.records": "20000",
@@ -238,7 +238,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 "read.timeout.ms": "120000",
                 "tasks.max": "1",
                 "topics": "resources-pipeline-with-inflate-should-inflate",
-                "transforms.changeTopic.replacement": "resources-pipeline-with-inflate-should-inflate-index-v1",
+                "transforms.changeTopic.replacement": "resources-pipeline-with-inflate-should-i",
             },
             "name": "resources-pipeline-with-inflate-sink-connector",
             "namespace": "example-namespace",
@@ -292,7 +292,7 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
                 "behavior.on.malformed.documents": "warn",
                 "behavior.on.null.values": "delete",
                 "connection.compression": "true",
-                "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+                "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnect",
                 "key.ignore": "false",
                 "linger.ms": "5000",
                 "max.buffered.records": "20000",
@@ -407,19 +407,19 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "filter-resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
+                    "consumergroup": "filter-resources-first-pipeline-a-long-name-a-long-name-a-l",
                     "enabled": True,
                     "lagThreshold": "10000",
                     "maxReplicas": 4,
                     "minReplicas": 4,
                     "topics": [
-                        "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name"
+                        "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name"
                     ],
                 },
                 "commandLine": {"TYPE": "nothing"},
                 "image": "fake-registry/filter",
                 "imageTag": "2.4.1",
-                "nameOverride": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
+                "nameOverride": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a",
                 "replicaCount": 4,
                 "resources": {"requests": {"memory": "3G"}},
                 "streams": {
@@ -427,13 +427,13 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
                     "config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
-                    "errorTopic": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error",
+                    "errorTopic": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a",
                     "inputTopics": ["resources-first-pipeline-converter"],
-                    "outputTopic": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
+                    "outputTopic": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "name": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
+            "name": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name",
             "namespace": "example-namespace",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
@@ -443,17 +443,12 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name": {
-                        "configs": {"retention.ms": "-1"},
-                        "partitions_count": 50,
-                        "type": "output",
-                    },
-                    "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error": {
+                    "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
                         "valueSchema": "com.bakdata.kafka.DeadLetter",
-                    },
+                    }
                 },
             },
             "type": "filter",
@@ -1014,7 +1009,7 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
                 "behavior.on.malformed.documents": "warn",
                 "behavior.on.null.values": "delete",
                 "connection.compression": "true",
-                "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+                "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnect",
                 "key.ignore": "false",
                 "linger.ms": "5000",
                 "max.buffered.records": "20000",
