@@ -115,7 +115,7 @@ class KafkaConnectHandler:
             log.debug(f"HOST: {self._connect_wrapper.host}")
 
         errors = self._connect_wrapper.validate_connector_config(
-            connector_name, kafka_connect_config
+            kafka_connect_config
         )
         if len(errors) > 0:
             log.error(
