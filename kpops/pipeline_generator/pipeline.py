@@ -248,7 +248,9 @@ class Pipeline:
         syntax = Syntax(
             substitute(str(self), substitution), "yaml", background_color="default"
         )
-        Console().print(syntax)
+        Console(
+            width=1000  # HACK: overwrite console width to avoid truncating output
+        ).print(syntax)
 
     def __iter__(self) -> Iterator[PipelineComponent]:
         return iter(self.components)
