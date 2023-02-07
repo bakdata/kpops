@@ -10,6 +10,7 @@
       jmx:
         enabled: false
     debug: true
+  prefix: ""
 
 - type: producer
   name: transaction-avro-producer
@@ -26,6 +27,7 @@
       jmx:
         enabled: false
     debug: true
+  prefix: ""
 
 - type: streams-app
   name: transaction-joiner
@@ -41,6 +43,7 @@
       jmx:
         enabled: false
     debug: true
+  prefix: ""
 
 - type: streams-app
   name: fraud-detector
@@ -56,6 +59,7 @@
       jmx:
         enabled: false
     debug: true
+  prefix: ""
 
 - type: streams-app
   name: account-linker
@@ -78,6 +82,7 @@
       jmx:
         enabled: false
     debug: true
+  prefix: ""
 
 - type: kafka-sink-connector
   name: postgresql-connector
@@ -104,3 +109,4 @@
     errors.deadletterqueue.topic.replication.factor: 1
     errors.tolerance: all
     pk.mode: record_value
+  prefix: ""
