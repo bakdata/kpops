@@ -197,17 +197,13 @@ def generate(
     components_module: Optional[str] = COMPONENTS_MODULES,
     defaults: Path = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    print_yaml: bool = typer.Option(
-        True, help="Print enriched pipeline yaml definition"
-    ),
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    if print_yaml:
-        pipeline.print_yaml()
+    pipeline.print_yaml()
 
 
 @app.command(help="Deploy pipeline steps")
