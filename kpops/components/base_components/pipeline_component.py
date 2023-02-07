@@ -5,7 +5,7 @@ from functools import cached_property
 
 from pydantic import BaseConfig, Extra, Field
 
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
 )
@@ -27,7 +27,11 @@ class PipelineComponent(BaseDefaultsComponent):
     from_: FromSection | None = Field(default=None, alias="from")
     app: object | None = None
     to: ToSection | None = None
-    prefix: str = PipelineConfig.pipeline_prefix
+    prefix: str = Field(
+        default="${pipeline_name}-",
+        env=f"{ENV_PREFIX}PIPELINE_PREFIX",
+        description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+    )
 
     class Config(BaseConfig):
         extra = Extra.allow
@@ -37,6 +41,7 @@ class PipelineComponent(BaseDefaultsComponent):
         super().__init__(**kwargs)
         self.substitute_output_topic_names()
         self.substitute_name()
+        self.substitute_prefix()
         self.set_input_topics()
         self.set_output_topics()
 
@@ -173,3 +178,6 @@ class PipelineComponent(BaseDefaultsComponent):
 
     def clean(self, dry_run: bool) -> None:
         pass
+
+    def substitute_prefix(self):
+        self.prefix = substitute(self.prefix, dict(os.environ))
