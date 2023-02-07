@@ -5,7 +5,7 @@ from functools import cached_property
 
 from pydantic import BaseConfig, Extra, Field
 
-from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
+from kpops.cli.pipeline_config import ENV_PREFIX
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
 )
