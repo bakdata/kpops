@@ -195,7 +195,7 @@ class TestKubernetesApp:
         )
         mock_load_manifest = mocker.patch(
             "kpops.components.base_components.kubernetes_app.Helm.load_helm_manifest",
-            return_value=iter([]),
+            return_value=(),
         )
         spy_helm_diff = mocker.spy(kubernetes_app, "print_helm_diff")
 
@@ -207,7 +207,7 @@ class TestKubernetesApp:
         )
         mock_load_manifest.assert_called_once()
         assert log_info_mock.mock_calls == [
-            mocker.call("Helm release test-kubernetes-apps already does not exist"),
+            mocker.call("Helm release test-kubernetes-apps does not exist"),
             mocker.call("\n\x1b[32m+ a: 1\n\x1b[0m"),
         ]
 
