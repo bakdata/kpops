@@ -168,7 +168,10 @@ class TestKubernetesApp:
             "test-kubernetes-apps", "test-namespace"
         )
         mock_load_manifest.assert_called_once()
-        assert log_info_mock.mock_calls == [mocker.call("\n\x1b[32m+ a: 1\n\x1b[0m")]
+        assert log_info_mock.mock_calls == [
+            mocker.call("Helm release test-kubernetes-apps does not exist"),
+            mocker.call("\n\x1b[32m+ a: 1\n\x1b[0m"),
+        ]
 
     def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
         self,
