@@ -40,6 +40,7 @@ class HelmConfig:
 
 @dataclass
 class HelmUpgradeInstallFlags:
+    create_namespace: bool = False
     force: bool = False
     repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
     timeout: str = "5m0s"

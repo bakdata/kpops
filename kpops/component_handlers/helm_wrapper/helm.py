@@ -224,6 +224,8 @@ class Helm:
         dry_run: bool,
         helm_command_config: HelmUpgradeInstallFlags,
     ) -> list[str]:
+        if helm_command_config.create_namespace:
+            command.append("--create-namespace")
         if dry_run:
             command.append("--dry-run")
         if helm_command_config.force:
