@@ -33,7 +33,7 @@ class TestKubernetesApp:
             defaults_path=DEFAULTS_PATH,
             environment="development",
             helm_diff_config=HelmDiffConfig(enable=True),
-            broker=""  # This is missing
+            broker="",  # This is missing
         )
 
     @pytest.fixture
@@ -137,7 +137,7 @@ class TestKubernetesApp:
             ]
         )
 
-    def test_should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled(
+    def test_should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled_exists(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -156,9 +156,12 @@ class TestKubernetesApp:
         mocker.patch.object(
             kubernetes_app, "get_helm_chart", return_value="test/test-chart"
         )
+        helm_mock.get_manifest.return_value = iter(
+            [HelmTemplate("path.yaml", {"a": 1})]
+        )
         mock_load_manifest = mocker.patch(
             "kpops.components.base_components.kubernetes_app.Helm.load_helm_manifest",
-            return_value=iter([HelmTemplate("path.yaml", {"a": 1})]),
+            return_value=iter([HelmTemplate("path.yaml", {"a": 2})]),
         )
         spy_helm_diff = mocker.spy(kubernetes_app, "print_helm_diff")
 
@@ -171,10 +174,12 @@ class TestKubernetesApp:
         mock_load_manifest.assert_called_once()
         assert log_info_mock.mock_calls == [
             mocker.call("Helm release test-kubernetes-apps already exists"),
-            mocker.call("\n\x1b[32m+ a: 1\n\x1b[0m"),
+            mocker.call(
+                "\n\x1b[31m- a: 1\n\x1b[0m\x1b[33m?    ^\n\x1b[0m\x1b[32m+ a: 2\n\x1b[0m\x1b[33m?    ^\n\x1b[0m"
+            ),
         ]
 
-    def test_should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled_2(  #TODO fix name
+    def test_should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled_new(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -193,9 +198,10 @@ class TestKubernetesApp:
         mocker.patch.object(
             kubernetes_app, "get_helm_chart", return_value="test/test-chart"
         )
+        helm_mock.get_manifest.return_value = iter(())
         mock_load_manifest = mocker.patch(
             "kpops.components.base_components.kubernetes_app.Helm.load_helm_manifest",
-            return_value=(),
+            return_value=iter([HelmTemplate("path.yaml", {"a": 1})]),
         )
         spy_helm_diff = mocker.spy(kubernetes_app, "print_helm_diff")
 
