@@ -452,7 +452,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
             "tasks.max": "1",
             "topics": "test-topic",
-            "name": "FileStreamSinkConnector"
+            "name": "FileStreamSinkConnector",
         }
         with pytest.raises(KafkaConnectError):
             self.connect_wrapper.validate_connector_config(
