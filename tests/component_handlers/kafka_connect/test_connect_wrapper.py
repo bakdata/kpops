@@ -466,6 +466,28 @@ class TestConnectorApiWrapper(unittest.TestCase):
             json=KafkaConnectConfig(**configs).dict(),
         )
 
+    @patch("requests.put")
+    def test_should_create_correct_validate_connector_config_and_name_gets_added(
+        self, mock_put: MagicMock
+    ):
+        connector_name = "FileStreamSinkConnector"
+        configs = {
+            "connector.class": f"org.apache.kafka.connect.file.{connector_name}",
+            "tasks.max": "1",
+            "topics": "test-topic",
+        }
+        with pytest.raises(KafkaConnectError):
+            self.connect_wrapper.validate_connector_config(
+                f"{connector_name}",
+                kafka_connect_config=KafkaConnectConfig(**configs),
+            )
+
+        mock_put.assert_called_with(
+            url=f"{HOST}/connector-plugins/{connector_name}/config/validate",
+            headers={"Accept": "application/json", "Content-Type": "application/json"},
+            json=KafkaConnectConfig(**{**configs, **{"name": connector_name}}).dict(),
+        )
+
     @responses.activate
     def test_should_parse_validate_connector_config(self):
         with open(
