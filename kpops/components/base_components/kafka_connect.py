@@ -71,11 +71,6 @@ class KafkaConnector(PipelineComponent, ABC):
     def kafka_connect_resetter_chart(self) -> str:
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
-    def verify_name_config(self, config: dict):
-        if config["name"] and config["name"] != self.name:
-            raise ValueError("Config name and connector name should match")
-        else:
-            config["name"] = self.name
 
     def prepare_connector_config(self) -> None:
         """
@@ -86,9 +81,6 @@ class KafkaConnector(PipelineComponent, ABC):
         )
 
         out: dict = json.loads(substituted_config)
-
-        self.verify_name_config(out)
-
         self.app = KafkaConnectConfig(**out)
 
     @override
