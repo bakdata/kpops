@@ -5,6 +5,7 @@ from functools import cached_property
 
 from pydantic import BaseConfig, Extra, Field
 
+from kpops.cli.pipeline_config import PipelineConfig
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
 )
@@ -26,6 +27,7 @@ class PipelineComponent(BaseDefaultsComponent):
     from_: FromSection | None = Field(default=None, alias="from")
     app: object | None = None
     to: ToSection | None = None
+    prefix: str = PipelineConfig.pipeline_prefix
 
     class Config(BaseConfig):
         extra = Extra.allow

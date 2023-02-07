@@ -71,7 +71,6 @@ class KafkaConnector(PipelineComponent, ABC):
     def kafka_connect_resetter_chart(self) -> str:
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
-
     def prepare_connector_config(self) -> None:
         """
         Substitute component related variables in config
