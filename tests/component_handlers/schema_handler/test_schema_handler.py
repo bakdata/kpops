@@ -34,6 +34,13 @@ def log_info_mock(mocker: MockerFixture) -> MagicMock:
     )
 
 
+@pytest.fixture(autouse=True)
+def log_debug_mock(mocker: MockerFixture) -> MagicMock:
+    return mocker.patch(
+        "kpops.component_handlers.schema_handler.schema_handler.log.debug"
+    )
+
+
 @pytest.fixture(autouse=False)
 def find_class_mock(mocker: MockerFixture) -> MagicMock:
     return mocker.patch(
@@ -220,7 +227,7 @@ def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatibl
 
 
 def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_version_and_dry_run_true(
-    log_info_mock: MagicMock, schema_registry_mock: MagicMock
+    log_info_mock: MagicMock, log_debug_mock: MagicMock, schema_registry_mock: MagicMock
 ):
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(
@@ -243,11 +250,15 @@ def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_ve
 
     log_info_mock.assert_has_calls(
         [
-            mock.call.log_debug(
-                f"Schema Submission: schema was already submitted for the subject topic-X-value as version {registered_version.schema}. Therefore, the specified schema must be compatible."
-            ),
             mock.call.log_info(
                 f"Schema Submission: compatible schema for topic-X-value with model {topic_config.value_schema}."
+            ),
+        ]
+    )
+    log_debug_mock.assert_has_calls(
+        [
+            mock.call.log_debug(
+                f"Schema Submission: schema was already submitted for the subject topic-X-value as version {registered_version.schema}. Therefore, the specified schema must be compatible."
             ),
         ]
     )
