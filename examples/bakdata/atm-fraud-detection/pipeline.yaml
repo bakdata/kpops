@@ -1,6 +1,5 @@
 - type: producer
   name: account-producer
-  namespace: ivan-yordanov-bakdata
   app:
     replicaCount: 1
     image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
@@ -13,7 +12,6 @@
     debug: true
 
 - type: producer
-  namespace: ivan-yordanov-bakdata
   name: transaction-avro-producer
   app:
     replicaCount: 1
@@ -30,7 +28,6 @@
     debug: true
 
 - type: streams-app
-  namespace: ivan-yordanov-bakdata
   name: transaction-joiner
   app:
     replicaCount: 1
@@ -46,7 +43,6 @@
     debug: true
 
 - type: streams-app
-  namespace: ivan-yordanov-bakdata
   name: fraud-detector
   app:
     replicaCount: 1
@@ -62,7 +58,6 @@
     debug: true
 
 - type: streams-app
-  namespace: ivan-yordanov-bakdata
   name: account-linker
   from:
     topics:
@@ -86,7 +81,6 @@
 
 - type: kafka-sink-connector
   name: postgresql-connector
-  namespace: ivan-yordanov-bakdata
   app:
     name: postgresql-connector
     connector.class: io.confluent.connect.jdbc.JdbcSinkConnector

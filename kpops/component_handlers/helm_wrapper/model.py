@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Iterator, Optional
+from typing import Iterator
 
 import yaml
 from pydantic import BaseModel, Field
@@ -54,10 +54,10 @@ HELM_SOURCE_PREFIX = "# Source: "
 
 @dataclass
 class HelmTemplateFlags:
-    api_versions: str = ""
-    ca_file: str = ""
-    cert_file: str = ""
-    version: Optional[str] = ""
+    api_versions: str | None = None
+    ca_file: str | None = None
+    cert_file: str | None = None
+    version: str | None = None
 
 
 @dataclass

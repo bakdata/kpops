@@ -164,7 +164,7 @@ class KafkaConnector(PipelineComponent, ABC):
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
             self.__uninstall_connect_resetter(trimmed_name, dry_run)
 
-    def _get_release_name(self, connector_name):
+    def _get_release_name(self, connector_name) -> str:
         suffix = "-clean"
         clean_up_release_name = connector_name + suffix
         trimmed_name = trim_release_name(clean_up_release_name, suffix)
@@ -241,7 +241,7 @@ class KafkaSourceConnector(KafkaConnector):
             self.name,
             KafkaConnectorType.SOURCE,
             {},
-            # offset_topic=self.offset_topic,
+            # offset_topic=self.offset_topic, # mypy did not like this
         )
         stdout = self.helm.template(
             self._get_release_name(self.name),
