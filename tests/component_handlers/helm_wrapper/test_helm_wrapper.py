@@ -361,7 +361,7 @@ data:
             chart="bakdata-streams-bootstrap/streams-app",
             values={"commandLine": "test"},
             flags=HelmTemplateFlags(
-                api_versions="2.1.1",
+                api_version="2.1.1",
                 ca_file="a_file.ca",
                 cert_file="a_file.pem",
             ),
@@ -393,7 +393,7 @@ data:
             chart="bakdata-streams-bootstrap/streams-app",
             values={"commandLine": "test"},
             flags=HelmTemplateFlags(
-                api_versions="",
+                api_version="",
                 ca_file="",
                 cert_file="",
             ),

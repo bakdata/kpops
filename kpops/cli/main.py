@@ -207,14 +207,14 @@ def generate(
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
     template: bool = typer.Option(False, help="Run helm template"),
     steps: Optional[str] = PIPELINE_STEPS,
-    api_versions: str = typer.Option(
-        "", help="Kubernetes api version used for Capabilities.APIVersions"
+    api_version: str = typer.Option(
+        None, help="Kubernetes api version used for Capabilities.APIVersions"
     ),
     ca_file: str = typer.Option(
-        "", help="Verify certificates of HTTPS-enabled servers using this CA bundle"
+        None, help="Verify certificates of HTTPS-enabled servers using this CA bundle"
     ),
     cert_file: str = typer.Option(
-        "", help="Identify HTTPS client using this SSL certificate file"
+        None, help="Identify HTTPS client using this SSL certificate file"
     ),
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
@@ -234,8 +234,8 @@ def generate(
     if template:
         steps_to_apply = get_steps_to_apply(pipeline, steps)
         for component in steps_to_apply:
-            component.template(api_versions, ca_file, cert_file)
-    elif cert_file or ca_file or api_versions or steps:
+            component.template(api_version, ca_file, cert_file)
+    elif cert_file or ca_file or api_version or steps:
         raise TypeError(
             "The following flags can only be used in conjuction with `--template`: \n \
                 '--cert-file'\n \

@@ -198,8 +198,8 @@ class Helm:
         """
         Add flags to `helm template`.
         """
-        if helm_command_config.api_versions:
-            command.extend(["--api-versions", helm_command_config.api_versions])
+        if helm_command_config.api_version:
+            command.extend(["--api-versions", helm_command_config.api_version])
         if helm_command_config.ca_file:
             command.extend(["--ca-file", helm_command_config.ca_file])
         if helm_command_config.cert_file:
