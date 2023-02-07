@@ -19,11 +19,7 @@ def load_yaml_file(
     file_path: Path, *, substitution: dict | None = None
 ) -> dict | list[dict]:
     with open(file_path) as yaml_file:
-        return load_yaml(yaml_file.read(), substitution=substitution)
-
-
-def load_yaml(content: str, *, substitution: dict | None = None) -> dict | list[dict]:
-    return yaml.load(substitute(content, substitution), Loader=yaml.Loader)
+        return yaml.load(substitute(yaml_file.read(), substitution), Loader=yaml.Loader)
 
 
 def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str:

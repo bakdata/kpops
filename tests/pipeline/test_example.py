@@ -1,8 +1,8 @@
+import yaml
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
-from kpops.utils.yaml_loading import load_yaml
 
 runner = CliRunner()
 
@@ -26,5 +26,5 @@ class TestExample:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml(result.stdout)
+        enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "atm-fraud-pipeline")

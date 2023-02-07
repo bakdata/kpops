@@ -3,11 +3,11 @@ from collections.abc import Iterator
 from pathlib import Path
 
 import pytest
+import yaml
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
-from kpops.utils.yaml_loading import load_yaml
 
 runner = CliRunner()
 
@@ -41,7 +41,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml(result.stdout)
+        enriched_pipeline = yaml.safe_load(result.stdout)
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
@@ -62,7 +62,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml(result.stdout)
+        enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_inflate_pipeline(self, snapshot: SnapshotTest):
@@ -82,7 +82,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml(result.stdout)
+        enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_substitute_component_names(self, snapshot: SnapshotTest):
@@ -102,7 +102,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml(result.stdout)
+        enriched_pipeline = yaml.safe_load(result.stdout)
 
         assert isinstance(enriched_pipeline, dict)
         labels = enriched_pipeline["components"][0]["app"]["labels"]
@@ -128,7 +128,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml(result.stdout)
+        enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_no_user_defined_components(self, snapshot: SnapshotTest):
@@ -147,7 +147,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml(result.stdout)
+        enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_kafka_connect_sink_weave_from_topics(self, snapshot: SnapshotTest):
@@ -167,7 +167,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml(result.stdout)
+        enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_with_env_defaults(self, snapshot: SnapshotTest):
@@ -186,7 +186,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml(result.stdout)
+        enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_with_custom_config(self, snapshot: SnapshotTest):
@@ -207,7 +207,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml(result.stdout)
+        enriched_pipeline = yaml.safe_load(result.stdout)
         assert isinstance(enriched_pipeline, dict)
 
         producer_details = enriched_pipeline["components"][0]
@@ -238,7 +238,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = load_yaml(result.stdout)
+        enriched_pipeline = yaml.safe_load(result.stdout)
         assert isinstance(enriched_pipeline, dict)
 
         producer_details = enriched_pipeline["components"][0]
