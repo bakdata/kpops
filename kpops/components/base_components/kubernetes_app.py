@@ -103,6 +103,7 @@ class KubernetesApp(PipelineComponent):
         current_release = list(
             self.helm.get_manifest(self.helm_release_name, self.namespace)
         )
+        # current_release is empty even if the iterable is not
         if current_release:
             log.info(f"Helm release {self.helm_release_name} already exists")
         else:

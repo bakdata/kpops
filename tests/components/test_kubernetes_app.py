@@ -33,6 +33,7 @@ class TestKubernetesApp:
             defaults_path=DEFAULTS_PATH,
             environment="development",
             helm_diff_config=HelmDiffConfig(enable=True),
+            broker=""  # This is missing
         )
 
     @pytest.fixture
@@ -169,7 +170,44 @@ class TestKubernetesApp:
         )
         mock_load_manifest.assert_called_once()
         assert log_info_mock.mock_calls == [
-            mocker.call("Helm release test-kubernetes-apps does not exist"),
+            mocker.call("Helm release test-kubernetes-apps already exists"),
+            mocker.call("\n\x1b[32m+ a: 1\n\x1b[0m"),
+        ]
+
+    def test_should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled_2(  #TODO fix name
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        helm_mock: MagicMock,
+        mocker: MockerFixture,
+        log_info_mock: MagicMock,
+        app_value: KubernetesTestValue,
+    ):
+        kubernetes_app = KubernetesApp(
+            name="test-kubernetes-apps",
+            config=config,
+            handlers=handlers,
+            app=app_value,
+            namespace="test-namespace",
+        )
+        mocker.patch.object(
+            kubernetes_app, "get_helm_chart", return_value="test/test-chart"
+        )
+        mock_load_manifest = mocker.patch(
+            "kpops.components.base_components.kubernetes_app.Helm.load_helm_manifest",
+            return_value=iter([]),
+        )
+        spy_helm_diff = mocker.spy(kubernetes_app, "print_helm_diff")
+
+        kubernetes_app.deploy(dry_run=True)
+
+        spy_helm_diff.assert_called_once()
+        helm_mock.get_manifest.assert_called_once_with(
+            "test-kubernetes-apps", "test-namespace"
+        )
+        mock_load_manifest.assert_called_once()
+        assert log_info_mock.mock_calls == [
+            mocker.call("Helm release test-kubernetes-apps already does not exist"),
             mocker.call("\n\x1b[32m+ a: 1\n\x1b[0m"),
         ]
 
