@@ -72,10 +72,10 @@ class KafkaConnector(PipelineComponent, ABC):
     def kafka_connect_resetter_chart(self) -> str:
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
-    def set_connector_name(self):
-        if self.app.name and self.app.name != self.name:
+    def set_connector_name(self, config: dict):
+        if config.get("name") and config.get("name") != self.name:
             raise ValueError("Component name should be the same as app name")
-        self.app.name = self.name
+        config["name"] = self.name
 
     def prepare_connector_config(self) -> None:
         """
@@ -85,8 +85,8 @@ class KafkaConnector(PipelineComponent, ABC):
             json.dumps(self.app.dict())
         )
         out: dict = json.loads(substituted_config)
+        self.set_connector_name(out)
         self.app = KafkaConnectConfig(**out)
-        self.set_connector_name()
 
     @override
     def deploy(self, dry_run: bool) -> None:

@@ -12,6 +12,8 @@ class KafkaConnectorType(str, Enum):
 
 
 class KafkaConnectConfig(BaseModel):
+    name: str
+
     class Config(BaseConfig):
         extra = Extra.allow
 
