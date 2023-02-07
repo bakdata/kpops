@@ -20,7 +20,7 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
-from kpops.utils.colorify import greenify, magentaify, yellowify
+from kpops.utils.colorify import greenify, magentaify
 
 log = logging.getLogger()
 log.level = logging.DEBUG
@@ -272,7 +272,10 @@ class TestTopicHandler:
         )
 
     def test_should_print_message_if_dry_run_and_topic_exists_with_same_partition_count_and_replication_factor(
-        self, log_info_mock: MagicMock, log_debug_mock: MagicMock, get_topic_response_mock: MagicMock
+        self,
+        log_info_mock: MagicMock,
+        log_debug_mock: MagicMock,
+        get_topic_response_mock: MagicMock,
     ):
         wrapper = get_topic_response_mock
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -295,16 +298,19 @@ class TestTopicHandler:
         log_debug_mock.assert_has_calls(
             [
                 mock.call(
-                        "Topic Creation: partition count of topic topic-X did not change. Current partitions count 10. Updating configs."
+                    "Topic Creation: partition count of topic topic-X did not change. Current partitions count 10. Updating configs."
                 ),
                 mock.call(
-                        "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 3. Updating configs."
+                    "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 3. Updating configs."
                 ),
             ]
         )
 
     def test_should_print_message_if_dry_run_and_topic_exists_with_default_partition_count_and_replication_factor(
-        self, log_info_mock: MagicMock, log_debug_mock: MagicMock, get_default_topic_response_mock: MagicMock
+        self,
+        log_info_mock: MagicMock,
+        log_debug_mock: MagicMock,
+        get_default_topic_response_mock: MagicMock,
     ):
         wrapper = get_default_topic_response_mock
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -325,10 +331,10 @@ class TestTopicHandler:
         log_debug_mock.assert_has_calls(
             [
                 mock.call(
-                        "Topic Creation: partition count of topic topic-X did not change. Current partitions count 1. Updating configs."
+                    "Topic Creation: partition count of topic topic-X did not change. Current partitions count 1. Updating configs."
                 ),
                 mock.call(
-                        "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 1. Updating configs."
+                    "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 1. Updating configs."
                 ),
             ]
         )

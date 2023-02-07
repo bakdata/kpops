@@ -9,7 +9,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
 )
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
-from kpops.utils.colorify import greenify, magentaify, yellowify
+from kpops.utils.colorify import greenify, magentaify
 
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
@@ -64,10 +64,10 @@ class TestConnectorHandler:
         log_info_mock.assert_has_calls(
             [
                 mock.call.log_info(
-                        f"Connector Creation: connector {CONNECTOR_NAME} already exists."
+                    f"Connector Creation: connector {CONNECTOR_NAME} already exists."
                 ),
                 mock.call.log_info(
-                        f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
+                    f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
                 ),
             ]
         )
@@ -94,7 +94,7 @@ class TestConnectorHandler:
                     )
                 ),
                 mock.call.log_info(
-                        f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
+                    f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
                 ),
             ]
         )
