@@ -503,7 +503,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         mock_put.assert_called_with(
             url=f"{HOST}/connector-plugins/{connector_name}/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectConfig(**{**configs, **{"name": connector_name}}).dict(),
+            json=KafkaConnectConfig(**{"name": connector_name, **configs}).dict(),
         )
 
     @responses.activate
