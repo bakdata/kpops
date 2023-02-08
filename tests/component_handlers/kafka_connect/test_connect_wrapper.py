@@ -205,13 +205,13 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "topics": "test-topic",
             "name": "OtherWrongName",
         }
-        with pytest.raises(ValueError) as e:
+        with pytest.raises(ValueError) as value_error:
             self.connect_wrapper.validate_connector_config(
                 "FileStreamSinkConnector",
                 kafka_connect_config=KafkaConnectConfig(**configs),
             )
 
-        assert str(e.value) == "App config name should be the same as component name"
+        assert str(value_error.value) == "Kafka Connect config should be the same as component name"
 
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
