@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import ANY, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -60,24 +60,22 @@ class TestTemplate:
         )
 
         run_command.assert_called_with(
-            mocker.call(
-                [
-                    "helm",
-                    "template",
-                    "resources-custom-config-app2",
-                    "bakdata-streams-bootstrap/streams-app",
-                    "--values",
-                    # "/var/folders/ys/df_4196j4qn_9kzww63p7yl40000gp/T/tmp4073isr8",  # FIXME
-                    "--api-versions",
-                    "2.1.1",
-                    "--ca-file",
-                    "ca-file",
-                    "--cert-file",
-                    "cert-file",
-                    " --version",
-                    "2.7.0",
-                ]
-            ),
+            [
+                "helm",
+                "template",
+                "resources-custom-config-app2",
+                "bakdata-streams-bootstrap/streams-app",
+                "--values",
+                ANY,
+                "--api-versions",
+                "2.1.1",
+                "--ca-file",
+                "ca-file",
+                "--cert-file",
+                "cert-file",
+                "--version",
+                "2.7.0",
+            ],
         )
 
         assert result.exit_code == 0
