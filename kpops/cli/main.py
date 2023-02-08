@@ -207,13 +207,13 @@ def generate(
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
     template: bool = typer.Option(False, help="Run helm template"),
     steps: Optional[str] = PIPELINE_STEPS,
-    api_version: str = typer.Option(
+    api_version: Optional[str] = typer.Option(
         None, help="Kubernetes api version used for Capabilities.APIVersions"
     ),
-    ca_file: str = typer.Option(
+    ca_file: Optional[str] = typer.Option(
         None, help="Verify certificates of HTTPS-enabled servers using this CA bundle"
     ),
-    cert_file: str = typer.Option(
+    cert_file: Optional[str] = typer.Option(
         None, help="Identify HTTPS client using this SSL certificate file"
     ),
 ):

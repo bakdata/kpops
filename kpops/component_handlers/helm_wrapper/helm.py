@@ -138,21 +138,30 @@ class Helm:
     ) -> str:
         """
         Render chart templates locally and display the output.
+
+        From HELM: Render chart templates locally and display the output.
+        Any values that would normally be looked up or retrieved in-cluster will
+        be faked locally. Additionally, none of the server-side testing of chart
+        validity (e.g. whether an API is supported) is done.
+
+        :param str release_name: the release name for which the command is ran
+        :param str chart: helm chart to be templated
+        :param dict[str, str] values: `values.yaml` to be used
+        :param flags: the flags to be set for `helm template`
+        :type flags: HelmTemplateFlags
+        :return: the output of `helm template`
+        :rtype: str
         """
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
             command = [
                 "helm",
+                "template",
+                release_name,
+                chart,
+                "--values",
+                values_file.name,
             ]
-            command.extend(
-                [
-                    "template",
-                    release_name,
-                    chart,
-                    "--values",
-                    values_file.name,
-                ]
-            )
             command = Helm.__enrich_template_command(command, flags)
             return self.__execute(command=command)
 
@@ -196,7 +205,14 @@ class Helm:
         helm_command_config: HelmTemplateFlags,
     ) -> list[str]:
         """
-        Add flags to `helm template`.
+        Enrich `self.template()` with the flags to be used for `helm template`
+
+        :param list[str] command: command that contains a call to
+            `helm template` with specified release name, chart and values
+        :param helm_command_config: flags to be set
+        :type helm_command_config: HelmTemplateFlags
+        :return: the enriched with flags `helm template`
+        :rtype: list[str]
         """
         if helm_command_config.api_version:
             command.extend(["--api-versions", helm_command_config.api_version])

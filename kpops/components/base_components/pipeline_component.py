@@ -161,20 +161,20 @@ class PipelineComponent(BaseDefaultsComponent):
         return [self]
 
     def template(self, api_version: str, ca_file: str, cert_file: str) -> None:
-        """Runs `helm template`
+        """
+        Runs `helm template`
 
         From HELM: Render chart templates locally and display the output.
         Any values that would normally be looked up or retrieved in-cluster will
         be faked locally. Additionally, none of the server-side testing of chart
         validity (e.g. whether an API is supported) is done.
 
-        Args:
-            api_version (str): Kubernetes api version used for
-                Capabilities.APIVersions, `--api_versions` in helm
-            ca_file string (str): verify certificates of HTTPS-enabled servers
-                using this CA bundle, `--ca-file` in helm
-            cert_file (str): identify HTTPS client using this SSL certificate
-                file, `--cert-file` in helm
+        :param api_version: Kubernetes api version used for
+            Capabilities.APIVersions, `--api_versions` in helm
+        :param str ca_file: verify certificates of HTTPS-enabled servers
+            using this CA bundle, `--ca-file` in helm
+        :param str cert_file: identify HTTPS client using this SSL certificate
+            file, `--cert-file` in helm
         """
         pass
 

@@ -392,11 +392,7 @@ data:
             release_name="test-release",
             chart="bakdata-streams-bootstrap/streams-app",
             values={"commandLine": "test"},
-            flags=HelmTemplateFlags(
-                api_version="",
-                ca_file="",
-                cert_file="",
-            ),
+            flags=HelmTemplateFlags(),
         )
         run_command.assert_called_once_with(
             command=[
