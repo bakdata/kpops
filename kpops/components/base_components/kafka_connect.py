@@ -235,7 +235,9 @@ class KafkaSourceConnector(KafkaConnector):
         raise NotImplementedError("Kafka source connector doesn't support FromSection")
 
     @override
-    def template(self, api_version: str, ca_file: str, cert_file: str) -> None:
+    def template(
+        self, api_version: str | None, ca_file: str | None, cert_file: str | None
+    ) -> None:
         flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
         values = self._get_kafka_connect_resetter_values(
             self.name,
@@ -284,7 +286,9 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "topics", ",".join(topics))
 
     @override
-    def template(self, api_version: str, ca_file: str, cert_file: str) -> None:
+    def template(
+        self, api_version: str | None, ca_file: str | None, cert_file: str | None
+    ) -> None:
         flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
         values = self._get_kafka_connect_resetter_values(
             self.name, KafkaConnectorType.SINK

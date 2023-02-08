@@ -160,7 +160,9 @@ class PipelineComponent(BaseDefaultsComponent):
         """
         return [self]
 
-    def template(self, api_version: str, ca_file: str, cert_file: str) -> None:
+    def template(
+        self, api_version: str | None, ca_file: str | None, cert_file: str | None
+    ) -> None:
         """
         Runs `helm template`
 

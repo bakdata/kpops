@@ -72,7 +72,9 @@ class KubernetesApp(PipelineComponent):
         return self.name
 
     @override
-    def template(self, api_version: str, ca_file: str, cert_file: str) -> None:
+    def template(
+        self, api_version: str | None, ca_file: str | None, cert_file: str | None
+    ) -> None:
         flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
         stdout = self.helm.template(
             self.helm_release_name, self.get_helm_chart(), self.to_helm_values(), flags
