@@ -134,9 +134,10 @@ class TestKubernetesApp:
             ),
             mocker.call.get_manifest("test-kubernetes-apps", "test-namespace"),
             mocker.call.get_manifest().__iter__(),
+            mocker.call.get_manifest().__len__(),
         ]
 
-    def test_should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled(
+    def test_should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled_exists(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -155,6 +156,49 @@ class TestKubernetesApp:
         mocker.patch.object(
             kubernetes_app, "get_helm_chart", return_value="test/test-chart"
         )
+        helm_mock.get_manifest.return_value = iter(
+            [HelmTemplate("path.yaml", {"a": 1})]
+        )
+        mock_load_manifest = mocker.patch(
+            "kpops.components.base_components.kubernetes_app.Helm.load_manifest",
+            return_value=iter([HelmTemplate("path.yaml", {"a": 2})]),
+        )
+        spy_helm_diff = mocker.spy(kubernetes_app, "print_helm_diff")
+
+        kubernetes_app.deploy(dry_run=True)
+
+        spy_helm_diff.assert_called_once()
+        helm_mock.get_manifest.assert_called_once_with(
+            "test-kubernetes-apps", "test-namespace"
+        )
+        mock_load_manifest.assert_called_once()
+        assert log_info_mock.mock_calls == [
+            mocker.call("Helm release test-kubernetes-apps already exists"),
+            mocker.call(
+                "\n\x1b[31m- a: 1\n\x1b[0m\x1b[33m?    ^\n\x1b[0m\x1b[32m+ a: 2\n\x1b[0m\x1b[33m?    ^\n\x1b[0m"
+            ),
+        ]
+
+    def test_should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled_new(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        helm_mock: MagicMock,
+        mocker: MockerFixture,
+        log_info_mock: MagicMock,
+        app_value: KubernetesTestValue,
+    ):
+        kubernetes_app = KubernetesApp(
+            name="test-kubernetes-apps",
+            config=config,
+            handlers=handlers,
+            app=app_value,
+            namespace="test-namespace",
+        )
+        mocker.patch.object(
+            kubernetes_app, "get_helm_chart", return_value="test/test-chart"
+        )
+        helm_mock.get_manifest.return_value = iter(())
         mock_load_manifest = mocker.patch(
             "kpops.components.base_components.kubernetes_app.Helm.load_manifest",
             return_value=iter([HelmTemplate("path.yaml", {"a": 1})]),
@@ -168,7 +212,10 @@ class TestKubernetesApp:
             "test-kubernetes-apps", "test-namespace"
         )
         mock_load_manifest.assert_called_once()
-        assert log_info_mock.mock_calls == [mocker.call("\n\x1b[32m+ a: 1\n\x1b[0m")]
+        assert log_info_mock.mock_calls == [
+            mocker.call("Helm release test-kubernetes-apps does not exist"),
+            mocker.call("\n\x1b[32m+ a: 1\n\x1b[0m"),
+        ]
 
     def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
         self,
