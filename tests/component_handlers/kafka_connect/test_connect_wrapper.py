@@ -211,7 +211,10 @@ class TestConnectorApiWrapper(unittest.TestCase):
                 kafka_connect_config=KafkaConnectConfig(**configs),
             )
 
-        assert str(value_error.value) == "Kafka Connect config should be the same as component name"
+        assert (
+            str(value_error.value)
+            == "Kafka Connect config should be the same as component name"
+        )
 
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")

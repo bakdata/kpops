@@ -1,6 +1,7 @@
 import logging
 import time
 from time import sleep
+from typing import Any
 
 import requests
 
@@ -123,10 +124,12 @@ class ConnectWrapper:
 
     def get_connector_config(
         self, connector_name: str, config: KafkaConnectConfig
-    ) -> dict:
+    ) -> dict[str, Any]:
         connector_config = config.dict(exclude_none=True, exclude_unset=True)
         if (name := connector_config.get("name")) and name != connector_name:
-            raise ValueError("Kafka Connect config should be the same as component name")
+            raise ValueError(
+                "Kafka Connect config should be the same as component name"
+            )
         connector_config["name"] = connector_name
         return connector_config
 
