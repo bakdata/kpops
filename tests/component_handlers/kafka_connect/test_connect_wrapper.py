@@ -213,7 +213,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
 
         assert (
             str(value_error.value)
-            == "Connect config should be the same as component name"
+            == "Connector name should be the same as component name"
         )
 
     @responses.activate
