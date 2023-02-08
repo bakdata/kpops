@@ -8,7 +8,7 @@ from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrappe
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.component_handlers.kafka_connect.timeout import timeout
-from kpops.utils.colorify import greenify, magentaify, yellowify
+from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
 
 if TYPE_CHECKING:
@@ -92,11 +92,7 @@ class KafkaConnectHandler:
         try:
             connector_config = self._connect_wrapper.get_connector(connector_name)
 
-            log.info(
-                yellowify(
-                    f"Connector Creation: connector {connector_name} already exists."
-                )
-            )
+            log.info(f"Connector Creation: connector {connector_name} already exists.")
             if diff := render_diff(
                 connector_config.config, kafka_connect_config.dict()
             ):
@@ -106,10 +102,9 @@ class KafkaConnectHandler:
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
         except ConnectorNotFoundException:
+            diff = render_diff({}, kafka_connect_config.dict())
             log.info(
-                greenify(
-                    f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n {kafka_connect_config}"
-                )
+                f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n{diff}"
             )
             log.debug("POST /connectors HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
@@ -120,12 +115,12 @@ class KafkaConnectHandler:
                 f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors:"
             )
             log.error("\n".join(errors))
-            sys.exit(1)
+            sys.exit(
+                1
+            )  # FIXME raise instead https://github.com/bakdata/kpops/issues/101
         else:
             log.info(
-                greenify(
-                    f"Connector Creation: connector config for {connector_name} is valid!"
-                )
+                f"Connector Creation: connector config for {connector_name} is valid!"
             )
 
     def __dry_run_connector_deletion(self, connector_name: str) -> None:
