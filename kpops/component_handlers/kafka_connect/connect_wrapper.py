@@ -128,7 +128,7 @@ class ConnectWrapper:
         connector_config = config.dict(exclude_none=True, exclude_unset=True)
         if (name := connector_config.get("name")) and name != connector_name:
             raise ValueError(
-                "Kafka Connect config should be the same as component name"
+                "Connect config should be the same as component name"
             )
         connector_config["name"] = connector_name
         return connector_config

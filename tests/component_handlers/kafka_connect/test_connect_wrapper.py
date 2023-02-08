@@ -213,7 +213,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
 
         assert (
             str(value_error.value)
-            == "Kafka Connect config should be the same as component name"
+            == "Connect config should be the same as component name"
         )
 
     @responses.activate
