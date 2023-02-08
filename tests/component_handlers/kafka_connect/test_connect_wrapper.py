@@ -198,6 +198,24 @@ class TestConnectorApiWrapper(unittest.TestCase):
             f"The named connector {connector_name} does not exists."
         )
 
+    def test_should_raise_connector_name_do_not_match(
+        self
+    ):
+        configs = {
+            "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+            "tasks.max": "1",
+            "topics": "test-topic",
+            "name": "OtherWrongName",
+        }
+        with pytest.raises(ValueError) as e:
+            self.connect_wrapper.validate_connector_config(
+                "FileStreamSinkConnector",
+                kafka_connect_config=KafkaConnectConfig(**configs),
+            )
+
+        assert str(e.value) == "App config name should be the same as component name"
+
+
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_rebalance_in_progress_when_getting_connector(
@@ -472,13 +490,13 @@ class TestConnectorApiWrapper(unittest.TestCase):
     ):
         connector_name = "FileStreamSinkConnector"
         configs = {
-            "connector.class": f"org.apache.kafka.connect.file.{connector_name}",
+            "connector.class": f"org.apache.kafka.connect.file.FileStreamSinkConnector",
             "tasks.max": "1",
             "topics": "test-topic",
         }
         with pytest.raises(KafkaConnectError):
             self.connect_wrapper.validate_connector_config(
-                f"{connector_name}",
+                connector_name,
                 kafka_connect_config=KafkaConnectConfig(**configs),
             )
 
