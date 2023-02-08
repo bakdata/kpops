@@ -36,9 +36,7 @@ class TestTemplate:
 
         assert result.exit_code == 0
 
-    def test_template_config_with_flags(
-        self, mocker: MockerFixture, run_command: MagicMock
-    ):
+    def test_template_config_with_flags(self, run_command: MagicMock):
         result = runner.invoke(
             app,
             [
