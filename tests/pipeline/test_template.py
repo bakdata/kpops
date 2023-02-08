@@ -1,8 +1,12 @@
 from pathlib import Path
+from unittest.mock import MagicMock
 
+import pytest
+from pytest_mock import MockerFixture
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
+from kpops.component_handlers.helm_wrapper.helm import Helm
 
 runner = CliRunner()
 
@@ -11,6 +15,10 @@ PIPELINE_BASE_DIR = str(RESOURCE_PATH.parent)
 
 
 class TestTemplate:
+    @pytest.fixture
+    def run_command(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch.object(Helm, "_Helm__execute")
+
     def test_default_template_config(self):
         result = runner.invoke(
             app,
@@ -28,7 +36,9 @@ class TestTemplate:
 
         assert result.exit_code == 0
 
-    def test_template_config_with_flags(self):
+    def test_template_config_with_flags(
+        self, mocker: MockerFixture, run_command: MagicMock
+    ):
         result = runner.invoke(
             app,
             [
@@ -47,6 +57,27 @@ class TestTemplate:
                 "cert-file",
             ],
             catch_exceptions=False,
+        )
+
+        run_command.assert_called_with(
+            mocker.call(
+                [
+                    "helm",
+                    "template",
+                    "resources-custom-config-app2",
+                    "bakdata-streams-bootstrap/streams-app",
+                    "--values",
+                    # "/var/folders/ys/df_4196j4qn_9kzww63p7yl40000gp/T/tmp4073isr8",  # FIXME
+                    "--api-versions",
+                    "2.1.1",
+                    "--ca-file",
+                    "ca-file",
+                    "--cert-file",
+                    "cert-file",
+                    " --version",
+                    "2.7.0",
+                ]
+            ),
         )
 
         assert result.exit_code == 0

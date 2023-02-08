@@ -163,7 +163,7 @@ class Helm:
                 values_file.name,
             ]
             command = Helm.__enrich_template_command(command, flags)
-            return self.__execute(command=command)
+            return self.__execute(command)
 
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
         command = [
