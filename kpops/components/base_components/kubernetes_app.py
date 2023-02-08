@@ -100,7 +100,13 @@ class KubernetesApp(PipelineComponent):
         return self.app.dict(by_alias=True, exclude_none=True, exclude_unset=True)
 
     def print_helm_diff(self, stdout: str) -> None:
-        current_release = self.helm.get_manifest(self.helm_release_name, self.namespace)
+        current_release = list(
+            self.helm.get_manifest(self.helm_release_name, self.namespace)
+        )
+        if current_release:
+            log.info(f"Helm release {self.helm_release_name} already exists")
+        else:
+            log.info(f"Helm release {self.helm_release_name} does not exist")
         new_release = Helm.load_helm_manifest(stdout)
         helm_diff = HelmDiff.get_diff(current_release, new_release)
         self.helm_diff.log_helm_diff(helm_diff, log)
