@@ -33,7 +33,6 @@ class TestKubernetesApp:
             defaults_path=DEFAULTS_PATH,
             environment="development",
             helm_diff_config=HelmDiffConfig(enable=True),
-            broker="",  # This is missing
         )
 
     @pytest.fixture
