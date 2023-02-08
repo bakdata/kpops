@@ -1,8 +1,5 @@
-import os
-from collections.abc import Iterator
 from pathlib import Path
 
-import pytest
 import yaml
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
@@ -16,14 +13,6 @@ PIPELINE_BASE_DIR = str(RESOURCE_PATH.parent)
 
 
 class TestPipeline:
-    @pytest.fixture(autouse=True)
-    def setup_teardown(self) -> Iterator[None]:
-        # setup
-        os.environ["KPOPS_ENVIRONMENT"] = "development"
-        yield  # testing
-        # teardown
-        del os.environ["KPOPS_ENVIRONMENT"]
-
     def test_load_pipeline(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
