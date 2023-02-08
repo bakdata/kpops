@@ -121,7 +121,9 @@ class ConnectWrapper:
             self.update_connector_config(connector_name, kafka_connect_config)
         raise KafkaConnectError(response)
 
-    def get_connector_config(self, connector_name: str, config: KafkaConnectConfig) -> dict:
+    def get_connector_config(
+        self, connector_name: str, config: KafkaConnectConfig
+    ) -> dict:
         connector_config = config.dict(exclude_none=True, exclude_unset=True)
         if (name := connector_config.get("name")) and name != connector_name:
             raise ValueError("App config name should be the same as component name")
