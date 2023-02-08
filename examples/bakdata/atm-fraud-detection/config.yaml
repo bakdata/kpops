@@ -12,4 +12,3 @@ kafka_rest_host: "http://localhost:8082"
 
 kafka_connect_host: "http://localhost:8083"
 
-pipeline_prefix: ""
