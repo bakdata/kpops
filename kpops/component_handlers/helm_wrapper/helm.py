@@ -13,6 +13,7 @@ from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundExcep
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
     HelmTemplate,
+    HelmTemplateFlags,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
     YamlReader,
@@ -128,6 +129,41 @@ class Helm:
                 f"Release with name {release_name} not found. Could not uninstall app."
             )
 
+    def template(
+        self,
+        release_name: str,
+        chart: str,
+        values: dict,
+        flags: HelmTemplateFlags = HelmTemplateFlags(),
+    ) -> str:
+        """
+        From HELM: Render chart templates locally and display the output.
+
+        Any values that would normally be looked up or retrieved in-cluster will
+        be faked locally. Additionally, none of the server-side testing of chart
+        validity (e.g. whether an API is supported) is done.
+
+        :param str release_name: the release name for which the command is ran
+        :param str chart: Helm chart to be templated
+        :param dict[str, str] values: `values.yaml` to be used
+        :param flags: the flags to be set for `helm template`
+        :type flags: HelmTemplateFlags
+        :return: the output of `helm template`
+        :rtype: str
+        """
+        with tempfile.NamedTemporaryFile("w") as values_file:
+            yaml.safe_dump(values, values_file)
+            command = [
+                "helm",
+                "template",
+                release_name,
+                chart,
+                "--values",
+                values_file.name,
+            ]
+            command = Helm.__enrich_template_command(command, flags)
+            return self.__execute(command)
+
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
         command = [
             "helm",
@@ -161,6 +197,31 @@ class Helm:
                 is_beginning = False
             else:
                 current_yaml_doc.append(line)
+
+    @staticmethod
+    def __enrich_template_command(
+        command: list[str],
+        helm_command_config: HelmTemplateFlags,
+    ) -> list[str]:
+        """
+        Enrich `self.template()` with the flags to be used for `helm template`
+
+        :param list[str] command: command that contains a call to
+            `helm template` with specified release name, chart and values
+        :param helm_command_config: flags to be set
+        :type helm_command_config: HelmTemplateFlags
+        :return: the enriched with flags `helm template`
+        :rtype: list[str]
+        """
+        if helm_command_config.api_version:
+            command.extend(["--api-versions", helm_command_config.api_version])
+        if helm_command_config.ca_file:
+            command.extend(["--ca-file", helm_command_config.ca_file])
+        if helm_command_config.cert_file:
+            command.extend(["--cert-file", helm_command_config.cert_file])
+        if helm_command_config.version:
+            command.extend(["--version", helm_command_config.version])
+        return command
 
     @staticmethod
     def __extend_tls_config(

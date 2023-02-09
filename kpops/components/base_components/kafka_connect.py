@@ -13,6 +13,7 @@ from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
+    HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import trim_release_name
@@ -63,6 +64,9 @@ class KafkaConnector(PipelineComponent, ABC):
             helm_repo_config.repo_auth_flags,
         )
         return helm
+
+    def _get_resetter_helm_chart(self) -> str:
+        return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
     @cached_property
     def helm_diff(self) -> HelmDiff:
@@ -131,9 +135,7 @@ class KafkaConnector(PipelineComponent, ABC):
         :param retain_clean_jobs: If the cleanup job should be kept
         :param kwargs: Other values for the KafkaConnectResetter
         """
-        suffix = "-clean"
-        clean_up_release_name = connector_name + suffix
-        trimmed_name = trim_release_name(clean_up_release_name, suffix)
+        trimmed_name = self._get_kafka_resetter_release_name(connector_name)
 
         log.info(
             magentaify(
@@ -149,7 +151,7 @@ class KafkaConnector(PipelineComponent, ABC):
         )
 
         stdout = self.__install_connect_resetter(
-            trimmed_name, connector_name, connector_type, dry_run, kwargs
+            trimmed_name, connector_name, connector_type, dry_run, **kwargs
         )
 
         if dry_run and self.helm_diff.config.enable:
@@ -161,13 +163,19 @@ class KafkaConnector(PipelineComponent, ABC):
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
             self.__uninstall_connect_resetter(trimmed_name, dry_run)
 
+    def _get_kafka_resetter_release_name(self, connector_name: str) -> str:
+        suffix = "-clean"
+        clean_up_release_name = connector_name + suffix
+        trimmed_name = trim_release_name(clean_up_release_name, suffix)
+        return trimmed_name
+
     def __install_connect_resetter(
         self,
         release_name: str,
         connector_name: str,
         connector_type: KafkaConnectorType,
         dry_run: bool,
-        kwargs,
+        **kwargs,
     ) -> str:
         return self.helm.upgrade_install(
             release_name=release_name,
@@ -180,19 +188,31 @@ class KafkaConnector(PipelineComponent, ABC):
                 wait_for_jobs=True,
                 wait=True,
             ),
-            values={
-                **KafkaConnectResetterValues(
-                    config=KafkaConnectResetterConfig(
-                        connector=connector_name,
-                        brokers=self.config.broker,
-                        **kwargs,
-                    ),
-                    connector_type=connector_type.value,
-                    name_override=connector_name,
-                ).dict(),
-                **self.resetter_values,
-            },
+            values=self._get_kafka_connect_resetter_values(
+                connector_name,
+                connector_type,
+                **kwargs,
+            ),
         )
+
+    def _get_kafka_connect_resetter_values(
+        self,
+        connector_name: str,
+        connector_type: KafkaConnectorType,
+        **kwargs,
+    ) -> dict:
+        return {
+            **KafkaConnectResetterValues(
+                config=KafkaConnectResetterConfig(
+                    connector=connector_name,
+                    brokers=self.config.broker,
+                    **kwargs,
+                ),
+                connector_type=connector_type.value,
+                name_override=connector_name,
+            ).dict(),
+            **self.resetter_values,
+        }
 
     def __uninstall_connect_resetter(self, release_name: str, dry_run: bool) -> None:
         self.helm.uninstall(
@@ -212,6 +232,24 @@ class KafkaSourceConnector(KafkaConnector):
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
         raise NotImplementedError("Kafka source connector doesn't support FromSection")
+
+    @override
+    def template(
+        self, api_version: str | None, ca_file: str | None, cert_file: str | None
+    ) -> None:
+        flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
+        values = self._get_kafka_connect_resetter_values(
+            self.name,
+            KafkaConnectorType.SOURCE,
+            offset_topic=self.offset_topic,
+        )
+        stdout = self.helm.template(
+            self._get_kafka_resetter_release_name(self.name),
+            self._get_resetter_helm_chart(),
+            values,
+            flags,
+        )
+        print(stdout)
 
     @override
     def reset(self, dry_run: bool) -> None:
@@ -244,6 +282,22 @@ class KafkaSinkConnector(KafkaConnector):
         topics = existing_topics.split(",") + topics if existing_topics else topics
         topics = deduplicate(topics)
         setattr(self.app, "topics", ",".join(topics))
+
+    @override
+    def template(
+        self, api_version: str | None, ca_file: str | None, cert_file: str | None
+    ) -> None:
+        flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
+        values = self._get_kafka_connect_resetter_values(
+            self.name, KafkaConnectorType.SINK
+        )
+        stdout = self.helm.template(
+            self._get_kafka_resetter_release_name(self.name),
+            self._get_resetter_helm_chart(),
+            values,
+            flags,
+        )
+        print(stdout)
 
     @override
     def set_input_pattern(self, name: str) -> None:

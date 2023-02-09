@@ -9,6 +9,7 @@ from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundExcep
 from kpops.component_handlers.helm_wrapper.helm import Helm, HelmTemplate
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
+    HelmTemplateFlags,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
@@ -347,3 +348,57 @@ data:
 
         run_command.side_effect = ReleaseNotFoundException()
         assert helm_wrapper.get_manifest("test-release", "test-namespace") == ()
+
+    def test_should_call_run_command_method_when_helm_template_with_optional_args(
+        self, run_command: MagicMock
+    ):
+        helm_wrapper = Helm(helm_config=HelmConfig())
+
+        helm_wrapper.template(
+            release_name="test-release",
+            chart="bakdata-streams-bootstrap/streams-app",
+            values={"commandLine": "test"},
+            flags=HelmTemplateFlags(
+                api_version="2.1.1",
+                ca_file="a_file.ca",
+                cert_file="a_file.pem",
+            ),
+        )
+        run_command.assert_called_once_with(
+            [
+                "helm",
+                "template",
+                "test-release",
+                "bakdata-streams-bootstrap/streams-app",
+                "--values",
+                "values.yaml",
+                "--api-versions",
+                "2.1.1",
+                "--ca-file",
+                "a_file.ca",
+                "--cert-file",
+                "a_file.pem",
+            ],
+        )
+
+    def test_should_call_run_command_method_when_helm_template_without_optional_args(
+        self, run_command: MagicMock
+    ):
+        helm_wrapper = Helm(helm_config=HelmConfig())
+
+        helm_wrapper.template(
+            release_name="test-release",
+            chart="bakdata-streams-bootstrap/streams-app",
+            values={"commandLine": "test"},
+            flags=HelmTemplateFlags(),
+        )
+        run_command.assert_called_once_with(
+            [
+                "helm",
+                "template",
+                "test-release",
+                "bakdata-streams-bootstrap/streams-app",
+                "--values",
+                "values.yaml",
+            ],
+        )
