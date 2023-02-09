@@ -118,23 +118,24 @@ class TestKubernetesApp:
 
         kubernetes_app.deploy(True)
 
-        helm_mock.assert_has_calls(
-            [
-                mocker.call.add_repo(
-                    "test-repo",
-                    "mock://test",
-                    RepoAuthFlags(),
-                ),
-                mocker.call.upgrade_install(
-                    "test-kubernetes-apps",
-                    "test/test-chart",
-                    True,
-                    "test-namespace",
-                    {"nameOverride": "test-value"},
-                    HelmUpgradeInstallFlags(version="3.4.5"),
-                ),
-            ]
-        )
+        assert helm_mock.mock_calls == [
+            mocker.call.add_repo(
+                "test-repo",
+                "mock://test",
+                RepoAuthFlags(),
+            ),
+            mocker.call.upgrade_install(
+                "test-kubernetes-apps",
+                "test/test-chart",
+                True,
+                "test-namespace",
+                {"nameOverride": "test-value"},
+                HelmUpgradeInstallFlags(version="3.4.5"),
+            ),
+            mocker.call.get_manifest("test-kubernetes-apps", "test-namespace"),
+            mocker.call.get_manifest().__iter__(),
+            mocker.call.get_manifest().__len__(),
+        ]
 
     def test_should_print_helm_diff_after_install_when_dry_run_and_helm_diff_enabled_exists(
         self,
@@ -159,7 +160,7 @@ class TestKubernetesApp:
             [HelmTemplate("path.yaml", {"a": 1})]
         )
         mock_load_manifest = mocker.patch(
-            "kpops.components.base_components.kubernetes_app.Helm.load_helm_manifest",
+            "kpops.components.base_components.kubernetes_app.Helm.load_manifest",
             return_value=iter([HelmTemplate("path.yaml", {"a": 2})]),
         )
         spy_helm_diff = mocker.spy(kubernetes_app, "print_helm_diff")
@@ -199,7 +200,7 @@ class TestKubernetesApp:
         )
         helm_mock.get_manifest.return_value = iter(())
         mock_load_manifest = mocker.patch(
-            "kpops.components.base_components.kubernetes_app.Helm.load_helm_manifest",
+            "kpops.components.base_components.kubernetes_app.Helm.load_manifest",
             return_value=iter([HelmTemplate("path.yaml", {"a": 1})]),
         )
         spy_helm_diff = mocker.spy(kubernetes_app, "print_helm_diff")

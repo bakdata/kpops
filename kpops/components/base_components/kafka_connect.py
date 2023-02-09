@@ -154,9 +154,8 @@ class KafkaConnector(PipelineComponent, ABC):
 
         if dry_run and self.helm_diff.config.enable:
             current_release = self.helm.get_manifest(trimmed_name, self.namespace)
-            new_release = Helm.load_helm_manifest(stdout)
-            helm_diff = HelmDiff.get_diff(current_release, new_release)
-            self.helm_diff.log_helm_diff(helm_diff, log)
+            new_release = Helm.load_manifest(stdout)
+            self.helm_diff.log_helm_diff(log, current_release, new_release)
 
         if not retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))

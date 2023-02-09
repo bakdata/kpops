@@ -140,12 +140,12 @@ class Helm:
 
         try:
             stdout = self.__execute(command=command)
-            return Helm.load_helm_manifest(stdout)
+            return Helm.load_manifest(stdout)
         except ReleaseNotFoundException:
             return ()
 
     @staticmethod
-    def load_helm_manifest(yaml_contents: str) -> Iterator[HelmTemplate]:
+    def load_manifest(yaml_contents: str) -> Iterator[HelmTemplate]:
         is_beginning: bool = False
         template_name = None
         current_yaml_doc: list[str] = []

@@ -107,16 +107,14 @@ class TestKafkaSourceConnector:
         mock.attach_mock(mock_create_topics, "mock_create_topics")
         mock.attach_mock(mock_create_connector, "mock_create_connector")
         connector.deploy(dry_run=True)
-        mock.assert_has_calls(
-            [
-                mocker.call.mock_create_topics(to_section=connector.to, dry_run=True),
-                mocker.call.mock_create_connector(
-                    connector_name="test-connector",
-                    kafka_connect_config=connector.app,
-                    dry_run=True,
-                ),
-            ],
-        )
+        assert mock.mock_calls == [
+            mocker.call.mock_create_topics(to_section=connector.to, dry_run=True),
+            mocker.call.mock_create_connector(
+                connector_name="test-connector",
+                kafka_connect_config=connector.app,
+                dry_run=True,
+            ),
+        ]
 
     def test_destroy(
         self,
@@ -192,45 +190,44 @@ class TestKafkaSourceConnector:
 
         connector.reset(dry_run=True)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.helm.add_repo(
-                    "bakdata-kafka-connect-resetter",
-                    "https://bakdata.github.io/kafka-connect-resetter/",
-                    RepoAuthFlags(),
+        assert mock.mock_calls == [
+            mocker.call.helm.add_repo(
+                "bakdata-kafka-connect-resetter",
+                "https://bakdata.github.io/kafka-connect-resetter/",
+                RepoAuthFlags(),
+            ),
+            mocker.call.helm.uninstall(
+                namespace="test-namespace",
+                release_name=CONNECTOR_CLEAN_NAME,
+                dry_run=True,
+            ),
+            mocker.call.helm.upgrade_install(
+                release_name=CONNECTOR_CLEAN_NAME,
+                namespace="test-namespace",
+                chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
+                dry_run=True,
+                flags=HelmUpgradeInstallFlags(
+                    version="1.0.4",
+                    wait=True,
+                    wait_for_jobs=True,
                 ),
-                mocker.call.helm.uninstall(
-                    namespace="test-namespace",
-                    release_name=CONNECTOR_CLEAN_NAME,
-                    dry_run=True,
-                ),
-                mocker.call.helm.upgrade_install(
-                    release_name=CONNECTOR_CLEAN_NAME,
-                    namespace="test-namespace",
-                    chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
-                    dry_run=True,
-                    flags=HelmUpgradeInstallFlags(
-                        version="1.0.4",
-                        wait=True,
-                        wait_for_jobs=True,
-                    ),
-                    values={
-                        "connectorType": "source",
-                        "config": {
-                            "brokers": "broker:9092",
-                            "connector": CONNECTOR_NAME,
-                            "offsetTopic": "kafka-connect-offsets",
-                        },
-                        "nameOverride": CONNECTOR_NAME,
+                values={
+                    "connectorType": "source",
+                    "config": {
+                        "brokers": "broker:9092",
+                        "connector": CONNECTOR_NAME,
+                        "offsetTopic": "kafka-connect-offsets",
                     },
-                ),
-                mocker.call.helm.uninstall(
-                    namespace="test-namespace",
-                    release_name=CONNECTOR_CLEAN_NAME,
-                    dry_run=True,
-                ),
-            ]
-        )
+                    "nameOverride": CONNECTOR_NAME,
+                },
+            ),
+            mocker.call.helm.uninstall(
+                namespace="test-namespace",
+                release_name=CONNECTOR_CLEAN_NAME,
+                dry_run=True,
+            ),
+        ]
+
         mock_delete_topics.assert_not_called()
 
     def test_clean(
@@ -271,46 +268,44 @@ class TestKafkaSourceConnector:
 
         connector.clean(dry_run=True)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.mock_delete_topics(connector.to, dry_run=True),
-                mocker.call.helm.add_repo(
-                    "bakdata-kafka-connect-resetter",
-                    "https://bakdata.github.io/kafka-connect-resetter/",
-                    RepoAuthFlags(),
+        assert mock.mock_calls == [
+            mocker.call.mock_delete_topics(connector.to, dry_run=True),
+            mocker.call.helm.add_repo(
+                "bakdata-kafka-connect-resetter",
+                "https://bakdata.github.io/kafka-connect-resetter/",
+                RepoAuthFlags(),
+            ),
+            mocker.call.helm.uninstall(
+                namespace="test-namespace",
+                release_name=CONNECTOR_CLEAN_NAME,
+                dry_run=True,
+            ),
+            mocker.call.helm.upgrade_install(
+                release_name=CONNECTOR_CLEAN_NAME,
+                namespace="test-namespace",
+                chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
+                dry_run=True,
+                flags=HelmUpgradeInstallFlags(
+                    version="1.0.4",
+                    wait=True,
+                    wait_for_jobs=True,
                 ),
-                mocker.call.helm.uninstall(
-                    namespace="test-namespace",
-                    release_name=CONNECTOR_CLEAN_NAME,
-                    dry_run=True,
-                ),
-                mocker.call.helm.upgrade_install(
-                    release_name=CONNECTOR_CLEAN_NAME,
-                    namespace="test-namespace",
-                    chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
-                    dry_run=True,
-                    flags=HelmUpgradeInstallFlags(
-                        version="1.0.4",
-                        wait=True,
-                        wait_for_jobs=True,
-                    ),
-                    values={
-                        "connectorType": "source",
-                        "config": {
-                            "brokers": "broker:9092",
-                            "connector": CONNECTOR_NAME,
-                            "offsetTopic": "kafka-connect-offsets",
-                        },
-                        "nameOverride": CONNECTOR_NAME,
+                values={
+                    "connectorType": "source",
+                    "config": {
+                        "brokers": "broker:9092",
+                        "connector": CONNECTOR_NAME,
+                        "offsetTopic": "kafka-connect-offsets",
                     },
-                ),
-                mocker.call.helm.uninstall(
-                    namespace="test-namespace",
-                    release_name=CONNECTOR_CLEAN_NAME,
-                    dry_run=True,
-                ),
-            ]
-        )
+                    "nameOverride": CONNECTOR_NAME,
+                },
+            ),
+            mocker.call.helm.uninstall(
+                namespace="test-namespace",
+                release_name=CONNECTOR_CLEAN_NAME,
+                dry_run=True,
+            ),
+        ]
 
     def test_clean_without_to(
         self,
@@ -345,43 +340,42 @@ class TestKafkaSourceConnector:
 
         connector.clean(dry_run=True)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.helm.add_repo(
-                    "bakdata-kafka-connect-resetter",
-                    "https://bakdata.github.io/kafka-connect-resetter/",
-                    RepoAuthFlags(),
+        assert mock.mock_calls == [
+            mocker.call.helm.add_repo(
+                "bakdata-kafka-connect-resetter",
+                "https://bakdata.github.io/kafka-connect-resetter/",
+                RepoAuthFlags(),
+            ),
+            mocker.call.helm.uninstall(
+                namespace="test-namespace",
+                release_name=CONNECTOR_CLEAN_NAME,
+                dry_run=True,
+            ),
+            mocker.call.helm.upgrade_install(
+                release_name=CONNECTOR_CLEAN_NAME,
+                namespace="test-namespace",
+                chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
+                dry_run=True,
+                flags=HelmUpgradeInstallFlags(
+                    version="1.0.4",
+                    wait=True,
+                    wait_for_jobs=True,
                 ),
-                mocker.call.helm.uninstall(
-                    namespace="test-namespace",
-                    release_name=CONNECTOR_CLEAN_NAME,
-                    dry_run=True,
-                ),
-                mocker.call.helm.upgrade_install(
-                    release_name=CONNECTOR_CLEAN_NAME,
-                    namespace="test-namespace",
-                    chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
-                    dry_run=True,
-                    flags=HelmUpgradeInstallFlags(
-                        version="1.0.4",
-                        wait=True,
-                        wait_for_jobs=True,
-                    ),
-                    values={
-                        "connectorType": "source",
-                        "config": {
-                            "brokers": "broker:9092",
-                            "connector": CONNECTOR_NAME,
-                            "offsetTopic": "kafka-connect-offsets",
-                        },
-                        "nameOverride": CONNECTOR_NAME,
+                values={
+                    "connectorType": "source",
+                    "config": {
+                        "brokers": "broker:9092",
+                        "connector": CONNECTOR_NAME,
+                        "offsetTopic": "kafka-connect-offsets",
                     },
-                ),
-                mocker.call.helm.uninstall(
-                    namespace="test-namespace",
-                    release_name=CONNECTOR_CLEAN_NAME,
-                    dry_run=True,
-                ),
-            ]
-        )
+                    "nameOverride": CONNECTOR_NAME,
+                },
+            ),
+            mocker.call.helm.uninstall(
+                namespace="test-namespace",
+                release_name=CONNECTOR_CLEAN_NAME,
+                dry_run=True,
+            ),
+        ]
+
         mock_delete_topics.assert_not_called()

@@ -248,20 +248,18 @@ def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_ve
 
     schema_handler.submit_schemas(to_section, True)
 
-    log_info_mock.assert_has_calls(
-        [
-            mock.call.log_info(
-                f"Schema Submission: compatible schema for topic-X-value with model {topic_config.value_schema}."
-            ),
-        ]
-    )
-    log_debug_mock.assert_has_calls(
-        [
-            mock.call.log_debug(
-                f"Schema Submission: schema was already submitted for the subject topic-X-value as version {registered_version.schema}. Therefore, the specified schema must be compatible."
-            ),
-        ]
-    )
+    assert log_info_mock.mock_calls == [
+        mock.call(
+            f"Schema Submission: compatible schema for topic-X-value with model {topic_config.value_schema}."
+        ),
+    ]
+
+    assert log_debug_mock.mock_calls == [
+        mock.call(
+            f"Schema Submission: schema was already submitted for the subject topic-X-value as version {registered_version.schema}. Therefore, the specified schema must be compatible."
+        ),
+    ]
+
     schema_registry_mock.register.assert_not_called()
 
 

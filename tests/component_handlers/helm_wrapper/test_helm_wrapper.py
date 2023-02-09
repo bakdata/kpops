@@ -70,25 +70,23 @@ class TestHelmWrapper:
             "fake",
             RepoAuthFlags(ca_file=Path("a_file.ca"), insecure_skip_tls_verify=True),
         )
-        run_command.assert_has_calls(
-            [
-                mock.call(
-                    [
-                        "helm",
-                        "repo",
-                        "add",
-                        "test-repository",
-                        "fake",
-                        "--ca-file",
-                        "a_file.ca",
-                        "--insecure-skip-tls-verify",
-                    ],
-                ),
-                mock.call(
-                    ["helm", "repo", "update"],
-                ),
-            ]
-        )
+        assert run_command.mock_calls == [
+            mock.call(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "test-repository",
+                    "fake",
+                    "--ca-file",
+                    "a_file.ca",
+                    "--insecure-skip-tls-verify",
+                ],
+            ),
+            mock.call(
+                ["helm", "repo", "update"],
+            ),
+        ]
 
     def test_should_include_configured_tls_parameters_on_update(
         self, run_command: MagicMock
@@ -242,7 +240,7 @@ class TestHelmWrapper:
 # Resource: chart/templates/test1.yaml
 """
         with pytest.raises(ValueError):
-            helm_templates = list(Helm.load_helm_manifest(stdout))
+            helm_templates = list(Helm.load_manifest(stdout))
             assert len(helm_templates) == 0
 
         stdout = """---
@@ -262,7 +260,7 @@ metadata:
             "metadata": {"labels": {"foo": "bar"}},
         }
 
-        helm_templates = list(Helm.load_helm_manifest(stdout))
+        helm_templates = list(Helm.load_manifest(stdout))
         assert len(helm_templates) == 1
         helm_template = helm_templates[0]
         assert isinstance(helm_template, HelmTemplate)
@@ -282,7 +280,7 @@ data:
 # Source: chart/templates/test3b.yaml
 foo: bar
 """
-        helm_templates = list(Helm.load_helm_manifest(stdout))
+        helm_templates = list(Helm.load_manifest(stdout))
         assert len(helm_templates) == 2
         assert all(
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
@@ -310,7 +308,7 @@ data:
 # Source: chart/templates/test3b.yaml
 foo: bar
 """
-        helm_templates = list(Helm.load_helm_manifest(stdout))
+        helm_templates = list(Helm.load_manifest(stdout))
         assert len(helm_templates) == 2
         assert all(
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
