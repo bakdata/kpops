@@ -118,9 +118,8 @@ class KubernetesApp(PipelineComponent):
             log.info(f"Helm release {self.helm_release_name} already exists")
         else:
             log.info(f"Helm release {self.helm_release_name} does not exist")
-        new_release = Helm.load_helm_manifest(stdout)
-        helm_diff = HelmDiff.get_diff(current_release, new_release)
-        self.helm_diff.log_helm_diff(helm_diff, log)
+        new_release = Helm.load_manifest(stdout)
+        self.helm_diff.log_helm_diff(log, current_release, new_release)
 
     def get_helm_chart(self) -> str:
         raise NotImplementedError(

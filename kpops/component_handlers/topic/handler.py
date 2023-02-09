@@ -14,7 +14,7 @@ from kpops.component_handlers.topic.utils import (
 )
 from kpops.components.base_components.models.to_section import TopicConfig, ToSection
 from kpops.utils.colorify import greenify, magentaify
-from kpops.utils.dict_differ import Diff, DiffType, get_diff, render_diff
+from kpops.utils.dict_differ import Diff, DiffType, render_diff
 
 log = logging.getLogger("KafkaTopic")
 
@@ -42,16 +42,14 @@ class TopicHandler:
                     if differences:
                         json_body = []
                         for difference in differences:
-                            if difference.diff_type == DiffType.REMOVE:
+                            if difference.diff_type is DiffType.REMOVE:
                                 json_body.append(
                                     {"name": difference.key, "operation": "DELETE"}
                                 )
-                            else:
-                                config_value = difference.change.new_value
-                                if config_value:
-                                    json_body.append(
-                                        {"name": difference.key, "value": config_value}
-                                    )
+                            elif config_value := difference.change.new_value:
+                                json_body.append(
+                                    {"name": difference.key, "value": config_value}
+                                )
                         self.proxy_wrapper.batch_alter_topic_config(
                             topic_name=topic_name,
                             json_body=json_body,
@@ -85,8 +83,7 @@ class TopicHandler:
         comparable_in_cluster_config_dict, _ = parse_rest_proxy_topic_config(
             cluster_config
         )
-
-        return get_diff(comparable_in_cluster_config_dict, current_config)
+        return list(Diff.from_dicts(comparable_in_cluster_config_dict, current_config))
 
     def __dry_run_topic_creation(
         self,

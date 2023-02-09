@@ -294,38 +294,35 @@ class TestStreamsApp:
 
         streams_app.deploy(dry_run=True)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=True),
-                mocker.call.mock_helm_upgrade_install(
-                    self.STREAMS_APP_NAME,
-                    "bakdata-streams-bootstrap/streams-app",
-                    True,
-                    "test-namespace",
-                    {
-                        "streams": {
-                            "brokers": "fake-broker:9092",
-                            "outputTopic": "streams-app-output-topic",
-                            "errorTopic": "streams-app-error-topic",
-                        },
+        assert mock.mock_calls == [
+            mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=True),
+            mocker.call.mock_helm_upgrade_install(
+                self.STREAMS_APP_NAME,
+                "bakdata-streams-bootstrap/streams-app",
+                True,
+                "test-namespace",
+                {
+                    "streams": {
+                        "brokers": "fake-broker:9092",
+                        "outputTopic": "streams-app-output-topic",
+                        "errorTopic": "streams-app-error-topic",
                     },
-                    HelmUpgradeInstallFlags(
-                        force=False,
-                        repo_auth_flags=RepoAuthFlags(
-                            username=None,
-                            password=None,
-                            ca_file=None,
-                            insecure_skip_tls_verify=False,
-                        ),
-                        timeout="5m0s",
-                        version="2.7.0",
-                        wait=True,
-                        wait_for_jobs=False,
+                },
+                HelmUpgradeInstallFlags(
+                    force=False,
+                    repo_auth_flags=RepoAuthFlags(
+                        username=None,
+                        password=None,
+                        ca_file=None,
+                        insecure_skip_tls_verify=False,
                     ),
+                    timeout="5m0s",
+                    version="2.7.0",
+                    wait=True,
+                    wait_for_jobs=False,
                 ),
-            ],
-            any_order=False,
-        )
+            ),
+        ]
 
     def test_destroy(self, streams_app: StreamsApp, mocker: MockerFixture):
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
@@ -348,32 +345,28 @@ class TestStreamsApp:
 
         streams_app.reset(dry_run=True)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.helm_uninstall(
-                    "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
-                ),
-                mocker.call.helm_upgrade_install(
-                    self.STREAMS_APP_CLEAN_NAME,
-                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
-                    True,
-                    "test-namespace",
-                    {
-                        "streams": {
-                            "brokers": "fake-broker:9092",
-                            "outputTopic": "streams-app-output-topic",
-                            "deleteOutput": False,
-                        },
+        assert mock.mock_calls == [
+            mocker.call.helm_uninstall(
+                "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
+            ),
+            mocker.call.helm_upgrade_install(
+                self.STREAMS_APP_CLEAN_NAME,
+                "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                True,
+                "test-namespace",
+                {
+                    "streams": {
+                        "brokers": "fake-broker:9092",
+                        "outputTopic": "streams-app-output-topic",
+                        "deleteOutput": False,
                     },
-                    HelmUpgradeInstallFlags(
-                        version="2.7.0", wait=True, wait_for_jobs=True
-                    ),
-                ),
-                mocker.call.helm_uninstall(
-                    "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
-                ),
-            ]
-        )
+                },
+                HelmUpgradeInstallFlags(version="2.7.0", wait=True, wait_for_jobs=True),
+            ),
+            mocker.call.helm_uninstall(
+                "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
+            ),
+        ]
 
     def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
@@ -391,29 +384,25 @@ class TestStreamsApp:
 
         streams_app.clean(dry_run=True)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.helm_uninstall(
-                    "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
-                ),
-                mocker.call.helm_upgrade_install(
-                    self.STREAMS_APP_CLEAN_NAME,
-                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
-                    True,
-                    "test-namespace",
-                    {
-                        "streams": {
-                            "brokers": "fake-broker:9092",
-                            "outputTopic": "streams-app-output-topic",
-                            "deleteOutput": True,
-                        },
+        assert mock.mock_calls == [
+            mocker.call.helm_uninstall(
+                "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
+            ),
+            mocker.call.helm_upgrade_install(
+                self.STREAMS_APP_CLEAN_NAME,
+                "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                True,
+                "test-namespace",
+                {
+                    "streams": {
+                        "brokers": "fake-broker:9092",
+                        "outputTopic": "streams-app-output-topic",
+                        "deleteOutput": True,
                     },
-                    HelmUpgradeInstallFlags(
-                        version="2.7.0", wait=True, wait_for_jobs=True
-                    ),
-                ),
-                mocker.call.helm_uninstall(
-                    "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
-                ),
-            ]
-        )
+                },
+                HelmUpgradeInstallFlags(version="2.7.0", wait=True, wait_for_jobs=True),
+            ),
+            mocker.call.helm_uninstall(
+                "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
+            ),
+        ]
