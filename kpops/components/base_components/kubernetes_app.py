@@ -12,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
+    HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -71,6 +72,16 @@ class KubernetesApp(PipelineComponent):
         return self.name
 
     @override
+    def template(
+        self, api_version: str | None, ca_file: str | None, cert_file: str | None
+    ) -> None:
+        flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
+        stdout = self.helm.template(
+            self.helm_release_name, self.get_helm_chart(), self.to_helm_values(), flags
+        )
+        print(stdout)
+
+    @override
     def deploy(self, dry_run: bool) -> None:
         stdout = self.helm.upgrade_install(
             self.helm_release_name,
@@ -78,7 +89,9 @@ class KubernetesApp(PipelineComponent):
             dry_run,
             self.namespace,
             self.to_helm_values(),
-            HelmUpgradeInstallFlags(version=self.version),
+            HelmUpgradeInstallFlags(
+                create_namespace=self.config.create_namespace, version=self.version
+            ),
         )
         if dry_run and self.helm_diff.config.enable:
             self.print_helm_diff(stdout)
@@ -98,10 +111,15 @@ class KubernetesApp(PipelineComponent):
         return self.app.dict(by_alias=True, exclude_none=True, exclude_unset=True)
 
     def print_helm_diff(self, stdout: str) -> None:
-        current_release = self.helm.get_manifest(self.helm_release_name, self.namespace)
-        new_release = Helm.load_helm_manifest(stdout)
-        helm_diff = HelmDiff.get_diff(current_release, new_release)
-        self.helm_diff.log_helm_diff(helm_diff, log)
+        current_release = list(
+            self.helm.get_manifest(self.helm_release_name, self.namespace)
+        )
+        if current_release:
+            log.info(f"Helm release {self.helm_release_name} already exists")
+        else:
+            log.info(f"Helm release {self.helm_release_name} does not exist")
+        new_release = Helm.load_manifest(stdout)
+        self.helm_diff.log_helm_diff(log, current_release, new_release)
 
     def get_helm_chart(self) -> str:
         raise NotImplementedError(

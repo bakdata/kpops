@@ -1,11 +1,13 @@
+from __future__ import annotations
+
+from dataclasses import dataclass
 from difflib import Differ
 from enum import Enum
-from typing import Any, Iterable, Iterator, Sequence
+from typing import Generic, Iterable, Iterator, Sequence, TypeVar
 
 import typer
 import yaml
 from dictdiffer import diff, patch
-from pydantic import BaseModel
 
 differ = Differ()
 
@@ -15,16 +17,63 @@ class DiffType(str, Enum):
     CHANGE = "change"
     REMOVE = "remove"
 
+    @staticmethod
+    def from_str(label: str) -> DiffType:
+        return DiffType[label.upper()]
 
-class Change(BaseModel):
-    old_value: Any | None
-    new_value: Any | None
+
+T = TypeVar("T")
 
 
-class Diff(BaseModel):
+@dataclass
+class Change(Generic[T]):  # Generic NamedTuple requires Python 3.11+
+    old_value: T
+    new_value: T
+
+    @staticmethod
+    def factory(type: DiffType, change: T | tuple[T, T]) -> Change:
+        match type:
+            case DiffType.ADD:
+                return Change(None, change)
+            case DiffType.REMOVE:
+                return Change(change, None)
+            case DiffType.CHANGE if isinstance(change, tuple):
+                return Change(*change)
+        raise ValueError(f"{type} is not part of {DiffType}")
+
+
+@dataclass
+class Diff(Generic[T]):
     diff_type: DiffType
     key: str
-    change: Change
+    change: Change[T]
+
+    @staticmethod
+    def from_dicts(
+        d1: dict, d2: dict, ignore: set[str] | None = None
+    ) -> Iterator[Diff]:
+        for diff_type, keys, changes in diff(d1, d2, ignore=ignore):
+            if not isinstance(changes, list):
+                changes = [("", changes)]
+            for key, change in changes:
+                yield Diff(
+                    DiffType.from_str(diff_type),
+                    Diff.__find_changed_key(keys, key),
+                    Change.factory(diff_type, change),
+                )
+
+    @staticmethod
+    def __find_changed_key(key_1: list[str] | str, key_2: str = "") -> str:
+        """
+        Generates a string that points to the changed key in the dictionary.
+        """
+        if isinstance(key_1, list) and len(key_1) > 1:
+            return f"{key_1[0]}[{key_1[1]}]"
+        if not key_1:
+            return key_2
+        if not key_2:
+            return "".join(key_1)
+        return f"{key_1}.{key_2}"
 
 
 def render_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> str | None:
@@ -41,57 +90,6 @@ def render_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> str | Non
             )
         )
     )
-
-
-def get_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> list[Diff]:
-    differences = list(diff(d1, d2, ignore=ignore))
-    diff_list = []
-    for difference in differences:
-        if difference[0] == DiffType.ADD:
-            for key, change in difference[2]:
-                diff_object = Diff(
-                    diff_type=DiffType[difference[0].upper()],
-                    key=__get_key(difference[1], key),
-                    change=Change(old_value=None, new_value=change),
-                )
-                diff_list.append(diff_object)
-
-        elif difference[0] == DiffType.REMOVE:
-            for key, change in difference[2]:
-                diff_object = Diff(
-                    diff_type=DiffType[difference[0].upper()],
-                    key=__get_key(difference[1], key),
-                    change=Change(old_value=change, new_value=None),
-                )
-                diff_list.append(diff_object)
-
-        elif difference[0] == DiffType.CHANGE:
-            diff_object = Diff(
-                diff_type=DiffType[difference[0].upper()],
-                key=__get_key(difference[1], ""),
-                change=Change(old_value=difference[2][0], new_value=difference[2][1]),
-            )
-            diff_list.append(diff_object)
-        else:
-            raise ValueError(
-                f"Unsupported diff type of {difference[0]}. Suppoerted diff types are: ADD, CHANGE, REMOVE."
-            )
-
-    return diff_list
-
-
-def __get_key(key_1: list[Any] | str, key_2: str) -> str:
-    """
-    Generates a string that points to the changed key in the dictionary.
-    """
-    if len(key_1) > 1 and type(key_1) == list:
-        return f"{key_1[0]}[{key_1[1]}]"
-    else:
-        if key_1 == "":
-            return key_2
-        elif key_2 == "":
-            return "".join(key_1)
-        return f"{key_1}.{key_2}"
 
 
 def colorize_diff(input: Iterable[str]) -> Iterator[str]:

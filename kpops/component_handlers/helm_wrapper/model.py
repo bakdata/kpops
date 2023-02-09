@@ -40,6 +40,7 @@ class HelmConfig:
 
 @dataclass
 class HelmUpgradeInstallFlags:
+    create_namespace: bool = False
     force: bool = False
     repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
     timeout: str = "5m0s"
@@ -49,6 +50,14 @@ class HelmUpgradeInstallFlags:
 
 
 HELM_SOURCE_PREFIX = "# Source: "
+
+
+@dataclass
+class HelmTemplateFlags:
+    api_version: str | None = None
+    ca_file: str | None = None
+    cert_file: str | None = None
+    version: str | None = None
 
 
 @dataclass

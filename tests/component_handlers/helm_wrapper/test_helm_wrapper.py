@@ -9,6 +9,7 @@ from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundExcep
 from kpops.component_handlers.helm_wrapper.helm import Helm, HelmTemplate
 from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
+    HelmTemplateFlags,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
@@ -70,25 +71,23 @@ class TestHelmWrapper:
             "fake",
             RepoAuthFlags(ca_file=Path("a_file.ca"), insecure_skip_tls_verify=True),
         )
-        run_command.assert_has_calls(
-            [
-                mock.call(
-                    [
-                        "helm",
-                        "repo",
-                        "add",
-                        "test-repository",
-                        "fake",
-                        "--ca-file",
-                        "a_file.ca",
-                        "--insecure-skip-tls-verify",
-                    ],
-                ),
-                mock.call(
-                    ["helm", "repo", "update"],
-                ),
-            ]
-        )
+        assert run_command.mock_calls == [
+            mock.call(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "test-repository",
+                    "fake",
+                    "--ca-file",
+                    "a_file.ca",
+                    "--insecure-skip-tls-verify",
+                ],
+            ),
+            mock.call(
+                ["helm", "repo", "update"],
+            ),
+        ]
 
     def test_should_include_configured_tls_parameters_on_update(
         self, run_command: MagicMock
@@ -138,6 +137,7 @@ class TestHelmWrapper:
             dry_run=True,
             values={"commandLine": "test"},
             flags=HelmUpgradeInstallFlags(
+                create_namespace=True,
                 force=True,
                 timeout="120s",
                 wait=True,
@@ -157,6 +157,7 @@ class TestHelmWrapper:
                 "test-namespace",
                 "--values",
                 "values.yaml",
+                "--create-namespace",
                 "--dry-run",
                 "--force",
                 "--wait",
@@ -240,7 +241,7 @@ class TestHelmWrapper:
 # Resource: chart/templates/test1.yaml
 """
         with pytest.raises(ValueError):
-            helm_templates = list(Helm.load_helm_manifest(stdout))
+            helm_templates = list(Helm.load_manifest(stdout))
             assert len(helm_templates) == 0
 
         stdout = """---
@@ -260,7 +261,7 @@ metadata:
             "metadata": {"labels": {"foo": "bar"}},
         }
 
-        helm_templates = list(Helm.load_helm_manifest(stdout))
+        helm_templates = list(Helm.load_manifest(stdout))
         assert len(helm_templates) == 1
         helm_template = helm_templates[0]
         assert isinstance(helm_template, HelmTemplate)
@@ -280,7 +281,7 @@ data:
 # Source: chart/templates/test3b.yaml
 foo: bar
 """
-        helm_templates = list(Helm.load_helm_manifest(stdout))
+        helm_templates = list(Helm.load_manifest(stdout))
         assert len(helm_templates) == 2
         assert all(
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
@@ -308,7 +309,7 @@ data:
 # Source: chart/templates/test3b.yaml
 foo: bar
 """
-        helm_templates = list(Helm.load_helm_manifest(stdout))
+        helm_templates = list(Helm.load_manifest(stdout))
         assert len(helm_templates) == 2
         assert all(
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
@@ -347,3 +348,57 @@ data:
 
         run_command.side_effect = ReleaseNotFoundException()
         assert helm_wrapper.get_manifest("test-release", "test-namespace") == ()
+
+    def test_should_call_run_command_method_when_helm_template_with_optional_args(
+        self, run_command: MagicMock
+    ):
+        helm_wrapper = Helm(helm_config=HelmConfig())
+
+        helm_wrapper.template(
+            release_name="test-release",
+            chart="bakdata-streams-bootstrap/streams-app",
+            values={"commandLine": "test"},
+            flags=HelmTemplateFlags(
+                api_version="2.1.1",
+                ca_file="a_file.ca",
+                cert_file="a_file.pem",
+            ),
+        )
+        run_command.assert_called_once_with(
+            [
+                "helm",
+                "template",
+                "test-release",
+                "bakdata-streams-bootstrap/streams-app",
+                "--values",
+                "values.yaml",
+                "--api-versions",
+                "2.1.1",
+                "--ca-file",
+                "a_file.ca",
+                "--cert-file",
+                "a_file.pem",
+            ],
+        )
+
+    def test_should_call_run_command_method_when_helm_template_without_optional_args(
+        self, run_command: MagicMock
+    ):
+        helm_wrapper = Helm(helm_config=HelmConfig())
+
+        helm_wrapper.template(
+            release_name="test-release",
+            chart="bakdata-streams-bootstrap/streams-app",
+            values={"commandLine": "test"},
+            flags=HelmTemplateFlags(),
+        )
+        run_command.assert_called_once_with(
+            [
+                "helm",
+                "template",
+                "test-release",
+                "bakdata-streams-bootstrap/streams-app",
+                "--values",
+                "values.yaml",
+            ],
+        )

@@ -50,6 +50,6 @@ jobs:
   publish:
     name: Publish
     needs: [test]
-    uses: ./.github/workflows/publish-dev.yaml
+    uses: ./.github/workflows/publish-test-pypi.yaml
     secrets:
       test-pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}

@@ -4,7 +4,7 @@
     replicaCount: 1
     image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
     imageTag: 1.0.0
-    schedule: "0 12 * * *"
+    schedule: 0 12 * * *
     suspend: true
     prometheus:
       jmx:
@@ -20,7 +20,7 @@
     commandLine:
       REAL_TX: 19
       ITERATION: 20
-    schedule: "0 12 * * *"
+    schedule: 0 12 * * *
     suspend: true
     prometheus:
       jmx:
@@ -36,7 +36,7 @@
     commandLine:
       PRODUCTIVE: false
     annotations:
-      consumerGroup: "atm-transactionjoiner-atm-fraud-joinedtransactions-topic"
+      consumerGroup: atm-transactionjoiner-atm-fraud-joinedtransactions-topic
     prometheus:
       jmx:
         enabled: false
@@ -51,7 +51,7 @@
     commandLine:
       PRODUCTIVE: false
     annotations:
-      consumerGroup: "atm-frauddetector-atm-fraud-possiblefraudtransactions-topic"
+      consumerGroup: atm-frauddetector-atm-fraud-possiblefraudtransactions-topic
     prometheus:
       jmx:
         enabled: false
@@ -73,7 +73,7 @@
     commandLine:
       PRODUCTIVE: false
     annotations:
-      consumerGroup: "atm-accountlinker-atm-fraud-output-topic"
+      consumerGroup: atm-accountlinker-atm-fraud-output-topic
     prometheus:
       jmx:
         enabled: false
@@ -82,23 +82,23 @@
 - type: kafka-sink-connector
   name: postgresql-connector
   app:
-    name: "postgresql-connector"
-    connector.class: "io.confluent.connect.jdbc.JdbcSinkConnector"
-    tasks.max: "1"
+    name: postgresql-connector
+    connector.class: io.confluent.connect.jdbc.JdbcSinkConnector
+    tasks.max: 1
     topics: ${pipeline_name}-account-linker-topic
-    connection.url: "jdbc:postgresql://postgresql-dev.kpops.svc.cluster.local:5432/app_db"
-    connection.user: "app1"
-    connection.password: "AppPassword"
+    connection.url: jdbc:postgresql://postgresql-dev.kpops.svc.cluster.local:5432/app_db
+    connection.user: app1
+    connection.password: AppPassword
     connection.ds.pool.size: 5
     insert.mode: insert
     insert.mode.databaselevel: true
-    value.converter: "io.confluent.connect.avro.AvroConverter"
-    value.converter.schema.registry.url: "http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081"
-    key.converter: "org.apache.kafka.connect.storage.StringConverter"
-    transforms: "flatten"
-    transforms.flatten.type: "org.apache.kafka.connect.transforms.Flatten$Value"
-    auto.create: "true"
-    table.name.format: "fraud_transactions"
+    value.converter: io.confluent.connect.avro.AvroConverter
+    value.converter.schema.registry.url: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    transforms: flatten
+    transforms.flatten.type: org.apache.kafka.connect.transforms.Flatten$Value
+    auto.create: true
+    table.name.format: fraud_transactions
     errors.deadletterqueue.context.headers.enable: true
     errors.deadletterqueue.topic.name: postgres-request-sink-dead-letters
     errors.deadletterqueue.topic.replication.factor: 1

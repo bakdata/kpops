@@ -111,8 +111,8 @@ class KafkaApp(KubernetesApp):
             current_release = self.helm.get_manifest(
                 clean_up_release_name, self.namespace
             )
-            new_release = Helm.load_helm_manifest(stdout)
-            self.helm_diff.get_diff(current_release, new_release)
+            new_release = Helm.load_manifest(stdout)
+            self.helm_diff.log_helm_diff(log, current_release, new_release)
 
         if not retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {clean_up_release_name}")
@@ -136,6 +136,7 @@ class KafkaApp(KubernetesApp):
             self.namespace,
             values,
             HelmUpgradeInstallFlags(
+                create_namespace=self.config.create_namespace,
                 version=self.version,
                 wait=True,
                 wait_for_jobs=True,
