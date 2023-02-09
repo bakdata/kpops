@@ -135,7 +135,7 @@ class KafkaConnector(PipelineComponent, ABC):
         :param retain_clean_jobs: If the cleanup job should be kept
         :param kwargs: Other values for the KafkaConnectResetter
         """
-        trimmed_name = self._get_release_name(connector_name)
+        trimmed_name = self._get_kafka_resetter_release_name(connector_name)
 
         log.info(
             magentaify(
@@ -163,7 +163,7 @@ class KafkaConnector(PipelineComponent, ABC):
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
             self.__uninstall_connect_resetter(trimmed_name, dry_run)
 
-    def _get_release_name(self, connector_name: str) -> str:
+    def _get_kafka_resetter_release_name(self, connector_name: str) -> str:
         suffix = "-clean"
         clean_up_release_name = connector_name + suffix
         trimmed_name = trim_release_name(clean_up_release_name, suffix)
@@ -245,7 +245,7 @@ class KafkaSourceConnector(KafkaConnector):
             offset_topic=self.offset_topic,
         )
         stdout = self.helm.template(
-            self._get_release_name(self.name),
+            self._get_kafka_resetter_release_name(self.name),
             self._get_resetter_helm_chart(),
             values,
             flags,
@@ -293,7 +293,7 @@ class KafkaSinkConnector(KafkaConnector):
             self.name, KafkaConnectorType.SINK
         )
         stdout = self.helm.template(
-            self._get_release_name(self.name),
+            self._get_kafka_resetter_release_name(self.name),
             self._get_resetter_helm_chart(),
             values,
             flags,
