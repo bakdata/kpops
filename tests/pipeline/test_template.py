@@ -19,7 +19,7 @@ class TestTemplate:
     def run_command(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "_Helm__execute")
 
-    def test_default_template_config(self):
+    def test_default_template_config(self, run_command: MagicMock):
         result = runner.invoke(
             app,
             [
@@ -32,6 +32,19 @@ class TestTemplate:
                 "--template",
             ],
             catch_exceptions=False,
+        )
+
+        run_command.assert_called_with(
+            [
+                "helm",
+                "template",
+                "resources-custom-config-app2",
+                "bakdata-streams-bootstrap/streams-app",
+                "--values",
+                ANY,
+                "--version",
+                ANY,
+            ],
         )
 
         assert result.exit_code == 0
@@ -72,7 +85,7 @@ class TestTemplate:
                 "--cert-file",
                 "cert-file",
                 "--version",
-                "2.7.0",
+                ANY,
             ],
         )
 

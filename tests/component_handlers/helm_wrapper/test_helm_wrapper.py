@@ -367,7 +367,7 @@ data:
             ),
         )
         run_command.assert_called_once_with(
-            command=[
+            [
                 "helm",
                 "template",
                 "test-release",
@@ -395,7 +395,7 @@ data:
             flags=HelmTemplateFlags(),
         )
         run_command.assert_called_once_with(
-            command=[
+            [
                 "helm",
                 "template",
                 "test-release",
