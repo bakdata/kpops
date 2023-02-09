@@ -198,10 +198,10 @@ def generate(
     defaults: Path = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
-    template: bool = typer.Option(False, help="Run helm template"),
+    template: bool = typer.Option(False, help="Run Helm template"),
     steps: Optional[str] = PIPELINE_STEPS,
     api_version: Optional[str] = typer.Option(
-        None, help="Kubernetes api version used for Capabilities.APIVersions"
+        None, help="Kubernetes API version used for Capabilities.APIVersions"
     ),
     ca_file: Optional[str] = typer.Option(
         None, help="Verify certificates of HTTPS-enabled servers using this CA bundle"

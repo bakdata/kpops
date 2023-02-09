@@ -171,12 +171,12 @@ class PipelineComponent(BaseDefaultsComponent):
         be faked locally. Additionally, none of the server-side testing of chart
         validity (e.g. whether an API is supported) is done.
 
-        :param api_version: Kubernetes api version used for
-            Capabilities.APIVersions, `--api_versions` in helm
+        :param api_version: Kubernetes API version used for
+            Capabilities.APIVersions, `--api_versions` in Helm
         :param str ca_file: verify certificates of HTTPS-enabled servers
-            using this CA bundle, `--ca-file` in helm
+            using this CA bundle, `--ca-file` in Helm
         :param str cert_file: identify HTTPS client using this SSL certificate
-            file, `--cert-file` in helm
+            file, `--cert-file` in Helm
         """
         pass
 

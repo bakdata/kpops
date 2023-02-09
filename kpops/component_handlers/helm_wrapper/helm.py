@@ -137,15 +137,14 @@ class Helm:
         flags: HelmTemplateFlags = HelmTemplateFlags(),
     ) -> str:
         """
-        Render chart templates locally and display the output.
-
         From HELM: Render chart templates locally and display the output.
+
         Any values that would normally be looked up or retrieved in-cluster will
         be faked locally. Additionally, none of the server-side testing of chart
         validity (e.g. whether an API is supported) is done.
 
         :param str release_name: the release name for which the command is ran
-        :param str chart: helm chart to be templated
+        :param str chart: Helm chart to be templated
         :param dict[str, str] values: `values.yaml` to be used
         :param flags: the flags to be set for `helm template`
         :type flags: HelmTemplateFlags

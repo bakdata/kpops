@@ -241,7 +241,6 @@ class KafkaSourceConnector(KafkaConnector):
         values = self._get_kafka_connect_resetter_values(
             self.name,
             KafkaConnectorType.SOURCE,
-            # {},
             offset_topic=self.offset_topic,
         )
         stdout = self.helm.template(
