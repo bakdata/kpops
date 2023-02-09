@@ -68,8 +68,6 @@ class Pipeline:
         self.registry = registry
         self.parse_components(component_list, environment_components)
 
-        super().__init__()
-
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
         """

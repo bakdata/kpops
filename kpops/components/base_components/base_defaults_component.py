@@ -4,7 +4,7 @@ import os
 from collections import deque
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any, ClassVar, TypeVar
+from typing import Any, TypeVar
 
 import typer
 from pydantic import BaseConfig, BaseModel, Field
@@ -17,7 +17,7 @@ log = logging.getLogger("PipelineComponentEnricher")
 
 
 class BaseDefaultsComponent(BaseModel):
-    type: ClassVar[str] = Field(default=..., const=True)
+    type: str
 
     enrich: bool = Field(default=False, exclude=True, hidden_from_schema=True)
     config: PipelineConfig = Field(default=..., exclude=True, hidden_from_schema=True)
@@ -59,16 +59,19 @@ class BaseDefaultsComponent(BaseModel):
                     main_default_file_path,
                     environment_default_file_path,
                 ) = get_defaults_file_paths(config)
+                component_type = base.__fields__["type"].default
                 if not environment_default_file_path.exists():
                     kwargs = update_nested(
                         kwargs,
-                        defaults_from_yaml(main_default_file_path, base.type),
+                        defaults_from_yaml(main_default_file_path, component_type),
                     )
                 else:
                     kwargs = update_nested(
                         kwargs,
-                        defaults_from_yaml(environment_default_file_path, base.type),
-                        defaults_from_yaml(main_default_file_path, base.type),
+                        defaults_from_yaml(
+                            environment_default_file_path, component_type
+                        ),
+                        defaults_from_yaml(main_default_file_path, component_type),
                     )
         return kwargs
 
