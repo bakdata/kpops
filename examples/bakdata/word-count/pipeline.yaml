@@ -1,0 +1,48 @@
+# wordcounter, completely carried over
+- type: streams-app
+  name: wc-word-counter
+  namespace: ivan-yordanov-bakdata
+  from:
+    topics:
+      word-count-raw-data-producer-topic:
+        type: input
+  to:
+    topics:
+      word-count-countedwords-topic:
+        type: output
+  app:
+    replicaCount: 1
+    image: bakdata/kpops-demo-word-count-app
+    imageTag: 1.0.0  
+    commandLine:
+      PRODUCTIVE: false
+    imagePullPolicy: Always # NOT SURE WHAT TO DO WITH THIS ONE
+    streams:
+      brokers: "k8kafka-cp-kafka-headless:9092"
+    annotations:
+      consumerGroup: "word-counter-group"
+    prometheus:
+      jmx:
+        enabled: false
+    debug: true
+      # inputTopics: 
+      #   - "word-count-raw-data-producer-topic"
+      # outputTopic: "word-count-countedwords-topic"
+
+
+# dataproducer, completely carried over
+- type: producer
+  name: wc-data-producer
+  namespace: ivan-yordanov-bakdata
+  app:
+    replicaCount: 1
+    image: bakdata/kpops-demo-sentence-producer
+    imageTag: 1.0.0
+    imagePullPolicy: Always
+    streams:
+      brokers: "k8kafka-cp-kafka-headless:9092"
+      outputTopic: "word-count-raw-data-producer-topic"
+    prometheus:
+      jmx:
+        enabled: false
+    debug: true
