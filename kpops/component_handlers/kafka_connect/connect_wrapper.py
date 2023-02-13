@@ -4,6 +4,7 @@ from time import sleep
 from typing import Any
 
 import requests
+from apischema import serialize
 
 from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
@@ -48,15 +49,18 @@ class ConnectWrapper:
         :param kafka_connect_config: The config of the connector
         :return: The current connector info if successful
         """
-        config_json = kafka_connect_config.dict(exclude_none=True, exclude_unset=True)
+        config_json = serialize(
+            kafka_connect_config, exclude_none=True, exclude_unset=True
+        )
         connect_data = {"name": connector_name, "config": config_json}
         response = requests.post(
             url=f"{self._host}/connectors", headers=HEADERS, json=connect_data
         )
         if response.status_code == requests.status_codes.codes.created:
+            data = response.json()
             log.info(f"Connector {connector_name} created.")
-            log.debug(response.json())
-            return KafkaConnectResponse(**response.json())
+            log.debug(data)
+            return KafkaConnectResponse.from_dict(data)
         elif response.status_code == requests.status_codes.codes.conflict:
             log.warning(
                 "Rebalancing in progress while creating a connector... Retrying..."
@@ -76,9 +80,10 @@ class ConnectWrapper:
             url=f"{self._host}/connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == requests.status_codes.codes.ok:
+            data = response.json()
             log.info(f"Connector {connector_name} exists.")
-            log.debug(response.json())
-            return KafkaConnectResponse(**response.json())
+            log.debug(data)
+            return KafkaConnectResponse.from_dict(data)
         elif response.status_code == requests.status_codes.codes.not_found:
             log.info(f"The named connector {connector_name} does not exists.")
             raise ConnectorNotFoundException()
@@ -99,7 +104,9 @@ class ConnectWrapper:
         :param kafka_connect_config: Configuration parameters for the connector.
         :return: Information about the connector after the change has been made.
         """
-        config_json = kafka_connect_config.dict(exclude_none=True, exclude_unset=True)
+        config_json = serialize(
+            kafka_connect_config, exclude_none=True, exclude_unset=True
+        )
         response = requests.put(
             url=f"{self._host}/connectors/{connector_name}/config",
             headers=HEADERS,
@@ -109,11 +116,11 @@ class ConnectWrapper:
         if response.status_code == requests.status_codes.codes.ok:
             log.info(f"Config for connector {connector_name} updated.")
             log.debug(data)
-            return KafkaConnectResponse(**data)
+            return KafkaConnectResponse.from_dict(data)
         if response.status_code == requests.status_codes.codes.created:
             log.info(f"Connector {connector_name} created.")
             log.debug(data)
-            return KafkaConnectResponse(**data)
+            return KafkaConnectResponse.from_dict(data)
         elif response.status_code == requests.status_codes.codes.conflict:
             log.warning(
                 "Rebalancing in progress while updating a connector... Retrying..."
@@ -125,7 +132,7 @@ class ConnectWrapper:
     def get_connector_config(
         self, connector_name: str, config: KafkaConnectConfig
     ) -> dict[str, Any]:
-        connector_config = config.dict(exclude_none=True, exclude_unset=True)
+        connector_config = serialize(config, exclude_none=True, exclude_unset=True)
         if (name := connector_config.get("name")) and name != connector_name:
             raise ValueError("Connector name should be the same as component name")
         connector_config["name"] = connector_name

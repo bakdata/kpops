@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Literal
 
-from kpops.utils.pydantic import CamelCaseConfig
+from kpops.utils.pydantic import FromDictMixin
 
 
 class KafkaConnectorType(str, Enum):
@@ -24,7 +24,7 @@ class ConnectorTask:
 
 
 @dataclass(kw_only=True)
-class KafkaConnectResponse:
+class KafkaConnectResponse(FromDictMixin):
     name: str
     config: dict[str, str]
     tasks: list[ConnectorTask]

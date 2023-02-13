@@ -76,7 +76,7 @@ class TestProxyWrapper:
         }
 
         with pytest.raises(KafkaRestProxyError):
-            self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
+            self.proxy_wrapper.create_topic(topic_spec=TopicSpec.from_dict(topic_spec))
 
         mock_post.assert_called_with(
             url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
@@ -89,7 +89,7 @@ class TestProxyWrapper:
         topic_spec: dict[str, Any] = {"topic_name": "topic-X"}
 
         with pytest.raises(KafkaRestProxyError):
-            self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
+            self.proxy_wrapper.create_topic(topic_spec=TopicSpec.from_dict(topic_spec))
 
         mock_post.assert_called_with(
             url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
@@ -174,7 +174,7 @@ class TestProxyWrapper:
             headers=HEADERS,
             status=201,
         )
-        self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
+        self.proxy_wrapper.create_topic(topic_spec=TopicSpec.from_dict(topic_spec))
         log_info_mock.assert_called_once_with("Topic topic-X created.")
 
     @responses.activate
@@ -207,7 +207,7 @@ class TestProxyWrapper:
             "configs": {"related": ""},
             "partition_reassignments": {"related": ""},
         }
-        topic_response = TopicResponse(**res)
+        topic_response = TopicResponse.from_dict(res)
 
         topic_name = "topic-X"
 

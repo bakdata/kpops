@@ -1,5 +1,7 @@
 import logging
 
+from apischema import serialize
+
 from kpops.component_handlers.topic.exception import TopicNotFoundException
 from kpops.component_handlers.topic.model import (
     TopicConfigResponse,
@@ -130,7 +132,7 @@ class TopicHandler:
             log.debug(f"POST /clusters/{self.proxy_wrapper.cluster_id}/topics HTTP/1.1")
             log.debug(f"Host: {self.proxy_wrapper.host}")
             log.debug(HEADERS)
-            log.debug(topic_spec.dict())
+            log.debug(serialize(topic_spec))
 
     @staticmethod
     def __check_partition_count(
@@ -206,18 +208,25 @@ class TopicHandler:
         :param topic_config: The topic config
         :return:
         """
-        topic_spec_json: dict = topic_config.dict(
-            include={
-                "partitions_count": True,
-                "replication_factor": True,
-                "configs": True,
-            },
+        topic_spec_json: dict = serialize(
+            topic_config,
             exclude_unset=True,
             exclude_none=True,
         )
+        include = (
+            {
+                "partitions_count",
+                "replication_factor",
+                "configs",
+            },
+        )
+        for key in topic_spec_json.keys():
+            if key not in include:
+                topic_spec_json.pop(key)
+
         configs = []
         for config_name, config_value in topic_spec_json["configs"].items():
             configs.append({"name": config_name, "value": config_value})
         topic_spec_json["configs"] = configs
         topic_spec_json["topic_name"] = topic_name
-        return TopicSpec(**topic_spec_json)
+        return TopicSpec.from_dict(topic_spec_json)

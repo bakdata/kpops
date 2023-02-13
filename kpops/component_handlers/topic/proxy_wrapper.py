@@ -101,9 +101,10 @@ class ProxyWrapper:
             headers=HEADERS,
         )
         if response.status_code == requests.status_codes.codes.ok:
+            data = response.json()
             log.debug(f"Topic {topic_name} found.")
-            log.debug(response.json())
-            return TopicResponse(**response.json())
+            log.debug(data)
+            return TopicResponse.from_dict(data)
 
         elif (
             response.status_code == requests.status_codes.codes.not_found
@@ -176,6 +177,6 @@ class ProxyWrapper:
             data = response.json()
             log.debug("Broker configs found.")
             log.debug(data)
-            return BrokerConfigResponse(**data)
+            return BrokerConfigResponse.from_dict(data)
 
         raise KafkaRestProxyError(response)

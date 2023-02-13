@@ -1,33 +1,9 @@
 from __future__ import annotations
 
-import inspect
 from dataclasses import dataclass
 from enum import Enum
 
-from apischema import deserialize
-from typing_extensions import Self
-
-
-# TODO: remove
-class AllowExtraMixin:
-    def __init__(self, **kwargs) -> None:  # allow extra fields passed as kwargs
-        for key, value in kwargs.items():
-            setattr(self, key, value)
-
-
-# TODO: remove
-# class FromDictMixin:
-#     @classmethod
-#     def from_dict(cls, d: dict) -> Self:
-#         return cls(
-#             **{k: v for k, v in d.items() if k in inspect.signature(cls).parameters}
-#         )
-
-
-class FromDictMixin:
-    @classmethod
-    def from_dict(cls, data: dict) -> Self:
-        return deserialize(cls, data, additional_properties=True)
+from kpops.utils.pydantic import FromDictMixin
 
 
 @dataclass(kw_only=True)
