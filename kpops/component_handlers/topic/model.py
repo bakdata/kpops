@@ -81,7 +81,7 @@ class KafkaTopicConfig:
 
 
 @dataclass(kw_only=True)
-class TopicConfigResponse:
+class TopicConfigResponse(FromDictMixin):
     data: list[KafkaTopicConfig]
 
 
@@ -101,13 +101,11 @@ class KafkaBrokerConfigSynonyms:
 
 
 @dataclass(kw_only=True)
-class KafkaBrokerConfig:
+class KafkaBrokerConfig(FromDictMixin):
     source: KafkaBrokerConfigSource
     synonyms: list[KafkaBrokerConfigSynonyms]
     value: str | None
     name: str
-
-    # TODO: allow extra
 
 
 @dataclass(kw_only=True)
