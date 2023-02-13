@@ -172,8 +172,9 @@ class ProxyWrapper:
         )
 
         if response.status_code == requests.status_codes.codes.ok:
+            data = response.json()
             log.debug("Broker configs found.")
-            log.debug(response.json())
-            return BrokerConfigResponse(**response.json())
+            log.debug(data)
+            return BrokerConfigResponse(**data)
 
         raise KafkaRestProxyError(response)
