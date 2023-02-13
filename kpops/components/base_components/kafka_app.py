@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import logging
+from dataclasses import dataclass, field
 from typing import ClassVar, Literal
 
-from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -16,18 +16,17 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
 )
-from kpops.utils.pydantic import CamelCaseConfig
 from kpops.utils.yaml_loading import substitute
 
 log = logging.getLogger("KafkaApp")
 
 
-class KafkaStreamsConfig(BaseModel):
+@dataclass(kw_only=True)
+class KafkaStreamsConfig:
     brokers: str
     schema_registry_url: str | None = None
 
-    class Config(CamelCaseConfig):
-        extra = Extra.allow
+    # TODO: allow extra
 
 
 class KafkaAppConfig(KubernetesAppConfig):
@@ -35,6 +34,7 @@ class KafkaAppConfig(KubernetesAppConfig):
     name_override: str | None
 
 
+@dataclass(kw_only=True)
 class KafkaApp(KubernetesApp):
     """
     Base component for Kafka-based components.
@@ -42,18 +42,16 @@ class KafkaApp(KubernetesApp):
     """
 
     type: ClassVar[str] = "kafka-app"
-    schema_type: Literal["kafka-app"] = Field(  # type: ignore[assignment]
-        default="kafka-app", exclude=True
-    )
     app: KafkaAppConfig
-    repo_config: HelmRepoConfig = HelmRepoConfig(
-        repository_name="bakdata-streams-bootstrap",
-        url="https://bakdata.github.io/streams-bootstrap/",
+    repo_config: HelmRepoConfig = field(
+        default_factory=lambda: HelmRepoConfig(
+            repository_name="bakdata-streams-bootstrap",
+            url="https://bakdata.github.io/streams-bootstrap/",
+        )
     )
     version = "2.7.0"
 
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
+    def __post_init__(self) -> None:
         self.app.streams.brokers = substitute(
             self.app.streams.brokers, {"broker": self.config.broker}
         )

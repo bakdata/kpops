@@ -3,10 +3,11 @@ from __future__ import annotations
 import json
 import logging
 from abc import ABC
+from dataclasses import dataclass, field
 from functools import cached_property
 from typing import ClassVar, Literal, NoReturn
 
-from pydantic import Field
+from apischema import serialize
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -27,7 +28,6 @@ from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
-from kpops.utils.pydantic import CamelCaseConfig
 
 log = logging.getLogger("KafkaConnector")
 
@@ -42,13 +42,12 @@ class KafkaConnector(PipelineComponent, ABC):
     )
     namespace: str
     version: str = "1.0.4"
-    resetter_values: dict = Field(
+    resetter_values: dict = field(
         default_factory=dict,
-        description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+        # description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
     )
 
-    class Config(CamelCaseConfig):
-        pass
+    # TODO: camelcase
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -81,7 +80,7 @@ class KafkaConnector(PipelineComponent, ABC):
         Substitute component related variables in config
         """
         substituted_config = self.substitute_component_variables(
-            json.dumps(self.app.dict())
+            json.dumps(serialize(self.app))
         )
         out: dict = json.loads(substituted_config)
         self.app = KafkaConnectConfig(**out)
@@ -202,15 +201,17 @@ class KafkaConnector(PipelineComponent, ABC):
         **kwargs,
     ) -> dict:
         return {
-            **KafkaConnectResetterValues(
-                config=KafkaConnectResetterConfig(
-                    connector=connector_name,
-                    brokers=self.config.broker,
-                    **kwargs,
-                ),
-                connector_type=connector_type.value,
-                name_override=connector_name,
-            ).dict(),
+            **serialize(
+                KafkaConnectResetterValues(
+                    config=KafkaConnectResetterConfig(
+                        connector=connector_name,
+                        brokers=self.config.broker,
+                        **kwargs,
+                    ),
+                    connector_type=connector_type.value,
+                    name_override=connector_name,
+                )
+            ),
             **self.resetter_values,
         }
 
@@ -224,9 +225,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
 class KafkaSourceConnector(KafkaConnector):
     type: ClassVar[str] = "kafka-source-connector"
-    schema_type: Literal["kafka-source-connector"] = Field(
-        default="kafka-source-connector", exclude=True
-    )
     offset_topic: str | None = None
 
     @override
@@ -270,11 +268,9 @@ class KafkaSourceConnector(KafkaConnector):
         )
 
 
+@dataclass(kw_only=True)
 class KafkaSinkConnector(KafkaConnector):
     type: ClassVar[str] = "kafka-sink-connector"
-    schema_type: Literal["kafka-sink-connector"] = Field(
-        default="kafka-sink-connector", exclude=True
-    )
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:

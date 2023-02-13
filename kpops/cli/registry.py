@@ -17,7 +17,7 @@ ClassDict = dict[str, type[T]]  # type -> class
 sys.path.append(os.getcwd())
 
 
-@dataclass
+@dataclass(kw_only=True)
 class Registry:
     """Class Registry to store and retrieve PipelineComponents."""
 

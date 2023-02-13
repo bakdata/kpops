@@ -1,7 +1,8 @@
+from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseConfig, BaseModel, Extra, Field, root_validator
+from apischema import alias
 
 
 class OutputTopicTypes(str, Enum):
@@ -14,44 +15,38 @@ class OutputTopicTypes(str, Enum):
     EXTRA = "extra"
 
 
-class TopicConfig(BaseModel):
+@dataclass(kw_only=True)
+class TopicConfig:
     """Configures a topic"""
 
-    type: OutputTopicTypes = Field(...)
-    key_schema: str | None = Field(default=None, alias="keySchema")
-    value_schema: str | None = Field(default=None, alias="valueSchema")
+    type: OutputTopicTypes
+    key_schema: str | None = field(default=None, metadata=alias("keySchema"))
+    value_schema: str | None = field(default=None, metadata=alias("valueSchema"))
     partitions_count: int | None = None
     replication_factor: int | None = None
-    configs: dict[str, str] = {}
+    configs: dict[str, str] = field(default_factory=dict)
     role: str | None = None
 
-    class Config(BaseConfig):
-        extra = Extra.forbid
-        allow_population_by_field_name = True
-        use_enum_values = True
-
-    @root_validator
-    def extra_topic_role(cls, values):
-        is_extra_topic: bool = values["type"] == OutputTopicTypes.EXTRA
-        if is_extra_topic and not values.get("role"):
-            raise ValueError(
-                "If you define an extra output topic, you have to define a role."
-            )
-        if not is_extra_topic and values.get("role"):
-            raise ValueError(
-                "If you do not define a output topic, the role is unnecessary. (This topic is either an output topic "
-                "without a role or an error topic)"
-            )
-        return values
+    # @root_validator # TODO
+    # def extra_topic_role(cls, values):
+    #     is_extra_topic: bool = values["type"] == OutputTopicTypes.EXTRA
+    #     if is_extra_topic and not values.get("role"):
+    #         raise ValueError(
+    #             "If you define an extra output topic, you have to define a role."
+    #         )
+    #     if not is_extra_topic and values.get("role"):
+    #         raise ValueError(
+    #             "If you do not define a output topic, the role is unnecessary. (This topic is either an output topic "
+    #             "without a role or an error topic)"
+    #         )
+    #     return values
 
 
-class ToSection(BaseModel):
-    models: dict[
-        str, Any
-    ] = (
-        {}
-    )  # any because snapshot versions must be supported  # TODO: really multiple models?
+@dataclass(kw_only=True)
+class ToSection:
     topics: dict[str, TopicConfig]
+    models: dict[str, Any] = field(
+        default_factory=dict
+    )  # any because snapshot versions must be supported  # TODO: really multiple models?
 
-    class Config(BaseConfig):
-        extra = Extra.allow
+    # TODO: allow extra

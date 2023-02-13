@@ -3,7 +3,6 @@ from __future__ import annotations
 from typing import ClassVar
 
 import pytest
-from pydantic import BaseModel
 
 from kpops.cli.registry import ClassNotFoundError, Registry, _find_classes, find_class
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -27,7 +26,7 @@ MODULE = SubComponent.__module__
 
 
 def test_find_classes():
-    gen = _find_classes(MODULE, BaseModel)
+    gen = _find_classes(MODULE, PipelineComponent)
     assert next(gen) is SubComponent
     assert next(gen) is SubSubComponent
     with pytest.raises(StopIteration):

@@ -183,9 +183,7 @@ def create_pipeline_config(
     config: Path, defaults: Path, verbose: bool
 ) -> PipelineConfig:
     setup_logging_level(verbose)
-    PipelineConfig.Config.config_path = config
-    pipeline_config = PipelineConfig(defaults_path=defaults)
-    return pipeline_config
+    return PipelineConfig.load_from_file(config, defaults)
 
 
 @app.command(

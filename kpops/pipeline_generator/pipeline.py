@@ -5,10 +5,11 @@ import logging
 import os
 from collections.abc import Iterator
 from contextlib import suppress
+from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel
+from apischema import serialize
 from rich.console import Console
 from rich.syntax import Syntax
 
@@ -26,7 +27,8 @@ class ParsingException(Exception):
     pass
 
 
-class PipelineComponents(BaseModel):
+@dataclass(kw_only=True)
+class PipelineComponents:
     components: list[PipelineComponent]
 
 
@@ -206,10 +208,7 @@ class Pipeline:
             handlers=self.handlers, config=self.config, **component
         )
         env_component_definition = env_components_index.get(component_object.name, {})
-        pair = update_nested_pair(
-            env_component_definition,
-            component_object.dict(by_alias=True),
-        )
+        pair = update_nested_pair(env_component_definition, serialize(component_object))
 
         json_object = self.substitute_component_specific_variables(
             component_object, pair
@@ -239,8 +238,10 @@ class Pipeline:
 
     def __str__(self) -> str:
         return yaml.dump(
-            PipelineComponents(components=self.components).dict(
-                exclude_unset=True, exclude_none=True, by_alias=True
+            serialize(
+                PipelineComponents(components=self.components),
+                exclude_unset=True,
+                exclude_none=True,
             )
         )
 

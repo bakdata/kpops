@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import ClassVar, Literal
 
-from pydantic import BaseConfig, Extra, Field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaApp
@@ -16,13 +15,9 @@ class StreamsApp(KafkaApp):
     """
 
     type: ClassVar[str] = "streams-app"
-    schema_type: Literal["streams-app"] = Field(  # type: ignore[assignment]
-        default="streams-app", exclude=True
-    )
     app: StreamsAppConfig
 
-    class Config(BaseConfig):
-        extra = Extra.allow
+    # TODO: allow extra
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

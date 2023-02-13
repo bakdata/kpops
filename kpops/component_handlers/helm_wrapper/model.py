@@ -3,42 +3,40 @@ from pathlib import Path
 from typing import Iterator
 
 import yaml
-from pydantic import BaseModel, Field
-
-from kpops.utils.pydantic import CamelCaseConfig
 
 
-class HelmDiffConfig(BaseModel):
+@dataclass(kw_only=True)
+class HelmDiffConfig:
     enable: bool = False
-    ignore: set[str] = Field(default_factory=set)
+    ignore: set[str] = field(default_factory=set)
 
 
-class RepoAuthFlags(BaseModel):
+@dataclass(kw_only=True)
+class RepoAuthFlags:
     username: str | None = None
     password: str | None = None
     ca_file: Path | None = None
     insecure_skip_tls_verify: bool = False
 
-    class Config(CamelCaseConfig):
-        pass
+    # TODO: camelcase
 
 
-class HelmRepoConfig(BaseModel):
+@dataclass(kw_only=True)
+class HelmRepoConfig:
     repository_name: str
     url: str
-    repo_auth_flags: RepoAuthFlags = Field(default=RepoAuthFlags())
+    repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
 
-    class Config(CamelCaseConfig):
-        pass
+    # TODO: camelcase
 
 
-@dataclass
+@dataclass(kw_only=True)
 class HelmConfig:
     context: str | None = None
     debug: bool = False
 
 
-@dataclass
+@dataclass(kw_only=True)
 class HelmUpgradeInstallFlags:
     create_namespace: bool = False
     force: bool = False
@@ -52,7 +50,7 @@ class HelmUpgradeInstallFlags:
 HELM_SOURCE_PREFIX = "# Source: "
 
 
-@dataclass
+@dataclass(kw_only=True)
 class HelmTemplateFlags:
     api_version: str | None = None
     ca_file: str | None = None
@@ -60,7 +58,7 @@ class HelmTemplateFlags:
     version: str | None = None
 
 
-@dataclass
+@dataclass(kw_only=True)
 class HelmTemplate:
     filepath: str
     template: dict
@@ -80,7 +78,7 @@ class HelmTemplate:
         return cls(filepath, template)
 
 
-@dataclass
+@dataclass(kw_only=True)
 class YamlReader:
     content: str
 

@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from typing import ClassVar, Literal
 
-from pydantic import BaseConfig, Extra, Field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaApp
@@ -22,13 +21,9 @@ class ProducerApp(KafkaApp):
     """
 
     type: ClassVar[str] = "producer"
-    schema_type: Literal["producer"] = Field(  # type: ignore[assignment]
-        default="producer", exclude=True
-    )
     app: ProducerValues
 
-    class Config(BaseConfig):
-        extra = Extra.allow
+    # TODO: allow extra
 
     @override
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:

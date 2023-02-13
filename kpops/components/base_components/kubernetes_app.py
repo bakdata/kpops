@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import logging
 import re
+from dataclasses import dataclass
 from functools import cached_property
 from typing import ClassVar, Literal
 
-from pydantic import BaseModel, Extra, Field
+from apischema import serialize
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -17,7 +18,6 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
-from kpops.utils.pydantic import CamelCaseConfig
 
 log = logging.getLogger("KubernetesAppComponent")
 
@@ -26,29 +26,25 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 )
 
 
-class KubernetesAppConfig(BaseModel):
-    class Config(CamelCaseConfig):
-        extra = Extra.allow
+@dataclass(kw_only=True)
+class KubernetesAppConfig:
+    pass  # TODO: allow extra
 
 
 # TODO: label and annotations
+@dataclass(kw_only=True)
 class KubernetesApp(PipelineComponent):
     """Base Kubernetes app"""
 
-    type: ClassVar[str] = "kubernetes-app"
-    schema_type: Literal["kubernetes-app"] = Field(  # type: ignore[assignment]
-        default="kubernetes-app", exclude=True
-    )
     app: KubernetesAppConfig
-    repo_config: HelmRepoConfig | None = None
     namespace: str
+    repo_config: HelmRepoConfig | None = None
     version: str | None = None
+    type: ClassVar[str] = "kubernetes-app"
 
-    class Config(CamelCaseConfig):
-        pass
+    # TODO: camelcase
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __post_init__(self) -> None:
         self.__check_compatible_name()
 
     @cached_property
@@ -108,7 +104,7 @@ class KubernetesApp(PipelineComponent):
             log.info(magentaify(stdout))
 
     def to_helm_values(self) -> dict:
-        return self.app.dict(by_alias=True, exclude_none=True, exclude_unset=True)
+        return serialize(self, exclude_none=True, exclude_unset=True)
 
     def print_helm_diff(self, stdout: str) -> None:
         current_release = list(

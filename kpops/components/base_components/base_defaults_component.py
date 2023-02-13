@@ -3,11 +3,12 @@ import logging
 import os
 from collections import deque
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, ClassVar, TypeVar
 
 import typer
-from pydantic import BaseConfig, BaseModel, Field
+from apischema.metadata import skip
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
@@ -16,22 +17,17 @@ from kpops.utils.yaml_loading import load_yaml_file
 log = logging.getLogger("PipelineComponentEnricher")
 
 
-class BaseDefaultsComponent(BaseModel):
-    type: ClassVar[str] = Field(default=..., const=True)
+@dataclass(kw_only=True)
+class BaseDefaultsComponent:
+    type: ClassVar[str] = "base-defaults-component"
 
-    enrich: bool = Field(default=False, exclude=True, hidden_from_schema=True)
-    config: PipelineConfig = Field(default=..., exclude=True, hidden_from_schema=True)
-    handlers: ComponentHandlers = Field(
-        default=..., exclude=True, hidden_from_schema=True
-    )
-
-    class Config(BaseConfig):
-        arbitrary_types_allowed = True
+    config: PipelineConfig = field(metadata=skip)
+    handlers: ComponentHandlers = field(metadata=skip)
+    enrich: bool = field(default=False, metadata=skip)
 
     def __init__(self, **kwargs) -> None:
         if kwargs.get("enrich", True):
             kwargs = self.extend_with_defaults(kwargs)
-        super().__init__(**kwargs)
 
     def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
         """

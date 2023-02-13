@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import os
-from functools import cached_property
+from dataclasses import dataclass, field
 
-from pydantic import BaseConfig, Extra, Field
+from apischema import alias
 
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
@@ -21,22 +21,19 @@ from kpops.components.base_components.models.to_section import (
 from kpops.utils.yaml_loading import substitute
 
 
+@dataclass(kw_only=True)
 class PipelineComponent(BaseDefaultsComponent):
+    type = "pipeline-component"
     name: str
-    from_: FromSection | None = Field(default=None, alias="from")
+    from_: FromSection | None = field(default=None, metadata=alias("from"))
     app: object | None = None
     to: ToSection | None = None
-    prefix: str = Field(
+    prefix: str = field(
         default="${pipeline_name}-",
-        description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+        # description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
     )
 
-    class Config(BaseConfig):
-        extra = Extra.allow
-        keep_untouched = (cached_property,)
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __post_init(self) -> None:
         self.substitute_output_topic_names()
         self.substitute_name()
         self.substitute_prefix()

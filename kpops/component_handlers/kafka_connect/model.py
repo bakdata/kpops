@@ -1,7 +1,6 @@
+from dataclasses import dataclass
 from enum import Enum
 from typing import Literal
-
-from pydantic import BaseConfig, BaseModel, Extra
 
 from kpops.utils.pydantic import CamelCaseConfig
 
@@ -11,58 +10,63 @@ class KafkaConnectorType(str, Enum):
     SOURCE = "source"
 
 
-class KafkaConnectConfig(BaseModel):
-    class Config(BaseConfig):
-        extra = Extra.allow
+@dataclass(kw_only=True)
+class KafkaConnectConfig:
+    def __init__(self, **kwargs) -> None:  # allow extra fields passed as kwargs
+        for key, value in kwargs.items():
+            setattr(self, key, value)
 
 
-class ConnectorTask(BaseModel):
+@dataclass(kw_only=True)
+class ConnectorTask:
     connector: str
     task: int
 
 
-class KafkaConnectResponse(BaseModel):
+@dataclass(kw_only=True)
+class KafkaConnectResponse:
     name: str
     config: dict[str, str]
     tasks: list[ConnectorTask]
     type: str | None
 
-    class Config(BaseConfig):
-        extra = Extra.forbid
 
-
-class KafkaConnectConfigError(BaseModel):
+@dataclass(kw_only=True)
+class KafkaConnectConfigError:
     name: str
     errors: list[str]
 
 
-class KafkaConnectConfigDescription(BaseModel):
+@dataclass(kw_only=True)
+class KafkaConnectConfigDescription:
     value: KafkaConnectConfigError
 
 
-class KafkaConnectConfigErrorResponse(BaseModel):
+@dataclass(kw_only=True)
+class KafkaConnectConfigErrorResponse:
     name: str
     error_count: int
     configs: list[KafkaConnectConfigDescription]
 
 
-class KafkaConnectResetterConfig(BaseModel):
+@dataclass(kw_only=True)
+class KafkaConnectResetterConfig:
     brokers: str
     connector: str
     delete_consumer_group: bool | None = None
     offset_topic: str | None = None
 
-    class Config(CamelCaseConfig):
-        pass
+    # TODO: camelcase
 
 
-class KafkaConnectResetterValues(BaseModel):
+@dataclass(kw_only=True)
+class KafkaConnectResetterValues:
     connector_type: Literal["source", "sink"]
     config: KafkaConnectResetterConfig
     name_override: str
 
-    class Config(CamelCaseConfig):
-        pass
+    # TODO: camelcase
 
-    def dict(self, **_) -> dict:
-        return super().dict(by_alias=True, exclude_none=True)
+    # TODO
+    # def dict(self, **_) -> dict:
+    #     return super().dict(by_alias=True, exclude_none=True)

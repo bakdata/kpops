@@ -14,6 +14,11 @@ from kpops.components import ProducerApp
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
+    ToSection,
+)
+from kpops.components.streams_bootstrap.producer.model import (
+    ProducerStreamsConfig,
+    ProducerValues,
 )
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
@@ -36,6 +41,7 @@ class TestProducerApp:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
+            broker="127.0.0.1",
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
@@ -51,21 +57,21 @@ class TestProducerApp:
             name=self.PRODUCER_APP_NAME,
             config=config,
             handlers=handlers,
-            **{
-                "version": "2.4.2",
-                "namespace": "test-namespace",
-                "app": {
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "clean_schemas": True,
-                "to": {
-                    "topics": {
-                        "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                    }
-                },
-            },
+            version="2.4.2",
+            namespace="test-namespace",
+            app=ProducerValues(
+                streams=ProducerStreamsConfig(brokers="fake-broker:9092")
+            ),
+            to=ToSection(
+                topics={
+                    "${output_topic_name}": TopicConfig(
+                        type=OutputTopicTypes.OUTPUT, partitions_count=10
+                    ),
+                }
+            ),
+            # **{
+            #     "clean_schemas": True,
+            # },
         )
 
     def test_output_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
@@ -73,25 +79,22 @@ class TestProducerApp:
             name=self.PRODUCER_APP_NAME,
             config=config,
             handlers=handlers,
-            **{
-                "namespace": "test-namespace",
-                "app": {
-                    "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "to": {
-                    "topics": {
-                        "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
-                        ),
-                        "extra-topic-1": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
-                            role="first-extra-topic",
-                            partitions_count=10,
-                        ),
-                    }
-                },
-            },
+            namespace="test-namespace",
+            app=ProducerValues(
+                streams=ProducerStreamsConfig(brokers="fake-broker:9092")
+            ),
+            to=ToSection(
+                topics={
+                    "${output_topic_name}": TopicConfig(
+                        type=OutputTopicTypes.OUTPUT, partitions_count=10
+                    ),
+                    "extra-topic-1": TopicConfig(
+                        type=OutputTopicTypes.EXTRA,
+                        role="first-extra-topic",
+                        partitions_count=10,
+                    ),
+                }
+            ),
         )
 
         assert producer_app.app.streams.output_topic == "producer-output-topic"
