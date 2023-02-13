@@ -53,6 +53,14 @@ HELM_SOURCE_PREFIX = "# Source: "
 
 
 @dataclass
+class HelmTemplateFlags:
+    api_version: str | None = None
+    ca_file: str | None = None
+    cert_file: str | None = None
+    version: str | None = None
+
+
+@dataclass
 class HelmTemplate:
     filepath: str
     template: dict

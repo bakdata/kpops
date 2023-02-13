@@ -6,7 +6,7 @@ from kpops.utils.dict_differ import Change
 def test_diff():
     helm_diff = HelmDiff(HelmDiffConfig())
     templates = [HelmTemplate("a.yaml", {})]
-    assert helm_diff.get_diff(templates, templates) == [
+    assert list(helm_diff.calculate_changes(templates, templates)) == [
         Change(
             old_value={},
             new_value={},
@@ -14,15 +14,17 @@ def test_diff():
     ]
 
     # test matching corresponding template files based on their filename
-    assert helm_diff.get_diff(
-        [
-            HelmTemplate("a.yaml", {"a": 1}),
-            HelmTemplate("b.yaml", {"b": 1}),
-        ],
-        [
-            HelmTemplate("a.yaml", {"a": 2}),
-            HelmTemplate("c.yaml", {"c": 1}),
-        ],
+    assert list(
+        helm_diff.calculate_changes(
+            [
+                HelmTemplate("a.yaml", {"a": 1}),
+                HelmTemplate("b.yaml", {"b": 1}),
+            ],
+            [
+                HelmTemplate("a.yaml", {"a": 2}),
+                HelmTemplate("c.yaml", {"c": 1}),
+            ],
+        )
     ) == [
         Change(
             old_value={"a": 1},
@@ -39,7 +41,9 @@ def test_diff():
     ]
 
     # test no current release
-    assert helm_diff.get_diff((), [HelmTemplate("a.yaml", {"a": 1})]) == [
+    assert list(
+        helm_diff.calculate_changes((), [HelmTemplate("a.yaml", {"a": 1})])
+    ) == [
         Change(
             old_value={},
             new_value={"a": 1},

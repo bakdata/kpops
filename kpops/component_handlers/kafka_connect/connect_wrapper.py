@@ -1,6 +1,7 @@
 import logging
 import time
 from time import sleep
+from typing import Any
 
 import requests
 
@@ -121,8 +122,17 @@ class ConnectWrapper:
             self.update_connector_config(connector_name, kafka_connect_config)
         raise KafkaConnectError(response)
 
+    def get_connector_config(
+        self, connector_name: str, config: KafkaConnectConfig
+    ) -> dict[str, Any]:
+        connector_config = config.dict(exclude_none=True, exclude_unset=True)
+        if (name := connector_config.get("name")) and name != connector_name:
+            raise ValueError("Connector name should be the same as component name")
+        connector_config["name"] = connector_name
+        return connector_config
+
     def validate_connector_config(
-        self, kafka_connect_config: KafkaConnectConfig
+        self, connector_name: str, kafka_connect_config: KafkaConnectConfig
     ) -> list[str]:
         """
         Validate connector config using the given configuration
@@ -130,7 +140,8 @@ class ConnectWrapper:
         :param kafka_connect_config: Configuration parameters for the connector.
         :return:
         """
-        config_json = kafka_connect_config.dict(exclude_none=True, exclude_unset=True)
+
+        config_json = self.get_connector_config(connector_name, kafka_connect_config)
         connector_class = ConnectWrapper.get_connector_class_name(config_json)
 
         response = requests.put(
