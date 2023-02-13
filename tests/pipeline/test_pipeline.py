@@ -60,7 +60,7 @@ class TestPipeline:
 
         assert (
             enriched_pipeline["components"][0]["name"]
-            == raw_pipeline[0]["prefix"] + raw_pipeline[0]["name"]
+            == "my-fake-prefix-my-streams-app"
         )
 
     def test_pipelines_with_env_values(self, snapshot: SnapshotTest):
