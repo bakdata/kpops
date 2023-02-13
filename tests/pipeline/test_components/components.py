@@ -1,8 +1,11 @@
-from typing import Any
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, Any, cast
 
 from schema_registry.client.schema import AvroSchema
 from typing_extensions import override
 
+from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,
@@ -11,6 +14,9 @@ from kpops.components import KafkaSinkConnector
 from kpops.components.base_components import PipelineComponent
 from kpops.components.base_components.models.to_section import OutputTopicTypes
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
+
+if TYPE_CHECKING:
+    from kpops.cli.registry import Registry
 
 
 class ImportProducer(ProducerApp):
@@ -35,17 +41,18 @@ class InflateStep(StreamsApp):
     type: str = "should-inflate"
 
     @override
-    def inflate(self) -> list[PipelineComponent]:
+    def inflate(self, registry: Registry) -> list[PipelineComponent]:
         inflate_steps: list[PipelineComponent] = [self]
         if self.to:
             for topic_name, topic_config in self.to.topics.items():
                 if topic_config.type == OutputTopicTypes.OUTPUT:
-                    kafka_connector = KafkaSinkConnector(
+                    _class = registry["kafka-sink-connector"]
+                    kafka_connector: KafkaSinkConnector = _class(  # type: ignore
                         name="sink-connector",
                         config=self.config,
                         handlers=self.handlers,
                         namespace="example-namespace",
-                        app={  # type: ignore # FIXME
+                        app={
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },
