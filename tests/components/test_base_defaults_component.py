@@ -41,6 +41,7 @@ def config() -> PipelineConfig:
     return PipelineConfig(
         defaults_path=DEFAULTS_PATH,
         environment="development",
+        broker="127.0.0.1",
     )
 
 
@@ -64,7 +65,7 @@ class TestBaseDefaultsComponent:
         ), "Child default should overwrite parent default"
         assert component.nice == {
             "fake-value": "fake"
-        }, "Field introduce by child should be added"
+        }, "Field introduced by child should be added"
         assert (
             component.value == 2.0
         ), "Environment tmp_defaults should always overwrite"
@@ -84,7 +85,7 @@ class TestBaseDefaultsComponent:
 
         assert (
             component.name == "name-defined-in-pipeline_generator"
-        ), "Kwargs should should overwrite all other values"
+        ), "kwargs should overwrite all other values"
         assert component.nice == {
             "fake-value": "fake"
         }, "Field introduce by child should be added"

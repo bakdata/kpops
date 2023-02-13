@@ -9,6 +9,7 @@ from typing import Any, ClassVar, TypeVar
 
 import typer
 from apischema.metadata import skip
+from attr import define
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
@@ -17,7 +18,7 @@ from kpops.utils.yaml_loading import load_yaml_file
 log = logging.getLogger("PipelineComponentEnricher")
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class BaseDefaultsComponent:
     type: ClassVar[str] = "base-defaults-component"
 
@@ -28,12 +29,18 @@ class BaseDefaultsComponent:
     def __init__(self, **kwargs) -> None:
         if kwargs.get("enrich", True):
             kwargs = self.extend_with_defaults(kwargs)
+        filtered = {
+            attribute.name: kwargs[attribute.name]
+            for attribute in self.__attrs_attrs__
+            if attribute.name in kwargs
+        }
+        self.__attrs_init__(**filtered)
 
     def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
         """
         Merges tmp_defaults with all tmp_defaults for parent classes
 
-        :param kwargs: the init kwargs for pydantic
+        :param kwargs: the init kwargs
         :return: enriched kwargs with tmp_defaults
         """
 
