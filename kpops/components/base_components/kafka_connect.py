@@ -83,7 +83,6 @@ class KafkaConnector(PipelineComponent, ABC):
         substituted_config = self.substitute_component_variables(
             json.dumps(self.app.dict())
         )
-
         out: dict = json.loads(substituted_config)
         self.app = KafkaConnectConfig(**out)
 

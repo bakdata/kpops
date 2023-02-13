@@ -1,0 +1,13 @@
+- type: streams-app
+  name: my-streams-app
+  prefix: my-fake-prefix-
+  from:
+    topics:
+      example-topic:
+        type: input
+  app:
+    image: fake-image
+  to:
+    topics:
+      example-output:
+        type: output
