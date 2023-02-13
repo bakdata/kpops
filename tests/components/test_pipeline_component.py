@@ -1,6 +1,8 @@
 from pathlib import Path
 from unittest.mock import MagicMock
 
+from pytest import MonkeyPatch
+
 from kpops.cli import pipeline_config
 from kpops.cli.pipeline_config import TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
@@ -50,7 +52,7 @@ class TestPipelineComponent:
         assert "output-plain-pipeline-component" in pipeline_component.to.topics
         assert len(pipeline_component.to.topics.keys()) == 2
 
-    def test_prefix_substitution(self, monkeypatch):
+    def test_prefix_substitution(self, monkeypatch: MonkeyPatch):
         prefix = "my-fake-prefix"
         monkeypatch.setenv("pipeline_name", prefix)
         pipeline_component = PipelineComponent(
@@ -70,6 +72,4 @@ class TestPipelineComponent:
                 topic_handler=MagicMock(),
             ),
         )
-
-        assert pipeline_component.prefix
         assert prefix + "-" == pipeline_component.prefix

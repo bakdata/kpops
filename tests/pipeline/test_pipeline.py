@@ -35,7 +35,6 @@ class TestPipeline:
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_name_equal_prefix_name_concatenation(self):
-
         result = runner.invoke(
             app,
             [
