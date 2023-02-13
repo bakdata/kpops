@@ -56,7 +56,6 @@
       jmx:
         enabled: false
     debug: true
-  prefix: ""
 
 - type: streams-app
   name: account-linker

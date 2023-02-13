@@ -49,3 +49,27 @@ class TestPipelineComponent:
         assert "error-plain-pipeline-component" in pipeline_component.to.topics
         assert "output-plain-pipeline-component" in pipeline_component.to.topics
         assert len(pipeline_component.to.topics.keys()) == 2
+
+    def test_prefix_substitution(self, monkeypatch):
+        prefix = "my-fake-prefix"
+        monkeypatch.setenv("pipeline_name", prefix)
+        pipeline_component = PipelineComponent(
+            type="plain-pipeline-component",
+            name="test-pipeline-component",
+            config=pipeline_config.PipelineConfig(
+                defaults_path=DEFAULTS_PATH,
+                environment="development",
+                topic_name_config=TopicNameConfig(
+                    default_error_topic_name="error-${component_type}",
+                    default_output_topic_name="output-${component_type}",
+                ),
+            ),
+            handlers=ComponentHandlers(
+                schema_handler=MagicMock(),
+                connector_handler=MagicMock(),
+                topic_handler=MagicMock(),
+            ),
+        )
+
+        assert pipeline_component.prefix
+        assert prefix + "-" == pipeline_component.prefix

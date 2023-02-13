@@ -35,6 +35,7 @@ log = logging.getLogger("KafkaConnector")
 class KafkaConnector(PipelineComponent, ABC):
     type: ClassVar[str] = "kafka-connect"
     app: KafkaConnectConfig
+
     repo_config: HelmRepoConfig = HelmRepoConfig(
         repository_name="bakdata-kafka-connect-resetter",
         url="https://bakdata.github.io/kafka-connect-resetter/",
