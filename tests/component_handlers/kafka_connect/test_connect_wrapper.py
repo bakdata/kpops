@@ -5,6 +5,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 import responses
+from apischema import serialize
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
@@ -30,6 +31,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         config = PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
+            broker="127.0.0.1",
             kafka_connect_host=HOST,
         )
         self.connect_wrapper = ConnectWrapper(host=config.kafka_connect_host)
@@ -38,6 +40,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         config = PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
+            broker="127.0.0.1",
             kafka_connect_host=None,
         )
         with pytest.raises(RuntimeError) as run_time_error:
@@ -71,7 +74,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             headers=HEADERS,
             json={
                 "name": "test-connector",
-                "config": KafkaConnectConfig(**configs).dict(),
+                "config": serialize(KafkaConnectConfig(**configs)),
             },
         )
 
@@ -105,7 +108,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         expected_response = self.connect_wrapper.create_connector(
             "test-connector", kafka_connect_config=KafkaConnectConfig()
         )
-        self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
+        assert KafkaConnectResponse(**actual_response) == expected_response
 
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
@@ -174,7 +177,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             status=200,
         )
         expected_response = self.connect_wrapper.get_connector(connector_name)
-        self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
+        assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {connector_name} exists.")
 
     @responses.activate
@@ -261,7 +264,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         mock_put.assert_called_with(
             url=f"{HOST}/connectors/{connector_name}/config",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectConfig(**configs).dict(),
+            json=serialize(KafkaConnectConfig(**configs)),
         )
 
     @responses.activate
@@ -299,7 +302,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         expected_response = self.connect_wrapper.update_connector_config(
             connector_name, KafkaConnectConfig()
         )
-        self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
+        assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(
             f"Config for connector {connector_name} updated."
         )
@@ -339,7 +342,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         expected_response = self.connect_wrapper.update_connector_config(
             connector_name, KafkaConnectConfig()
         )
-        self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
+        assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {connector_name} created.")
 
     @responses.activate
@@ -481,7 +484,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         mock_put.assert_called_with(
             url=f"{HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectConfig(**configs).dict(),
+            json=serialize(KafkaConnectConfig(**configs)),
         )
 
     @patch("requests.put")
@@ -503,7 +506,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         mock_put.assert_called_with(
             url=f"{HOST}/connector-plugins/{connector_name}/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectConfig(**{"name": connector_name, **configs}).dict(),
+            json=serialize(KafkaConnectConfig(**{"name": connector_name, **configs})),
         )
 
     @responses.activate

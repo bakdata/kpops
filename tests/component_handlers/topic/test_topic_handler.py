@@ -63,10 +63,12 @@ class TestTopicHandler:
             response_topic_config = json.load(f)
 
         wrapper = MagicMock()
-        wrapper.get_topic.return_value = TopicResponse(**response)
-        wrapper.get_broker_config.return_value = BrokerConfigResponse(**broker_response)
-        wrapper.get_topic_config.return_value = TopicConfigResponse(
-            **response_topic_config
+        wrapper.get_topic.return_value = TopicResponse.from_dict(response)
+        wrapper.get_broker_config.return_value = BrokerConfigResponse.from_dict(
+            broker_response
+        )
+        wrapper.get_topic_config.return_value = TopicConfigResponse.from_dict(
+            response_topic_config
         )
         return wrapper
 
@@ -83,8 +85,10 @@ class TestTopicHandler:
             broker_response = json.load(f)
 
         wrapper = MagicMock()
-        wrapper.get_topic.return_value = TopicResponse(**response)
-        wrapper.get_broker_config.return_value = BrokerConfigResponse(**broker_response)
+        wrapper.get_topic.return_value = TopicResponse.from_dict(response)
+        wrapper.get_broker_config.return_value = BrokerConfigResponse.from_dict(
+            broker_response
+        )
         return wrapper
 
     def test_should_call_create_topic_with_dry_run_false(self):
@@ -112,7 +116,9 @@ class TestTopicHandler:
             ],
         }
 
-        wrapper.create_topic.assert_called_once_with(topic_spec=TopicSpec(**topic_spec))
+        wrapper.create_topic.assert_called_once_with(
+            topic_spec=TopicSpec.from_dict(topic_spec)
+        )
         wrapper.__dry_run_topic_creation.assert_not_called()
 
     def test_should_call_update_topic_config_when_topic_exists_and_with_dry_run_false(

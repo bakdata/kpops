@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -22,6 +23,7 @@ from kpops.utils.colorify import magentaify
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
+@dataclass(kw_only=True)
 class KubernetesTestValue(KubernetesAppConfig):
     name_override: str
 
@@ -32,6 +34,7 @@ class TestKubernetesApp:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
+            broker="127.0.0.1",
             helm_diff_config=HelmDiffConfig(enable=True),
         )
 
@@ -55,7 +58,7 @@ class TestKubernetesApp:
 
     @pytest.fixture
     def app_value(self) -> KubernetesTestValue:
-        return KubernetesTestValue(**{"name_override": "test-value"})
+        return KubernetesTestValue(name_override="test-value")
 
     def test_should_lazy_load_helm_wrapper_and_not_repo_add(
         self,
@@ -282,6 +285,7 @@ class TestKubernetesApp:
         with pytest.raises(ValueError):
             assert KubernetesApp(
                 name="Not-Compatible*",
+                namespace="test-namspace",
                 config=config,
                 handlers=handlers,
             )
@@ -289,6 +293,7 @@ class TestKubernetesApp:
         with pytest.raises(ValueError):
             assert KubernetesApp(
                 name="snake_case",
+                namespace="test-namspace",
                 config=config,
                 handlers=handlers,
             )

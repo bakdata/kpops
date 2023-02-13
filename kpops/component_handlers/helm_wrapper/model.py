@@ -50,7 +50,7 @@ class HelmUpgradeInstallFlags:
 HELM_SOURCE_PREFIX = "# Source: "
 
 
-@dataclass(kw_only=True)
+@dataclass
 class HelmTemplateFlags:
     api_version: str | None = None
     ca_file: str | None = None
@@ -58,7 +58,7 @@ class HelmTemplateFlags:
     version: str | None = None
 
 
-@dataclass(kw_only=True)
+@dataclass
 class HelmTemplate:
     filepath: str
     template: dict
@@ -78,7 +78,7 @@ class HelmTemplate:
         return cls(filepath, template)
 
 
-@dataclass(kw_only=True)
+@dataclass
 class YamlReader:
     content: str
 

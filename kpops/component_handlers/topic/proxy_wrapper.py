@@ -128,9 +128,10 @@ class ProxyWrapper:
         )
 
         if response.status_code == requests.status_codes.codes.ok:
+            data = response.json()
             log.debug(f"Configs for {topic_name} found.")
-            log.debug(response.json())
-            return TopicConfigResponse(**response.json())
+            log.debug(data)
+            return TopicConfigResponse.from_dict(data)
 
         elif (
             response.status_code == requests.status_codes.codes.not_found

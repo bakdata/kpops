@@ -32,13 +32,16 @@ from kpops.utils.colorify import magentaify
 log = logging.getLogger("KafkaConnector")
 
 
+@dataclass(kw_only=True)
 class KafkaConnector(PipelineComponent, ABC):
     type: ClassVar[str] = "kafka-connect"
     app: KafkaConnectConfig
 
-    repo_config: HelmRepoConfig = HelmRepoConfig(
-        repository_name="bakdata-kafka-connect-resetter",
-        url="https://bakdata.github.io/kafka-connect-resetter/",
+    repo_config: HelmRepoConfig = field(
+        default_factory=lambda: HelmRepoConfig(
+            repository_name="bakdata-kafka-connect-resetter",
+            url="https://bakdata.github.io/kafka-connect-resetter/",
+        )
     )
     namespace: str
     version: str = "1.0.4"

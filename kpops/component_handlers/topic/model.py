@@ -31,7 +31,7 @@ class FromDictMixin:
 
 
 @dataclass(kw_only=True)
-class TopicSpec:
+class TopicSpec(FromDictMixin):
     topic_name: str
     partitions_count: int | None
     replication_factor: int | None
@@ -39,7 +39,7 @@ class TopicSpec:
 
 
 @dataclass(kw_only=True)
-class TopicResponse:
+class TopicResponse(FromDictMixin):
     metadata: dict[str, str]
     cluster_id: str
     topic_name: str
@@ -97,11 +97,9 @@ class KafkaBrokerConfigSynonyms:
     value: str | None
     source: KafkaBrokerConfigSource
 
-    # TODO: allow extra
-
 
 @dataclass(kw_only=True)
-class KafkaBrokerConfig(FromDictMixin):
+class KafkaBrokerConfig:
     source: KafkaBrokerConfigSource
     synonyms: list[KafkaBrokerConfigSynonyms]
     value: str | None
