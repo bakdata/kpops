@@ -2,6 +2,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Literal
 
+from apischema import serialize
+
 from kpops.utils.pydantic import FromDictMixin
 
 
@@ -67,6 +69,5 @@ class KafkaConnectResetterValues:
 
     # TODO: camelcase
 
-    # TODO
-    # def dict(self, **_) -> dict:
-    #     return super().dict(by_alias=True, exclude_none=True)
+    def dict(self) -> dict:
+        return serialize(self, exclude_none=True)

@@ -4,6 +4,8 @@ import logging
 import sys
 from typing import TYPE_CHECKING
 
+from apischema import serialize
+
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
@@ -94,15 +96,17 @@ class KafkaConnectHandler:
 
             log.info(f"Connector Creation: connector {connector_name} already exists.")
             if diff := render_diff(
-                connector_config.config, kafka_connect_config.dict()
+                connector_config.config, serialize(kafka_connect_config)
             ):
                 log.info(f"Updating config:\n {diff}")
 
-            log.debug(kafka_connect_config.dict(exclude_unset=True, exclude_none=True))
+            log.debug(
+                serialize(kafka_connect_config, exclude_unset=True, exclude_none=True)
+            )
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
         except ConnectorNotFoundException:
-            diff = render_diff({}, kafka_connect_config.dict())
+            diff = render_diff({}, serialize(kafka_connect_config))
             log.info(
                 f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n{diff}"
             )

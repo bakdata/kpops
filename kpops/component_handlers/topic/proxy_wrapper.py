@@ -2,6 +2,7 @@ import logging
 from functools import cached_property
 
 import requests
+from apischema import serialize
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.topic.exception import (
@@ -64,7 +65,7 @@ class ProxyWrapper:
         response = requests.post(
             url=f"{self._host}/v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
-            json=topic_spec.dict(exclude_unset=True, exclude_none=True),
+            json=serialize(topic_spec, exclude_unset=True, exclude_none=True),
         )
         if response.status_code == requests.status_codes.codes.created:
             log.info(f"Topic {topic_spec.topic_name} created.")

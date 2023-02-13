@@ -1,5 +1,7 @@
 from dataclasses import dataclass, field
 
+from apischema import serialize
+
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
     KafkaAppConfig,
@@ -30,27 +32,8 @@ class StreamsConfig(KafkaStreamsConfig):
             self.extra_input_topics.get(role, []) + topics
         )
 
-    # TODO
-    # def dict(
-    #     self,
-    #     *,
-    #     include=None,
-    #     exclude=None,
-    #     by_alias: bool = False,
-    #     skip_defaults: bool | None = None,
-    #     exclude_unset: bool = False,
-    #     **kwargs,
-    # ) -> dict:
-    #     return super().dict(
-    #         include=include,
-    #         exclude=exclude,
-    #         by_alias=by_alias,
-    #         skip_defaults=skip_defaults,
-    #         exclude_unset=exclude_unset,
-    #         # The following lines are required only for the streams configs since we never not want to export defaults here, just fallback to helm default values
-    #         exclude_defaults=True,
-    #         exclude_none=True,
-    #     )
+    def dict(self) -> dict:
+        return serialize(self, exclude_defaults=True, exclude_none=True)
 
 
 @dataclass(kw_only=True)
