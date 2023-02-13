@@ -36,6 +36,10 @@ class BaseDefaultsComponent:
         }
         self.__attrs_init__(**filtered)
 
+        # add extra fields
+        for key in set(kwargs.keys()).difference(self.__attrs_attrs__):
+            setattr(self, key, kwargs[key])
+
     def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
         """
         Merges tmp_defaults with all tmp_defaults for parent classes

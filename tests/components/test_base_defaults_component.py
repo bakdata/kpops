@@ -1,9 +1,11 @@
 import os
+from dataclasses import dataclass
 from pathlib import Path
 from typing import ClassVar
 from unittest.mock import MagicMock
 
 import pytest
+from attr import define
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
@@ -15,6 +17,7 @@ from kpops.components.base_components.base_defaults_component import (
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
+@define(kw_only=True)
 class TestParentModel(BaseDefaultsComponent):
     __test__ = False
     type: ClassVar[str] = "parent"
@@ -23,6 +26,7 @@ class TestParentModel(BaseDefaultsComponent):
     hard_coded: str = "hard_coded_value"
 
 
+@define(kw_only=True)
 class TestChildModel(TestParentModel):
     __test__ = False
     type: ClassVar[str] = "child"
@@ -30,6 +34,7 @@ class TestChildModel(TestParentModel):
     another_hard_coded: str = "another_hard_coded_value"
 
 
+@define(kw_only=True)
 class TestGrandChildModel(TestChildModel):
     __test__ = False
     type: ClassVar[str] = "grand-child"
