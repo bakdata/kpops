@@ -9,6 +9,7 @@ snapshots = Snapshot()
 snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
     "components": [
         {
+            "prefix": "",
             "app": {
                 "debug": True,
                 "image": "${DOCKER_REGISTRY}/atm-demo-accountproducer",
@@ -46,6 +47,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
             "version": "2.7.0",
         },
         {
+            "prefix": "",
             "app": {
                 "commandLine": {"ITERATION": 20, "REAL_TX": 19},
                 "debug": True,
@@ -84,6 +86,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
             "version": "2.7.0",
         },
         {
+            "prefix": "",
             "app": {
                 "annotations": {
                     "consumerGroup": "atm-transactionjoiner-atm-fraud-joinedtransactions-topic"
@@ -132,6 +135,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
             "version": "2.7.0",
         },
         {
+            "prefix": "",
             "app": {
                 "annotations": {
                     "consumerGroup": "atm-frauddetector-atm-fraud-possiblefraudtransactions-topic"
@@ -180,6 +184,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
             "version": "2.7.0",
         },
         {
+            "prefix": "",
             "app": {
                 "annotations": {
                     "consumerGroup": "atm-accountlinker-atm-fraud-output-topic"
@@ -242,6 +247,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
             "version": "2.7.0",
         },
         {
+            "prefix": "",
             "app": {
                 "auto.create": True,
                 "connection.ds.pool.size": 5,
