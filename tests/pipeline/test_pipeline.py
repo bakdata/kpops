@@ -36,10 +36,6 @@ class TestPipeline:
 
     def test_name_equal_prefix_name_concatenation(self):
 
-        raw_pipeline = yaml.safe_load(
-            open(str(RESOURCE_PATH / "name_prefix_concatenation/pipeline.yaml"), "r")
-        )
-
         result = runner.invoke(
             app,
             [
