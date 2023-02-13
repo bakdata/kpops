@@ -19,8 +19,7 @@ class StreamsApp(KafkaApp):
 
     # TODO: allow extra
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __post_init__(self) -> None:
         self.__substitute_autoscaling_topic_names()
 
     @override

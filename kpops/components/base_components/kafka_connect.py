@@ -52,8 +52,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     # TODO: camelcase
 
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
+    def __post_init__(self) -> None:
         self.prepare_connector_config()
 
     @cached_property
