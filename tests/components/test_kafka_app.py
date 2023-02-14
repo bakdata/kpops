@@ -21,6 +21,7 @@ class TestKafkaApp:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
+            broker="127.0.0.1",
         )
 
     @pytest.fixture
