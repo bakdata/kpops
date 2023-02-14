@@ -29,10 +29,10 @@ class KafkaStreamsConfig:
     # TODO: allow extra
 
 
-@define
+@define(kw_only=True)
 class KafkaAppConfig(KubernetesAppConfig):
     streams: KafkaStreamsConfig
-    name_override: str | None
+    name_override: str | None = None
 
 
 class KafkaApp(KubernetesApp):
