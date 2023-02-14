@@ -36,7 +36,8 @@ class BaseDefaultsComponent(BaseModel):
     @classmethod
     def get_component_type(cls) -> str:
         # HACK: access type attribute through default value
-        # because ClassVar is not exported from Pydantic models
+        # because exporting type as ClassVar from Pydantic models
+        # is not reliable
         return cls.__fields__["type"].default
 
     def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
