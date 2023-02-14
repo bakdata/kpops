@@ -5,8 +5,9 @@ import inspect
 import os
 import sys
 from collections.abc import Iterator
-from dataclasses import dataclass, field
 from typing import TypeVar
+
+from attr import define
 
 from kpops.cli.exception import ClassNotFoundError
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -17,11 +18,11 @@ ClassDict = dict[str, type[T]]  # type -> class
 sys.path.append(os.getcwd())
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True, init=False)
 class Registry:
     """Class Registry to store and retrieve PipelineComponents."""
 
-    _classes: ClassDict[PipelineComponent] = field(default_factory=dict, init=False)
+    _classes: ClassDict[PipelineComponent] = {}
 
     def find_components(self, module_name: str) -> None:
         """

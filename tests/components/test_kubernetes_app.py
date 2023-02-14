@@ -1,8 +1,8 @@
-from dataclasses import dataclass
 from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
+from attr import define
 from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig
@@ -23,7 +23,7 @@ from kpops.utils.colorify import magentaify
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KubernetesTestValue(KubernetesAppConfig):
     name_override: str
 

@@ -7,6 +7,7 @@ from functools import cached_property
 from typing import ClassVar, Literal
 
 from apischema import serialize
+from attr import define
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -26,13 +27,23 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 )
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KubernetesAppConfig:
-    pass  # TODO: allow extra
+    pass
+    # def __init__(self, **kwargs) -> None:
+    #     filtered = {
+    #         attribute.name: kwargs[attribute.name]
+    #         for attribute in self.__attrs_attrs__
+    #         if attribute.name in kwargs
+    #     }
+    #     self.__attrs_init__(**filtered)
+
+    #     # add extra fields
+    #     for key in set(kwargs.keys()).difference(self.__attrs_attrs__):
+    #         setattr(self, key, kwargs[key])
 
 
 # TODO: label and annotations
-@dataclass(kw_only=True)
 class KubernetesApp(PipelineComponent):
     """Base Kubernetes app"""
 
@@ -44,7 +55,7 @@ class KubernetesApp(PipelineComponent):
 
     # TODO: camelcase
 
-    def __post_init__(self) -> None:
+    def __attrs_post_init__(self) -> None:
         self.__check_compatible_name()
 
     @cached_property

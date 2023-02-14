@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from enum import Enum
+
+from attr import define
 
 
 class InputTopicTypes(str, Enum):
@@ -9,7 +10,7 @@ class InputTopicTypes(str, Enum):
     EXTRA_PATTERN = "extra-pattern"
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class FromTopic:
     type: InputTopicTypes
     role: str | None = None
@@ -31,6 +32,6 @@ class FromTopic:
     #     return values
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class FromSection:
     topics: dict[str, FromTopic]

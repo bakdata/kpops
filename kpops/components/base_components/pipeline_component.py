@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass, field
 
 from apischema import alias
+from attr import field
 
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
@@ -21,7 +21,6 @@ from kpops.components.base_components.models.to_section import (
 from kpops.utils.yaml_loading import substitute
 
 
-@dataclass(kw_only=True)
 class PipelineComponent(BaseDefaultsComponent):
     type = "pipeline-component"
     name: str
@@ -33,7 +32,7 @@ class PipelineComponent(BaseDefaultsComponent):
         # description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
     )
 
-    def __post_init(self) -> None:
+    def __attrs_post_init__(self) -> None:
         self.substitute_output_topic_names()
         self.substitute_name()
         self.substitute_prefix()

@@ -1,8 +1,8 @@
-from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any
 
 from apischema import alias
+from attr import define, field
 
 
 class OutputTopicTypes(str, Enum):
@@ -15,7 +15,7 @@ class OutputTopicTypes(str, Enum):
     EXTRA = "extra"
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class TopicConfig:
     """Configures a topic"""
 
@@ -24,7 +24,7 @@ class TopicConfig:
     value_schema: str | None = field(default=None, metadata=alias("valueSchema"))
     partitions_count: int | None = None
     replication_factor: int | None = None
-    configs: dict[str, str] = field(default_factory=dict)
+    configs: dict[str, str] = {}
     role: str | None = None
 
     # @root_validator # TODO
@@ -42,11 +42,13 @@ class TopicConfig:
     #     return values
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class ToSection:
     topics: dict[str, TopicConfig]
-    models: dict[str, Any] = field(
-        default_factory=dict
+    models: dict[
+        str, Any
+    ] = (
+        {}
     )  # any because snapshot versions must be supported  # TODO: really multiple models?
 
     # TODO: allow extra

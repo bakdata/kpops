@@ -11,10 +11,19 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
 )
 from kpops.components import StreamsApp
+from kpops.components.base_components.models.from_section import (
+    FromSection,
+    FromTopic,
+    InputTopicTypes,
+)
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
     ToSection,
+)
+from kpops.components.streams_bootstrap.streams.model import (
+    StreamsAppConfig,
+    StreamsConfig,
 )
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
@@ -37,6 +46,7 @@ class TestStreamsApp:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
+            broker="127.0.0.1",
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
@@ -111,17 +121,13 @@ class TestStreamsApp:
             name=self.STREAMS_APP_NAME,
             config=config,
             handlers=handlers,
-            **{
-                "namespace": "test-namespace",
-                "app": {
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "from": {
-                    "topics": {
-                        ".*": {"type": "input-pattern"},
-                    }
-                },
-            },
+            namespace="test-namespace",
+            app=StreamsAppConfig(
+                streams=StreamsConfig(brokers="fake-broker:9092"), name_override=None
+            ),
+            from_=FromSection(
+                topics={".*": FromTopic(type=InputTopicTypes.INPUT_PATTERN)}
+            ),
         )
         assert not streams_app.app.streams.extra_input_topics
         assert not streams_app.app.streams.input_topics

@@ -3,11 +3,11 @@ from __future__ import annotations
 import json
 import logging
 from abc import ABC
-from dataclasses import dataclass, field
 from functools import cached_property
 from typing import ClassVar, Literal, NoReturn
 
 from apischema import serialize
+from attr import field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -32,27 +32,25 @@ from kpops.utils.colorify import magentaify
 log = logging.getLogger("KafkaConnector")
 
 
-@dataclass(kw_only=True)
 class KafkaConnector(PipelineComponent, ABC):
     type: ClassVar[str] = "kafka-connect"
     app: KafkaConnectConfig
 
-    repo_config: HelmRepoConfig = field(
-        default_factory=lambda: HelmRepoConfig(
-            repository_name="bakdata-kafka-connect-resetter",
-            url="https://bakdata.github.io/kafka-connect-resetter/",
-        )
+    repo_config: HelmRepoConfig = HelmRepoConfig(
+        repository_name="bakdata-kafka-connect-resetter",
+        url="https://bakdata.github.io/kafka-connect-resetter/",
     )
+
     namespace: str
     version: str = "1.0.4"
     resetter_values: dict = field(
-        default_factory=dict,
+        default={},
         # description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
     )
 
     # TODO: camelcase
 
-    def __post_init__(self) -> None:
+    def __attrs_post_init__(self) -> None:
         self.prepare_connector_config()
 
     @cached_property
@@ -270,7 +268,6 @@ class KafkaSourceConnector(KafkaConnector):
         )
 
 
-@dataclass(kw_only=True)
 class KafkaSinkConnector(KafkaConnector):
     type: ClassVar[str] = "kafka-sink-connector"
 

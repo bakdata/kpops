@@ -5,11 +5,11 @@ import logging
 import os
 from collections.abc import Iterator
 from contextlib import suppress
-from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
 from apischema import serialize
+from attr import define
 from rich.console import Console
 from rich.syntax import Syntax
 
@@ -27,7 +27,7 @@ class ParsingException(Exception):
     pass
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class PipelineComponents:
     components: list[PipelineComponent]
 

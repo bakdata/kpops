@@ -1,17 +1,17 @@
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterator
 
 import yaml
+from attr import define
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class HelmDiffConfig:
     enable: bool = False
-    ignore: set[str] = field(default_factory=set)
+    ignore: set[str] = set()
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class RepoAuthFlags:
     username: str | None = None
     password: str | None = None
@@ -21,26 +21,26 @@ class RepoAuthFlags:
     # TODO: camelcase
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class HelmRepoConfig:
     repository_name: str
     url: str
-    repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
+    repo_auth_flags: RepoAuthFlags = RepoAuthFlags()
 
     # TODO: camelcase
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class HelmConfig:
     context: str | None = None
     debug: bool = False
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class HelmUpgradeInstallFlags:
     create_namespace: bool = False
     force: bool = False
-    repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
+    repo_auth_flags: RepoAuthFlags = RepoAuthFlags()
     timeout: str = "5m0s"
     version: str | None = None
     wait: bool = True
@@ -50,7 +50,7 @@ class HelmUpgradeInstallFlags:
 HELM_SOURCE_PREFIX = "# Source: "
 
 
-@dataclass
+@define
 class HelmTemplateFlags:
     api_version: str | None = None
     ca_file: str | None = None
@@ -58,7 +58,7 @@ class HelmTemplateFlags:
     version: str | None = None
 
 
-@dataclass
+@define
 class HelmTemplate:
     filepath: str
     template: dict
@@ -78,7 +78,7 @@ class HelmTemplate:
         return cls(filepath, template)
 
 
-@dataclass
+@define
 class YamlReader:
     content: str
 

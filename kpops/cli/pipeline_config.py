@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass, field
 from pathlib import Path
 
 import yaml
+from attr import define, field
 
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.yaml_loading import load_yaml_file
@@ -12,7 +12,7 @@ from kpops.utils.yaml_loading import load_yaml_file
 ENV_PREFIX = "KPOPS_"
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class TopicNameConfig:
     default_output_topic_name: str = field(
         default="${pipeline_name}-${component_name}",
@@ -24,7 +24,7 @@ class TopicNameConfig:
     )
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class PipelineConfig:
     defaults_path: Path = field(
         # description="The path to the folder containing the defaults file and the environment defaults files.",
@@ -44,11 +44,11 @@ class PipelineConfig:
         # description="The name of the defaults file and the prefix of the defaults environment file.",
     )
     topic_name_config: TopicNameConfig = field(
-        default_factory=TopicNameConfig,
+        default=TopicNameConfig(),
         # description="Configure the topic name variables you can use in the pipeline definition.",
     )
     kafka_rest_host: str | None = field(
-        default_factory=lambda: os.environ.get(f"{ENV_PREFIX}REST_PROXY_HOST"),
+        default=os.environ.get(f"{ENV_PREFIX}REST_PROXY_HOST"),
         # example="http://localhost:8082",
         # description="Address to the rest proxy REST API.",
     )
@@ -69,9 +69,9 @@ class PipelineConfig:
         # description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
     )
 
-    create_namespace: bool = field(default=False)
-    helm_config: HelmConfig = field(default_factory=HelmConfig)
-    helm_diff_config: HelmDiffConfig = field(default_factory=HelmDiffConfig)
+    create_namespace: bool = False
+    helm_config: HelmConfig = HelmConfig()
+    helm_diff_config: HelmDiffConfig = HelmDiffConfig()
 
     retain_clean_jobs: bool = field(
         default=False,

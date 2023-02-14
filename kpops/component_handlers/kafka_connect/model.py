@@ -1,8 +1,8 @@
-from dataclasses import dataclass
 from enum import Enum
 from typing import Literal
 
 from apischema import serialize
+from attr import define
 
 from kpops.utils.pydantic import FromDictMixin
 
@@ -12,20 +12,20 @@ class KafkaConnectorType(str, Enum):
     SOURCE = "source"
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KafkaConnectConfig:
     def __init__(self, **kwargs) -> None:  # allow extra fields passed as kwargs
         for key, value in kwargs.items():
             setattr(self, key, value)
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class ConnectorTask:
     connector: str
     task: int
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KafkaConnectResponse(FromDictMixin):
     name: str
     config: dict[str, str]
@@ -33,25 +33,25 @@ class KafkaConnectResponse(FromDictMixin):
     type: str | None
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KafkaConnectConfigError:
     name: str
     errors: list[str]
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KafkaConnectConfigDescription:
     value: KafkaConnectConfigError
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KafkaConnectConfigErrorResponse:
     name: str
     error_count: int
     configs: list[KafkaConnectConfigDescription]
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KafkaConnectResetterConfig:
     brokers: str
     connector: str
@@ -61,7 +61,7 @@ class KafkaConnectResetterConfig:
     # TODO: camelcase
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KafkaConnectResetterValues:
     connector_type: Literal["source", "sink"]
     config: KafkaConnectResetterConfig

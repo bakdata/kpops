@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import logging
-from dataclasses import dataclass, field
-from typing import ClassVar, Literal
+from typing import ClassVar
 
+from attr import define
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -21,7 +21,7 @@ from kpops.utils.yaml_loading import substitute
 log = logging.getLogger("KafkaApp")
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KafkaStreamsConfig:
     brokers: str
     schema_registry_url: str | None = None
@@ -29,12 +29,12 @@ class KafkaStreamsConfig:
     # TODO: allow extra
 
 
+@define
 class KafkaAppConfig(KubernetesAppConfig):
     streams: KafkaStreamsConfig
     name_override: str | None
 
 
-@dataclass(kw_only=True)
 class KafkaApp(KubernetesApp):
     """
     Base component for Kafka-based components.
@@ -43,15 +43,14 @@ class KafkaApp(KubernetesApp):
 
     type: ClassVar[str] = "kafka-app"
     app: KafkaAppConfig
-    repo_config: HelmRepoConfig = field(
-        default_factory=lambda: HelmRepoConfig(
-            repository_name="bakdata-streams-bootstrap",
-            url="https://bakdata.github.io/streams-bootstrap/",
-        )
+    repo_config: HelmRepoConfig = HelmRepoConfig(
+        repository_name="bakdata-streams-bootstrap",
+        url="https://bakdata.github.io/streams-bootstrap/",
     )
+
     version = "2.7.0"
 
-    def __post_init__(self) -> None:
+    def __attrs_post_init__(self) -> None:
         self.app.streams.brokers = substitute(
             self.app.streams.brokers, {"broker": self.config.broker}
         )

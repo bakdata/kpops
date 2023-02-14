@@ -1,6 +1,5 @@
-from dataclasses import dataclass, field
-
 from apischema import serialize
+from attr import define
 
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
@@ -9,20 +8,20 @@ from kpops.components.base_components.kafka_app import (
 )
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class StreamsConfig(KafkaStreamsConfig):
     """
     Streams Bootstrap streams section
     """
 
-    input_topics: list[str] = field(default_factory=list)
+    input_topics: list[str] = []
     input_pattern: str | None = None
-    extra_input_topics: dict[str, list[str]] = field(default_factory=dict)
-    extra_input_patterns: dict[str, str] = field(default_factory=dict)
-    extra_output_topics: dict[str, str] = field(default_factory=dict)
+    extra_input_topics: dict[str, list[str]] = {}
+    extra_input_patterns: dict[str, str] = {}
+    extra_output_topics: dict[str, str] = {}
     output_topic: str | None = None
     error_topic: str | None = None
-    config: dict[str, str] = field(default_factory=dict)
+    config: dict[str, str] = {}
 
     def add_input_topics(self, topics: list[str]) -> None:
         self.input_topics = deduplicate(self.input_topics + topics)
@@ -36,14 +35,15 @@ class StreamsConfig(KafkaStreamsConfig):
         return serialize(self, exclude_defaults=True, exclude_none=True)
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class StreamsAppAutoScaling:
     consumergroup: str
-    topics: list[str] = field(default_factory=list)
+    topics: list[str] = []
 
     # TODO: allow extra
 
 
+@define
 class StreamsAppConfig(KafkaAppConfig):
     """
     StreamsBoostrap app configurations.

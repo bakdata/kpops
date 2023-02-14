@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
 from enum import Enum
+
+from attr import define
 
 from kpops.utils.pydantic import FromDictMixin
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class TopicSpec(FromDictMixin):
     topic_name: str
     partitions_count: int | None
@@ -14,7 +15,7 @@ class TopicSpec(FromDictMixin):
     configs: list[dict[str, str]] | None
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class TopicResponse(FromDictMixin):
     metadata: dict[str, str]
     cluster_id: str
@@ -37,7 +38,7 @@ class KafkaTopicConfigSource(str, Enum):
     DEFAULT_CONFIG = "DEFAULT_CONFIG"
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KafkaTopicConfigSynonyms:
     name: str
     value: str
@@ -46,7 +47,7 @@ class KafkaTopicConfigSynonyms:
     # TODO: allow extra
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KafkaTopicConfig:
     source: KafkaTopicConfigSource
     synonyms: list[KafkaTopicConfigSynonyms]
@@ -56,7 +57,7 @@ class KafkaTopicConfig:
     # TODO: allow extra
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class TopicConfigResponse(FromDictMixin):
     data: list[KafkaTopicConfig]
 
@@ -67,14 +68,14 @@ class KafkaBrokerConfigSource(str, Enum):
     DEFAULT_CONFIG = "DEFAULT_CONFIG"
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KafkaBrokerConfigSynonyms:
     name: str
     value: str | None
     source: KafkaBrokerConfigSource
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class KafkaBrokerConfig:
     source: KafkaBrokerConfigSource
     synonyms: list[KafkaBrokerConfigSynonyms]
@@ -82,6 +83,6 @@ class KafkaBrokerConfig:
     name: str
 
 
-@dataclass(kw_only=True)
+@define(kw_only=True)
 class BrokerConfigResponse(FromDictMixin):
     data: list[KafkaBrokerConfig]

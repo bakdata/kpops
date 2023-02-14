@@ -1,6 +1,7 @@
-from dataclasses import dataclass
 from typing import cast
 from unittest.mock import patch
+
+from attr import define
 
 from kpops.cli.main import get_steps_to_apply
 from kpops.pipeline_generator.pipeline import Pipeline
@@ -8,7 +9,7 @@ from kpops.pipeline_generator.pipeline import Pipeline
 
 @patch("kpops.cli.main.log.info")
 def tests_filter_steps_to_apply(log_info):
-    @dataclass
+    @define
     class TestComponent:
         name: str
 

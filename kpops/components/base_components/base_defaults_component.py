@@ -53,9 +53,7 @@ class BaseDefaultsComponent:
             typer.style(
                 "Enriching component of type ", fg=typer.colors.GREEN, bold=False
             )
-            + typer.style(
-                kwargs.get("type"), fg=typer.colors.GREEN, bold=True, underline=True
-            )
+            + typer.style(self.type, fg=typer.colors.GREEN, bold=True, underline=True)
         )
         # Merge tmp_defaults before we initialize the thing
         classes = deque(inspect.getmro(self.__class__))
