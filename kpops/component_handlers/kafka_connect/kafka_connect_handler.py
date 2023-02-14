@@ -94,9 +94,12 @@ class KafkaConnectHandler:
 
             log.info(f"Connector Creation: connector {connector_name} already exists.")
             if diff := render_diff(
-                connector_config.config, kafka_connect_config.dict()
+                connector_config.config,
+                ConnectWrapper.get_connector_config(
+                    connector_name, kafka_connect_config
+                ),
             ):
-                log.info(f"Updating config:\n {diff}")
+                log.info(f"Updating config:\n{diff}")
 
             log.debug(kafka_connect_config.dict(exclude_unset=True, exclude_none=True))
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")

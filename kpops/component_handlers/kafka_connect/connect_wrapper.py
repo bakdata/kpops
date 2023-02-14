@@ -122,8 +122,9 @@ class ConnectWrapper:
             self.update_connector_config(connector_name, kafka_connect_config)
         raise KafkaConnectError(response)
 
+    @classmethod
     def get_connector_config(
-        self, connector_name: str, config: KafkaConnectConfig
+        cls, connector_name: str, config: KafkaConnectConfig
     ) -> dict[str, Any]:
         connector_config = config.dict(exclude_none=True, exclude_unset=True)
         if (name := connector_config.get("name")) and name != connector_name:
