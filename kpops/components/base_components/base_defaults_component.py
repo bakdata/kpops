@@ -33,6 +33,12 @@ class BaseDefaultsComponent(BaseModel):
             kwargs = self.extend_with_defaults(kwargs)
         super().__init__(**kwargs)
 
+    @classmethod
+    def get_component_type(cls) -> str:
+        # HACK: access type attribute through default value
+        # because ClassVar is not exported from Pydantic models
+        return cls.__fields__["type"].default
+
     def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
         """
         Merges tmp_defaults with all tmp_defaults for parent classes
@@ -55,7 +61,7 @@ class BaseDefaultsComponent(BaseModel):
         classes.appendleft(self.__class__)
         for base in deduplicate(classes):
             if issubclass(base, BaseDefaultsComponent):
-                component_type = base.__fields__["type"].default  # HACK
+                component_type = base.get_component_type()
                 (
                     main_default_file_path,
                     environment_default_file_path,
