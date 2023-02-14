@@ -1,11 +1,8 @@
-from __future__ import annotations
-
-from typing import TYPE_CHECKING, Any, cast
+from typing import Any, ClassVar
 
 from schema_registry.client.schema import AvroSchema
 from typing_extensions import override
 
-from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,
@@ -15,16 +12,13 @@ from kpops.components.base_components import PipelineComponent
 from kpops.components.base_components.models.to_section import OutputTopicTypes
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
-if TYPE_CHECKING:
-    from kpops.cli.registry import Registry
-
 
 class ImportProducer(ProducerApp):
-    type: str = "scheduled-producer"
+    type: ClassVar[str] = "scheduled-producer"
 
 
 class Converter(StreamsApp):
-    type: str = "converter"
+    type: ClassVar[str] = "converter"
 
 
 class SubStreamsApp(StreamsApp):
@@ -34,25 +28,24 @@ class SubStreamsApp(StreamsApp):
 class Filter(SubStreamsApp):
     """Subsubclass of StreamsApp to test inheritance."""
 
-    type: str = "filter"
+    type: ClassVar[str] = "filter"
 
 
 class InflateStep(StreamsApp):
-    type: str = "should-inflate"
+    type: ClassVar[str] = "should-inflate"
 
     @override
-    def inflate(self, registry: Registry) -> list[PipelineComponent]:
+    def inflate(self) -> list[PipelineComponent]:
         inflate_steps: list[PipelineComponent] = [self]
         if self.to:
             for topic_name, topic_config in self.to.topics.items():
                 if topic_config.type == OutputTopicTypes.OUTPUT:
-                    _class = registry["kafka-sink-connector"]
-                    kafka_connector: KafkaSinkConnector = _class(  # type: ignore
+                    kafka_connector = KafkaSinkConnector(
                         name="sink-connector",
                         config=self.config,
                         handlers=self.handlers,
                         namespace="example-namespace",
-                        app={
+                        app={  # type: ignore # FIXME
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },

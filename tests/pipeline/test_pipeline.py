@@ -72,10 +72,6 @@ class TestPipeline:
         assert result.exit_code == 0
 
         enriched_pipeline = yaml.safe_load(result.stdout)
-
-        for component in enriched_pipeline["components"]:
-            assert component["type"]
-
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_substitute_component_names(self, snapshot: SnapshotTest):

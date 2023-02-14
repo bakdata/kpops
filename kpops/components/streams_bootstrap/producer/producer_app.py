@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal
+from typing import ClassVar, Literal
 
 from pydantic import BaseConfig, Extra, Field
 from typing_extensions import override
@@ -21,7 +21,7 @@ class ProducerApp(KafkaApp):
     This producer holds configuration to use as values for the streams bootstrap produce helm chart.
     """
 
-    type: str = "producer"
+    type: ClassVar[str] = "producer"
     schema_type: Literal["producer"] = Field(  # type: ignore[assignment]
         default="producer", exclude=True
     )

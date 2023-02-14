@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from functools import cached_property
-from typing import Literal
+from typing import ClassVar, Literal
 
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
@@ -35,7 +35,7 @@ class KubernetesAppConfig(BaseModel):
 class KubernetesApp(PipelineComponent):
     """Base Kubernetes app"""
 
-    type: str = "kubernetes-app"
+    type: ClassVar[str] = "kubernetes-app"
     schema_type: Literal["kubernetes-app"] = Field(  # type: ignore[assignment]
         default="kubernetes-app", exclude=True
     )
