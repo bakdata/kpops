@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import os
 from functools import cached_property
-from typing import TYPE_CHECKING
 
 from pydantic import BaseConfig, Extra, Field
 
@@ -20,9 +19,6 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.yaml_loading import substitute
-
-if TYPE_CHECKING:
-    from kpops.cli.registry import Registry
 
 
 class PipelineComponent(BaseDefaultsComponent):
@@ -157,7 +153,7 @@ class PipelineComponent(BaseDefaultsComponent):
         else:
             raise ValueError("Every component must have a name in the end.")
 
-    def inflate(self, registry: Registry) -> list[PipelineComponent]:
+    def inflate(self) -> list[PipelineComponent]:
         """Inflate a component. This is helpful if one component should result in multiple components.
         If you wish to support this, override this method and return a list of components the component you result in.
         The order of the components is the order the components will be deployed

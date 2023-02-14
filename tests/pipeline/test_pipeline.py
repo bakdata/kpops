@@ -74,6 +74,9 @@ class TestPipeline:
         enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
+        for component in enriched_pipeline["components"]:
+            assert component["type"]
+
     def test_substitute_component_names(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,

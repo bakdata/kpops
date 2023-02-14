@@ -154,10 +154,7 @@ class Pipeline:
                     )
                 component_class = self.registry[component_type]
                 inflated_components = self.apply_component(
-                    component,
-                    component_class,
-                    env_components_index,
-                    previous_component,
+                    component, component_class, env_components_index, previous_component
                 )
                 self.populate_pipeline_component_names(inflated_components)
                 self.components.extend(inflated_components)
@@ -197,7 +194,7 @@ class Pipeline:
         if previous_component and previous_component.to:
             component_object.weave_from_topics(previous_component.to)
 
-        return component_object.inflate(self.registry)
+        return component_object.inflate()
 
     def enrich_component(
         self,
