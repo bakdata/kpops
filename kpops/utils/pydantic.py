@@ -1,8 +1,9 @@
 # TODO: rename
 import humps
-from apischema import deserialize
 from pydantic import BaseConfig
 from typing_extensions import Self
+
+from kpops.utils.apischema import deserialize
 
 
 def to_camel(field: str) -> str:

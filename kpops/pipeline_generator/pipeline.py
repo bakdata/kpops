@@ -8,7 +8,6 @@ from contextlib import suppress
 from pathlib import Path
 
 import yaml
-from apischema import serialize
 from attr import define
 from rich.console import Console
 from rich.syntax import Syntax
@@ -18,6 +17,7 @@ from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import update_nested_pair
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.utils.apischema import deserialize, serialize
 from kpops.utils.yaml_loading import load_yaml_file, substitute
 
 log = logging.getLogger("PipelineGenerator")
@@ -147,27 +147,28 @@ class Pipeline:
         env_components_index = create_env_components_index(environment_components)
         previous_component: PipelineComponent | None = None
         for component in component_list:
+            # TODO: reenable try-except
+            # try:
             try:
-                try:
-                    component_type: str = component["type"]
-                except KeyError:
-                    raise ValueError(
-                        "Every component must have a type defined, this component does not have one."
-                    )
-                component_class = self.registry[component_type]
-                inflated_components = self.apply_component(
-                    component, component_class, env_components_index, previous_component
+                component_type: str = component["type"]
+            except KeyError:
+                raise ValueError(
+                    "Every component must have a type defined, this component does not have one."
                 )
-                self.populate_pipeline_component_names(inflated_components)
-                self.components.extend(inflated_components)
-                previous_component = inflated_components.pop()
-            except Exception as ex:
-                if "name" in component:
-                    raise ParsingException(
-                        f"Error enriching {component['type']} component {component['name']}"
-                    ) from ex
-                else:
-                    raise ParsingException() from ex
+            component_class = self.registry[component_type]
+            inflated_components = self.apply_component(
+                component, component_class, env_components_index, previous_component
+            )
+            self.populate_pipeline_component_names(inflated_components)
+            self.components.extend(inflated_components)
+            previous_component = inflated_components.pop()
+        # except Exception as ex:
+        #     if "name" in component:
+        #         raise ParsingException(
+        #             f"Error enriching {component['type']} component {component['name']}"
+        #         ) from ex
+        #     else:
+        #         raise ParsingException() from ex
 
     def populate_pipeline_component_names(
         self, inflated_components: list[PipelineComponent]
@@ -204,8 +205,13 @@ class Pipeline:
         component_class: type[PipelineComponent],
         env_components_index: dict[str, dict],
     ) -> PipelineComponent:
-        component_object: PipelineComponent = component_class(
-            handlers=self.handlers, config=self.config, **component
+        component_object: PipelineComponent = deserialize(
+            component_class,
+            {
+                "config": self.config,
+                "handlers": self.handlers,
+                **component,
+            },
         )
         env_component_definition = env_components_index.get(component_object.name, {})
         pair = update_nested_pair(env_component_definition, serialize(component_object))
