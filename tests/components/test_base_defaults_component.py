@@ -17,7 +17,7 @@ from kpops.components.base_components.base_defaults_component import (
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
-@define(kw_only=True)
+@define(init=False, kw_only=True)
 class TestParentModel(BaseDefaultsComponent):
     __test__ = False
     type: ClassVar[str] = "parent"
@@ -25,22 +25,16 @@ class TestParentModel(BaseDefaultsComponent):
     value: float | None = None
     hard_coded: str = "hard_coded_value"
 
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
 
-
-@define(kw_only=True)
+@define(init=False, kw_only=True)
 class TestChildModel(TestParentModel):
     __test__ = False
     type: ClassVar[str] = "child"
     nice: dict | None = None
     another_hard_coded: str = "another_hard_coded_value"
 
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
 
-
-@define(kw_only=True)
+@define(init=False, kw_only=True)
 class TestGrandChildModel(TestChildModel):
     __test__ = False
     type: ClassVar[str] = "grand-child"
