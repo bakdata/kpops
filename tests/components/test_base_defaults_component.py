@@ -25,6 +25,9 @@ class TestParentModel(BaseDefaultsComponent):
     value: float | None = None
     hard_coded: str = "hard_coded_value"
 
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+
 
 @define(kw_only=True)
 class TestChildModel(TestParentModel):
@@ -33,12 +36,18 @@ class TestChildModel(TestParentModel):
     nice: dict | None = None
     another_hard_coded: str = "another_hard_coded_value"
 
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+
 
 @define(kw_only=True)
 class TestGrandChildModel(TestChildModel):
     __test__ = False
     type: ClassVar[str] = "grand-child"
     grand_child: str | None = None
+
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
 
 
 @pytest.fixture
