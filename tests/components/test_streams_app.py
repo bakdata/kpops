@@ -25,6 +25,7 @@ from kpops.components.streams_bootstrap.streams.model import (
     StreamsAppConfig,
     StreamsConfig,
 )
+from kpops.utils.apischema import deserialize
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
@@ -180,11 +181,12 @@ class TestStreamsApp:
     def test_set_streams_output_from_to(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
-        streams_app = StreamsApp(
-            name=self.STREAMS_APP_NAME,
-            config=config,
-            handlers=handlers,
-            **{
+        streams_app = deserialize(
+            StreamsApp,
+            {
+                "name": self.STREAMS_APP_NAME,
+                "config": config,
+                "handlers": handlers,
                 "namespace": "test-namespace",
                 "app": {
                     "streams": {"brokers": "fake-broker:9092"},
@@ -221,11 +223,12 @@ class TestStreamsApp:
     def test_weave_inputs_from_prev_component(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
-        streams_app = StreamsApp(
-            name=self.STREAMS_APP_NAME,
-            config=config,
-            handlers=handlers,
-            **{
+        streams_app = deserialize(
+            StreamsApp,
+            {
+                "name": self.STREAMS_APP_NAME,
+                "config": config,
+                "handlers": handlers,
                 "namespace": "test-namespace",
                 "app": {
                     "streams": {"brokers": "fake-broker:9092"},
