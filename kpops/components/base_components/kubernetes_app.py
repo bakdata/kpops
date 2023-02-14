@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 import re
-from dataclasses import dataclass
 from functools import cached_property
 from typing import ClassVar, Literal
 

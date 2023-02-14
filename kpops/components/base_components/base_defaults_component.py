@@ -3,19 +3,22 @@ import logging
 import os
 from collections import deque
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, ClassVar, TypeVar
 
 import typer
+from apischema import deserializer
+from apischema.conversions import Conversion
 from apischema.metadata import skip
-from attr import define
+from attr import define, field
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.utils.yaml_loading import load_yaml_file
 
 log = logging.getLogger("PipelineComponentEnricher")
+
+Component_ = TypeVar("Component_", bound="BaseDefaultsComponent")
 
 
 @define(kw_only=True)
@@ -39,6 +42,15 @@ class BaseDefaultsComponent:
         # add extra fields
         for key in set(kwargs.keys()).difference(self.__attrs_attrs__):
             setattr(self, key, kwargs[key])
+
+    # @classmethod
+    # def deserialize(cls: type[Component_], value: int) -> Component_:
+    #     return cls(value)
+
+    # def __init_subclass__(cls, **kwargs) -> None:
+    #     super().__init_subclass__(**kwargs)
+    #     # Register subclasses' conversion in __init_subclass__
+    #     deserializer(Conversion(cls.deserialize, target=cls))
 
     def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
         """
