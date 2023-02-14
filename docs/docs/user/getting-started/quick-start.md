@@ -2,7 +2,7 @@
 
 ## Word-count
 
-Word-count is a demo pipeline which consists of producing words to Kafka, counting the number of times each word occurs and consuming them into a database.
+Word-count is a demo pipeline which consists of a producer producing words to Kafka, a Kafka streams app counting the number of times each word occurs and finally a Redis database into which the words are exported.
 
 ## What this will demonstrate
 
@@ -19,20 +19,20 @@ Completed all steps in the [setup](../getting-started/setup.md).
 ### Redis
 
 Deploy Redis using the [Bitnami Helm chart:](https://artifacthub.io/packages/helm/bitnami/redis)
-Add the helm repository:
+Add the Helm repository:
 ```shell
 helm repo add bitnami https://charts.bitnami.com/bitnami && \
 helm repo update
 ```
 
-Install the Redis with helm:
+Install Redis with Helm:
 ```shell
 helm upgrade --install -f ./redis.yaml \
 --namespace kpops \
 redis bitnami/redis
 ```
 
-??? "Redis Example Helm chart values (`redis.yaml`)"
+??? "Redis example Helm chart values (`redis.yaml`)"
     ```yaml
     architecture: standalone
     auth:
@@ -98,12 +98,13 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 ### Check if the deployment is successful
 
-You can use the [Streams Explorer](https://github.com/bakdata/streams-explorer) to see the deployed pipeline. 
+You can use the [Streams Explorer](https://github.com/bakdata/streams-explorer) to inspect the deployed pipeline.
 To do so, port-forward the service in a separate terminal session using the command below:
 
 ```shell
 kubectl port-forward -n kpops service/streams-explorer 8080:8080
 ```
+
 After that open [http://localhost:8080](http://localhost:8080) in your browser.
 
 You should be able to see pipeline shown in the image below:
@@ -115,7 +116,7 @@ You should be able to see pipeline shown in the image below:
 
 !!! Attention
     Kafka Connect needs some time to set up the connector.
-    Moreover, Streams Explorer needs a while to scrape the information from Kafka connect.
+    Moreover, Streams Explorer needs a while to scrape the information from Kafka Connect.
     Therefore, it might take a bit until you see the whole graph.
 
 ## Teardown resources
