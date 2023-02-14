@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from enum import Enum
 
-from attr import define
+from attrs import define
 
 from kpops.utils.pydantic import FromDictMixin
 

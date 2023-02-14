@@ -6,7 +6,7 @@ from functools import cached_property
 from typing import ClassVar, Literal
 
 from apischema import serialize
-from attr import define
+from attrs import define
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm

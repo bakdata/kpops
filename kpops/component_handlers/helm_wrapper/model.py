@@ -2,7 +2,7 @@ from pathlib import Path
 from typing import Iterator
 
 import yaml
-from attr import define
+from attrs import define
 
 
 @define(kw_only=True)

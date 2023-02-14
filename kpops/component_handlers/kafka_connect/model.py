@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Literal
 
 from apischema import serialize
-from attr import define
+from attrs import define
 
 from kpops.utils.pydantic import FromDictMixin
 

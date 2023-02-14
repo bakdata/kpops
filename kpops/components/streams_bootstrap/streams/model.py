@@ -1,5 +1,5 @@
 from apischema import serialize
-from attr import define
+from attrs import define
 
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (

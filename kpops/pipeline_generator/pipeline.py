@@ -8,7 +8,7 @@ from contextlib import suppress
 from pathlib import Path
 
 import yaml
-from attr import define
+from attrs import define
 from rich.console import Console
 from rich.syntax import Syntax
 

@@ -2,7 +2,7 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-from attr import define
+from attrs import define
 from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig

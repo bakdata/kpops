@@ -4,7 +4,7 @@ import os
 from pathlib import Path
 
 import yaml
-from attr import define, field
+from attrs import define, field
 
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.yaml_loading import load_yaml_file

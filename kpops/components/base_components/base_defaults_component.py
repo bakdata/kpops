@@ -10,7 +10,7 @@ import typer
 from apischema import deserializer
 from apischema.conversions import Conversion
 from apischema.metadata import skip
-from attr import define, field
+from attrs import define, field
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers

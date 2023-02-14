@@ -1,7 +1,7 @@
 from typing import cast
 from unittest.mock import patch
 
-from attr import define
+from attrs import define
 
 from kpops.cli.main import get_steps_to_apply
 from kpops.pipeline_generator.pipeline import Pipeline

@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 
 from apischema import alias
-from attr import field
+from attrs import field
 
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,

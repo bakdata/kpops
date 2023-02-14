@@ -7,7 +7,7 @@ import sys
 from collections.abc import Iterator
 from typing import TypeVar
 
-from attr import define, field
+from attrs import define, field
 
 from kpops.cli.exception import ClassNotFoundError
 from kpops.components.base_components.pipeline_component import PipelineComponent

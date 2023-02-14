@@ -2,7 +2,7 @@ from enum import Enum
 from typing import Any
 
 from apischema import alias
-from attr import define, field
+from attrs import define, field
 
 
 class OutputTopicTypes(str, Enum):

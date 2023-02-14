@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import ClassVar
 
-from attr import define
+from attrs import define
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm

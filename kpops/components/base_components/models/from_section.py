@@ -1,6 +1,6 @@
 from enum import Enum
 
-from attr import define
+from attrs import define
 
 
 class InputTopicTypes(str, Enum):
