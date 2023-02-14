@@ -35,6 +35,12 @@ class TestGrandChildModel(TestChildModel):
     grand_child: str | None = None
 
 
+class TestEnvVarModel(BaseDefaultsComponent):
+    __test__ = False
+    type = "env-var-test"
+    name: str | None = None
+
+
 @pytest.fixture
 def config() -> PipelineConfig:
     return PipelineConfig(
@@ -122,10 +128,6 @@ class TestBaseDefaultsComponent:
     def test_env_var_substitution(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
-        class TestEnvVarModel(BaseDefaultsComponent):
-            type = "env-var-test"
-            name: str | None = None
-
         os.environ["pipeline_name"] = str(DEFAULTS_PATH)
         component = TestEnvVarModel(config=config, handlers=handlers)
 
