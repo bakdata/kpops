@@ -157,15 +157,13 @@
                     ],
                     "type": "integer"
                 },
-                "pipeline_prefix": {
-                    "title": "Pipeline Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "env": "KPOPS_PIPELINE_PREFIX",
+                "create_namespace": {
+                    "title": "Create Namespace",
+                    "default": false,
                     "env_names": [
-                        "kpops_pipeline_prefix"
+                        "create_namespace"
                     ],
-                    "type": "string"
+                    "type": "boolean"
                 },
                 "helm_config": {
                     "title": "Helm Config",

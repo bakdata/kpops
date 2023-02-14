@@ -39,7 +39,6 @@ class TestKafkaSourceConnector:
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
             ),
-            pipeline_prefix="",
             broker="broker:9092",
         )
 
