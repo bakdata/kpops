@@ -16,10 +16,13 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
+class PlainPipelineComponent(PipelineComponent):
+    type = "plain-pipeline-component"
+
+
 class TestPipelineComponent:
     def test_topic_substitution(self):
-        pipeline_component = PipelineComponent(
-            type="plain-pipeline-component",
+        pipeline_component = PlainPipelineComponent(
             name="test-pipeline-component",
             config=pipeline_config.PipelineConfig(
                 defaults_path=DEFAULTS_PATH,
@@ -55,8 +58,7 @@ class TestPipelineComponent:
     def test_prefix_substitution(self, monkeypatch: MonkeyPatch):
         prefix = "my-fake-prefix"
         monkeypatch.setenv("pipeline_name", prefix)
-        pipeline_component = PipelineComponent(
-            type="plain-pipeline-component",
+        pipeline_component = PlainPipelineComponent(
             name="test-pipeline-component",
             config=pipeline_config.PipelineConfig(
                 defaults_path=DEFAULTS_PATH,
