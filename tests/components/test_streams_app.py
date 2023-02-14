@@ -41,7 +41,6 @@ class TestStreamsApp:
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
             ),
-            pipeline_prefix="",
         )
 
     @pytest.fixture

@@ -68,6 +68,7 @@ nav:
       - user/getting-started/index.md
       - user/getting-started/setup.md
       - user/getting-started/teardown.md
+      - user/getting-started/quick-start.md
     - Examples:
       - user/examples/index.md
       - user/examples/atm-fraud-pipeline.md

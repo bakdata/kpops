@@ -127,14 +127,8 @@ def parse_steps(steps: str) -> set[str]:
     return set(steps.split(","))
 
 
-def remove_pipeline_prefix(name: str, pipeline: Pipeline) -> str:
-    return name.removeprefix(pipeline.config.pipeline_prefix)
-
-
-def get_step_names(
-    steps_to_apply: list[PipelineComponent], pipeline: Pipeline
-) -> list[str]:
-    return [remove_pipeline_prefix(step.name, pipeline) for step in steps_to_apply]
+def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
+    return [step.name.removeprefix(step.prefix) for step in steps_to_apply]
 
 
 def filter_steps_to_apply(
@@ -143,15 +137,16 @@ def filter_steps_to_apply(
     skipped_steps: list[str] = []
 
     def filter_component(component: PipelineComponent) -> bool:
-        if remove_pipeline_prefix(component.name, pipeline) in steps:
+        step_name = component.name.removeprefix(component.prefix)
+        if step_name in steps:
             return True
-        skipped_steps.append(remove_pipeline_prefix(component.name, pipeline))
+        skipped_steps.append(step_name)
         return False
 
     steps_to_apply = list(filter(filter_component, pipeline))
     log.info("KPOPS_PIPELINE_STEPS is defined.")
     log.info(
-        f"Executing only on the following steps: {get_step_names(steps_to_apply, pipeline)}"
+        f"Executing only on the following steps: {get_step_names(steps_to_apply)}"
         f", \n ignoring {skipped_steps}"
     )
     return steps_to_apply

@@ -81,15 +81,6 @@ class Pipeline:
         return path.with_stem(f"{path.stem}_{config.environment}")
 
     @staticmethod
-    def substitute_pipeline_prefix(config: PipelineConfig) -> str:
-        """
-        Sets the pipline_prefix field in the config with the environment variable pipeline_name.
-        :param config: The pipeline config
-        :return: The pipeline prefix string
-        """
-        return substitute(config.pipeline_prefix, dict(os.environ))
-
-    @staticmethod
     def set_pipeline_name_env_vars(base_dir: Path, path: Path) -> None:
         """
         Sets the environment variable pipeline_name relative to the given base_dir.
@@ -120,7 +111,6 @@ class Pipeline:
         handlers: ComponentHandlers,
     ) -> Pipeline:
         Pipeline.set_pipeline_name_env_vars(base_dir, path)
-        config.pipeline_prefix = Pipeline.substitute_pipeline_prefix(config)
 
         main_content = load_yaml_file(path, substitution=dict(os.environ))
         if not isinstance(main_content, list):

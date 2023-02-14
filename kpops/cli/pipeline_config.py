@@ -62,11 +62,6 @@ class PipelineConfig(BaseSettings):
         env=f"{ENV_PREFIX}TIMEOUT",
         description="The timeout in seconds that specifies when actions like deletion or deploy timeout.",
     )
-    pipeline_prefix: str = Field(
-        default="${pipeline_name}-",
-        env=f"{ENV_PREFIX}PIPELINE_PREFIX",
-        description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-    )
 
     create_namespace: bool = Field(default=False)
     helm_config: HelmConfig = Field(default=HelmConfig())

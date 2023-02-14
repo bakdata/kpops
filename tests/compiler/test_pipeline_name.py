@@ -54,29 +54,6 @@ def test_should_not_set_pipeline_name_with_the_same_base_dir():
         Pipeline.set_pipeline_name_env_vars(PIPELINE_PATH, PIPELINE_PATH)
 
 
-def test_substitute_pipeline_prefix_with_default_base_path():
-    Pipeline.set_pipeline_name_env_vars(DEFAULT_BASE_DIR, PIPELINE_PATH)
-
-    config = PipelineConfig(
-        defaults_path=DEFAULTS_PATH,
-        environment="development",
-    )
-    pipeline_prefix = Pipeline.substitute_pipeline_prefix(config)
-    assert pipeline_prefix == "some-random-path-for-testing-"
-
-
-def test_substitute_pipeline_prefix_when_the_default_is_overwritten():
-    Pipeline.set_pipeline_name_env_vars(DEFAULT_BASE_DIR, PIPELINE_PATH)
-
-    config = PipelineConfig(
-        defaults_path=DEFAULTS_PATH,
-        environment="development",
-        pipeline_prefix="this-is-a-new-prefix-",
-    )
-    pipeline_prefix = Pipeline.substitute_pipeline_prefix(config)
-    assert pipeline_prefix == "this-is-a-new-prefix-"
-
-
 def test_pipeline_file_name_environment():
     config = PipelineConfig(
         defaults_path=DEFAULTS_PATH,
