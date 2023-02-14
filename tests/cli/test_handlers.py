@@ -19,7 +19,9 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
     config = PipelineConfig(
         defaults_path=Path("fake"),
         environment="development",
+        broker="127.0.0.1",
         kafka_rest_host="https://testhost:8082",
+        kafka_connect_host="http://testhost:8083",
         schema_registry_url=None,
     )
     connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
@@ -54,7 +56,9 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     config = PipelineConfig(
         defaults_path=Path("fake"),
         environment="development",
+        broker="127.0.0.1",
         kafka_rest_host="https://testhost:8082",
+        kafka_connect_host="http://testhost:8083",
         schema_registry_url="https://testhost:8081",
     )
     schema_handler_mock = mocker.patch("kpops.cli.main.SchemaHandler")
