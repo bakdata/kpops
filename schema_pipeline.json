@@ -232,6 +232,12 @@
                 "to": {
                     "$ref": "#/definitions/ToSection"
                 },
+                "prefix": {
+                    "title": "Prefix",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "default": "${pipeline_name}-",
+                    "type": "string"
+                },
                 "type": {
                     "title": "Schema Type",
                     "default": "kubernetes-app",
@@ -308,6 +314,12 @@
                 },
                 "to": {
                     "$ref": "#/definitions/ToSection"
+                },
+                "prefix": {
+                    "title": "Prefix",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "default": "${pipeline_name}-",
+                    "type": "string"
                 },
                 "type": {
                     "title": "Schema Type",
@@ -483,6 +495,12 @@
                 "to": {
                     "$ref": "#/definitions/ToSection"
                 },
+                "prefix": {
+                    "title": "Prefix",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "default": "${pipeline_name}-",
+                    "type": "string"
+                },
                 "type": {
                     "title": "Schema Type",
                     "default": "streams-app",
@@ -588,6 +606,12 @@
                 "to": {
                     "$ref": "#/definitions/ToSection"
                 },
+                "prefix": {
+                    "title": "Prefix",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "default": "${pipeline_name}-",
+                    "type": "string"
+                },
                 "type": {
                     "title": "Schema Type",
                     "default": "producer",
@@ -651,6 +675,12 @@
                 },
                 "to": {
                     "$ref": "#/definitions/ToSection"
+                },
+                "prefix": {
+                    "title": "Prefix",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "default": "${pipeline_name}-",
+                    "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
@@ -719,6 +749,12 @@
                 },
                 "to": {
                     "$ref": "#/definitions/ToSection"
+                },
+                "prefix": {
+                    "title": "Prefix",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "default": "${pipeline_name}-",
+                    "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
