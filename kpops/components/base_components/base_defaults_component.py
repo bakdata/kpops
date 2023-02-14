@@ -33,7 +33,7 @@ class BaseDefaultsComponent(BaseModel):
             kwargs = self.extend_with_defaults(kwargs)
         super().__init__(**kwargs)
 
-    @classmethod
+    @classmethod  # NOTE: property as classmethod deprecated in Python 3.11
     def get_component_type(cls) -> str:
         # HACK: access type attribute through default value
         # because exporting type as ClassVar from Pydantic models
