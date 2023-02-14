@@ -242,6 +242,14 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             },
             "name": "resources-pipeline-with-inflate-sink-connector",
             "namespace": "example-namespace",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-kafka-connect-resetter",
+                "url": "https://bakdata.github.io/kafka-connect-resetter/",
+            },
+            "resetterValues": {},
+            "type": "kafka-sink-connector",
+            "version": "1.0.4",
         },
     ]
 }
