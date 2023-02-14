@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import ClassVar, Literal
+from typing import Literal
 
 from pydantic import BaseConfig, Extra, Field
 from typing_extensions import override
@@ -15,7 +15,7 @@ class StreamsApp(KafkaApp):
     StreamsApp component that configures a streams bootstrap app
     """
 
-    type: ClassVar[str] = "streams-app"
+    type: str = "streams-app"
     schema_type: Literal["streams-app"] = Field(  # type: ignore[assignment]
         default="streams-app", exclude=True
     )
