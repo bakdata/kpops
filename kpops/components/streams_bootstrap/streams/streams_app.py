@@ -15,7 +15,7 @@ class StreamsApp(KafkaApp):
     StreamsApp component that configures a streams bootstrap app
     """
 
-    type: str = "streams-app"
+    type = "streams-app"
     schema_type: Literal["streams-app"] = Field(  # type: ignore[assignment]
         default="streams-app", exclude=True
     )

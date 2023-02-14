@@ -223,7 +223,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
 
 class KafkaSourceConnector(KafkaConnector):
-    type: str = "kafka-source-connector"
+    type = "kafka-source-connector"
     schema_type: Literal["kafka-source-connector"] = Field(
         default="kafka-source-connector", exclude=True
     )

@@ -8,15 +8,15 @@ from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
 class ImportProducer(ProducerApp):
-    type: str = "scheduled-producer"
+    type = "scheduled-producer"
 
 
 class Converter(StreamsApp):
-    type: str = "converter"
+    type = "converter"
 
 
 class InflateStep(StreamsApp):
-    type: str = "should-inflate"
+    type = "should-inflate"
 
     @override
     def inflate(self) -> list[PipelineComponent]:

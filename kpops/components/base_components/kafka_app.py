@@ -41,7 +41,7 @@ class KafkaApp(KubernetesApp):
     Producer or streaming apps should inherit from this class.
     """
 
-    type: str = "kafka-app"
+    type = "kafka-app"
     schema_type: Literal["kafka-app"] = Field(  # type: ignore[assignment]
         default="kafka-app", exclude=True
     )

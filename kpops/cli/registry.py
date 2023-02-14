@@ -29,7 +29,8 @@ class Registry:
         :param module_name: name of the python module
         """
         for _class in _find_classes(module_name, PipelineComponent):
-            self._classes[_class.__fields__["type"].default] = _class
+            component_type: str = _class.__fields__["type"].default  # HACK
+            self._classes[component_type] = _class
 
     def __getitem__(self, component_type: str) -> type[PipelineComponent]:
         try:

@@ -55,7 +55,7 @@ class BaseDefaultsComponent(BaseModel):
         classes.appendleft(self.__class__)
         for base in deduplicate(classes):
             if issubclass(base, BaseDefaultsComponent):
-                component_type = base.__fields__["type"].default
+                component_type = base.__fields__["type"].default  # HACK
                 (
                     main_default_file_path,
                     environment_default_file_path,

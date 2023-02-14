@@ -35,7 +35,7 @@ class KubernetesAppConfig(BaseModel):
 class KubernetesApp(PipelineComponent):
     """Base Kubernetes app"""
 
-    type: str = "kubernetes-app"
+    type = "kubernetes-app"
     schema_type: Literal["kubernetes-app"] = Field(  # type: ignore[assignment]
         default="kubernetes-app", exclude=True
     )
