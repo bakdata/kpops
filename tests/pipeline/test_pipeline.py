@@ -34,6 +34,30 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
+    def test_name_equal_prefix_name_concatenation(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "name_prefix_concatenation/pipeline.yaml"),
+                "tests.pipeline.test_components",
+                "--defaults",
+                str(RESOURCE_PATH),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0
+
+        enriched_pipeline = yaml.safe_load(result.stdout)
+
+        assert (
+            enriched_pipeline["components"][0]["name"]
+            == "my-fake-prefix-my-streams-app"
+        )
+
     def test_pipelines_with_env_values(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,

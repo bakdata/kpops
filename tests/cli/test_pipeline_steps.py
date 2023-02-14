@@ -1,4 +1,4 @@
-import dataclasses
+from dataclasses import dataclass
 from typing import cast
 from unittest.mock import patch
 
@@ -8,12 +8,10 @@ from kpops.pipeline_generator.pipeline import Pipeline
 
 @patch("kpops.cli.main.log.info")
 def tests_filter_steps_to_apply(log_info):
-    @dataclasses.dataclass
+    @dataclass
     class TestComponent:
         name: str
-
-    class TestPipelineConfig:
-        pipeline_prefix: str = "example-prefix-"
+        prefix: str = "example-prefix-"
 
     class TestPipeline:
         components = [
@@ -21,8 +19,6 @@ def tests_filter_steps_to_apply(log_info):
             TestComponent("example-prefix-example2"),
             TestComponent("example-prefix-example3"),
         ]
-
-        config = TestPipelineConfig()
 
         def __iter__(self):
             return iter(self.components)

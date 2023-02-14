@@ -26,6 +26,10 @@ class PipelineComponent(BaseDefaultsComponent):
     from_: FromSection | None = Field(default=None, alias="from")
     app: object | None = None
     to: ToSection | None = None
+    prefix: str = Field(
+        default="${pipeline_name}-",
+        description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+    )
 
     class Config(BaseConfig):
         extra = Extra.allow
@@ -35,6 +39,7 @@ class PipelineComponent(BaseDefaultsComponent):
         super().__init__(**kwargs)
         self.substitute_output_topic_names()
         self.substitute_name()
+        self.substitute_prefix()
         self.set_input_topics()
         self.set_output_topics()
 
@@ -191,3 +196,6 @@ class PipelineComponent(BaseDefaultsComponent):
 
     def clean(self, dry_run: bool) -> None:
         pass
+
+    def substitute_prefix(self) -> None:
+        self.prefix = substitute(self.prefix, dict(os.environ))

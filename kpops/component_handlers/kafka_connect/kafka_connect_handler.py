@@ -94,9 +94,12 @@ class KafkaConnectHandler:
 
             log.info(f"Connector Creation: connector {connector_name} already exists.")
             if diff := render_diff(
-                connector_config.config, kafka_connect_config.dict()
+                connector_config.config,
+                ConnectWrapper.get_connector_config(
+                    connector_name, kafka_connect_config
+                ),
             ):
-                log.info(f"Updating config:\n {diff}")
+                log.info(f"Updating config:\n{diff}")
 
             log.debug(kafka_connect_config.dict(exclude_unset=True, exclude_none=True))
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
@@ -109,7 +112,9 @@ class KafkaConnectHandler:
             log.debug("POST /connectors HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
 
-        errors = self._connect_wrapper.validate_connector_config(kafka_connect_config)
+        errors = self._connect_wrapper.validate_connector_config(
+            connector_name, kafka_connect_config
+        )
         if len(errors) > 0:
             log.error(
                 f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors:"
