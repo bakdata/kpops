@@ -27,12 +27,12 @@ helm repo update
 
 Install Redis with Helm:
 ```shell
-helm upgrade --install -f ./redis.yaml \
+helm upgrade --install -f ./values-redis.yaml \
 --namespace kpops \
 redis bitnami/redis
 ```
 
-??? "Redis example Helm chart values (`redis.yaml`)"
+??? "Redis example Helm chart values (`values-redis.yaml`)"
     ```yaml
     architecture: standalone
     auth:
@@ -85,7 +85,7 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 3. Deploy the pipeline
 
     ```shell
-    poetry run kpops deploy ./examples/bakdata/word-count/pipeline.yaml \
+    kpops deploy ./examples/bakdata/word-count/pipeline.yaml \
     --pipeline-base-dir ./examples \
     --defaults ./examples/bakdata/word-count/defaults \
     --config ./examples/bakdata/word-count/config.yaml \
@@ -141,7 +141,7 @@ helm --namespace kpops uninstall redis
 2. Remove the pipeline
 
     ```shell
-    poetry run kpops clean ./examples/bakdata/word-count/pipeline.yaml \
+    kpops clean ./examples/bakdata/word-count/pipeline.yaml \
     --pipeline-base-dir ./examples \
     --defaults ./examples/bakdata/word-count/defaults \
     --config ./examples/bakdata/word-count/config.yaml \
