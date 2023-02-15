@@ -62,7 +62,7 @@ class BaseDefaultsComponent(BaseModel):
         classes.appendleft(self.__class__)
         for base in deduplicate(classes):
             if issubclass(base, BaseDefaultsComponent):
-                component_type = base.get_component_type()
+                component_type: str = base.get_component_type()
                 (
                     main_default_file_path,
                     environment_default_file_path,

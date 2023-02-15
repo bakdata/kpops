@@ -14,11 +14,11 @@ from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
 class ImportProducer(ProducerApp):
-    type = "scheduled-producer"
+    type: str = "scheduled-producer"
 
 
 class Converter(StreamsApp):
-    type = "converter"
+    type: str = "converter"
 
 
 class SubStreamsApp(StreamsApp):
@@ -28,11 +28,11 @@ class SubStreamsApp(StreamsApp):
 class Filter(SubStreamsApp):
     """Subsubclass of StreamsApp to test inheritance."""
 
-    type = "filter"
+    type: str = "filter"
 
 
 class InflateStep(StreamsApp):
-    type = "should-inflate"
+    type: str = "should-inflate"
 
     @override
     def inflate(self) -> list[PipelineComponent]:

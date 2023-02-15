@@ -8,11 +8,11 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 
 
 class SubComponent(PipelineComponent):
-    type = "sub-component"
+    type: str = "sub-component"
 
 
 class SubSubComponent(SubComponent):
-    type = "sub-sub-component"
+    type: str = "sub-sub-component"
 
 
 class Unrelated:

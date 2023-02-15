@@ -17,7 +17,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 class PlainPipelineComponent(PipelineComponent):
-    type = "plain-pipeline-component"
+    type: str = "plain-pipeline-component"
 
 
 class TestPipelineComponent:
