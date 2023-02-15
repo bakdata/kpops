@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import ClassVar
-
 import pytest
 from pydantic import BaseModel
 
@@ -10,13 +8,11 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 
 
 class SubComponent(PipelineComponent):
-    type: ClassVar[str] = "sub-component"
-    pass
+    type: str = "sub-component"
 
 
 class SubSubComponent(SubComponent):
-    type: ClassVar[str] = "sub-sub-component"
-    pass
+    type: str = "sub-sub-component"
 
 
 class Unrelated:
