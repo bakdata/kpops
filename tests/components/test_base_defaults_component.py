@@ -1,6 +1,5 @@
 import os
 from pathlib import Path
-from typing import ClassVar
 from unittest.mock import MagicMock
 
 import pytest
@@ -17,7 +16,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 class TestParentModel(BaseDefaultsComponent):
     __test__ = False
-    type: ClassVar[str] = "parent"
+    type: str = "parent"
     name: str | None = None
     value: float | None = None
     hard_coded: str = "hard_coded_value"
@@ -25,15 +24,21 @@ class TestParentModel(BaseDefaultsComponent):
 
 class TestChildModel(TestParentModel):
     __test__ = False
-    type: ClassVar[str] = "child"
+    type: str = "child"
     nice: dict | None = None
     another_hard_coded: str = "another_hard_coded_value"
 
 
 class TestGrandChildModel(TestChildModel):
     __test__ = False
-    type: ClassVar[str] = "grand-child"
+    type: str = "grand-child"
     grand_child: str | None = None
+
+
+class TestEnvVarModel(BaseDefaultsComponent):
+    __test__ = False
+    type: str = "env-var-test"
+    name: str | None = None
 
 
 @pytest.fixture
@@ -123,10 +128,6 @@ class TestBaseDefaultsComponent:
     def test_env_var_substitution(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
-        class TestEnvVarModel(BaseDefaultsComponent):
-            type: ClassVar[str] = "env-var-test"
-            name: str | None = None
-
         os.environ["pipeline_name"] = str(DEFAULTS_PATH)
         component = TestEnvVarModel(config=config, handlers=handlers)
 

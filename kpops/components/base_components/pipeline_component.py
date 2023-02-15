@@ -183,7 +183,6 @@ class PipelineComponent(BaseDefaultsComponent):
         :param str cert_file: identify HTTPS client using this SSL certificate
             file, `--cert-file` in Helm
         """
-        pass
 
     def deploy(self, dry_run: bool) -> None:
         pass
