@@ -5,10 +5,10 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<link href="https://d9p.io/0.10/user/getting-started/teardown/" rel="canonical"/>
+<link href="https://d9p.io/0.10/user/getting-started/quick-start/" rel="canonical"/>
 <link href="../../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.4.2, mkdocs-material-8.5.10" name="generator"/>
-<title>Teardown resources - KPOps</title>
+<title>Quick-start - KPOps</title>
 <link href="../../../assets/stylesheets/main.975780f9.min.css" rel="stylesheet"/>
 <link href="../../../assets/stylesheets/palette.2505c338.min.css" rel="stylesheet"/>
 <meta content="#000000" name="theme-color"/>
@@ -33,7 +33,7 @@
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#teardown-resources">
+<a class="md-skip" href="#quick-start">
           Skip to content
         </a>
 </div>
@@ -57,7 +57,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Teardown resources
+              Quick-start
             
           </span>
 </div>
@@ -177,14 +177,19 @@
         Setup KPOps
       </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../teardown/">
+        Teardown resources
+      </a>
+</li>
 <li class="md-nav__item md-nav__item--active">
 <input class="md-nav__toggle md-toggle" data-md-toggle="toc" id="__toc" type="checkbox"/>
 <label class="md-nav__link md-nav__link--active" for="__toc">
-          Teardown resources
+          Quick-start
           <span class="md-nav__icon md-icon"></span>
 </label>
 <a class="md-nav__link md-nav__link--active" href="./">
-        Teardown resources
+        Quick-start
       </a>
 <nav aria-label="Table of contents" class="md-nav md-nav--secondary">
 <label class="md-nav__title" for="__toc">
@@ -193,37 +198,84 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#kpops-teardown-commands">
-    KPOps teardown commands
+<a class="md-nav__link" href="#word-count">
+    Word-count
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#kpops-deployed-pipeline">
-    KPOps-deployed pipeline
+<a class="md-nav__link" href="#what-this-will-demonstrate">
+    What this will demonstrate
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#infrastructure">
-    Infrastructure
+<a class="md-nav__link" href="#prerequisites">
+    Prerequisites
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#local-cluster">
-    Local cluster
+<a class="md-nav__link" href="#setup-and-deployment">
+    Setup and deployment
+  </a>
+<nav aria-label="Setup and deployment" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#redis">
+    Redis
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#local-image-registry">
-    Local image registry
+<a class="md-nav__link" href="#word-count-example-pipeline-setup">
+    Word-count example pipeline setup
+  </a>
+<nav aria-label="Word-count example pipeline setup" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#port-forwarding">
+    Port forwarding
   </a>
 </li>
 </ul>
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../quick-start/">
-        Quick-start
-      </a>
+<a class="md-nav__link" href="#deploying-the-word-count-pipeline">
+    Deploying the Word-count pipeline
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#check-if-the-deployment-is-successful">
+    Check if the deployment is successful
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#teardown-resources">
+    Teardown resources
+  </a>
+<nav aria-label="Teardown resources" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#redis_1">
+    Redis
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#word-count-pipeline">
+    Word-count pipeline
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#common-errors">
+    Common errors
+  </a>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -295,28 +347,80 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#kpops-teardown-commands">
-    KPOps teardown commands
+<a class="md-nav__link" href="#word-count">
+    Word-count
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#kpops-deployed-pipeline">
-    KPOps-deployed pipeline
+<a class="md-nav__link" href="#what-this-will-demonstrate">
+    What this will demonstrate
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#infrastructure">
-    Infrastructure
+<a class="md-nav__link" href="#prerequisites">
+    Prerequisites
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#local-cluster">
-    Local cluster
+<a class="md-nav__link" href="#setup-and-deployment">
+    Setup and deployment
+  </a>
+<nav aria-label="Setup and deployment" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#redis">
+    Redis
   </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="#local-image-registry">
-    Local image registry
+<a class="md-nav__link" href="#word-count-example-pipeline-setup">
+    Word-count example pipeline setup
+  </a>
+<nav aria-label="Word-count example pipeline setup" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#port-forwarding">
+    Port forwarding
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#deploying-the-word-count-pipeline">
+    Deploying the Word-count pipeline
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#check-if-the-deployment-is-successful">
+    Check if the deployment is successful
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#teardown-resources">
+    Teardown resources
+  </a>
+<nav aria-label="Teardown resources" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#redis_1">
+    Redis
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#word-count-pipeline">
+    Word-count pipeline
+  </a>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#common-errors">
+    Common errors
   </a>
 </li>
 </ul>
@@ -326,63 +430,157 @@
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<a class="md-content__button md-icon" href="https://github.com/bakdata/kpops/edit/master/docs/user/getting-started/teardown.md" title="Edit this page">
+<a class="md-content__button md-icon" href="https://github.com/bakdata/kpops/edit/master/docs/user/getting-started/quick-start.md" title="Edit this page">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25Z"></path></svg>
 </a>
-<h1 id="teardown-resources">Teardown resources<a class="headerlink" href="#teardown-resources" title="Permanent link">¶</a></h1>
-<h2 id="kpops-teardown-commands">KPOps teardown commands<a class="headerlink" href="#kpops-teardown-commands" title="Permanent link">¶</a></h2>
+<h1 id="quick-start">Quick-start<a class="headerlink" href="#quick-start" title="Permanent link">¶</a></h1>
+<h2 id="word-count">Word-count<a class="headerlink" href="#word-count" title="Permanent link">¶</a></h2>
+<p>Word-count is a demo pipeline which consists of a producer producing words to Kafka, a Kafka streams app counting the number of times each word occurs and finally a Redis database into which the words are exported.</p>
+<h2 id="what-this-will-demonstrate">What this will demonstrate<a class="headerlink" href="#what-this-will-demonstrate" title="Permanent link">¶</a></h2>
 <ul>
-<li><code>destroy</code>: Removes Kubernetes resources.</li>
-<li><code>reset</code>: Runs <code>destroy</code>, resets the states of Kafka Streams apps and resets offsets to zero.</li>
-<li><code>clean</code>: Runs <code>reset</code> and removes all Kafka resources.</li>
+<li>Deploying a Redis database using Helm</li>
+<li>Deploying a pipeline using <code>kpops</code></li>
+<li>Destroying a pipeline using <code>kpops</code></li>
 </ul>
-<h2 id="kpops-deployed-pipeline">KPOps-deployed pipeline<a class="headerlink" href="#kpops-deployed-pipeline" title="Permanent link">¶</a></h2>
-<p>The <code>kpops</code> CLI can be used to destroy a pipeline that was previously deployed with <code>kpops</code>.
-In case that doesn't work, the pipeline can always be taken down manually 
-with <code>helm</code> (see section <a href="#infrastructure">Infrastructure</a>).</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">¶</a></h2>
+<p>Completed all steps in the <a href="../setup/">setup</a>.</p>
+<h2 id="setup-and-deployment">Setup and deployment<a class="headerlink" href="#setup-and-deployment" title="Permanent link">¶</a></h2>
+<h3 id="redis">Redis<a class="headerlink" href="#redis" title="Permanent link">¶</a></h3>
+<p>Deploy Redis using the <a href="https://artifacthub.io/packages/helm/bitnami/redis">Bitnami Helm chart:</a>
+Add the Helm repository:
+<div class="highlight"><pre><span></span><code>helm repo add bitnami https://charts.bitnami.com/bitnami <span class="o">&amp;&amp;</span> <span class="se">\</span>
+helm repo update
+</code></pre></div></p>
+<p>Install Redis with Helm:
+<div class="highlight"><pre><span></span><code>helm upgrade --install -f ./values-redis.yaml <span class="se">\</span>
+--namespace kpops <span class="se">\</span>
+redis bitnami/redis
+</code></pre></div></p>
+<details>
+<summary>Redis example Helm chart values (<code>values-redis.yaml</code>)</summary>
+<div class="highlight"><pre><span></span><code><span class="nt">architecture</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">standalone</span><span class="w"></span>
+<span class="nt">auth</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="nt">master</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">configuration</span><span class="p">:</span><span class="w"> </span><span class="s">"databases</span><span class="nv"> </span><span class="s">1"</span><span class="w"></span>
+<span class="nt">image</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7.0.8</span><span class="w"></span>
+</code></pre></div>
+</details>
+<h3 id="word-count-example-pipeline-setup">Word-count example pipeline setup<a class="headerlink" href="#word-count-example-pipeline-setup" title="Permanent link">¶</a></h3>
+<h4 id="port-forwarding">Port forwarding<a class="headerlink" href="#port-forwarding" title="Permanent link">¶</a></h4>
+<p>Before we deploy the pipeline, we need to forward the ports of <code>kafka-rest-proxy</code> and <code>kafka-connect</code>. 
+Run the following commands in two different terminals.</p>
+<div class="highlight"><pre><span></span><code>kubectl port-forward --namespace kpops service/k8kafka-cp-rest <span class="m">8082</span>:8082
+</code></pre></div>
+<div class="highlight"><pre><span></span><code>kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect <span class="m">8083</span>:8083
+</code></pre></div>
+<h3 id="deploying-the-word-count-pipeline">Deploying the Word-count pipeline<a class="headerlink" href="#deploying-the-word-count-pipeline" title="Permanent link">¶</a></h3>
 <ol>
 <li>
-<p>Export environment variables.</p>
+<p>Copy the <a href="https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/word-count">configuration</a> from the <a href="https://github.com/bakdata/kpops-examples/tree/main/word-count">kpops-examples repository</a> into <code>kpops&gt;examples&gt;bakdata&gt;word-count</code> like so:</p>
+<div class="highlight"><pre><span></span><code>kpops
+├── examples
+|   ├── bakdata
+|   |   ├── word-count
+|   |   |   ├── config.yaml
+|   |   |   ├── defaults
+|   |   |   │   └── defaults.yaml
+|   |   |   └── pipeline.yaml
+|   |   |
+</code></pre></div>
+</li>
+<li>
+<p>Export environment variables in your terminal:</p>
 <div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">DOCKER_REGISTRY</span><span class="o">=</span>bakdata <span class="o">&amp;&amp;</span> <span class="se">\</span>
 <span class="nb">export</span> <span class="nv">NAMESPACE</span><span class="o">=</span>kpops
 </code></pre></div>
 </li>
 <li>
-<p>Navigate to the <code>examples</code> folder. 
-   Replace the <code>&lt;name-of-the-example-directory&gt;</code> with the example you want to tear down.
-   For example the <code>atm-fraud-detection</code>.</p>
-</li>
-<li>
-<p>Remove the pipeline</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># Uncomment 1 line to either destroy, reset or clean.</span>
-
-<span class="c1"># poetry run kpops destroy &lt;name-of-the-example-directory&gt;/pipeline.yaml \</span>
-<span class="c1"># poetry run kpops reset &lt;name-of-the-example-directory&gt;/pipeline.yaml \</span>
-<span class="c1"># poetry run kpops clean &lt;name-of-the-example-directory&gt;/pipeline.yaml \</span>
---defaults &lt;name-of-the-example-directory&gt;/defaults <span class="se">\</span>
---config &lt;name-of-the-example-directory&gt;/config.yaml <span class="se">\</span>
+<p>Deploy the pipeline</p>
+<div class="highlight"><pre><span></span><code>kpops deploy ./examples/bakdata/word-count/pipeline.yaml <span class="se">\</span>
+--pipeline-base-dir ./examples <span class="se">\</span>
+--defaults ./examples/bakdata/word-count/defaults <span class="se">\</span>
+--config ./examples/bakdata/word-count/config.yaml <span class="se">\</span>
 --execute
 </code></pre></div>
 </li>
 </ol>
-<h2 id="infrastructure">Infrastructure<a class="headerlink" href="#infrastructure" title="Permanent link">¶</a></h2>
-<p>Delete namespace:</p>
-<div class="highlight"><pre><span></span><code>kubectl delete namespace kpops
-</code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>In case <code>kpops destroy</code> is not working one can uninstall the pipeline services one by one.
-This is equivalent to running <code>kpops destroy</code>. In case a clean uninstall (like the one <code>kpops clean</code> does) 
-is needed, one needs to also delete the topics and schemas created by deployment of the pipeline.</p>
+<p>You can use the <code>--dry-run</code> flag instead of the <code>--execute</code> flag and check the logs if your pipeline will be
+deployed correctly.</p>
 </div>
-<h2 id="local-cluster">Local cluster<a class="headerlink" href="#local-cluster" title="Permanent link">¶</a></h2>
-<p>Delete local cluster:</p>
-<div class="highlight"><pre><span></span><code>k3d cluster delete kpops
+<h3 id="check-if-the-deployment-is-successful">Check if the deployment is successful<a class="headerlink" href="#check-if-the-deployment-is-successful" title="Permanent link">¶</a></h3>
+<p>You can use the <a href="https://github.com/bakdata/streams-explorer">Streams Explorer</a> to inspect the deployed pipeline.
+To do so, port-forward the service in a separate terminal session using the command below:</p>
+<div class="highlight"><pre><span></span><code>kubectl port-forward -n kpops service/streams-explorer <span class="m">8080</span>:8080
 </code></pre></div>
-<h2 id="local-image-registry">Local image registry<a class="headerlink" href="#local-image-registry" title="Permanent link">¶</a></h2>
-<p>Delete local registry:</p>
-<div class="highlight"><pre><span></span><code>k3d registry delete k3d-kpops-registry.localhost
+<p>After that open <a href="http://localhost:8080">http://localhost:8080</a> in your browser.</p>
+<p>You should be able to see pipeline shown in the image below:</p>
+<figure>
+<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="../../../images/word-counter-pipeline_streams-explorer.png"><img alt="word-count-pipeline" src="../../../images/word-counter-pipeline_streams-explorer.png"/></a>
+</p>
+<figcaption>An overview of Word-count pipeline shown in Streams Explorer</figcaption>
+</figure>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>Kafka Connect needs some time to set up the connector.
+Moreover, Streams Explorer needs a while to scrape the information from Kafka Connect.
+Therefore, it might take a bit until you see the whole graph.</p>
+</div>
+<h2 id="teardown-resources">Teardown resources<a class="headerlink" href="#teardown-resources" title="Permanent link">¶</a></h2>
+<h3 id="redis_1">Redis<a class="headerlink" href="#redis_1" title="Permanent link">¶</a></h3>
+<p>Redis can be uninstalled by running the following command:</p>
+<div class="highlight"><pre><span></span><code>helm --namespace kpops uninstall redis
 </code></pre></div>
+<h3 id="word-count-pipeline">Word-count pipeline<a class="headerlink" href="#word-count-pipeline" title="Permanent link">¶</a></h3>
+<ol>
+<li>
+<p>Export environment variables in your terminal.</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span> <span class="nv">DOCKER_REGISTRY</span><span class="o">=</span>bakdata <span class="o">&amp;&amp;</span> <span class="se">\</span>
+<span class="nb">export</span> <span class="nv">NAMESPACE</span><span class="o">=</span>kpops
+</code></pre></div>
+</li>
+<li>
+<p>Remove the pipeline</p>
+<div class="highlight"><pre><span></span><code>kpops clean ./examples/bakdata/word-count/pipeline.yaml <span class="se">\</span>
+--pipeline-base-dir ./examples <span class="se">\</span>
+--defaults ./examples/bakdata/word-count/defaults <span class="se">\</span>
+--config ./examples/bakdata/word-count/config.yaml <span class="se">\</span>
+--verbose <span class="se">\</span>
+--execute
+</code></pre></div>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can use the <code>--dry-run</code> flag instead of the <code>--execute</code> flag and check the logs if your pipeline will be
+destroyed correctly.</p>
+</div>
+<div class="admonition attention">
+<p class="admonition-title">Attention</p>
+<p>If you face any issues destroying this example see <a href="../teardown/">Teardown</a> for manual deletion.</p>
+</div>
+<h2 id="common-errors">Common errors<a class="headerlink" href="#common-errors" title="Permanent link">¶</a></h2>
+<ul>
+<li><code>deploy</code> fails:<ol>
+<li>Read the error message.</li>
+<li>Try to correct the mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.</li>
+<li>Run <code>clean</code>.</li>
+<li>Run <code>deploy --dry-run</code> to avoid havig to <code>clean</code> again. If an error is dropped, start over from step 1.</li>
+<li>If the dry-run is succesful, run <code>deploy</code>.</li>
+</ol>
+</li>
+<li><code>clean</code> fails:<ol>
+<li>Read the error message.</li>
+<li>Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.</li>
+<li>Run <code>clean</code>.</li>
+<li>If <code>clean</code> fails, follow the steps in <a href="../teardown/">teardown</a>.</li>
+</ol>
+</li>
+</ul>
 </article>
 </div>
 </div>
@@ -393,7 +591,7 @@ is needed, one needs to also delete the topics and schemas created by deployment
 </main>
 <footer class="md-footer">
 <nav aria-label="Footer" class="md-footer__inner md-grid">
-<a aria-label="Previous: Setup KPOps" class="md-footer__link md-footer__link--prev" href="../setup/" rel="prev">
+<a aria-label="Previous: Teardown resources" class="md-footer__link md-footer__link--prev" href="../teardown/" rel="prev">
 <div class="md-footer__button md-icon">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"></path></svg>
 </div>
@@ -402,17 +600,17 @@ is needed, one needs to also delete the topics and schemas created by deployment
 <span class="md-footer__direction">
                 Previous
               </span>
-              Setup KPOps
+              Teardown resources
             </div>
 </div>
 </a>
-<a aria-label="Next: Quick-start" class="md-footer__link md-footer__link--next" href="../quick-start/" rel="next">
+<a aria-label="Next: Examples" class="md-footer__link md-footer__link--next" href="../../examples/" rel="next">
 <div class="md-footer__title">
 <div class="md-ellipsis">
 <span class="md-footer__direction">
                 Next
               </span>
-              Quick-start
+              Examples
             </div>
 </div>
 <div class="md-footer__button md-icon">
