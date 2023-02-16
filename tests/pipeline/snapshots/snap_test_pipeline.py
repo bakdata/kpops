@@ -276,8 +276,8 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                     "config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
-                    "errorTopic": "resources-pipeline-with-inflate-${component_name}-error",
-                    "outputTopic": "${component_type}",
+                    "errorTopic": "resources-pipeline-with-inflate-inflated-streams-app-error",
+                    "outputTopic": "streams-app",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -292,7 +292,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "resources-pipeline-with-inflate-${component_name}-error": {
+                    "resources-pipeline-with-inflate-inflated-streams-app-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
