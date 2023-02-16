@@ -6,290 +6,9 @@ from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
-snapshots["TestPipeline.test_atm_fraud_example test-pipeline"] = {
-    "components": [
-        {
-            "prefix": "",
-            "app": {
-                "debug": True,
-                "image": "${DOCKER_REGISTRY}/atm-demo-accountproducer",
-                "imageTag": "1.0.0",
-                "nameOverride": "account-producer",
-                "prometheus": {"jmx": {"enabled": False}},
-                "replicaCount": 1,
-                "schedule": "0 12 * * *",
-                "streams": {
-                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "extraOutputTopics": {},
-                    "outputTopic": "bakdata-atm-fraud-detection-account-producer-topic",
-                    "schemaRegistryUrl": "http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081",
-                },
-                "suspend": True,
-            },
-            "name": "account-producer",
-            "namespace": "${NAMESPACE}",
-            "repoConfig": {
-                "repoAuthFlags": {"insecureSkipTlsVerify": False},
-                "repositoryName": "bakdata-streams-bootstrap",
-                "url": "https://bakdata.github.io/streams-bootstrap/",
-            },
-            "to": {
-                "models": {},
-                "topics": {
-                    "bakdata-atm-fraud-detection-account-producer-topic": {
-                        "configs": {},
-                        "partitions_count": 3,
-                        "type": "output",
-                    }
-                },
-            },
-            "type": "producer",
-            "version": "2.7.0",
-        },
-        {
-            "prefix": "",
-            "app": {
-                "commandLine": {"ITERATION": 20, "REAL_TX": 19},
-                "debug": True,
-                "image": "${DOCKER_REGISTRY}/atm-demo-transactionavroproducer",
-                "imageTag": "1.0.0",
-                "nameOverride": "transaction-avro-producer",
-                "prometheus": {"jmx": {"enabled": False}},
-                "replicaCount": 1,
-                "schedule": "0 12 * * *",
-                "streams": {
-                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "extraOutputTopics": {},
-                    "outputTopic": "bakdata-atm-fraud-detection-transaction-avro-producer-topic",
-                    "schemaRegistryUrl": "http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081",
-                },
-                "suspend": True,
-            },
-            "name": "transaction-avro-producer",
-            "namespace": "${NAMESPACE}",
-            "repoConfig": {
-                "repoAuthFlags": {"insecureSkipTlsVerify": False},
-                "repositoryName": "bakdata-streams-bootstrap",
-                "url": "https://bakdata.github.io/streams-bootstrap/",
-            },
-            "to": {
-                "models": {},
-                "topics": {
-                    "bakdata-atm-fraud-detection-transaction-avro-producer-topic": {
-                        "configs": {},
-                        "partitions_count": 3,
-                        "type": "output",
-                    }
-                },
-            },
-            "type": "producer",
-            "version": "2.7.0",
-        },
-        {
-            "prefix": "",
-            "app": {
-                "annotations": {
-                    "consumerGroup": "atm-transactionjoiner-atm-fraud-joinedtransactions-topic"
-                },
-                "commandLine": {"PRODUCTIVE": False},
-                "debug": True,
-                "image": "${DOCKER_REGISTRY}/atm-demo-transactionjoiner",
-                "imageTag": "1.0.0",
-                "labels": {"pipeline": "bakdata-atm-fraud-detection"},
-                "nameOverride": "transaction-joiner",
-                "prometheus": {"jmx": {"enabled": False}},
-                "replicaCount": 1,
-                "streams": {
-                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "errorTopic": "bakdata-atm-fraud-detection-transaction-joiner-dead-letter-topic",
-                    "inputTopics": [
-                        "bakdata-atm-fraud-detection-transaction-avro-producer-topic"
-                    ],
-                    "outputTopic": "bakdata-atm-fraud-detection-transaction-joiner-topic",
-                    "schemaRegistryUrl": "http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081",
-                },
-            },
-            "name": "transaction-joiner",
-            "namespace": "${NAMESPACE}",
-            "repoConfig": {
-                "repoAuthFlags": {"insecureSkipTlsVerify": False},
-                "repositoryName": "bakdata-streams-bootstrap",
-                "url": "https://bakdata.github.io/streams-bootstrap/",
-            },
-            "to": {
-                "models": {},
-                "topics": {
-                    "bakdata-atm-fraud-detection-transaction-joiner-dead-letter-topic": {
-                        "configs": {},
-                        "partitions_count": 1,
-                        "type": "error",
-                    },
-                    "bakdata-atm-fraud-detection-transaction-joiner-topic": {
-                        "configs": {},
-                        "partitions_count": 3,
-                        "type": "output",
-                    },
-                },
-            },
-            "type": "streams-app",
-            "version": "2.7.0",
-        },
-        {
-            "prefix": "",
-            "app": {
-                "annotations": {
-                    "consumerGroup": "atm-frauddetector-atm-fraud-possiblefraudtransactions-topic"
-                },
-                "commandLine": {"PRODUCTIVE": False},
-                "debug": True,
-                "image": "${DOCKER_REGISTRY}/atm-demo-frauddetector",
-                "imageTag": "1.0.0",
-                "labels": {"pipeline": "bakdata-atm-fraud-detection"},
-                "nameOverride": "fraud-detector",
-                "prometheus": {"jmx": {"enabled": False}},
-                "replicaCount": 1,
-                "streams": {
-                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "errorTopic": "bakdata-atm-fraud-detection-fraud-detector-dead-letter-topic",
-                    "inputTopics": [
-                        "bakdata-atm-fraud-detection-transaction-joiner-topic"
-                    ],
-                    "outputTopic": "bakdata-atm-fraud-detection-fraud-detector-topic",
-                    "schemaRegistryUrl": "http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081",
-                },
-            },
-            "name": "fraud-detector",
-            "namespace": "${NAMESPACE}",
-            "repoConfig": {
-                "repoAuthFlags": {"insecureSkipTlsVerify": False},
-                "repositoryName": "bakdata-streams-bootstrap",
-                "url": "https://bakdata.github.io/streams-bootstrap/",
-            },
-            "to": {
-                "models": {},
-                "topics": {
-                    "bakdata-atm-fraud-detection-fraud-detector-dead-letter-topic": {
-                        "configs": {},
-                        "partitions_count": 1,
-                        "type": "error",
-                    },
-                    "bakdata-atm-fraud-detection-fraud-detector-topic": {
-                        "configs": {},
-                        "partitions_count": 3,
-                        "type": "output",
-                    },
-                },
-            },
-            "type": "streams-app",
-            "version": "2.7.0",
-        },
-        {
-            "prefix": "",
-            "app": {
-                "annotations": {
-                    "consumerGroup": "atm-accountlinker-atm-fraud-output-topic"
-                },
-                "commandLine": {"PRODUCTIVE": False},
-                "debug": True,
-                "image": "${DOCKER_REGISTRY}/atm-demo-accountlinker",
-                "imageTag": "1.0.0",
-                "labels": {"pipeline": "bakdata-atm-fraud-detection"},
-                "nameOverride": "account-linker",
-                "prometheus": {"jmx": {"enabled": False}},
-                "replicaCount": 1,
-                "streams": {
-                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "errorTopic": "bakdata-atm-fraud-detection-account-linker-dead-letter-topic",
-                    "extraInputTopics": {
-                        "accounts": [
-                            "bakdata-atm-fraud-detection-account-producer-topic"
-                        ]
-                    },
-                    "inputTopics": ["bakdata-atm-fraud-detection-fraud-detector-topic"],
-                    "outputTopic": "bakdata-atm-fraud-detection-account-linker-topic",
-                    "schemaRegistryUrl": "http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081",
-                },
-            },
-            "from": {
-                "topics": {
-                    "bakdata-atm-fraud-detection-account-producer-topic": {
-                        "role": "accounts",
-                        "type": "extra",
-                    },
-                    "bakdata-atm-fraud-detection-fraud-detector-topic": {
-                        "type": "input"
-                    },
-                }
-            },
-            "name": "account-linker",
-            "namespace": "${NAMESPACE}",
-            "repoConfig": {
-                "repoAuthFlags": {"insecureSkipTlsVerify": False},
-                "repositoryName": "bakdata-streams-bootstrap",
-                "url": "https://bakdata.github.io/streams-bootstrap/",
-            },
-            "to": {
-                "models": {},
-                "topics": {
-                    "bakdata-atm-fraud-detection-account-linker-dead-letter-topic": {
-                        "configs": {},
-                        "partitions_count": 1,
-                        "type": "error",
-                    },
-                    "bakdata-atm-fraud-detection-account-linker-topic": {
-                        "configs": {},
-                        "partitions_count": 3,
-                        "type": "output",
-                    },
-                },
-            },
-            "type": "streams-app",
-            "version": "2.7.0",
-        },
-        {
-            "prefix": "",
-            "app": {
-                "auto.create": True,
-                "connection.ds.pool.size": 5,
-                "connection.password": "AppPassword",
-                "connection.url": "jdbc:postgresql://postgresql-dev.kpops.svc.cluster.local:5432/app_db",
-                "connection.user": "app1",
-                "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
-                "errors.deadletterqueue.context.headers.enable": True,
-                "errors.deadletterqueue.topic.name": "postgres-request-sink-dead-letters",
-                "errors.deadletterqueue.topic.replication.factor": 1,
-                "errors.tolerance": "all",
-                "insert.mode": "insert",
-                "insert.mode.databaselevel": True,
-                "key.converter": "org.apache.kafka.connect.storage.StringConverter",
-                "name": "postgresql-connector",
-                "pk.mode": "record_value",
-                "table.name.format": "fraud_transactions",
-                "tasks.max": 1,
-                "topics": "bakdata-atm-fraud-detection-account-linker-topic",
-                "transforms": "flatten",
-                "transforms.flatten.type": "org.apache.kafka.connect.transforms.Flatten$Value",
-                "value.converter": "io.confluent.connect.avro.AvroConverter",
-                "value.converter.schema.registry.url": "http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081",
-            },
-            "name": "postgresql-connector",
-            "namespace": "${NAMESPACE}",
-            "repoConfig": {
-                "repoAuthFlags": {"insecureSkipTlsVerify": False},
-                "repositoryName": "bakdata-kafka-connect-resetter",
-                "url": "https://bakdata.github.io/kafka-connect-resetter/",
-            },
-            "resetterValues": {},
-            "type": "kafka-sink-connector",
-            "version": "1.0.4",
-        },
-    ]
-}
-
 snapshots["TestPipeline.test_default_config test-pipeline"] = {
     "components": [
         {
-            "prefix": "resources-custom-config-",
             "app": {
                 "nameOverride": "resources-custom-config-app1",
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
@@ -302,6 +21,7 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
             },
             "name": "resources-custom-config-app1",
             "namespace": "development-namespace",
+            "prefix": "resources-custom-config-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -321,7 +41,6 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
             "version": "2.7.0",
         },
         {
-            "prefix": "resources-custom-config-",
             "app": {
                 "image": "some-image",
                 "labels": {"pipeline": "resources-custom-config"},
@@ -336,6 +55,7 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
             },
             "name": "resources-custom-config-app2",
             "namespace": "development-namespace",
+            "prefix": "resources-custom-config-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -365,7 +85,6 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
 snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
     "components": [
         {
-            "prefix": "resources-pipeline-with-inflate-",
             "app": {
                 "commandLine": {"FAKE_ARG": "fake-arg-value"},
                 "image": "example-registry/fake-image",
@@ -381,6 +100,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             },
             "name": "resources-pipeline-with-inflate-scheduled-producer",
             "namespace": "example-namespace",
+            "prefix": "resources-pipeline-with-inflate-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -401,7 +121,6 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             "version": "2.4.2",
         },
         {
-            "prefix": "resources-pipeline-with-inflate-",
             "app": {
                 "autoscaling": {
                     "consumergroup": "converter-resources-pipeline-with-inflate-converter",
@@ -428,6 +147,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             },
             "name": "resources-pipeline-with-inflate-converter",
             "namespace": "example-namespace",
+            "prefix": "resources-pipeline-with-inflate-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -456,7 +176,6 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             "version": "2.4.2",
         },
         {
-            "prefix": "resources-pipeline-with-inflate-",
             "app": {
                 "autoscaling": {
                     "consumergroup": "filter-resources-pipeline-with-inflate-should-inflate",
@@ -485,6 +204,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             },
             "name": "resources-pipeline-with-inflate-should-inflate",
             "namespace": "example-namespace",
+            "prefix": "resources-pipeline-with-inflate-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -510,7 +230,6 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             "version": "2.4.2",
         },
         {
-            "prefix": "resources-pipeline-with-inflate-",
             "app": {
                 "batch.size": "2000",
                 "behavior.on.malformed.documents": "warn",
@@ -528,12 +247,20 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             },
             "name": "resources-pipeline-with-inflate-sink-connector",
             "namespace": "example-namespace",
+            "prefix": "resources-pipeline-with-inflate-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-kafka-connect-resetter",
                 "url": "https://bakdata.github.io/kafka-connect-resetter/",
             },
             "resetterValues": {},
+            "to": {
+                "models": {},
+                "topics": {
+                    "kafka-sink-connector": {"configs": {}, "type": "output"},
+                    "sink-connector": {"configs": {}, "role": "test", "type": "extra"},
+                },
+            },
             "type": "kafka-sink-connector",
             "version": "1.0.4",
         },
@@ -543,7 +270,6 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
 snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"] = {
     "components": [
         {
-            "prefix": "resources-kafka-connect-sink-",
             "app": {
                 "image": "fake-image",
                 "nameOverride": "resources-kafka-connect-sink-streams-app",
@@ -561,6 +287,7 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
             "from": {"topics": {"example-topic": {"type": "input"}}},
             "name": "resources-kafka-connect-sink-streams-app",
             "namespace": "example-namespace",
+            "prefix": "resources-kafka-connect-sink-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -582,7 +309,6 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
             "version": "2.4.2",
         },
         {
-            "prefix": "resources-kafka-connect-sink-",
             "app": {
                 "batch.size": "2000",
                 "behavior.on.malformed.documents": "warn",
@@ -599,6 +325,7 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
             },
             "name": "resources-kafka-connect-sink-es-sink-connector",
             "namespace": "example-namespace",
+            "prefix": "resources-kafka-connect-sink-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-kafka-connect-resetter",
@@ -614,7 +341,6 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
 snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
     "components": [
         {
-            "prefix": "resources-first-pipeline-",
             "app": {
                 "commandLine": {"FAKE_ARG": "fake-arg-value"},
                 "image": "example-registry/fake-image",
@@ -630,6 +356,7 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
             },
             "name": "resources-first-pipeline-scheduled-producer",
             "namespace": "example-namespace",
+            "prefix": "resources-first-pipeline-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -650,7 +377,6 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
             "version": "2.4.2",
         },
         {
-            "prefix": "resources-first-pipeline-",
             "app": {
                 "autoscaling": {
                     "consumergroup": "converter-resources-first-pipeline-converter",
@@ -675,6 +401,7 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
             },
             "name": "resources-first-pipeline-converter",
             "namespace": "example-namespace",
+            "prefix": "resources-first-pipeline-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -703,7 +430,6 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
             "version": "2.4.2",
         },
         {
-            "prefix": "resources-first-pipeline-",
             "app": {
                 "autoscaling": {
                     "consumergroup": "filter-resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
@@ -734,6 +460,7 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
             },
             "name": "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
             "namespace": "example-namespace",
+            "prefix": "resources-first-pipeline-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -764,7 +491,6 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
 snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
     "components": [
         {
-            "prefix": "resources-no-input-topic-pipeline-",
             "app": {
                 "commandLine": {"CONVERT_XML": True},
                 "nameOverride": "resources-no-input-topic-pipeline-streams-app",
@@ -783,6 +509,7 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
             "from": {"topics": {".*": {"type": "input-pattern"}}},
             "name": "resources-no-input-topic-pipeline-streams-app",
             "namespace": "example-namespace",
+            "prefix": "resources-no-input-topic-pipeline-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -804,7 +531,6 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
             "version": "2.4.2",
         },
         {
-            "prefix": "resources-no-input-topic-pipeline-",
             "app": {
                 "nameOverride": "resources-no-input-topic-pipeline-streams-app",
                 "streams": {
@@ -823,6 +549,7 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
             },
             "name": "resources-no-input-topic-pipeline-streams-app",
             "namespace": "example-namespace",
+            "prefix": "resources-no-input-topic-pipeline-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -858,7 +585,6 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
 snapshots["TestPipeline.test_no_user_defined_components test-pipeline"] = {
     "components": [
         {
-            "prefix": "resources-no-user-defined-components-",
             "app": {
                 "image": "fake-image",
                 "nameOverride": "resources-no-user-defined-components-streams-app",
@@ -876,6 +602,7 @@ snapshots["TestPipeline.test_no_user_defined_components test-pipeline"] = {
             "from": {"topics": {"example-topic": {"type": "input"}}},
             "name": "resources-no-user-defined-components-streams-app",
             "namespace": "example-namespace",
+            "prefix": "resources-no-user-defined-components-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -902,7 +629,6 @@ snapshots["TestPipeline.test_no_user_defined_components test-pipeline"] = {
 snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
     "components": [
         {
-            "prefix": "resources-pipeline-with-envs-",
             "app": {
                 "commandLine": {"FAKE_ARG": "fake-arg-value"},
                 "image": "example-registry/fake-image",
@@ -918,6 +644,7 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
             },
             "name": "resources-pipeline-with-envs-scheduled-producer",
             "namespace": "example-namespace",
+            "prefix": "resources-pipeline-with-envs-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -938,7 +665,6 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
             "version": "2.4.2",
         },
         {
-            "prefix": "resources-pipeline-with-envs-",
             "app": {
                 "autoscaling": {
                     "consumergroup": "converter-resources-pipeline-with-envs-converter",
@@ -963,6 +689,7 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
             },
             "name": "resources-pipeline-with-envs-converter",
             "namespace": "example-namespace",
+            "prefix": "resources-pipeline-with-envs-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -991,7 +718,6 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
             "version": "2.4.2",
         },
         {
-            "prefix": "resources-pipeline-with-envs-",
             "app": {
                 "autoscaling": {
                     "consumergroup": "filter-resources-pipeline-with-envs-filter",
@@ -1020,6 +746,7 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
             },
             "name": "resources-pipeline-with-envs-filter",
             "namespace": "example-namespace",
+            "prefix": "resources-pipeline-with-envs-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -1050,7 +777,6 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
 snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
     "components": [
         {
-            "prefix": "resources-component-type-substitution-",
             "app": {
                 "commandLine": {"FAKE_ARG": "fake-arg-value"},
                 "image": "example-registry/fake-image",
@@ -1070,6 +796,7 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
             },
             "name": "resources-component-type-substitution-scheduled-producer",
             "namespace": "example-namespace",
+            "prefix": "resources-component-type-substitution-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -1090,7 +817,6 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
             "version": "2.4.2",
         },
         {
-            "prefix": "resources-component-type-substitution-",
             "app": {
                 "autoscaling": {
                     "consumergroup": "converter-resources-component-type-substitution-converter",
@@ -1117,6 +843,7 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
             },
             "name": "resources-component-type-substitution-converter",
             "namespace": "example-namespace",
+            "prefix": "resources-component-type-substitution-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -1145,7 +872,6 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
             "version": "2.4.2",
         },
         {
-            "prefix": "resources-component-type-substitution-",
             "app": {
                 "autoscaling": {
                     "consumergroup": "filter-resources-component-type-substitution-filter-app",
@@ -1175,6 +901,7 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
             },
             "name": "resources-component-type-substitution-filter-app",
             "namespace": "example-namespace",
+            "prefix": "resources-component-type-substitution-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -1205,7 +932,6 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
 snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
     "components": [
         {
-            "prefix": "resources-custom-config-",
             "app": {
                 "nameOverride": "resources-custom-config-app1",
                 "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
@@ -1218,6 +944,7 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
             },
             "name": "resources-custom-config-app1",
             "namespace": "development-namespace",
+            "prefix": "resources-custom-config-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -1237,7 +964,6 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
             "version": "2.7.0",
         },
         {
-            "prefix": "resources-custom-config-",
             "app": {
                 "image": "some-image",
                 "labels": {"pipeline": "resources-custom-config"},
@@ -1252,6 +978,7 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
             },
             "name": "resources-custom-config-app2",
             "namespace": "development-namespace",
+            "prefix": "resources-custom-config-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -1281,7 +1008,6 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
 snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
     "components": [
         {
-            "prefix": "resources-kafka-connect-sink-",
             "app": {
                 "image": "fake-image",
                 "nameOverride": "resources-kafka-connect-sink-streams-app-development",
@@ -1299,6 +1025,7 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
             "from": {"topics": {"example-topic": {"type": "input"}}},
             "name": "resources-kafka-connect-sink-streams-app-development",
             "namespace": "development-namespace",
+            "prefix": "resources-kafka-connect-sink-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -1320,7 +1047,6 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
             "version": "2.7.0",
         },
         {
-            "prefix": "resources-kafka-connect-sink-",
             "app": {
                 "batch.size": "2000",
                 "behavior.on.malformed.documents": "warn",
@@ -1337,6 +1063,7 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
             },
             "name": "resources-kafka-connect-sink-es-sink-connector",
             "namespace": "example-namespace",
+            "prefix": "resources-kafka-connect-sink-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-kafka-connect-resetter",
