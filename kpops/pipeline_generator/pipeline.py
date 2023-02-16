@@ -66,7 +66,8 @@ class Pipeline:
         self.handlers = handlers
         self.config = config
         self.registry = registry
-        self.parse_components(component_list, environment_components)
+        self.env_components_index = create_env_components_index(environment_components)
+        self.parse_components(component_list)
 
         super().__init__()
 
@@ -129,10 +130,7 @@ class Pipeline:
         pipeline = cls(main_content, env_content, registry, config, handlers)
         return pipeline
 
-    def parse_components(
-        self, component_list: list[dict], environment_components: list[dict]
-    ) -> None:
-        env_components_index = create_env_components_index(environment_components)
+    def parse_components(self, component_list: list[dict]) -> None:
         previous_component: PipelineComponent | None = None
         for component_data in component_list:
             try:
@@ -146,7 +144,6 @@ class Pipeline:
                 inflated_components = self.apply_component(
                     component_data,
                     component_class,
-                    env_components_index,
                     previous_component,
                 )
                 self.populate_pipeline_component_names(inflated_components)
@@ -175,7 +172,6 @@ class Pipeline:
         self,
         component_data: dict,
         component_class: type[PipelineComponent],
-        env_components_index: dict[str, dict],
         previous_component: PipelineComponent | None,
     ) -> list[PipelineComponent]:
         component = component_class(
@@ -183,14 +179,12 @@ class Pipeline:
             handlers=self.handlers,
             **component_data,
         )
-        component = self.enrich_component(component, env_components_index)
+        component = self.enrich_component(component)
 
         inflated_components = component.inflate()  # TODO: recursively
         # enrich inflated components
         for inflated_component in inflated_components:  # TODO: slicing necessary?
-            inflated_component = self.enrich_component(
-                inflated_component, env_components_index
-            )
+            inflated_component = self.enrich_component(inflated_component)
 
         # weave from topics
         if previous_component and previous_component.to:
@@ -201,9 +195,8 @@ class Pipeline:
     def enrich_component(
         self,
         component: PipelineComponent,
-        env_components_index: dict[str, dict],
     ) -> PipelineComponent:
-        env_component_definition = env_components_index.get(component.name, {})
+        env_component_definition = self.env_components_index.get(component.type, {})
         pair = update_nested_pair(
             env_component_definition, component.dict(by_alias=True)
         )
