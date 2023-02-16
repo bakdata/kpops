@@ -45,7 +45,7 @@ class InflateStep(StreamsApp):
             for topic_name, topic_config in self.to.topics.items():
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
-                        name="sink-connector",
+                        name="inflated-sink-connector",
                         config=self.config,
                         handlers=self.handlers,
                         namespace="example-namespace",
@@ -65,6 +65,13 @@ class InflateStep(StreamsApp):
                         ),
                     )
                     inflate_steps.append(kafka_connector)
+                    streams_app = StreamsApp(
+                        name="inflated-streams-app",
+                        config=self.config,
+                        handlers=self.handlers,
+                    )
+                    streams_app.set_output_topic("${component_type}")
+                    inflate_steps.append(streams_app)
 
         return inflate_steps
 
