@@ -110,7 +110,7 @@ After that open [http://localhost:8080](http://localhost:8080) in your browser.
 You should be able to see pipeline shown in the image below:
 
 <figure markdown>
-  ![word-count-pipeline](../../images/word-counter-pipeline_streams-explorer.png)
+  ![word-count-pipeline](../../images/word-count-pipeline_streams-explorer.png)
   <figcaption>An overview of Word-count pipeline shown in Streams Explorer</figcaption>
 </figure>
 
