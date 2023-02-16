@@ -470,7 +470,7 @@ redis bitnami/redis
 </details>
 <h3 id="word-count-example-pipeline-setup">Word-count example pipeline setup<a class="headerlink" href="#word-count-example-pipeline-setup" title="Permanent link">¶</a></h3>
 <h4 id="port-forwarding">Port forwarding<a class="headerlink" href="#port-forwarding" title="Permanent link">¶</a></h4>
-<p>Before we deploy the pipeline, we need to forward the ports of <code>kafka-rest-proxy</code> and <code>kafka-connect</code>. 
+<p>Before we deploy the pipeline, we need to forward the ports of <code>kafka-rest-proxy</code> and <code>kafka-connect</code>.
 Run the following commands in two different terminals.</p>
 <div class="highlight"><pre><span></span><code>kubectl port-forward --namespace kpops service/k8kafka-cp-rest <span class="m">8082</span>:8082
 </code></pre></div>
@@ -520,7 +520,7 @@ To do so, port-forward the service in a separate terminal session using the comm
 <p>After that open <a href="http://localhost:8080">http://localhost:8080</a> in your browser.</p>
 <p>You should be able to see pipeline shown in the image below:</p>
 <figure>
-<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="../../../images/word-counter-pipeline_streams-explorer.png"><img alt="word-count-pipeline" src="../../../images/word-counter-pipeline_streams-explorer.png"/></a>
+<p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="../../../images/word-count-pipeline_streams-explorer.png"><img alt="word-count-pipeline" src="../../../images/word-count-pipeline_streams-explorer.png"/></a>
 </p>
 <figcaption>An overview of Word-count pipeline shown in Streams Explorer</figcaption>
 </figure>
