@@ -179,7 +179,9 @@ class Pipeline:
         previous_component: PipelineComponent | None,
     ) -> list[PipelineComponent]:
         component = component_class(
-            handlers=self.handlers, config=self.config, **component_data
+            config=self.config,
+            handlers=self.handlers,
+            **component_data,
         )
         component = self.enrich_component(component, env_components_index)
 
@@ -203,34 +205,35 @@ class Pipeline:
     ) -> PipelineComponent:
         env_component_definition = env_components_index.get(component.name, {})
         pair = update_nested_pair(
-            env_component_definition,
-            component.dict(by_alias=True),
+            env_component_definition, component.dict(by_alias=True)
         )
 
-        json_object = self.substitute_component_specific_variables(component, pair)
+        component_data = self.substitute_component_specific_variables(component, pair)
+
         component_class = type(component)
         return component_class(
             enrich=False,
-            handlers=self.handlers,
             config=self.config,
-            **json_object,
+            handlers=self.handlers,
+            **component_data,
         )
 
     @staticmethod
     def substitute_component_specific_variables(
-        component_object: PipelineComponent, pair: dict
+        component: PipelineComponent, pair: dict  # TODO: better parameter name for pair
     ) -> dict:
         # Override component config with component config in pipeline environment definition
-        json_object: dict = json.loads(
+        # HACK: why do we need an intermediate JSON object?
+        component_data: dict = json.loads(
             substitute(
                 json.dumps(pair),
                 {
-                    "component_type": component_object.type,
-                    "component_name": component_object.name,
+                    "component_type": component.type,
+                    "component_name": component.name,
                 },
             )
         )
-        return json_object
+        return component_data
 
     def __str__(self) -> str:
         return yaml.dump(
