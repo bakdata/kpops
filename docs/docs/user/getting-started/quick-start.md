@@ -48,7 +48,7 @@ redis bitnami/redis
 
 #### Port forwarding
 
-Before we deploy the pipeline, we need to forward the ports of `kafka-rest-proxy` and `kafka-connect`. 
+Before we deploy the pipeline, we need to forward the ports of `kafka-rest-proxy` and `kafka-connect`.
 Run the following commands in two different terminals.
 
 ```shell
@@ -91,7 +91,7 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
     --config ./examples/bakdata/word-count/config.yaml \
     --execute
     ```
-   
+
 !!! Note
     You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be
     deployed correctly.
