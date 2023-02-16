@@ -69,7 +69,7 @@ nav:
       - user/getting-started/setup.md
       - user/getting-started/teardown.md
       - user/getting-started/quick-start.md
-      - user/getting-started/working-with-kpops.md
+      - user/getting-started/components.md
     - Examples:
       - user/examples/index.md
       - user/examples/atm-fraud-pipeline.md
