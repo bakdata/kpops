@@ -256,7 +256,14 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             "resetterValues": {},
             "to": {
                 "models": {},
-                "topics": {"kafka-sink-connector": {"configs": {}, "type": "output"}},
+                "topics": {
+                    "${component_name}": {
+                        "configs": {},
+                        "role": "test",
+                        "type": "extra",
+                    },
+                    "kafka-sink-connector": {"configs": {}, "type": "output"},
+                },
             },
             "type": "kafka-sink-connector",
             "version": "1.0.4",
