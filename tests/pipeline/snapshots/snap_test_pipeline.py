@@ -257,12 +257,8 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "${component_name}": {
-                        "configs": {},
-                        "role": "test",
-                        "type": "extra",
-                    },
                     "kafka-sink-connector": {"configs": {}, "type": "output"},
+                    "sink-connector": {"configs": {}, "role": "test", "type": "extra"},
                 },
             },
             "type": "kafka-sink-connector",

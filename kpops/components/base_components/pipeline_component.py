@@ -78,6 +78,7 @@ class PipelineComponent(BaseDefaultsComponent):
         return self.substitute_component_names(
             topic_name,
             self.type,
+            component_name=self.name,
             error_topic_name=error_topic_name,
             output_topic_name=output_topic_name,
         )
