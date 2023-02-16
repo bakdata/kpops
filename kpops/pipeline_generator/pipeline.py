@@ -134,25 +134,28 @@ class Pipeline:
     ) -> None:
         env_components_index = create_env_components_index(environment_components)
         previous_component: PipelineComponent | None = None
-        for component in component_list:
+        for component_data in component_list:
             try:
                 try:
-                    component_type: str = component["type"]
+                    component_type: str = component_data["type"]
                 except KeyError:
                     raise ValueError(
                         "Every component must have a type defined, this component does not have one."
                     )
                 component_class = self.registry[component_type]
                 inflated_components = self.apply_component(
-                    component, component_class, env_components_index, previous_component
+                    component_data,
+                    component_class,
+                    env_components_index,
+                    previous_component,
                 )
                 self.populate_pipeline_component_names(inflated_components)
                 self.components.extend(inflated_components)
                 previous_component = inflated_components.pop()
             except Exception as ex:
-                if "name" in component:
+                if "name" in component_data:
                     raise ParsingException(
-                        f"Error enriching {component['type']} component {component['name']}"
+                        f"Error enriching {component_data['type']} component {component_data['name']}"
                     ) from ex
                 else:
                     raise ParsingException() from ex
@@ -170,40 +173,42 @@ class Pipeline:
 
     def apply_component(
         self,
-        component: dict,
+        component_data: dict,
         component_class: type[PipelineComponent],
         env_components_index: dict[str, dict],
         previous_component: PipelineComponent | None,
     ) -> list[PipelineComponent]:
-        # Init component for main pipeline
-        component_object = self.enrich_component(
-            component, component_class, env_components_index
+        component = component_class(
+            handlers=self.handlers, config=self.config, **component_data
         )
+        component = self.enrich_component(component, env_components_index)
+
+        inflated_components = component.inflate()  # TODO: recursively
+        # enrich inflated components
+        for inflated_component in inflated_components:  # TODO: slicing necessary?
+            inflated_component = self.enrich_component(
+                inflated_component, env_components_index
+            )
 
         # weave from topics
         if previous_component and previous_component.to:
-            component_object.weave_from_topics(previous_component.to)
+            component.weave_from_topics(previous_component.to)
 
-        return component_object.inflate()
+        return inflated_components
 
     def enrich_component(
         self,
-        component: dict,
-        component_class: type[PipelineComponent],
+        component: PipelineComponent,
         env_components_index: dict[str, dict],
     ) -> PipelineComponent:
-        component_object: PipelineComponent = component_class(
-            handlers=self.handlers, config=self.config, **component
-        )
-        env_component_definition = env_components_index.get(component_object.name, {})
+        env_component_definition = env_components_index.get(component.name, {})
         pair = update_nested_pair(
             env_component_definition,
-            component_object.dict(by_alias=True),
+            component.dict(by_alias=True),
         )
 
-        json_object = self.substitute_component_specific_variables(
-            component_object, pair
-        )
+        json_object = self.substitute_component_specific_variables(component, pair)
+        component_class = type(component)
         return component_class(
             enrich=False,
             handlers=self.handlers,
