@@ -69,8 +69,6 @@ class Pipeline:
         self.env_components_index = create_env_components_index(environment_components)
         self.parse_components(component_list)
 
-        super().__init__()
-
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
         """
