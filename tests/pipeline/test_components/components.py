@@ -9,7 +9,11 @@ from kpops.component_handlers.schema_handler.schema_provider import (
 )
 from kpops.components import KafkaSinkConnector
 from kpops.components.base_components import PipelineComponent
-from kpops.components.base_components.models.to_section import OutputTopicTypes
+from kpops.components.base_components.models.to_section import (
+    OutputTopicTypes,
+    TopicConfig,
+    ToSection,
+)
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
@@ -49,6 +53,13 @@ class InflateStep(StreamsApp):
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },
+                        to=ToSection(
+                            topics={
+                                "${component_type}": TopicConfig(
+                                    type=OutputTopicTypes.OUTPUT
+                                )
+                            }
+                        ),
                     )
                     inflate_steps.append(kafka_connector)
 

@@ -254,6 +254,10 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 "url": "https://bakdata.github.io/kafka-connect-resetter/",
             },
             "resetterValues": {},
+            "to": {
+                "models": {},
+                "topics": {"kafka-sink-connector": {"configs": {}, "type": "output"}},
+            },
             "type": "kafka-sink-connector",
             "version": "1.0.4",
         },
