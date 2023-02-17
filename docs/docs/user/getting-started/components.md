@@ -1,6 +1,9 @@
 # Components
 
 This section explains the different components of KPOps, their usage and configuration.
+To learn more about their hierarchy, visit the
+[architecture](/kpops/docs/docs/developer/architecture/component-inheritance.md)
+page.
 
 ## KubernetesApp
 
@@ -52,6 +55,7 @@ Inherits from KubernetesApp. Often used in `defaults.yaml` Not usually used to d
 ## StreamsApp
 
 _StreamsApp_ inherits from [_KafkaApp_](#kafkaapp).
+Find more information about _StreamsApp_ on [streams bootstrap](https://github.com/bakdata/streams-bootstrap)'s page.
 
 ### Usage
 
@@ -90,6 +94,7 @@ Additionally, the consumer group is deleted.
 ## Producer
 
 _Producer_ inherits from [_KafkaApp_](#kafkaapp).
+Find more information about _StreamsApp_ on [streams bootstrap](https://github.com/bakdata/streams-bootstrap)'s page.
 
 ### Usage
 
