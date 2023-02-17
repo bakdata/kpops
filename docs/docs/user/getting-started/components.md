@@ -9,7 +9,7 @@ page.
 
 ### Usage
 
-Can be used to deploy any app in Kubernetes using helm, for example, a REST Service that serves Kafka Data.
+Can be used to deploy any app in Kubernetes using helm, for example, a REST service that serves Kafka data.
 
 ### Configuration
 
@@ -62,12 +62,10 @@ Can be used to deploy any app in Kubernetes using helm, for example, a REST Serv
       version: 1.0.0
     ```
 
-### Commands
-
-#### deploy
-#### destory
-#### reset
-#### clean
+### deploy
+### destory
+### reset
+### clean
 
 ## KafkaApp
 
@@ -135,12 +133,11 @@ Inherits from KubernetesApp. Often used in `defaults.yaml` Not usually used to d
         version: "2.7.0"
     ```
 
-### Commands
 
-#### deploy
-#### destory
-#### reset
-#### clean
+### deploy
+### destory
+### reset
+### clean
 
 ## StreamsApp
 
@@ -233,23 +230,22 @@ Configures a [streams bootstrap app](https://github.com/bakdata/streams-bootstra
         version: "2.7.0"
     ```
 
-### Commands
 
-#### deploy
+### deploy
 
 A Kubernetes deployment is created.
 The output topics are created, and schemas are registered in the Schema registry if configured.
 
-#### destory
+### destory
 
 The associated Kubernetes resources are removed.
 
-#### reset
+### reset
 
 Kafka Streams apps are reset by resetting the consumer group offsets and removing all streams state.
 This is achieved by running a reset job in the cluster that is deleted by default after it successfully runs.
 
-#### clean
+### clean
 
 The output topics of the Kafka Streams app are deleted as well as all associated schemas in the Schema Registry.
 Additionally, the consumer group is deleted.
@@ -325,22 +321,21 @@ Publishes (write) events to a Kafka cluster.
         version: "2.7.0"
     ```
 
-### Commands
 
-#### deploy
+### deploy
 
 A Kubernetes job or cron job is deployed.
 The output topics are created, and schemas are registered in the Schema registry if configured.
 
-#### destory
+### destory
 
 The associated Kubernetes resources are removed.
 
-#### reset
+### reset
 
 Producers are not affected by reset as they are stateless.
 
-#### clean
+### clean
 
 The output topics of the Kafka producer are deleted as well as all associated schemas in the Schema Registry.
 
@@ -405,22 +400,20 @@ Lets other systems pull data from Apache Kafka.
         offsetTopic: offset_topic
     ```
 
-### Commands
-
-#### deploy
+### deploy
 
 A Kafka connector is deployed.
 The output topics are created, and schemas are registered in the Schema registry if configured.
 
-#### destory
+### destory
 
 The associated Kafka connector is removed.
 
-#### reset
+### reset
 
 Kafka Sink Connectors are reset by resetting the consumer group offsets.
 
-#### clean
+### clean
 
 Kafka Sink Connectors are cleaned by deleting their consumer group and deleting configured error topics.
 
@@ -486,22 +479,21 @@ Lets other systems push data to Apache Kafka.
         offsetTopic: offset_topic
     ```
 
-### Commands
 
-#### deploy
+### deploy
 
 A Kafka connector is deployed.
 The output topics are created, and schemas are registered in the Schema registry if configured.
 
-#### destory
+### destory
 
 The associated Kafka connector is removed.
 
-#### reset
+### reset
 
 Kafka Source Connectors are reset by removing all connect states.
 
-#### clean
+### clean
 
 The output topics of the Kafka Source Connector are deleted as well as all associated schemas in the Schema Registry.
 
