@@ -181,14 +181,16 @@ class Pipeline:
 
         inflated_components = component.inflate()  # TODO: recursively
         # enrich inflated components
-        for inflated_component in inflated_components:  # TODO: slicing necessary?
-            inflated_component = self.enrich_component(inflated_component)
+        enriched_components = [
+            self.enrich_component(inflated_component)
+            for inflated_component in inflated_components
+        ]
 
         # weave from topics
         if previous_component and previous_component.to:
             component.weave_from_topics(previous_component.to)
 
-        return inflated_components
+        return enriched_components
 
     def enrich_component(
         self,
