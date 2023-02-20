@@ -4,7 +4,7 @@ import os
 from collections import deque
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any, ClassVar, TypeVar
+from typing import Any, TypeVar
 
 import typer
 from pydantic import BaseConfig, BaseModel, Field
@@ -17,7 +17,7 @@ log = logging.getLogger("PipelineComponentEnricher")
 
 
 class BaseDefaultsComponent(BaseModel):
-    type: ClassVar[str] = Field(default=..., const=True)
+    type: str = Field(default=..., const=True)
 
     enrich: bool = Field(default=False, exclude=True, hidden_from_schema=True)
     config: PipelineConfig = Field(default=..., exclude=True, hidden_from_schema=True)
@@ -32,6 +32,13 @@ class BaseDefaultsComponent(BaseModel):
         if kwargs.get("enrich", True):
             kwargs = self.extend_with_defaults(kwargs)
         super().__init__(**kwargs)
+
+    @classmethod  # NOTE: property as classmethod deprecated in Python 3.11
+    def get_component_type(cls) -> str:
+        # HACK: access type attribute through default value
+        # because exporting type as ClassVar from Pydantic models
+        # is not reliable
+        return cls.__fields__["type"].default
 
     def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
         """
@@ -55,6 +62,7 @@ class BaseDefaultsComponent(BaseModel):
         classes.appendleft(self.__class__)
         for base in deduplicate(classes):
             if issubclass(base, BaseDefaultsComponent):
+                component_type: str = base.get_component_type()
                 (
                     main_default_file_path,
                     environment_default_file_path,
@@ -62,13 +70,15 @@ class BaseDefaultsComponent(BaseModel):
                 if not environment_default_file_path.exists():
                     kwargs = update_nested(
                         kwargs,
-                        defaults_from_yaml(main_default_file_path, base.type),
+                        defaults_from_yaml(main_default_file_path, component_type),
                     )
                 else:
                     kwargs = update_nested(
                         kwargs,
-                        defaults_from_yaml(environment_default_file_path, base.type),
-                        defaults_from_yaml(main_default_file_path, base.type),
+                        defaults_from_yaml(
+                            environment_default_file_path, component_type
+                        ),
+                        defaults_from_yaml(main_default_file_path, component_type),
                     )
         return kwargs
 

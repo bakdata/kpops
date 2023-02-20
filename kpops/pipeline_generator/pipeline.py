@@ -230,7 +230,7 @@ class Pipeline:
     def __str__(self) -> str:
         return yaml.dump(
             PipelineComponents(components=self.components).dict(
-                exclude_unset=True, exclude_none=True, by_alias=True
+                exclude_none=True, by_alias=True
             )
         )
 

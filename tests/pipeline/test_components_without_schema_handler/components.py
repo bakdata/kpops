@@ -1,5 +1,3 @@
-from typing import ClassVar
-
 from typing_extensions import override
 
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
@@ -10,15 +8,15 @@ from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
 class ImportProducer(ProducerApp):
-    type: ClassVar[str] = "scheduled-producer"
+    type: str = "scheduled-producer"
 
 
 class Converter(StreamsApp):
-    type: ClassVar[str] = "converter"
+    type: str = "converter"
 
 
 class InflateStep(StreamsApp):
-    type: ClassVar[str] = "should-inflate"
+    type: str = "should-inflate"
 
     @override
     def inflate(self) -> list[PipelineComponent]:
