@@ -59,12 +59,26 @@ Sub class of [_KubernetesApp_](#kubernetesapp).
       --8<--
     ```
 
+### deploy
+
+In addition to [KubernetesApp's](#kubernetesapp) `deploy`:
+
+- Create topics if provided (optional)
+- Submit schemas if provided (optional)
+
+### destroy
+
+Refer to [KubernetesApp](#kubernetesapp).
+
 ### reset
+
+- Delete all output topics
+
 ### clean
 
 ## StreamsApp
 
-_StreamsApp_ inherits from [_KafkaApp_](#kafkaapp).
+Sub class of [_KafkaApp_](#kafkaapp).
 
 ### Usage
 
@@ -86,7 +100,7 @@ Configures a [streams bootstrap app](https://github.com/bakdata/streams-bootstra
 A Kubernetes deployment is created.
 The output topics are created, and schemas are registered in the Schema registry if configured.
 
-### destory
+### destroy
 
 The associated Kubernetes resources are removed.
 
@@ -102,7 +116,7 @@ Additionally, the consumer group is deleted.
 
 ## Producer
 
-_Producer_ inherits from [_KafkaApp_](#kafkaapp).
+Sub class of [_KafkaApp_](#kafkaapp).
 
 ### Usage
 
@@ -124,7 +138,7 @@ Publishes (write) events to a Kafka cluster.
 A Kubernetes job or cron job is deployed.
 The output topics are created, and schemas are registered in the Schema registry if configured.
 
-### destory
+### destroy
 
 The associated Kubernetes resources are removed.
 
@@ -159,7 +173,7 @@ Lets other systems pull data from Apache Kafka.
 A Kafka connector is deployed.
 The output topics are created, and schemas are registered in the Schema registry if configured.
 
-### destory
+### destroy
 
 The associated Kafka connector is removed.
 
@@ -195,7 +209,7 @@ Lets other systems push data to Apache Kafka.
 A Kafka connector is deployed.
 The output topics are created, and schemas are registered in the Schema registry if configured.
 
-### destory
+### destroy
 
 The associated Kafka connector is removed.
 
