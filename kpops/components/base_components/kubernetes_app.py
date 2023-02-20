@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from functools import cached_property
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
@@ -131,3 +131,11 @@ class KubernetesApp(PipelineComponent):
             raise ValueError(
                 f"The component name {self.name} is invalid for Kubernetes."
             )
+
+    def dict(self, *, exclude=None, **kwargs) -> dict[str, Any]:
+        # HACK: workaround for Pydantic to exclude cached properties during model export
+        if exclude is None:
+            exclude = set()
+        exclude.add("helm")
+        exclude.add("helm_diff")
+        return super().dict(exclude=exclude, **kwargs)
