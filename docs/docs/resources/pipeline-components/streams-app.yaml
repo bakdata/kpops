@@ -5,7 +5,7 @@
   namespace: namespace # required
   # No arbitrary keys are allowed under `app`here
   # Allowed configs:
-  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
+  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
   app: # required
     # Streams Bootstrap streams section
     streams: # required, streams-app-specific
@@ -35,8 +35,8 @@
     autoscaling: # streams-app-specific
       consumergroup: consumer-group # required
       topics:
-        - "topic1"
-        - "topic2"
+        - topic1
+        - topic2
   # Topic(s) from which the component will read input
   from:
     topics: # required

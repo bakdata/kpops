@@ -47,7 +47,7 @@ Sub class of [_KubernetesApp_](#kubernetesapp).
 
 - Deploys a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap)
 component
-- Not used in `pipeline.yaml` as the component can be defined as either a
+- Should not be used in `pipeline.yaml` as the component can be defined as either a
 [StreamsApp](#streamsapp) or a [Producer](#producer)
 - Often used in `defaults.yaml`
 
@@ -119,10 +119,11 @@ Runs a reset job in the cluster that is deleted by default after a succesful
 completion.
 
 - Reset the consumer group offsets
-- Remove all streams' state
+- Reset Kafka Streams state
 
 #### clean
 
+- Reset Kafka Streams state
 - Delete the app's output topics
 - Delete all associated schemas in the Schema Registry
 - Delete the consumer group
@@ -235,9 +236,10 @@ The associated Kafka connector is removed.
 
 #### reset
 
-Remove all connect states.
+Delete state associated with the connector
 
 #### clean
 
 - Delete all associated output topics
 - Delete all associated schemas in the Schema Registry
+- Delete state associated with the connector

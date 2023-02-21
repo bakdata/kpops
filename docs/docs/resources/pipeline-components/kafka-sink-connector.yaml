@@ -1,6 +1,6 @@
 # Kafka sink connector
 - type: kafka-sink-connector
-  name: kafka-sink-connector # required, clean up jobs for the connector will run
+  name: kafka-sink-connector # required,
   namespace: namespace # required, clean up jobs for the connector will run here
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example. Extensive documentation on
@@ -29,7 +29,7 @@
   # Pipeline prefix that will prefix every component name. If you wish to not 
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # Helm repository configuration
+  # Helm repository configuration for resetter
   repoConfig:
     repositoryName: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required

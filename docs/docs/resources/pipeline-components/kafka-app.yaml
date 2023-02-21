@@ -47,4 +47,4 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  version: "2.7.0" # helm chart version
+  version: "2.7.0" # Helm chart version
