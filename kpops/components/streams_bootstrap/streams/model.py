@@ -64,6 +64,36 @@ class StreamsAppAutoScaling(BaseModel):
         title="Lag threshold",
         description="Average target value to trigger scaling actions.",
     )
+    polling_interval: int = Field(
+        default=30,
+        title="Polling interval",
+        description="https://keda.sh/docs/2.7/concepts/scaling-deployments/#pollinginterval",
+    )
+    cooldown_period: int = Field(
+        default=300,
+        title="Cooldown period",
+        description="https://keda.sh/docs/2.7/concepts/scaling-deployments/#cooldownperiod",
+    )
+    offset_reset_policy: str = Field(
+        default="earliest",
+        title="Offset reset policy",
+        description="The offset reset policy for the consumer if the the consumer group is not yet subscribed to a partition.",
+    )
+    min_replicas: int = Field(
+        default=0,
+        title="Min replicas",
+        description="https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount",
+    )
+    max_replicas: int = Field(
+        default=1,
+        title="Max replicas",
+        description="https://keda.sh/docs/2.7/concepts/scaling-deployments/#maxreplicacount",
+    )
+    idle_replicas: int | None = Field(
+        default=None,
+        title="Idle replicas",
+        description="https://keda.sh/docs/2.7/concepts/scaling-deployments/#idlereplicacount",
+    )
     topics: list[str] = Field(
         default=[],
         description="List of auto-generated Kafka Streams topics used by the streams app.",
