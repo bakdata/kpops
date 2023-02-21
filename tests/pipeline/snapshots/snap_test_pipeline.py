@@ -124,9 +124,13 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             "app": {
                 "autoscaling": {
                     "consumerGroup": "converter-resources-pipeline-with-inflate-converter",
+                    "cooldownPeriod": 300,
                     "enabled": True,
                     "lagThreshold": 10000,
                     "maxReplicas": 1,
+                    "minReplicas": 0,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": [],
                 },
                 "commandLine": {"CONVERT_XML": True},
@@ -179,10 +183,13 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             "app": {
                 "autoscaling": {
                     "consumerGroup": "filter-resources-pipeline-with-inflate-should-inflate",
+                    "cooldownPeriod": 300,
                     "enabled": True,
                     "lagThreshold": 10000,
                     "maxReplicas": 4,
                     "minReplicas": 4,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": ["resources-pipeline-with-inflate-should-inflate"],
                 },
                 "commandLine": {"TYPE": "nothing"},
@@ -420,9 +427,13 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
             "app": {
                 "autoscaling": {
                     "consumerGroup": "converter-resources-first-pipeline-converter",
+                    "cooldownPeriod": 300,
                     "enabled": True,
                     "lagThreshold": 10000,
                     "maxReplicas": 1,
+                    "minReplicas": 0,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": [],
                 },
                 "commandLine": {"CONVERT_XML": True},
@@ -473,10 +484,13 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
             "app": {
                 "autoscaling": {
                     "consumerGroup": "filter-resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
+                    "cooldownPeriod": 300,
                     "enabled": True,
                     "lagThreshold": 10000,
                     "maxReplicas": 4,
                     "minReplicas": 4,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": [
                         "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name"
                     ],
@@ -708,9 +722,13 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
             "app": {
                 "autoscaling": {
                     "consumerGroup": "converter-resources-pipeline-with-envs-converter",
+                    "cooldownPeriod": 300,
                     "enabled": True,
                     "lagThreshold": 10000,
                     "maxReplicas": 1,
+                    "minReplicas": 0,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": [],
                 },
                 "commandLine": {"CONVERT_XML": True},
@@ -761,10 +779,13 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
             "app": {
                 "autoscaling": {
                     "consumerGroup": "filter-resources-pipeline-with-envs-filter",
+                    "cooldownPeriod": 300,
                     "enabled": True,
                     "lagThreshold": 10000,
                     "maxReplicas": 4,
                     "minReplicas": 4,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": ["resources-pipeline-with-envs-filter"],
                 },
                 "commandLine": {"TYPE": "nothing"},
@@ -860,9 +881,13 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
             "app": {
                 "autoscaling": {
                     "consumerGroup": "converter-resources-component-type-substitution-converter",
+                    "cooldownPeriod": 300,
                     "enabled": True,
                     "lagThreshold": 10000,
                     "maxReplicas": 1,
+                    "minReplicas": 0,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": [],
                 },
                 "commandLine": {"CONVERT_XML": True},
@@ -915,10 +940,13 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
             "app": {
                 "autoscaling": {
                     "consumerGroup": "filter-resources-component-type-substitution-filter-app",
+                    "cooldownPeriod": 300,
                     "enabled": True,
                     "lagThreshold": 10000,
                     "maxReplicas": 4,
                     "minReplicas": 4,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": ["resources-component-type-substitution-filter-app"],
                 },
                 "commandLine": {"TYPE": "nothing"},
