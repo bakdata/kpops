@@ -47,7 +47,7 @@ converter:
         memory: 3G
     autoscaling:
       enabled: true
-      consumergroup: converter-${output_topic_name}
+      consumerGroup: converter-${output_topic_name}
       maxReplicas: 1
       lagThreshold: "10000"
   to:
@@ -73,7 +73,7 @@ filter:
       enabled: true
       maxReplicas: 1
       lagThreshold: "10000"
-      consumergroup: filter-${output_topic_name}
+      consumerGroup: filter-${output_topic_name}
       topics:
         - "${output_topic_name}"
   to:
@@ -92,7 +92,7 @@ should-inflate:
       enabled: true
       maxReplicas: 1
       lagThreshold: "10000"
-      consumergroup: filter-${output_topic_name}
+      consumerGroup: filter-${output_topic_name}
       topics:
         - "${output_topic_name}"
   to:
