@@ -1,4 +1,4 @@
-from pydantic import BaseConfig, BaseModel, Extra
+from pydantic import BaseConfig, BaseModel, Extra, Field
 
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
@@ -53,9 +53,21 @@ class StreamsConfig(KafkaStreamsConfig):
 
 
 class StreamsAppAutoScaling(BaseModel):
-    consumer_group: str
-    lag_threshold: int
-    topics: list[str] = []
+    enabled: bool = Field(
+        default=False, description="Whether to enable auto-scaling using KEDA."
+    )
+    consumer_group: str = Field(
+        title="Consumer group",
+        description="Name of the consumer group used for checking the offset on the topic and processing the related lag.",
+    )
+    lag_threshold: int = Field(
+        title="Lag threshold",
+        description="Average target value to trigger scaling actions.",
+    )
+    topics: list[str] = Field(
+        default=[],
+        description="List of auto-generated Kafka Streams topics used by the streams app.",
+    )
 
     class Config(CamelCaseConfig):
         extra = Extra.allow
