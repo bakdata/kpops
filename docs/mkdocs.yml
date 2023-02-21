@@ -68,7 +68,6 @@ nav:
       - user/getting-started/index.md
       - user/getting-started/setup.md
       - user/getting-started/quick-start.md
-      - user/getting-started/components.md
       - user/getting-started/teardown.md
     - Examples:
       - user/examples/index.md
@@ -77,3 +76,4 @@ nav:
       - user/references/index.md
       - user/references/cli-commands.md
       - user/references/variables.md
+      - user/references/components.md
