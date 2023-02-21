@@ -5,6 +5,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaAppConfig,
     KafkaStreamsConfig,
 )
+from kpops.utils.pydantic import CamelCaseConfig
 
 
 class StreamsConfig(KafkaStreamsConfig):
@@ -53,9 +54,10 @@ class StreamsConfig(KafkaStreamsConfig):
 
 class StreamsAppAutoScaling(BaseModel):
     consumergroup: str
+    lag_threshold: int
     topics: list[str] = []
 
-    class Config(BaseConfig):
+    class Config(CamelCaseConfig):
         extra = Extra.allow
 
 
