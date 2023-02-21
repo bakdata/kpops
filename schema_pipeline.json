@@ -457,13 +457,48 @@
                     "type": "boolean"
                 },
                 "consumerGroup": {
-                    "title": "consumer group",
+                    "title": "Consumer group",
                     "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag.",
                     "type": "string"
                 },
                 "lagThreshold": {
-                    "title": "lag threshold",
+                    "title": "Lag threshold",
                     "description": "Average target value to trigger scaling actions.",
+                    "type": "integer"
+                },
+                "pollingInterval": {
+                    "title": "Polling interval",
+                    "description": "This is the interval to check each trigger on.\n        https://keda.sh/docs/2.7/concepts/scaling-deployments/#pollinginterval\n        ",
+                    "default": 30,
+                    "type": "integer"
+                },
+                "cooldownPeriod": {
+                    "title": "Cooldown period",
+                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0.\n        https://keda.sh/docs/2.7/concepts/scaling-deployments/#cooldownperiod\n        ",
+                    "default": 300,
+                    "type": "integer"
+                },
+                "offsetResetPolicy": {
+                    "title": "Offset reset policy",
+                    "description": "The offset reset policy for the consumer if the the consumer group is not yet subscribed to a partition.",
+                    "default": "earliest",
+                    "type": "string"
+                },
+                "minReplicas": {
+                    "title": "Min replica count",
+                    "description": "Minimum number of replicas KEDA will scale the resource down to.\n        https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount\n        ",
+                    "default": 0,
+                    "type": "integer"
+                },
+                "maxReplicas": {
+                    "title": "Max replica count",
+                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce.\n        https://keda.sh/docs/2.7/concepts/scaling-deployments/#maxreplicacount\n        ",
+                    "default": 1,
+                    "type": "integer"
+                },
+                "idleReplicas": {
+                    "title": "Idle replica count",
+                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas.\n        https://keda.sh/docs/2.7/concepts/scaling-deployments/#idlereplicacount\n        ",
                     "type": "integer"
                 },
                 "topics": {
