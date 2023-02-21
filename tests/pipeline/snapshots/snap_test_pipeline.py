@@ -123,9 +123,9 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "converter-resources-pipeline-with-inflate-converter",
+                    "consumerGroup": "converter-resources-pipeline-with-inflate-converter",
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 1,
                     "topics": [],
                 },
@@ -178,9 +178,9 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "filter-resources-pipeline-with-inflate-should-inflate",
+                    "consumerGroup": "filter-resources-pipeline-with-inflate-should-inflate",
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 4,
                     "minReplicas": 4,
                     "topics": ["resources-pipeline-with-inflate-should-inflate"],
@@ -379,9 +379,9 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "converter-resources-first-pipeline-converter",
+                    "consumerGroup": "converter-resources-first-pipeline-converter",
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 1,
                     "topics": [],
                 },
@@ -432,9 +432,9 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "filter-resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
+                    "consumerGroup": "filter-resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 4,
                     "minReplicas": 4,
                     "topics": [
@@ -667,9 +667,9 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "converter-resources-pipeline-with-envs-converter",
+                    "consumerGroup": "converter-resources-pipeline-with-envs-converter",
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 1,
                     "topics": [],
                 },
@@ -720,9 +720,9 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "filter-resources-pipeline-with-envs-filter",
+                    "consumerGroup": "filter-resources-pipeline-with-envs-filter",
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 4,
                     "minReplicas": 4,
                     "topics": ["resources-pipeline-with-envs-filter"],
@@ -819,9 +819,9 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "converter-resources-component-type-substitution-converter",
+                    "consumerGroup": "converter-resources-component-type-substitution-converter",
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 1,
                     "topics": [],
                 },
@@ -874,9 +874,9 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "filter-resources-component-type-substitution-filter-app",
+                    "consumerGroup": "filter-resources-component-type-substitution-filter-app",
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 4,
                     "minReplicas": 4,
                     "topics": ["resources-component-type-substitution-filter-app"],
