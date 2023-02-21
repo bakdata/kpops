@@ -219,6 +219,11 @@
             "description": "Base Kubernetes app",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "kubernetes-app",
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -302,6 +307,11 @@
             "description": "Base component for Kafka-based components.\nProducer or streaming apps should inherit from this class.",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "kafka-app",
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -353,7 +363,7 @@
                 },
                 "version": {
                     "title": "Version",
-                    "default": "2.7.0",
+                    "default": "2.9.0",
                     "type": "string"
                 }
             },
@@ -440,9 +450,13 @@
             "title": "StreamsAppAutoScaling",
             "type": "object",
             "properties": {
-                "consumergroup": {
+                "consumerGroup": {
                     "title": "Consumergroup",
                     "type": "string"
+                },
+                "lagThreshold": {
+                    "title": "Lagthreshold",
+                    "type": "integer"
                 },
                 "topics": {
                     "title": "Topics",
@@ -454,7 +468,8 @@
                 }
             },
             "required": [
-                "consumergroup"
+                "consumerGroup",
+                "lagThreshold"
             ]
         },
         "StreamsAppConfig": {
@@ -482,6 +497,11 @@
             "description": "StreamsApp component that configures a streams bootstrap app",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "streams-app",
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -533,7 +553,7 @@
                 },
                 "version": {
                     "title": "Version",
-                    "default": "2.7.0",
+                    "default": "2.9.0",
                     "type": "string"
                 }
             },
@@ -593,6 +613,11 @@
             "description": "Producer component\n\nThis producer holds configuration to use as values for the streams bootstrap produce helm chart.",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "producer",
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -644,7 +669,7 @@
                 },
                 "version": {
                     "title": "Version",
-                    "default": "2.7.0",
+                    "default": "2.9.0",
                     "type": "string"
                 }
             },
@@ -663,6 +688,11 @@
             "title": "KafkaSourceConnector",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "kafka-source-connector",
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -737,6 +767,11 @@
             "title": "KafkaSinkConnector",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "kafka-sink-connector",
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
