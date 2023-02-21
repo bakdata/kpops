@@ -1,15 +1,15 @@
 # Components
 
-This section explains the different components of KPOps, their usage and configuration.
-To learn more about their hierarchy, visit the
-[architecture](/kpops/docs/docs/developer/architecture/component-inheritance.md)
-page.
+This section explains the different components of KPOps, their usage and
+configuration. To learn more about their hierarchy, visit the
+[architecture](/docs/developer/architecture/component-inheritance.md) page.
 
 ## KubernetesApp
 
 ### Usage
 
-Can be used to deploy any app in Kubernetes using Helm, for example, a REST service that serves Kafka data.
+Can be used to deploy any app in Kubernetes using Helm, for example, a REST
+service that serves Kafka data.
 
 ### Configuration
 
@@ -21,7 +21,6 @@ Can be used to deploy any app in Kubernetes using Helm, for example, a REST serv
       --8<--
     ```
 
-
 ### deploy
 
 Deploy using Helm.
@@ -32,11 +31,11 @@ Uninstall Helm release.
 
 ### reset
 
-Do nothing.
+Not implemented.
 
 ### clean
 
-Do nothing.
+Not implemented.
 
 ## KafkaApp
 
@@ -44,10 +43,11 @@ Sub class of [_KubernetesApp_](#kubernetesapp).
 
 ### Usage
 
-- Deploys a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap) component.
-- Not usually used in `pipeline.yaml` as the component can usually be defined as either a [StreamsApp](#streamsapp) or a [Producer](#producer).
-- Often used in `defaults.yaml`.
-
+- Deploys a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap)
+component
+- Not used in `pipeline.yaml` as the component can be defined as either a
+[StreamsApp](#streamsapp) or a [Producer](#producer)
+- Often used in `defaults.yaml`
 
 ### Configuration
 
@@ -64,7 +64,7 @@ Sub class of [_KubernetesApp_](#kubernetesapp).
 In addition to [KubernetesApp's](#kubernetesapp) `deploy`:
 
 - Create topics if provided (optional)
-- Submit schemas if provided (optional)
+- Submit schemas to the registry if provided (optional)
 
 ### destroy
 
@@ -72,9 +72,11 @@ Refer to [KubernetesApp](#kubernetesapp).
 
 ### reset
 
-- Delete all output topics
+Not implemented.
 
 ### clean
+
+Not implemented.
 
 ## StreamsApp
 
@@ -82,7 +84,10 @@ Sub class of [_KafkaApp_](#kafkaapp).
 
 ### Usage
 
-Configures a [streams bootstrap app](https://github.com/bakdata/streams-bootstrap) which in turns configures a [Kafka Streams app](https://kafka.apache.org/documentation/streams/)
+Configures a
+[streams-bootstrap app](https://github.com/bakdata/streams-bootstrap) which in
+turn configures a
+[Kafka Streams app](https://kafka.apache.org/documentation/streams/).
 
 ### Configuration
 
@@ -94,25 +99,27 @@ Configures a [streams bootstrap app](https://github.com/bakdata/streams-bootstra
       --8<--
     ```
 
-
 ### deploy
 
-A Kubernetes deployment is created.
-The output topics are created, and schemas are registered in the Schema registry if configured.
+Refer to [KafkaApp](#kafkaapp).
 
 ### destroy
 
-The associated Kubernetes resources are removed.
+Refer to [KafkaApp](#kafkaapp).
 
 ### reset
 
-Kafka Streams apps are reset by resetting the consumer group offsets and removing all streams state.
-This is achieved by running a reset job in the cluster that is deleted by default after it successfully runs.
+Runs a reset job in the cluster that is deleted by default after a succesful
+completion.
+
+- Reset the consumer group offsets
+- Remove all streams' state
 
 ### clean
 
-The output topics of the Kafka Streams app are deleted as well as all associated schemas in the Schema Registry.
-Additionally, the consumer group is deleted.
+- Delete the app's output topics
+- Delete all associated schemas in the Schema Registry
+- Delete the consumer group
 
 ## Producer
 
@@ -120,7 +127,7 @@ Sub class of [_KafkaApp_](#kafkaapp).
 
 ### Usage
 
-Publishes (write) events to a Kafka cluster.
+Publishes (writes) events to a Kafka cluster.
 
 ### Configuration
 
@@ -135,20 +142,20 @@ Publishes (write) events to a Kafka cluster.
 
 ### deploy
 
-A Kubernetes job or cron job is deployed.
-The output topics are created, and schemas are registered in the Schema registry if configured.
+Refer to [KafkaApp](#kafkaapp).
 
 ### destroy
 
-The associated Kubernetes resources are removed.
+Refer to [KafkaApp](#kafkaapp).
 
 ### reset
 
-Producers are not affected by reset as they are stateless.
+Not implemented, producers are stateless.
 
 ### clean
 
-The output topics of the Kafka producer are deleted as well as all associated schemas in the Schema Registry.
+- Delete the output topics of the Kafka producer
+- Delete all associated schemas in the Schema Registry
 
 ## KafkaSinkConnector
 
@@ -170,8 +177,9 @@ Lets other systems pull data from Apache Kafka.
 
 ### deploy
 
-A Kafka connector is deployed.
-The output topics are created, and schemas are registered in the Schema registry if configured.
+- Deploy the Kafka connector
+- Create the output topics if provided (optional)
+- Register schemas in the Schema registry if provided (optional)
 
 ### destroy
 
@@ -179,11 +187,12 @@ The associated Kafka connector is removed.
 
 ### reset
 
-Kafka Sink Connectors are reset by resetting the consumer group offsets.
+Reset the consumer group offsets.
 
 ### clean
 
-Kafka Sink Connectors are cleaned by deleting their consumer group and deleting configured error topics.
+- Delete associated consumer group
+- Delete configured error topics
 
 ## KafkaSourceConnector
 
@@ -206,8 +215,9 @@ Lets other systems push data to Apache Kafka.
 
 ### deploy
 
-A Kafka connector is deployed.
-The output topics are created, and schemas are registered in the Schema registry if configured.
+- Deploy the Kafka connector
+- Create the output topics if provided (optional)
+- Register schemas in the Schema registry if provided (optional)
 
 ### destroy
 
@@ -215,39 +225,9 @@ The associated Kafka connector is removed.
 
 ### reset
 
-Kafka Source Connectors are reset by removing all connect states.
+Remove all connect states.
 
 ### clean
 
-The output topics of the Kafka Source Connector are deleted as well as all associated schemas in the Schema Registry.
-
-# Commands
-
-<!--
-## Deploy
-
-The `kpops deploy` command creates the application resources.
-We can update our deployment by changing its configuration and redeploying the pipeline.
-If the data is incompatible with the currently deployed version, resetting or cleaning the pipeline might be necessary.
-
-## Destroy
-
-The `kpops destroy` command removes the application resources.
-
-## Reset
-
-The `kpops reset` command resets the state of applications and allows reprocessing of the data after a redeployment.
-
-> The reset command does not affect output topics.
-Running reset always includes running destroy.
-
-Often, a reset job is deployed in the cluster that is deleted by default after running successfully.
-
-## Clean
-
-The `kpops clean` command removes all Kafka resources associated with a pipeline.
-
-Running clean always includes running reset.
-
-A clean job is often deployed in the cluster that is deleted by default after it successfully runs.
--->
+- Delete all associated output topics
+- Delete all associated schemas in the Schema Registry
