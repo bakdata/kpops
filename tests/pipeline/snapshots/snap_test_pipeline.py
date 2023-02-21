@@ -245,7 +245,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 "topics": "resources-pipeline-with-inflate-should-inflate",
                 "transforms.changeTopic.replacement": "resources-pipeline-with-inflate-should-inflate-index-v1",
             },
-            "name": "resources-pipeline-with-inflate-sink-connector",
+            "name": "resources-pipeline-with-inflate-inflated-sink-connector",
             "namespace": "example-namespace",
             "prefix": "resources-pipeline-with-inflate-",
             "repoConfig": {
@@ -257,12 +257,52 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
+                    "inflated-sink-connector": {
+                        "configs": {},
+                        "role": "test",
+                        "type": "extra",
+                    },
                     "kafka-sink-connector": {"configs": {}, "type": "output"},
-                    "sink-connector": {"configs": {}, "role": "test", "type": "extra"},
                 },
             },
             "type": "kafka-sink-connector",
             "version": "1.0.4",
+        },
+        {
+            "app": {
+                "nameOverride": "resources-pipeline-with-inflate-inflated-streams-app",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-pipeline-with-inflate-inflated-streams-app-error",
+                    "inputTopics": ["kafka-sink-connector"],
+                    "outputTopic": "streams-app",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-pipeline-with-inflate-inflated-streams-app",
+            "namespace": "example-namespace",
+            "prefix": "resources-pipeline-with-inflate-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-pipeline-with-inflate-inflated-streams-app-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    }
+                },
+            },
+            "type": "streams-app",
+            "version": "2.4.2",
         },
     ]
 }
