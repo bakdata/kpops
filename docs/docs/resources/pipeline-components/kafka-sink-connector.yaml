@@ -7,7 +7,6 @@
   # sink connectors: https://kafka.apache.org/documentation/#sinkconnectconfigs
   app: # required
     tasks.max: 1
-    replication.factor: -1
   # Topic(s) from which the component will read input
   from:
     topics: # required
