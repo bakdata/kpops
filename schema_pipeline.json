@@ -468,13 +468,13 @@
                 },
                 "pollingInterval": {
                     "title": "Polling interval",
-                    "description": "This is the interval to check each trigger on.\n        https://keda.sh/docs/2.7/concepts/scaling-deployments/#pollinginterval\n        ",
+                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.7/concepts/scaling-deployments/#pollinginterval",
                     "default": 30,
                     "type": "integer"
                 },
                 "cooldownPeriod": {
                     "title": "Cooldown period",
-                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0.\n        https://keda.sh/docs/2.7/concepts/scaling-deployments/#cooldownperiod\n        ",
+                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.7/concepts/scaling-deployments/#cooldownperiod",
                     "default": 300,
                     "type": "integer"
                 },
@@ -486,19 +486,19 @@
                 },
                 "minReplicas": {
                     "title": "Min replica count",
-                    "description": "Minimum number of replicas KEDA will scale the resource down to.\n        https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount\n        ",
+                    "description": "Minimum number of replicas KEDA will scale the resource down to. https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount",
                     "default": 0,
                     "type": "integer"
                 },
                 "maxReplicas": {
                     "title": "Max replica count",
-                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce.\n        https://keda.sh/docs/2.7/concepts/scaling-deployments/#maxreplicacount\n        ",
+                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.7/concepts/scaling-deployments/#maxreplicacount",
                     "default": 1,
                     "type": "integer"
                 },
                 "idleReplicas": {
                     "title": "Idle replica count",
-                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas.\n        https://keda.sh/docs/2.7/concepts/scaling-deployments/#idlereplicacount\n        ",
+                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.7/concepts/scaling-deployments/#idlereplicacount",
                     "type": "integer"
                 },
                 "topics": {
