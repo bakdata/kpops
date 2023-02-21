@@ -53,7 +53,7 @@ class StreamsConfig(KafkaStreamsConfig):
 
 
 class StreamsAppAutoScaling(BaseModel):
-    consumergroup: str
+    consumer_group: str
     lag_threshold: int
     topics: list[str] = []
 
