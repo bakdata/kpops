@@ -242,7 +242,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 "name": "sink-connector",
                 "read.timeout.ms": "120000",
                 "tasks.max": "1",
-                "topics": "resources-pipeline-with-inflate-should-inflate,resources-pipeline-with-inflate-converter",
+                "topics": "resources-pipeline-with-inflate-should-inflate",
                 "transforms.changeTopic.replacement": "resources-pipeline-with-inflate-should-inflate-index-v1",
             },
             "name": "resources-pipeline-with-inflate-inflated-sink-connector",
@@ -277,7 +277,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-pipeline-with-inflate-inflated-streams-app-error",
-                    "inputTopics": ["resources-pipeline-with-inflate-converter"],
+                    "inputTopics": ["kafka-sink-connector"],
                     "outputTopic": "streams-app",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
