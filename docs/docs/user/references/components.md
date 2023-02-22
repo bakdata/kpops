@@ -21,7 +21,7 @@ service that serves Kafka data.
       --8<--
     ```
 
-### Methods
+### Operations
 
 #### deploy
 
@@ -61,7 +61,7 @@ component
       --8<--
     ```
 
-### Methods
+### Operations
 
 #### deploy
 
@@ -103,7 +103,7 @@ turn configures a
       --8<--
     ```
 
-### Methods
+### Operations
 
 #### deploy
 
@@ -146,7 +146,7 @@ Publishes (writes) events to a Kafka cluster.
       --8<--
     ```
 
-### Methods
+### Operations
 
 #### deploy
 
@@ -183,7 +183,7 @@ Lets other systems pull data from Apache Kafka.
       --8<--
     ```
 
-### Methods
+### Operations
 
 #### deploy
 
@@ -222,7 +222,7 @@ Lets other systems push data to Apache Kafka.
       --8<--
     ```
 
-### Methods
+### Operations
 
 #### deploy
 
