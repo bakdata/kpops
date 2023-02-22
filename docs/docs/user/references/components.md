@@ -45,7 +45,7 @@ Sub class of [_KubernetesApp_](#kubernetesapp).
 
 ### Usage
 
-- Deploys a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap)
+- Defines a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap)
 component
 - Should not be used in `pipeline.yaml` as the component can be defined as either a
 [StreamsApp](#streamsapp) or a [Producer](#producer)
@@ -68,7 +68,7 @@ component
 In addition to [KubernetesApp's](#kubernetesapp) `deploy`:
 
 - Create topics if provided (optional)
-- Submit schemas to the registry if provided (optional)
+- Submit Avro schemas to the registry if provided (optional)
 
 #### destroy
 
@@ -115,7 +115,7 @@ Refer to [KafkaApp](#kafkaapp).
 
 #### reset
 
-Runs a reset job in the cluster that is deleted by default after a succesful
+Runs a reset job in the cluster that is deleted by default after a successful
 completion.
 
 - Reset the consumer group offsets
@@ -134,7 +134,7 @@ Sub class of [_KafkaApp_](#kafkaapp).
 
 ### Usage
 
-Publishes (writes) events to a Kafka cluster.
+Produces events to a Kafka cluster.
 
 ### Configuration
 
@@ -187,13 +187,13 @@ Lets other systems pull data from Apache Kafka.
 
 #### deploy
 
-- Deploy the Kafka connector
+- Add the sink connector to the Kafka Connect cluster
 - Create the output topics if provided (optional)
-- Register schemas in the Schema registry if provided (optional)
+- Register schemas in the Schema Registry if provided (optional)
 
 #### destroy
 
-The associated Kafka connector is removed.
+The associated sink connector is removed.
 
 #### reset
 
@@ -210,7 +210,7 @@ Sub class of [KafkaConnector](/docs/user/references/config.md)
 
 ### Usage
 
-Lets other systems push data to Apache Kafka.
+Manages source connectors in your Kafka connect cluster.
 
 ### Configuration
 
@@ -226,13 +226,13 @@ Lets other systems push data to Apache Kafka.
 
 #### deploy
 
-- Deploy the Kafka connector
+- Add the source connector to the Kafka Connect cluster
 - Create the output topics if provided (optional)
 - Register schemas in the Schema registry if provided (optional)
 
 #### destroy
 
-The associated Kafka connector is removed.
+Remove the source connector from the Kafka Connect cluster.
 
 #### reset
 

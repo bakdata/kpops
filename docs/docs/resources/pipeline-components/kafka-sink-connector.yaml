@@ -38,7 +38,7 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  version: "1.0.4" # helm chart version
+  version: "1.0.4" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
   resetterValues:
