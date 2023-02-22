@@ -50,7 +50,7 @@ class KafkaApp(KubernetesApp):
         repository_name="bakdata-streams-bootstrap",
         url="https://bakdata.github.io/streams-bootstrap/",
     )
-    version = "2.7.0"
+    version = "2.9.0"
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)

@@ -9,7 +9,6 @@ snapshots = Snapshot()
 snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
     "components": [
         {
-            "prefix": "",
             "app": {
                 "debug": True,
                 "image": "${DOCKER_REGISTRY}/atm-demo-accountproducer",
@@ -28,6 +27,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
             },
             "name": "account-producer",
             "namespace": "${NAMESPACE}",
+            "prefix": "",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -44,10 +44,9 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
                 },
             },
             "type": "producer",
-            "version": "2.7.0",
+            "version": "2.9.0",
         },
         {
-            "prefix": "",
             "app": {
                 "commandLine": {"ITERATION": 20, "REAL_TX": 19},
                 "debug": True,
@@ -67,6 +66,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
             },
             "name": "transaction-avro-producer",
             "namespace": "${NAMESPACE}",
+            "prefix": "",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -83,10 +83,9 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
                 },
             },
             "type": "producer",
-            "version": "2.7.0",
+            "version": "2.9.0",
         },
         {
-            "prefix": "",
             "app": {
                 "annotations": {
                     "consumerGroup": "atm-transactionjoiner-atm-fraud-joinedtransactions-topic"
@@ -111,6 +110,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
             },
             "name": "transaction-joiner",
             "namespace": "${NAMESPACE}",
+            "prefix": "",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -132,10 +132,9 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
                 },
             },
             "type": "streams-app",
-            "version": "2.7.0",
+            "version": "2.9.0",
         },
         {
-            "prefix": "",
             "app": {
                 "annotations": {
                     "consumerGroup": "atm-frauddetector-atm-fraud-possiblefraudtransactions-topic"
@@ -160,6 +159,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
             },
             "name": "fraud-detector",
             "namespace": "${NAMESPACE}",
+            "prefix": "",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -181,10 +181,9 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
                 },
             },
             "type": "streams-app",
-            "version": "2.7.0",
+            "version": "2.9.0",
         },
         {
-            "prefix": "",
             "app": {
                 "annotations": {
                     "consumerGroup": "atm-accountlinker-atm-fraud-output-topic"
@@ -223,6 +222,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
             },
             "name": "account-linker",
             "namespace": "${NAMESPACE}",
+            "prefix": "",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -244,10 +244,9 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
                 },
             },
             "type": "streams-app",
-            "version": "2.7.0",
+            "version": "2.9.0",
         },
         {
-            "prefix": "",
             "app": {
                 "auto.create": True,
                 "connection.ds.pool.size": 5,
@@ -274,6 +273,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
             },
             "name": "postgresql-connector",
             "namespace": "${NAMESPACE}",
+            "prefix": "",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-kafka-connect-resetter",
