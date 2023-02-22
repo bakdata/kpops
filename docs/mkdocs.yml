@@ -2,7 +2,7 @@ site_name: KPOps
 repo_url: https://github.com/bakdata/kpops
 site_url: https://d9p.io
 remote_branch: gh-pages
-copyright: Copyright &copy; 2022 bakdata
+copyright: Copyright &copy; 2023 bakdata
 
 theme:
   name: "material"
