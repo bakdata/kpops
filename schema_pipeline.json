@@ -219,6 +219,11 @@
             "description": "Base Kubernetes app",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "kubernetes-app",
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -302,6 +307,11 @@
             "description": "Base component for Kafka-based components.\nProducer or streaming apps should inherit from this class.",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "kafka-app",
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -353,7 +363,7 @@
                 },
                 "version": {
                     "title": "Version",
-                    "default": "2.7.0",
+                    "default": "2.9.0",
                     "type": "string"
                 }
             },
@@ -440,12 +450,60 @@
             "title": "StreamsAppAutoScaling",
             "type": "object",
             "properties": {
-                "consumergroup": {
-                    "title": "Consumergroup",
+                "enabled": {
+                    "title": "Enabled",
+                    "description": "Whether to enable auto-scaling using KEDA.",
+                    "default": false,
+                    "type": "boolean"
+                },
+                "consumerGroup": {
+                    "title": "Consumer group",
+                    "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag.",
                     "type": "string"
+                },
+                "lagThreshold": {
+                    "title": "Lag threshold",
+                    "description": "Average target value to trigger scaling actions.",
+                    "type": "integer"
+                },
+                "pollingInterval": {
+                    "title": "Polling interval",
+                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.7/concepts/scaling-deployments/#pollinginterval",
+                    "default": 30,
+                    "type": "integer"
+                },
+                "cooldownPeriod": {
+                    "title": "Cooldown period",
+                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.7/concepts/scaling-deployments/#cooldownperiod",
+                    "default": 300,
+                    "type": "integer"
+                },
+                "offsetResetPolicy": {
+                    "title": "Offset reset policy",
+                    "description": "The offset reset policy for the consumer if the the consumer group is not yet subscribed to a partition.",
+                    "default": "earliest",
+                    "type": "string"
+                },
+                "minReplicas": {
+                    "title": "Min replica count",
+                    "description": "Minimum number of replicas KEDA will scale the resource down to. https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount",
+                    "default": 0,
+                    "type": "integer"
+                },
+                "maxReplicas": {
+                    "title": "Max replica count",
+                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.7/concepts/scaling-deployments/#maxreplicacount",
+                    "default": 1,
+                    "type": "integer"
+                },
+                "idleReplicas": {
+                    "title": "Idle replica count",
+                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.7/concepts/scaling-deployments/#idlereplicacount",
+                    "type": "integer"
                 },
                 "topics": {
                     "title": "Topics",
+                    "description": "List of auto-generated Kafka Streams topics used by the streams app.",
                     "default": [],
                     "type": "array",
                     "items": {
@@ -454,7 +512,8 @@
                 }
             },
             "required": [
-                "consumergroup"
+                "consumerGroup",
+                "lagThreshold"
             ]
         },
         "StreamsAppConfig": {
@@ -482,6 +541,11 @@
             "description": "StreamsApp component that configures a streams bootstrap app",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "streams-app",
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -533,7 +597,7 @@
                 },
                 "version": {
                     "title": "Version",
-                    "default": "2.7.0",
+                    "default": "2.9.0",
                     "type": "string"
                 }
             },
@@ -593,6 +657,11 @@
             "description": "Producer component\n\nThis producer holds configuration to use as values for the streams bootstrap produce helm chart.",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "producer",
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -644,7 +713,7 @@
                 },
                 "version": {
                     "title": "Version",
-                    "default": "2.7.0",
+                    "default": "2.9.0",
                     "type": "string"
                 }
             },
@@ -663,6 +732,11 @@
             "title": "KafkaSourceConnector",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "kafka-source-connector",
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -737,6 +811,11 @@
             "title": "KafkaSinkConnector",
             "type": "object",
             "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "kafka-sink-connector",
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
