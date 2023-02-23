@@ -12,8 +12,8 @@
       brokers: ${broker} # required
       schemaRegistryUrl: ${schema_registry_url}
       inputTopics:
-        - "topic1"
-        - "topic2"
+        - topic1
+        - topic2
       outputTopic: output-topic
       inputPattern: input-pattern
       extraInputTopics:
