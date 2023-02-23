@@ -2,7 +2,7 @@ site_name: KPOps
 repo_url: https://github.com/bakdata/kpops
 site_url: https://d9p.io
 remote_branch: gh-pages
-copyright: Copyright &copy; 2022 bakdata
+copyright: Copyright &copy; 2023 bakdata
 
 theme:
   name: "material"
@@ -62,18 +62,17 @@ markdown_extensions:
           format: !!python/name:pymdownx.superfences.fence_code_format
 
 nav:
+  - Home:
+      index.md
   - User Guide:
-    - user/index.md
+    - user/what-is-kpops.md
     - Getting Started:
-      - user/getting-started/index.md
       - user/getting-started/setup.md
       - user/getting-started/quick-start.md
       - user/getting-started/teardown.md
     - Examples:
-      - user/examples/index.md
       - user/examples/atm-fraud-pipeline.md
     - References:
-      - user/references/index.md
+      - user/references/components.md
       - user/references/cli-commands.md
       - user/references/variables.md
-      - user/references/components.md
