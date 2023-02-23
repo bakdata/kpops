@@ -171,7 +171,7 @@ class Pipeline:
             **component_data,
         )
         component = self.enrich_component(component)
-        # weave from topics
+        # apply previous component ToSection
         if self.components:
             previous_component = self.components[-1]
             component.weave_from_topics(previous_component.to)
