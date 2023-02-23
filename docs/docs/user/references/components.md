@@ -113,15 +113,13 @@ Refer to [KafkaApp](#kafkaapp).
 
 Refer to [KafkaApp](#kafkaapp).
 
-#### reset
-
-Runs a reset job in the cluster that is deleted by default after a successful
-completion.
+#### [reset](https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app-cleanup-job#streams-app-cleanup-helm-chart)
 
 - Reset the consumer group offsets
 - Reset Kafka Streams state
 
 #### [clean](https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app-cleanup-job#streams-app-cleanup-helm-chart)
+<!-- same as reset, but `deleteOutput=true` -->
 
 - Reset Kafka Streams state
 - Delete the app's output topics
