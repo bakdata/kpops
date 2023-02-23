@@ -129,7 +129,6 @@ class Pipeline:
         return pipeline
 
     def parse_components(self, component_list: list[dict]) -> None:
-        previous_component: PipelineComponent | None = None
         for component_data in component_list:
             try:
                 try:
@@ -140,13 +139,10 @@ class Pipeline:
                     )
                 component_class = self.registry[component_type]
                 inflated_components = self.apply_component(
-                    component_data,
-                    component_class,
-                    previous_component,
+                    component_data, component_class
                 )
                 self.populate_pipeline_component_names(inflated_components)
                 self.components.extend(inflated_components)
-                previous_component = inflated_components.pop()
             except Exception as ex:
                 if "name" in component_data:
                     raise ParsingException(
@@ -167,10 +163,7 @@ class Pipeline:
                     setattr(component.app, "name_override", component.name)
 
     def apply_component(
-        self,
-        component_data: dict,
-        component_class: type[PipelineComponent],
-        previous_component: PipelineComponent | None,
+        self, component_data: dict, component_class: type[PipelineComponent]
     ) -> list[PipelineComponent]:
         component = component_class(
             config=self.config,
@@ -179,7 +172,8 @@ class Pipeline:
         )
         component = self.enrich_component(component)
         # weave from topics
-        if previous_component and previous_component.to:
+        if self.components:
+            previous_component = self.components[-1]
             component.weave_from_topics(previous_component.to)
 
         # inflate & enrich components
@@ -188,8 +182,7 @@ class Pipeline:
             enriched_component = self.enrich_component(inflated_component)
             if enriched_components:
                 prev = enriched_components[-1]
-                if prev.to:
-                    enriched_component.weave_from_topics(prev.to)
+                enriched_component.weave_from_topics(prev.to)
             enriched_components.append(enriched_component)
 
         return enriched_components

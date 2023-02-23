@@ -138,12 +138,12 @@ class PipelineComponent(BaseDefaultsComponent):
             case OutputTopicTypes.EXTRA if topic.role:
                 self.add_extra_output_topic(name, topic.role)
 
-    def weave_from_topics(self, prev_component_to: ToSection) -> None:
+    def weave_from_topics(self, prev_component_to: ToSection | None) -> None:
         """
         Weave output topics of upstream component or from component into config
         Override this method if you want to apply custom logic
         """
-        if self.from_:
+        if not prev_component_to or self.from_:
             return
         input_topics = [
             topic_name
