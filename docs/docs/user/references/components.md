@@ -199,7 +199,7 @@ Lets other systems pull data from Apache Kafka.
 
 The associated sink connector is removed.
 
-#### reset
+#### [reset](https://github.com/bakdata/kafka-connect-resetter/#sink-resetter)
 
 Reset the consumer group offsets.
 
@@ -240,7 +240,7 @@ Manages source connectors in your Kafka Connect cluster.
 
 Remove the source connector from the Kafka Connect cluster.
 
-#### reset
+#### [reset](https://github.com/bakdata/kafka-connect-resetter/#source-resetter)
 
 Delete state associated with the connector
 
