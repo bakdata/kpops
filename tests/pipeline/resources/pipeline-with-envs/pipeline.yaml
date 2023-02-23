@@ -1,4 +1,5 @@
 - type: scheduled-producer
+  name: input-producer
   app:
     commandLine:
       FAKE_ARG: fake-arg-value

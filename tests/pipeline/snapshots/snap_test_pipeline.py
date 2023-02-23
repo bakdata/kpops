@@ -687,16 +687,16 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                 "commandLine": {"FAKE_ARG": "override-arg"},
                 "image": "example-registry/fake-image",
                 "imageTag": "0.0.1",
-                "nameOverride": "resources-pipeline-with-envs-scheduled-producer",
+                "nameOverride": "resources-pipeline-with-envs-input-producer",
                 "schedule": "20 3/8 * * *",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "extraOutputTopics": {},
-                    "outputTopic": "resources-pipeline-with-envs-scheduled-producer",
+                    "outputTopic": "resources-pipeline-with-envs-input-producer",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "name": "resources-pipeline-with-envs-scheduled-producer",
+            "name": "resources-pipeline-with-envs-input-producer",
             "namespace": "example-namespace",
             "prefix": "resources-pipeline-with-envs-",
             "repoConfig": {
@@ -707,7 +707,7 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
             "to": {
                 "models": {"com/bakdata/kafka/fake": "1.0.0"},
                 "topics": {
-                    "resources-pipeline-with-envs-scheduled-producer": {
+                    "resources-pipeline-with-envs-input-producer": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 12,
                         "type": "output",
@@ -740,7 +740,7 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-pipeline-with-envs-converter-error",
-                    "inputTopics": ["resources-pipeline-with-envs-scheduled-producer"],
+                    "inputTopics": ["resources-pipeline-with-envs-input-producer"],
                     "outputTopic": "resources-pipeline-with-envs-converter",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
