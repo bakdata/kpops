@@ -198,7 +198,7 @@ class Pipeline:
         self,
         component: PipelineComponent,
     ) -> PipelineComponent:
-        env_component_definition = self.env_components_index.get(component.type, {})
+        env_component_definition = self.env_components_index.get(component.name, {})
         pair = update_nested_pair(
             env_component_definition, component.dict(by_alias=True)
         )
