@@ -684,11 +684,11 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
     "components": [
         {
             "app": {
-                "commandLine": {"FAKE_ARG": "fake-arg-value"},
+                "commandLine": {"FAKE_ARG": "override-arg"},
                 "image": "example-registry/fake-image",
                 "imageTag": "0.0.1",
                 "nameOverride": "resources-pipeline-with-envs-scheduled-producer",
-                "schedule": "30 3/8 * * *",
+                "schedule": "20 3/8 * * *",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "extraOutputTopics": {},
