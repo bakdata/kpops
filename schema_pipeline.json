@@ -681,8 +681,8 @@
                     "title": "Name",
                     "type": "string"
                 },
-                "from_": {
-                    "title": "From ",
+                "from": {
+                    "title": "From",
                     "type": "null"
                 },
                 "app": {

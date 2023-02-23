@@ -26,7 +26,7 @@ class ProducerApp(KafkaApp):
         default="producer", exclude=True
     )
     app: ProducerValues
-    from_: None = None
+    from_: None = Field(default=None, alias="from", title="From")
 
     class Config(BaseConfig):
         extra = Extra.allow
