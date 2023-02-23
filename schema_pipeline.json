@@ -683,6 +683,7 @@
                 },
                 "from": {
                     "title": "From",
+                    "description": "Producer doesn't support FromSection",
                     "type": "null"
                 },
                 "app": {
