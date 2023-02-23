@@ -1,8 +1,9 @@
 # Components
 
 This section explains the different components of KPOps, their usage and
-configuration. To learn more about their hierarchy, visit the
-[architecture](/docs/developer/architecture/component-inheritance.md) page.
+configuration.
+<!-- To learn more about their hierarchy, visit the
+[architecture](/docs/developer/architecture/component-inheritance.md) page. -->
 
 ## KubernetesApp
 
@@ -33,11 +34,11 @@ Uninstall Helm release.
 
 #### reset
 
-Not implemented.
+Do nothing.
 
 #### clean
 
-Not implemented.
+Do nothing.
 
 ## KafkaApp
 
@@ -45,7 +46,7 @@ Sub class of [_KubernetesApp_](#kubernetesapp).
 
 ### Usage
 
-- Defines a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap)
+- Defines a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap#usage)
 component
 - Should not be used in `pipeline.yaml` as the component can be defined as either a
 [StreamsApp](#streamsapp) or a [Producer](#producer)
@@ -76,11 +77,11 @@ Refer to [KubernetesApp](#kubernetesapp).
 
 #### reset
 
-Not implemented.
+Do nothing.
 
 #### clean
 
-Not implemented.
+Do nothing.
 
 ## StreamsApp
 
@@ -89,9 +90,8 @@ Sub class of [_KafkaApp_](#kafkaapp).
 ### Usage
 
 Configures a
-[streams-bootstrap app](https://github.com/bakdata/streams-bootstrap) which in
-turn configures a
-[Kafka Streams app](https://kafka.apache.org/documentation/streams/).
+[streams-bootstrap](https://github.com/bakdata/streams-bootstrap)
+[Kafka Streams app](https://github.com/bakdata/streams-bootstrap#kafka-streams)
 
 ### Configuration
 
@@ -121,7 +121,7 @@ completion.
 - Reset the consumer group offsets
 - Reset Kafka Streams state
 
-#### clean
+#### [clean](https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app-cleanup-job#streams-app-cleanup-helm-chart)
 
 - Reset Kafka Streams state
 - Delete the app's output topics
@@ -134,7 +134,9 @@ Sub class of [_KafkaApp_](#kafkaapp).
 
 ### Usage
 
-Produces events to a Kafka cluster.
+Configures a
+[streams-bootstrap](https://github.com/bakdata/streams-bootstrap)
+[Kafka producer app](https://github.com/bakdata/streams-bootstrap#kafka-producer)
 
 ### Configuration
 
@@ -158,16 +160,18 @@ Refer to [KafkaApp](#kafkaapp).
 
 #### reset
 
-Not implemented, producers are stateless.
+Do nothing, producers are stateless.
 
-#### clean
+#### [clean](https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app-cleanup-job#producer-app-cleanup-helm-chart)
 
 - Delete the output topics of the Kafka producer
 - Delete all associated schemas in the Schema Registry
 
 ## KafkaSinkConnector
 
-Sub class of [KafkaConnector](/docs/user/references/config.md)
+<!-- CHANGE LINK TO A DOCS PAGE WHEN CREATED -->
+<!-- Sub class of [KafkaConnector](/docs/user/references/config.md) -->
+Sub class of [KafkaConnector](https://github.com/bakdata/kpops/blob/main/kpops/components/base_components/kafka_connect.py#L35)
 
 ### Usage
 
@@ -206,11 +210,13 @@ Reset the consumer group offsets.
 
 ## KafkaSourceConnector
 
-Sub class of [KafkaConnector](/docs/user/references/config.md)
+<!-- CHANGE LINK TO A DOCS PAGE WHEN CREATED -->
+<!-- Sub class of [KafkaConnector](/docs/user/references/config.md) -->
+Sub class of [KafkaConnector](https://github.com/bakdata/kpops/blob/main/kpops/components/base_components/kafka_connect.py#L35)
 
 ### Usage
 
-Manages source connectors in your Kafka connect cluster.
+Manages source connectors in your Kafka Connect cluster.
 
 ### Configuration
 

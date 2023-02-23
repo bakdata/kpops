@@ -5,10 +5,9 @@
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example.
   app: # required
-    key1:
-      key4: value3
-    key2: value1
-    key3: value2
+    image: exampleImage # Example
+    debug: false # Example
+    commandLine: {} # Example
   # Topic(s) from which the component will read input
   from:
     topics: # required
