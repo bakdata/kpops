@@ -229,7 +229,12 @@
                     "type": "string"
                 },
                 "from": {
-                    "$ref": "#/definitions/FromSection"
+                    "title": "From",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ]
                 },
                 "app": {
                     "$ref": "#/definitions/KubernetesAppConfig"
@@ -317,7 +322,12 @@
                     "type": "string"
                 },
                 "from": {
-                    "$ref": "#/definitions/FromSection"
+                    "title": "From",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ]
                 },
                 "app": {
                     "$ref": "#/definitions/KafkaAppConfig"
@@ -551,7 +561,12 @@
                     "type": "string"
                 },
                 "from": {
-                    "$ref": "#/definitions/FromSection"
+                    "title": "From",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ]
                 },
                 "app": {
                     "$ref": "#/definitions/StreamsAppConfig"
@@ -667,7 +682,9 @@
                     "type": "string"
                 },
                 "from": {
-                    "$ref": "#/definitions/FromSection"
+                    "title": "From",
+                    "description": "Producer doesn't support FromSection",
+                    "type": "null"
                 },
                 "app": {
                     "$ref": "#/definitions/ProducerValues"
@@ -742,7 +759,12 @@
                     "type": "string"
                 },
                 "from": {
-                    "$ref": "#/definitions/FromSection"
+                    "title": "From",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ]
                 },
                 "app": {
                     "$ref": "#/definitions/KafkaConnectConfig"
@@ -821,7 +843,12 @@
                     "type": "string"
                 },
                 "from": {
-                    "$ref": "#/definitions/FromSection"
+                    "title": "From",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ]
                 },
                 "app": {
                     "$ref": "#/definitions/KafkaConnectConfig"
