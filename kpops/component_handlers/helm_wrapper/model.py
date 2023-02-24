@@ -91,7 +91,7 @@ class YamlReader:
         if notes in self.content:
             rindex = self.content.rindex(notes)
         else:
-            rindex=-1
+            rindex = -1
         self.content = self.content[index:rindex]
         yield from self.content.splitlines()
         yield "---"  # add final divider to make parsing easier
