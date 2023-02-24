@@ -87,7 +87,11 @@ class YamlReader:
     def __iter__(self) -> Iterator[str]:
         # discard all output before template documents
         index = self.content.index("---")
-        rindex = self.content.rindex("NOTES:")
+        notes = "NOTES:"
+        if notes in self.content:
+            rindex = self.content.rindex(notes)
+        else:
+            rindex=-1
         self.content = self.content[index:rindex]
         yield from self.content.splitlines()
         yield "---"  # add final divider to make parsing easier
