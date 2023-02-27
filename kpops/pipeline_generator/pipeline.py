@@ -190,7 +190,7 @@ class Pipeline:
             if enriched_component.from_:
                 for from_component_name in enriched_component.from_.components:
                     from_component = self._find_component(from_component_name)
-                    enriched_component.weave_from_topics(from_component.to)
+                    enriched_component.weave_from_components(from_component.to)
 
         return enriched_components
 
