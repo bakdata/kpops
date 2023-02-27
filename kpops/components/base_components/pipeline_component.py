@@ -143,16 +143,8 @@ class PipelineComponent(BaseDefaultsComponent):
         Weave output topics of upstream component or from component into config
         Override this method if you want to apply custom logic
         """
-        if not to or self.from_:
-            return
-        self.apply_to_as_inputs(to)
-
-    def weave_from_components(self, to: ToSection | None) -> None:
         if not to:
             return
-        self.apply_to_as_inputs(to)
-
-    def apply_to_as_inputs(self, to: ToSection) -> None:
         input_topics = [
             topic_name
             for topic_name, topic_config in to.topics.items()
