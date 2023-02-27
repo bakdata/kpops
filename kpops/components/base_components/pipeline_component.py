@@ -148,7 +148,7 @@ class PipelineComponent(BaseDefaultsComponent):
         input_topics = [
             topic_name
             for topic_name, topic_config in prev_component_to.topics.items()
-            if topic_config.type is OutputTopicTypes.OUTPUT
+            if topic_config.type == OutputTopicTypes.OUTPUT
         ]
         if input_topics:
             self.add_input_topics(input_topics)
