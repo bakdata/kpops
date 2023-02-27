@@ -1,4 +1,4 @@
-# Quick-start
+# Quick Start
 
 ## Word-count
 
@@ -48,7 +48,7 @@ redis bitnami/redis
 
 #### Port forwarding
 
-Before we deploy the pipeline, we need to forward the ports of `kafka-rest-proxy` and `kafka-connect`. 
+Before we deploy the pipeline, we need to forward the ports of `kafka-rest-proxy` and `kafka-connect`.
 Run the following commands in two different terminals.
 
 ```shell
@@ -91,7 +91,7 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
     --config ./examples/bakdata/word-count/config.yaml \
     --execute
     ```
-   
+
 !!! Note
     You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be
     deployed correctly.
@@ -110,7 +110,7 @@ After that open [http://localhost:8080](http://localhost:8080) in your browser.
 You should be able to see pipeline shown in the image below:
 
 <figure markdown>
-  ![word-count-pipeline](../../images/word-counter-pipeline_streams-explorer.png)
+  ![word-count-pipeline](../../images/word-count-pipeline_streams-explorer.png)
   <figcaption>An overview of Word-count pipeline shown in Streams Explorer</figcaption>
 </figure>
 

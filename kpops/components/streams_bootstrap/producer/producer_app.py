@@ -6,6 +6,7 @@ from pydantic import BaseConfig, Extra, Field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaApp
+from kpops.components.base_components.models.from_section import FromSection
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -26,6 +27,12 @@ class ProducerApp(KafkaApp):
         default="producer", exclude=True
     )
     app: ProducerValues
+    from_: None = Field(
+        default=None,
+        alias="from",
+        title="From",
+        description=f"Producer doesn't support {FromSection.__name__}",
+    )
 
     class Config(BaseConfig):
         extra = Extra.allow

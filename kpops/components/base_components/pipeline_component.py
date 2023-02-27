@@ -23,7 +23,7 @@ from kpops.utils.yaml_loading import substitute
 
 class PipelineComponent(BaseDefaultsComponent):
     name: str
-    from_: FromSection | None = Field(default=None, alias="from")
+    from_: FromSection | None = Field(default=None, alias="from", title="From")
     app: object | None = None
     to: ToSection | None = None
     prefix: str = Field(
@@ -78,6 +78,7 @@ class PipelineComponent(BaseDefaultsComponent):
         return self.substitute_component_names(
             topic_name,
             self.type,
+            component_name=self.name,
             error_topic_name=error_topic_name,
             output_topic_name=output_topic_name,
         )
@@ -178,10 +179,13 @@ class PipelineComponent(BaseDefaultsComponent):
 
         :param api_version: Kubernetes API version used for
             Capabilities.APIVersions, `--api_versions` in Helm
-        :param str ca_file: verify certificates of HTTPS-enabled servers
+        :type api_version: str
+        :param ca_file: verify certificates of HTTPS-enabled servers
             using this CA bundle, `--ca-file` in Helm
-        :param str cert_file: identify HTTPS client using this SSL certificate
+        :type ca_file: str
+        :param cert_file: identify HTTPS client using this SSL certificate
             file, `--cert-file` in Helm
+        :type cert_file: str
         """
 
     def deploy(self, dry_run: bool) -> None:

@@ -1,8 +1,9 @@
 - type: scheduled-producer
+  name: input-producer
   app:
     commandLine:
-      FAKE_ARG: "fake-arg-value"
-    schedule: "30 3/8 * * *"
+      FAKE_ARG: fake-arg-value
+    schedule: 30 3/8 * * *
 - type: converter
   app:
     commandLine:
@@ -15,7 +16,7 @@
 - type: filter
   app:
     commandLine:
-      TYPE: "nothing"
+      TYPE: nothing
     resources:
       requests:
         memory: 3G

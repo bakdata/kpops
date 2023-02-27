@@ -9,7 +9,11 @@ from kpops.component_handlers.schema_handler.schema_provider import (
 )
 from kpops.components import KafkaSinkConnector
 from kpops.components.base_components import PipelineComponent
-from kpops.components.base_components.models.to_section import OutputTopicTypes
+from kpops.components.base_components.models.to_section import (
+    OutputTopicTypes,
+    TopicConfig,
+    ToSection,
+)
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
@@ -41,7 +45,7 @@ class InflateStep(StreamsApp):
             for topic_name, topic_config in self.to.topics.items():
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
-                        name="sink-connector",
+                        name="inflated-sink-connector",
                         config=self.config,
                         handlers=self.handlers,
                         namespace="example-namespace",
@@ -49,8 +53,25 @@ class InflateStep(StreamsApp):
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },
+                        to=ToSection(
+                            topics={
+                                "${component_type}": TopicConfig(
+                                    type=OutputTopicTypes.OUTPUT
+                                ),
+                                "${component_name}": TopicConfig(
+                                    type=OutputTopicTypes.EXTRA, role="test"
+                                ),
+                            }
+                        ),
                     )
                     inflate_steps.append(kafka_connector)
+                    streams_app = StreamsApp(
+                        name="inflated-streams-app",
+                        config=self.config,
+                        handlers=self.handlers,
+                    )
+                    streams_app.set_output_topic("${component_type}")
+                    inflate_steps.append(streams_app)
 
         return inflate_steps
 

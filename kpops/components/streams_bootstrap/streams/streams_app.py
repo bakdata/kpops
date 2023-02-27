@@ -89,6 +89,6 @@ class StreamsApp(KafkaApp):
             self.substitute_component_variables(topic)
             for topic in self.app.autoscaling.topics
         ]
-        self.app.autoscaling.consumergroup = self.substitute_component_variables(
-            self.app.autoscaling.consumergroup
+        self.app.autoscaling.consumer_group = self.substitute_component_variables(
+            self.app.autoscaling.consumer_group
         )

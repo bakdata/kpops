@@ -66,9 +66,8 @@ class Pipeline:
         self.handlers = handlers
         self.config = config
         self.registry = registry
-        self.parse_components(component_list, environment_components)
-
-        super().__init__()
+        self.env_components_index = create_env_components_index(environment_components)
+        self.parse_components(component_list)
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
@@ -129,30 +128,29 @@ class Pipeline:
         pipeline = cls(main_content, env_content, registry, config, handlers)
         return pipeline
 
-    def parse_components(
-        self, component_list: list[dict], environment_components: list[dict]
-    ) -> None:
-        env_components_index = create_env_components_index(environment_components)
+    def parse_components(self, component_list: list[dict]) -> None:
         previous_component: PipelineComponent | None = None
-        for component in component_list:
+        for component_data in component_list:
             try:
                 try:
-                    component_type: str = component["type"]
+                    component_type: str = component_data["type"]
                 except KeyError:
                     raise ValueError(
                         "Every component must have a type defined, this component does not have one."
                     )
                 component_class = self.registry[component_type]
                 inflated_components = self.apply_component(
-                    component, component_class, env_components_index, previous_component
+                    component_data,
+                    component_class,
+                    previous_component,
                 )
                 self.populate_pipeline_component_names(inflated_components)
                 self.components.extend(inflated_components)
                 previous_component = inflated_components.pop()
             except Exception as ex:
-                if "name" in component:
+                if "name" in component_data:
                     raise ParsingException(
-                        f"Error enriching {component['type']} component {component['name']}"
+                        f"Error enriching {component_data['type']} component {component_data['name']}"
                     ) from ex
                 else:
                     raise ParsingException() from ex
@@ -170,62 +168,67 @@ class Pipeline:
 
     def apply_component(
         self,
-        component: dict,
+        component_data: dict,
         component_class: type[PipelineComponent],
-        env_components_index: dict[str, dict],
         previous_component: PipelineComponent | None,
     ) -> list[PipelineComponent]:
-        # Init component for main pipeline
-        component_object = self.enrich_component(
-            component, component_class, env_components_index
+        component = component_class(
+            config=self.config,
+            handlers=self.handlers,
+            **component_data,
         )
-
+        component = self.enrich_component(component)
         # weave from topics
         if previous_component and previous_component.to:
-            component_object.weave_from_topics(previous_component.to)
+            component.weave_from_topics(previous_component.to)
 
-        return component_object.inflate()
+        # inflate & enrich components
+        enriched_components: list[PipelineComponent] = []
+        for inflated_component in component.inflate():  # TODO: recursively:
+            enriched_component = self.enrich_component(inflated_component)
+            if enriched_components:
+                prev = enriched_components[-1]
+                if prev.to:
+                    enriched_component.weave_from_topics(prev.to)
+            enriched_components.append(enriched_component)
+
+        return enriched_components
 
     def enrich_component(
         self,
-        component: dict,
-        component_class: type[PipelineComponent],
-        env_components_index: dict[str, dict],
+        component: PipelineComponent,
     ) -> PipelineComponent:
-        component_object: PipelineComponent = component_class(
-            handlers=self.handlers, config=self.config, **component
-        )
-        env_component_definition = env_components_index.get(component_object.name, {})
+        env_component_definition = self.env_components_index.get(component.name, {})
         pair = update_nested_pair(
-            env_component_definition,
-            component_object.dict(by_alias=True),
+            env_component_definition, component.dict(by_alias=True)
         )
 
-        json_object = self.substitute_component_specific_variables(
-            component_object, pair
-        )
+        component_data = self.substitute_component_specific_variables(component, pair)
+
+        component_class = type(component)
         return component_class(
             enrich=False,
-            handlers=self.handlers,
             config=self.config,
-            **json_object,
+            handlers=self.handlers,
+            **component_data,
         )
 
     @staticmethod
     def substitute_component_specific_variables(
-        component_object: PipelineComponent, pair: dict
+        component: PipelineComponent, pair: dict  # TODO: better parameter name for pair
     ) -> dict:
         # Override component config with component config in pipeline environment definition
-        json_object: dict = json.loads(
+        # HACK: why do we need an intermediate JSON object?
+        component_data: dict = json.loads(
             substitute(
                 json.dumps(pair),
                 {
-                    "component_type": component_object.type,
-                    "component_name": component_object.name,
+                    "component_type": component.type,
+                    "component_name": component.name,
                 },
             )
         )
-        return json_object
+        return component_data
 
     def __str__(self) -> str:
         return yaml.dump(
