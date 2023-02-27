@@ -7,3 +7,10 @@
 
 - type: streams-app
   name: consumer1
+
+- type: streams-app
+  name: consumer2
+  from:
+    topics: {}
+    components:
+      - ${pipeline_name}-producer
