@@ -27,7 +27,27 @@ class ParsingException(Exception):
 
 
 class PipelineComponents(BaseModel):
-    components: list[PipelineComponent]
+    components: list[PipelineComponent] = []
+
+    def extend(self, __iterable: list[PipelineComponent]) -> None:
+        self.components.extend(__iterable)
+
+    @property
+    def last(self) -> PipelineComponent:
+        return self.components[-1]
+
+    def find(self, component_name: str) -> PipelineComponent:
+        # TODO: optimize
+        for component in self.components:
+            if component_name == component.name:
+                return component
+        raise ValueError(f"Component {component_name} not found")
+
+    def __bool__(self) -> bool:
+        return bool(self.components)
+
+    def __iter__(self) -> Iterator[PipelineComponent]:
+        return iter(self.components)
 
 
 def create_env_components_index(
@@ -62,7 +82,7 @@ class Pipeline:
         config: PipelineConfig,
         handlers: ComponentHandlers,
     ):
-        self.components: list[PipelineComponent] = []
+        self.components: PipelineComponents = PipelineComponents()
         self.handlers = handlers
         self.config = config
         self.registry = registry
@@ -173,7 +193,7 @@ class Pipeline:
         component = self.enrich_component(component)
         # apply previous component ToSection
         if self.components:
-            previous_component = self.components[-1]
+            previous_component = self.components.last
             component.weave_from_topics(previous_component.to)
 
         # inflate & enrich components
@@ -189,17 +209,10 @@ class Pipeline:
         for enriched_component in enriched_components:
             if enriched_component.from_:
                 for from_component_name in enriched_component.from_.components:
-                    from_component = self._find_component(from_component_name)
+                    from_component = self.components.find(from_component_name)
                     enriched_component.weave_from_topics(from_component.to)
 
         return enriched_components
-
-    def _find_component(self, component_name: str) -> PipelineComponent:
-        # TODO: optimize
-        for component in self.components:
-            if component_name == component.name:
-                return component
-        raise ValueError(f"Component {component_name} not found")
 
     def enrich_component(
         self,
@@ -238,11 +251,7 @@ class Pipeline:
         return component_data
 
     def __str__(self) -> str:
-        return yaml.dump(
-            PipelineComponents(components=self.components).dict(
-                exclude_none=True, by_alias=True
-            )
-        )
+        return yaml.dump(self.components.dict(exclude_none=True, by_alias=True))
 
     def print_yaml(self, substitution: dict | None = None) -> None:
         syntax = Syntax(
