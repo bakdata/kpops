@@ -37,7 +37,7 @@ class FromTopic(BaseModel):
 
 class FromSection(BaseModel):
     topics: dict[str, FromTopic]
-    components: set[str] = set()
+    components: list[str] = []
 
     class Config(BaseConfig):
         extra = Extra.forbid
