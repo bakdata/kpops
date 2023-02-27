@@ -1,0 +1,91 @@
+# StreamsApp component that configures a streams bootstrap app.
+# More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
+- type: streams-app # required
+  name: streams-app # required
+  namespace: namespace # required
+  # No arbitrary keys are allowed under `app`here
+  # Allowed configs:
+  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
+  app: # required
+    # Streams Bootstrap streams section
+    streams: # required, streams-app-specific
+      brokers: ${broker} # required
+      schemaRegistryUrl: ${schema_registry_url}
+      inputTopics:
+        - topic1
+        - topic2
+      outputTopic: output-topic
+      inputPattern: input-pattern
+      extraInputTopics:
+        input_role1:
+          - input_topic1
+          - input_topic2
+        input_role2:
+          - input_topic3
+          - input_topic4
+      extraInputPatterns:
+        pattern_role1: input_pattern1
+      extraOutputTopics: 
+        output_role1: output_topic1
+        output_role2: output_topic2
+      errorTopic: error-topic
+      config: 
+        my.streams.config: my.value
+    nameOverride: override-with-this-name # streams-app-specific
+    autoscaling: # streams-app-specific
+      consumerGroup: consumer-group # required
+      lagThreshold: 0 # Average target value to trigger scaling actions.
+      enabled: false # Whether to enable auto-scaling using KEDA.
+      # This is the interval to check each trigger on.
+      # https://keda.sh/docs/2.7/concepts/scaling-deployments/#pollinginterval
+      pollingInterval: 30
+      # The period to wait after the last trigger reported active before scaling
+      #  the resource back to 0. https://keda.sh/docs/2.7/concepts/scaling-deployments/#cooldownperiod
+      cooldownPeriod: 300
+      # The offset reset policy for the consumer if the the consumer group is
+      # not yet subscribed to a partition.
+      offsetResetPolicy: earliest
+      # This setting is passed to the HPA definition that KEDA will create for a
+      # given resource and holds the maximum number of replicas of the target resouce.
+      # https://keda.sh/docs/2.7/concepts/scaling-deployments/#maxreplicacount
+      maxReplicas: 1
+      # If this property is set, KEDA will scale the resource down to this
+      # number of replicas.
+      # https://keda.sh/docs/2.7/concepts/scaling-deployments/#idlereplicacount
+      idleReplicas: 0
+      topics: # List of auto-generated Kafka Streams topics used by the streams app.
+        - topic1
+        - topic2
+  # Topic(s) from which the component will read input
+  from:
+    topics: # required
+      ${pipeline_name}-input-topic:
+        type: input # required
+        # role: topic-role # only used if type is `extra` or `extra-pattern`
+  # Topic(s) into which the component will write output
+  to:
+    topics: # required
+      ${pipeline_name}-output-topic:
+        type: output # required
+        # role: topic-role # only used if type is `extra`
+        keySchema: key-schema # must implement SchemaProvider to use
+        valueSchema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: 
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
+  # Pipeline prefix that will prefix every component name. If you wish to not 
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
+  # Helm repository configuration, the default value is given here
+  repoConfig:
+    repositoryName: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "2.7.0" # Helm chart version

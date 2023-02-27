@@ -38,7 +38,7 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
                 },
             },
             "type": "producer",
-            "version": "2.7.0",
+            "version": "2.9.0",
         },
         {
             "app": {
@@ -77,7 +77,7 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
                 },
             },
             "type": "streams-app",
-            "version": "2.7.0",
+            "version": "2.9.0",
         },
     ]
 }
@@ -123,10 +123,14 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "converter-resources-pipeline-with-inflate-converter",
+                    "consumerGroup": "converter-resources-pipeline-with-inflate-converter",
+                    "cooldownPeriod": 300,
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 1,
+                    "minReplicas": 0,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": [],
                 },
                 "commandLine": {"CONVERT_XML": True},
@@ -178,11 +182,14 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "filter-resources-pipeline-with-inflate-should-inflate",
+                    "consumerGroup": "filter-resources-pipeline-with-inflate-should-inflate",
+                    "cooldownPeriod": 300,
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 4,
                     "minReplicas": 4,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": ["resources-pipeline-with-inflate-should-inflate"],
                 },
                 "commandLine": {"TYPE": "nothing"},
@@ -419,10 +426,14 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "converter-resources-first-pipeline-converter",
+                    "consumerGroup": "converter-resources-first-pipeline-converter",
+                    "cooldownPeriod": 300,
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 1,
+                    "minReplicas": 0,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": [],
                 },
                 "commandLine": {"CONVERT_XML": True},
@@ -472,11 +483,14 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "filter-resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
+                    "consumerGroup": "filter-resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name",
+                    "cooldownPeriod": 300,
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 4,
                     "minReplicas": 4,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": [
                         "resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name"
                     ],
@@ -670,19 +684,19 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
     "components": [
         {
             "app": {
-                "commandLine": {"FAKE_ARG": "fake-arg-value"},
+                "commandLine": {"FAKE_ARG": "override-arg"},
                 "image": "example-registry/fake-image",
                 "imageTag": "0.0.1",
-                "nameOverride": "resources-pipeline-with-envs-scheduled-producer",
-                "schedule": "30 3/8 * * *",
+                "nameOverride": "resources-pipeline-with-envs-input-producer",
+                "schedule": "20 3/8 * * *",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "extraOutputTopics": {},
-                    "outputTopic": "resources-pipeline-with-envs-scheduled-producer",
+                    "outputTopic": "resources-pipeline-with-envs-input-producer",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "name": "resources-pipeline-with-envs-scheduled-producer",
+            "name": "resources-pipeline-with-envs-input-producer",
             "namespace": "example-namespace",
             "prefix": "resources-pipeline-with-envs-",
             "repoConfig": {
@@ -693,7 +707,7 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
             "to": {
                 "models": {"com/bakdata/kafka/fake": "1.0.0"},
                 "topics": {
-                    "resources-pipeline-with-envs-scheduled-producer": {
+                    "resources-pipeline-with-envs-input-producer": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 12,
                         "type": "output",
@@ -707,10 +721,14 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "converter-resources-pipeline-with-envs-converter",
+                    "consumerGroup": "converter-resources-pipeline-with-envs-converter",
+                    "cooldownPeriod": 300,
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 1,
+                    "minReplicas": 0,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": [],
                 },
                 "commandLine": {"CONVERT_XML": True},
@@ -722,7 +740,7 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-pipeline-with-envs-converter-error",
-                    "inputTopics": ["resources-pipeline-with-envs-scheduled-producer"],
+                    "inputTopics": ["resources-pipeline-with-envs-input-producer"],
                     "outputTopic": "resources-pipeline-with-envs-converter",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
@@ -760,11 +778,14 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "filter-resources-pipeline-with-envs-filter",
+                    "consumerGroup": "filter-resources-pipeline-with-envs-filter",
+                    "cooldownPeriod": 300,
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 4,
                     "minReplicas": 4,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": ["resources-pipeline-with-envs-filter"],
                 },
                 "commandLine": {"TYPE": "nothing"},
@@ -859,10 +880,14 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "converter-resources-component-type-substitution-converter",
+                    "consumerGroup": "converter-resources-component-type-substitution-converter",
+                    "cooldownPeriod": 300,
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 1,
+                    "minReplicas": 0,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": [],
                 },
                 "commandLine": {"CONVERT_XML": True},
@@ -914,11 +939,14 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumergroup": "filter-resources-component-type-substitution-filter-app",
+                    "consumerGroup": "filter-resources-component-type-substitution-filter-app",
+                    "cooldownPeriod": 300,
                     "enabled": True,
-                    "lagThreshold": "10000",
+                    "lagThreshold": 10000,
                     "maxReplicas": 4,
                     "minReplicas": 4,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
                     "topics": ["resources-component-type-substitution-filter-app"],
                 },
                 "commandLine": {"TYPE": "nothing"},
@@ -1001,7 +1029,7 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
                 },
             },
             "type": "producer",
-            "version": "2.7.0",
+            "version": "2.9.0",
         },
         {
             "app": {
@@ -1040,7 +1068,7 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
                 },
             },
             "type": "streams-app",
-            "version": "2.7.0",
+            "version": "2.9.0",
         },
     ]
 }
@@ -1084,7 +1112,7 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
                 },
             },
             "type": "streams-app",
-            "version": "2.7.0",
+            "version": "2.9.0",
         },
         {
             "app": {
