@@ -835,6 +835,76 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
     ]
 }
 
+snapshots["TestPipeline.test_read_from_step test-pipeline"] = {
+    "components": [
+        {
+            "app": {
+                "nameOverride": "resources-read-from-step-producer",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "extraOutputTopics": {},
+                    "outputTopic": "resources-read-from-step-producer",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-read-from-step-producer",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-step-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-step-producer": {
+                        "configs": {},
+                        "type": "output",
+                    }
+                },
+            },
+            "type": "producer",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "nameOverride": "resources-read-from-step-consumer1",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-read-from-step-consumer1-error",
+                    "inputTopics": ["resources-read-from-step-producer"],
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-read-from-step-consumer1",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-step-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-step-consumer1-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    }
+                },
+            },
+            "type": "streams-app",
+            "version": "2.4.2",
+        },
+    ]
+}
+
 snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
     "components": [
         {

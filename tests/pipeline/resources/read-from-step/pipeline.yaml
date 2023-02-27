@@ -1,0 +1,9 @@
+- type: producer
+  name: producer
+  to:
+    topics:
+      ${output_topic_name}:
+        type: output
+
+- type: streams-app
+  name: consumer1

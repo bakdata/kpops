@@ -183,6 +183,25 @@ class TestPipeline:
         enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
+    def test_read_from_step(self, snapshot: SnapshotTest):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "read-from-step/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0
+
+        enriched_pipeline = yaml.safe_load(result.stdout)
+        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
     def test_with_env_defaults(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
