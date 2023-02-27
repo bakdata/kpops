@@ -195,6 +195,7 @@ class Pipeline:
         return enriched_components
 
     def _find_component(self, component_name: str) -> PipelineComponent:
+        # TODO: optimize
         for component in self.components:
             if component_name == component.name:
                 return component
