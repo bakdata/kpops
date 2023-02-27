@@ -80,13 +80,22 @@ class HelmTemplate:
         return cls(filepath, template)
 
 
+# Indicates the beginning of `NOTES:` section in the output of `helm install` or
+# `helm upgrade`
+HELM_NOTES = "\n\nNOTES:\n"
+
+
 @dataclass
 class YamlReader:
     content: str
 
     def __iter__(self) -> Iterator[str]:
         # discard all output before template documents
-        index = self.content.index("---")
-        self.content = self.content[index:-1]
+        start = self.content.index("---")
+        if HELM_NOTES in self.content:
+            end = self.content.index(HELM_NOTES)
+        else:
+            end = -1
+        self.content = self.content[start:end]
         yield from self.content.splitlines()
         yield "---"  # add final divider to make parsing easier

@@ -1,0 +1,43 @@
+# Kafka source connector
+- type: kafka-source-connector
+  name: kafka-source-connector # required
+  namespace: namespace # required, clean up jobs for the connector will run here
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example. Extensive documentation on
+  # sink connectors: https://kafka.apache.org/documentation/#sourceconnectconfigs
+  app: # required
+    key1:
+      tasks.max: 1
+      errors.tolerance: none
+  # Topic(s) into which the component will write output
+  to:
+    topics: # required
+      ${pipeline_name}-output-topic:
+        type: output # required
+        # role: topic-role # only used if type is `extra`
+        keySchema: key-schema # must implement SchemaProvider to use
+        valueSchema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
+  # Pipeline prefix that will prefix every component name. If you wish to not 
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
+  # Helm repository configuration
+  repoConfig:
+    repositoryName: my-repo # required
+    url: https://bakdata.github.io/kafka-connect-resetter/ # required
+    repoAuthFlags: 
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "1.0.4" # Helm chart version
+  # Overriding Kafka Connect Resetter Helm values. E.g. to override the
+  # Image Tag etc.
+  resetterValues:
+    imageTag: 1.2.3
+  offsetTopic: offset_topic

@@ -1,4 +1,4 @@
-# Quick-start
+# Quick Start
 
 ## Word-count
 

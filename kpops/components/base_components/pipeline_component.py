@@ -179,10 +179,13 @@ class PipelineComponent(BaseDefaultsComponent):
 
         :param api_version: Kubernetes API version used for
             Capabilities.APIVersions, `--api_versions` in Helm
-        :param str ca_file: verify certificates of HTTPS-enabled servers
+        :type api_version: str
+        :param ca_file: verify certificates of HTTPS-enabled servers
             using this CA bundle, `--ca-file` in Helm
-        :param str cert_file: identify HTTPS client using this SSL certificate
+        :type ca_file: str
+        :param cert_file: identify HTTPS client using this SSL certificate
             file, `--cert-file` in Helm
+        :type cert_file: str
         """
 
     def deploy(self, dry_run: bool) -> None:
