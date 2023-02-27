@@ -73,6 +73,14 @@
                     "additionalProperties": {
                         "$ref": "#/definitions/FromTopic"
                     }
+                },
+                "components": {
+                    "title": "Components",
+                    "default": [],
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 }
             },
             "required": [
