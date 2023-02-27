@@ -29,8 +29,8 @@ class ParsingException(Exception):
 class PipelineComponents(BaseModel):
     components: list[PipelineComponent] = []
 
-    def extend(self, __iterable: list[PipelineComponent]) -> None:
-        self.components.extend(__iterable)
+    def extend(self, components: list[PipelineComponent]) -> None:
+        self.components.extend(components)
 
     @property
     def last(self) -> PipelineComponent:
