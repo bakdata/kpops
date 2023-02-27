@@ -183,14 +183,14 @@ class TestPipeline:
         enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    def test_read_from_step(self, snapshot: SnapshotTest):
+    def test_read_from_component(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "read-from-step/pipeline.yaml"),
+                str(RESOURCE_PATH / "read-from-component/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH),
             ],

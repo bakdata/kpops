@@ -835,21 +835,21 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
     ]
 }
 
-snapshots["TestPipeline.test_read_from_step test-pipeline"] = {
+snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
     "components": [
         {
             "app": {
-                "nameOverride": "resources-read-from-step-producer",
+                "nameOverride": "resources-read-from-component-producer",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "extraOutputTopics": {},
-                    "outputTopic": "resources-read-from-step-producer",
+                    "outputTopic": "resources-read-from-component-producer",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "name": "resources-read-from-step-producer",
+            "name": "resources-read-from-component-producer",
             "namespace": "example-namespace",
-            "prefix": "resources-read-from-step-",
+            "prefix": "resources-read-from-component-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -858,7 +858,7 @@ snapshots["TestPipeline.test_read_from_step test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "resources-read-from-step-producer": {
+                    "resources-read-from-component-producer": {
                         "configs": {},
                         "type": "output",
                     }
@@ -869,20 +869,20 @@ snapshots["TestPipeline.test_read_from_step test-pipeline"] = {
         },
         {
             "app": {
-                "nameOverride": "resources-read-from-step-consumer1",
+                "nameOverride": "resources-read-from-component-consumer1",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
-                    "errorTopic": "resources-read-from-step-consumer1-error",
-                    "inputTopics": ["resources-read-from-step-producer"],
+                    "errorTopic": "resources-read-from-component-consumer1-error",
+                    "inputTopics": ["resources-read-from-component-producer"],
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "name": "resources-read-from-step-consumer1",
+            "name": "resources-read-from-component-consumer1",
             "namespace": "example-namespace",
-            "prefix": "resources-read-from-step-",
+            "prefix": "resources-read-from-component-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -891,7 +891,7 @@ snapshots["TestPipeline.test_read_from_step test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "resources-read-from-step-consumer1-error": {
+                    "resources-read-from-component-consumer1-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
@@ -904,21 +904,24 @@ snapshots["TestPipeline.test_read_from_step test-pipeline"] = {
         },
         {
             "app": {
-                "nameOverride": "resources-read-from-step-consumer2",
+                "nameOverride": "resources-read-from-component-consumer2",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
-                    "errorTopic": "resources-read-from-step-consumer2-error",
-                    "inputTopics": ["resources-read-from-step-producer"],
+                    "errorTopic": "resources-read-from-component-consumer2-error",
+                    "inputTopics": ["resources-read-from-component-producer"],
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "from": {"components": ["resources-read-from-step-producer"], "topics": {}},
-            "name": "resources-read-from-step-consumer2",
+            "from": {
+                "components": ["resources-read-from-component-producer"],
+                "topics": {},
+            },
+            "name": "resources-read-from-component-consumer2",
             "namespace": "example-namespace",
-            "prefix": "resources-read-from-step-",
+            "prefix": "resources-read-from-component-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -927,7 +930,7 @@ snapshots["TestPipeline.test_read_from_step test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "resources-read-from-step-consumer2-error": {
+                    "resources-read-from-component-consumer2-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
