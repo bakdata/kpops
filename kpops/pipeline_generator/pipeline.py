@@ -199,17 +199,16 @@ class Pipeline:
         enriched_components: list[PipelineComponent] = []
         for inflated_component in component.inflate():  # TODO: recursively:
             enriched_component = self.enrich_component(inflated_component)
-            if enriched_components:
-                prev = enriched_components[-1]
-                enriched_component.weave_from_topics(prev.to)
-            enriched_components.append(enriched_component)
-
-        # read from component
-        for enriched_component in enriched_components:
             if enriched_component.from_:
+                # read from component
                 for from_component_name in enriched_component.from_.components:
                     from_component = self.components.find(from_component_name)
                     enriched_component.weave_from_topics(from_component.to)
+            elif enriched_components:
+                # read from previous component
+                prev = enriched_components[-1]
+                enriched_component.weave_from_topics(prev.to)
+            enriched_components.append(enriched_component)
 
         return enriched_components
 
