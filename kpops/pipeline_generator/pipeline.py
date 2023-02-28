@@ -43,6 +43,12 @@ class PipelineComponents(BaseModel):
         self._populate_component_name(component)
         self.components.append(component)
 
+    def __bool__(self) -> bool:
+        return bool(self.components)
+
+    def __iter__(self) -> Iterator[PipelineComponent]:  # type: ignore[override]
+        return iter(self.components)
+
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:
         component.name = component.prefix + component.name
@@ -51,12 +57,6 @@ class PipelineComponents(BaseModel):
         ):
             if component.app and getattr(component.app, "name_override") is None:
                 setattr(component.app, "name_override", component.name)
-
-    def __bool__(self) -> bool:
-        return bool(self.components)
-
-    def __iter__(self) -> Iterator[PipelineComponent]:  # type: ignore[override]
-        return iter(self.components)
 
 
 def create_env_components_index(
@@ -90,44 +90,13 @@ class Pipeline:
         registry: Registry,
         config: PipelineConfig,
         handlers: ComponentHandlers,
-    ):
+    ) -> None:
         self.components: PipelineComponents = PipelineComponents()
         self.handlers = handlers
         self.config = config
         self.registry = registry
         self.env_components_index = create_env_components_index(environment_components)
         self.parse_components(component_list)
-
-    @staticmethod
-    def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
-        """
-        Adds the environment name from the PipelineConfig to the pipeline.yaml path
-        :param path: Path to pipeline.yaml file
-        :param config: The PipelineConfig
-        :return: Absolute path to the pipeline_<environment>.yaml
-        """
-        return path.with_stem(f"{path.stem}_{config.environment}")
-
-    @staticmethod
-    def set_pipeline_name_env_vars(base_dir: Path, path: Path) -> None:
-        """
-        Sets the environment variable pipeline_name relative to the given base_dir.
-        Moreover, for each sub-path an environment variable is set.
-        For example, for a given path ./data/v1/dev/pipeline.yaml the pipeline_name would be
-        set to data-v1-dev. Then the sub environment variables are set:
-        pipeline_name_0 = data
-        pipeline_name_1 = v1
-        pipeline_name_2 = dev
-        :param base_dir: Base directory to the pipeline files
-        :param path: Path to pipeline.yaml file
-        """
-        path_without_file = path.resolve().relative_to(base_dir.resolve()).parts[:-1]
-        if not path_without_file:
-            raise ValueError("The pipeline-base-dir should not equal the pipeline-path")
-        pipeline_name = "-".join(path_without_file)
-        os.environ["pipeline_name"] = pipeline_name
-        for level, parent in enumerate(path_without_file):
-            os.environ[f"pipeline_name_{level}"] = parent
 
     @classmethod
     def load_from_yaml(
@@ -219,11 +188,25 @@ class Pipeline:
             **component_data,
         )
 
+    def print_yaml(self, substitution: dict | None = None) -> None:
+        syntax = Syntax(
+            substitute(str(self), substitution), "yaml", background_color="default"
+        )
+        Console(
+            width=1000  # HACK: overwrite console width to avoid truncating output
+        ).print(syntax)
+
+    def __iter__(self) -> Iterator[PipelineComponent]:
+        return iter(self.components)
+
+    def __str__(self) -> str:
+        return yaml.dump(self.components.dict(exclude_none=True, by_alias=True))
+
     @staticmethod
     def substitute_component_specific_variables(
         component: PipelineComponent, pair: dict  # TODO: better parameter name for pair
     ) -> dict:
-        # Override component config with component config in pipeline environment definition
+        """Overrides component config with component config in pipeline environment definition."""
         # HACK: why do we need an intermediate JSON object?
         component_data: dict = json.loads(
             substitute(
@@ -236,16 +219,33 @@ class Pipeline:
         )
         return component_data
 
-    def __str__(self) -> str:
-        return yaml.dump(self.components.dict(exclude_none=True, by_alias=True))
+    @staticmethod
+    def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
+        """
+        Adds the environment name from the PipelineConfig to the pipeline.yaml path
+        :param path: Path to pipeline.yaml file
+        :param config: The PipelineConfig
+        :return: Absolute path to the pipeline_<environment>.yaml
+        """
+        return path.with_stem(f"{path.stem}_{config.environment}")
 
-    def print_yaml(self, substitution: dict | None = None) -> None:
-        syntax = Syntax(
-            substitute(str(self), substitution), "yaml", background_color="default"
-        )
-        Console(
-            width=1000  # HACK: overwrite console width to avoid truncating output
-        ).print(syntax)
-
-    def __iter__(self) -> Iterator[PipelineComponent]:
-        return iter(self.components)
+    @staticmethod
+    def set_pipeline_name_env_vars(base_dir: Path, path: Path) -> None:
+        """
+        Sets the environment variable pipeline_name relative to the given base_dir.
+        Moreover, for each sub-path an environment variable is set.
+        For example, for a given path ./data/v1/dev/pipeline.yaml the pipeline_name would be
+        set to data-v1-dev. Then the sub environment variables are set:
+        pipeline_name_0 = data
+        pipeline_name_1 = v1
+        pipeline_name_2 = dev
+        :param base_dir: Base directory to the pipeline files
+        :param path: Path to pipeline.yaml file
+        """
+        path_without_file = path.resolve().relative_to(base_dir.resolve()).parts[:-1]
+        if not path_without_file:
+            raise ValueError("The pipeline-base-dir should not equal the pipeline-path")
+        pipeline_name = "-".join(path_without_file)
+        os.environ["pipeline_name"] = pipeline_name
+        for level, parent in enumerate(path_without_file):
+            os.environ[f"pipeline_name_{level}"] = parent
