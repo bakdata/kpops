@@ -187,7 +187,7 @@ class Pipeline:
         component = self.enrich_component(component)
 
         # inflate & enrich components
-        for inflated_component in component.inflate():  # TODO: recursively:
+        for inflated_component in component.inflate():  # TODO: recursively
             enriched_component = self.enrich_component(inflated_component)
             if enriched_component.from_:
                 # read from specified components
