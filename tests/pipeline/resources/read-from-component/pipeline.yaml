@@ -13,3 +13,14 @@
   from:
     components:
       - ${pipeline_name}-producer
+  to:
+    topics:
+      ${output_topic_name}:
+        type: output
+
+- type: streams-app
+  name: consumer3
+  from:
+    components:
+      - ${pipeline_name}-producer
+      - ${pipeline_name}-consumer2

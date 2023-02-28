@@ -912,6 +912,7 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                     },
                     "errorTopic": "resources-read-from-component-consumer2-error",
                     "inputTopics": ["resources-read-from-component-producer"],
+                    "outputTopic": "resources-read-from-component-consumer2",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -930,7 +931,56 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
+                    "resources-read-from-component-consumer2": {
+                        "configs": {},
+                        "type": "output",
+                    },
                     "resources-read-from-component-consumer2-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    },
+                },
+            },
+            "type": "streams-app",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "nameOverride": "resources-read-from-component-consumer3",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-read-from-component-consumer3-error",
+                    "inputTopics": [
+                        "resources-read-from-component-producer",
+                        "resources-read-from-component-consumer2",
+                    ],
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "from": {
+                "components": [
+                    "resources-read-from-component-producer",
+                    "resources-read-from-component-consumer2",
+                ],
+                "topics": {},
+            },
+            "name": "resources-read-from-component-consumer3",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-component-consumer3-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
