@@ -196,8 +196,8 @@ class Pipeline:
                     enriched_component.weave_from_topics(from_component.to)
             elif self.components:
                 # read from previous component
-                prev = self.components.last
-                enriched_component.weave_from_topics(prev.to)
+                prev_component = self.components.last
+                enriched_component.weave_from_topics(prev_component.to)
             self.components.add(enriched_component)
 
     def enrich_component(
