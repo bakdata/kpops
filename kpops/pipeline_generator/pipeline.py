@@ -43,7 +43,8 @@ class PipelineComponents(BaseModel):
         self._populate_component_name(component)
         self.components.append(component)
 
-    def _populate_component_name(self, component: PipelineComponent) -> None:
+    @staticmethod
+    def _populate_component_name(component: PipelineComponent) -> None:
         component.name = component.prefix + component.name
         with suppress(
             AttributeError  # Some components like Kafka Connect do not have a name_override attribute
