@@ -36,8 +36,14 @@ class FromTopic(BaseModel):
 
 
 class FromSection(BaseModel):
-    topics: dict[str, FromTopic] = {}
-    components: list[str] = []
+    topics: dict[str, FromTopic] = Field(
+        default={},
+        description="Topics to read from.",
+    )
+    components: list[str] = Field(
+        default=[],
+        description="Components to read from.",
+    )
 
     class Config(BaseConfig):
         extra = Extra.forbid

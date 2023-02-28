@@ -69,6 +69,7 @@
             "properties": {
                 "topics": {
                     "title": "Topics",
+                    "description": "Topics to read from.",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -77,6 +78,7 @@
                 },
                 "components": {
                     "title": "Components",
+                    "description": "Components to read from.",
                     "default": [],
                     "type": "array",
                     "items": {
