@@ -839,15 +839,15 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
     "components": [
         {
             "app": {
-                "nameOverride": "resources-read-from-component-producer",
+                "nameOverride": "resources-read-from-component-producer1",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "extraOutputTopics": {},
-                    "outputTopic": "resources-read-from-component-producer",
+                    "outputTopic": "resources-read-from-component-producer1",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "name": "resources-read-from-component-producer",
+            "name": "resources-read-from-component-producer1",
             "namespace": "example-namespace",
             "prefix": "resources-read-from-component-",
             "repoConfig": {
@@ -858,7 +858,37 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "resources-read-from-component-producer": {
+                    "resources-read-from-component-producer1": {
+                        "configs": {},
+                        "type": "output",
+                    }
+                },
+            },
+            "type": "producer",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "nameOverride": "producer2",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "extraOutputTopics": {},
+                    "outputTopic": "resources-read-from-component-producer2",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "producer2",
+            "namespace": "example-namespace",
+            "prefix": "",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-component-producer2": {
                         "configs": {},
                         "type": "output",
                     }
@@ -876,9 +906,14 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-read-from-component-consumer1-error",
-                    "inputTopics": ["resources-read-from-component-producer"],
+                    "inputTopics": ["resources-read-from-component-producer1"],
+                    "outputTopic": "resources-read-from-component-consumer1",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
+            },
+            "from": {
+                "components": ["resources-read-from-component-producer1"],
+                "topics": {},
             },
             "name": "resources-read-from-component-consumer1",
             "namespace": "example-namespace",
@@ -891,12 +926,16 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
+                    "resources-read-from-component-consumer1": {
+                        "configs": {},
+                        "type": "output",
+                    },
                     "resources-read-from-component-consumer1-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
                         "valueSchema": "com.bakdata.kafka.DeadLetter",
-                    }
+                    },
                 },
             },
             "type": "streams-app",
@@ -911,13 +950,18 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-read-from-component-consumer2-error",
-                    "inputTopics": ["resources-read-from-component-producer"],
-                    "outputTopic": "resources-read-from-component-consumer2",
+                    "inputTopics": [
+                        "resources-read-from-component-producer1",
+                        "resources-read-from-component-consumer1",
+                    ],
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
             "from": {
-                "components": ["resources-read-from-component-producer"],
+                "components": [
+                    "resources-read-from-component-producer1",
+                    "resources-read-from-component-consumer1",
+                ],
                 "topics": {},
             },
             "name": "resources-read-from-component-consumer2",
@@ -931,16 +975,12 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "resources-read-from-component-consumer2": {
-                        "configs": {},
-                        "type": "output",
-                    },
                     "resources-read-from-component-consumer2-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
                         "valueSchema": "com.bakdata.kafka.DeadLetter",
-                    },
+                    }
                 },
             },
             "type": "streams-app",
@@ -955,20 +995,11 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-read-from-component-consumer3-error",
-                    "inputTopics": [
-                        "resources-read-from-component-producer",
-                        "resources-read-from-component-consumer2",
-                    ],
+                    "inputTopics": ["resources-read-from-component-producer2"],
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "from": {
-                "components": [
-                    "resources-read-from-component-producer",
-                    "resources-read-from-component-consumer2",
-                ],
-                "topics": {},
-            },
+            "from": {"components": ["producer2"], "topics": {}},
             "name": "resources-read-from-component-consumer3",
             "namespace": "example-namespace",
             "prefix": "resources-read-from-component-",

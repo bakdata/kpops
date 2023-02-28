@@ -1,5 +1,13 @@
 - type: producer
-  name: producer
+  name: producer1
+  to:
+    topics:
+      ${output_topic_name}:
+        type: output
+
+- type: producer
+  name: producer2
+  prefix: ""
   to:
     topics:
       ${output_topic_name}:
@@ -7,20 +15,23 @@
 
 - type: streams-app
   name: consumer1
-
-- type: streams-app
-  name: consumer2
   from:
     components:
-      - ${pipeline_name}-producer
+      - ${pipeline_name}-producer1
   to:
     topics:
       ${output_topic_name}:
         type: output
 
 - type: streams-app
+  name: consumer2
+  from:
+    components:
+      - ${pipeline_name}-producer1
+      - ${pipeline_name}-consumer1
+
+- type: streams-app
   name: consumer3
   from:
     components:
-      - ${pipeline_name}-producer
-      - ${pipeline_name}-consumer2
+      - producer2
