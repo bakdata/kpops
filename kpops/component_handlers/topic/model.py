@@ -36,6 +36,7 @@ class TopicResponse(BaseModel):
 class KafkaTopicConfigSource(str, Enum):
     DYNAMIC_TOPIC_CONFIG = "DYNAMIC_TOPIC_CONFIG"
     DEFAULT_CONFIG = "DEFAULT_CONFIG"
+    STATIC_BROKER_CONFIG = "STATIC_BROKER_CONFIG"
 
 
 class KafkaTopicConfigSynonyms(BaseModel):
