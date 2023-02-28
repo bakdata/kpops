@@ -62,6 +62,8 @@
       ${pipeline_name}-input-topic:
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
+    components: # read from specific component
+      - ${pipeline_name}-producer
   # Topic(s) into which the component will write output
   to:
     topics: # required
