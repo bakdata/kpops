@@ -995,11 +995,19 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-read-from-component-consumer3-error",
-                    "inputTopics": ["resources-read-from-component-producer2"],
+                    "inputTopics": [
+                        "resources-read-from-component-producer1",
+                        "resources-read-from-component-producer2",
+                    ],
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "from": {"components": ["producer2"], "topics": {}},
+            "from": {
+                "components": ["producer2"],
+                "topics": {
+                    "resources-read-from-component-producer1": {"type": "input"}
+                },
+            },
             "name": "resources-read-from-component-consumer3",
             "namespace": "example-namespace",
             "prefix": "resources-read-from-component-",
