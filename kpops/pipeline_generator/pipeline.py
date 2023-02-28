@@ -42,11 +42,23 @@ class PipelineComponents(BaseModel):
                 return component
         raise ValueError(f"Component {component_name} not found")
 
+    def add(self, component: PipelineComponent) -> None:
+        self._populate_component_name(component)
+        self.components.append(component)
+
     def __bool__(self) -> bool:
         return bool(self.components)
 
     def __iter__(self) -> Iterator[PipelineComponent]:  # type: ignore[override]
         return iter(self.components)
+
+    def _populate_component_name(self, component: PipelineComponent) -> None:
+        component.name = component.prefix + component.name
+        with suppress(
+            AttributeError  # Some components like Kafka Connect do not have a name_override attribute
+        ):
+            if component.app and getattr(component.app, "name_override") is None:
+                setattr(component.app, "name_override", component.name)
 
 
 def create_env_components_index(
@@ -157,11 +169,7 @@ class Pipeline:
                         "Every component must have a type defined, this component does not have one."
                     )
                 component_class = self.registry[component_type]
-                inflated_components = self.apply_component(
-                    component_data, component_class
-                )
-                self.populate_pipeline_component_names(inflated_components)
-                self.components.extend(inflated_components)
+                self.apply_component(component_data, component_class)
             except Exception as ex:
                 if "name" in component_data:
                     raise ParsingException(
@@ -170,33 +178,17 @@ class Pipeline:
                 else:
                     raise ParsingException() from ex
 
-    def populate_pipeline_component_names(
-        self, inflated_components: list[PipelineComponent]
-    ) -> None:
-        for component in inflated_components:
-            component.name = component.prefix + component.name
-            with suppress(
-                AttributeError  # Some components like Kafka Connect do not have a name_override attribute
-            ):
-                if component.app and getattr(component.app, "name_override") is None:
-                    setattr(component.app, "name_override", component.name)
-
     def apply_component(
         self, component_data: dict, component_class: type[PipelineComponent]
-    ) -> list[PipelineComponent]:
+    ) -> None:
         component = component_class(
             config=self.config,
             handlers=self.handlers,
             **component_data,
         )
         component = self.enrich_component(component)
-        # apply previous component ToSection
-        if self.components:
-            previous_component = self.components.last
-            component.weave_from_topics(previous_component.to)
 
         # inflate & enrich components
-        enriched_components: list[PipelineComponent] = []
         for inflated_component in component.inflate():  # TODO: recursively:
             enriched_component = self.enrich_component(inflated_component)
             if enriched_component.from_:
@@ -204,13 +196,11 @@ class Pipeline:
                 for from_component_name in enriched_component.from_.components:
                     from_component = self.components.find(from_component_name)
                     enriched_component.weave_from_topics(from_component.to)
-            elif enriched_components:
+            elif self.components:
                 # read from previous component
-                prev = enriched_components[-1]
+                prev = self.components.last
                 enriched_component.weave_from_topics(prev.to)
-            enriched_components.append(enriched_component)
-
-        return enriched_components
+            self.components.add(enriched_component)
 
     def enrich_component(
         self,
