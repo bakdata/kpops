@@ -167,7 +167,7 @@ class Pipeline:
                         "Every component must have a type defined, this component does not have one."
                     )
                 component_class = self.registry[component_type]
-                self.apply_component(component_data, component_class)
+                self.apply_component(component_class, component_data)
             except Exception as ex:
                 if "name" in component_data:
                     raise ParsingException(
@@ -177,7 +177,7 @@ class Pipeline:
                     raise ParsingException() from ex
 
     def apply_component(
-        self, component_data: dict, component_class: type[PipelineComponent]
+        self, component_class: type[PipelineComponent], component_data: dict
     ) -> None:
         component = component_class(
             config=self.config,
