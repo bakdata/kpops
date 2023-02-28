@@ -17,7 +17,7 @@
       - ${pipeline_name}-producer
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics: 
       ${pipeline_name}-output-topic:
         type: error # required
         keySchema: key-schema # must implement SchemaProvider to use
