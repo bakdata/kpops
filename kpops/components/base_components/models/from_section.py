@@ -36,7 +36,7 @@ class FromTopic(BaseModel):
 
 
 class FromSection(BaseModel):
-    topics: dict[str, FromTopic]
+    topics: dict[str, FromTopic] = {}
     components: list[str] = []
 
     class Config(BaseConfig):
