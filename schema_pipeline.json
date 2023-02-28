@@ -69,6 +69,7 @@
             "properties": {
                 "topics": {
                     "title": "Topics",
+                    "default": {},
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "#/definitions/FromTopic"
@@ -83,9 +84,6 @@
                     }
                 }
             },
-            "required": [
-                "topics"
-            ],
             "additionalProperties": false
         },
         "KubernetesAppConfig": {
