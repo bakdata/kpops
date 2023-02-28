@@ -29,9 +29,6 @@ class ParsingException(Exception):
 class PipelineComponents(BaseModel):
     components: list[PipelineComponent] = []
 
-    def extend(self, components: list[PipelineComponent]) -> None:
-        self.components.extend(components)
-
     @property
     def last(self) -> PipelineComponent:
         return self.components[-1]
@@ -46,12 +43,6 @@ class PipelineComponents(BaseModel):
         self._populate_component_name(component)
         self.components.append(component)
 
-    def __bool__(self) -> bool:
-        return bool(self.components)
-
-    def __iter__(self) -> Iterator[PipelineComponent]:  # type: ignore[override]
-        return iter(self.components)
-
     def _populate_component_name(self, component: PipelineComponent) -> None:
         component.name = component.prefix + component.name
         with suppress(
@@ -59,6 +50,12 @@ class PipelineComponents(BaseModel):
         ):
             if component.app and getattr(component.app, "name_override") is None:
                 setattr(component.app, "name_override", component.name)
+
+    def __bool__(self) -> bool:
+        return bool(self.components)
+
+    def __iter__(self) -> Iterator[PipelineComponent]:  # type: ignore[override]
+        return iter(self.components)
 
 
 def create_env_components_index(
