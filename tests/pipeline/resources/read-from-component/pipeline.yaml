@@ -47,4 +47,4 @@
   from:
     components:
       # - inflate-step
-      - resources-read-from-component-inflate-step
+      - ${pipeline_name}-inflate-step
