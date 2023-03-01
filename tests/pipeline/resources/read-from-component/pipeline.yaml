@@ -16,6 +16,10 @@
 - type: should-inflate
   name: inflate-step
 
+- type: should-inflate
+  name: inflate-step-without-prefix
+  prefix: ""
+
 - type: streams-app
   name: consumer1
   from:
@@ -46,5 +50,10 @@
   name: consumer4
   from:
     components:
-      # - inflate-step
       - ${pipeline_name}-inflate-step
+
+- type: streams-app
+  name: consumer5
+  from:
+    components:
+      - inflate-step-without-prefix
