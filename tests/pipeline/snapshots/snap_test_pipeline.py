@@ -285,7 +285,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                     },
                     "errorTopic": "resources-pipeline-with-inflate-inflated-streams-app-error",
                     "inputTopics": ["kafka-sink-connector"],
-                    "outputTopic": "streams-app",
+                    "outputTopic": "inflated-streams-app",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -300,12 +300,13 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
+                    "inflated-streams-app": {"configs": {}, "type": "output"},
                     "resources-pipeline-with-inflate-inflated-streams-app-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
                         "valueSchema": "com.bakdata.kafka.DeadLetter",
-                    }
+                    },
                 },
             },
             "type": "streams-app",
@@ -900,7 +901,7 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
         {
             "app": {
                 "autoscaling": {
-                    "consumerGroup": "filter-resources-read-from-component-inflate",
+                    "consumerGroup": "filter-resources-read-from-component-inflate-step",
                     "cooldownPeriod": 300,
                     "enabled": True,
                     "lagThreshold": 10000,
@@ -908,25 +909,25 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                     "minReplicas": 0,
                     "offsetResetPolicy": "earliest",
                     "pollingInterval": 30,
-                    "topics": ["resources-read-from-component-inflate"],
+                    "topics": ["resources-read-from-component-inflate-step"],
                 },
                 "image": "fake-registry/filter",
                 "imageTag": "2.4.1",
-                "nameOverride": "inflate",
+                "nameOverride": "resources-read-from-component-inflate-step",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "config": {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
-                    "errorTopic": "resources-read-from-component-inflate-error",
+                    "errorTopic": "resources-read-from-component-inflate-step-error",
                     "inputTopics": ["resources-read-from-component-producer2"],
-                    "outputTopic": "resources-read-from-component-inflate",
+                    "outputTopic": "resources-read-from-component-inflate-step",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "name": "inflate",
+            "name": "resources-read-from-component-inflate-step",
             "namespace": "example-namespace",
-            "prefix": "",
+            "prefix": "resources-read-from-component-",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -935,12 +936,12 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
-                    "resources-read-from-component-inflate": {
+                    "resources-read-from-component-inflate-step": {
                         "configs": {"retention.ms": "-1"},
                         "partitions_count": 50,
                         "type": "output",
                     },
-                    "resources-read-from-component-inflate-error": {
+                    "resources-read-from-component-inflate-step-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
@@ -964,8 +965,8 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                 "name": "sink-connector",
                 "read.timeout.ms": "120000",
                 "tasks.max": "1",
-                "topics": "resources-read-from-component-inflate",
-                "transforms.changeTopic.replacement": "resources-read-from-component-inflate-index-v1",
+                "topics": "resources-read-from-component-inflate-step",
+                "transforms.changeTopic.replacement": "resources-read-from-component-inflate-step-index-v1",
             },
             "name": "resources-read-from-component-inflated-sink-connector",
             "namespace": "example-namespace",
@@ -1000,7 +1001,7 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                     },
                     "errorTopic": "resources-read-from-component-inflated-streams-app-error",
                     "inputTopics": ["kafka-sink-connector"],
-                    "outputTopic": "streams-app",
+                    "outputTopic": "inflated-streams-app",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -1015,12 +1016,13 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
             "to": {
                 "models": {},
                 "topics": {
+                    "inflated-streams-app": {"configs": {}, "type": "output"},
                     "resources-read-from-component-inflated-streams-app-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",
                         "valueSchema": "com.bakdata.kafka.DeadLetter",
-                    }
+                    },
                 },
             },
             "type": "streams-app",
@@ -1168,11 +1170,14 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                         "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
                     },
                     "errorTopic": "resources-read-from-component-consumer4-error",
-                    "inputTopics": ["resources-read-from-component-inflate"],
+                    "inputTopics": ["inflated-streams-app"],
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "from": {"components": ["inflate"], "topics": {}},
+            "from": {
+                "components": ["resources-read-from-component-inflate-step"],
+                "topics": {},
+            },
             "name": "resources-read-from-component-consumer4",
             "namespace": "example-namespace",
             "prefix": "resources-read-from-component-",

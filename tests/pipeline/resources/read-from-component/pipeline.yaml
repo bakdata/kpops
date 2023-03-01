@@ -14,8 +14,7 @@
         type: output
 
 - type: should-inflate
-  name: inflate
-  prefix: ""
+  name: inflate-step
 
 - type: streams-app
   name: consumer1
@@ -47,4 +46,5 @@
   name: consumer4
   from:
     components:
-      - inflate
+      # - inflate-step
+      - resources-read-from-component-inflate-step

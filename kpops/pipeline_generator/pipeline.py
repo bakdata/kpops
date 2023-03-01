@@ -160,8 +160,20 @@ class Pipeline:
             enriched_component = self.enrich_component(inflated_component)
             if enriched_component.from_:
                 # read from specified components
-                for from_component_name in enriched_component.from_.components:
-                    from_component = self.components.find(from_component_name)
+                for original_from_component_name in enriched_component.from_.components:
+                    original_from_component = self.components.find(
+                        original_from_component_name
+                    )
+                    inflated_from_component = original_from_component.inflate()[-1]
+                    if inflated_from_component is not original_from_component:
+                        # HACK
+                        resolved_from_component_name = (
+                            inflated_from_component.prefix
+                            + inflated_from_component.name
+                        )
+                    else:
+                        resolved_from_component_name = original_from_component_name
+                    from_component = self.components.find(resolved_from_component_name)
                     enriched_component.weave_from_topics(from_component.to)
             elif self.components:
                 # read from previous component
