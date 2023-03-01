@@ -10,12 +10,12 @@ of the files that the user must work with.
 
 ## Usage
 
-1. Check that your editor implements the
+1. Install the
 [yaml-language-server](https://github.com/redhat-developer/yaml-language-server#clients)
-2. Make sure to install the needed extension/plugin
-3. Add the text below to your editor's settings.
+in your editor of choice. (requires LSP support)
+2. Configure the extension with the settings below.
 
-??? "`settings.json`"
+???+ "`settings.json`"
 
     ```json
       --8<--
