@@ -912,7 +912,7 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                 },
                 "image": "fake-registry/filter",
                 "imageTag": "2.4.1",
-                "nameOverride": "resources-read-from-component-inflate",
+                "nameOverride": "inflate",
                 "streams": {
                     "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
                     "config": {
@@ -924,9 +924,9 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "name": "resources-read-from-component-inflate",
+            "name": "inflate",
             "namespace": "example-namespace",
-            "prefix": "resources-read-from-component-",
+            "prefix": "",
             "repoConfig": {
                 "repoAuthFlags": {"insecureSkipTlsVerify": False},
                 "repositoryName": "bakdata-streams-bootstrap",
@@ -1149,6 +1149,42 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                 "models": {},
                 "topics": {
                     "resources-read-from-component-consumer3-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    }
+                },
+            },
+            "type": "streams-app",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "nameOverride": "resources-read-from-component-consumer4",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-read-from-component-consumer4-error",
+                    "inputTopics": ["resources-read-from-component-inflate"],
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "from": {"components": ["inflate"], "topics": {}},
+            "name": "resources-read-from-component-consumer4",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-component-consumer4-error": {
                         "configs": {"cleanup.policy": "compact,delete"},
                         "partitions_count": 1,
                         "type": "error",

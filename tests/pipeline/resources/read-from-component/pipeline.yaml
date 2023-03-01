@@ -15,6 +15,7 @@
 
 - type: should-inflate
   name: inflate
+  prefix: ""
 
 - type: streams-app
   name: consumer1
@@ -41,3 +42,9 @@
         type: input
     components:
       - producer2
+
+- type: streams-app
+  name: consumer4
+  from:
+    components:
+      - inflate
