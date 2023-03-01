@@ -1,12 +1,11 @@
+import json
+import tomllib
 from pathlib import Path
 from typing import Annotated, Any, Sequence
 
 from pydantic import Field, schema, schema_json_of
 from pydantic.fields import ModelField
 from pydantic.schema import SkipField
-
-import tomllib
-import json
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.components.base_components.kafka_app import KafkaApp
