@@ -13,6 +13,9 @@
       ${output_topic_name}:
         type: output
 
+- type: should-inflate
+  name: inflate
+
 - type: streams-app
   name: consumer1
   from:

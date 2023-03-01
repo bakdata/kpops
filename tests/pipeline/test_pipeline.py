@@ -191,6 +191,7 @@ class TestPipeline:
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
                 str(RESOURCE_PATH / "read-from-component/pipeline.yaml"),
+                "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
             ],
