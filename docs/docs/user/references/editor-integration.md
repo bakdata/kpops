@@ -12,7 +12,8 @@ of the files that the user must work with.
 
 1. Check that your editor implements the
 [yaml-language-server](https://github.com/redhat-developer/yaml-language-server#clients)
-2. Add the code below to your editor's settings.
+2. Make sure to install the needed extension/plugin
+3. Add the text below to your editor's settings.
 
 ??? "`settings.json`"
 
