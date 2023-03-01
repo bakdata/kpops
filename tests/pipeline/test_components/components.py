@@ -71,7 +71,8 @@ class InflateStep(StreamsApp):
                         handlers=self.handlers,
                         to=ToSection(
                             topics={
-                                "${component_name}": TopicConfig(
+                                f"{self.name}-"
+                                + "${component_name}": TopicConfig(
                                     type=OutputTopicTypes.OUTPUT
                                 )
                             }
