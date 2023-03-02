@@ -9,7 +9,7 @@ from kpops.utils.pydantic import CamelCaseConfig
 
 
 class HelmDiffConfig(BaseModel):
-    enable: bool = False
+    enable: bool = True
     ignore: set[str] = Field(default_factory=set)
 
 
