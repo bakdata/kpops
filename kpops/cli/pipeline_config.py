@@ -69,7 +69,7 @@ class PipelineConfig(BaseSettings):
         description="The timeout in seconds that specifies when actions like deletion or deploy timeout.",
     )
 
-    create_namespace: bool = Field(default=False) # Move under helm_config?
+    create_namespace: bool = Field(default=False)  # Move under helm_config?
     helm_config: HelmConfig = Field(default=HelmConfig())
     helm_diff_config: HelmDiffConfig = Field(default=HelmDiffConfig())
 
