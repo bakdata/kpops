@@ -56,6 +56,8 @@ schema = schema_json_of(
     indent=4,
 ).replace("schema_type", "type")
 write(schema, Path("schema_pipeline.json"))
+write(schema, Path("./docs/docs/schema/pipeline.json"))
 
 schema = schema_json_of(PipelineConfig, title="kpops config schema", indent=4)
 write(schema, Path("schema_config.json"))
+write(schema, Path("./docs/docs/schema/config.json"))

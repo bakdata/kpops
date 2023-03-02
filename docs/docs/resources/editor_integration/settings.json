@@ -1,6 +1,6 @@
 {
     "yaml.schemas": {
-        "https://raw.githubusercontent.com/bakdata/kpops/main/schema_config.json": "config.yaml",
-        "https://raw.githubusercontent.com/bakdata/kpops/main/schema_pipeline.json": "pipeline.yaml"
+        "https://bakdata.github.io/kpops/latest/schema/config.json": "config.yaml",
+        "https://bakdata.github.io/kpops/latest/schema/pipeline.json": "pipeline.yaml"
     }
 }
