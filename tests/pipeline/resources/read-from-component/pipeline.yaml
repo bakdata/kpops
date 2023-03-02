@@ -13,6 +13,13 @@
       ${output_topic_name}:
         type: output
 
+- type: should-inflate
+  name: inflate-step
+
+- type: should-inflate
+  name: inflate-step-without-prefix
+  prefix: ""
+
 - type: streams-app
   name: consumer1
   from:
@@ -38,3 +45,15 @@
         type: input
     components:
       - producer2
+
+- type: streams-app
+  name: consumer4
+  from:
+    components:
+      - ${pipeline_name}-inflate-step
+
+- type: streams-app
+  name: consumer5
+  from:
+    components:
+      - inflate-step-without-prefix

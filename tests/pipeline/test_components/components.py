@@ -69,8 +69,15 @@ class InflateStep(StreamsApp):
                         name="inflated-streams-app",
                         config=self.config,
                         handlers=self.handlers,
+                        to=ToSection(
+                            topics={
+                                f"{self.name}-"
+                                + "${component_name}": TopicConfig(
+                                    type=OutputTopicTypes.OUTPUT
+                                )
+                            }
+                        ).dict(),
                     )
-                    streams_app.set_output_topic("${component_type}")
                     inflate_steps.append(streams_app)
 
         return inflate_steps
