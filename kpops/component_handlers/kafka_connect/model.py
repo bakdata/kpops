@@ -14,6 +14,7 @@ class KafkaConnectorType(str, Enum):
 class KafkaConnectConfig(BaseModel):
     class Config(BaseConfig):
         extra = Extra.allow
+        schema_extra = {"additionalProperties": {"type": "string"}}
 
 
 class ConnectorTask(BaseModel):
