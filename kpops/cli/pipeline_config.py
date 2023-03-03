@@ -28,6 +28,7 @@ class PipelineConfig(BaseSettings):
     """
     Pipeline configuration unrelated to the components.
     """
+
     defaults_path: Path = Field(
         default=...,
         description="The path to the folder containing the defaults.yaml file and the environment defaults files.",

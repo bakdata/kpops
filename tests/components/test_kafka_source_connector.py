@@ -8,9 +8,9 @@ from pytest_mock import MockerFixture
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmDiffConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
-    HelmDiffConfig,
 )
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.components.base_components.kafka_connect import KafkaSourceConnector

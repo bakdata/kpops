@@ -7,9 +7,9 @@ from pytest_mock import MockerFixture
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmDiffConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
-    HelmDiffConfig,
 )
 from kpops.components import StreamsApp
 from kpops.components.base_components.models.to_section import (
