@@ -10,6 +10,10 @@ ENV_PREFIX = "KPOPS_"
 
 
 class TopicNameConfig(BaseSettings):
+    """
+    Configures topic names.
+    """
+
     default_output_topic_name: str = Field(
         default="${pipeline_name}-${component_name}",
         description="Configures the value for the variable ${output_topic_name}",
@@ -61,18 +65,25 @@ class PipelineConfig(BaseSettings):
         default=None,
         env=f"{ENV_PREFIX}CONNECT_HOST",
         example="http://localhost:8083",
-        description="# Address of Kafka Connect.",
+        description="Address of Kafka Connect.",
     )
     timeout: int = Field(
         default=300,
         env=f"{ENV_PREFIX}TIMEOUT",
         description="The timeout in seconds that specifies when actions like deletion or deploy timeout.",
     )
-
-    create_namespace: bool = Field(default=False)  # Move under helm_config?
-    helm_config: HelmConfig = Field(default=HelmConfig())
-    helm_diff_config: HelmDiffConfig = Field(default=HelmDiffConfig())
-
+    create_namespace: bool = Field(
+        default=False,
+        description="Flag for `helm upgrade --install`. Create the release namespace if not present.",
+    )
+    helm_config: HelmConfig = Field(
+        default=HelmConfig(),
+        description="Global flags for Helm.",
+    )
+    helm_diff_config: HelmDiffConfig = Field(
+        default=HelmDiffConfig(),
+        description="Configure Helm Diff.",
+    )
     retain_clean_jobs: bool = Field(
         default=False,
         env=f"{ENV_PREFIX}RETAIN_CLEAN_JOBS",

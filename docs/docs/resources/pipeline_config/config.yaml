@@ -14,10 +14,7 @@ environment: development
 broker: "http://localhost:9092"
 # The name of the defaults file and the prefix of the defaults environment file.
 defaults_filename_prefix: defaults
-# Base class for settings, allowing values to be overridden by environment
-# variables. This is useful in production for secrets you do not wish to save in
-# code, it plays nicely with docker(-compose), Heroku and any 12 factor app
-# design.
+# Configures topic names.
 topic_name_config: 
   # Configures the value for the variable ${output_topic_name}
   default_output_topic_name: ${pipeline_name}-${component_name}
@@ -35,13 +32,13 @@ timeout: 300
 # Flag for `helm upgrade --install`.
 # Create the release namespace if not present.
 create_namespace: false
-# Global flags for Helm
+# Global flags for Helm.
 helm_config:
   # Set the name of the kubeconfig context. (--kube-context)
   context: name
   # Run Helm in Debug mode.
   debug: false
-# Configure Helm Diff
+# Configure Helm Diff.
 helm_diff_config: 
   # Enable Helm Diff.
   enable: true

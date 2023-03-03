@@ -4,7 +4,7 @@
     "definitions": {
         "TopicNameConfig": {
             "title": "TopicNameConfig",
-            "description": "Base class for settings, allowing values to be overridden by environment variables.\n\nThis is useful in production for secrets you do not wish to save in code, it plays nicely with docker(-compose),\nHeroku and any 12 factor app design.",
+            "description": "Configures topic names.",
             "type": "object",
             "properties": {
                 "default_output_topic_name": {
@@ -34,21 +34,17 @@
             "properties": {
                 "context": {
                     "title": "Context",
-                    "env_names": [
-                        "context"
-                    ],
+                    "description": "Set the name of the kubeconfig context. (--kube-context)",
+                    "example": "dev-storage",
                     "type": "string"
                 },
                 "debug": {
                     "title": "Debug",
+                    "description": "Run Helm in Debug mode.",
                     "default": false,
-                    "env_names": [
-                        "debug"
-                    ],
                     "type": "boolean"
                 }
-            },
-            "additionalProperties": false
+            }
         },
         "HelmDiffConfig": {
             "title": "HelmDiffConfig",
@@ -56,11 +52,14 @@
             "properties": {
                 "enable": {
                     "title": "Enable",
-                    "default": false,
+                    "description": "Enable Helm Diff.",
+                    "default": true,
                     "type": "boolean"
                 },
                 "ignore": {
                     "title": "Ignore",
+                    "description": "Set of keys that should not be checked.",
+                    "example": "- name\n- imageTag",
                     "type": "array",
                     "items": {
                         "type": "string"
@@ -76,7 +75,7 @@
             "properties": {
                 "defaults_path": {
                     "title": "Defaults Path",
-                    "description": "The path to the folder containing the defaults file and the environment defaults files.",
+                    "description": "The path to the folder containing the defaults.yaml file and the environment defaults files.",
                     "env_names": [
                         "defaults_path"
                     ],
@@ -95,7 +94,7 @@
                 },
                 "broker": {
                     "title": "Broker",
-                    "description": "The kafka broker address.",
+                    "description": "The Kafka broker address.",
                     "env": "KPOPS_KAFKA_BROKER",
                     "env_names": [
                         "kpops_kafka_broker"
@@ -127,9 +126,19 @@
                         }
                     ]
                 },
+                "schema_registry_url": {
+                    "title": "Schema Registry Url",
+                    "description": "Address of the Schema Registry.",
+                    "example": "http://localhost:8081",
+                    "env": "KPOPS_SCHEMA_REGISTRY_URL",
+                    "env_names": [
+                        "kpops_schema_registry_url"
+                    ],
+                    "type": "string"
+                },
                 "kafka_rest_host": {
                     "title": "Kafka Rest Host",
-                    "description": "Address to the rest proxy REST API.",
+                    "description": "Address of the Kafka REST Proxy.",
                     "env": "KPOPS_REST_PROXY_HOST",
                     "example": "http://localhost:8082",
                     "env_names": [
@@ -139,7 +148,7 @@
                 },
                 "kafka_connect_host": {
                     "title": "Kafka Connect Host",
-                    "description": "Address to the kafka connect REST API.",
+                    "description": "Address of Kafka Connect.",
                     "env": "KPOPS_CONNECT_HOST",
                     "example": "http://localhost:8083",
                     "env_names": [
@@ -159,6 +168,7 @@
                 },
                 "create_namespace": {
                     "title": "Create Namespace",
+                    "description": "Flag for `helm upgrade --install`. Create the release namespace if not present.",
                     "default": false,
                     "env_names": [
                         "create_namespace"
@@ -167,6 +177,7 @@
                 },
                 "helm_config": {
                     "title": "Helm Config",
+                    "description": "Global flags for Helm.",
                     "default": {
                         "context": null,
                         "debug": false
@@ -182,8 +193,9 @@
                 },
                 "helm_diff_config": {
                     "title": "Helm Diff Config",
+                    "description": "Configure Helm Diff.",
                     "default": {
-                        "enable": false,
+                        "enable": true,
                         "ignore": []
                     },
                     "env_names": [
@@ -204,16 +216,6 @@
                         "kpops_retain_clean_jobs"
                     ],
                     "type": "boolean"
-                },
-                "schema_registry_url": {
-                    "title": "Schema Registry Url",
-                    "description": "The URL to schema registry.",
-                    "example": "http://localhost:8081",
-                    "env": "KPOPS_SCHEMA_REGISTRY_URL",
-                    "env_names": [
-                        "kpops_schema_registry_url"
-                    ],
-                    "type": "string"
                 }
             },
             "required": [
