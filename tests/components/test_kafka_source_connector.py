@@ -10,6 +10,7 @@ from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
+    HelmDiffConfig,
 )
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.components.base_components.kafka_connect import KafkaSourceConnector
@@ -40,6 +41,9 @@ class TestKafkaSourceConnector:
                 default_output_topic_name="${component_type}-output-topic",
             ),
             broker="broker:9092",
+            helm_diff_config=HelmDiffConfig(
+                enable=False,
+            ),
         )
 
     @pytest.fixture
