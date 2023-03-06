@@ -9,8 +9,15 @@ from kpops.utils.pydantic import CamelCaseConfig
 
 
 class HelmDiffConfig(BaseModel):
-    enable: bool = False
-    ignore: set[str] = Field(default_factory=set)
+    enable: bool = Field(
+        default=True,
+        description="Enable Helm Diff.",
+    )
+    ignore: set[str] = Field(
+        default_factory=set,
+        description="Set of keys that should not be checked.",
+        example="- name\n- imageTag",
+    )
 
 
 class RepoAuthFlags(BaseModel):
@@ -32,10 +39,16 @@ class HelmRepoConfig(BaseModel):
         pass
 
 
-@dataclass
-class HelmConfig:
-    context: str | None = None
-    debug: bool = False
+class HelmConfig(BaseModel):
+    context: str | None = Field(
+        default=None,
+        description="Set the name of the kubeconfig context. (--kube-context)",
+        example="dev-storage",
+    )
+    debug: bool = Field(
+        default=False,
+        description="Run Helm in Debug mode.",
+    )
 
 
 @dataclass

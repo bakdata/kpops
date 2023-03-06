@@ -7,6 +7,7 @@ from pytest_mock import MockerFixture
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmDiffConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
@@ -47,6 +48,9 @@ class TestKafkaSinkConnector:
                 default_output_topic_name="${component_type}-output-topic",
             ),
             broker="broker:9092",
+            helm_diff_config=HelmDiffConfig(
+                enable=False,
+            ),
         )
 
     @pytest.fixture
