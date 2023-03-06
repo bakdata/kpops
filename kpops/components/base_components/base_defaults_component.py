@@ -58,43 +58,43 @@ class BaseDefaultsComponent(BaseModel):
             )
         )
         # Merge tmp_defaults before we initialize the thing
-        classes = deque(inspect.getmro(self.__class__))
-        classes.appendleft(self.__class__)
-        for base in deduplicate(classes):
-            if issubclass(base, BaseDefaultsComponent):
-                component_type: str = base.get_component_type()
-                (
-                    main_default_file_path,
-                    environment_default_file_path,
-                ) = get_defaults_file_paths(config)
-                if not environment_default_file_path.exists():
-                    kwargs = update_nested(
-                        kwargs,
-                        defaults_from_yaml(main_default_file_path, component_type),
-                    )
-                else:
-                    kwargs = update_nested(
-                        kwargs,
-                        defaults_from_yaml(
-                            environment_default_file_path, component_type
-                        ),
-                        defaults_from_yaml(main_default_file_path, component_type),
-                    )
+        main_default_file_path, environment_default_file_path = get_defaults_file_paths(
+            config
+        )
+        kwargs = update_nested(
+            kwargs,
+            find_defaults(
+                self.__class__, main_default_file_path, environment_default_file_path
+            ),
+        )
         return kwargs
 
 
 def find_defaults(
-    component_class: type[BaseDefaultsComponent], defaults_file_path: Path
+    component_class: type[BaseDefaultsComponent],
+    defaults_file_path: Path,
+    environment_defaults_file_path: Path | None = None,
 ) -> dict:
     classes = deque(inspect.getmro(component_class))
     classes.appendleft(component_class)
     result: dict = {}
     for base in deduplicate(classes):
         if issubclass(base, BaseDefaultsComponent):
-            result = update_nested(
-                result,
-                defaults_from_yaml(defaults_file_path, base.get_component_type()),
-            )
+            component_type: str = base.get_component_type()
+            if (
+                not environment_defaults_file_path
+                or not environment_defaults_file_path.exists()
+            ):
+                result = update_nested(
+                    result,
+                    defaults_from_yaml(defaults_file_path, component_type),
+                )
+            else:
+                result = update_nested(
+                    result,
+                    defaults_from_yaml(environment_defaults_file_path, component_type),
+                    defaults_from_yaml(defaults_file_path, component_type),
+                )
     return result
 
 
