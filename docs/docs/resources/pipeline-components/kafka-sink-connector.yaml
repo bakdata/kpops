@@ -43,4 +43,3 @@
   # Image Tag etc.
   resetterValues:
     imageTag: 1.2.3
-  offsetTopic: offset_topic

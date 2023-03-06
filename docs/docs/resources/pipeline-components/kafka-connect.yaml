@@ -1,19 +1,22 @@
-# Kafka source connector
-- type: kafka-source-connector
-  name: kafka-source-connector # required
+- type: kafka-connect # required
+  name: kafka-connect # required
   namespace: namespace # required, clean up jobs for the connector will run here
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example. Extensive documentation on
-  # source connectors: https://kafka.apache.org/documentation/#sourceconnectconfigs
-  app: # required
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
+  app:
     tasks.max: 1
-    errors.tolerance: none
+  # Topic(s) from which the component will read input
+  from:
+    topics: # required
+      ${pipeline_name}-input-topic:
+        type: input # required
+        # role: topic-role # only used if type is `extra`
   # Topic(s) into which the component will write output
   to:
     topics: # required
       ${pipeline_name}-output-topic:
-        type: output # required
-        # role: topic-role # only used if type is `extra`
+        type: error # required
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
         partitions_count: 1
@@ -25,7 +28,7 @@
   # Pipeline prefix that will prefix every component name. If you wish to not 
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # Helm repository configuration
+  # Helm repository configuration for resetter
   repoConfig:
     repositoryName: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
@@ -39,5 +42,3 @@
   # Image Tag etc.
   resetterValues:
     imageTag: 1.2.3
-  #  https://kafka.apache.org/documentation/#impl_offsettracking
-  offsetTopic: offset_topic

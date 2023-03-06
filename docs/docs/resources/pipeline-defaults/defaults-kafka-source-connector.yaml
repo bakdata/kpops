@@ -1,0 +1,6 @@
+# Kafka source connector
+#
+# Child of: KafkaConnector
+kafka-source-connector:
+  # https://kafka.apache.org/documentation/#impl_offsettracking
+  offsetTopic: offset_topic

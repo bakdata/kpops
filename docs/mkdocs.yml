@@ -77,5 +77,6 @@ nav:
       - user/references/cli-commands.md
       - user/references/components.md
       - user/references/config.md
+      - user/references/defaults.md
       - user/references/editor-integration.md
       - user/references/variables.md

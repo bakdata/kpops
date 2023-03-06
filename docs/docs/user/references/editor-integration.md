@@ -20,3 +20,6 @@ KPOps provides JSON schemas that enable autocompletion and validation for some o
       ./docs/resources/editor_integration/settings.json
       --8<--
     ```
+
+!!! bug
+    Currently there is a [bug](https://github.com/redhat-developer/vscode-yaml/issues/523) in VScode's [Yaml Language Support](https://github.com/redhat-developer/vscode-yaml/) extension that gives an error when having both local (path) and remote (URI) schemas that match a file.
