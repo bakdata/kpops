@@ -83,6 +83,21 @@ class BaseDefaultsComponent(BaseModel):
         return kwargs
 
 
+def find_defaults(
+    component_class: type[BaseDefaultsComponent], defaults_file_path: Path
+) -> dict:
+    classes = deque(inspect.getmro(component_class))
+    classes.appendleft(component_class)
+    result: dict = {}
+    for base in deduplicate(classes):
+        if issubclass(base, BaseDefaultsComponent):
+            result = update_nested(
+                result,
+                defaults_from_yaml(defaults_file_path, base.get_component_type()),
+            )
+    return result
+
+
 def defaults_from_yaml(path: Path, key: str) -> dict:
     """
     Read value from json file and return @default if not found
