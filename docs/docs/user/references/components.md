@@ -173,9 +173,7 @@ Do nothing, producers are stateless.
 
 ## KafkaSinkConnector
 
-<!-- CHANGE LINK TO A DOCS PAGE WHEN CREATED -->
-<!-- Sub class of [KafkaConnector](/docs/user/references/config.md) -->
-Sub class of [KafkaConnector](https://github.com/bakdata/kpops/blob/main/kpops/components/base_components/kafka_connect.py#L35)
+Sub class of [_KafkaConnector_](/user/references/defaults/#kafkaconnector).
 
 ### Usage
 
@@ -214,9 +212,7 @@ Reset the consumer group offsets.
 
 ## KafkaSourceConnector
 
-<!-- CHANGE LINK TO A DOCS PAGE WHEN CREATED -->
-<!-- Sub class of [KafkaConnector](/docs/user/references/config.md) -->
-Sub class of [KafkaConnector](https://github.com/bakdata/kpops/blob/main/kpops/components/base_components/kafka_connect.py#L35)
+Sub class of [_KafkaConnector_](/user/references/defaults/#kafkaconnector).
 
 ### Usage
 
