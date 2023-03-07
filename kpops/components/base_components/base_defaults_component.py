@@ -61,12 +61,10 @@ class BaseDefaultsComponent(BaseModel):
         main_default_file_path, environment_default_file_path = get_defaults_file_paths(
             config
         )
-        kwargs = update_nested(
-            kwargs,
-            find_defaults(
-                self.__class__, main_default_file_path, environment_default_file_path
-            ),
+        defaults = find_defaults(
+            self.__class__, main_default_file_path, environment_default_file_path
         )
+        kwargs = update_nested(kwargs, defaults)
         return kwargs
 
 
