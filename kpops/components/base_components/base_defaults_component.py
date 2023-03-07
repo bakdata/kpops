@@ -80,7 +80,7 @@ def find_defaults(
     result: dict = {}
     for base in deduplicate(classes):
         if issubclass(base, BaseDefaultsComponent):
-            component_type: str = base.get_component_type()
+            component_type = base.get_component_type()
             if (
                 not environment_defaults_file_path
                 or not environment_defaults_file_path.exists()
