@@ -12,7 +12,7 @@ Word-count is a demo pipeline which consists of a producer producing words to Ka
 
 ## Prerequisites
 
-Completed all steps in the [setup](../getting-started/setup.md).
+Completed all steps in the [setup](/user/getting-started/setup).
 
 ## Setup and deployment
 
@@ -61,7 +61,7 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 ### Deploying the Word-count pipeline
 
-1. Copy the [configuration](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/word-count) from the [kpops-examples repository](https://github.com/bakdata/kpops-examples/tree/main/word-count) into `kpops>examples>bakdata>word-count` like so:
+1. Copy the [configuration](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops) from the [kpops-examples repository](https://github.com/bakdata/kpops-examples/tree/main/word-count) into `kpops>examples>bakdata>word-count` like so:
 
     ```
     kpops
@@ -110,7 +110,7 @@ After that open [http://localhost:8080](http://localhost:8080) in your browser.
 You should be able to see pipeline shown in the image below:
 
 <figure markdown>
-  ![word-count-pipeline](../../images/word-count-pipeline_streams-explorer.png)
+  ![word-count-pipeline](/images/word-count-pipeline_streams-explorer.png)
   <figcaption>An overview of Word-count pipeline shown in Streams Explorer</figcaption>
 </figure>
 
@@ -153,7 +153,7 @@ helm --namespace kpops uninstall redis
     destroyed correctly.
 
 !!! Attention
-    If you face any issues destroying this example see [Teardown](../getting-started/teardown.md) for manual deletion.
+    If you face any issues destroying this example see [Teardown](/user/getting-started/teardown) for manual deletion.
 
 ## Common errors
 
@@ -167,4 +167,4 @@ helm --namespace kpops uninstall redis
     1. Read the error message.
     2. Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
     3. Run `clean`.
-    4. If `clean` fails, follow the steps in [teardown](../getting-started/teardown.md).
+    4. If `clean` fails, follow the steps in [teardown](/user/getting-started/teardown).

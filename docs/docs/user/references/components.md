@@ -1,8 +1,14 @@
 # Components
 
 This section explains the different components of KPOps, their usage and
-configuration.
-<!-- To learn more about their hierarchy, visit the
+configuration via [`pipeline.yaml`](/resources/pipeline-components/pipeline).
+
+--8<--
+./docs/resources/architecture/components-hierarchy.md
+--8<--
+
+<!-- Uncomment when page is created. -->
+<!-- To learn more about KPOps' components hierarchy, visit the
 [architecture](/docs/developer/architecture/component-inheritance.md) page. -->
 
 ## KubernetesApp

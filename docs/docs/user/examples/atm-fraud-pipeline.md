@@ -14,7 +14,7 @@ The one used in this example is re-built from scratch using [bakdata](https://ba
 
 ## Prerequisites
 
-Completed all steps in the [setup](../getting-started/setup.md).
+Completed all steps in the [setup](/user/getting-started/setup).
 
 ## Setup and deployment
 
@@ -100,7 +100,7 @@ After that open [http://localhost:8080](http://localhost:8080) in your browser.
 You should be able to see pipeline shown in the image below:
 
 <figure markdown>
-  ![atm-fraud-pipeline](../../images/atm-fraud-pipeline_streams-explorer.png)
+  ![atm-fraud-pipeline](/images/atm-fraud-pipeline_streams-explorer.png)
   <figcaption>An overview of ATM fraud pipeline shown in Streams Explorer</figcaption>
 </figure>
 
@@ -143,7 +143,7 @@ helm --namespace kpops uninstall postgresql
     destroyed correctly.
 
 !!! Attention
-    If you face any issues destroying this example see [Teardown](../getting-started/teardown.md) for manual deletion.
+    If you face any issues destroying this example see [Teardown](/user/getting-started/teardown) for manual deletion.
 
 ## Common errors
 
@@ -157,4 +157,4 @@ helm --namespace kpops uninstall postgresql
     1. Read the error message.
     2. Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
     3. Run `clean`.
-    4. If `clean` fails, follow the steps in [teardown](../getting-started/teardown.md).
+    4. If `clean` fails, follow the steps in [teardown](/user/getting-started/teardown).
