@@ -63,6 +63,7 @@ class TestBaseDefaultsComponent:
     @pytest.mark.parametrize(
         ("component_class", "defaults"),
         [
+            (BaseDefaultsComponent, {}),
             (
                 TestParentModel,
                 {
@@ -90,6 +91,7 @@ class TestBaseDefaultsComponent:
     @pytest.mark.parametrize(
         ("component_class", "defaults"),
         [
+            (BaseDefaultsComponent, {}),
             (
                 TestParentModel,
                 {
