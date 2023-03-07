@@ -61,21 +61,21 @@ class BaseDefaultsComponent(BaseModel):
         main_default_file_path, environment_default_file_path = get_defaults_file_paths(
             config
         )
-        defaults = find_defaults(
+        defaults = load_defaults(
             self.__class__, main_default_file_path, environment_default_file_path
         )
         kwargs = update_nested(kwargs, defaults)
         return kwargs
 
 
-def find_defaults(
+def load_defaults(
     component_class: type[BaseDefaultsComponent],
     defaults_file_path: Path,
     environment_defaults_file_path: Path | None = None,
 ) -> dict:
     classes = deque(inspect.getmro(component_class))
     classes.appendleft(component_class)
-    result: dict = {}
+    defaults: dict = {}
     for base in deduplicate(classes):
         if issubclass(base, BaseDefaultsComponent):
             component_type = base.get_component_type()
@@ -83,17 +83,17 @@ def find_defaults(
                 not environment_defaults_file_path
                 or not environment_defaults_file_path.exists()
             ):
-                result = update_nested(
-                    result,
+                defaults = update_nested(
+                    defaults,
                     defaults_from_yaml(defaults_file_path, component_type),
                 )
             else:
-                result = update_nested(
-                    result,
+                defaults = update_nested(
+                    defaults,
                     defaults_from_yaml(environment_defaults_file_path, component_type),
                     defaults_from_yaml(defaults_file_path, component_type),
                 )
-    return result
+    return defaults
 
 
 def defaults_from_yaml(path: Path, key: str) -> dict:
