@@ -8,6 +8,7 @@ from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
+    load_defaults,
     update_nested_pair,
 )
 
@@ -59,6 +60,48 @@ def handlers() -> ComponentHandlers:
 
 
 class TestBaseDefaultsComponent:
+    def test_load_defaults(self):
+        defaults = load_defaults(
+            TestParentModel,
+            DEFAULTS_PATH / "defaults.yaml",
+        )
+        assert defaults == {
+            "name": "fake-name",
+            "value": 1.0,
+        }
+
+        defaults = load_defaults(
+            TestChildModel,
+            DEFAULTS_PATH / "defaults.yaml",
+        )
+        assert defaults == {
+            "name": "fake-child-name",
+            "nice": {"fake-value": "must-be-overwritten"},
+            "value": 1.0,
+        }
+
+    def test_load_defaults_with_environment(self):
+        defaults = load_defaults(
+            TestParentModel,
+            DEFAULTS_PATH / "defaults.yaml",
+            DEFAULTS_PATH / "defaults_development.yaml",
+        )
+        assert defaults == {
+            "name": "fake-name",
+            "value": 2.0,
+        }
+
+        defaults = load_defaults(
+            TestChildModel,
+            DEFAULTS_PATH / "defaults.yaml",
+            DEFAULTS_PATH / "defaults_development.yaml",
+        )
+        assert defaults == {
+            "name": "fake-child-name",
+            "nice": {"fake-value": "fake"},
+            "value": 2.0,
+        }
+
     def test_inherit_defaults(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
