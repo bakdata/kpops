@@ -1,8 +1,8 @@
 # Defaults
 
-KPOps has a very efficient way of dealing with repeating settings which manifests as [`defaults.yaml`](/resources/pipeline-defaults/defaults). This file provides the user with the power to set defaults for any and all [components](/user/references/components), thus omitting the need to repeat the same settings in [`pipeline.yaml`](/user/references/components).
+KPOps has a very efficient way of dealing with repeating settings which manifests as [`defaults.yaml`](/resources/pipeline-defaults/defaults). This file provides the user with the power to set defaults for any and all [components](/user/references/components), thus omitting the need to repeat the same settings in [`pipeline.yaml`](/resources/pipeline-components/pipeline).
 
-A very important mechanic of KPOps' defaults is that defaults set for a component apply to all components that inherit from it. An example can be found [here](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops/defaults).
+A very important mechanic of KPOps' defaults is that defaults set for a component apply to all components that inherit from it. Examples can be found [here](/resources/examples/defaults).
 
 ??? "KPOps component Hierarchy"
     --8<--
