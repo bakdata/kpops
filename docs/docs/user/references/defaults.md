@@ -11,7 +11,7 @@ A very important mechanic of KPOps' defaults is that defaults set for a componen
 
 !!! tip inline end
     `defaults` is the default value of `defaults_filename_prefix`.
-    It, together with `defaults_path` and  `environment` can be changed in [`config.yaml`](/user/references/config)
+    Together with `defaults_path` and  `environment` it can be changed in [`config.yaml`](/user/references/config)
 
 It is possible to set specific `defaults` for each `environment` by adding files called `defaults_{environment}.yaml` to the defaults folder at `defaults_path`. The defaults are loaded based on the currently set environment. It is important to note that `defaults_{environment}.yaml` overrides only the settings that are explicitly set to be different from the ones in the base `defaults` file.
 
@@ -59,7 +59,7 @@ It is possible to set specific `defaults` for each `environment` by adding files
 
 `KafkaConnector` is a component that deploys [Kafka Connectors](https://kafka.apache.org/documentation.html#connect_configuring). Since a connector cannot be different from [sink](#kafkasinkconnector) or [source](#kafkasourceconnector), it is not recommended to use `KafkaConnector` for deployment in [`pipeline.yaml`](/resources/pipeline-components/pipeline).
 
-Instead, `KafkaConnector` should be used in [`defaults.yaml`](/resources/pipeline-defaults/defaults) to set defaults for all connectors in the pipeline as they usually share a lot common settings.
+Instead, `KafkaConnector` should be used in [`defaults.yaml`](/resources/pipeline-defaults/defaults) to set defaults for all connectors in the pipeline as they can share some common settings.
 
 ??? "`defaults.yaml`"
 
