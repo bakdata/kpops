@@ -37,21 +37,24 @@
       lagThreshold: 0 # Average target value to trigger scaling actions.
       enabled: false # Whether to enable auto-scaling using KEDA.
       # This is the interval to check each trigger on.
-      # https://keda.sh/docs/2.7/concepts/scaling-deployments/#pollinginterval
+      # https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval
       pollingInterval: 30
       # The period to wait after the last trigger reported active before scaling
-      #  the resource back to 0. https://keda.sh/docs/2.7/concepts/scaling-deployments/#cooldownperiod
+      #  the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod
       cooldownPeriod: 300
       # The offset reset policy for the consumer if the the consumer group is
       # not yet subscribed to a partition.
       offsetResetPolicy: earliest
       # This setting is passed to the HPA definition that KEDA will create for a
       # given resource and holds the maximum number of replicas of the target resouce.
-      # https://keda.sh/docs/2.7/concepts/scaling-deployments/#maxreplicacount
+      # https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount
       maxReplicas: 1
+      # Minimum number of replicas KEDA will scale the resource down to.
+      # https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount
+      minReplicas: 0
       # If this property is set, KEDA will scale the resource down to this
       # number of replicas.
-      # https://keda.sh/docs/2.7/concepts/scaling-deployments/#idlereplicacount
+      # https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount
       idleReplicas: 0
       topics: # List of auto-generated Kafka Streams topics used by the streams app.
         - topic1

@@ -12,13 +12,9 @@
 <!-- ## [Word-count Pipeline](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops/defaults) -->
 ## [Word Count Pipeline](/user/getting-started/quick-start)
 
+<!-- Replace with https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml? -->
 ??? code
     ```yaml
-        <!-- Uncomment the snippet below when repo is made public and delete /docs/docs/resources/examples/word-count-->
-        <!-- --8<--
-        https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml?
-        --8<-- -->
-        <!-- Remove the snippet below when uncommenting the one above -->
         --8<--
         ./docs/resources/examples/word-count/defaults.yaml
         --8<--
