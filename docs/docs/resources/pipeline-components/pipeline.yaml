@@ -53,7 +53,7 @@
       brokers: ${broker} # required
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
-    imageTag: 1.0.0 # Example values that are shared between streams-app and producer-app 
+    imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
   # Topic(s) from which the component will read input
   # from: # Not advised to ever be used in `kafka-app` as it isn't supported by
   # `producer`
