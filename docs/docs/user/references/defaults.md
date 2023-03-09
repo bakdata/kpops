@@ -2,7 +2,7 @@
 
 KPOps has a very efficient way of dealing with repeating settings which manifests as [`defaults.yaml`](/resources/pipeline-defaults/defaults). This file provides the user with the power to set defaults for any and all [components](/user/references/components), thus omitting the need to repeat the same settings in [`pipeline.yaml`](/resources/pipeline-components/pipeline).
 
-See real-world `defaults` configs [here](/resources/examples/defaults).
+See real-world examples for `defaults` [here](/resources/examples/defaults).
 
 ??? "KPOps component Hierarchy"
     --8<--

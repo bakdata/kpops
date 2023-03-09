@@ -40,8 +40,7 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  version: 1.0.0 # Helm chart version
-#
+  version: "1.0.0" # Helm chart version
 # Base component for Kafka-based components.
 # Producer or streaming apps should inherit from this class.
 - type: kafka-app # required
@@ -86,7 +85,6 @@
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "2.7.0" # Helm chart version
-#
 # StreamsApp component that configures a streams bootstrap app.
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
 - type: streams-app # required
@@ -178,7 +176,6 @@
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "2.7.0" # Helm chart version
-#
 # Holds configuration to use as values for the streams bootstrap producer Helm
 # chart.
 # More documentation on ProducersApp:
@@ -186,7 +183,6 @@
 - type: producer
   name: producer # required
   namespace: namespace # required
-  # No arbitrary keys are allowed under `app`here
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
@@ -225,7 +221,6 @@
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "2.7.0" # Helm chart version
-#
 # Kafka source connector
 - type: kafka-source-connector
   name: kafka-source-connector # required
@@ -266,10 +261,9 @@
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
   resetterValues:
-    imageTag: 1.2.3
+    imageTag: "1.2.3"
   #  https://kafka.apache.org/documentation/#impl_offsettracking
   offsetTopic: offset_topic
-#
 # Kafka sink connector
 - type: kafka-sink-connector
   name: kafka-sink-connector # required,
@@ -314,4 +308,4 @@
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
   resetterValues:
-    imageTag: 1.2.3
+    imageTag: "1.2.3"

@@ -4,7 +4,6 @@
 # Child of: KafkaApp
 # More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
 producer:
-  # No arbitrary keys are allowed under `app`.
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app:

@@ -5,7 +5,6 @@
 - type: producer
   name: producer # required
   namespace: namespace # required
-  # No arbitrary keys are allowed under `app`here
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required

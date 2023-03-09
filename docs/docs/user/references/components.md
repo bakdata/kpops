@@ -7,6 +7,8 @@ configuration via [`pipeline.yaml`](/resources/pipeline-components/pipeline).
 ./docs/resources/architecture/components-hierarchy.md
 --8<--
 
+See real-world examples of `pipeline.yaml` [here](/resources/examples/pipeline).
+
 <!-- Uncomment when page is created. -->
 <!-- To learn more about KPOps' components hierarchy, visit the
 [architecture](/docs/developer/architecture/component-inheritance.md) page. -->

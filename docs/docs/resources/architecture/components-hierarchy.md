@@ -1,11 +1,4 @@
-<!-- I dislike how the mermaid diagram looks, hence I drew it in draw.io. ~Ivan -->
-
-<!-- <figure markdown>
-  ![kpops-component-hierarchy](/images/kpops-components_class-diagram.png)
-  <figcaption>KPOps component hierarchy</figcaption>
-</figure> -->
-
-```mermaid 
+```mermaid
 classDiagram
     BaseDefaultsComponent <|-- PipelineComponent
     PipelineComponent <|-- KafkaConnector
@@ -16,3 +9,4 @@ classDiagram
     KafkaApp <|-- StreamsApp
     KafkaApp <|-- ProducerApp
 ```
+<p style="text-align: center;"><i>KPOps component hierarchy</i></p>
