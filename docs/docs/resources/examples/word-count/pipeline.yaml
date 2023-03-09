@@ -2,7 +2,7 @@
   name: wc-data-producer
   app:
     image: bakdata/kpops-demo-sentence-producer
-    imageTag: 1.0.0
+    imageTag: "1.0.0"
 
 - type: streams-app
   name: wc-word-counter
@@ -14,7 +14,7 @@
   app:
     replicaCount: 1
     image: bakdata/kpops-demo-word-count-app
-    imageTag: 1.0.0
+    imageTag: "1.0.0"
 
 - type: kafka-sink-connector
   name: redis-sink-connector
