@@ -1,0 +1,28 @@
+- type: producer
+  name: wc-data-producer
+  app:
+    image: bakdata/kpops-demo-sentence-producer
+    imageTag: 1.0.0
+
+- type: streams-app
+  name: wc-word-counter
+  to:
+    topics:
+      ${output_topic_name}:
+        configs:
+          cleanup.policy: compact
+  app:
+    replicaCount: 1
+    image: bakdata/kpops-demo-word-count-app
+    imageTag: 1.0.0
+
+- type: kafka-sink-connector
+  name: redis-sink-connector
+  namespace: kpops
+  app:
+    connector.class: com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector
+    redis.hosts: redis-headless:6379
+    redis.database: 0
+    tasks.max: 1
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    value.converter: org.apache.kafka.connect.storage.StringConverter

@@ -1,0 +1,37 @@
+kubernetes-app:
+  prefix: ""
+
+kafka-app:
+  namespace: kpops
+  app:
+    streams:
+      brokers: "k8kafka-cp-kafka-headless:9092"
+    prometheus:
+      jmx:
+        enabled: false
+  debug: true
+
+producer:
+  to:
+    topics:
+      ${output_topic_name}:
+        type: output
+        partitions_count: 1
+
+streams-app:
+  app:
+    labels:
+      pipeline: ${pipeline_name}
+    commandLine:
+      PRODUCTIVE: false
+  to:
+    topics:
+      ${error_topic_name}:
+        type: error
+        partitions_count: 1
+      ${output_topic_name}:
+        type: output
+        partitions_count: 1
+
+kafka-connect:
+  prefix: ""
