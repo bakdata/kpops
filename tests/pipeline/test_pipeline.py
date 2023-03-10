@@ -210,8 +210,6 @@ class TestPipeline:
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH / "no-topics-defaults"),
                 "--config",
                 str(RESOURCE_PATH / "custom-config/config.yaml"),
             ],
