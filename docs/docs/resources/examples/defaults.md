@@ -9,13 +9,11 @@
         --8<--
     ```
 
-<!-- ## [Word-count Pipeline](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops/defaults) -->
-## [Word Count Pipeline](/user/getting-started/quick-start)
+## [Word-count Pipeline](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops/defaults)
 
-<!-- Replace with https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml? -->
-??? code
+??? "defaults.yaml"
     ```yaml
         --8<--
-        ./docs/resources/examples/word-count/defaults.yaml
+        [./docs/resources/examples/word-count/defaults.yaml](https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml)
         --8<--
     ```
