@@ -33,7 +33,7 @@ log = logging.getLogger("KafkaConnector")
 
 
 class KafkaConnector(PipelineComponent, ABC):
-    type: str = "kafka-connect"
+    type: str = "kafka-connector"
     app: KafkaConnectConfig
 
     repo_config: HelmRepoConfig = HelmRepoConfig(

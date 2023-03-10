@@ -7,7 +7,7 @@ from pydantic.schema import SkipField
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.components.base_components.kafka_app import KafkaApp
-from kpops.components.base_components.kafka_connect import (
+from kpops.components.base_components.kafka_connector import (
     KafkaSinkConnector,
     KafkaSourceConnector,
 )
