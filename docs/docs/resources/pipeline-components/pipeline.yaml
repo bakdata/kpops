@@ -265,7 +265,8 @@
   # Image Tag etc.
   resetterValues:
     imageTag: "1.2.3"
-  #  https://kafka.apache.org/documentation/#impl_offsettracking
+  # offset.storage.topic
+  # https://kafka.apache.org/documentation/#connect_running
   offsetTopic: offset_topic
 # Kafka sink connector
 - type: kafka-sink-connector
