@@ -14,9 +14,8 @@ With a couple easy commands in the shell and a [`pipeline.yaml`](#example) of un
 
 ## Example
 
-<!-- Replace with https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml -->
 ```yaml title="Word-count pipeline.yaml"
     --8<--
-    ./docs/resources/examples/word-count/pipeline.yaml
+    https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml
     --8<--
 ```
