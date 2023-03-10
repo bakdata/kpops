@@ -14,6 +14,6 @@
 ??? "pipeline.yaml"
     ```yaml
         --8<--
-        https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml?
+        https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml
         --8<--
     ```
