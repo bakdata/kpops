@@ -1,4 +1,4 @@
-# Quick Start
+# Quick start
 
 ## Word-count
 
@@ -7,8 +7,8 @@ Word-count is a demo pipeline which consists of a producer producing words to Ka
 ## What this will demonstrate
 
 - Deploying a Redis database using Helm
-- Deploying a pipeline using `kpops`
-- Destroying a pipeline using `kpops`
+- Deploying a pipeline using KPOps
+- Destroying a pipeline using KPOps
 
 ## Prerequisites
 
@@ -18,7 +18,7 @@ Completed all steps in the [setup](/user/getting-started/setup).
 
 ### Redis
 
-Deploy Redis using the [Bitnami Helm chart:](https://artifacthub.io/packages/helm/bitnami/redis)
+Deploy Redis using the [Bitnami Helm chart:](https://artifacthub.io/packages/helm/bitnami/redis){target=_blank}
 Add the Helm repository:
 ```shell
 helm repo add bitnami https://charts.bitnami.com/bitnami && \
@@ -32,7 +32,7 @@ helm upgrade --install -f ./values-redis.yaml \
 redis bitnami/redis
 ```
 
-??? "Redis example Helm chart values (`values-redis.yaml`)"
+??? example "Redis example Helm chart values (`values-redis.yaml`)"
     ```yaml
     architecture: standalone
     auth:
@@ -61,7 +61,7 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 ### Deploying the Word-count pipeline
 
-1. Copy the [configuration](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops) from the [kpops-examples repository](https://github.com/bakdata/kpops-examples/tree/main/word-count) into `kpops>examples>bakdata>word-count` like so:
+1. Copy the [configuration](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops){target=_blank} from the [kpops-examples repository](https://github.com/bakdata/kpops-examples/tree/main/word-count){target=_blank} into `kpops>examples>bakdata>word-count` like so:
 
     ```
     kpops
@@ -98,14 +98,14 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 ### Check if the deployment is successful
 
-You can use the [Streams Explorer](https://github.com/bakdata/streams-explorer) to inspect the deployed pipeline.
+You can use the [Streams Explorer](https://github.com/bakdata/streams-explorer){target=_blank} to inspect the deployed pipeline.
 To do so, port-forward the service in a separate terminal session using the command below:
 
 ```shell
 kubectl port-forward -n kpops service/streams-explorer 8080:8080
 ```
 
-After that open [http://localhost:8080](http://localhost:8080) in your browser.
+After that open [http://localhost:8080](http://localhost:8080){target=_blank} in your browser.
 
 You should be able to see pipeline shown in the image below:
 

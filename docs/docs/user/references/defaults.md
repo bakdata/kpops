@@ -4,11 +4,6 @@ KPOps has a very efficient way of dealing with repeating settings which manifest
 
 [See real-world examples for `defaults`](/resources/examples/defaults).
 
-??? "KPOps component Hierarchy"
-    --8<--
-    ./docs/resources/architecture/components-hierarchy.md
-    --8<--
-
 ## Features
 
 ### Inheritance
@@ -19,13 +14,13 @@ It is possible, although not recommended, to add settings that are specific to a
 
 ### Configuration
 
-!!! tip inline end
-    `defaults` is the default value of `defaults_filename_prefix`.
-    Together with `defaults_path` and  `environment` it can be changed in [`config.yaml`](/user/references/config/#__codelineno-0-16)
-
 It is possible to set specific `defaults` for each `environment` by adding files called `defaults_{environment}.yaml` to the defaults folder at `defaults_path`. The defaults are loaded based on the currently set environment.
 
 It is important to note that `defaults_{environment}.yaml` overrides only the settings that are explicitly set to be different from the ones in the base `defaults` file.
+
+!!! tip
+    `defaults` is the default value of `defaults_filename_prefix`.
+    Together with `defaults_path` and  `environment` it can be changed in [`config.yaml`](/user/references/config/#__codelineno-0-16)
 
 ## Components
 
@@ -35,7 +30,7 @@ The `defaults` codeblocks in this section contain the full set of settings that 
 
 ### [KubernetesApp](/user/references/components/#kubernetesapp)
 
-??? "`defaults.yaml`"
+??? example "`defaults.yaml`"
 
     ```yaml
       --8<--
@@ -45,7 +40,7 @@ The `defaults` codeblocks in this section contain the full set of settings that 
 
 ### [KafkaApp](/user/references/components/#kafkaapp)
 
-??? "`defaults.yaml`"
+??? example "`defaults.yaml`"
 
     ```yaml
       --8<--
@@ -55,7 +50,7 @@ The `defaults` codeblocks in this section contain the full set of settings that 
 
 ### [StreamsApp](/user/references/components/#streamsapp)
 
-??? "`defaults.yaml`"
+??? example "`defaults.yaml`"
 
     ```yaml
       --8<--
@@ -65,7 +60,7 @@ The `defaults` codeblocks in this section contain the full set of settings that 
 
 ### [ProducerApp](/user/references/components/#producerapp)
 
-??? "`defaults.yaml`"
+??? example "`defaults.yaml`"
 
     ```yaml
       --8<--
@@ -73,13 +68,13 @@ The `defaults` codeblocks in this section contain the full set of settings that 
       --8<--
     ```
 
-### [KafkaConnector](#kafkaconnector)
+### KafkaConnector
 
-`KafkaConnector` is a component that deploys [Kafka Connectors](https://kafka.apache.org/documentation.html#connect_configuring). Since a connector cannot be different from [sink](#kafkasinkconnector) or [source](#kafkasourceconnector), it is not recommended to use `KafkaConnector` for deployment in [`pipeline.yaml`](/resources/pipeline-components/pipeline).
+`KafkaConnector` is a component that deploys [Kafka Connectors](https://kafka.apache.org/documentation.html#connect_configuring){target=_blank}. Since a connector cannot be different from sink or source it is not recommended to use `KafkaConnector` for deployment in [`pipeline.yaml`](/resources/pipeline-components/pipeline).
 
 Instead, `KafkaConnector` should be used in [`defaults.yaml`](/resources/pipeline-defaults/defaults) to set defaults for all connectors in the pipeline as they can share some common settings.
 
-??? "`defaults.yaml`"
+??? example "`defaults.yaml`"
 
     ```yaml
       --8<--
@@ -89,7 +84,7 @@ Instead, `KafkaConnector` should be used in [`defaults.yaml`](/resources/pipelin
 
 ### [KafkaSourceConnector](/user/references/components/#kafkasourceconnector)
 
-??? "`defaults.yaml`"
+??? example "`defaults.yaml`"
 
     ```yaml
       --8<--
@@ -99,7 +94,7 @@ Instead, `KafkaConnector` should be used in [`defaults.yaml`](/resources/pipelin
 
 ### [KafkaSinkConnector](/user/references/components/#kafkasinkconnector)
 
-??? "`defaults.yaml`"
+??? example "`defaults.yaml`"
 
     ```yaml
       --8<--
