@@ -8,7 +8,7 @@
 
 ## KPOps-deployed pipeline
 
-The `kpops` CLI can be used to destroy a pipeline that was previously deployed with `kpops`.
+The [KPOps CLI](/user/references/cli-commands){target=_blank} can be used to destroy a pipeline that was previously deployed with KPOps.
 In case that doesn't work, the pipeline can always be taken down manually 
 with `helm` (see section [Infrastructure](#infrastructure)).
 

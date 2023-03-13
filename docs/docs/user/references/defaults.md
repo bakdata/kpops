@@ -1,8 +1,8 @@
 # Defaults
 
-KPOps has a very efficient way of dealing with repeating settings which manifests as [`defaults.yaml`](/resources/pipeline-defaults/defaults). This file provides the user with the power to set defaults for any and all [components](/user/references/components), thus omitting the need to repeat the same settings in [`pipeline.yaml`](/resources/pipeline-components/pipeline).
+KPOps has a very efficient way of dealing with repeating settings which manifests as [`defaults.yaml`](/resources/pipeline-defaults/defaults){target=_blank}. This file provides the user with the power to set defaults for any and all [components](/user/references/components){target=_blank}, thus omitting the need to repeat the same settings in [`pipeline.yaml`](/resources/pipeline-components/pipeline){target=_blank}.
 
-[See real-world examples for `defaults`](/resources/examples/defaults).
+[See real-world examples for `defaults`](/resources/examples/defaults){target=_blank}.
 
 ??? "KPOps component Hierarchy"
     --8<--
@@ -19,13 +19,13 @@ It is possible, although not recommended, to add settings that are specific to a
 
 ### Configuration
 
-!!! tip inline end
-    `defaults` is the default value of `defaults_filename_prefix`.
-    Together with `defaults_path` and  `environment` it can be changed in [`config.yaml`](/user/references/config/#__codelineno-0-16)
-
 It is possible to set specific `defaults` for each `environment` by adding files called `defaults_{environment}.yaml` to the defaults folder at `defaults_path`. The defaults are loaded based on the currently set environment.
 
 It is important to note that `defaults_{environment}.yaml` overrides only the settings that are explicitly set to be different from the ones in the base `defaults` file.
+
+!!! tip
+    `defaults` is the default value of `defaults_filename_prefix`.
+    Together with `defaults_path` and  `environment` it can be changed in [`config.yaml`](/user/references/config/#__codelineno-0-16){target=_blank}
 
 ## Components
 
@@ -33,7 +33,7 @@ It is important to note that `defaults_{environment}.yaml` overrides only the se
 
 The `defaults` codeblocks in this section contain the full set of settings that are specific to the component. If a setting already exists in a parent config, it will not be included in the child's.
 
-### [KubernetesApp](/user/references/components/#kubernetesapp)
+### [KubernetesApp](/user/references/components/#kubernetesapp){target=_blank}
 
 ??? "`defaults.yaml`"
 
@@ -43,7 +43,7 @@ The `defaults` codeblocks in this section contain the full set of settings that 
       --8<--
     ```
 
-### [KafkaApp](/user/references/components/#kafkaapp)
+### [KafkaApp](/user/references/components/#kafkaapp){target=_blank}
 
 ??? "`defaults.yaml`"
 
@@ -53,7 +53,7 @@ The `defaults` codeblocks in this section contain the full set of settings that 
       --8<--
     ```
 
-### [StreamsApp](/user/references/components/#streamsapp)
+### [StreamsApp](/user/references/components/#streamsapp){target=_blank}
 
 ??? "`defaults.yaml`"
 
@@ -63,7 +63,7 @@ The `defaults` codeblocks in this section contain the full set of settings that 
       --8<--
     ```
 
-### [ProducerApp](/user/references/components/#producerapp)
+### [ProducerApp](/user/references/components/#producerapp){target=_blank}
 
 ??? "`defaults.yaml`"
 
@@ -73,11 +73,11 @@ The `defaults` codeblocks in this section contain the full set of settings that 
       --8<--
     ```
 
-### [KafkaConnector](#kafkaconnector)
+### KafkaConnector
 
-`KafkaConnector` is a component that deploys [Kafka Connectors](https://kafka.apache.org/documentation.html#connect_configuring). Since a connector cannot be different from [sink](#kafkasinkconnector) or [source](#kafkasourceconnector), it is not recommended to use `KafkaConnector` for deployment in [`pipeline.yaml`](/resources/pipeline-components/pipeline).
+`KafkaConnector` is a component that deploys [Kafka Connectors](https://kafka.apache.org/documentation.html#connect_configuring){target=_blank}. Since a connector cannot be different from [sink](#kafkasinkconnector) or [source](#kafkasourceconnector), it is not recommended to use `KafkaConnector` for deployment in [`pipeline.yaml`](/resources/pipeline-components/pipeline){target=_blank}.
 
-Instead, `KafkaConnector` should be used in [`defaults.yaml`](/resources/pipeline-defaults/defaults) to set defaults for all connectors in the pipeline as they can share some common settings.
+Instead, `KafkaConnector` should be used in [`defaults.yaml`](/resources/pipeline-defaults/defaults){target=_blank} to set defaults for all connectors in the pipeline as they can share some common settings.
 
 ??? "`defaults.yaml`"
 
@@ -87,7 +87,7 @@ Instead, `KafkaConnector` should be used in [`defaults.yaml`](/resources/pipelin
       --8<--
     ```
 
-### [KafkaSourceConnector](/user/references/components/#kafkasourceconnector)
+### [KafkaSourceConnector](/user/references/components/#kafkasourceconnector){target=_blank}
 
 ??? "`defaults.yaml`"
 
@@ -97,7 +97,7 @@ Instead, `KafkaConnector` should be used in [`defaults.yaml`](/resources/pipelin
       --8<--
     ```
 
-### [KafkaSinkConnector](/user/references/components/#kafkasinkconnector)
+### [KafkaSinkConnector](/user/references/components/#kafkasinkconnector){target=_blank}
 
 ??? "`defaults.yaml`"
 

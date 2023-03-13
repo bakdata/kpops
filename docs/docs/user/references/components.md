@@ -1,13 +1,12 @@
 # Components
 
-This section explains the different components of KPOps, their usage and
-configuration via [`pipeline.yaml`](/resources/pipeline-components/pipeline).
+This section explains the different components of KPOps, their usage and configuration via [`pipeline.yaml`](/resources/pipeline-components/pipeline){target=_blank}.
 
 --8<--
 ./docs/resources/architecture/components-hierarchy.md
 --8<--
 
-[See real-world examples of `pipeline.yaml`](/resources/examples/pipeline)
+[See real-world examples of `pipeline.yaml`](/resources/examples/pipeline){target=_blank}
 
 <!-- Uncomment when page is created. -->
 <!-- To learn more about KPOps' components hierarchy, visit the
@@ -17,8 +16,7 @@ configuration via [`pipeline.yaml`](/resources/pipeline-components/pipeline).
 
 ### Usage
 
-Can be used to deploy any app in Kubernetes using Helm, for example, a REST
-service that serves Kafka data.
+Can be used to deploy any app in Kubernetes using Helm, for example, a REST service that serves Kafka data.
 
 ### Configuration
 
@@ -54,10 +52,8 @@ Sub class of [_KubernetesApp_](#kubernetesapp).
 
 ### Usage
 
-- Defines a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap#usage)
-component
-- Should not be used in `pipeline.yaml` as the component can be defined as either a
-[StreamsApp](#streamsapp) or a [Producer](#producer)
+- Defines a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap#usage){target=_blank} component
+- Should not be used in `pipeline.yaml` as the component can be defined as either a [StreamsApp](#streamsapp) or a [Producer](#producer)
 - Often used in `defaults.yaml`
 
 ### Configuration
@@ -98,8 +94,8 @@ Sub class of [_KafkaApp_](#kafkaapp).
 ### Usage
 
 Configures a
-[streams-bootstrap](https://github.com/bakdata/streams-bootstrap)
-[Kafka Streams app](https://github.com/bakdata/streams-bootstrap#kafka-streams)
+[streams-bootstrap](https://github.com/bakdata/streams-bootstrap){target=_blank}
+[Kafka Streams app](https://github.com/bakdata/streams-bootstrap#kafka-streams){target=_blank}
 
 ### Configuration
 
@@ -121,12 +117,12 @@ Refer to [KafkaApp](#kafkaapp).
 
 Refer to [KafkaApp](#kafkaapp).
 
-#### [reset](https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app-cleanup-job#streams-app-cleanup-helm-chart)
+#### [reset](https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app-cleanup-job#streams-app-cleanup-helm-chart){target=_blank}
 
 - Reset the consumer group offsets
 - Reset Kafka Streams state
 
-#### [clean](https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app-cleanup-job#streams-app-cleanup-helm-chart)
+#### [clean](https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app-cleanup-job#streams-app-cleanup-helm-chart){target=_blank}
 <!-- same as reset, but `deleteOutput=true` -->
 
 - Reset Kafka Streams state
@@ -141,8 +137,8 @@ Sub class of [_KafkaApp_](#kafkaapp).
 ### Usage
 
 Configures a
-[streams-bootstrap](https://github.com/bakdata/streams-bootstrap)
-[Kafka producer app](https://github.com/bakdata/streams-bootstrap#kafka-producer)
+[streams-bootstrap](https://github.com/bakdata/streams-bootstrap){target=_blank}
+[Kafka producer app](https://github.com/bakdata/streams-bootstrap#kafka-producer){target=_blank}
 
 ### Configuration
 
@@ -168,14 +164,14 @@ Refer to [KafkaApp](#kafkaapp).
 
 Do nothing, producers are stateless.
 
-#### [clean](https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app-cleanup-job#producer-app-cleanup-helm-chart)
+#### [clean](https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app-cleanup-job#producer-app-cleanup-helm-chart){target=_blank}
 
 - Delete the output topics of the Kafka producer
 - Delete all associated schemas in the Schema Registry
 
 ## KafkaSinkConnector
 
-Sub class of [_KafkaConnector_](/user/references/defaults/#kafkaconnector).
+Sub class of [_KafkaConnector_](/user/references/defaults/#kafkaconnector){target=_blank}.
 
 ### Usage
 
@@ -203,7 +199,7 @@ Lets other systems pull data from Apache Kafka.
 
 The associated sink connector is removed.
 
-#### [reset](https://github.com/bakdata/kafka-connect-resetter/#sink-resetter)
+#### [reset](https://github.com/bakdata/kafka-connect-resetter/#sink-resetter){target=_blank}
 
 Reset the consumer group offsets.
 
@@ -214,7 +210,7 @@ Reset the consumer group offsets.
 
 ## KafkaSourceConnector
 
-Sub class of [_KafkaConnector_](/user/references/defaults/#kafkaconnector).
+Sub class of [_KafkaConnector_](/user/references/defaults/#kafkaconnector){target=_blank}.
 
 ### Usage
 
@@ -242,7 +238,7 @@ Manages source connectors in your Kafka Connect cluster.
 
 Remove the source connector from the Kafka Connect cluster.
 
-#### [reset](https://github.com/bakdata/kafka-connect-resetter/#source-resetter)
+#### [reset](https://github.com/bakdata/kafka-connect-resetter/#source-resetter){target=_blank}
 
 Delete state associated with the connector
 
