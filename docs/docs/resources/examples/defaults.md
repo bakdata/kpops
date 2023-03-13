@@ -1,19 +1,19 @@
 # Example `defaults.yaml` files
 
-## [ATM Fraud Pipeline](https://github.com/bakdata/kpops/tree/main/examples/bakdata/atm-fraud-detection/defaults)
+## [ATM Fraud Pipeline](https://github.com/bakdata/kpops/tree/main/examples/bakdata/atm-fraud-detection/defaults){target=_blank}
 
-??? "defaults.yaml"
+??? example "defaults.yaml"
     ```yaml
         --8<--
         https://raw.githubusercontent.com/bakdata/kpops/main/examples/bakdata/atm-fraud-detection/defaults/defaults.yaml
         --8<--
     ```
 
-## [Word-count Pipeline](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops/defaults)
+## [Word-count Pipeline](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops/defaults){target=_blank}
 
-??? "defaults.yaml"
+??? example "defaults.yaml"
     ```yaml
         --8<--
-        [./docs/resources/examples/word-count/defaults.yaml](https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml)
+        https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/defaults/defaults.yaml
         --8<--
     ```
