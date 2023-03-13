@@ -117,12 +117,12 @@ Refer to [KafkaApp](#kafkaapp).
 
 Refer to [KafkaApp](#kafkaapp).
 
-#### [reset](https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app-cleanup-job#streams-app-cleanup-helm-chart){target=_blank}
+#### reset
 
 - Reset the consumer group offsets
 - Reset Kafka Streams state
 
-#### [clean](https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app-cleanup-job#streams-app-cleanup-helm-chart){target=_blank}
+#### clean
 <!-- same as reset, but `deleteOutput=true` -->
 
 - Reset Kafka Streams state
@@ -164,7 +164,7 @@ Refer to [KafkaApp](#kafkaapp).
 
 Do nothing, producers are stateless.
 
-#### [clean](https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app-cleanup-job#producer-app-cleanup-helm-chart){target=_blank}
+#### clean
 
 - Delete the output topics of the Kafka producer
 - Delete all associated schemas in the Schema Registry
@@ -199,9 +199,9 @@ Lets other systems pull data from Apache Kafka.
 
 The associated sink connector is removed.
 
-#### [reset](https://github.com/bakdata/kafka-connect-resetter/#sink-resetter){target=_blank}
+#### reset
 
-Reset the consumer group offsets.
+Reset the consumer group offsets using [bakdata's sink resetter](https://github.com/bakdata/kafka-connect-resetter/#sink-resetter){target=_blank}.
 
 #### clean
 
@@ -238,9 +238,9 @@ Manages source connectors in your Kafka Connect cluster.
 
 Remove the source connector from the Kafka Connect cluster.
 
-#### [reset](https://github.com/bakdata/kafka-connect-resetter/#source-resetter){target=_blank}
+#### reset
 
-Delete state associated with the connector
+Delete state associated with the connector using [bakdata's sink resetter](https://github.com/bakdata/kafka-connect-resetter/#source-resetter){target=_blank}.
 
 #### clean
 

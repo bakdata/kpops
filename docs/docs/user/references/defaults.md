@@ -4,11 +4,6 @@ KPOps has a very efficient way of dealing with repeating settings which manifest
 
 [See real-world examples for `defaults`](/resources/examples/defaults).
 
-??? question "KPOps component Hierarchy"
-    --8<--
-    ./docs/resources/architecture/components-hierarchy.md
-    --8<--
-
 ## Features
 
 ### Inheritance
