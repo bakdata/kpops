@@ -4,8 +4,8 @@ KPOps provides JSON schemas that enable autocompletion and validation for some o
 
 ## Supported files
 
-- [`pipeline.yaml`](/user/references/components){target=_blank}
-- [`config.yaml`](/user/references/config){target=_blank}
+- [`pipeline.yaml`](/user/references/components)
+- [`config.yaml`](/user/references/config)
 
 ## Usage
 
@@ -13,7 +13,7 @@ KPOps provides JSON schemas that enable autocompletion and validation for some o
 [yaml-language-server](https://github.com/redhat-developer/yaml-language-server#clients){target=_blank} in your editor of choice. (requires LSP support)
 2. Configure the extension with the settings below.
 
-???+ "`settings.json`"
+???+ example "`settings.json`"
 
     ```json
       --8<--

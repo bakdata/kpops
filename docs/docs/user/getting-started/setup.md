@@ -84,7 +84,7 @@ You can check the cluster status with `kubectl get pods -n kube-system`. If all 
         k8kafka confluentinc/cp-helm-charts
     ```
 
-    ??? "Kafka Helm chart values (`kafka.yaml`)"
+    ??? example "Kafka Helm chart values (`kafka.yaml`)"
         An example value configuration for Confluent's Helm chart. This configuration deploys a single Kafka Broker, a Schema Registry, Zookeeper, Kafka Rest Proxy, and Kafka Connect with minimal resources.
 
         ```yaml
@@ -219,7 +219,7 @@ Below you can find an example for the `--values ./streams-explorer.yaml` file co
      streams-explorer streams-explorer/streams-explorer
  ```
 
-??? "Streams Explorer Helm chart values (`streams-explorer.yaml`)"
+??? example "Streams Explorer Helm chart values (`streams-explorer.yaml`)"
     An example value configuration for Steams Explorer Helm chart.
 
     ```yaml

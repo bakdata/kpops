@@ -12,7 +12,7 @@ Word-count is a demo pipeline which consists of a producer producing words to Ka
 
 ## Prerequisites
 
-Completed all steps in the [setup](/user/getting-started/setup){target=_blank}.
+Completed all steps in the [setup](/user/getting-started/setup).
 
 ## Setup and deployment
 
@@ -32,7 +32,7 @@ helm upgrade --install -f ./values-redis.yaml \
 redis bitnami/redis
 ```
 
-??? "Redis example Helm chart values (`values-redis.yaml`)"
+??? example "Redis example Helm chart values (`values-redis.yaml`)"
     ```yaml
     architecture: standalone
     auth:
@@ -153,7 +153,7 @@ helm --namespace kpops uninstall redis
     destroyed correctly.
 
 !!! Attention
-    If you face any issues destroying this example see [Teardown](/user/getting-started/teardown){target=_blank} for manual deletion.
+    If you face any issues destroying this example see [Teardown](/user/getting-started/teardown) for manual deletion.
 
 ## Common errors
 
@@ -167,4 +167,4 @@ helm --namespace kpops uninstall redis
     1. Read the error message.
     2. Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
     3. Run `clean`.
-    4. If `clean` fails, follow the steps in [teardown](/user/getting-started/teardown){target=_blank}.
+    4. If `clean` fails, follow the steps in [teardown](/user/getting-started/teardown).

@@ -1,12 +1,12 @@
 # Components
 
-This section explains the different components of KPOps, their usage and configuration via [`pipeline.yaml`](/resources/pipeline-components/pipeline){target=_blank}.
+This section explains the different components of KPOps, their usage and configuration via [`pipeline.yaml`](/resources/pipeline-components/pipeline).
 
 --8<--
 ./docs/resources/architecture/components-hierarchy.md
 --8<--
 
-[See real-world examples of `pipeline.yaml`](/resources/examples/pipeline){target=_blank}
+[See real-world examples of `pipeline.yaml`](/resources/examples/pipeline)
 
 <!-- Uncomment when page is created. -->
 <!-- To learn more about KPOps' components hierarchy, visit the
@@ -20,7 +20,7 @@ Can be used to deploy any app in Kubernetes using Helm, for example, a REST serv
 
 ### Configuration
 
-??? "`pipeline.yaml`"
+??? example "`pipeline.yaml`"
 
     ```yaml
       --8<--
@@ -58,7 +58,7 @@ Sub class of [_KubernetesApp_](#kubernetesapp).
 
 ### Configuration
 
-??? "`pipeline.yaml`"
+??? example "`pipeline.yaml`"
 
     ```yaml
       --8<--
@@ -99,7 +99,7 @@ Configures a
 
 ### Configuration
 
-??? "`pipeline.yaml`"
+??? example "`pipeline.yaml`"
 
     ```yaml
       --8<--
@@ -142,7 +142,7 @@ Configures a
 
 ### Configuration
 
-??? "`pipeline.yaml`"
+??? example "`pipeline.yaml`"
 
     ```yaml
       --8<--
@@ -171,7 +171,7 @@ Do nothing, producers are stateless.
 
 ## KafkaSinkConnector
 
-Sub class of [_KafkaConnector_](/user/references/defaults/#kafkaconnector){target=_blank}.
+Sub class of [_KafkaConnector_](/user/references/defaults/#kafkaconnector).
 
 ### Usage
 
@@ -179,7 +179,7 @@ Lets other systems pull data from Apache Kafka.
 
 ### Configuration
 
-??? "`pipeline.yaml`"
+??? example "`pipeline.yaml`"
 
     ```yaml
       --8<--
@@ -210,7 +210,7 @@ Reset the consumer group offsets.
 
 ## KafkaSourceConnector
 
-Sub class of [_KafkaConnector_](/user/references/defaults/#kafkaconnector){target=_blank}.
+Sub class of [_KafkaConnector_](/user/references/defaults/#kafkaconnector).
 
 ### Usage
 
@@ -218,7 +218,7 @@ Manages source connectors in your Kafka Connect cluster.
 
 ### Configuration
 
-??? "`pipeline.yaml`"
+??? example "`pipeline.yaml`"
 
     ```yaml
       --8<--
