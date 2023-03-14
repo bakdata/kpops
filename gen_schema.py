@@ -8,9 +8,9 @@ from pydantic.schema import SkipField
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.base_components.kafka_connector import (
+    KafkaConnector,
     KafkaSinkConnector,
     KafkaSourceConnector,
-    KafkaConnector,
 )
 from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
