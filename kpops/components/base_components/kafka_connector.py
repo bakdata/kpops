@@ -33,9 +33,9 @@ log = logging.getLogger("KafkaConnector")
 
 
 class KafkaConnector(PipelineComponent, ABC):
-    type: str = "kafka-connect"
-    schema_type: Literal["kafka-connect"] = Field(  # type: ignore[assignment]
-        default="kafka-connect", exclude=True
+    type: str = "kafka-connector"
+    schema_type: Literal["kafka-connector"] = Field(  # type: ignore[assignment]
+        default="kafka-connector", exclude=True
     )
     app: KafkaConnectConfig
 

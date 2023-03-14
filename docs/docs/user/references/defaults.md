@@ -10,7 +10,7 @@ KPOps has a very efficient way of dealing with repeating settings which manifest
 
 An important mechanic of KPOps is that `defaults` set for a component apply to all components that inherit from it.
 
-It is possible, although not recommended, to add settings that are specific to a component's subclass. An example would be configuring `offsetTopic` under `kafka-connect` instead of `kafka-source-connector`.
+It is possible, although not recommended, to add settings that are specific to a component's subclass. An example would be configuring `offsetTopic` under `kafka-connector` instead of `kafka-source-connector`.
 
 ### Configuration
 
@@ -78,7 +78,7 @@ Instead, `KafkaConnector` should be used in [`defaults.yaml`](/resources/pipelin
 
     ```yaml
       --8<--
-      ./docs/resources/pipeline-defaults/defaults-kafka-connect.yaml
+      ./docs/resources/pipeline-defaults/defaults-kafka-connector.yaml
       --8<--
     ```
 

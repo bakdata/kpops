@@ -23,7 +23,7 @@ streams-app: # inherits from kafka
         configs:
           cleanup.policy: compact,delete
 
-kafka-connect:
+kafka-connector:
   name: "sink-connector"
   app:
     batch.size: "2000"

@@ -36,7 +36,7 @@ CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
 class TestKafkaSinkConnector:
     @pytest.fixture
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.components.base_components.kafka_connect.log.info")
+        return mocker.patch("kpops.components.base_components.kafka_connector.log.info")
 
     @pytest.fixture
     def config(self) -> PipelineConfig:
@@ -64,7 +64,7 @@ class TestKafkaSinkConnector:
     @pytest.fixture
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.components.base_components.kafka_connect.Helm"
+            "kpops.components.base_components.kafka_connector.Helm"
         ).return_value
 
     def test_connector_config_parsing(
