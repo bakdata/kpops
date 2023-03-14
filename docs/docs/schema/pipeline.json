@@ -9,6 +9,7 @@
                 "kafka-app": "#/definitions/KafkaApp",
                 "streams-app": "#/definitions/StreamsApp",
                 "producer": "#/definitions/ProducerApp",
+                "kafka-connect": "#/definitions/KafkaConnector",
                 "kafka-source-connector": "#/definitions/KafkaSourceConnector",
                 "kafka-sink-connector": "#/definitions/KafkaSinkConnector"
             }
@@ -25,6 +26,9 @@
             },
             {
                 "$ref": "#/definitions/ProducerApp"
+            },
+            {
+                "$ref": "#/definitions/KafkaConnector"
             },
             {
                 "$ref": "#/definitions/KafkaSourceConnector"
@@ -745,13 +749,13 @@
             "type": "object",
             "properties": {}
         },
-        "KafkaSourceConnector": {
-            "title": "KafkaSourceConnector",
+        "KafkaConnector": {
+            "title": "KafkaConnector",
             "type": "object",
             "properties": {
                 "type": {
                     "title": "Type",
-                    "default": "kafka-source-connector",
+                    "default": "kafka-connect",
                     "type": "string"
                 },
                 "name": {
@@ -776,6 +780,14 @@
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
+                    "type": "string"
+                },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-connect",
+                    "enum": [
+                        "kafka-connect"
+                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -809,6 +821,46 @@
                     "title": "Resettervalues",
                     "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
                     "type": "object"
+                }
+            },
+            "required": [
+                "name",
+                "app",
+                "namespace"
+            ]
+        },
+        "KafkaSourceConnector": {
+            "title": "KafkaSourceConnector",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "kafka-source-connector",
+                    "type": "string"
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "from": {
+                    "title": "From",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ]
+                },
+                "app": {
+                    "$ref": "#/definitions/KafkaConnectConfig"
+                },
+                "to": {
+                    "$ref": "#/definitions/ToSection"
+                },
+                "prefix": {
+                    "title": "Prefix",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "default": "${pipeline_name}-",
+                    "type": "string"
                 },
                 "type": {
                     "title": "Schema Type",
@@ -817,6 +869,38 @@
                         "kafka-source-connector"
                     ],
                     "type": "string"
+                },
+                "repoConfig": {
+                    "title": "Repoconfig",
+                    "default": {
+                        "repository_name": "bakdata-kafka-connect-resetter",
+                        "url": "https://bakdata.github.io/kafka-connect-resetter/",
+                        "repo_auth_flags": {
+                            "username": null,
+                            "password": null,
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ]
+                },
+                "namespace": {
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "version": {
+                    "title": "Version",
+                    "default": "1.0.4",
+                    "type": "string"
+                },
+                "resetterValues": {
+                    "title": "Resettervalues",
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "type": "object"
                 },
                 "offsetTopic": {
                     "title": "Offsettopic",
@@ -862,6 +946,14 @@
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-sink-connector",
+                    "enum": [
+                        "kafka-sink-connector"
+                    ],
+                    "type": "string"
+                },
                 "repoConfig": {
                     "title": "Repoconfig",
                     "default": {
@@ -893,14 +985,6 @@
                     "title": "Resettervalues",
                     "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
                     "type": "object"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-sink-connector",
-                    "enum": [
-                        "kafka-sink-connector"
-                    ],
-                    "type": "string"
                 }
             },
             "required": [
