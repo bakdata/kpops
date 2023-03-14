@@ -10,6 +10,7 @@ from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.base_components.kafka_connector import (
     KafkaSinkConnector,
     KafkaSourceConnector,
+    KafkaConnector,
 )
 from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
