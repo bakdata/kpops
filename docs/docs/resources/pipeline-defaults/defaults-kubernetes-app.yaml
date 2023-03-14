@@ -1,24 +1,27 @@
 # Base Kubernetes App
-- type: kubernetes-app
-  name: kubernetes-app # required
-  namespace: namespace # required
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example.
-  app: # required
+#
+# Parent of: KafkaApp
+# Child of: PipelineComponent
+kubernetes-app:
+  name: kubernetes-app
+  namespace: namespace
+  # `app` contains application-specific settings.
+  # The fields below are just an example.
+  app:
     image: exampleImage # Example
     debug: false # Example
     commandLine: {} # Example
   # Topic(s) from which the component will read input
   from:
-    topics: # required
+    topics:
       ${pipeline_name}-input-topic:
-        type: input # required
+        type: input
         # role: topic-role # only used if type is `extra` or `extra-pattern`
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
-        type: output # required
+        type: output
         # role: topic-role # only used if type is `extra`
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
@@ -33,8 +36,8 @@
   prefix: ${pipeline_name}-
   # Helm repository configuration
   repoConfig:
-    repositoryName: my-repo # required
-    url: https://bakdata.github.io/ # required
+    repositoryName: my-repo
+    url: https://bakdata.github.io/
     repoAuthFlags: 
       username: user
       password: pass
