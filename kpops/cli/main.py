@@ -38,7 +38,7 @@ BASE_DIR_PATH_OPTION: Path = typer.Option(
 )
 
 DEFAULT_PATH_OPTION: Path = typer.Option(
-    default=Path("defaults"),
+    default=None,
     exists=True,
     dir_okay=True,
     file_okay=False,
@@ -179,7 +179,10 @@ def create_pipeline_config(
 ) -> PipelineConfig:
     setup_logging_level(verbose)
     PipelineConfig.Config.config_path = config
-    pipeline_config = PipelineConfig(defaults_path=defaults)
+    if defaults:
+        pipeline_config = PipelineConfig(defaults_path=defaults)
+    else:
+        pipeline_config = PipelineConfig()
     return pipeline_config
 
 

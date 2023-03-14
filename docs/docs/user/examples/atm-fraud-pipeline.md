@@ -79,7 +79,6 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
     ```shell
     poetry run kpops deploy ./examples/bakdata/atm-fraud-detection/pipeline.yaml \
     --pipeline-base-dir ./examples \
-    --defaults ./examples/bakdata/atm-fraud-detection/defaults \
     --config ./examples/bakdata/atm-fraud-detection/config.yaml \
     --execute
     ```
@@ -133,7 +132,6 @@ helm --namespace kpops uninstall postgresql
     ```shell
     poetry run kpops clean ./examples/bakdata/atm-fraud-detection/pipeline.yaml \
     --pipeline-base-dir ./examples \
-    --defaults ./examples/bakdata/atm-fraud-detection/defaults \
     --config ./examples/bakdata/atm-fraud-detection/config.yaml \
     --verbose \
     --execute
