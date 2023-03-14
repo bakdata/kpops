@@ -1,6 +1,6 @@
 site_name: KPOps
 repo_url: https://github.com/bakdata/kpops
-site_url: https://d9p.io
+site_url: https://bakdata.github.io/kpops
 remote_branch: gh-pages
 copyright: Copyright &copy; 2023 bakdata
 
@@ -79,7 +79,7 @@ nav:
     - Examples:
       - user/examples/atm-fraud-pipeline.md
     - References:
-      - user/references/cli-commands.md
+      - CLI usage: user/references/cli-commands.md
       - user/references/components.md
       - user/references/config.md
       - user/references/defaults.md
