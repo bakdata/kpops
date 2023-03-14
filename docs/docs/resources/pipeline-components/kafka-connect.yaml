@@ -1,11 +1,10 @@
-# Kafka sink connector
-- type: kafka-sink-connector
-  name: kafka-sink-connector # required,
+- type: kafka-connect # required
+  name: kafka-connect # required
   namespace: namespace # required, clean up jobs for the connector will run here
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example. Extensive documentation on
-  # sink connectors: https://kafka.apache.org/documentation/#sinkconnectconfigs
-  app: # required
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
+  app:
     tasks.max: 1
   # Topic(s) from which the component will read input
   from:

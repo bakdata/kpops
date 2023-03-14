@@ -1,11 +1,10 @@
-# Holds configuration to use as values for the streams bootstrap produce Helm
+# Holds configuration to use as values for the streams bootstrap producer Helm
 # chart.
 # More documentation on ProducersApp:
 # https://github.com/bakdata/streams-bootstrap
 - type: producer
   name: producer # required
   namespace: namespace # required
-  # No arbitrary keys are allowed under `app`here
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required

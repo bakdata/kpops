@@ -17,7 +17,6 @@ theme:
     - navigation.sections
     - navigation.tabs
     - navigation.indexes
-    - content.code.annotate
     - navigation.top
     - navigation.tracking
     - toc.follow
@@ -25,6 +24,8 @@ theme:
     - search.share
     - search.suggest
     - content.tooltips
+    - content.code.select
+    - content.code.annotate
 
 plugins:
   - macros
@@ -38,23 +39,27 @@ markdown_extensions:
   - def_list
   - attr_list
   - admonition
-  - pymdownx.highlight
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      linenums: true
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
   - pymdownx.superfences
   - pymdownx.keys
   - pymdownx.details
   - pymdownx.snippets:
       base_path: 'docs/'
+      url_download: true
   - pymdownx.caret
   - pymdownx.mark
   - pymdownx.tilde
   - md_in_html
   - pymdownx.tabbed:
       alternate_style: true
-
   - pymdownx.emoji:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
-
   - pymdownx.superfences:
       preserve_tabs: true
       custom_fences:
@@ -77,5 +82,6 @@ nav:
       - user/references/cli-commands.md
       - user/references/components.md
       - user/references/config.md
+      - user/references/defaults.md
       - user/references/editor-integration.md
       - user/references/variables.md

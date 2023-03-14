@@ -39,6 +39,7 @@ PipelineComponent = (
     | KafkaApp
     | StreamsApp
     | ProducerApp
+    | KafkaConnector
     | KafkaSourceConnector
     | KafkaSinkConnector
 )
