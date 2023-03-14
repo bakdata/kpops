@@ -41,6 +41,7 @@ jobs:
         run: poetry run pre-commit run mypy --all-files
 
       # TODO: enable when PEP 604 incompatibilty is in typer is resolved https://github.com/tiangolo/typer/issues/348
+      # See https://github.com/tiangolo/typer/pull/522
       # - name: Syntax (pyupgrade)
       #   run: poetry run pre-commit run --hook-stage manual pyupgrade --all-files
 
