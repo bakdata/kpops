@@ -1,16 +1,16 @@
 # What is KPOps?
 
-With a couple easy commands in the shell and a [`pipeline.yaml`](#example) of under 30 lines, [KPOps](/) can not only [`deploy`](/user/references/cli-commands/#deploy) a Kafka pipeline[^1] to a Kubernetes cluster, but also [`reset`](/user/references/cli-commands/#reset), [`clean`](/user/references/cli-commands/#clean) or [`destroy`](/user/references/cli-commands/#destroy) it!
+With a couple of easy commands in the shell and a [`pipeline.yaml`](#example) of under 30 lines, [KPOps](/) can not only [`deploy`](/user/references/cli-commands/#deploy) a Kafka pipeline[^1] to a Kubernetes cluster, but also [`reset`](/user/references/cli-commands/#reset), [`clean`](/user/references/cli-commands/#clean) or [`destroy`](/user/references/cli-commands/#destroy) it!
 [^1]:
      A Kafka pipeline can consist of consecutive [streaming applications](/user/references/components/#streamsapp), [producers](/user/references/components/#producer), and [connectors](/user/references/defaults/#kafkaconnector).
 
 ## Key features
 
-- Deploy pipelines with minimal effort and without sacrificing configurability
 - Easy-to-read and write pipeline definitions
+- Deploy pipelines with minimal effort and without sacrificing configurability
 - Reset or destroy pipelines gracefully
 - Reset or clean apps again with a single command
-- Set [defaults](/user/references/defaults) to share settings between pipeline steps (or whole different pipelines!)
+- Set [defaults](/user/references/defaults) to share settings within and across pipelines
 
 ## Example
 
