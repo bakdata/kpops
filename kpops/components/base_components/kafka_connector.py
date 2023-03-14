@@ -34,6 +34,9 @@ log = logging.getLogger("KafkaConnector")
 
 class KafkaConnector(PipelineComponent, ABC):
     type: str = "kafka-connector"
+    schema_type: Literal["kafka-connector"] = Field(  # type: ignore[assignment]
+        default="kafka-connector", exclude=True
+    )
     app: KafkaConnectConfig
 
     repo_config: HelmRepoConfig = HelmRepoConfig(
@@ -224,7 +227,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
 class KafkaSourceConnector(KafkaConnector):
     type: str = "kafka-source-connector"
-    schema_type: Literal["kafka-source-connector"] = Field(
+    schema_type: Literal["kafka-source-connector"] = Field(  # type: ignore[assignment]
         default="kafka-source-connector", exclude=True
     )
     offset_topic: str | None = None
@@ -272,7 +275,7 @@ class KafkaSourceConnector(KafkaConnector):
 
 class KafkaSinkConnector(KafkaConnector):
     type: str = "kafka-sink-connector"
-    schema_type: Literal["kafka-sink-connector"] = Field(
+    schema_type: Literal["kafka-sink-connector"] = Field(  # type: ignore[assignment]
         default="kafka-sink-connector", exclude=True
     )
 
