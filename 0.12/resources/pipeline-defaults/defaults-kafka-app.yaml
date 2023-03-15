@@ -1,0 +1,10 @@
+# Base component for Kafka-based components.
+#
+# Parent of: ProducerApp, StreamsApp
+# Child of: KubernetesApp
+kafka-app:
+  app:
+    streams:
+      brokers: ${broker}
+      schemaRegistryUrl: ${schema_registry_url}
+    nameOverride: override-with-this-name
