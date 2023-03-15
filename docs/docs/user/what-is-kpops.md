@@ -6,7 +6,7 @@ With a couple of easy commands in the shell and a [`pipeline.yaml`](#example) of
 
 ## Key features
 
-- Easy-to-read and write pipeline definitions
+- Easy-to-read and -write pipeline definitions
 - Deploy pipelines with minimal effort and without sacrificing configurability
 - Reset or destroy pipelines gracefully
 - Reset or clean apps again with a single command
