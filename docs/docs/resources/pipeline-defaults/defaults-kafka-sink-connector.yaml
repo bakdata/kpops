@@ -2,4 +2,4 @@
 #
 # Child of: KafkaConnector
 kafka-sink-connector:
-  # No settings differ from `kafka-connect`
+  # No settings differ from `kafka-connector`

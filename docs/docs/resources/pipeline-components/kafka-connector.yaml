@@ -1,25 +1,22 @@
-# Kafka connector
-#
-# Parent of: KafkaSinkConnector, KafkaSourceConnector
-# Child of: PipelineComponent
-Kafka-connect:
-  name: kafka-connect
-  namespace: namespace # Clean up jobs for the connector will run here
-  # `app` contains application-specific settings. Extensive documentation on
+- type: kafka-connector # required
+  name: kafka-connector # required
+  namespace: namespace # required, clean up jobs for the connector will run here
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example. Extensive documentation on
   # connectors: https://kafka.apache.org/documentation/#connectconfigs
   app:
-    tasks.max: 1 # example
+    tasks.max: 1
   # Topic(s) from which the component will read input
   from:
-    topics:
+    topics: # required
       ${pipeline_name}-input-topic:
-        type: input
+        type: input # required
         # role: topic-role # only used if type is `extra`
   # Topic(s) into which the component will write output
   to:
-    topics:
+    topics: # required
       ${pipeline_name}-output-topic:
-        type: error 
+        type: error # required
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
         partitions_count: 1
@@ -33,8 +30,8 @@ Kafka-connect:
   prefix: ${pipeline_name}-
   # Helm repository configuration for resetter
   repoConfig:
-    repositoryName: my-repo
-    url: https://bakdata.github.io/kafka-connect-resetter/
+    repositoryName: my-repo # required
+    url: https://bakdata.github.io/kafka-connect-resetter/ # required
     repoAuthFlags: 
       username: user
       password: pass

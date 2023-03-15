@@ -54,8 +54,7 @@ postgresql bitnami/postgresql
 
 #### Port forwarding
 
-Before we deploy the pipeline, we need to forward the ports of `kafka-rest-proxy` and `kafka-connect`. 
-Run the following commands in two different terminals.
+Before we deploy the pipeline, we need to forward the ports of `kafka-rest-proxy` and `kafka-connect`. Run the following commands in two different terminals.
 
 ```shell
 kubectl port-forward --namespace kpops service/k8kafka-cp-rest 8082:8082
