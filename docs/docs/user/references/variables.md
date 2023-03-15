@@ -27,13 +27,3 @@ topic_name_config:
   default_error_topic_name: "${pipeline_name}-${component_type}-error-topic"
   default_output_topic_name: "${pipeline_name}-${component_type}-topic"
 ```
-
-## Environment Variables
-
-| Variable                  | Required         | Default Value | Description                                           |
-| :------------------------ | :--------------- | :------------ | :---------------------------------------------------- |
-| `KPOPS_PIPELINE_PATH`     | :material-check: |               | Path to YAML with pipeline definition                 |
-| `KPOPS_PIPELINE_BASE_DIR` | :material-close: | `.`           | Base directory to the pipelines                       |
-| `KPOPS_DEFAULT_PATH`      | :material-close: | `defaults`    | Path to defaults folder                               |
-| `KPOPS_CONFIG_PATH`       | :material-close: | `config.yaml` | Path to the config.yaml file                          |
-| `KPOPS_PIPELINE_STEPS`    | :material-close: | `None`        | Comma separated list of steps to apply the command on |

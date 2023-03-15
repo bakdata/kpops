@@ -9,8 +9,15 @@ from kpops.utils.pydantic import CamelCaseConfig
 
 
 class HelmDiffConfig(BaseModel):
-    enable: bool = False
-    ignore: set[str] = Field(default_factory=set)
+    enable: bool = Field(
+        default=True,
+        description="Enable Helm Diff.",
+    )
+    ignore: set[str] = Field(
+        default_factory=set,
+        description="Set of keys that should not be checked.",
+        example="- name\n- imageTag",
+    )
 
 
 class RepoAuthFlags(BaseModel):
@@ -32,10 +39,16 @@ class HelmRepoConfig(BaseModel):
         pass
 
 
-@dataclass
-class HelmConfig:
-    context: str | None = None
-    debug: bool = False
+class HelmConfig(BaseModel):
+    context: str | None = Field(
+        default=None,
+        description="Set the name of the kubeconfig context. (--kube-context)",
+        example="dev-storage",
+    )
+    debug: bool = Field(
+        default=False,
+        description="Run Helm in Debug mode.",
+    )
 
 
 @dataclass
@@ -80,13 +93,22 @@ class HelmTemplate:
         return cls(filepath, template)
 
 
+# Indicates the beginning of `NOTES:` section in the output of `helm install` or
+# `helm upgrade`
+HELM_NOTES = "\n\nNOTES:\n"
+
+
 @dataclass
 class YamlReader:
     content: str
 
     def __iter__(self) -> Iterator[str]:
         # discard all output before template documents
-        index = self.content.index("---")
-        self.content = self.content[index:-1]
+        start = self.content.index("---")
+        if HELM_NOTES in self.content:
+            end = self.content.index(HELM_NOTES)
+        else:
+            end = -1
+        self.content = self.content[start:end]
         yield from self.content.splitlines()
         yield "---"  # add final divider to make parsing easier

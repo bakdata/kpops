@@ -308,6 +308,13 @@ data:
 ---
 # Source: chart/templates/test3b.yaml
 foo: bar
+
+NOTES:
+1. Get the application URL by running these commands:
+
+    NOTES:
+
+    test
 """
         helm_templates = list(Helm.load_manifest(stdout))
         assert len(helm_templates) == 2

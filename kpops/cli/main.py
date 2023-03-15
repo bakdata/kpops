@@ -224,6 +224,8 @@ def generate(
                 '--steps'"
         )
 
+    return pipeline
+
 
 @app.command(help="Deploy pipeline steps")
 def deploy(
