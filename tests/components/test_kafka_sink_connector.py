@@ -7,6 +7,7 @@ from pytest_mock import MockerFixture
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmDiffConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
@@ -35,7 +36,7 @@ CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
 class TestKafkaSinkConnector:
     @pytest.fixture
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.components.base_components.kafka_connect.log.info")
+        return mocker.patch("kpops.components.base_components.kafka_connector.log.info")
 
     @pytest.fixture
     def config(self) -> PipelineConfig:
@@ -47,6 +48,9 @@ class TestKafkaSinkConnector:
                 default_output_topic_name="${component_type}-output-topic",
             ),
             broker="broker:9092",
+            helm_diff_config=HelmDiffConfig(
+                enable=False,
+            ),
         )
 
     @pytest.fixture
@@ -60,7 +64,7 @@ class TestKafkaSinkConnector:
     @pytest.fixture
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.components.base_components.kafka_connect.Helm"
+            "kpops.components.base_components.kafka_connector.Helm"
         ).return_value
 
     def test_connector_config_parsing(

@@ -4,11 +4,10 @@
   namespace: namespace # required, clean up jobs for the connector will run here
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example. Extensive documentation on
-  # sink connectors: https://kafka.apache.org/documentation/#sourceconnectconfigs
+  # source connectors: https://kafka.apache.org/documentation/#sourceconnectconfigs
   app: # required
-    key1:
-      tasks.max: 1
-      errors.tolerance: none
+    tasks.max: 1
+    errors.tolerance: none
   # Topic(s) into which the component will write output
   to:
     topics: # required
@@ -39,5 +38,7 @@
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
   resetterValues:
-    imageTag: 1.2.3
+    imageTag: "1.2.3"
+  # offset.storage.topic
+  # https://kafka.apache.org/documentation/#connect_running
   offsetTopic: offset_topic

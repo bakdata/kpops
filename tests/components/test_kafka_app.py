@@ -7,6 +7,7 @@ from pytest_mock import MockerFixture
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmDiffConfig,
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
 )
@@ -21,6 +22,9 @@ class TestKafkaApp:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
+            helm_diff_config=HelmDiffConfig(
+                enable=False,
+            ),
         )
 
     @pytest.fixture

@@ -8,6 +8,7 @@ from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
+    load_defaults,
     update_nested_pair,
 )
 
@@ -59,6 +60,67 @@ def handlers() -> ComponentHandlers:
 
 
 class TestBaseDefaultsComponent:
+    @pytest.mark.parametrize(
+        ("component_class", "defaults"),
+        [
+            (BaseDefaultsComponent, {}),
+            (
+                TestParentModel,
+                {
+                    "name": "fake-name",
+                    "value": 1.0,
+                },
+            ),
+            (
+                TestChildModel,
+                {
+                    "name": "fake-child-name",
+                    "nice": {"fake-value": "must-be-overwritten"},
+                    "value": 1.0,
+                },
+            ),
+        ],
+    )
+    def test_load_defaults(
+        self, component_class: type[BaseDefaultsComponent], defaults: dict
+    ):
+        assert (
+            load_defaults(component_class, DEFAULTS_PATH / "defaults.yaml") == defaults
+        )
+
+    @pytest.mark.parametrize(
+        ("component_class", "defaults"),
+        [
+            (BaseDefaultsComponent, {}),
+            (
+                TestParentModel,
+                {
+                    "name": "fake-name",
+                    "value": 2.0,
+                },
+            ),
+            (
+                TestChildModel,
+                {
+                    "name": "fake-child-name",
+                    "nice": {"fake-value": "fake"},
+                    "value": 2.0,
+                },
+            ),
+        ],
+    )
+    def test_load_defaults_with_environment(
+        self, component_class: type[BaseDefaultsComponent], defaults: dict
+    ):
+        assert (
+            load_defaults(
+                component_class,
+                DEFAULTS_PATH / "defaults.yaml",
+                DEFAULTS_PATH / "defaults_development.yaml",
+            )
+            == defaults
+        )
+
     def test_inherit_defaults(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):

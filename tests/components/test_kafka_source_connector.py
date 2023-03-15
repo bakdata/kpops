@@ -8,11 +8,12 @@ from pytest_mock import MockerFixture
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmDiffConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
-from kpops.components.base_components.kafka_connect import KafkaSourceConnector
+from kpops.components.base_components.kafka_connector import KafkaSourceConnector
 from kpops.components.base_components.models.from_section import (
     FromSection,
     FromTopic,
@@ -40,6 +41,9 @@ class TestKafkaSourceConnector:
                 default_output_topic_name="${component_type}-output-topic",
             ),
             broker="broker:9092",
+            helm_diff_config=HelmDiffConfig(
+                enable=False,
+            ),
         )
 
     @pytest.fixture
@@ -53,7 +57,7 @@ class TestKafkaSourceConnector:
     @pytest.fixture
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.components.base_components.kafka_connect.Helm"
+            "kpops.components.base_components.kafka_connector.Helm"
         ).return_value
 
     def test_from_section_raises_exception(
