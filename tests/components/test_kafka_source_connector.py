@@ -13,7 +13,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
 )
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
-from kpops.components.base_components.kafka_connect import KafkaSourceConnector
+from kpops.components.base_components.kafka_connector import KafkaSourceConnector
 from kpops.components.base_components.models.from_section import (
     FromSection,
     FromTopic,
@@ -57,7 +57,7 @@ class TestKafkaSourceConnector:
     @pytest.fixture
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.components.base_components.kafka_connect.Helm"
+            "kpops.components.base_components.kafka_connector.Helm"
         ).return_value
 
     def test_from_section_raises_exception(
