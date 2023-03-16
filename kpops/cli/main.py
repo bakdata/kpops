@@ -183,6 +183,7 @@ def create_pipeline_config(
         pipeline_config = PipelineConfig(defaults_path=defaults)
     else:
         pipeline_config = PipelineConfig()
+        pipeline_config.defaults_path = config.parent / pipeline_config.defaults_path
     return pipeline_config
 
 

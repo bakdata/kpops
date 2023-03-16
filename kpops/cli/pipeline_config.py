@@ -30,7 +30,7 @@ class PipelineConfig(BaseSettings):
     """
 
     defaults_path: Path = Field(
-        default=Path("defaults"),
+        default=Path("."),
         example="defaults",
         description="The path to the folder containing the defaults.yaml file and the environment defaults files.",
     )
@@ -119,10 +119,5 @@ def yaml_config_settings_source(settings: PipelineConfig) -> dict | list:
     path_to_config = settings.Config.config_path
     if path_to_config.exists():
         config = load_yaml_file(path_to_config)
-        if "defaults_path" in config.keys():
-            # calculate defaults path relative to config.yaml
-            defaults_path = path_to_config.parent / Path(config["defaults_path"])
-            # write correct defaults_path into config
-            config["defaults_path"] = defaults_path
         return config
     return {}

@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 import yaml
@@ -202,7 +203,9 @@ class TestPipeline:
         enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    def test_with_custom_config(self, snapshot: SnapshotTest):
+    def test_with_custom_config_with_relative_defaults_path(
+        self, snapshot: SnapshotTest
+    ):
         result = runner.invoke(
             app,
             [
@@ -232,6 +235,53 @@ class TestPipeline:
         assert error_topic == "app2-dead-letter-topic"
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_with_custom_config_with_absolute_defaults_path(
+        self, snapshot: SnapshotTest
+    ):
+        with open(
+            str(RESOURCE_PATH / "custom-config/config.yaml"), "r"
+        ) as rel_config_yaml:
+            config_dict = yaml.safe_load(rel_config_yaml)
+        defaults_path = (
+            RESOURCE_PATH / "custom-config" / Path(config_dict["defaults_path"])
+        )
+        config_dict["defaults_path"] = str(defaults_path)
+        abs_config_yaml = open(
+            str(RESOURCE_PATH / "custom-config/temp_config.yaml"), "w"
+        )
+        yaml.dump(config_dict, abs_config_yaml)
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                str(RESOURCE_PATH / "custom-config/temp_config.yaml"),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0
+
+        enriched_pipeline = yaml.safe_load(result.stdout)
+        assert isinstance(enriched_pipeline, dict)
+
+        producer_details = enriched_pipeline["components"][0]
+        output_topic = producer_details["app"]["streams"]["outputTopic"]
+        assert output_topic == "app1-test-topic"
+
+        streams_app_details = enriched_pipeline["components"][1]
+        output_topic = streams_app_details["app"]["streams"]["outputTopic"]
+        assert output_topic == "app2-test-topic"
+        error_topic = streams_app_details["app"]["streams"]["errorTopic"]
+        assert error_topic == "app2-dead-letter-topic"
+
+        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        abs_config_yaml.close()
+        os.remove(str(RESOURCE_PATH / "custom-config/temp_config.yaml"))
 
     def test_default_config(self, snapshot: SnapshotTest):
         result = runner.invoke(

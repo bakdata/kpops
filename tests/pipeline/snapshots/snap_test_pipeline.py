@@ -1073,6 +1073,162 @@ snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
     ]
 }
 
+snapshots[
+    "TestPipeline.test_with_custom_config_with_absolute_defaults_path test-pipeline"
+] = {
+    "components": [
+        {
+            "app": {
+                "nameOverride": "resources-custom-config-app1",
+                "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "extraOutputTopics": {},
+                    "outputTopic": "app1-test-topic",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-custom-config-app1",
+            "namespace": "development-namespace",
+            "prefix": "resources-custom-config-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "app1-test-topic": {
+                        "configs": {},
+                        "partitions_count": 3,
+                        "type": "output",
+                    }
+                },
+            },
+            "type": "producer",
+            "version": "2.9.0",
+        },
+        {
+            "app": {
+                "image": "some-image",
+                "labels": {"pipeline": "resources-custom-config"},
+                "nameOverride": "resources-custom-config-app2",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "errorTopic": "app2-dead-letter-topic",
+                    "inputTopics": ["app1-test-topic"],
+                    "outputTopic": "app2-test-topic",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-custom-config-app2",
+            "namespace": "development-namespace",
+            "prefix": "resources-custom-config-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "app2-dead-letter-topic": {
+                        "configs": {},
+                        "partitions_count": 1,
+                        "type": "error",
+                    },
+                    "app2-test-topic": {
+                        "configs": {},
+                        "partitions_count": 3,
+                        "type": "output",
+                    },
+                },
+            },
+            "type": "streams-app",
+            "version": "2.9.0",
+        },
+    ]
+}
+
+snapshots[
+    "TestPipeline.test_with_custom_config_with_relative_defaults_path test-pipeline"
+] = {
+    "components": [
+        {
+            "app": {
+                "nameOverride": "resources-custom-config-app1",
+                "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "extraOutputTopics": {},
+                    "outputTopic": "app1-test-topic",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-custom-config-app1",
+            "namespace": "development-namespace",
+            "prefix": "resources-custom-config-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "app1-test-topic": {
+                        "configs": {},
+                        "partitions_count": 3,
+                        "type": "output",
+                    }
+                },
+            },
+            "type": "producer",
+            "version": "2.9.0",
+        },
+        {
+            "app": {
+                "image": "some-image",
+                "labels": {"pipeline": "resources-custom-config"},
+                "nameOverride": "resources-custom-config-app2",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "errorTopic": "app2-dead-letter-topic",
+                    "inputTopics": ["app1-test-topic"],
+                    "outputTopic": "app2-test-topic",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-custom-config-app2",
+            "namespace": "development-namespace",
+            "prefix": "resources-custom-config-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "app2-dead-letter-topic": {
+                        "configs": {},
+                        "partitions_count": 1,
+                        "type": "error",
+                    },
+                    "app2-test-topic": {
+                        "configs": {},
+                        "partitions_count": 3,
+                        "type": "output",
+                    },
+                },
+            },
+            "type": "streams-app",
+            "version": "2.9.0",
+        },
+    ]
+}
+
 snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
     "components": [
         {
