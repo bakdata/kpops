@@ -1,7 +1,27 @@
 # What is KPOps?
 
-KPOps is a CLI tool that allows deploying and destroying consecutive Kafka Streams applications, Producers, and Kafka 
-Connectors using an easy-to-read and write pipeline definition. KPOps comes with various abstractions that can simplify
-configuring multiple pipelines and steps within pipelines by sharing configuration between different applications,
-like producers or streaming applications. In addition, Kafka apps and its resources can be reset or cleaned up 
-again with a single command.
+With a couple of easy commands in the shell and a [`pipeline.yaml`](#example) of under 30 lines, [KPOps](/) can not only [`deploy`](/user/references/cli-commands/#deploy) a Kafka pipeline[^1] to a Kubernetes cluster, but also [`reset`](/user/references/cli-commands/#reset), [`clean`](/user/references/cli-commands/#clean) or [`destroy`](/user/references/cli-commands/#destroy) it!
+[^1]:
+     A Kafka pipeline can consist of consecutive [streaming applications](/user/references/components/#streamsapp), [producers](/user/references/components/#producer), and [connectors](/user/references/defaults/#kafkaconnector).
+
+## Key features
+
+- **Deploy Kafka apps to Kubernetes**: KPOps allows to deploy consecutive Kafka Streams applications and producers using an easy-to-read and -write pipeline definition.
+- **Manage Kafka Connectors**: KPOps connects with your Kafka connect cluster and applies, validates, and deletes your connector configs.
+- **Configure multiple pipelines and steps**: KPOps has various abstractions that simplify configuring multiple pipelines and steps within pipelines by sharing common configuration between different components, such as producers or streaming applications.
+- **Handle your topics and schemas**: KPOps not only creates and deletes your topics but also registers and deletes your schemas.
+- **Clean termination of Kafka components**: KPOps removes your pipeline components (i.e., Kafka Streams applications) from the Kubernetes cluster _and_ cleans up the component-related states (i.e., removing/resetting offset of Kafka consumer groups).
+- **Preview your pipeline changes**: With the KPOps dry-run, you can ensure your pipeline definition is set up correctly. This helps to minimize downtime and prevent potential errors or issues that could impact your production environment.
+
+## Example
+
+<figure markdown>
+  ![atm-fraud-pipeline](/images/word-count-pipeline_streams-explorer.png)
+  <figcaption>An overview of <a href="/user/getting-started/quick-start">Word-count pipeline</a> shown in <a href="https://github.com/bakdata/streams-explorer#streams-explorer" target="_blank">Streams Explorer</a></figcaption>
+</figure>
+
+```yaml title="Word-count pipeline.yaml"
+    --8<--
+    https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml
+    --8<--
+```
