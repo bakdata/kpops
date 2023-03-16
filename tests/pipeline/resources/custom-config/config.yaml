@@ -1,5 +1,5 @@
 environment: development
-defaults_path: tests/pipeline/resources/no-topics-defaults
+defaults_path: ../no-topics-defaults
 topic_name_config:
   default_error_topic_name: "${component_name}-dead-letter-topic"
   default_output_topic_name: "${component_name}-test-topic"

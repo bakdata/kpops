@@ -175,7 +175,7 @@ def log_action(action: str, pipeline_component: PipelineComponent):
 
 
 def create_pipeline_config(
-    config: Path, defaults: Path, verbose: bool
+    config: Path, defaults: Optional[Path], verbose: bool
 ) -> PipelineConfig:
     setup_logging_level(verbose)
     PipelineConfig.Config.config_path = config
