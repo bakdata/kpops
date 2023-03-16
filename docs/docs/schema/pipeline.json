@@ -747,7 +747,10 @@
         "KafkaConnectConfig": {
             "title": "KafkaConnectConfig",
             "type": "object",
-            "properties": {}
+            "properties": {},
+            "additionalProperties": {
+                "type": "string"
+            }
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
