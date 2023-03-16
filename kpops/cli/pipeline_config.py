@@ -118,6 +118,5 @@ class PipelineConfig(BaseSettings):
 def yaml_config_settings_source(settings: PipelineConfig) -> dict | list:
     path_to_config = settings.Config.config_path
     if path_to_config.exists():
-        config = load_yaml_file(path_to_config)
-        return config
+        return load_yaml_file(path_to_config)
     return {}
