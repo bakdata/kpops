@@ -9,7 +9,7 @@
                 "kafka-app": "#/definitions/KafkaApp",
                 "streams-app": "#/definitions/StreamsApp",
                 "producer": "#/definitions/ProducerApp",
-                "kafka-connect": "#/definitions/KafkaConnector",
+                "kafka-connector": "#/definitions/KafkaConnector",
                 "kafka-source-connector": "#/definitions/KafkaSourceConnector",
                 "kafka-sink-connector": "#/definitions/KafkaSinkConnector"
             }
@@ -482,13 +482,13 @@
                 },
                 "pollingInterval": {
                     "title": "Polling interval",
-                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.7/concepts/scaling-deployments/#pollinginterval",
+                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
                     "default": 30,
                     "type": "integer"
                 },
                 "cooldownPeriod": {
                     "title": "Cooldown period",
-                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.7/concepts/scaling-deployments/#cooldownperiod",
+                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
                     "default": 300,
                     "type": "integer"
                 },
@@ -500,19 +500,19 @@
                 },
                 "minReplicas": {
                     "title": "Min replica count",
-                    "description": "Minimum number of replicas KEDA will scale the resource down to. https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount",
+                    "description": "Minimum number of replicas KEDA will scale the resource down to. https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount",
                     "default": 0,
                     "type": "integer"
                 },
                 "maxReplicas": {
                     "title": "Max replica count",
-                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.7/concepts/scaling-deployments/#maxreplicacount",
+                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
                     "default": 1,
                     "type": "integer"
                 },
                 "idleReplicas": {
                     "title": "Idle replica count",
-                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.7/concepts/scaling-deployments/#idlereplicacount",
+                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount",
                     "type": "integer"
                 },
                 "topics": {
@@ -747,7 +747,10 @@
         "KafkaConnectConfig": {
             "title": "KafkaConnectConfig",
             "type": "object",
-            "properties": {}
+            "properties": {},
+            "additionalProperties": {
+                "type": "string"
+            }
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
@@ -755,7 +758,7 @@
             "properties": {
                 "type": {
                     "title": "Type",
-                    "default": "kafka-connect",
+                    "default": "kafka-connector",
                     "type": "string"
                 },
                 "name": {
@@ -784,9 +787,9 @@
                 },
                 "type": {
                     "title": "Schema Type",
-                    "default": "kafka-connect",
+                    "default": "kafka-connector",
                     "enum": [
-                        "kafka-connect"
+                        "kafka-connector"
                     ],
                     "type": "string"
                 },
