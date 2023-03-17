@@ -238,16 +238,14 @@ class TestPipeline:
     def test_with_custom_config_with_absolute_defaults_path(
         self, snapshot: SnapshotTest
     ):
-        with open(
-            str(RESOURCE_PATH / "custom-config/config.yaml"), "r"
-        ) as rel_config_yaml:
+        with open(RESOURCE_PATH / "custom-config/config.yaml", "r") as rel_config_yaml:
             config_dict = yaml.safe_load(rel_config_yaml)
         defaults_path = (
             RESOURCE_PATH / "custom-config" / Path(config_dict["defaults_path"])
         )
         config_dict["defaults_path"] = str(defaults_path)
         temp_config_path = RESOURCE_PATH / "custom-config/temp_config.yaml"
-        with open(str(temp_config_path), "w") as abs_config_yaml:
+        with open(temp_config_path, "w") as abs_config_yaml:
             try:
                 yaml.dump(config_dict, abs_config_yaml)
                 result = runner.invoke(
