@@ -1,6 +1,6 @@
 # pipeline.yaml
 
-[:material-download:](/resources/pipeline-components/pipeline.yaml)
+[:material-download:](./pipeline.yaml)
 
 ```yaml
     --8<--

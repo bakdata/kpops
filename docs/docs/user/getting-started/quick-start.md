@@ -12,7 +12,7 @@ Word-count is a demo pipeline which consists of a producer producing words to Ka
 
 ## Prerequisites
 
-Completed all steps in the [setup](/user/getting-started/setup).
+Completed all steps in the [setup](../setup).
 
 ## Setup and deployment
 
@@ -110,7 +110,7 @@ After that open [http://localhost:8080](http://localhost:8080){target=_blank} in
 You should be able to see pipeline shown in the image below:
 
 <figure markdown>
-  ![word-count-pipeline](/images/word-count-pipeline_streams-explorer.png)
+  ![word-count-pipeline](../../images/word-count-pipeline_streams-explorer.png)
   <figcaption>An overview of Word-count pipeline shown in Streams Explorer</figcaption>
 </figure>
 
@@ -153,7 +153,7 @@ helm --namespace kpops uninstall redis
     destroyed correctly.
 
 !!! Attention
-    If you face any issues destroying this example see [Teardown](/user/getting-started/teardown) for manual deletion.
+    If you face any issues destroying this example see [Teardown](../teardown) for manual deletion.
 
 ## Common errors
 
@@ -167,4 +167,4 @@ helm --namespace kpops uninstall redis
     1. Read the error message.
     2. Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
     3. Run `clean`.
-    4. If `clean` fails, follow the steps in [teardown](/user/getting-started/teardown).
+    4. If `clean` fails, follow the steps in [teardown](../teardown).
