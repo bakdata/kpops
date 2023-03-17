@@ -9,7 +9,7 @@
                 "kafka-app": "#/definitions/KafkaApp",
                 "streams-app": "#/definitions/StreamsApp",
                 "producer": "#/definitions/ProducerApp",
-                "kafka-connect": "#/definitions/KafkaConnector",
+                "kafka-connector": "#/definitions/KafkaConnector",
                 "kafka-source-connector": "#/definitions/KafkaSourceConnector",
                 "kafka-sink-connector": "#/definitions/KafkaSinkConnector"
             }
@@ -747,7 +747,10 @@
         "KafkaConnectConfig": {
             "title": "KafkaConnectConfig",
             "type": "object",
-            "properties": {}
+            "properties": {},
+            "additionalProperties": {
+                "type": "string"
+            }
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
@@ -755,7 +758,7 @@
             "properties": {
                 "type": {
                     "title": "Type",
-                    "default": "kafka-connect",
+                    "default": "kafka-connector",
                     "type": "string"
                 },
                 "name": {
@@ -784,9 +787,9 @@
                 },
                 "type": {
                     "title": "Schema Type",
-                    "default": "kafka-connect",
+                    "default": "kafka-connector",
                     "enum": [
-                        "kafka-connect"
+                        "kafka-connector"
                     ],
                     "type": "string"
                 },

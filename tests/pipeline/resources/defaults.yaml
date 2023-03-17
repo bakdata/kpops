@@ -103,7 +103,7 @@ should-inflate:
         configs:
           retention.ms: "-1"
 
-kafka-connect:
+kafka-connector:
   name: "sink-connector"
   namespace: "example-namespace"
   app:

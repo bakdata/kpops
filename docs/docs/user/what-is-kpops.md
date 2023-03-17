@@ -1,16 +1,17 @@
 # What is KPOps?
 
-With a couple easy commands in the shell and a [`pipeline.yaml`](#example) of under 30 lines, [KPOps](/) can not only [`deploy`](../references/cli-commands/#deploy) a pipeline[^1] to a Kubernetes cluster, but also [`reset`](../references/cli-commands/#reset), [`clean`](../references/cli-commands/#clean) or [`destroy`](../references/cli-commands/#destroy) it!
+With a couple of easy commands in the shell and a [`pipeline.yaml`](#example) of under 30 lines, [KPOps](/) can not only [`deploy`](../references/cli-commands/#deploy) a Kafka pipeline[^1] to a Kubernetes cluster, but also [`reset`](../references/cli-commands/#reset), [`clean`](../references/cli-commands/#clean) or [`destroy`](../references/cli-commands/#destroy) it!
 [^1]:
-     A pipeline can consist of just consecutive [Kafka Streams applications](../references/components/#streamsapp) or it could also contain [Producers](../references/components/#producer) and/or [Kafka Connectors](../references/defaults/#kafkaconnector).
+     A Kafka pipeline can consist of consecutive [streaming applications](../references/components/#streamsapp), [producers](../references/components/#producer), and [connectors](../references/defaults/#kafkaconnector).
 
 ## Key features
 
-- Deploy pipelines with minimal effort and without sacrificing configurability
-- Easy-to-read and write pipeline definitions
-- Reset or destroy pipelines gracefully
-- Reset or clean apps again with a single command
-- Set defaults to share settings between pipeline steps (or whole different pipelines!)
+- **Deploy Kafka apps to Kubernetes**: KPOps allows to deploy consecutive Kafka Streams applications and producers using an easy-to-read and -write pipeline definition.
+- **Manage Kafka Connectors**: KPOps connects with your Kafka Connect cluster and deploys, validates, and deletes your connectors.
+- **Configure multiple pipelines and steps**: KPOps has various abstractions that simplify configuring multiple pipelines and steps within pipelines by sharing common configuration between different components, such as producers or streaming applications.
+- **Handle your topics and schemas**: KPOps not only creates and deletes your topics but also registers and deletes your schemas.
+- **Clean termination of Kafka components**: KPOps removes your pipeline components (i.e., Kafka Streams applications) from the Kubernetes cluster _and_ cleans up the component-related states (i.e., removing/resetting offset of Kafka consumer groups).
+- **Preview your pipeline changes**: With the KPOps dry-run, you can ensure your pipeline definition is set up correctly. This helps to minimize downtime and prevent potential errors or issues that could impact your production environment.
 
 ## Example
 

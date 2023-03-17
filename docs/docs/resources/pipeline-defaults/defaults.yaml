@@ -134,8 +134,8 @@ producer:
 #
 # Parent of: KafkaSinkConnector, KafkaSourceConnector
 # Child of: PipelineComponent
-Kafka-connect:
-  name: kafka-connect
+kafka-connector:
+  name: kafka-connector
   namespace: namespace # Clean up jobs for the connector will run here
   # `app` contains application-specific settings. Extensive documentation on
   # connectors: https://kafka.apache.org/documentation/#connectconfigs
@@ -190,4 +190,4 @@ kafka-source-connector:
 #
 # Child of: KafkaConnector
 kafka-sink-connector:
-  # No settings differ from `kafka-connect`
+  # No settings differ from `kafka-connector`
