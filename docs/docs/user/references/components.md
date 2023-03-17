@@ -1,12 +1,12 @@
 # Components
 
-This section explains the different components of KPOps, their usage and configuration via [`pipeline.yaml`](/resources/pipeline-components/pipeline).
+This section explains the different components of KPOps, their usage and configuration via [`pipeline.yaml`](../../../resources/pipeline-components/pipeline).
 
 --8<--
 ./docs/resources/architecture/components-hierarchy.md
 --8<--
 
-[See real-world examples of `pipeline.yaml`](/resources/examples/pipeline)
+[See real-world examples of `pipeline.yaml`](../../../resources/examples/pipeline)
 
 <!-- Uncomment when page is created. -->
 <!-- To learn more about KPOps' components hierarchy, visit the
@@ -171,7 +171,7 @@ Do nothing, producers are stateless.
 
 ## KafkaSinkConnector
 
-Sub class of [_KafkaConnector_](/user/references/defaults/#kafkaconnector).
+Sub class of [_KafkaConnector_](../defaults/#kafkaconnector).
 
 ### Usage
 
@@ -210,7 +210,7 @@ Reset the consumer group offsets using [bakdata's sink resetter](https://github.
 
 ## KafkaSourceConnector
 
-Sub class of [_KafkaConnector_](/user/references/defaults/#kafkaconnector).
+Sub class of [_KafkaConnector_](../defaults/#kafkaconnector).
 
 ### Usage
 

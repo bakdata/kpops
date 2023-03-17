@@ -1,4 +1,4 @@
-# `kpops`
+# CLI Usage
 
 **Usage**:
 
