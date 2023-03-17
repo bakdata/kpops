@@ -32,7 +32,8 @@ class PipelineConfig(BaseSettings):
     defaults_path: Path = Field(
         default=Path("."),
         example="defaults",
-        description="The path to the folder containing the defaults.yaml file and the environment defaults files.",
+        description="The path to the folder containing the defaults.yaml file and the environment defaults files. \n"
+        "Paths can either be absolute or relative to `config.yaml`",
     )
     environment: str = Field(
         default=...,
