@@ -87,7 +87,6 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
     ```shell
     kpops deploy ./examples/bakdata/word-count/pipeline.yaml \
     --pipeline-base-dir ./examples \
-    --defaults ./examples/bakdata/word-count/defaults \
     --config ./examples/bakdata/word-count/config.yaml \
     --execute
     ```
@@ -143,7 +142,6 @@ helm --namespace kpops uninstall redis
     ```shell
     kpops clean ./examples/bakdata/word-count/pipeline.yaml \
     --pipeline-base-dir ./examples \
-    --defaults ./examples/bakdata/word-count/defaults \
     --config ./examples/bakdata/word-count/config.yaml \
     --verbose \
     --execute

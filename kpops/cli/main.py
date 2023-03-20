@@ -37,8 +37,8 @@ BASE_DIR_PATH_OPTION: Path = typer.Option(
     help="Base directory to the pipelines (default is current working directory)",
 )
 
-DEFAULT_PATH_OPTION: Path = typer.Option(
-    default=Path("defaults"),
+DEFAULT_PATH_OPTION: Optional[Path] = typer.Option(
+    default=None,
     exists=True,
     dir_okay=True,
     file_okay=False,
@@ -175,11 +175,15 @@ def log_action(action: str, pipeline_component: PipelineComponent):
 
 
 def create_pipeline_config(
-    config: Path, defaults: Path, verbose: bool
+    config: Path, defaults: Optional[Path], verbose: bool
 ) -> PipelineConfig:
     setup_logging_level(verbose)
     PipelineConfig.Config.config_path = config
-    pipeline_config = PipelineConfig(defaults_path=defaults)
+    if defaults:
+        pipeline_config = PipelineConfig(defaults_path=defaults)
+    else:
+        pipeline_config = PipelineConfig()
+        pipeline_config.defaults_path = config.parent / pipeline_config.defaults_path
     return pipeline_config
 
 
@@ -190,7 +194,7 @@ def generate(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
-    defaults: Path = DEFAULT_PATH_OPTION,
+    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     verbose: bool = typer.Option(False, help="Enable verbose printing"),
     template: bool = typer.Option(False, help="Run Helm template"),
@@ -232,7 +236,7 @@ def deploy(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
-    defaults: Path = DEFAULT_PATH_OPTION,
+    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     verbose: bool = False,
     dry_run: bool = DRY_RUN,
@@ -254,7 +258,7 @@ def destroy(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
-    defaults: Path = DEFAULT_PATH_OPTION,
+    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     dry_run: bool = DRY_RUN,
@@ -275,7 +279,7 @@ def reset(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
-    defaults: Path = DEFAULT_PATH_OPTION,
+    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     dry_run: bool = DRY_RUN,
@@ -297,7 +301,7 @@ def clean(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
-    defaults: Path = DEFAULT_PATH_OPTION,
+    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     dry_run: bool = DRY_RUN,

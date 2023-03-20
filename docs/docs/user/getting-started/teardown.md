@@ -30,7 +30,6 @@ In case that doesn't work, the pipeline can always be taken down manually with `
     # poetry run kpops destroy <name-of-the-example-directory>/pipeline.yaml \
     # poetry run kpops reset <name-of-the-example-directory>/pipeline.yaml \
     # poetry run kpops clean <name-of-the-example-directory>/pipeline.yaml \
-    --defaults <name-of-the-example-directory>/defaults \
     --config <name-of-the-example-directory>/config.yaml \
     --execute
     ```
