@@ -240,13 +240,12 @@ class TestPipeline:
     ):
         with open(RESOURCE_PATH / "custom-config/config.yaml", "r") as rel_config_yaml:
             config_dict = yaml.safe_load(rel_config_yaml)
-        defaults_path = (
-            RESOURCE_PATH / "custom-config" / Path(config_dict["defaults_path"])
+        config_dict["defaults_path"] = str(
+            (RESOURCE_PATH / "no-topics-defaults").absolute()
         )
-        config_dict["defaults_path"] = str(defaults_path)
         temp_config_path = RESOURCE_PATH / "custom-config/temp_config.yaml"
-        with open(temp_config_path, "w") as abs_config_yaml:
-            try:
+        try:
+            with open(temp_config_path, "w") as abs_config_yaml:
                 yaml.dump(config_dict, abs_config_yaml)
                 result = runner.invoke(
                     app,
@@ -277,8 +276,8 @@ class TestPipeline:
                 assert error_topic == "app2-dead-letter-topic"
 
                 snapshot.assert_match(enriched_pipeline, "test-pipeline")
-            finally:
-                temp_config_path.unlink()
+        finally:
+            temp_config_path.unlink()
 
     def test_default_config(self, snapshot: SnapshotTest):
         result = runner.invoke(
