@@ -15,7 +15,7 @@
 ## Documentation
 
 For detailed usage and installation instructions, check out
-the [documentation](https://bakdata.github.io/kpops/latest).
+the [documentation](https://bakdata.github.io/kpops/latest/user/what-is-kpops/).
 
 ## Install KPOps
 
