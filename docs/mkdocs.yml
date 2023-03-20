@@ -1,6 +1,6 @@
 site_name: KPOps
-repo_url: https://github.com/bakdata/kpops
-site_url: https://d9p.io
+repo_url: https://github.com/bakdata/kpops/
+site_url: https://bakdata.github.io/kpops/
 remote_branch: gh-pages
 copyright: Copyright &copy; 2023 bakdata
 
@@ -51,6 +51,7 @@ markdown_extensions:
   - pymdownx.snippets:
       base_path: 'docs/'
       url_download: true
+      url_timeout: false
   - pymdownx.caret
   - pymdownx.mark
   - pymdownx.tilde
@@ -69,19 +70,19 @@ markdown_extensions:
 
 nav:
   - Home:
-      index.md
+      KPOps Documentation: index.md
   - User Guide:
-    - user/what-is-kpops.md
+    - What is KPOps: user/what-is-kpops.md
     - Getting Started:
-      - user/getting-started/setup.md
-      - user/getting-started/quick-start.md
-      - user/getting-started/teardown.md
+      - Setup: user/getting-started/setup.md
+      - Getting started: user/getting-started/quick-start.md
+      - Teardown: user/getting-started/teardown.md
     - Examples:
-      - user/examples/atm-fraud-pipeline.md
+      - ATM Fraud detection pipeline: user/examples/atm-fraud-pipeline.md
     - References:
-      - user/references/cli-commands.md
-      - user/references/components.md
-      - user/references/config.md
-      - user/references/defaults.md
-      - user/references/editor-integration.md
-      - user/references/variables.md
+      - CLI usage: user/references/cli-commands.md
+      - Components: user/references/components.md
+      - Config: user/references/config.md
+      - Defaults: user/references/defaults.md
+      - Editor integration: user/references/editor-integration.md
+      - Variables: user/references/variables.md

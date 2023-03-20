@@ -4,8 +4,8 @@ KPOps provides JSON schemas that enable autocompletion and validation for some o
 
 ## Supported files
 
-- [`pipeline.yaml`](/user/references/components)
-- [`config.yaml`](/user/references/config)
+- [`pipeline.yaml`](../components)
+- [`config.yaml`](../config)
 
 ## Usage
 

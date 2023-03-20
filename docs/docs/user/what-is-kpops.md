@@ -1,8 +1,8 @@
 # What is KPOps?
 
-With a couple of easy commands in the shell and a [`pipeline.yaml`](#example) of under 30 lines, [KPOps](/) can not only [`deploy`](/user/references/cli-commands/#deploy) a Kafka pipeline[^1] to a Kubernetes cluster, but also [`reset`](/user/references/cli-commands/#reset), [`clean`](/user/references/cli-commands/#clean) or [`destroy`](/user/references/cli-commands/#destroy) it!
+With a couple of easy commands in the shell and a [`pipeline.yaml`](#example) of under 30 lines, [KPOps](/) can not only [`deploy`](../references/cli-commands/#deploy) a Kafka pipeline[^1] to a Kubernetes cluster, but also [`reset`](../references/cli-commands/#reset), [`clean`](../references/cli-commands/#clean) or [`destroy`](../references/cli-commands/#destroy) it!
 [^1]:
-     A Kafka pipeline can consist of consecutive [streaming applications](/user/references/components/#streamsapp), [producers](/user/references/components/#producer), and [connectors](/user/references/defaults/#kafkaconnector).
+     A Kafka pipeline can consist of consecutive [streaming applications](../references/components/#streamsapp), [producers](../references/components/#producer), and [connectors](../references/defaults/#kafkaconnector).
 
 ## Key features
 
@@ -16,8 +16,8 @@ With a couple of easy commands in the shell and a [`pipeline.yaml`](#example) of
 ## Example
 
 <figure markdown>
-  ![atm-fraud-pipeline](/images/word-count-pipeline_streams-explorer.png)
-  <figcaption>An overview of <a href="/user/getting-started/quick-start">Word-count pipeline</a> shown in <a href="https://github.com/bakdata/streams-explorer#streams-explorer" target="_blank">Streams Explorer</a></figcaption>
+  ![atm-fraud-pipeline](../images/word-count-pipeline_streams-explorer.png)
+  <figcaption>An overview of <a href="../getting-started/quick-start">Word-count pipeline</a> shown in <a href="https://github.com/bakdata/streams-explorer#streams-explorer" target="_blank">Streams Explorer</a></figcaption>
 </figure>
 
 ```yaml title="Word-count pipeline.yaml"

@@ -1,6 +1,6 @@
 # defaults.yaml
 
-[:material-download:](/resources/pipeline-defaults/defaults.yaml)
+[:material-download:](./defaults.yaml)
 
 ```yaml
     --8<--
