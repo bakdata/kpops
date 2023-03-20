@@ -75,7 +75,7 @@
             "properties": {
                 "defaults_path": {
                     "title": "Defaults Path",
-                    "description": "The path to the folder containing the defaults.yaml file and the environment defaults files.",
+                    "description": "The path to the folder containing the defaults.yaml file and the environment defaults files. \nPaths can either be absolute or relative to `config.yaml`",
                     "default": ".",
                     "example": "defaults",
                     "env_names": [
