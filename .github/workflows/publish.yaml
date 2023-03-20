@@ -1,0 +1,36 @@
+name: Release to PyPi, Update docs
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release-to-pypi:
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@v1.13.2
+    with:
+      release-type: ${{ github.event.inputs.release-type }}
+      publish-to-test: false
+      python-version: "3.10"
+      poetry-version: "1.3.2"
+    secrets:
+      github-email: ${{ secrets.GH_EMAIL }}
+      github-username: ${{ secrets.GH_USERNAME }}
+      github-token: ${{ secrets.GH_TOKEN }}
+      pypi-token: ${{ secrets.PYPI_TOKEN }}
+
+  update-docs:
+    runs-on: ubuntu-22.04
+    needs: release-to-pypi
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0 # Fetch all tags; Required for doc versioning
+
+      - name: Update gh-pages
+        uses: ./.github/actions/update-docs
+        with:
+          tag: ${{ github.event.inputs.release-type }}
+          username: ${{ secrets.GH_USERNAME }}
+          email: ${{ secrets.GH_EMAIL }}
+          token: ${{ secrets.GH_TOKEN }}
