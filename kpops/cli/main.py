@@ -17,6 +17,7 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.pipeline_generator.pipeline import Pipeline
+from kpops.utils.gen_schema import gen_schemas
 
 if TYPE_CHECKING:
     from kpops.components.base_components import PipelineComponent
@@ -81,6 +82,11 @@ DRY_RUN: bool = typer.Option(
 COMPONENTS_MODULES: str | None = typer.Argument(
     default=None,
     help="Custom Python module containing your project-specific components",
+)
+
+SCHEMA_PATH: Path = typer.Option(
+    default = Path("~"),
+    help="Target path for the generation of schemas."
 )
 
 logger = logging.getLogger()
@@ -185,6 +191,11 @@ def create_pipeline_config(
         pipeline_config = PipelineConfig()
         pipeline_config.defaults_path = config.parent / pipeline_config.defaults_path
     return pipeline_config
+
+
+@app.command(help="Generate actual schema")
+def gen_schema(path: Path = SCHEMA_PATH) -> None:
+    gen_schemas(path)
 
 
 @app.command(

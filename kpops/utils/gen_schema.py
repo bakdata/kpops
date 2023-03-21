@@ -17,6 +17,9 @@ from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
 
 
+
+
+
 def write(contents: str, path: Path) -> None:
     with open(path, "w") as f:
         print(contents, file=f)
@@ -50,14 +53,14 @@ AnnotatedPipelineComponent = Annotated[
     PipelineComponent, Field(discriminator="schema_type")
 ]
 
+def gen_schemas(path: Path = Path(__file__).parents[2] / "docs/docs/schema") -> None:
+    schema = schema_json_of(
+        Sequence[AnnotatedPipelineComponent],
+        title="kpops pipeline schema",
+        by_alias=True,
+        indent=4,
+    ).replace("schema_type", "type")
+    write(schema, path / "pipeline.json")
 
-schema = schema_json_of(
-    Sequence[AnnotatedPipelineComponent],
-    title="kpops pipeline schema",
-    by_alias=True,
-    indent=4,
-).replace("schema_type", "type")
-write(schema, Path("./docs/docs/schema/pipeline.json"))
-
-schema = schema_json_of(PipelineConfig, title="kpops config schema", indent=4)
-write(schema, Path("./docs/docs/schema/config.json"))
+    schema = schema_json_of(PipelineConfig, title="kpops config schema", indent=4)
+    write(schema, path / "config.json")
