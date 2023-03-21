@@ -17,7 +17,7 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.pipeline_generator.pipeline import Pipeline
-from kpops.utils.gen_schema import gen_schemas
+from kpops.utils.gen_schema import gen_pipeline_schema
 
 if TYPE_CHECKING:
     from kpops.components.base_components import PipelineComponent
@@ -85,7 +85,7 @@ COMPONENTS_MODULES: str | None = typer.Argument(
 )
 
 SCHEMA_PATH: Path = typer.Option(
-    default = Path("~"),
+    default = Path("."),
     help="Target path for the generation of schemas."
 )
 
@@ -194,8 +194,8 @@ def create_pipeline_config(
 
 
 @app.command(help="Generate actual schema")
-def gen_schema(path: Path = SCHEMA_PATH) -> None:
-    gen_schemas(path)
+def gen_schema(components_module: Optional[str] = COMPONENTS_MODULES, path: Path = SCHEMA_PATH) -> None:
+    gen_pipeline_schema(components_module, path)
 
 
 @app.command(
