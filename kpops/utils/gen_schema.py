@@ -1,5 +1,6 @@
 from itertools import chain
 from pathlib import Path
+from types import UnionType
 from typing import Annotated, Any, Optional, Sequence
 
 from pydantic import Field, schema, schema_json_of
@@ -10,8 +11,6 @@ from kpops.cli.exception import ClassNotFoundError
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
 from kpops.components.base_components.kafka_connector import KafkaConnector
-
-# from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.components.base_components.pipeline_component import PipelineComponent
 
 
@@ -46,13 +45,13 @@ def gen_pipeline_schema(
         )
 
     # Why doesnt KafkaConnector get found by _find_classes?
-    PipelineComponent_ = KafkaConnector
+    PipelineComponent_: UnionType = KafkaConnector
 
     for component in components:
         try:
             PipelineComponent_ = PipelineComponent_ | component
-        except (ClassNotFoundError):
-            break
+        except StopIteration:
+            raise ClassNotFoundError
 
     AnnotatedPipelineComponent = Annotated[
         PipelineComponent_, Field(discriminator="schema_type")
