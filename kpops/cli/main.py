@@ -85,8 +85,7 @@ COMPONENTS_MODULES: str | None = typer.Argument(
 )
 
 SCHEMA_PATH: Path = typer.Option(
-    default = Path("."),
-    help="Target path for the generation of schemas."
+    default=Path("."), help="Target path for the generation of schemas."
 )
 
 logger = logging.getLogger()
@@ -194,7 +193,9 @@ def create_pipeline_config(
 
 
 @app.command(help="Generate actual schema")
-def gen_schema(components_module: Optional[str] = COMPONENTS_MODULES, path: Path = SCHEMA_PATH) -> None:
+def gen_schema(
+    components_module: Optional[str] = COMPONENTS_MODULES, path: Path = SCHEMA_PATH
+) -> None:
     gen_pipeline_schema(components_module, path)
 
 
