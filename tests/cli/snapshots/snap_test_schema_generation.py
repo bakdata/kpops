@@ -75,8 +75,7 @@ snapshots["TestGenSchema.test_gen_config_schema test-schema-generation"] = {
                 },
                 "defaults_path": {
                     "default": ".",
-                    "description": """The path to the folder containing the defaults.yaml file and the environment defaults files.
-Paths can either be absolute or relative to `config.yaml`""",
+                    "description": """The path to the folder containing the defaults.yaml file and the environment defaults files. Paths can either be absolute or relative to `config.yaml`""",
                     "env_names": ["defaults_path"],
                     "example": "defaults",
                     "format": "path",

@@ -25,9 +25,6 @@ class SubComponent(PipelineComponent):
     )
 
 
-MODULE = SubComponent.__module__
-
-
 class SubSubComponent(SubComponent):
     type: str = "sub-sub-component"
     schema_type: Literal["sub-sub-component"] = Field(  # type: ignore[assignment]
@@ -35,8 +32,7 @@ class SubSubComponent(SubComponent):
     )
 
 
-class Unrelated:
-    pass
+MODULE = SubComponent.__module__
 
 
 @pytest.mark.filterwarnings("ignore:handlers", "ignore:config", "ignore:enrich")

@@ -55,10 +55,10 @@ def gen_pipeline_schema(
     PipelineComponent_ = KafkaConnector
 
     for component in components:
-        PipelineComponent_ = PipelineComponent_ | component
+        PipelineComponent_ = PipelineComponent_ | component  # type: ignore[assignment]
 
     AnnotatedPipelineComponent = Annotated[
-        PipelineComponent_, Field(discriminator="schema_type")
+        PipelineComponent_, Field(discriminator="schema_type")  # type: ignore[valid-type]
     ]
 
     schema = schema_json_of(
