@@ -189,19 +189,18 @@ def create_pipeline_config(
 
 
 @app.command(
-    help="Generates json schemas. " 
+    help="Generates json schemas. "
     "The schemas can be used to enable support for kpops files in a text editor."
 )
 def gen_schema(
     path: Path = typer.Argument(
-        default=...,
-        help="Target path for the generation of schemas."
+        default=..., help="Target path for the generation of schemas."
     ),
     components_module: Optional[str] = COMPONENTS_MODULES,
     pipeline: bool = typer.Option(
         default=True,
         help="Generate json schema of pipeline components. Always includes the built-in kpops components. "
-        "To include custom components, provide [COMPONENTS_MODULES]"
+        "To include custom components, provide [COMPONENTS_MODULES]",
     ),
     config: bool = typer.Option(
         default=False, help="Generate json schema pipeline configuration."
