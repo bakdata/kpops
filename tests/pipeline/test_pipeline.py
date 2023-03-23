@@ -311,7 +311,7 @@ class TestPipeline:
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_model_serialization(self, snapshot: SnapshotTest):
-        """Component containing pathlib.Path attribute"""
+        """Test model serialization of component containing pathlib.Path attribute"""
         result = runner.invoke(
             app,
             [
