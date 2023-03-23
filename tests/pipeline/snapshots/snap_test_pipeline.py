@@ -542,6 +542,37 @@ snapshots["TestPipeline.test_load_pipeline test-pipeline"] = {
     ]
 }
 
+snapshots["TestPipeline.test_model_serialization test-pipeline"] = {
+    "components": [
+        {
+            "app": {
+                "nameOverride": "resources-pipeline-with-paths-account-producer",
+                "streams": {
+                    "brokers": "test",
+                    "extraOutputTopics": {},
+                    "outputTopic": "out",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-pipeline-with-paths-account-producer",
+            "namespace": "test",
+            "prefix": "resources-pipeline-with-paths-",
+            "repoConfig": {
+                "repoAuthFlags": {
+                    "caFile": "/my-cert.cert",
+                    "insecureSkipTlsVerify": False,
+                    "password": "$CI_JOB_TOKEN",
+                    "username": "masked",
+                },
+                "repositoryName": "masked",
+                "url": "masked",
+            },
+            "type": "producer",
+            "version": "2.4.2",
+        }
+    ]
+}
+
 snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
     "components": [
         {
