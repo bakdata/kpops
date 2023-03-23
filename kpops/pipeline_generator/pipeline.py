@@ -200,7 +200,9 @@ class Pipeline:
     ) -> PipelineComponent:
         env_component_definition = self.env_components_index.get(component.name, {})
         pair = update_nested_pair(
-            env_component_definition, component.dict(by_alias=True)
+            env_component_definition,
+            # HACK: Pydantic .dict() doesn't create jsonable dict
+            json.loads(component.json(by_alias=True)),
         )
 
         component_data = self.substitute_component_specific_variables(component, pair)
@@ -232,8 +234,10 @@ class Pipeline:
 
     def __str__(self) -> str:
         return yaml.dump(
-            PipelineComponents(components=self.components).dict(
-                exclude_none=True, by_alias=True
+            json.loads(  # HACK: serialize types on Pydantic model export, which are not serialized by .dict(); e.g. pathlib.Path
+                PipelineComponents(components=self.components).json(
+                    exclude_none=True, by_alias=True
+                )
             )
         )
 
