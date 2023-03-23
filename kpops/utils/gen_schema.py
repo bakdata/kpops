@@ -34,8 +34,8 @@ schema.field_schema = field_schema
 
 
 def gen_pipeline_schema(
+    path: Path,
     components_module: Optional[str] = None,
-    path: Path = Path(__file__).parents[2] / "docs/docs/schema/pipeline.json",
 ) -> None:
 
     components = _find_classes("kpops.components", PipelineComponent)
@@ -44,7 +44,6 @@ def gen_pipeline_schema(
             components, _find_classes(components_module, PipelineComponent)
         )
 
-    # Why doesnt KafkaConnector get found by _find_classes?
     PipelineComponent_: UnionType = KafkaConnector
 
     for component in components:
@@ -63,11 +62,9 @@ def gen_pipeline_schema(
         by_alias=True,
         indent=4,
     ).replace("schema_type", "type")
-    write(schema, path)
+    write(schema, path / "pipeline.json")
 
 
-def gen_config_schema(
-    path: Path = Path(__file__).parents[2] / "docs/docs/schema/config.json",
-) -> None:
+def gen_config_schema(path: Path) -> None:
     schema = schema_json_of(PipelineConfig, title="kpops config schema", indent=4)
-    write(schema, path)
+    write(schema, path / "config.json")

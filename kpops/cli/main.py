@@ -17,7 +17,7 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.pipeline_generator.pipeline import Pipeline
-from kpops.utils.gen_schema import gen_pipeline_schema
+from kpops.utils.gen_schema import gen_config_schema, gen_pipeline_schema
 
 if TYPE_CHECKING:
     from kpops.components.base_components import PipelineComponent
@@ -82,10 +82,6 @@ DRY_RUN: bool = typer.Option(
 COMPONENTS_MODULES: str | None = typer.Argument(
     default=None,
     help="Custom Python module containing your project-specific components",
-)
-
-SCHEMA_PATH: Path = typer.Option(
-    default=Path("."), help="Target path for the generation of schemas."
 )
 
 logger = logging.getLogger()
@@ -192,11 +188,23 @@ def create_pipeline_config(
     return pipeline_config
 
 
-@app.command(help="Generate actual schema")
+@app.command(help="Generate json schema.")
 def gen_schema(
-    components_module: Optional[str] = COMPONENTS_MODULES, path: Path = SCHEMA_PATH
+    components_module: Optional[str] = COMPONENTS_MODULES,
+    path: Path = typer.Option(
+        default=Path("."), help="Target path for the generation of schemas."
+    ),
+    pipeline: bool = typer.Option(
+        True, help="Generate json schema of pipeline components."
+    ),
+    config: bool = typer.Option(
+        False, help="Generate json schema pipeline configuration."
+    ),
 ) -> None:
-    gen_pipeline_schema(components_module, path)
+    if pipeline:
+        gen_pipeline_schema(path, components_module)
+    if config:
+        gen_config_schema(path)
 
 
 @app.command(
