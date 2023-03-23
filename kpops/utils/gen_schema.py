@@ -1,13 +1,11 @@
 from itertools import chain
 from pathlib import Path
-from types import UnionType
 from typing import Annotated, Any, Optional, Sequence
 
 from pydantic import Field, schema, schema_json_of
 from pydantic.fields import ModelField
 from pydantic.schema import SkipField
 
-from kpops.cli.exception import ClassNotFoundError
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
 from kpops.components.base_components.kafka_connector import KafkaConnector
@@ -37,6 +35,15 @@ def gen_pipeline_schema(
     path: Path,
     components_module: Optional[str] = None,
 ) -> None:
+    """
+    Generate a json schema from the models of pipeline components.
+
+    :param path: The path to the directory where the schema is to be stored.
+    :type path: Path
+    :param components_module: Python module. Only the classes that inherit from PipelineComponent will be considered.
+    :type components_module: str or None
+    :rtype: None
+    """
 
     components = _find_classes("kpops.components", PipelineComponent)
     if components_module:
@@ -44,13 +51,11 @@ def gen_pipeline_schema(
             components, _find_classes(components_module, PipelineComponent)
         )
 
-    PipelineComponent_: UnionType = KafkaConnector
+    # Create a variable that will hold the union of all component types
+    PipelineComponent_ = KafkaConnector
 
     for component in components:
-        try:
-            PipelineComponent_ = PipelineComponent_ | component
-        except StopIteration:
-            raise ClassNotFoundError
+        PipelineComponent_ = PipelineComponent_ | component
 
     AnnotatedPipelineComponent = Annotated[
         PipelineComponent_, Field(discriminator="schema_type")
@@ -66,5 +71,12 @@ def gen_pipeline_schema(
 
 
 def gen_config_schema(path: Path) -> None:
+    """
+    Generate a json schema from the model of pipeline config.
+
+    :param path: The path to the directory where the schema is to be stored.
+    :type path: Path
+    :rtype: None
+    """
     schema = schema_json_of(PipelineConfig, title="kpops config schema", indent=4)
     write(schema, path / "config.json")
