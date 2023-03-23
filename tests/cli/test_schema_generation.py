@@ -1,11 +1,10 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Literal
 
 import pytest
-import json
-import warnings
 from pydantic import Field
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
@@ -25,7 +24,9 @@ class SubComponent(PipelineComponent):
         default="sub-component", exclude=True
     )
 
+
 MODULE = SubComponent.__module__
+
 
 class SubSubComponent(SubComponent):
     type: str = "sub-sub-component"
@@ -36,6 +37,7 @@ class SubSubComponent(SubComponent):
 
 class Unrelated:
     pass
+
 
 @pytest.mark.filterwarnings("ignore:handlers", "ignore:config", "ignore:enrich")
 class TestGenSchema:
@@ -61,9 +63,7 @@ class TestGenSchema:
         try:
             schema_path.unlink()
         except FileNotFoundError:
-            pytest.fail(
-                f"File {schema_path} did not get generated."
-            )
+            pytest.fail(f"File {schema_path} did not get generated.")
 
     def test_gen_pipeline_schema_with_custom_module(self, snapshot: SnapshotTest):
         result = runner.invoke(
@@ -89,9 +89,7 @@ class TestGenSchema:
         try:
             schema_path.unlink()
         except FileNotFoundError:
-            pytest.fail(
-                f"File {schema_path} did not get generated."
-            )
+            pytest.fail(f"File {schema_path} did not get generated.")
 
     def test_gen_config_schema(self, snapshot: SnapshotTest):
         result = runner.invoke(
@@ -119,6 +117,4 @@ class TestGenSchema:
         try:
             schema_path.unlink()
         except FileNotFoundError:
-            pytest.fail(
-                f"File {schema_path} did not get generated."
-            )
+            pytest.fail(f"File {schema_path} did not get generated.")
