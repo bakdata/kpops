@@ -309,3 +309,23 @@ class TestPipeline:
         assert error_topic == "resources-custom-config-app2-error"
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_model_serialization(self, snapshot: SnapshotTest):
+        """Component containing pathlib.Path attribute"""
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "pipeline-with-paths/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0
+
+        enriched_pipeline = yaml.safe_load(result.stdout)
+        snapshot.assert_match(enriched_pipeline, "test-pipeline")
