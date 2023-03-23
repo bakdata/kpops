@@ -46,7 +46,6 @@ class TestGenSchema:
             app,
             [
                 "gen-schema",
-                "--path",
                 str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
@@ -70,9 +69,8 @@ class TestGenSchema:
             app,
             [
                 "gen-schema",
-                MODULE,
-                "--path",
                 str(RESOURCE_PATH),
+                MODULE,
             ],
             catch_exceptions=False,
         )
@@ -96,11 +94,9 @@ class TestGenSchema:
             app,
             [
                 "gen-schema",
-                MODULE,
+                str(RESOURCE_PATH),
                 "--no-pipeline",
                 "--config",
-                "--path",
-                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
