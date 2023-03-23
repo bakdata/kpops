@@ -234,8 +234,10 @@ class Pipeline:
 
     def __str__(self) -> str:
         return yaml.dump(
-            PipelineComponents(components=self.components).dict(
-                exclude_none=True, by_alias=True
+            json.loads(  # HACK: serialize types on Pydantic model export, which are not serialized by .dict(); e.g. pathlib.Path
+                PipelineComponents(components=self.components).json(
+                    exclude_none=True, by_alias=True
+                )
             )
         )
 
