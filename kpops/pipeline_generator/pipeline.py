@@ -243,7 +243,13 @@ class Pipeline:
 
     def print_yaml(self, substitution: dict | None = None) -> None:
         syntax = Syntax(
-            substitute(str(self), substitution), "yaml", background_color="default"
+            substitute(str(self), substitution),
+            "yaml",
+            background_color="default",
+            # The syntax theme rich should use to print to the terminal
+            # If not set, this uses rich's default monokai
+            # rich itself delegates to pygments styles: https://pygments.org/styles/
+            theme=os.getenv("KPOPS_GENERATE_THEME") or "monokai",
         )
         Console(
             width=1000  # HACK: overwrite console width to avoid truncating output
