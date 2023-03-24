@@ -220,8 +220,8 @@ def generate(
         for component in steps_to_apply:
             component.template(api_version, ca_file, cert_file)
     elif cert_file or ca_file or api_version or steps:
-        raise TypeError(
-            "The following flags can only be used in conjuction with `--template`: \n \
+        log.warning(
+            "The following flags are considered only when `--template` is set: \n \
                 '--cert-file'\n \
                 '--ca-file'\n \
                 '--api-version'\n \
