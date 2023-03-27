@@ -1,6 +1,9 @@
 from itertools import chain
 from pathlib import Path
-from typing import Annotated, Any, Optional, Sequence
+from typing import Annotated, Any, Optional, Sequence, Union, Literal, get_origin, get_args
+import logging
+from rich.console import Console
+from enum import Enum
 
 from pydantic import Field, schema, schema_json_of
 from pydantic.fields import ModelField
@@ -12,9 +15,9 @@ from kpops.components.base_components.kafka_connector import KafkaConnector
 from kpops.components.base_components.pipeline_component import PipelineComponent
 
 
-def write(contents: str, path: Path) -> None:
-    with open(path, "w") as f:
-        print(contents, file=f)
+class SchemaScope(str, Enum):
+    pipeline = "pipeline"
+    config = "config"
 
 
 original_field_schema = schema.field_schema
@@ -30,47 +33,90 @@ def field_schema(field: ModelField, **kwargs: Any) -> Any:
 
 schema.field_schema = field_schema
 
+log = logging.getLogger("")
+
+ModelField
+
+def is_valid_component(used_fields: list[str], component: type[PipelineComponent]) -> bool:
+    """
+    Check whether a PipelineComponent subclass has a valid definition for the schema generation.
+
+    :param used_fields: types defined so far
+    :type used_fields: list[str]
+    :param component: component type to be validated
+    :type component: type[PipelineComponent]
+    :return: Whether component is valid for schema generation
+    :rtype: bool
+    """
+    component_name: str = component.__name__
+    # PipelineComponent always has a field 'type'
+    type: str = component.__fields__.get("type").field_info.default
+    if not component.__fields__.get("schema_type") :
+        log.warning(f"SKIPPED {component_name}, schema_type is not defined")
+        return False
+    schema_type: ModelField = component.__fields__.get("schema_type")
+    schema_type_default = schema_type.field_info.default
+    if get_origin(schema_type.type_) is not Literal or len(get_args(schema_type.type_)) != 1:
+        log.warning(f"SKIPPED {component_name}, schema_type must be a Literal with 1 argument of type str.")
+        return False
+    elif get_args(schema_type.type_)[0] != schema_type_default:
+        log.warning(f"SKIPPED {component_name}, schema_type default value must match Literal arg")
+        return False
+    elif schema_type_default != type:
+        log.warning(f"SKIPPED {component_name}, schema_type != type.")
+        return False
+    elif schema_type_default in used_fields:
+        log.warning(f"SKIPPED {component_name}, schema_type must be unique.")
+        return False
+    else:
+        used_fields.append(schema_type)
+        return True
+
 
 def gen_pipeline_schema(
-    path: Path,
-    components_module: Optional[str] = None,
+    components_module: str | None = None,
 ) -> None:
     """
     Generate a json schema from the models of pipeline components.
 
-    :param path: The path to the directory where the schema is to be stored.
-    :type path: Path
     :param components_module: Python module. Only the classes that inherit from PipelineComponent will be considered.
     :type components_module: str or None
     :rtype: None
     """
 
-    components = _find_classes("kpops.components", PipelineComponent)
+    components = tuple(_find_classes("kpops.components", PipelineComponent))
     if components_module:
-        components = chain(
-            components, _find_classes(components_module, PipelineComponent)
-        )
+        # record components types used so far
+        used_fields = [
+            component.__fields__.get("schema_type").default
+            for component in components
+        ]
+        custom_components = [
+                component
+                for component in _find_classes(components_module, PipelineComponent)
+                if is_valid_component(used_fields, component)
+            ]
+        components += tuple(custom_components)
 
-    # Create a variable that will hold the union of all component types
-    PipelineComponent_ = KafkaConnector
+    # Create a type union that will hold the union of all component types
+    PipelineComponents = Union[components]  # type: ignore[valid-type]
 
-    for component in components:
-        PipelineComponent_ = PipelineComponent_ | component  # type: ignore[assignment]
-
-    AnnotatedPipelineComponent = Annotated[
-        PipelineComponent_, Field(discriminator="schema_type")  # type: ignore[valid-type]
-    ]
+    AnnotatedPipelineComponents = Annotated[
+        PipelineComponents, Field(discriminator="schema_type")
+     ]
 
     schema = schema_json_of(
-        Sequence[AnnotatedPipelineComponent],
+        Sequence[AnnotatedPipelineComponents],
         title="kpops pipeline schema",
         by_alias=True,
         indent=4,
     ).replace("schema_type", "type")
-    write(schema, path / "pipeline.json")
+    Console(
+            width=1000  # HACK: overwrite console width to avoid truncating output
+    ).print(schema)
 
 
-def gen_config_schema(path: Path) -> None:
+def gen_config_schema() -> None:
     """
     Generate a json schema from the model of pipeline config.
 
@@ -79,4 +125,6 @@ def gen_config_schema(path: Path) -> None:
     :rtype: None
     """
     schema = schema_json_of(PipelineConfig, title="kpops config schema", indent=4)
-    write(schema, path / "config.json")
+    Console(
+            width=1000  # HACK: overwrite console width to avoid truncating output
+    ).print(schema)

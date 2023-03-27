@@ -18,21 +18,64 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 runner = CliRunner()
 
 
-class SubComponent(PipelineComponent):
-    type: str = "sub-component"
-    schema_type: Literal["sub-component"] = Field(  # type: ignore[assignment]
-        default="sub-component", exclude=True
+# schema_type and type not defined
+class EmptyPipelineComponent(PipelineComponent):
+    ...
+
+# schema_type does not exist
+class PipelineComponentNoSchemaType(EmptyPipelineComponent):
+    type: str = "pipeline-component-no-schema-type"
+
+class SubPipelineComponent(EmptyPipelineComponent):
+    type: str = "sub-pipeline-component"
+    schema_type: Literal["sub-pipeline-component"] = Field(  # type: ignore[assignment]
+        default="sub-pipeline-component", exclude=True
     )
 
 
-class SubSubComponent(SubComponent):
-    type: str = "sub-sub-component"
-    schema_type: Literal["sub-sub-component"] = Field(  # type: ignore[assignment]
-        default="sub-sub-component", exclude=True
+# schema_type is ineritted from sub-pipeline-component
+class SubPipelineComponentNoSchemaType(SubPipelineComponent):
+    type: str = "sub-pipeline-component-no-schema-type"
+
+# schema_type and type are ineritted from sub-pipeline-component
+class SubPipelineComponentNoSchemaTypeNoType(SubPipelineComponent):
+    ...
+
+# schema_type not Literal
+class SubPipelineComponentBadSchemaTypeDef(SubPipelineComponent):
+    type: str = "sub-pipeline-component-bad-schema-type-def"
+    schema_type: str = "sub-pipeline-component-bad-schema-type-def"
+
+# schema_type Literal arg not same as default value
+class SubPipelineComponentBadSchemaTypeNoMatchDefault(SubPipelineComponent):
+    type: str = "sub-pipeline-component-bad-schema-type-no-match-default"
+    schema_type: Literal["sub-pipeline-component-bad-schema-type-no-match-default-NO-MATCH"] = Field(  # type: ignore[assignment]
+        default="sub-pipeline-component-bad-schema-type-no-match-default", exclude=True
+    )
+
+# schema_type not matching type
+class SubPipelineComponentBadSchemaTypeDefNotMatching(SubPipelineComponent):
+    type: str = "sub-pipeline-component-not-matching"
+    schema_type: Literal["sub-pipeline-component-bad-schema-type-def-not-matching"] = Field(  # type: ignore[assignment]
+        default="sub-pipeline-component-bad-schema-type-def-not-matching", exclude=True
+    )
+
+# schema_type no default
+class SubPipelineComponentBadSchemaTypeMissingDefault(SubPipelineComponent):
+    type: str = "sub-pipeline-component-bad-schema-type-default-not-set"
+    schema_type: Literal["sub-pipeline-component-bad-schema-type-default-not-set"] = Field(  # type: ignore[assignment]
+        exclude=True
+    )
+
+# Correctly defined
+class SubPipelineComponentCorrect(SubPipelineComponent):
+    type: str = "sub-pipeline-component-correct"
+    schema_type: Literal["sub-pipeline-component-correct"] = Field(  # type: ignore[assignment]
+        default="sub-pipeline-component-correct", exclude=True
     )
 
 
-MODULE = SubComponent.__module__
+MODULE = EmptyPipelineComponent.__module__
 
 
 @pytest.mark.filterwarnings("ignore:handlers", "ignore:config", "ignore:enrich")
@@ -41,31 +84,22 @@ class TestGenSchema:
         result = runner.invoke(
             app,
             [
-                "gen-schema",
-                str(RESOURCE_PATH),
+                "schema",
+                "pipeline",
             ],
             catch_exceptions=False,
         )
 
         assert result.exit_code == 0
 
-        schema_path = RESOURCE_PATH / "pipeline.json"
-
-        with open(schema_path, "r") as schema:
-            generated_schema = json.load(schema)
-
-        snapshot.assert_match(generated_schema, "test-schema-generation")
-        try:
-            schema_path.unlink()
-        except FileNotFoundError:
-            pytest.fail(f"File {schema_path} did not get generated.")
+        snapshot.assert_match(result.stdout, "test-schema-generation")
 
     def test_gen_pipeline_schema_with_custom_module(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
-                "gen-schema",
-                str(RESOURCE_PATH),
+                "schema",
+                "pipeline",
                 MODULE,
             ],
             catch_exceptions=False,
@@ -73,40 +107,18 @@ class TestGenSchema:
 
         assert result.exit_code == 0
 
-        schema_path = RESOURCE_PATH / "pipeline.json"
-
-        with open(schema_path, "r") as schema:
-            generated_schema = json.load(schema)
-
-        snapshot.assert_match(generated_schema, "test-schema-generation")
-
-        try:
-            schema_path.unlink()
-        except FileNotFoundError:
-            pytest.fail(f"File {schema_path} did not get generated.")
+        snapshot.assert_match(result.stdout, "test-schema-generation")
 
     def test_gen_config_schema(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
-                "gen-schema",
-                str(RESOURCE_PATH),
-                "--no-pipeline",
-                "--config",
+                "schema",
+                "config"
             ],
             catch_exceptions=False,
         )
 
         assert result.exit_code == 0
 
-        schema_path = RESOURCE_PATH / "config.json"
-
-        with open(schema_path, "r") as schema:
-            generated_schema = json.load(schema)
-
-        snapshot.assert_match(generated_schema, "test-schema-generation")
-
-        try:
-            schema_path.unlink()
-        except FileNotFoundError:
-            pytest.fail(f"File {schema_path} did not get generated.")
+        snapshot.assert_match(result.stdout, "test-schema-generation")

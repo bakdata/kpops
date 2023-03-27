@@ -17,11 +17,10 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.pipeline_generator.pipeline import Pipeline
-from kpops.utils.gen_schema import gen_config_schema, gen_pipeline_schema
+from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 
 if TYPE_CHECKING:
     from kpops.components.base_components import PipelineComponent
-
 
 LOG_DIVIDER = "#" * 100
 
@@ -189,27 +188,28 @@ def create_pipeline_config(
 
 
 @app.command(
-    help="Generates json schemas. "
-    "The schemas can be used to enable support for kpops files in a text editor."
+    help="""
+    Generates json schemas.
+
+    The schemas can be used to enable support for kpops files in a text editor.
+    """
 )
-def gen_schema(
-    path: Path = typer.Argument(
-        default=..., help="Target path for the generation of schemas."
+def schema(
+    scope: SchemaScope = typer.Argument(
+    ...,
+        help="""
+        Scope of the generated schema
+
+        pipeline: Schema of PipelineComponents. Always includes the built-in kpops components. To include custom components, provide [COMPONENTS_MODULES].
+
+        config: Schema of PipelineConfig.""",
     ),
     components_module: Optional[str] = COMPONENTS_MODULES,
-    pipeline: bool = typer.Option(
-        default=True,
-        help="Generate json schema of pipeline components. Always includes the built-in kpops components. "
-        "To include custom components, provide [COMPONENTS_MODULES]",
-    ),
-    config: bool = typer.Option(
-        default=False, help="Generate json schema pipeline configuration."
-    ),
 ) -> None:
-    if pipeline:
-        gen_pipeline_schema(path, components_module)
-    if config:
-        gen_config_schema(path)
+    if scope == "pipeline":
+        gen_pipeline_schema(components_module)
+    elif scope == "config":
+        gen_config_schema()
 
 
 @app.command(
