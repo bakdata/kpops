@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Literal
 
@@ -22,9 +21,11 @@ runner = CliRunner()
 class EmptyPipelineComponent(PipelineComponent):
     ...
 
+
 # schema_type does not exist
 class PipelineComponentNoSchemaType(EmptyPipelineComponent):
     type: str = "pipeline-component-no-schema-type"
+
 
 class SubPipelineComponent(EmptyPipelineComponent):
     type: str = "sub-pipeline-component"
@@ -37,14 +38,17 @@ class SubPipelineComponent(EmptyPipelineComponent):
 class SubPipelineComponentNoSchemaType(SubPipelineComponent):
     type: str = "sub-pipeline-component-no-schema-type"
 
+
 # schema_type and type are ineritted from sub-pipeline-component
 class SubPipelineComponentNoSchemaTypeNoType(SubPipelineComponent):
     ...
 
+
 # schema_type not Literal
 class SubPipelineComponentBadSchemaTypeDef(SubPipelineComponent):
     type: str = "sub-pipeline-component-bad-schema-type-def"
-    schema_type: str = "sub-pipeline-component-bad-schema-type-def"
+    schema_type: str = "sub-pipeline-component-bad-schema-type-def"  # type: ignore [assignment]
+
 
 # schema_type Literal arg not same as default value
 class SubPipelineComponentBadSchemaTypeNoMatchDefault(SubPipelineComponent):
@@ -53,6 +57,7 @@ class SubPipelineComponentBadSchemaTypeNoMatchDefault(SubPipelineComponent):
         default="sub-pipeline-component-bad-schema-type-no-match-default", exclude=True
     )
 
+
 # schema_type not matching type
 class SubPipelineComponentBadSchemaTypeDefNotMatching(SubPipelineComponent):
     type: str = "sub-pipeline-component-not-matching"
@@ -60,12 +65,14 @@ class SubPipelineComponentBadSchemaTypeDefNotMatching(SubPipelineComponent):
         default="sub-pipeline-component-bad-schema-type-def-not-matching", exclude=True
     )
 
+
 # schema_type no default
 class SubPipelineComponentBadSchemaTypeMissingDefault(SubPipelineComponent):
     type: str = "sub-pipeline-component-bad-schema-type-default-not-set"
     schema_type: Literal["sub-pipeline-component-bad-schema-type-default-not-set"] = Field(  # type: ignore[assignment]
         exclude=True
     )
+
 
 # Correctly defined
 class SubPipelineComponentCorrect(SubPipelineComponent):
@@ -112,10 +119,7 @@ class TestGenSchema:
     def test_gen_config_schema(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
-            [
-                "schema",
-                "config"
-            ],
+            ["schema", "config"],
             catch_exceptions=False,
         )
 

@@ -196,7 +196,7 @@ def create_pipeline_config(
 )
 def schema(
     scope: SchemaScope = typer.Argument(
-    ...,
+        ...,
         help="""
         Scope of the generated schema
 
