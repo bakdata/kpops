@@ -189,7 +189,7 @@ def create_pipeline_config(
 
 @app.command(
     help="""
-    Generates json schemas.
+    Generate json schema.
 
     The schemas can be used to enable support for kpops files in a text editor.
     """

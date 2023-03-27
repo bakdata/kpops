@@ -19,6 +19,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `destroy`: Destroy pipeline steps
 * `generate`: Enriches pipelines steps with defaults.
 * `reset`: Reset pipeline steps
+* `schema`: Generates json schema
 
 ## `kpops clean`
 
@@ -38,7 +39,7 @@ $ kpops clean [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH; default: defaults]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
@@ -63,7 +64,7 @@ $ kpops deploy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH; default: defaults]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--verbose / --no-verbose`: [default: no-verbose]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
@@ -88,7 +89,7 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH; default: defaults]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
@@ -113,7 +114,7 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH; default: defaults]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
 * `--template / --no-template`: Run Helm template  [default: no-template]
@@ -141,9 +142,35 @@ $ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH; default: defaults]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: [default: no-verbose]
+* `--help`: Show this message and exit.
+
+## `kpops schema`
+
+Generates json schema
+
+The schemas can be used to enable support for kpops files in a text editor.
+
+**Usage**:
+
+```console
+$ kpops schema [OPTIONS] SCOPE:{pipeline|config} [COMPONENTS_MODULE]
+```
+
+**Arguments**:
+
+* `SCOPE:{pipeline|config}`: 
+        Scope of the generated schema
+
+        pipeline: Schema of PipelineComponents. Always includes the built-in kpops components. To include custom components, provide [COMPONENTS_MODULES].
+
+        config: Schema of PipelineConfig.  [required]
+* `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
+
+**Options**:
+
 * `--help`: Show this message and exit.

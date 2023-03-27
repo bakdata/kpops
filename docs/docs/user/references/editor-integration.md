@@ -20,3 +20,6 @@ KPOps provides JSON schemas that enable autocompletion and validation for some o
       ./docs/resources/editor_integration/settings.json
       --8<--
     ```
+
+!!! tip "Advanced usage"
+    It is possible to generate schemas with the [`kpops schema`](../cli-commands/#kpops-schema) command. Useful when using custom components or when using a pre-release version of KPOps.
