@@ -54,3 +54,8 @@ jobs:
     uses: ./.github/workflows/publish-test-pypi.yaml
     secrets:
       test-pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
+    
+  gen-docs:
+    name: Generate docs
+    needs: [test]
+    uses: ./.github/workflows/gen-docs.yaml

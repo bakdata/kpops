@@ -1,0 +1,27 @@
+name: Generate all files related to documentation
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, synchronize]
+  push:
+    branches:
+      - main
+
+jobs:
+  genereate-markdown-pages:
+    name: Generate CLI Usage page
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install optional dependencies
+        shell: bash
+        run: poetry install --with docs
+
+      - name: Generate CLI Usage page
+        shell: bash
+        run: |
+          # Generate page with typer-cli
+          poetry run typer ./kpops/cli/main.py utils docs --name kpops --output ./docs/docs/user/references/cli-commands.md
+          # Fix title
+          sed -i '1s/.*/# CLI Usage/' ./docs/docs/user/references/cli-commands.md

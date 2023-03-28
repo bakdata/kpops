@@ -38,7 +38,7 @@ $ kpops clean [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH; default: defaults]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
@@ -63,7 +63,7 @@ $ kpops deploy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH; default: defaults]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--verbose / --no-verbose`: [default: no-verbose]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
@@ -88,7 +88,7 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH; default: defaults]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
@@ -113,7 +113,7 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH; default: defaults]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
 * `--template / --no-template`: Run Helm template  [default: no-template]
@@ -141,7 +141,7 @@ $ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH; default: defaults]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
