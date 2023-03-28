@@ -54,9 +54,9 @@ def is_valid_component(
     :return: Whether component is valid for schema generation
     :rtype: bool
     """
-    component_name: str = component.__name__
-    component_type: str = component.get_component_type()
-    schema_type: Optional[ModelField] = component.__fields__.get("schema_type")
+    component_name = component.__name__
+    component_type = component.get_component_type()
+    schema_type = component.__fields__.get("schema_type")
     if not schema_type:
         log.warning(f"SKIPPED {component_name}, schema_type is not defined")
         return False
