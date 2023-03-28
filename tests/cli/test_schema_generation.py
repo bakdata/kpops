@@ -34,12 +34,12 @@ class SubPipelineComponent(EmptyPipelineComponent):
     )
 
 
-# schema_type is inerited from SubPipelineComponent
+# schema_type is inherited from SubPipelineComponent
 class SubPipelineComponentNoSchemaType(SubPipelineComponent):
     type: str = "sub-pipeline-component-no-schema-type"
 
 
-# schema_type and type are inerited from SubPipelineComponent
+# schema_type and type are inherited from SubPipelineComponent
 class SubPipelineComponentNoSchemaTypeNoType(SubPipelineComponent):
     ...
 
