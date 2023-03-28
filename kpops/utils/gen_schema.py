@@ -1,11 +1,19 @@
 import logging
 from enum import Enum
-from typing import Annotated, Any, Literal, Sequence, Union, get_args, get_origin
+from typing import (
+    Annotated,
+    Any,
+    Literal,
+    Optional,
+    Sequence,
+    Union,
+    get_args,
+    get_origin,
+)
 
 from pydantic import Field, schema, schema_json_of
 from pydantic.fields import ModelField
 from pydantic.schema import SkipField
-from rich.console import Console
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
@@ -13,8 +21,8 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 
 
 class SchemaScope(str, Enum):
-    pipeline = "pipeline"
-    config = "config"
+    PIPELINE = "pipeline"
+    CONFIG = "config"
 
 
 original_field_schema = schema.field_schema
@@ -32,11 +40,9 @@ schema.field_schema = field_schema
 
 log = logging.getLogger("")
 
-ModelField
-
 
 def is_valid_component(
-    used_fields: list[str], component: type[PipelineComponent]
+    used_fields: set[str], component: type[PipelineComponent]
 ) -> bool:
     """
     Check whether a PipelineComponent subclass has a valid definition for the schema generation.
@@ -49,12 +55,11 @@ def is_valid_component(
     :rtype: bool
     """
     component_name: str = component.__name__
-    # PipelineComponent always has a field 'type'
-    type: str = component.__fields__.get("type").field_info.default  # type: ignore[union-attr]
-    if not component.__fields__.get("schema_type"):
+    component_type: str = component.get_component_type()
+    schema_type: Optional[ModelField] = component.__fields__.get("schema_type")
+    if not schema_type:
         log.warning(f"SKIPPED {component_name}, schema_type is not defined")
         return False
-    schema_type: ModelField = component.__fields__.get("schema_type")  # type: ignore[assignment]
     schema_type_default = schema_type.field_info.default
     if (
         get_origin(schema_type.type_) is not Literal
@@ -69,14 +74,14 @@ def is_valid_component(
             f"SKIPPED {component_name}, schema_type default value must match Literal arg"
         )
         return False
-    elif schema_type_default != type:
+    elif schema_type_default != component_type:
         log.warning(f"SKIPPED {component_name}, schema_type != type.")
         return False
     elif schema_type_default in used_fields:
         log.warning(f"SKIPPED {component_name}, schema_type must be unique.")
         return False
     else:
-        used_fields.append(schema_type_default)
+        used_fields.add(schema_type_default)
         return True
 
 
@@ -94,10 +99,11 @@ def gen_pipeline_schema(
     components = tuple(_find_classes("kpops.components", PipelineComponent))
     if components_module:
         # record components types used so far
-        used_fields: list[str] = [
-            component.__fields__.get("schema_type").default  # type: ignore [union-attr]
+        used_fields: set[str] = {
+            component.__fields__["schema_type"].default
             for component in components
-        ]
+            if component.__fields__.get("schema_type")
+        }
         custom_components = [
             component
             for component in _find_classes(components_module, PipelineComponent)
@@ -118,9 +124,7 @@ def gen_pipeline_schema(
         by_alias=True,
         indent=4,
     ).replace("schema_type", "type")
-    Console(
-        width=1000  # HACK: overwrite console width to avoid truncating output
-    ).print(schema)
+    print(schema)
 
 
 def gen_config_schema() -> None:
@@ -132,6 +136,4 @@ def gen_config_schema() -> None:
     :rtype: None
     """
     schema = schema_json_of(PipelineConfig, title="kpops config schema", indent=4)
-    Console(
-        width=1000  # HACK: overwrite console width to avoid truncating output
-    ).print(schema)
+    print(schema)

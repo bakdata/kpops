@@ -197,19 +197,21 @@ def create_pipeline_config(
 def schema(
     scope: SchemaScope = typer.Argument(
         ...,
+        show_default=False,
         help="""
         Scope of the generated schema
-
+        \n\n\n
         pipeline: Schema of PipelineComponents. Always includes the built-in kpops components. To include custom components, provide [COMPONENTS_MODULES].
-
+        \n\n\n
         config: Schema of PipelineConfig.""",
     ),
     components_module: Optional[str] = COMPONENTS_MODULES,
 ) -> None:
-    if scope == "pipeline":
-        gen_pipeline_schema(components_module)
-    elif scope == "config":
-        gen_config_schema()
+    match scope:
+        case SchemaScope.PIPELINE:
+            gen_pipeline_schema(components_module)
+        case SchemaScope.CONFIG:
+            gen_config_schema()
 
 
 @app.command(
