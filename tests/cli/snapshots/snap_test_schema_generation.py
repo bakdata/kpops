@@ -256,7 +256,7 @@ snapshots[
                 "kubernetes-app": "#/definitions/KubernetesApp",
                 "producer": "#/definitions/ProducerApp",
                 "streams-app": "#/definitions/StreamsApp",
-                "sub-pipeline-component": "#/definitions/SubPipelineComponentNoSchemaTypeNoType",
+                "sub-pipeline-component": "#/definitions/SubPipelineComponent",
                 "sub-pipeline-component-correct": "#/definitions/SubPipelineComponentCorrect"
             }
         },
@@ -287,9 +287,6 @@ snapshots[
             },
             {
                 "$ref": "#/definitions/SubPipelineComponentCorrect"
-            },
-            {
-                "$ref": "#/definitions/SubPipelineComponentNoSchemaTypeNoType"
             }
         ]
     },
@@ -1335,52 +1332,6 @@ snapshots[
                     "default": "sub-pipeline-component-correct",
                     "enum": [
                         "sub-pipeline-component-correct"
-                    ],
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
-            ]
-        },
-        "SubPipelineComponentNoSchemaTypeNoType": {
-            "title": "SubPipelineComponentNoSchemaTypeNoType",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "sub-pipeline-component",
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ]
-                },
-                "app": {
-                    "title": "App"
-                },
-                "to": {
-                    "$ref": "#/definitions/ToSection"
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "sub-pipeline-component",
-                    "enum": [
-                        "sub-pipeline-component"
                     ],
                     "type": "string"
                 }
