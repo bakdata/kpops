@@ -1509,7 +1509,7 @@ test = ["black (>=22.3.0,<23.0.0)", "coverage (>=5.2,<6.0)", "isort (>=5.0.6,<6.
 name = "typer-cli"
 version = "0.0.13"
 description = "Run Typer scripts with completion, without having to create a package, using Typer CLI."
-category = "main"
+category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
@@ -1691,4 +1691,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "41295ed3abdd73c1c382e69545d23ade6f9e6a83c1eb77deb40c5f9551b4ec8d"
+content-hash = "fb214c9f11be3184b940a03a1fd0695d37fa50b9a8f18b44f8b6928010f1e159"

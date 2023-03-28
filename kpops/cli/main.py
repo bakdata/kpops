@@ -17,10 +17,10 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.pipeline_generator.pipeline import Pipeline
+from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 
 if TYPE_CHECKING:
     from kpops.components.base_components import PipelineComponent
-
 
 LOG_DIVIDER = "#" * 100
 
@@ -185,6 +185,33 @@ def create_pipeline_config(
         pipeline_config = PipelineConfig()
         pipeline_config.defaults_path = config.parent / pipeline_config.defaults_path
     return pipeline_config
+
+
+@app.command(
+    help="""
+    Generate json schema.
+
+    The schemas can be used to enable support for kpops files in a text editor.
+    """
+)
+def schema(
+    scope: SchemaScope = typer.Argument(
+        ...,
+        show_default=False,
+        help="""
+        Scope of the generated schema
+        \n\n\n
+        pipeline: Schema of PipelineComponents. Always includes the built-in kpops components. To include custom components, provide [COMPONENTS_MODULES].
+        \n\n\n
+        config: Schema of PipelineConfig.""",
+    ),
+    components_module: Optional[str] = COMPONENTS_MODULES,
+) -> None:
+    match scope:
+        case SchemaScope.PIPELINE:
+            gen_pipeline_schema(components_module)
+        case SchemaScope.CONFIG:
+            gen_config_schema()
 
 
 @app.command(
