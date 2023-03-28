@@ -13,7 +13,7 @@ KPOps provides JSON schemas that enable autocompletion and validation for some o
 [yaml-language-server](https://github.com/redhat-developer/yaml-language-server#clients){target=_blank} in your editor of choice. (requires LSP support)
 2. Configure the extension with the settings below.
 
-???+ note "`settings.json`"
+??? note "`settings.json`"
 
     ```json
       --8<--
