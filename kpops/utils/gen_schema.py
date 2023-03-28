@@ -1,15 +1,6 @@
 import logging
 from enum import Enum
-from typing import (
-    Annotated,
-    Any,
-    Literal,
-    Optional,
-    Sequence,
-    Union,
-    get_args,
-    get_origin,
-)
+from typing import Annotated, Any, Literal, Sequence, Union, get_args, get_origin
 
 from pydantic import Field, schema, schema_json_of
 from pydantic.fields import ModelField
