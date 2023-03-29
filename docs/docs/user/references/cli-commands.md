@@ -20,7 +20,6 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `generate`: Enriches pipelines steps with defaults.
 * `reset`: Reset pipeline steps
 * `schema`: Generate json schema.
-* `testing-ci`: TEST
 
 ## `kpops clean`
 
@@ -177,25 +176,6 @@ $ kpops schema [OPTIONS] SCOPE:{pipeline|config} [COMPONENTS_MODULE]
 
         config: Schema of PipelineConfig.  [required]
 * `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
-
-**Options**:
-
-* `--help`: Show this message and exit.
-
-## `kpops testing-ci`
-
-TEST
-    
-
-**Usage**:
-
-```console
-$ kpops testing-ci [OPTIONS] TEST_
-```
-
-**Arguments**:
-
-* `TEST_`: TEST  [required]
 
 **Options**:
 
