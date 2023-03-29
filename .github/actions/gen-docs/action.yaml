@@ -32,13 +32,10 @@ runs:
         USERNAME: ${{ inputs.username }}
         EMAIL: ${{ inputs.email }}
         TOKEN: ${{ inputs.token }}
-      with:
-        ref: ${{ github.event.pull_request.head.ref }}
       run: |
         git config --local user.name ${USERNAME}
         git config --local user.email ${EMAIL}
         git config --local user.password ${TOKEN}
-        git checkout origin/{{ ref }}
 
     - name: Install just
       uses: extractions/setup-just@v1
