@@ -1,0 +1,51 @@
+name: "Generate all files related to documentation"
+
+description: "Generates all files related to documentation."
+
+inputs:
+  username:
+    description: "GitHub username"
+    required: true
+  email:
+    description: "GitHub email"
+    required: true
+  token:
+    description: "GitHub Token (must be a PAT for repository dispatch)"
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install python and set up Poetry
+      uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.3
+      with:
+        poetry-version: "1.3.2"
+        python-version: "3.10"
+
+    - name: Install optional dependencies
+      shell: bash
+      run: poetry install --with docs
+
+    - name: Configure git
+      shell: bash
+      env:
+        USERNAME: ${{ inputs.username }}
+        EMAIL: ${{ inputs.email }}
+        TOKEN: ${{ inputs.token }}
+      run: |
+        git config --local user.name ${USERNAME}
+        git config --local user.email ${EMAIL}
+        git config --local user.password ${TOKEN}
+
+    - name: Generate CLI Usage page
+      shell: bash
+      run: |
+        # Generate page with typer-cli
+        poetry run just generate-doc-cli-usage
+
+    - name: Commit generated pages
+      if: github.event_name == 'push'
+      shell: bash
+      run: |
+        git add ./docs/docs/user/references/cli-commands.md
+        git commit -m "docs(cli): Generated CLI Usage page."

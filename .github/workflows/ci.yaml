@@ -48,14 +48,23 @@ jobs:
       - name: Test
         run: poetry run pytest tests
 
+  gen-docs:
+    runs-on: ubuntu-22.04
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Generate CLI Usage page
+        uses: ./.github/actions/gen-docs
+        with:
+          username: ${{ secrets.GH_USERNAME }}
+          email: ${{ secrets.GH_EMAIL }}
+          token: ${{ secrets.GH_TOKEN }}
+
   publish:
     name: Publish
     needs: [test]
     uses: ./.github/workflows/publish-test-pypi.yaml
     secrets:
       test-pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
-    
-  gen-docs:
-    name: Generate docs
-    needs: [test]
-    uses: ./.github/workflows/gen-docs.yaml
