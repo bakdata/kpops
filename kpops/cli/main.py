@@ -215,6 +215,14 @@ def schema(
 
 
 @app.command(
+    help="test"
+)
+def test_(
+    test_: bool = typer.Option(False, help="bool"),
+) -> None:
+    print(test_)
+
+@app.command(
     help="Enriches pipelines steps with defaults. The output is used as input for the deploy/destroy/... commands."
 )
 def generate(
