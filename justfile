@@ -17,5 +17,5 @@ serve-docs port="8000":
 
 # Generate CLI Usage page in documentation
 generate-doc-cli-usage:
-    typer {{base-directory}}/kpops/cli/main.py utils docs --name kpops --output {{base-directory}}/docs/docs/user/references/cli-commands.md
+    poetry run typer {{base-directory}}/kpops/cli/main.py utils docs --name kpops --output {{base-directory}}/docs/docs/user/references/cli-commands.md
     sed -i '1s/.*/# CLI Usage/' {{base-directory}}/docs/docs/user/references/cli-commands.md
