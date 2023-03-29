@@ -222,6 +222,7 @@ def test_(
 ) -> None:
     print(test_)
 
+
 @app.command(
     help="Enriches pipelines steps with defaults. The output is used as input for the deploy/destroy/... commands."
 )
