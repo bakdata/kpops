@@ -49,7 +49,6 @@ runs:
         poetry run just generate-doc-cli-usage
 
     - name: Commit generated pages
-      if: github.event_name == 'push'
       shell: bash
       run: |
         git add ./docs/docs/user/references/cli-commands.md
