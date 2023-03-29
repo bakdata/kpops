@@ -37,16 +37,12 @@ runs:
         git config --local user.email ${EMAIL}
         git config --local user.password ${TOKEN}
 
-    - name: Install just
-      uses: extractions/setup-just@v1
-      with:
-        just-version: '1.4.0'
-
     - name: Generate CLI Usage page
       shell: bash
       run: |
         # Generate page with typer-cli
-        poetry run just generate-doc-cli-usage
+        poetry run typer ./kpops/cli/main.py utils docs --name kpops --output ./docs/docs/user/references/cli-commands.md
+        sed -i '1s/.*/# CLI Usage/' ./docs/docs/user/references/cli-commands.md
 
     - name: Commit generated pages
       if: github.event_name == 'push'
