@@ -51,6 +51,7 @@ jobs:
   gen-docs:
     runs-on: ubuntu-22.04
     needs: test
+    if: github.event_name == 'push'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
