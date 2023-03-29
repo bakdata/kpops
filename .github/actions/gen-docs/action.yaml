@@ -37,15 +37,16 @@ runs:
         git config --local user.email ${EMAIL}
         git config --local user.password ${TOKEN}
 
+    - name: Install just
+      uses: extractions/setup-just@v1
+      with:
+        just-version: '1.4.0'
+
     - name: Generate CLI Usage page
       shell: bash
       run: |
-        # install just
-        git clone 'https://mpr.makedeb.org/just'
-        cd just
-        makedeb -si
         # Generate page with typer-cli
-        just generate-doc-cli-usage
+        poetry run just generate-doc-cli-usage
 
     - name: Commit generated pages
       if: github.event_name == 'push'
