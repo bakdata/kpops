@@ -214,9 +214,7 @@ def schema(
             gen_config_schema()
 
 
-@app.command(
-    help="test"
-)
+@app.command(help="test")
 def test_(
     test_: bool = typer.Option(False, help="bool"),
 ) -> None:
