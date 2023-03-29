@@ -189,6 +189,21 @@ def create_pipeline_config(
 
 @app.command(
     help="""
+TEST
+    """
+)
+def testing_ci(
+    test_: str = typer.Argument(
+        ...,
+        show_default=False,
+        help="""TEST""",
+    ),
+) -> None:
+    print(test_)
+
+
+@app.command(
+    help="""
     Generate json schema.
 
     The schemas can be used to enable support for kpops files in a text editor.
