@@ -32,10 +32,13 @@ runs:
         USERNAME: ${{ inputs.username }}
         EMAIL: ${{ inputs.email }}
         TOKEN: ${{ inputs.token }}
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
       run: |
         git config --local user.name ${USERNAME}
         git config --local user.email ${EMAIL}
         git config --local user.password ${TOKEN}
+        git checkout origin/{{ ref }}
 
     - name: Install just
       uses: extractions/setup-just@v1
@@ -52,5 +55,5 @@ runs:
       shell: bash
       run: |
         git add ./docs/docs/user/references/cli-commands.md
-        git commit -m "docs(cli): Generated CLI Usage page."
+        git commit -m "docs(cli): Autogenerate CLI Usage page"
         git push
