@@ -51,7 +51,7 @@ jobs:
   gen-docs:
     runs-on: ubuntu-22.04
     needs: test
-    if: github.event_name == 'push'
+    if: github.event_name == 'push' || github.event.pull_request.merged == true
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -67,7 +67,7 @@ jobs:
 
   publish:
     name: Publish
-    needs: [test, gen-docs]
+    needs: [test]
     uses: ./.github/workflows/publish-test-pypi.yaml
     secrets:
       test-pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
