@@ -51,7 +51,7 @@ jobs:
   gen-docs:
     runs-on: ubuntu-22.04
     needs: test
-    if: github.event_name == 'push' || github.event.pull_request.merged == true
+    if: ${{ github.event.pull_request.draft }} == False
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
