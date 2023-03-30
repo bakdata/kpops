@@ -52,5 +52,5 @@ runs:
       shell: bash
       run: |
         git add ./docs/docs/user/references/cli-commands.md
-        git commit -m "docs(cli): Autogenerate CLI Usage page" || echo "No changes to commit."
+        git commit -m "docs(cli): Autogenerate CLI Usage page" || echo "Commit was empty, skipping."
         git push
