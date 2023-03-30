@@ -12,6 +12,15 @@ inputs:
   token:
     description: "GitHub Token (must be a PAT for repository dispatch)"
     required: true
+  python-version:
+    description: "Poetry version"
+    required: true
+  poetry-version:
+    description: "Poetry version"
+    required: true
+  just-version:
+    description: "Just version"
+    required: true
 
 runs:
   using: "composite"
@@ -19,28 +28,17 @@ runs:
     - name: Install python and set up Poetry
       uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.3
       with:
-        poetry-version: "1.3.2"
-        python-version: "3.10"
+        poetry-version: ${{ inputs.poetry-version }}
+        python-version: ${{ inputs.python-version }}
 
     - name: Install optional dependencies
       shell: bash
       run: poetry install --with docs
 
-    - name: Configure git
-      shell: bash
-      env:
-        USERNAME: ${{ inputs.username }}
-        EMAIL: ${{ inputs.email }}
-        TOKEN: ${{ inputs.token }}
-      run: |
-        git config --local user.name ${USERNAME}
-        git config --local user.email ${EMAIL}
-        git config --local user.password ${TOKEN}
-
     - name: Install just
       uses: extractions/setup-just@v1
       with:
-        just-version: '1.4.0'
+        just-version: ${{ inputs.just-version }}
 
     - name: Generate CLI Usage page
       shell: bash
@@ -48,9 +46,12 @@ runs:
         # Generate page with typer-cli
         poetry run just generate-doc-cli-usage
 
-    - name: Commit generated pages
-      shell: bash
-      run: |
-        git add ./docs/docs/user/references/cli-commands.md
-        git commit -m "docs(cli): Autogenerate CLI Usage page" || echo "Commit was empty, skipping."
-        git push
+    - name: Commit and push changes
+      uses: bakdata/ci-templates/actions/commit-and-push@main
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+        commit-message: "docs(cli): Autogenerate CLI Usage page"
+        add-untracked: "false"
+        github-username: ${{ inputs.username }}
+        github-email: ${{ inputs.email }}
+        github-token: ${{ inputs.token }}
