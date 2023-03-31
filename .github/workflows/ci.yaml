@@ -48,23 +48,9 @@ jobs:
       - name: Test
         run: poetry run pytest tests
 
-  gen-docs:
-    runs-on: ubuntu-22.04
-    needs: test
-    if: "! github.event.pull_request.draft"
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Generate CLI Usage page
-        uses: ./.github/actions/gen-docs
-        with:
-          username: ${{ secrets.GH_USERNAME }}
-          email: ${{ secrets.GH_EMAIL }}
-          token: ${{ secrets.GH_TOKEN }}
-          python-version: "3.10"
-          poetry-version: "1.3.2"
-          just-version: "1.4.0"
+      - name: Generate docs
+        run: sh ./gen_docs.sh
+        shell: bash
 
   publish:
     name: Publish

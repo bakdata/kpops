@@ -16,6 +16,5 @@ serve-docs port="8000":
     poetry run mkdocs serve --config-file {{ docs-config }} --dev-addr localhost:{{ port }}
 
 # Generate CLI Usage page in documentation
-generate-doc-cli-usage:
-    poetry run typer {{base-directory}}/kpops/cli/main.py utils docs --name kpops --output {{base-directory}}/docs/docs/user/references/cli-commands.md
-    sed -i '1s/.*/# CLI Usage/' {{base-directory}}/docs/docs/user/references/cli-commands.md
+generate-docs:
+    sh ./gen_docs.sh
