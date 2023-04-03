@@ -31,8 +31,6 @@ plugins:
   - macros
   - search
   - glightbox
-  - codeinclude:
-      title_mode: pymdownx.tabbed
 
 markdown_extensions:
   - footnotes
