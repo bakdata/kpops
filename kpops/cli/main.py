@@ -187,11 +187,6 @@ def create_pipeline_config(
     return pipeline_config
 
 
-@app.command(help="help")
-def test_(test_=typer.Option(default=True, help="help")):
-    pass
-
-
 @app.command(
     help="""
     Generate json schema.
