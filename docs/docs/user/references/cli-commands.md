@@ -19,7 +19,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `destroy`: Destroy pipeline steps
 * `generate`: Enriches pipelines steps with defaults.
 * `reset`: Reset pipeline steps
-* `schema`: Generates json schema
+* `schema`: Generate json schema.
 
 ## `kpops clean`
 
@@ -151,7 +151,7 @@ $ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 
 ## `kpops schema`
 
-Generates json schema
+Generate json schema.
 
 The schemas can be used to enable support for kpops files in a text editor.
 
@@ -165,8 +165,14 @@ $ kpops schema [OPTIONS] SCOPE:{pipeline|config} [COMPONENTS_MODULE]
 
 * `SCOPE:{pipeline|config}`: 
         Scope of the generated schema
+        
+
+
 
         pipeline: Schema of PipelineComponents. Always includes the built-in kpops components. To include custom components, provide [COMPONENTS_MODULES].
+        
+
+
 
         config: Schema of PipelineConfig.  [required]
 * `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components

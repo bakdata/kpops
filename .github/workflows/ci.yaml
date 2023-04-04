@@ -48,6 +48,13 @@ jobs:
       - name: Test
         run: poetry run pytest tests
 
+      - name: Install docs dependencies
+        run: poetry install --no-interaction --only docs
+
+      - name: Generate docs
+        run: sh ./gen_docs.sh
+        shell: bash
+
   publish:
     name: Publish
     needs: [test]

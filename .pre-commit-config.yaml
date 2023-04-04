@@ -29,3 +29,10 @@ repos:
         stages: [manual]
         args: ["--py310-plus"]
         exclude: ^tests/.*snapshots/
+  - repo: local
+    hooks:
+      - id: gen-docs
+        name: gen-docs
+        entry: ./gen_docs.sh
+        language: system
+        require_serial: true
