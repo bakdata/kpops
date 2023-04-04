@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-scriptDir=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[0]}" )")
+scriptDir=$(dirname -- "$(readlink -f -- "${BASH_SOURCE[2]}" )")
 output="$scriptDir"/docs/docs/user/references/cli-commands.md
 
 echo "generate CLI Usage"
