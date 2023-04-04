@@ -1,7 +1,9 @@
 # KPOps
 
-[![Latest release](https://img.shields.io/github/v/release/bakdata/kpops)](https://github.com/bakdata/kpops/releases/latest)
 [![Build status](https://github.com/bakdata/kpops/actions/workflows/ci.yaml/badge.svg)](https://github.com/bakdata/kpops/actions/workflows/ci.yaml)
+[![pypi](https://img.shields.io/pypi/v/kpops.svg)](https://pypi.org/project/kpops)
+[![versions](https://img.shields.io/pypi/pyversions/kpops.svg)](https://github.com/bakdata/kpops)
+[![license](https://img.shields.io/github/license/bakdata/kpops.svg)](https://github.com/bakdata/kpops/blob/main/LICENSE)
 
 ## Key features
 
