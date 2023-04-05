@@ -1,4 +1,4 @@
-name: Release to PyPI, GitHub, and update docs
+name: test changelog gen
 
 on:
   workflow_dispatch:
@@ -16,7 +16,6 @@ on:
 jobs:
   create-github-release-push-tag:
     runs-on: ubuntu-22.04
-    needs: release-to-pypi
     steps:
       - name: "Generate Changelog"
         id: generate-changelog
