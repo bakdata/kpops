@@ -1,0 +1,354 @@
+# [1.0.1](https://github.com/bakdata/kpops/releases/tag/1.0.1) - 2023-03-23T11:01:34.000Z
+
+
+<details>
+<summary>Uncategorized</summary>
+
+- Add installation instructions to README
+   - PR: https://github.com/bakdata/kpops/pull/30
+   - Assignees: raminqaf
+   - Reviewers: 
+   - Approvers: philipp94831, disrupted
+- Fix usage of template workflow for Poetry release
+   - PR: https://github.com/bakdata/kpops/pull/25
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: raminqaf
+- Set default value of retain clean jobs flag to false
+   - PR: https://github.com/bakdata/kpops/pull/31
+   - Assignees: raminqaf
+   - Reviewers: 
+   - Approvers: philipp94831
+- Refactor component handlers
+   - PR: https://github.com/bakdata/kpops/pull/3
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: raminqaf
+- Fix link for getting started in readme
+   - PR: https://github.com/bakdata/kpops/pull/34
+   - Assignees: 
+   - Reviewers: 
+   - Approvers: raminqaf
+- Use new Helm repositories for streams-bootstrap and Kafka Connect resetter
+   - PR: https://github.com/bakdata/kpops/pull/36
+   - Assignees: philipp94831
+   - Reviewers: 
+   - Approvers: raminqaf
+- Fix spelling of PyPI
+   - PR: https://github.com/bakdata/kpops/pull/33
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: raminqaf
+- Fix typo in docs
+   - PR: https://github.com/bakdata/kpops/pull/38
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: philipp94831
+- Fix broken links in the documentation
+   - PR: https://github.com/bakdata/kpops/pull/39
+   - Assignees: 
+   - Reviewers: philipp94831
+   - Approvers: yannick-roeder
+- Fix generate connecting to Kafka REST proxy
+   - PR: https://github.com/bakdata/kpops/pull/41
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: philipp94831, raminqaf
+- Fix release version for TestPyPI
+   - PR: https://github.com/bakdata/kpops/pull/48
+   - Assignees: philipp94831
+   - Reviewers: 
+   - Approvers: raminqaf
+- Change topic_name variable to output_topic_name
+   - PR: https://github.com/bakdata/kpops/pull/50
+   - Assignees: MichaelKora
+   - Reviewers: philipp94831, disrupted, raminqaf
+   - Approvers: disrupted
+- Improve exception output for integration tests
+   - PR: https://github.com/bakdata/kpops/pull/51
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: philipp94831
+- Refactor usage of Pydantic aliases
+   - PR: https://github.com/bakdata/kpops/pull/52
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: raminqaf
+- Add MyPy plugin for Pydantic
+   - PR: https://github.com/bakdata/kpops/pull/56
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: philipp94831
+- Use component name instead of type to set default output topic name
+   - PR: https://github.com/bakdata/kpops/pull/53
+   - Assignees: MichaelKora
+   - Reviewers: philipp94831
+   - Approvers: disrupted
+- Refactor Helm Wrapper
+   - PR: https://github.com/bakdata/kpops/pull/47
+   - Assignees: raminqaf
+   - Reviewers: philipp94831
+   - Approvers: disrupted
+- Separate clean, reset, and destroy logic
+   - PR: https://github.com/bakdata/kpops/pull/57
+   - Assignees: raminqaf
+   - Reviewers: 
+   - Approvers: philipp94831, disrupted
+- Fix trigger CI job once on release workflow
+   - PR: https://github.com/bakdata/kpops/pull/58
+   - Assignees: raminqaf
+   - Reviewers: 
+   - Approvers: yannick-roeder
+- Fix double push of docs to GitHub pages
+   - PR: https://github.com/bakdata/kpops/pull/59
+   - Assignees: raminqaf
+   - Reviewers: 
+   - Approvers: yannick-roeder
+- Refactor Kubernetes app properties
+   - PR: https://github.com/bakdata/kpops/pull/60
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: philipp94831, raminqaf
+- Fix Helm release name trimming of cleanup jobs
+   - PR: https://github.com/bakdata/kpops/pull/61
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: raminqaf
+- Update setup.cfg
+   - PR: https://github.com/bakdata/kpops/pull/65
+   - Assignees: sujuka99
+   - Reviewers: 
+   - Approvers: disrupted
+- Refactor component configs
+   - PR: https://github.com/bakdata/kpops/pull/63
+   - Assignees: raminqaf
+   - Reviewers: 
+   - Approvers: philipp94831, disrupted
+- Generate schema for pipeline.yaml and config.yaml
+   - PR: https://github.com/bakdata/kpops/pull/70
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: sujuka99
+- Tidy user guide
+   - PR: https://github.com/bakdata/kpops/pull/81
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: raminqaf
+- Fix typo and metrics replication factor in Kafka values
+   - PR: https://github.com/bakdata/kpops/pull/82
+   - Assignees: yannick-roeder
+   - Reviewers: disrupted, torbsto, raminqaf, sujuka99, MichaelKora
+   - Approvers: philipp94831
+- Add  flag to mike
+   - PR: https://github.com/bakdata/kpops/pull/83
+   - Assignees: raminqaf
+   - Reviewers: yannick-roeder
+   - Approvers: disrupted
+- Correct push flag of mike
+   - PR: https://github.com/bakdata/kpops/pull/84
+   - Assignees: 
+   - Reviewers: 
+   - Approvers: philipp94831
+- Remove mike set-default command
+   - PR: https://github.com/bakdata/kpops/pull/86
+   - Assignees: 
+   - Reviewers: 
+   - Approvers: philipp94831
+- Add --create-namespace option to helm
+   - PR: https://github.com/bakdata/kpops/pull/91
+   - Assignees: raminqaf
+   - Reviewers: disrupted, sujuka99
+   - Approvers: philipp94831
+- Fix diff not shown for new Helm releases
+   - PR: https://github.com/bakdata/kpops/pull/92
+   - Assignees: disrupted
+   - Reviewers: raminqaf, sujuka99
+   - Approvers: philipp94831
+- Fix ATM fraud example
+   - PR: https://github.com/bakdata/kpops/pull/95
+   - Assignees: disrupted
+   - Reviewers: sujuka99
+   - Approvers: philipp94831
+- Fix kpops version in pyproject.toml
+   - PR: https://github.com/bakdata/kpops/pull/99
+   - Assignees: 
+   - Reviewers: 
+   - Approvers: philipp94831
+- Clean up dry-run logging
+   - PR: https://github.com/bakdata/kpops/pull/100
+   - Assignees: philipp94831
+   - Reviewers: 
+   - Approvers: raminqaf, disrupted
+- Refactor integration test
+   - PR: https://github.com/bakdata/kpops/pull/96
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: raminqaf, sujuka99
+- Refactor change calculation
+   - PR: https://github.com/bakdata/kpops/pull/88
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: raminqaf, raminqaf, philipp94831
+- Support printing final Kubernetes resources with kpops generate
+   - PR: https://github.com/bakdata/kpops/pull/69
+   - Assignees: sujuka99
+   - Reviewers: 
+   - Approvers: disrupted
+- Set Kafka Connect config name from component
+   - PR: https://github.com/bakdata/kpops/pull/98
+   - Assignees: irux
+   - Reviewers: 
+   - Approvers: disrupted, raminqaf
+- Add prefix as an option to customize
+   - PR: https://github.com/bakdata/kpops/pull/97
+   - Assignees: irux
+   - Reviewers: raminqaf
+   - Approvers: philipp94831, disrupted
+- Add name to connector dry-run diff
+   - PR: https://github.com/bakdata/kpops/pull/108
+   - Assignees: philipp94831
+   - Reviewers: 
+   - Approvers: raminqaf
+- Create deployment documentation for Word Count pipeline
+   - PR: https://github.com/bakdata/kpops/pull/107
+   - Assignees: sujuka99
+   - Reviewers: raminqaf, yannick-roeder, MichaelKora
+   - Approvers: disrupted
+- Delete leftover pipeline prefix config
+   - PR: https://github.com/bakdata/kpops/pull/111
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: philipp94831
+- Remove  from Quickstart doc
+   - PR: https://github.com/bakdata/kpops/pull/114
+   - Assignees: sujuka99
+   - Reviewers: 
+   - Approvers: raminqaf
+- Fix incomplete inflate component
+   - PR: https://github.com/bakdata/kpops/pull/105
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: raminqaf
+- Update screenshot of word count pipeline
+   - PR: https://github.com/bakdata/kpops/pull/116
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: philipp94831
+- Fix topic name substitution of  in ToSection
+   - PR: https://github.com/bakdata/kpops/pull/117
+   - Assignees: disrupted
+   - Reviewers: raminqaf
+   - Approvers: philipp94831, sujuka99
+- Fix enrichment of inflated components
+   - PR: https://github.com/bakdata/kpops/pull/118
+   - Assignees: disrupted
+   - Reviewers: raminqaf, sujuka99
+   - Approvers: philipp94831
+- Assign default reviewers through codeowners
+   - PR: https://github.com/bakdata/kpops/pull/124
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: sujuka99, yannick-roeder
+- Update streams-bootstrap autoscaling config
+   - PR: https://github.com/bakdata/kpops/pull/122
+   - Assignees: disrupted
+   - Reviewers: philipp94831
+   - Approvers: sujuka99, raminqaf, yannick-roeder
+- Skip FromSection for producers
+   - PR: https://github.com/bakdata/kpops/pull/125
+   - Assignees: disrupted
+   - Reviewers: sujuka99
+   - Approvers: raminqaf
+- Fix pipeline environment override
+   - PR: https://github.com/bakdata/kpops/pull/127
+   - Assignees: disrupted
+   - Reviewers: raminqaf, sujuka99
+   - Approvers: philipp94831
+- Create documentation of KPOps components 
+   - PR: https://github.com/bakdata/kpops/pull/112
+   - Assignees: sujuka99
+   - Reviewers: philipp94831, raminqaf
+   - Approvers: disrupted
+- Helm diff should not render NOTES.txt
+   - PR: https://github.com/bakdata/kpops/pull/130
+   - Assignees: sujuka99
+   - Reviewers: philipp94831, raminqaf
+   - Approvers: disrupted
+- Improve inflate example & enum comparison in test
+   - PR: https://github.com/bakdata/kpops/pull/104
+   - Assignees: disrupted
+   - Reviewers: philipp94831, sujuka99
+   - Approvers: raminqaf
+- Remove duplicate documentation about CLI environment variables
+   - PR: https://github.com/bakdata/kpops/pull/140
+   - Assignees: disrupted
+   - Reviewers: philipp94831, raminqaf
+   - Approvers: sujuka99
+- Provide documentation for editor integration
+   - PR: https://github.com/bakdata/kpops/pull/137
+   - Assignees: sujuka99
+   - Reviewers: philipp94831, raminqaf
+   - Approvers: disrupted
+- Create documentation of 
+   - PR: https://github.com/bakdata/kpops/pull/138
+   - Assignees: sujuka99
+   - Reviewers: philipp94831, raminqaf
+   - Approvers: disrupted
+- Refactor loading of component defaults to independent function
+   - PR: https://github.com/bakdata/kpops/pull/147
+   - Assignees: disrupted
+   - Reviewers: raminqaf, sujuka99
+   - Approvers: philipp94831
+- Create documentation for defaults.yaml
+   - PR: https://github.com/bakdata/kpops/pull/146
+   - Assignees: sujuka99
+   - Reviewers: philipp94831
+   - Approvers: disrupted, raminqaf
+- Rename  to 
+   - PR: https://github.com/bakdata/kpops/pull/150
+   - Assignees: sujuka99
+   - Reviewers: philipp94831
+   - Approvers: raminqaf, disrupted
+- Set schema for Kafka Connect config
+   - PR: https://github.com/bakdata/kpops/pull/132
+   - Assignees: disrupted
+   - Reviewers: 
+   - Approvers: raminqaf, sujuka99, philipp94831
+- Fix missing enum keys in Kafka REST proxy response model
+   - PR: https://github.com/bakdata/kpops/pull/135
+   - Assignees: 
+   - Reviewers: philipp94831, raminqaf, sujuka99
+   - Approvers: disrupted
+- Update What is KPOps section to be more catchy
+   - PR: https://github.com/bakdata/kpops/pull/148
+   - Assignees: sujuka99
+   - Reviewers: 
+   - Approvers: raminqaf
+- Fix broken links in README
+   - PR: https://github.com/bakdata/kpops/pull/160
+   - Assignees: raminqaf
+   - Reviewers: disrupted, sujuka99
+   - Approvers: philipp94831
+- Update CLI usage Reference
+   - PR: https://github.com/bakdata/kpops/pull/152
+   - Assignees: sujuka99
+   - Reviewers: philipp94831, disrupted
+   - Approvers: raminqaf
+- Fix config.yaml  being overridden by CLI
+   - PR: https://github.com/bakdata/kpops/pull/151
+   - Assignees: sujuka99
+   - Reviewers: philipp94831
+   - Approvers: disrupted
+- fix(README): documentation leads to user-guide
+   - PR: https://github.com/bakdata/kpops/pull/163
+   - Assignees: sujuka99
+   - Reviewers: philipp94831, raminqaf
+   - Approvers: disrupted
+- Fix serialization of  type on model export
+   - PR: https://github.com/bakdata/kpops/pull/168
+   - Assignees: disrupted
+   - Reviewers: philipp94831, sujuka99
+   - Approvers: raminqaf
+
+</details>
+
