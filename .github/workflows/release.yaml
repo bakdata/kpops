@@ -14,57 +14,33 @@ on:
           - major
 
 jobs:
-  release-to-pypi:
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@v1.13.2
-    with:
-      release-type: ${{ github.event.inputs.release-type }}
-      publish-to-test: false
-      python-version: "3.10"
-      poetry-version: "1.3.2"
-    secrets:
-      github-email: ${{ secrets.GH_EMAIL }}
-      github-username: ${{ secrets.GH_USERNAME }}
-      github-token: ${{ secrets.GH_TOKEN }}
-      pypi-token: ${{ secrets.PYPI_TOKEN }}
-
   create-github-release-push-tag:
     runs-on: ubuntu-22.04
     needs: release-to-pypi
     steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
+      - name: "Generate Changelog"
+        id: generate-changelog
+        uses: mikepenz/release-changelog-builder-action@v3
         with:
-          persist-credentials: false
+          configuration: "./changelog-config.json"
+          fetchReviewers: "true"
+          fetchReleaseInformation: "true"
+          failOnError: "true"
+          fromTag: "0.3.0"
+          toTag: ${{ github.head_ref || github.ref_name }}
+          token: ${{ secrets.GH_TOKEN  }}
 
-      - name: Create tag
-        run: |
-          git config --local user.name ${{ secrets.GH_USERNAME }}
-          git config --local user.email ${{ secrets.GH_EMAIL }}
-          git tag v${{ needs.release-to-pypi.outputs.release-tag }}
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: "Update Documentation"
+        run: echo "${{ steps.generate-changelog.outputs.changelog }}" > ./CHANGELOG.md
+        shell: bash
+      
+      - name: Commit and push changes
+        uses: bakdata/ci-templates/actions/commit-and-push@main
         with:
-          tag_name: "${{ needs.release-to-pypi.outputs.release-tag }}"
-          name: Release v${{ needs.release-to-pypi.outputs.release-tag }}
-          draft: false
-          prerelease: false
-
-  update-docs:
-    runs-on: ubuntu-22.04
-    needs: release-to-pypi
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # Fetch all tags; Required for doc versioning
-
-      - name: Update gh-pages
-        uses: ./.github/actions/update-docs
-        with:
-          tag: ${{ needs.release-to-pypi.outputs.release-tag }}
-          username: ${{ secrets.GH_USERNAME }}
-          email: ${{ secrets.GH_EMAIL }}
-          token: ${{ secrets.GH_TOKEN }}
+          ref: ${{ github.head_ref || github.ref_name }} # (Optional) if not set the ${{ github.event.repository.default_branch }} will fill the value
+          commit-message: "docs(changelog): CI-generated CHANGELOG ${{ steps.generate-changelog.outputs.fromTag }} -> ${{ steps.generate-changelog.outputs.toTag }}"
+          add-untracked: "true" # (Optional) if not set, only tracked files will be committed
+          pass-empty-commit: "true" # (Optional) if not set, fail upon nothing to commit
+          github-username: ${{ secrets.GH_USERNAME }}
+          github-email: ${{ secrets.GH_EMAIL }}
+          github-token: ${{ secrets.GH_TOKEN }}
