@@ -17,6 +17,12 @@ jobs:
   ctest-changelog-gen:
     runs-on: ubuntu-22.04
     steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+          
       - name: "Generate Changelog"
         id: generate-changelog
         uses: mikepenz/release-changelog-builder-action@v3
