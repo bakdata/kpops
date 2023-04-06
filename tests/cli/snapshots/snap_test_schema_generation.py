@@ -319,6 +319,23 @@ snapshots[
             ],
             "additionalProperties": false
         },
+        "FromComponent": {
+            "title": "FromComponent",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "$ref": "#/definitions/InputTopicTypes"
+                },
+                "role": {
+                    "title": "Role",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "additionalProperties": false
+        },
         "FromSection": {
             "title": "FromSection",
             "type": "object",
@@ -338,7 +355,7 @@ snapshots[
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/FromTopic"
+                        "$ref": "#/definitions/FromComponent"
                     }
                 }
             },
@@ -1423,6 +1440,23 @@ snapshots[
             ],
             "additionalProperties": false
         },
+        "FromComponent": {
+            "title": "FromComponent",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "$ref": "#/definitions/InputTopicTypes"
+                },
+                "role": {
+                    "title": "Role",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "additionalProperties": false
+        },
         "FromSection": {
             "title": "FromSection",
             "type": "object",
@@ -1442,7 +1476,7 @@ snapshots[
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/FromTopic"
+                        "$ref": "#/definitions/FromComponent"
                     }
                 }
             },
