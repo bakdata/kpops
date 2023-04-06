@@ -114,7 +114,7 @@ class PipelineComponent(BaseDefaultsComponent):
                 self.apply_from_inputs(name, topic)
 
     def apply_from_inputs(self, name: str, topic: FromTopic) -> None:
-        match (topic.type):
+        match topic.type:
             case InputTopicTypes.INPUT:
                 self.add_input_topics([name])
             case InputTopicTypes.EXTRA if topic.role:
@@ -130,7 +130,7 @@ class PipelineComponent(BaseDefaultsComponent):
                 self.apply_to_outputs(name, topic)
 
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:
-        match (topic.type):
+        match topic.type:
             case OutputTopicTypes.OUTPUT:
                 self.set_output_topic(name)
             case OutputTopicTypes.ERROR:
