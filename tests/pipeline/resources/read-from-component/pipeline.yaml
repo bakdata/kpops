@@ -24,7 +24,8 @@
   name: consumer1
   from:
     components:
-      - producer1
+      producer1:
+        type: input
   to:
     topics:
       ${output_topic_name}:
@@ -34,8 +35,10 @@
   name: consumer2
   from:
     components:
-      - producer1
-      - consumer1
+      producer1:
+        type: input
+      consumer1:
+        type: input
 
 - type: streams-app
   name: consumer3
@@ -44,16 +47,19 @@
       ${pipeline_name}-producer1:
         type: input
     components:
-      - producer2
+      producer2:
+        type: input
 
 - type: streams-app
   name: consumer4
   from:
     components:
-      - inflate-step
+      inflate-step:
+        type: input
 
 - type: streams-app
   name: consumer5
   from:
     components:
-      - inflate-step-without-prefix
+      inflate-step-without-prefix:
+        type: input

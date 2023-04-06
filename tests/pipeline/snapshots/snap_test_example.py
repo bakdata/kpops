@@ -210,7 +210,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
                 },
             },
             "from": {
-                "components": [],
+                "components": {},
                 "topics": {
                     "bakdata-atm-fraud-detection-account-producer-topic": {
                         "role": "accounts",

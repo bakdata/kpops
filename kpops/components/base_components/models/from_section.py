@@ -40,8 +40,8 @@ class FromSection(BaseModel):
         default={},
         description="Topics to read from.",
     )
-    components: list[str] = Field(
-        default=[],
+    components: dict[str, FromTopic] = Field(  # TODO
+        default={},
         description="Components to read from.",
     )
 

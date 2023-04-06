@@ -335,10 +335,10 @@ snapshots[
                 "components": {
                     "title": "Components",
                     "description": "Components to read from.",
-                    "default": [],
-                    "type": "array",
-                    "items": {
-                        "type": "string"
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FromTopic"
                     }
                 }
             },
@@ -1439,10 +1439,10 @@ snapshots[
                 "components": {
                     "title": "Components",
                     "description": "Components to read from.",
-                    "default": [],
-                    "type": "array",
-                    "items": {
-                        "type": "string"
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FromTopic"
                     }
                 }
             },
