@@ -1214,10 +1214,7 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "from": {
-                "components": ["resources-read-from-component-producer1"],
-                "topics": {},
-            },
+            "from": {"components": ["producer1"], "topics": {}},
             "name": "resources-read-from-component-consumer1",
             "namespace": "example-namespace",
             "prefix": "resources-read-from-component-",
@@ -1260,13 +1257,7 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "from": {
-                "components": [
-                    "resources-read-from-component-producer1",
-                    "resources-read-from-component-consumer1",
-                ],
-                "topics": {},
-            },
+            "from": {"components": ["producer1", "consumer1"], "topics": {}},
             "name": "resources-read-from-component-consumer2",
             "namespace": "example-namespace",
             "prefix": "resources-read-from-component-",
@@ -1346,10 +1337,7 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "from": {
-                "components": ["resources-read-from-component-inflate-step"],
-                "topics": {},
-            },
+            "from": {"components": ["inflate-step"], "topics": {}},
             "name": "resources-read-from-component-consumer4",
             "namespace": "example-namespace",
             "prefix": "resources-read-from-component-",

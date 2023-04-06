@@ -35,7 +35,7 @@ class PipelineComponents(BaseModel):
 
     def find(self, component_name: str) -> PipelineComponent:
         for component in self.components:
-            if component_name == component.name:
+            if component_name == component.name.removeprefix(component.prefix):
                 return component
         raise ValueError(f"Component {component_name} not found")
 
@@ -166,11 +166,7 @@ class Pipeline:
                     )
                     inflated_from_component = original_from_component.inflate()[-1]
                     if inflated_from_component is not original_from_component:
-                        # HACK
-                        resolved_from_component_name = (
-                            inflated_from_component.prefix
-                            + inflated_from_component.name
-                        )
+                        resolved_from_component_name = inflated_from_component.name
                     else:
                         resolved_from_component_name = original_from_component_name
                     from_component = self.components.find(resolved_from_component_name)
