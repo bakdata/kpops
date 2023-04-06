@@ -4,11 +4,10 @@ from __future__ import unicode_literals
 
 from snapshottest import Snapshot
 
+
 snapshots = Snapshot()
 
-snapshots[
-    "TestGenSchema.test_gen_config_schema test-schema-generation"
-] = """{
+snapshots['TestGenSchema.test_gen_config_schema test-schema-generation'] = '''{
     "title": "kpops config schema",
     "$ref": "#/definitions/PipelineConfig",
     "definitions": {
@@ -238,11 +237,9 @@ snapshots[
         }
     }
 }
-"""
+'''
 
-snapshots[
-    "TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema-generation"
-] = """{
+snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema-generation'] = '''{
     "title": "kpops pipeline schema",
     "type": "array",
     "items": {
@@ -293,7 +290,7 @@ snapshots[
     "definitions": {
         "InputTopicTypes": {
             "title": "InputTopicTypes",
-            "description": "An enumeration.",
+            "description": "Input topic types\\n\\n    input (input topic), input_pattern (input pattern topic), extra (extra topic), extra_pattern (extra pattern topic).\\n    Every extra topic must have a role.\\n    ",
             "enum": [
                 "input",
                 "extra",
@@ -304,13 +301,20 @@ snapshots[
         },
         "FromTopic": {
             "title": "FromTopic",
+            "description": "Input topic",
             "type": "object",
             "properties": {
                 "type": {
-                    "$ref": "#/definitions/InputTopicTypes"
+                    "description": "Topic type",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/InputTopicTypes"
+                        }
+                    ]
                 },
                 "role": {
                     "title": "Role",
+                    "description": "Topic role",
                     "type": "string"
                 }
             },
@@ -321,10 +325,12 @@ snapshots[
         },
         "FromSection": {
             "title": "FromSection",
+            "description": "Holds multiple input topics",
             "type": "object",
             "properties": {
                 "topics": {
                     "title": "Topics",
+                    "description": "Input topics",
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "#/definitions/FromTopic"
@@ -371,7 +377,7 @@ snapshots[
         },
         "OutputTopicTypes": {
             "title": "OutputTopicTypes",
-            "description": "Types of output topic.\\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\\n    ",
+            "description": "Types of output topic\\n\\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\\n    ",
             "enum": [
                 "error",
                 "output",
@@ -385,26 +391,36 @@ snapshots[
             "type": "object",
             "properties": {
                 "type": {
-                    "$ref": "#/definitions/OutputTopicTypes"
+                    "description": "Topic type",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/OutputTopicTypes"
+                        }
+                    ]
                 },
                 "keySchema": {
                     "title": "Keyschema",
+                    "description": "Key schema class name",
                     "type": "string"
                 },
                 "valueSchema": {
                     "title": "Valueschema",
+                    "description": "Value schema class name",
                     "type": "string"
                 },
                 "partitions_count": {
                     "title": "Partitions Count",
+                    "description": "Number of partitions",
                     "type": "integer"
                 },
                 "replication_factor": {
                     "title": "Replication Factor",
+                    "description": "Replication factor",
                     "type": "integer"
                 },
                 "configs": {
                     "title": "Configs",
+                    "description": "Topic configs",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -413,6 +429,7 @@ snapshots[
                 },
                 "role": {
                     "title": "Role",
+                    "description": "Topic role",
                     "type": "string"
                 }
             },
@@ -423,6 +440,7 @@ snapshots[
         },
         "ToSection": {
             "title": "ToSection",
+            "description": "Holds multiple output topics",
             "type": "object",
             "properties": {
                 "models": {
@@ -432,6 +450,7 @@ snapshots[
                 },
                 "topics": {
                     "title": "Topics",
+                    "description": "Output topics",
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "#/definitions/TopicConfig"
@@ -584,6 +603,7 @@ snapshots[
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
+            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
             "type": "object",
             "properties": {
                 "type": {
@@ -664,6 +684,7 @@ snapshots[
         },
         "KafkaSinkConnector": {
             "title": "KafkaSinkConnector",
+            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
             "type": "object",
             "properties": {
                 "type": {
@@ -744,6 +765,7 @@ snapshots[
         },
         "KafkaSourceConnector": {
             "title": "KafkaSourceConnector",
+            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
             "type": "object",
             "properties": {
                 "type": {
@@ -1250,6 +1272,7 @@ snapshots[
         },
         "SubPipelineComponent": {
             "title": "SubPipelineComponent",
+            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
             "type": "object",
             "properties": {
                 "type": {
@@ -1296,6 +1319,7 @@ snapshots[
         },
         "SubPipelineComponentCorrect": {
             "title": "SubPipelineComponentCorrect",
+            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
             "type": "object",
             "properties": {
                 "type": {
@@ -1342,11 +1366,9 @@ snapshots[
         }
     }
 }
-"""
+'''
 
-snapshots[
-    "TestGenSchema.test_gen_pipeline_schema_without_custom_module test-schema-generation"
-] = """{
+snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-schema-generation'] = '''{
     "title": "kpops pipeline schema",
     "type": "array",
     "items": {
@@ -1389,7 +1411,7 @@ snapshots[
     "definitions": {
         "InputTopicTypes": {
             "title": "InputTopicTypes",
-            "description": "An enumeration.",
+            "description": "Input topic types\\n\\n    input (input topic), input_pattern (input pattern topic), extra (extra topic), extra_pattern (extra pattern topic).\\n    Every extra topic must have a role.\\n    ",
             "enum": [
                 "input",
                 "extra",
@@ -1400,13 +1422,20 @@ snapshots[
         },
         "FromTopic": {
             "title": "FromTopic",
+            "description": "Input topic",
             "type": "object",
             "properties": {
                 "type": {
-                    "$ref": "#/definitions/InputTopicTypes"
+                    "description": "Topic type",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/InputTopicTypes"
+                        }
+                    ]
                 },
                 "role": {
                     "title": "Role",
+                    "description": "Topic role",
                     "type": "string"
                 }
             },
@@ -1417,10 +1446,12 @@ snapshots[
         },
         "FromSection": {
             "title": "FromSection",
+            "description": "Holds multiple input topics",
             "type": "object",
             "properties": {
                 "topics": {
                     "title": "Topics",
+                    "description": "Input topics",
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "#/definitions/FromTopic"
@@ -1467,7 +1498,7 @@ snapshots[
         },
         "OutputTopicTypes": {
             "title": "OutputTopicTypes",
-            "description": "Types of output topic.\\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\\n    ",
+            "description": "Types of output topic\\n\\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\\n    ",
             "enum": [
                 "error",
                 "output",
@@ -1481,26 +1512,36 @@ snapshots[
             "type": "object",
             "properties": {
                 "type": {
-                    "$ref": "#/definitions/OutputTopicTypes"
+                    "description": "Topic type",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/OutputTopicTypes"
+                        }
+                    ]
                 },
                 "keySchema": {
                     "title": "Keyschema",
+                    "description": "Key schema class name",
                     "type": "string"
                 },
                 "valueSchema": {
                     "title": "Valueschema",
+                    "description": "Value schema class name",
                     "type": "string"
                 },
                 "partitions_count": {
                     "title": "Partitions Count",
+                    "description": "Number of partitions",
                     "type": "integer"
                 },
                 "replication_factor": {
                     "title": "Replication Factor",
+                    "description": "Replication factor",
                     "type": "integer"
                 },
                 "configs": {
                     "title": "Configs",
+                    "description": "Topic configs",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -1509,6 +1550,7 @@ snapshots[
                 },
                 "role": {
                     "title": "Role",
+                    "description": "Topic role",
                     "type": "string"
                 }
             },
@@ -1519,6 +1561,7 @@ snapshots[
         },
         "ToSection": {
             "title": "ToSection",
+            "description": "Holds multiple output topics",
             "type": "object",
             "properties": {
                 "models": {
@@ -1528,6 +1571,7 @@ snapshots[
                 },
                 "topics": {
                     "title": "Topics",
+                    "description": "Output topics",
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "#/definitions/TopicConfig"
@@ -1680,6 +1724,7 @@ snapshots[
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
+            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
             "type": "object",
             "properties": {
                 "type": {
@@ -1760,6 +1805,7 @@ snapshots[
         },
         "KafkaSinkConnector": {
             "title": "KafkaSinkConnector",
+            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
             "type": "object",
             "properties": {
                 "type": {
@@ -1840,6 +1886,7 @@ snapshots[
         },
         "KafkaSourceConnector": {
             "title": "KafkaSourceConnector",
+            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
             "type": "object",
             "properties": {
                 "type": {
@@ -2346,4 +2393,4 @@ snapshots[
         }
     }
 }
-"""
+'''

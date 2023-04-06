@@ -4,6 +4,12 @@ from pydantic import BaseConfig, BaseModel, Extra, Field, root_validator
 
 
 class InputTopicTypes(str, Enum):
+    """Input topic types
+
+    input (input topic), input_pattern (input pattern topic), extra (extra topic), extra_pattern (extra pattern topic).
+    Every extra topic must have a role.
+    """
+
     INPUT = "input"
     EXTRA = "extra"
     INPUT_PATTERN = "input-pattern"
@@ -11,8 +17,10 @@ class InputTopicTypes(str, Enum):
 
 
 class FromTopic(BaseModel):
-    type: InputTopicTypes = Field(...)
-    role: str | None = None
+    """Input topic"""
+
+    type: InputTopicTypes = Field(..., description="Topic type")
+    role: str | None = Field(default=None, description="Topic role")
 
     class Config(BaseConfig):
         extra = Extra.forbid
@@ -20,6 +28,7 @@ class FromTopic(BaseModel):
 
     @root_validator
     def extra_topic_role(cls, values):
+        """Ensure that cls.role is used correctly"""
         is_extra_topic = values["type"] in (
             InputTopicTypes.EXTRA,
             InputTopicTypes.EXTRA_PATTERN,
@@ -36,7 +45,9 @@ class FromTopic(BaseModel):
 
 
 class FromSection(BaseModel):
-    topics: dict[str, FromTopic]
+    """Holds multiple input topics"""
+
+    topics: dict[str, FromTopic] = Field(..., description="Input topics")
 
     class Config(BaseConfig):
         extra = Extra.forbid

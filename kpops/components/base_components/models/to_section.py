@@ -5,7 +5,8 @@ from pydantic import BaseConfig, BaseModel, Extra, Field, root_validator
 
 
 class OutputTopicTypes(str, Enum):
-    """Types of output topic.
+    """Types of output topic
+
     error (error topic), output (output topic), and extra topics. Every extra topic must have a role.
     """
 
@@ -17,13 +18,21 @@ class OutputTopicTypes(str, Enum):
 class TopicConfig(BaseModel):
     """Configures a topic"""
 
-    type: OutputTopicTypes = Field(...)
-    key_schema: str | None = Field(default=None, alias="keySchema")
-    value_schema: str | None = Field(default=None, alias="valueSchema")
-    partitions_count: int | None = None
-    replication_factor: int | None = None
-    configs: dict[str, str] = {}
-    role: str | None = None
+    type: OutputTopicTypes = Field(..., description="Topic type")
+    key_schema: str | None = Field(
+        default=None, alias="keySchema", description="Key schema class name"
+    )
+    value_schema: str | None = Field(
+        default=None, alias="valueSchema", description="Value schema class name"
+    )
+    partitions_count: int | None = Field(
+        default=None, description="Number of partitions"
+    )
+    replication_factor: int | None = Field(
+        default=None, description="Replication factor"
+    )
+    configs: dict[str, str] = Field(default={}, description="Topic configs")
+    role: str | None = Field(default=None, description="Topic role")
 
     class Config(BaseConfig):
         extra = Extra.forbid
@@ -32,6 +41,7 @@ class TopicConfig(BaseModel):
 
     @root_validator
     def extra_topic_role(cls, values):
+        """Ensure that cls.role is used correctly"""
         is_extra_topic: bool = values["type"] == OutputTopicTypes.EXTRA
         if is_extra_topic and not values.get("role"):
             raise ValueError(
@@ -46,12 +56,14 @@ class TopicConfig(BaseModel):
 
 
 class ToSection(BaseModel):
+    """Holds multiple output topics"""
+    
     models: dict[
         str, Any
     ] = (
         {}
     )  # any because snapshot versions must be supported  # TODO: really multiple models?
-    topics: dict[str, TopicConfig]
+    topics: dict[str, TopicConfig] = Field(..., description="Output topics")
 
     class Config(BaseConfig):
         extra = Extra.allow

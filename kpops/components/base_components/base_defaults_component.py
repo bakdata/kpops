@@ -17,12 +17,33 @@ log = logging.getLogger("PipelineComponentEnricher")
 
 
 class BaseDefaultsComponent(BaseModel):
-    type: str = Field(default=..., const=True)
+    """
+    Base for all components, handles defaults.
 
-    enrich: bool = Field(default=False, exclude=True, hidden_from_schema=True)
-    config: PipelineConfig = Field(default=..., exclude=True, hidden_from_schema=True)
+    Component defaults are usually provided in a yaml file called
+    `defaults.yaml`. This class ensures that the defaults are read and assigned
+    correctly to the component.
+    """
+
+    type: str = Field(default=..., description="Component type", const=True)
+
+    enrich: bool = Field(
+        default=False,
+        description="Whether to enrich component with defaults",
+        exclude=True,
+        hidden_from_schema=True,
+    )
+    config: PipelineConfig = Field(
+        default=...,
+        description="Pipeline configuration to be accessed by this component",
+        exclude=True,
+        hidden_from_schema=True,
+    )
     handlers: ComponentHandlers = Field(
-        default=..., exclude=True, hidden_from_schema=True
+        default=...,
+        description="Component handlers to be accessed by this component",
+        exclude=True,
+        hidden_from_schema=True,
     )
 
     class Config(BaseConfig):
@@ -35,17 +56,25 @@ class BaseDefaultsComponent(BaseModel):
 
     @classmethod  # NOTE: property as classmethod deprecated in Python 3.11
     def get_component_type(cls) -> str:
+        """Return calling component's type
+
+        :returns: Component type
+        :rtype: str
+        """
         # HACK: access type attribute through default value
         # because exporting type as ClassVar from Pydantic models
         # is not reliable
         return cls.__fields__["type"].default
 
     def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
-        """
+        """Merge parent components' defaults with own
+
         Merges tmp_defaults with all tmp_defaults for parent classes
 
-        :param kwargs: the init kwargs for pydantic
-        :return: enriched kwargs with tmp_defaults
+        :param kwargs: The init kwargs for pydantic
+        :type kwargs: dict[str, Any]
+        :returns: Enriched kwargs with tmp_defaults
+        :rtype: dict[str, Any]
         """
 
         config: PipelineConfig = kwargs["config"]
@@ -73,6 +102,17 @@ def load_defaults(
     defaults_file_path: Path,
     environment_defaults_file_path: Path | None = None,
 ) -> dict:
+    """Resolve component-specific defaults including environment defaults
+
+    :param component_class: Component class
+    :type component_class: type[BaseDefaultsComponent]
+    :param defaults_file_path: Path to `defaults.yaml`
+    :type defaults_file_path: Path
+    :param environment_defaults_file_path: Path to `defaults_{environment}.yaml`
+    :type environment_defaults_file_path: Path
+    :returns: Component defaults
+    :rtype: dict
+    """
     classes = deque(inspect.getmro(component_class))
     classes.appendleft(component_class)
     defaults: dict = {}
@@ -97,8 +137,18 @@ def load_defaults(
 
 
 def defaults_from_yaml(path: Path, key: str) -> dict:
-    """
-    Read value from json file and return @default if not found
+    """Read value from a defaults yaml file and return @default if not found
+
+    :param path: Path to defaults yaml file`
+    :type path: Path
+    :param key: Key of target value
+    :type key: str
+    :returns: Requested value
+    :rtype: dict
+
+    :Example:
+
+    value = defaults_from_yaml
     """
     content = load_yaml_file(path, substitution=dict(os.environ))
     if not isinstance(content, dict):
@@ -115,6 +165,13 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
 
 
 def get_defaults_file_paths(config: PipelineConfig) -> tuple[Path, Path]:
+    """Returns defaults files paths from the pipeline config
+
+    :param config: Pipeline configuration
+    :type config: PipelineConfig
+    :returns: The defaults files paths
+    :rtype: tuple[Path, Path]
+    """
     defaults_dir = Path(config.defaults_path).resolve()
     main_default_file_path = defaults_dir / Path(
         config.defaults_filename_prefix
@@ -131,12 +188,26 @@ T = TypeVar("T")
 
 
 def deduplicate(seq: Sequence[T]) -> list[T]:
-    """Deduplicate items of a sequence while preserving its order."""
+    """Deduplicate items of a sequence while preserving its order.
+
+    :param seq: Sequence to be 'cleaned'
+    :type seq: Sequence[T]
+    :returns: Cleaned sequence in the form of a list
+    :rtype: list[T]
+    """
     return list(dict.fromkeys(seq))
 
 
 def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
-    """Nested update for 2 dictionaries"""
+    """Nested update for 2 dictionaries
+
+    :param original_dict: Dictionary to be updated
+    :type original_dict: dict
+    :param other_dict: Mapping that contains new or updated key-value pairs
+    :type other_dict: Mapping
+    :return: Updated dictionary
+    :rtype: dict
+    """
     for key, value in other_dict.items():
         if isinstance(value, Mapping):
             nested_val = original_dict.get(key, {})
@@ -149,9 +220,14 @@ def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
 
 
 def update_nested(*argv: dict) -> dict:
-    """
-    Merge multiple configuration dicts. The dicts have multiple layers. These layers will be merged recursively.
-    :arg argv - n dictionaries
+    """Merge multiple configuration dicts.
+
+    The dicts have multiple layers. These layers will be merged recursively.
+
+    :param argv: n dictionaries
+    :type argv: dict
+    :returns: Merged coniguration dict
+    :rtype: dict
     """
 
     if len(argv) == 0:
