@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import NewType
 
 from pydantic import BaseConfig, BaseModel, Extra, Field, root_validator
 
@@ -35,12 +36,16 @@ class FromTopic(BaseModel):
         return values
 
 
+TopicName = NewType("TopicName", str)
+ComponentName = NewType("ComponentName", str)
+
+
 class FromSection(BaseModel):
-    topics: dict[str, FromTopic] = Field(
+    topics: dict[TopicName, FromTopic] = Field(
         default={},
         description="Topics to read from.",
     )
-    components: dict[str, FromTopic] = Field(  # TODO
+    components: dict[ComponentName, FromTopic] = Field(  # TODO
         default={},
         description="Components to read from.",
     )
