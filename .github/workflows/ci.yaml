@@ -41,11 +41,19 @@ jobs:
         run: poetry run pre-commit run mypy --all-files
 
       # TODO: enable when PEP 604 incompatibilty is in typer is resolved https://github.com/tiangolo/typer/issues/348
+      # See https://github.com/tiangolo/typer/pull/522
       # - name: Syntax (pyupgrade)
       #   run: poetry run pre-commit run --hook-stage manual pyupgrade --all-files
 
       - name: Test
         run: poetry run pytest tests
+
+      - name: Install docs dependencies
+        run: poetry install --no-interaction --only docs
+
+      - name: Generate docs
+        run: sh ./gen_docs.sh
+        shell: bash
 
   publish:
     name: Publish

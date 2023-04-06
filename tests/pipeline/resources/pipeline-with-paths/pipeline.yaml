@@ -1,0 +1,14 @@
+- type: producer
+  name: account-producer
+  namespace: test
+  app:
+    streams:
+      brokers: test
+      output_topic: out
+  repo_config:
+    repository_name: masked
+    url: masked
+    repo_auth_flags:
+      username: masked
+      password: $CI_JOB_TOKEN
+      ca_file: /my-cert.cert

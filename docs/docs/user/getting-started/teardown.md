@@ -8,9 +8,8 @@
 
 ## KPOps-deployed pipeline
 
-The `kpops` CLI can be used to destroy a pipeline that was previously deployed with `kpops`.
-In case that doesn't work, the pipeline can always be taken down manually 
-with `helm` (see section [Infrastructure](#infrastructure)).
+The [`kpops` CLI](../../references/cli-commands) can be used to destroy a pipeline that was previously deployed with KPOps.
+In case that doesn't work, the pipeline can always be taken down manually with `helm` (see section [Infrastructure](#infrastructure)).
 
 1. Export environment variables.
 
@@ -31,7 +30,6 @@ with `helm` (see section [Infrastructure](#infrastructure)).
     # poetry run kpops destroy <name-of-the-example-directory>/pipeline.yaml \
     # poetry run kpops reset <name-of-the-example-directory>/pipeline.yaml \
     # poetry run kpops clean <name-of-the-example-directory>/pipeline.yaml \
-    --defaults <name-of-the-example-directory>/defaults \
     --config <name-of-the-example-directory>/config.yaml \
     --execute
     ```

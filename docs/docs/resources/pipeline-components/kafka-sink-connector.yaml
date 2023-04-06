@@ -44,5 +44,4 @@
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
   resetterValues:
-    imageTag: 1.2.3
-  offsetTopic: offset_topic
+    imageTag: "1.2.3"

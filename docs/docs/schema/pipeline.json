@@ -9,6 +9,7 @@
                 "kafka-app": "#/definitions/KafkaApp",
                 "streams-app": "#/definitions/StreamsApp",
                 "producer": "#/definitions/ProducerApp",
+                "kafka-connector": "#/definitions/KafkaConnector",
                 "kafka-source-connector": "#/definitions/KafkaSourceConnector",
                 "kafka-sink-connector": "#/definitions/KafkaSinkConnector"
             }
@@ -25,6 +26,9 @@
             },
             {
                 "$ref": "#/definitions/ProducerApp"
+            },
+            {
+                "$ref": "#/definitions/KafkaConnector"
             },
             {
                 "$ref": "#/definitions/KafkaSourceConnector"
@@ -486,13 +490,13 @@
                 },
                 "pollingInterval": {
                     "title": "Polling interval",
-                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.7/concepts/scaling-deployments/#pollinginterval",
+                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
                     "default": 30,
                     "type": "integer"
                 },
                 "cooldownPeriod": {
                     "title": "Cooldown period",
-                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.7/concepts/scaling-deployments/#cooldownperiod",
+                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
                     "default": 300,
                     "type": "integer"
                 },
@@ -504,19 +508,19 @@
                 },
                 "minReplicas": {
                     "title": "Min replica count",
-                    "description": "Minimum number of replicas KEDA will scale the resource down to. https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount",
+                    "description": "Minimum number of replicas KEDA will scale the resource down to. https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount",
                     "default": 0,
                     "type": "integer"
                 },
                 "maxReplicas": {
                     "title": "Max replica count",
-                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.7/concepts/scaling-deployments/#maxreplicacount",
+                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
                     "default": 1,
                     "type": "integer"
                 },
                 "idleReplicas": {
                     "title": "Idle replica count",
-                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.7/concepts/scaling-deployments/#idlereplicacount",
+                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount",
                     "type": "integer"
                 },
                 "topics": {
@@ -751,7 +755,90 @@
         "KafkaConnectConfig": {
             "title": "KafkaConnectConfig",
             "type": "object",
-            "properties": {}
+            "properties": {},
+            "additionalProperties": {
+                "type": "string"
+            }
+        },
+        "KafkaConnector": {
+            "title": "KafkaConnector",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "kafka-connector",
+                    "type": "string"
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "from": {
+                    "title": "From",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ]
+                },
+                "app": {
+                    "$ref": "#/definitions/KafkaConnectConfig"
+                },
+                "to": {
+                    "$ref": "#/definitions/ToSection"
+                },
+                "prefix": {
+                    "title": "Prefix",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "default": "${pipeline_name}-",
+                    "type": "string"
+                },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-connector",
+                    "enum": [
+                        "kafka-connector"
+                    ],
+                    "type": "string"
+                },
+                "repoConfig": {
+                    "title": "Repoconfig",
+                    "default": {
+                        "repository_name": "bakdata-kafka-connect-resetter",
+                        "url": "https://bakdata.github.io/kafka-connect-resetter/",
+                        "repo_auth_flags": {
+                            "username": null,
+                            "password": null,
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false
+                        }
+                    },
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ]
+                },
+                "namespace": {
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "version": {
+                    "title": "Version",
+                    "default": "1.0.4",
+                    "type": "string"
+                },
+                "resetterValues": {
+                    "title": "Resettervalues",
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "name",
+                "app",
+                "namespace"
+            ]
         },
         "KafkaSourceConnector": {
             "title": "KafkaSourceConnector",
@@ -786,6 +873,14 @@
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-source-connector",
+                    "enum": [
+                        "kafka-source-connector"
+                    ],
+                    "type": "string"
+                },
                 "repoConfig": {
                     "title": "Repoconfig",
                     "default": {
@@ -817,14 +912,6 @@
                     "title": "Resettervalues",
                     "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
                     "type": "object"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-source-connector",
-                    "enum": [
-                        "kafka-source-connector"
-                    ],
-                    "type": "string"
                 },
                 "offsetTopic": {
                     "title": "Offsettopic",
@@ -870,6 +957,14 @@
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-sink-connector",
+                    "enum": [
+                        "kafka-sink-connector"
+                    ],
+                    "type": "string"
+                },
                 "repoConfig": {
                     "title": "Repoconfig",
                     "default": {
@@ -901,14 +996,6 @@
                     "title": "Resettervalues",
                     "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
                     "type": "object"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-sink-connector",
-                    "enum": [
-                        "kafka-sink-connector"
-                    ],
-                    "type": "string"
                 }
             },
             "required": [

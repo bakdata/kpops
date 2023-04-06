@@ -69,7 +69,7 @@ class StreamsAppAutoScaling(BaseModel):
         title="Polling interval",
         description=(
             "This is the interval to check each trigger on. "
-            "https://keda.sh/docs/2.7/concepts/scaling-deployments/#pollinginterval"
+            "https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval"
         ),
     )
     cooldown_period: int = Field(
@@ -77,7 +77,7 @@ class StreamsAppAutoScaling(BaseModel):
         title="Cooldown period",
         description=(
             "The period to wait after the last trigger reported active before scaling the resource back to 0. "
-            "https://keda.sh/docs/2.7/concepts/scaling-deployments/#cooldownperiod"
+            "https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod"
         ),
     )
     offset_reset_policy: str = Field(
@@ -90,7 +90,7 @@ class StreamsAppAutoScaling(BaseModel):
         title="Min replica count",
         description=(
             "Minimum number of replicas KEDA will scale the resource down to. "
-            "https://keda.sh/docs/2.7/concepts/scaling-deployments/#minreplicacount"
+            "https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount"
         ),
     )
     max_replicas: int = Field(
@@ -98,7 +98,7 @@ class StreamsAppAutoScaling(BaseModel):
         title="Max replica count",
         description=(
             "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. "
-            "https://keda.sh/docs/2.7/concepts/scaling-deployments/#maxreplicacount"
+            "https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount"
         ),
     )
     idle_replicas: int | None = Field(
@@ -106,7 +106,7 @@ class StreamsAppAutoScaling(BaseModel):
         title="Idle replica count",
         description=(
             "If this property is set, KEDA will scale the resource down to this number of replicas. "
-            "https://keda.sh/docs/2.7/concepts/scaling-deployments/#idlereplicacount"
+            "https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount"
         ),
     )
     topics: list[str] = Field(

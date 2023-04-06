@@ -10,6 +10,10 @@ ENV_PREFIX = "KPOPS_"
 
 
 class TopicNameConfig(BaseSettings):
+    """
+    Configures topic names.
+    """
+
     default_output_topic_name: str = Field(
         default="${pipeline_name}-${component_name}",
         description="Configures the value for the variable ${output_topic_name}",
@@ -21,9 +25,15 @@ class TopicNameConfig(BaseSettings):
 
 
 class PipelineConfig(BaseSettings):
+    """
+    Pipeline configuration unrelated to the components.
+    """
+
     defaults_path: Path = Field(
-        default=...,
-        description="The path to the folder containing the defaults file and the environment defaults files.",
+        default=Path("."),
+        example="defaults",
+        description="The path to the folder containing the defaults.yaml file and the environment defaults files. "
+        "Paths can either be absolute or relative to `config.yaml`",
     )
     environment: str = Field(
         default=...,
@@ -35,7 +45,7 @@ class PipelineConfig(BaseSettings):
     broker: str = Field(
         default=...,
         env=f"{ENV_PREFIX}KAFKA_BROKER",
-        description="The kafka broker address.",
+        description="The Kafka broker address.",
     )
     defaults_filename_prefix: str = Field(
         default="defaults",
@@ -45,38 +55,45 @@ class PipelineConfig(BaseSettings):
         default=TopicNameConfig(),
         description="Configure the topic name variables you can use in the pipeline definition.",
     )
+    schema_registry_url: str | None = Field(
+        default=None,
+        example="http://localhost:8081",
+        env=f"{ENV_PREFIX}SCHEMA_REGISTRY_URL",
+        description="Address of the Schema Registry.",
+    )
     kafka_rest_host: str | None = Field(
         default=None,
         env=f"{ENV_PREFIX}REST_PROXY_HOST",
         example="http://localhost:8082",
-        description="Address to the rest proxy REST API.",
+        description="Address of the Kafka REST Proxy.",
     )
     kafka_connect_host: str | None = Field(
         default=None,
         env=f"{ENV_PREFIX}CONNECT_HOST",
         example="http://localhost:8083",
-        description="Address to the kafka connect REST API.",
+        description="Address of Kafka Connect.",
     )
     timeout: int = Field(
         default=300,
         env=f"{ENV_PREFIX}TIMEOUT",
         description="The timeout in seconds that specifies when actions like deletion or deploy timeout.",
     )
-
-    create_namespace: bool = Field(default=False)
-    helm_config: HelmConfig = Field(default=HelmConfig())
-    helm_diff_config: HelmDiffConfig = Field(default=HelmDiffConfig())
-
+    create_namespace: bool = Field(
+        default=False,
+        description="Flag for `helm upgrade --install`. Create the release namespace if not present.",
+    )
+    helm_config: HelmConfig = Field(
+        default=HelmConfig(),
+        description="Global flags for Helm.",
+    )
+    helm_diff_config: HelmDiffConfig = Field(
+        default=HelmDiffConfig(),
+        description="Configure Helm Diff.",
+    )
     retain_clean_jobs: bool = Field(
         default=False,
         env=f"{ENV_PREFIX}RETAIN_CLEAN_JOBS",
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
-    )
-    schema_registry_url: str | None = Field(
-        default=None,
-        example="http://localhost:8081",
-        env=f"{ENV_PREFIX}SCHEMA_REGISTRY_URL",
-        description="The URL to schema registry.",
     )
 
     class Config(BaseConfig):

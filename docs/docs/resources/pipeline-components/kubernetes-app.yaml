@@ -33,7 +33,8 @@
   # Pipeline prefix that will prefix every component name. If you wish to not 
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # Helm repository configuration
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:
     repositoryName: my-repo # required
     url: https://bakdata.github.io/ # required
@@ -42,4 +43,4 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  version: 1.0.0 # Helm chart version
+  version: "1.0.0" # Helm chart version
