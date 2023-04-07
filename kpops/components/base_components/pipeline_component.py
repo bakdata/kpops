@@ -24,8 +24,6 @@ from kpops.utils.yaml_loading import substitute
 class PipelineComponent(BaseDefaultsComponent):
     """Base class for all components
 
-    Does smth [WRITE DESCRIPTION]
-
     :param name: Component name
     :type name: str
     :param from_: Topic(s) from which the component will read input

@@ -621,7 +621,7 @@ snapshots[
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
-            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
+            "description": "Base class for all components\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -710,7 +710,7 @@ snapshots[
         },
         "KafkaSinkConnector": {
             "title": "KafkaSinkConnector",
-            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
+            "description": "Base class for all components\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -799,7 +799,7 @@ snapshots[
         },
         "KafkaSourceConnector": {
             "title": "KafkaSourceConnector",
-            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
+            "description": "Base class for all components\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -1337,7 +1337,7 @@ snapshots[
         },
         "SubPipelineComponent": {
             "title": "SubPipelineComponent",
-            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
+            "description": "Base class for all components\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -1393,7 +1393,7 @@ snapshots[
         },
         "SubPipelineComponentCorrect": {
             "title": "SubPipelineComponentCorrect",
-            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
+            "description": "Base class for all components\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -1824,7 +1824,7 @@ snapshots[
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
-            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
+            "description": "Base class for all components\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -1913,7 +1913,7 @@ snapshots[
         },
         "KafkaSinkConnector": {
             "title": "KafkaSinkConnector",
-            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
+            "description": "Base class for all components\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -2002,7 +2002,7 @@ snapshots[
         },
         "KafkaSourceConnector": {
             "title": "KafkaSourceConnector",
-            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
+            "description": "Base class for all components\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
