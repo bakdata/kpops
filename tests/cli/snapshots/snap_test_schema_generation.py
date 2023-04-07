@@ -301,7 +301,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
         },
         "FromTopic": {
             "title": "FromTopic",
-            "description": "Input topic",
+            "description": "Input topic\\n\\n:param type: Topic type\\n:type type: InputTopicTypes\\n:param role: Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`\\n:type role: str | None",
             "type": "object",
             "properties": {
                 "type": {
@@ -314,7 +314,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                 },
                 "role": {
                     "title": "Role",
-                    "description": "Topic role",
+                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
                     "type": "string"
                 }
             },
@@ -325,7 +325,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
         },
         "FromSection": {
             "title": "FromSection",
-            "description": "Holds multiple input topics",
+            "description": "Holds multiple input topics\\n\\n:param topics: Input topics\\n:type topics: dict[str, FromTopic]",
             "type": "object",
             "properties": {
                 "topics": {
@@ -377,7 +377,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
         },
         "OutputTopicTypes": {
             "title": "OutputTopicTypes",
-            "description": "Types of output topic\\n\\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\\n    ",
+            "description": "Types of output topic\\n\\n    Error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\\n    ",
             "enum": [
                 "error",
                 "output",
@@ -387,7 +387,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
         },
         "TopicConfig": {
             "title": "TopicConfig",
-            "description": "Configures a topic",
+            "description": "Configure an output topic\\n\\n:param type: Topic type\\n:type type: InputTopicTypes\\n:param key_schema: Key schema class name\\n:type key_schema: str | None\\n:param partitions_count: Number of partitions into which the topic is divided\\n:type partitions_count: int | None\\n:param replication_factor: Replication topic of the topic\\n:type replication_factor: int | None\\n:param configs: Topic configs\\n:type configs: dict[str, str | int]\\n:param role: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`\\n:type role: str | None",
             "type": "object",
             "properties": {
                 "type": {
@@ -410,12 +410,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                 },
                 "partitions_count": {
                     "title": "Partitions Count",
-                    "description": "Number of partitions",
+                    "description": "Number of partitions into which the topic is divided",
                     "type": "integer"
                 },
                 "replication_factor": {
                     "title": "Replication Factor",
-                    "description": "Replication factor",
+                    "description": "Replication topic of the topic",
                     "type": "integer"
                 },
                 "configs": {
@@ -424,12 +424,19 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
-                        "type": "string"
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer"
+                            }
+                        ]
                     }
                 },
                 "role": {
                     "title": "Role",
-                    "description": "Topic role",
+                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
                     "type": "string"
                 }
             },
@@ -440,7 +447,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
         },
         "ToSection": {
             "title": "ToSection",
-            "description": "Holds multiple output topics",
+            "description": "Holds multiple output topics\\n\\n:param models: Data models\\n:type models: dict[str, Any]\\n:param topics: Output topics\\n:type topics: dict[str, TopicConfig]",
             "type": "object",
             "properties": {
                 "models": {
@@ -529,10 +536,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -543,7 +552,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                     "$ref": "#/definitions/KafkaAppConfig"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -603,7 +618,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
-            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
+            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -613,10 +628,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -627,7 +644,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                     "$ref": "#/definitions/KafkaConnectConfig"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -684,7 +707,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
         },
         "KafkaSinkConnector": {
             "title": "KafkaSinkConnector",
-            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
+            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -694,10 +717,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -708,7 +733,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                     "$ref": "#/definitions/KafkaConnectConfig"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -765,7 +796,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
         },
         "KafkaSourceConnector": {
             "title": "KafkaSourceConnector",
-            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
+            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -775,10 +806,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -789,7 +822,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                     "$ref": "#/definitions/KafkaConnectConfig"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -865,10 +904,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -879,7 +920,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                     "$ref": "#/definitions/KubernetesAppConfig"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -970,6 +1017,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
@@ -981,7 +1029,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                     "$ref": "#/definitions/ProducerValues"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -1206,10 +1260,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -1220,7 +1276,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                     "$ref": "#/definitions/StreamsAppConfig"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -1272,7 +1334,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
         },
         "SubPipelineComponent": {
             "title": "SubPipelineComponent",
-            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
+            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -1282,10 +1344,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -1293,10 +1357,17 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                     ]
                 },
                 "app": {
-                    "title": "App"
+                    "title": "App",
+                    "description": "Application-specific settings"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -1319,7 +1390,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
         },
         "SubPipelineComponentCorrect": {
             "title": "SubPipelineComponentCorrect",
-            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
+            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -1329,10 +1400,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -1340,10 +1413,17 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
                     ]
                 },
                 "app": {
-                    "title": "App"
+                    "title": "App",
+                    "description": "Application-specific settings"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -1422,7 +1502,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
         },
         "FromTopic": {
             "title": "FromTopic",
-            "description": "Input topic",
+            "description": "Input topic\\n\\n:param type: Topic type\\n:type type: InputTopicTypes\\n:param role: Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`\\n:type role: str | None",
             "type": "object",
             "properties": {
                 "type": {
@@ -1435,7 +1515,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                 },
                 "role": {
                     "title": "Role",
-                    "description": "Topic role",
+                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
                     "type": "string"
                 }
             },
@@ -1446,7 +1526,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
         },
         "FromSection": {
             "title": "FromSection",
-            "description": "Holds multiple input topics",
+            "description": "Holds multiple input topics\\n\\n:param topics: Input topics\\n:type topics: dict[str, FromTopic]",
             "type": "object",
             "properties": {
                 "topics": {
@@ -1498,7 +1578,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
         },
         "OutputTopicTypes": {
             "title": "OutputTopicTypes",
-            "description": "Types of output topic\\n\\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\\n    ",
+            "description": "Types of output topic\\n\\n    Error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\\n    ",
             "enum": [
                 "error",
                 "output",
@@ -1508,7 +1588,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
         },
         "TopicConfig": {
             "title": "TopicConfig",
-            "description": "Configures a topic",
+            "description": "Configure an output topic\\n\\n:param type: Topic type\\n:type type: InputTopicTypes\\n:param key_schema: Key schema class name\\n:type key_schema: str | None\\n:param partitions_count: Number of partitions into which the topic is divided\\n:type partitions_count: int | None\\n:param replication_factor: Replication topic of the topic\\n:type replication_factor: int | None\\n:param configs: Topic configs\\n:type configs: dict[str, str | int]\\n:param role: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`\\n:type role: str | None",
             "type": "object",
             "properties": {
                 "type": {
@@ -1531,12 +1611,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                 },
                 "partitions_count": {
                     "title": "Partitions Count",
-                    "description": "Number of partitions",
+                    "description": "Number of partitions into which the topic is divided",
                     "type": "integer"
                 },
                 "replication_factor": {
                     "title": "Replication Factor",
-                    "description": "Replication factor",
+                    "description": "Replication topic of the topic",
                     "type": "integer"
                 },
                 "configs": {
@@ -1545,12 +1625,19 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
-                        "type": "string"
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer"
+                            }
+                        ]
                     }
                 },
                 "role": {
                     "title": "Role",
-                    "description": "Topic role",
+                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
                     "type": "string"
                 }
             },
@@ -1561,7 +1648,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
         },
         "ToSection": {
             "title": "ToSection",
-            "description": "Holds multiple output topics",
+            "description": "Holds multiple output topics\\n\\n:param models: Data models\\n:type models: dict[str, Any]\\n:param topics: Output topics\\n:type topics: dict[str, TopicConfig]",
             "type": "object",
             "properties": {
                 "models": {
@@ -1650,10 +1737,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -1664,7 +1753,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                     "$ref": "#/definitions/KafkaAppConfig"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -1724,7 +1819,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
-            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
+            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -1734,10 +1829,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -1748,7 +1845,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                     "$ref": "#/definitions/KafkaConnectConfig"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -1805,7 +1908,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
         },
         "KafkaSinkConnector": {
             "title": "KafkaSinkConnector",
-            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
+            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -1815,10 +1918,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -1829,7 +1934,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                     "$ref": "#/definitions/KafkaConnectConfig"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -1886,7 +1997,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
         },
         "KafkaSourceConnector": {
             "title": "KafkaSourceConnector",
-            "description": "Base for all components, handles defaults.\\n\\nComponent defaults are usually provided in a yaml file called\\n`defaults.yaml`. This class ensures that the defaults are read and assigned\\ncorrectly to the component.",
+            "description": "Base class for all components\\n\\nDoes smth [WRITE DESCRIPTION]\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input\\n:type from_: FromSection | None\\n:param app: Application-specific settings\\n:type app: object | None\\n:param to: Topic(s) into which the component will write output\\n:type to: ToSection | None\\n:param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.\\n:type prefix: str",
             "type": "object",
             "properties": {
                 "type": {
@@ -1896,10 +2007,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -1910,7 +2023,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                     "$ref": "#/definitions/KafkaConnectConfig"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -1986,10 +2105,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -2000,7 +2121,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                     "$ref": "#/definitions/KubernetesAppConfig"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -2091,6 +2218,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
@@ -2102,7 +2230,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                     "$ref": "#/definitions/ProducerValues"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
@@ -2327,10 +2461,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) from which the component will read input",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -2341,7 +2477,13 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
                     "$ref": "#/definitions/StreamsAppConfig"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",

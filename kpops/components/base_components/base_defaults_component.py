@@ -23,6 +23,15 @@ class BaseDefaultsComponent(BaseModel):
     Component defaults are usually provided in a yaml file called
     `defaults.yaml`. This class ensures that the defaults are read and assigned
     correctly to the component.
+
+    :param type: Component type
+    :type type: str
+    :param enrich: Whether to enrich component with defaults
+    :type enrich: bool
+    :param config: Pipeline configuration to be accessed by this component
+    :type config: PipelineConfig
+    :param handlers: Component handlers to be accessed by this component
+    :type handlers: ComponentHandlers
     """
 
     type: str = Field(default=..., description="Component type", const=True)

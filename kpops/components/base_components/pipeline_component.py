@@ -22,10 +22,37 @@ from kpops.utils.yaml_loading import substitute
 
 
 class PipelineComponent(BaseDefaultsComponent):
-    name: str
-    from_: FromSection | None = Field(default=None, alias="from", title="From")
-    app: object | None = None
-    to: ToSection | None = None
+    """Base class for all components
+
+    Does smth [WRITE DESCRIPTION]
+
+    :param name: Component name
+    :type name: str
+    :param from_: Topic(s) from which the component will read input
+    :type from_: FromSection | None
+    :param app: Application-specific settings
+    :type app: object | None
+    :param to: Topic(s) into which the component will write output
+    :type to: ToSection | None
+    :param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.
+    :type prefix: str
+    """
+
+    name: str = Field(default=..., description="Component name")
+    from_: FromSection | None = Field(
+        default=None,
+        alias="from",
+        title="From",
+        description="Topic(s) from which the component will read input",
+    )
+    app: object | None = Field(
+        default=None,
+        description="Application-specific settings",
+    )
+    to: ToSection | None = Field(
+        default=None,
+        description="Topic(s) into which the component will write output",
+    )
     prefix: str = Field(
         default="${pipeline_name}-",
         description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
@@ -43,10 +70,8 @@ class PipelineComponent(BaseDefaultsComponent):
         self.set_input_topics()
         self.set_output_topics()
 
-    def substitute_output_topic_names(self):
-        """
-        Substitutes component and topic sepcific names in output topics
-        """
+    def substitute_output_topic_names(self) -> None:
+        """Substitute component and topic sepcific names in output topics"""
         if self.to:
             updated_to = {}
             for name, topic in self.to.topics.items():
@@ -56,11 +81,20 @@ class PipelineComponent(BaseDefaultsComponent):
 
     @staticmethod
     def substitute_component_names(key: str, _type: str, **kwargs) -> str:
+        """Substitute component field name, e.g., `error_topic_name`
+
+        :param key: The raw input containing $-placeholders
+        :type key: str
+        :param _type: The key-value mapping containing substitutions
+        :type _type: str
+        :param **kwargs: Additional key-value mappings that contain substitutions
+        :return: Substituted input string
+        :rtype: str
+        """
         return substitute(key, {"component_type": _type, **kwargs})
 
     def substitute_component_variables(self, topic_name: str) -> str:
-        """
-        Substitutes component, env and topic specific variables in the topic name
+        """Substitute component, env and topic specific variables in the topic name
 
         :param topic_name: topic name
         :return: final topic name
@@ -84,29 +118,63 @@ class PipelineComponent(BaseDefaultsComponent):
         )
 
     def add_input_topics(self, topics: list[str]) -> None:
-        pass
+        """Add given topics to the list of input topics.
+
+        :param topics: Input topics
+        :type topics: list[str]
+        """
 
     def add_extra_input_topic(self, role: str, topics: list[str]) -> None:
-        pass
+        """Add given extra topics that share a role to the list of extra input topics.
+
+        :param topics: Extra input topics
+        :type topics: list[str]
+        :param role: Topic role
+        :type role: str
+        """
 
     def set_input_pattern(self, name: str) -> None:
-        pass
+        """Set input pattern
+
+        :param name: Input pattern name
+        :type name: str
+        """
 
     def add_extra_input_pattern(self, role: str, topic: str) -> None:
-        pass
+        """Add an input pattern of type extra
+
+        :param role: Custom identifier belonging to one or multiple topics
+        :type role: str
+        :param topic: Topic name
+        :type topic: str
+        """
 
     def set_output_topic(self, topic_name: str) -> None:
-        pass
+        """Set output topic
+
+        :param topic_name: Output topic name
+        :type topic_name: str
+        """
 
     def set_error_topic(self, topic_name: str) -> None:
-        pass
+        """Set error topic
+
+        :param topic_name: Error topic name
+        :type topic_name: str
+        """
 
     def add_extra_output_topic(self, topic_name: str, role: str) -> None:
-        pass
+        """Add an output topic of type extra
+
+        :param topic_name: Output topic name
+        :type topic_name: str
+        :param role: Role that is unique to the extra output topic
+        :type role: str
+        """
 
     def set_input_topics(self) -> None:
-        """
-        Puts values of config.from into the streams config section of streams bootstrap
+        """Put values of config.from into the streams config section of streams bootstrap
+
         Supports extra_input_topics (topics by role) or input_topics.
         """
         if self.from_:
@@ -114,6 +182,13 @@ class PipelineComponent(BaseDefaultsComponent):
                 self.apply_from_inputs(name, topic)
 
     def apply_from_inputs(self, name: str, topic: FromTopic) -> None:
+        """Add a `from` section input to the component config
+
+        :param name: Name of the field
+        :type name: str
+        :param topic: Value of the field
+        :type topic: FromTopic
+        """
         match (topic.type):
             case InputTopicTypes.INPUT:
                 self.add_input_topics([name])
@@ -125,11 +200,22 @@ class PipelineComponent(BaseDefaultsComponent):
                 self.add_extra_input_pattern(topic.role, name)
 
     def set_output_topics(self) -> None:
+        """Put values of config.to into the producer config section of streams bootstrap
+
+        Supports extra_output_topics (topics by role) or output_topics.
+        """
         if self.to:
             for name, topic in self.to.topics.items():
                 self.apply_to_outputs(name, topic)
 
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:
+        """Add a `to` section input to the component config
+
+        :param name: Name of the field
+        :type name: str
+        :param topic: Value of the field
+        :type topic: TopicConfig
+        """
         match (topic.type):
             case OutputTopicTypes.OUTPUT:
                 self.set_output_topic(name)
@@ -139,9 +225,9 @@ class PipelineComponent(BaseDefaultsComponent):
                 self.add_extra_output_topic(name, topic.role)
 
     def weave_from_topics(self, prev_component_to: ToSection) -> None:
-        """
-        Weave output topics of upstream component or from component into config
-        Override this method if you want to apply custom logic
+        """Weave output topics of upstream component or from component into config
+
+        Override this method to apply custom logic
         """
         if self.from_:
             return
@@ -154,6 +240,7 @@ class PipelineComponent(BaseDefaultsComponent):
             self.add_input_topics(input_topics)
 
     def substitute_name(self):
+        """Substitute $ placeholders in `self.name` with `self.type`"""
         if self.name:
             self.name = self.substitute_component_names(self.name, self.type)
         else:
@@ -161,8 +248,9 @@ class PipelineComponent(BaseDefaultsComponent):
 
     def inflate(self) -> list[PipelineComponent]:
         """Inflate a component. This is helpful if one component should result in multiple components.
-        If you wish to support this, override this method and return a list of components the component you result in.
-        The order of the components is the order the components will be deployed
+
+        To support this, override this method and return a list of components the component you result in.
+        The order of the components is the order the components will be deployed in.
         """
         return [self]
 
@@ -177,28 +265,42 @@ class PipelineComponent(BaseDefaultsComponent):
         be faked locally. Additionally, none of the server-side testing of chart
         validity (e.g. whether an API is supported) is done.
 
-        :param api_version: Kubernetes API version used for
-            Capabilities.APIVersions, `--api_versions` in Helm
+        :param api_version: Kubernetes API version used for Capabilities.APIVersions, `--api_versions` in Helm
         :type api_version: str
-        :param ca_file: verify certificates of HTTPS-enabled servers
-            using this CA bundle, `--ca-file` in Helm
+        :param ca_file: verify certificates of HTTPS-enabled servers using this CA bundle, `--ca-file` in Helm
         :type ca_file: str
-        :param cert_file: identify HTTPS client using this SSL certificate
-            file, `--cert-file` in Helm
+        :param cert_file: identify HTTPS client using this SSL certificate file, `--cert-file` in Helm
         :type cert_file: str
         """
 
     def deploy(self, dry_run: bool) -> None:
-        pass
+        """Deploy the component (self) to the k8s cluster
+
+        :param dry_run: Whether to do a dry run of the command
+        :type dry_run: bool
+        """
 
     def destroy(self, dry_run: bool) -> None:
-        pass
+        """Uninstall the component (self) from the k8s cluster
+
+        :param dry_run: Whether to do a dry run of the command
+        :type dry_run: bool
+        """
 
     def reset(self, dry_run: bool) -> None:
-        pass
+        """Reset component (self) state
+
+        :param dry_run: Whether to do a dry run of the command
+        :type dry_run: bool
+        """
 
     def clean(self, dry_run: bool) -> None:
-        pass
+        """Remove component (self) and any trace of it
+
+        :param dry_run: Whether to do a dry run of the command
+        :type dry_run: bool
+        """
 
     def substitute_prefix(self) -> None:
+        """Substitute $-placeholders in self.prefix with environment variables"""
         self.prefix = substitute(self.prefix, dict(os.environ))

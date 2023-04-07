@@ -17,10 +17,19 @@ class InputTopicTypes(str, Enum):
 
 
 class FromTopic(BaseModel):
-    """Input topic"""
+    """Input topic
+
+    :param type: Topic type
+    :type type: InputTopicTypes
+    :param role: Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`
+    :type role: str | None
+    """
 
     type: InputTopicTypes = Field(..., description="Topic type")
-    role: str | None = Field(default=None, description="Topic role")
+    role: str | None = Field(
+        default=None,
+        description="Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+    )
 
     class Config(BaseConfig):
         extra = Extra.forbid
@@ -45,7 +54,11 @@ class FromTopic(BaseModel):
 
 
 class FromSection(BaseModel):
-    """Holds multiple input topics"""
+    """Holds multiple input topics
+
+    :param topics: Input topics
+    :type topics: dict[str, FromTopic]
+    """
 
     topics: dict[str, FromTopic] = Field(..., description="Input topics")
 

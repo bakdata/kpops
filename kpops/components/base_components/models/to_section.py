@@ -7,7 +7,7 @@ from pydantic import BaseConfig, BaseModel, Extra, Field, root_validator
 class OutputTopicTypes(str, Enum):
     """Types of output topic
 
-    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.
+    Error (error topic), output (output topic), and extra topics. Every extra topic must have a role.
     """
 
     ERROR = "error"
@@ -16,7 +16,21 @@ class OutputTopicTypes(str, Enum):
 
 
 class TopicConfig(BaseModel):
-    """Configures a topic"""
+    """Configure an output topic
+
+    :param type: Topic type
+    :type type: InputTopicTypes
+    :param key_schema: Key schema class name
+    :type key_schema: str | None
+    :param partitions_count: Number of partitions into which the topic is divided
+    :type partitions_count: int | None
+    :param replication_factor: Replication topic of the topic
+    :type replication_factor: int | None
+    :param configs: Topic configs
+    :type configs: dict[str, str | int]
+    :param role: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`
+    :type role: str | None
+    """
 
     type: OutputTopicTypes = Field(..., description="Topic type")
     key_schema: str | None = Field(
@@ -26,13 +40,16 @@ class TopicConfig(BaseModel):
         default=None, alias="valueSchema", description="Value schema class name"
     )
     partitions_count: int | None = Field(
-        default=None, description="Number of partitions"
+        default=None, description="Number of partitions into which the topic is divided"
     )
     replication_factor: int | None = Field(
-        default=None, description="Replication factor"
+        default=None, description="Replication topic of the topic"
     )
-    configs: dict[str, str] = Field(default={}, description="Topic configs")
-    role: str | None = Field(default=None, description="Topic role")
+    configs: dict[str, str | int] = Field(default={}, description="Topic configs")
+    role: str | None = Field(
+        default=None,
+        description="Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+    )
 
     class Config(BaseConfig):
         extra = Extra.forbid
@@ -56,13 +73,17 @@ class TopicConfig(BaseModel):
 
 
 class ToSection(BaseModel):
-    """Holds multiple output topics"""
-    
-    models: dict[
-        str, Any
-    ] = (
-        {}
-    )  # any because snapshot versions must be supported  # TODO: really multiple models?
+    """Holds multiple output topics
+
+    :param models: Data models
+    :type models: dict[str, Any]
+    :param topics: Output topics
+    :type topics: dict[str, TopicConfig]
+    """
+
+    # TODO: really multiple models?
+    # any because snapshot versions must be supported
+    models: dict[str, Any] = {}
     topics: dict[str, TopicConfig] = Field(..., description="Output topics")
 
     class Config(BaseConfig):

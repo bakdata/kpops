@@ -1,3 +1,5 @@
+from typing import AbstractSet, Any, Mapping
+
 from pydantic import BaseConfig, BaseModel, Extra, Field
 
 from kpops.components.base_components.base_defaults_component import deduplicate
@@ -9,9 +11,7 @@ from kpops.utils.pydantic import CamelCaseConfig
 
 
 class StreamsConfig(KafkaStreamsConfig):
-    """
-    Streams Bootstrap streams section
-    """
+    """Streams Bootstrap streams section"""
 
     input_topics: list[str] = []
     input_pattern: str | None = None
@@ -23,9 +23,25 @@ class StreamsConfig(KafkaStreamsConfig):
     config: dict[str, str] = {}
 
     def add_input_topics(self, topics: list[str]) -> None:
+        """Add given topics to the list of input topics.
+
+        Ensures no duplicate topics in the list.
+
+        :param topics: Input topics
+        :type topics: list[str]
+        """
         self.input_topics = deduplicate(self.input_topics + topics)
 
     def add_extra_input_topics(self, role: str, topics: list[str]) -> None:
+        """Add given extra topics that share a role to the list of extra input topics.
+
+        Ensures no duplicate topics in the list.
+
+        :param topics: Extra input topics
+        :type topics: list[str]
+        :param role: Topic role
+        :type role: str
+        """
         self.extra_input_topics[role] = deduplicate(
             self.extra_input_topics.get(role, []) + topics
         )
@@ -33,13 +49,28 @@ class StreamsConfig(KafkaStreamsConfig):
     def dict(
         self,
         *,
-        include=None,
-        exclude=None,
+        include: None | AbstractSet[int | str] | Mapping[int | str, Any] = None,
+        exclude: None | AbstractSet[int | str] | Mapping[int | str, Any] = None,
         by_alias: bool = False,
         skip_defaults: bool | None = None,
         exclude_unset: bool = False,
         **kwargs,
     ) -> dict:
+        """Generate a dictionary representation of the model
+
+        Optionally, specify which fields to include or exclude.
+
+        :param include: Fields to include
+        :type include: None | AbstractSet[int | str] | Mapping[int | str, Any]
+        :param include: Fields to exclude
+        :type include: None | AbstractSet[int | str] | Mapping[int | str, Any]
+        :param by_alias: Use the fields' aliases in the dictionary
+        :type by_alias: bool
+        :param skip_defaults: Whether to skip defaults
+        :type skip_defaults: bool | None
+        :param exclude_unset: Whether to exclude unset fields
+        :type exclude_unset: bool
+        """
         return super().dict(
             include=include,
             exclude=exclude,
