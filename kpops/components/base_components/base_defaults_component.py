@@ -17,8 +17,7 @@ log = logging.getLogger("PipelineComponentEnricher")
 
 
 class BaseDefaultsComponent(BaseModel):
-    """
-    Base for all components, handles defaults.
+    """Base for all components, handles defaults.
 
     Component defaults are usually provided in a yaml file called
     `defaults.yaml`. This class ensures that the defaults are read and assigned
@@ -78,14 +77,13 @@ class BaseDefaultsComponent(BaseModel):
     def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
         """Merge parent components' defaults with own
 
-        Merges tmp_defaults with all tmp_defaults for parent classes
+        Merges tmp_defaults with all tmp_defaults for parent classes.
 
         :param kwargs: The init kwargs for pydantic
         :type kwargs: dict[str, Any]
         :returns: Enriched kwargs with tmp_defaults
         :rtype: dict[str, Any]
         """
-
         config: PipelineConfig = kwargs["config"]
         log.debug(
             typer.style(
@@ -146,18 +144,18 @@ def load_defaults(
 
 
 def defaults_from_yaml(path: Path, key: str) -> dict:
-    """Read value from a defaults yaml file and return @default if not found
+    """Read component-specific settings from a defaults yaml file and return @default if not found
 
-    :param path: Path to defaults yaml file`
+    :param path: Path to defaults yaml file
     :type path: Path
-    :param key: Key of target value
+    :param key: Component type
     :type key: str
-    :returns: Requested value
+    :returns: All defaults set for the given component in the provided yaml
     :rtype: dict
 
     :Example:
 
-    value = defaults_from_yaml
+    kafka_app_defaults = defaults_from_yaml(Path("/path/to/defaults.yaml"), "kafka-app")
     """
     content = load_yaml_file(path, substitution=dict(os.environ))
     if not isinstance(content, dict):
@@ -174,7 +172,11 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
 
 
 def get_defaults_file_paths(config: PipelineConfig) -> tuple[Path, Path]:
-    """Returns defaults files paths from the pipeline config
+    """Return the paths to the main and the environment defaults-files
+
+    The files need not exist, this function will only check if the dir set in
+    `config.defaults_path` exists and return paths to the defaults files
+    calculated from it. It is up to the caller to handle any false paths.
 
     :param config: Pipeline configuration
     :type config: PipelineConfig
@@ -235,10 +237,9 @@ def update_nested(*argv: dict) -> dict:
 
     :param argv: n dictionaries
     :type argv: dict
-    :returns: Merged coniguration dict
+    :returns: Merged configuration dict
     :rtype: dict
     """
-
     if len(argv) == 0:
         return {}
     if len(argv) == 1:
