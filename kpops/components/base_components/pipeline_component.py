@@ -96,7 +96,7 @@ class PipelineComponent(BaseDefaultsComponent):
         return substitute(key, {"component_type": _type, **kwargs})
 
     def substitute_component_variables(self, topic_name: str) -> str:
-        """Substitute component, env and topic specific variables in the topic name
+        """Substitute component, env and topic-specific variables in topic's name
 
         :param topic_name: topic name
         :return: final topic name
