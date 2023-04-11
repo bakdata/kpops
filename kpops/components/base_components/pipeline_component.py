@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from functools import cached_property
+from typing import Literal
 
 from pydantic import BaseConfig, Extra, Field
 
@@ -30,6 +31,9 @@ class PipelineComponent(BaseDefaultsComponent):
     prefix: str = Field(
         default="${pipeline_name}-",
         description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+    )
+    schema_type: Literal["pipeline-component"] = Field(  # type: ignore[assignment]
+        default="pipeline-component", exclude=True
     )
 
     class Config(BaseConfig):
