@@ -16,7 +16,6 @@ from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import update_nested_pair
-from kpops.components.base_components.models.from_section import InputTopicTypes
 from kpops.components.base_components.models.to_section import OutputTopicTypes
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.yaml_loading import load_yaml_file, substitute
@@ -181,10 +180,7 @@ class Pipeline:
                             topic_name,
                             topic_config,
                         ) in from_component.to.topics.items():
-                            if (
-                                from_component_.type == InputTopicTypes.INPUT
-                                and topic_config.type == OutputTopicTypes.OUTPUT
-                            ):
+                            if topic_config.type == OutputTopicTypes.OUTPUT:
                                 enriched_component.apply_from_inputs(
                                     topic_name, from_component_
                                 )
