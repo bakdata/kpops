@@ -138,7 +138,11 @@ class PipelineComponent(BaseDefaultsComponent):
             case OutputTopicTypes.EXTRA if topic.role:
                 self.add_extra_output_topic(name, topic.role)
 
-    def weave_from_topics(self, to: ToSection | None) -> None:
+    def weave_from_topics(
+        self,
+        to: ToSection | None,
+        from_topic: FromTopic = FromTopic(type=InputTopicTypes.INPUT),
+    ) -> None:
         """
         Weave output topics of upstream component or from component into config
         Override this method if you want to apply custom logic
@@ -150,10 +154,10 @@ class PipelineComponent(BaseDefaultsComponent):
             for topic_name, topic_config in to.topics.items()
             if topic_config.type == OutputTopicTypes.OUTPUT
         ]
-        if input_topics:
-            self.add_input_topics(input_topics)
+        for input_topic in input_topics:
+            self.apply_from_inputs(input_topic, from_topic)
 
-    def substitute_name(self):
+    def substitute_name(self) -> None:
         if self.name:
             self.name = self.substitute_component_names(self.name, self.type)
         else:
