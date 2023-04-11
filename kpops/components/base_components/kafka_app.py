@@ -39,20 +39,41 @@ class KafkaApp(KubernetesApp):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.
+
+    :param type: Component type, defaults to "kafka-app"
+    :type type: str, optional
+    :param schema_type: Used for schema generation, same as :param:`type`,
+        defaults to "kafka-app"
+    :type schema_type: Literal["kafka-app"], optional
+    :param app: Application-specific settings
+    :type app: KafkaAppConfig
+    :param repo_config: Configuration of the Helm chart repo to be used for
+        deploying the component,
+        defaults to HelmRepoConfig(repository_name="bakdata-streams-bootstrap", url="https://bakdata.github.io/streams-bootstrap/")
+    :type repo_config: HelmRepoConfig, None, optional
+    :param version: Helm chart version, defaults to "2.9.0"
+    :type version: str, optional
     """
 
-    type: str = "kafka-app"
+    type: str = Field(default="kafka-app", description="Component type")
     schema_type: Literal["kafka-app"] = Field(  # type: ignore[assignment]
         default="kafka-app",
+        title="Component type",
         description=__doc__.partition(":param")[0].strip(),
         exclude=True,
     )
-    app: KafkaAppConfig
-    repo_config: HelmRepoConfig = HelmRepoConfig(
-        repository_name="bakdata-streams-bootstrap",
-        url="https://bakdata.github.io/streams-bootstrap/",
+    app: KafkaAppConfig = Field(
+        default=...,
+        description="Application-specific settings",
     )
-    version = "2.9.0"
+    repo_config: HelmRepoConfig = Field(
+        default=HelmRepoConfig(
+            repository_name="bakdata-streams-bootstrap",
+            url="https://bakdata.github.io/streams-bootstrap/",
+        ),
+        description="Configuration of the Helm chart repo to be used for deploying the component",
+    )
+    version = Field(default="2.9.0", description="Helm chart version")
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -67,6 +88,7 @@ class KafkaApp(KubernetesApp):
 
     @property
     def clean_up_helm_chart(self) -> str:
+        """Helm chart used to destroy and clean this component"""
         raise NotImplementedError()
 
     @override
@@ -88,11 +110,14 @@ class KafkaApp(KubernetesApp):
         dry_run: bool,
         retain_clean_jobs: bool = False,
     ) -> None:
-        """
-        Cleans an app using the respective cleanup job
+        """Clean an app using the respective cleanup job
+
         :param values: The value YAML for the chart
+        :type values: dict
         :param dry_run: Dry run command
-        :param retain_clean_jobs: Whether to retain the cleanup job
+        :type dry_run: bool
+        :param retain_clean_jobs: Whether to retain the cleanup job, defaults to False
+        :type retain_clean_jobs: bool, optional
         :return:
         """
         suffix = "-clean"
@@ -121,6 +146,13 @@ class KafkaApp(KubernetesApp):
             self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
 
     def __uninstall_clean_up_job(self, release_name: str, dry_run: bool) -> None:
+        """Uninstall clean up job
+        
+        :param release_name: Name of the Helm release
+        :type release_name: str
+        :param dry_run: Whether to do a dry run of the command
+        :type dry_run: bool
+        """
         self.helm.uninstall(self.namespace, release_name, dry_run)
 
     def __install_clean_up_job(
@@ -130,6 +162,19 @@ class KafkaApp(KubernetesApp):
         values: dict,
         dry_run: bool,
     ) -> str:
+        """Install clean up job
+
+        :param release_name: Name of the Helm release
+        :type release_name: str
+        :param suffix: Suffix to add to the realease name, e.g. "-clean"
+        :type suffix: str
+        :param values: The Helm values for the chart
+        :type values: dict
+        :param dry_run: Whether to do a dry run of the command
+        :type dry_run: bool
+        :return: Install clean up job with helm, return the output of the installation
+        :rtype: str
+        """
         clean_up_release_name = trim_release_name(release_name, suffix)
         return self.helm.upgrade_install(
             clean_up_release_name,

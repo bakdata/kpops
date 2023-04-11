@@ -1,8 +1,8 @@
 from enum import Enum
 from typing import Literal
-from typing_extensions import override
 
 from pydantic import BaseConfig, BaseModel, Extra
+from typing_extensions import override
 
 from kpops.utils.pydantic import CamelCaseConfig
 

@@ -1,5 +1,4 @@
 from __future__ import annotations
-import humps
 
 import logging
 import re
@@ -141,7 +140,7 @@ class KubernetesApp(PipelineComponent):
 
     def to_helm_values(self) -> dict:
         """Generate a dictionary of values readable by Helm from `self.app`
-        
+
         :returns: Thte values to be used by Helm
         :rtype: dict
         """
@@ -149,7 +148,7 @@ class KubernetesApp(PipelineComponent):
 
     def print_helm_diff(self, stdout: str) -> None:
         """Print the diff of the last and current release of this component
-        
+
         :param stdout: The output of a Helm command that installs or upgrades the release
         :type stdout: str
         """
@@ -165,7 +164,7 @@ class KubernetesApp(PipelineComponent):
 
     def get_helm_chart(self) -> str:
         """Return component's helm chart
-        
+
         :return: Helm chart of this component
         :rtype: str
         """

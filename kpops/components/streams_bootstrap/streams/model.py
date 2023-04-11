@@ -1,7 +1,7 @@
 from typing import AbstractSet, Any, Mapping
-from typing_extensions import override
 
 from pydantic import BaseConfig, BaseModel, Extra, Field
+from typing_extensions import override
 
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
