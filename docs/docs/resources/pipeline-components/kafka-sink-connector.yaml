@@ -13,9 +13,11 @@
       ${pipeline_name}-input-topic:
         type: input # required
         # role: topic-role # only used if type is `extra`
+    components: # read from specific component
+      - producer
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: error # required
         keySchema: key-schema # must implement SchemaProvider to use
@@ -26,14 +28,14 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration for resetter
   repoConfig:
     repositoryName: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags: 
+    repoAuthFlags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file

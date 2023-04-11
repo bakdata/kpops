@@ -114,7 +114,7 @@ class PipelineComponent(BaseDefaultsComponent):
                 self.apply_from_inputs(name, topic)
 
     def apply_from_inputs(self, name: str, topic: FromTopic) -> None:
-        match (topic.type):
+        match topic.type:
             case InputTopicTypes.INPUT:
                 self.add_input_topics([name])
             case InputTopicTypes.EXTRA if topic.role:
@@ -130,7 +130,7 @@ class PipelineComponent(BaseDefaultsComponent):
                 self.apply_to_outputs(name, topic)
 
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:
-        match (topic.type):
+        match topic.type:
             case OutputTopicTypes.OUTPUT:
                 self.set_output_topic(name)
             case OutputTopicTypes.ERROR:
@@ -138,22 +138,26 @@ class PipelineComponent(BaseDefaultsComponent):
             case OutputTopicTypes.EXTRA if topic.role:
                 self.add_extra_output_topic(name, topic.role)
 
-    def weave_from_topics(self, prev_component_to: ToSection) -> None:
+    def weave_from_topics(
+        self,
+        to: ToSection | None,
+        from_topic: FromTopic = FromTopic(type=InputTopicTypes.INPUT),
+    ) -> None:
         """
         Weave output topics of upstream component or from component into config
         Override this method if you want to apply custom logic
         """
-        if self.from_:
+        if not to:
             return
         input_topics = [
             topic_name
-            for topic_name, topic_config in prev_component_to.topics.items()
+            for topic_name, topic_config in to.topics.items()
             if topic_config.type == OutputTopicTypes.OUTPUT
         ]
-        if input_topics:
-            self.add_input_topics(input_topics)
+        for input_topic in input_topics:
+            self.apply_from_inputs(input_topic, from_topic)
 
-    def substitute_name(self):
+    def substitute_name(self) -> None:
         if self.name:
             self.name = self.substitute_component_names(self.name, self.type)
         else:
