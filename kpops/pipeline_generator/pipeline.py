@@ -162,7 +162,7 @@ class Pipeline:
                 # read from specified components
                 for (
                     original_from_component_name,
-                    from_component,
+                    from_topic,
                 ) in enriched_component.from_.components.items():
                     original_from_component = self.components.find(
                         original_from_component_name
@@ -176,7 +176,7 @@ class Pipeline:
                         resolved_from_component_name
                     )
                     enriched_component.weave_from_topics(
-                        resolved_from_component.to, from_component
+                        resolved_from_component.to, from_topic
                     )
             elif self.components:
                 # read from previous component

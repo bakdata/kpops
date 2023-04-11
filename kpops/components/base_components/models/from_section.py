@@ -36,10 +36,6 @@ class FromTopic(BaseModel):
         return values
 
 
-class FromComponent(FromTopic):
-    pass
-
-
 TopicName = NewType("TopicName", str)
 ComponentName = NewType("ComponentName", str)
 
@@ -49,7 +45,7 @@ class FromSection(BaseModel):
         default={},
         description="Topics to read from.",
     )
-    components: dict[ComponentName, FromComponent] = Field(
+    components: dict[ComponentName, FromTopic] = Field(
         default={},
         description="Components to read from.",
     )

@@ -67,23 +67,6 @@
             ],
             "additionalProperties": false
         },
-        "FromComponent": {
-            "title": "FromComponent",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "$ref": "#/definitions/InputTopicTypes"
-                },
-                "role": {
-                    "title": "Role",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type"
-            ],
-            "additionalProperties": false
-        },
         "FromSection": {
             "title": "FromSection",
             "type": "object",
@@ -103,7 +86,7 @@
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
-                        "$ref": "#/definitions/FromComponent"
+                        "$ref": "#/definitions/FromTopic"
                     }
                 }
             },
