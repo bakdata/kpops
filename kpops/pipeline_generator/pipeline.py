@@ -16,6 +16,8 @@ from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import update_nested_pair
+from kpops.components.base_components.models.from_section import InputTopicTypes
+from kpops.components.base_components.models.to_section import OutputTopicTypes
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.yaml_loading import load_yaml_file, substitute
 
@@ -160,7 +162,10 @@ class Pipeline:
             enriched_component = self.enrich_component(inflated_component)
             if enriched_component.from_:
                 # read from specified components
-                for original_from_component_name in enriched_component.from_.components:
+                for (
+                    original_from_component_name,
+                    from_component_,
+                ) in enriched_component.from_.components.items():
                     original_from_component = self.components.find(
                         original_from_component_name
                     )
@@ -170,7 +175,19 @@ class Pipeline:
                     else:
                         resolved_from_component_name = original_from_component_name
                     from_component = self.components.find(resolved_from_component_name)
-                    enriched_component.weave_from_topics(from_component.to)
+                    # enriched_component.weave_from_topics(from_component.to)
+                    if from_component.to:
+                        for (
+                            topic_name,
+                            topic_config,
+                        ) in from_component.to.topics.items():
+                            if (
+                                from_component_.type == InputTopicTypes.INPUT
+                                and topic_config.type == OutputTopicTypes.OUTPUT
+                            ):
+                                enriched_component.apply_from_inputs(
+                                    topic_name, from_component_
+                                )
             elif self.components:
                 # read from previous component
                 prev_component = self.components.last
