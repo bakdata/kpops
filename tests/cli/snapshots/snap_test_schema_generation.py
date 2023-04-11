@@ -333,16 +333,23 @@ snapshots[
             "properties": {
                 "topics": {
                     "title": "Topics",
-                    "description": "Input topics",
+                    "description": "Topics to read from.",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FromTopic"
+                    }
+                },
+                "components": {
+                    "title": "Components",
+                    "description": "Components to read from.",
+                    "default": {},
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "#/definitions/FromTopic"
                     }
                 }
             },
-            "required": [
-                "topics"
-            ],
             "additionalProperties": false
         },
         "KafkaStreamsConfig": {
@@ -1620,16 +1627,23 @@ snapshots[
             "properties": {
                 "topics": {
                     "title": "Topics",
-                    "description": "Input topics",
+                    "description": "Topics to read from.",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FromTopic"
+                    }
+                },
+                "components": {
+                    "title": "Components",
+                    "description": "Components to read from.",
+                    "default": {},
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "#/definitions/FromTopic"
                     }
                 }
             },
-            "required": [
-                "topics"
-            ],
             "additionalProperties": false
         },
         "KafkaStreamsConfig": {

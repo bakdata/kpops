@@ -8,7 +8,11 @@
                 "kafka-app": "#/definitions/KafkaApp",
                 "kafka-connector": "#/definitions/KafkaConnector",
                 "kafka-sink-connector": "#/definitions/KafkaSinkConnector",
+                "kafka-sink-connector": "#/definitions/KafkaSinkConnector",
                 "kafka-source-connector": "#/definitions/KafkaSourceConnector",
+                "kubernetes-app": "#/definitions/KubernetesApp",
+                "producer": "#/definitions/ProducerApp",
+                "streams-app": "#/definitions/StreamsApp"
                 "kubernetes-app": "#/definitions/KubernetesApp",
                 "producer": "#/definitions/ProducerApp",
                 "streams-app": "#/definitions/StreamsApp"
@@ -17,23 +21,30 @@
         "oneOf": [
             {
                 "$ref": "#/definitions/KafkaApp"
+                "$ref": "#/definitions/KafkaApp"
             },
             {
+                "$ref": "#/definitions/KafkaConnector"
                 "$ref": "#/definitions/KafkaConnector"
             },
             {
                 "$ref": "#/definitions/KafkaSinkConnector"
+                "$ref": "#/definitions/KafkaSinkConnector"
             },
             {
+                "$ref": "#/definitions/KafkaSourceConnector"
                 "$ref": "#/definitions/KafkaSourceConnector"
             },
             {
                 "$ref": "#/definitions/KubernetesApp"
+                "$ref": "#/definitions/KubernetesApp"
             },
             {
                 "$ref": "#/definitions/ProducerApp"
+                "$ref": "#/definitions/ProducerApp"
             },
             {
+                "$ref": "#/definitions/StreamsApp"
                 "$ref": "#/definitions/StreamsApp"
             }
         ]
@@ -86,16 +97,53 @@
                     "additionalProperties": {
                         "$ref": "#/definitions/FromTopic"
                     }
+                },
+                "components": {
+                    "title": "Components",
+                    "description": "Components to read from.",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FromTopic"
+                    }
                 }
             },
-            "required": [
-                "topics"
-            ],
             "additionalProperties": false
         },
         "KafkaStreamsConfig": {
             "title": "KafkaStreamsConfig",
+        "KafkaStreamsConfig": {
+            "title": "KafkaStreamsConfig",
             "type": "object",
+            "properties": {
+                "brokers": {
+                    "title": "Brokers",
+                    "type": "string"
+                },
+                "schemaRegistryUrl": {
+                    "title": "Schemaregistryurl",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "brokers"
+            ]
+        },
+        "KafkaAppConfig": {
+            "title": "KafkaAppConfig",
+            "type": "object",
+            "properties": {
+                "streams": {
+                    "$ref": "#/definitions/KafkaStreamsConfig"
+                },
+                "nameOverride": {
+                    "title": "Nameoverride",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "streams"
+            ]
             "properties": {
                 "brokers": {
                     "title": "Brokers",
@@ -331,6 +379,7 @@
                     "default": "kafka-app",
                     "enum": [
                         "kafka-app"
+                        "kafka-app"
                     ],
                     "type": "string"
                 },
@@ -371,6 +420,8 @@
                 "namespace"
             ]
         },
+        "KafkaConnectConfig": {
+            "title": "KafkaConnectConfig",
         "KafkaConnectConfig": {
             "title": "KafkaConnectConfig",
             "type": "object",
@@ -434,6 +485,7 @@
                     "default": "kafka-connector",
                     "enum": [
                         "kafka-connector"
+                        "kafka-connector"
                     ],
                     "type": "string"
                 },
@@ -441,6 +493,8 @@
                     "title": "Repoconfig",
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
                     "default": {
+                        "repository_name": "bakdata-kafka-connect-resetter",
+                        "url": "https://bakdata.github.io/kafka-connect-resetter/",
                         "repository_name": "bakdata-kafka-connect-resetter",
                         "url": "https://bakdata.github.io/kafka-connect-resetter/",
                         "repo_auth_flags": {
@@ -471,6 +525,11 @@
                     "description": "Helm chart version",
                     "default": "1.0.4",
                     "type": "string"
+                },
+                "resetterValues": {
+                    "title": "Resettervalues",
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "type": "object"
                 }
             },
             "required": [
@@ -577,6 +636,9 @@
                 "name",
                 "app",
                 "namespace"
+                "name",
+                "app",
+                "namespace"
             ]
         },
         "KafkaSourceConnector": {
@@ -622,6 +684,10 @@
                         }
                     ]
                 },
+                "prefix": {
+                    "title": "Prefix",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "default": "${pipeline_name}-",
                 "prefix": {
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
@@ -679,6 +745,9 @@
                 }
             },
             "required": [
+                "name",
+                "app",
+                "namespace"
                 "name",
                 "app",
                 "namespace"
@@ -743,6 +812,7 @@
                     "description": "Base class for all Kubernetes apps.\n\n    All built-in components are Kubernetes apps, except for the Kafka connectors.",
                     "default": "kubernetes-app",
                     "enum": [
+                        "kubernetes-app"
                         "kubernetes-app"
                     ],
                     "type": "string"
@@ -912,12 +982,19 @@
         "StreamsConfig": {
             "title": "StreamsConfig",
             "description": "Streams Bootstrap streams section",
+        "StreamsConfig": {
+            "title": "StreamsConfig",
+            "description": "Streams Bootstrap streams section",
             "type": "object",
             "properties": {
                 "brokers": {
                     "title": "Brokers",
+                "brokers": {
+                    "title": "Brokers",
                     "type": "string"
                 },
+                "schemaRegistryUrl": {
+                    "title": "Schemaregistryurl",
                 "schemaRegistryUrl": {
                     "title": "Schemaregistryurl",
                     "type": "string"
@@ -929,11 +1006,30 @@
                     "items": {
                         "type": "string"
                     }
+                "inputTopics": {
+                    "title": "Inputtopics",
+                    "default": [],
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
                 },
+                "inputPattern": {
+                    "title": "Inputpattern",
                 "inputPattern": {
                     "title": "Inputpattern",
                     "type": "string"
                 },
+                "extraInputTopics": {
+                    "title": "Extrainputtopics",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
                 "extraInputTopics": {
                     "title": "Extrainputtopics",
                     "default": {},
@@ -960,11 +1056,30 @@
                     "additionalProperties": {
                         "type": "string"
                     }
+                "extraInputPatterns": {
+                    "title": "Extrainputpatterns",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 },
+                "extraOutputTopics": {
+                    "title": "Extraoutputtopics",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
+                },
+                "outputTopic": {
+                    "title": "Outputtopic",
                 "outputTopic": {
                     "title": "Outputtopic",
                     "type": "string"
                 },
+                "errorTopic": {
+                    "title": "Errortopic",
                 "errorTopic": {
                     "title": "Errortopic",
                     "type": "string"
@@ -976,12 +1091,22 @@
                     "additionalProperties": {
                         "type": "string"
                     }
+                "config": {
+                    "title": "Config",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "string"
+                    }
                 }
             },
             "required": [
                 "brokers"
+                "brokers"
             ]
         },
+        "StreamsAppAutoScaling": {
+            "title": "StreamsAppAutoScaling",
         "StreamsAppAutoScaling": {
             "title": "StreamsAppAutoScaling",
             "type": "object",
@@ -991,7 +1116,15 @@
                     "description": "Whether to enable auto-scaling using KEDA.",
                     "default": false,
                     "type": "boolean"
+                "enabled": {
+                    "title": "Enabled",
+                    "description": "Whether to enable auto-scaling using KEDA.",
+                    "default": false,
+                    "type": "boolean"
                 },
+                "consumerGroup": {
+                    "title": "Consumer group",
+                    "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag.",
                 "consumerGroup": {
                     "title": "Consumer group",
                     "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag.",
@@ -1001,7 +1134,16 @@
                     "title": "Lag threshold",
                     "description": "Average target value to trigger scaling actions.",
                     "type": "integer"
+                "lagThreshold": {
+                    "title": "Lag threshold",
+                    "description": "Average target value to trigger scaling actions.",
+                    "type": "integer"
                 },
+                "pollingInterval": {
+                    "title": "Polling interval",
+                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
+                    "default": 30,
+                    "type": "integer"
                 "pollingInterval": {
                     "title": "Polling interval",
                     "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
@@ -1013,7 +1155,16 @@
                     "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
                     "default": 300,
                     "type": "integer"
+                "cooldownPeriod": {
+                    "title": "Cooldown period",
+                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
+                    "default": 300,
+                    "type": "integer"
                 },
+                "offsetResetPolicy": {
+                    "title": "Offset reset policy",
+                    "description": "The offset reset policy for the consumer if the the consumer group is not yet subscribed to a partition.",
+                    "default": "earliest",
                 "offsetResetPolicy": {
                     "title": "Offset reset policy",
                     "description": "The offset reset policy for the consumer if the the consumer group is not yet subscribed to a partition.",
@@ -1025,7 +1176,22 @@
                     "description": "Minimum number of replicas KEDA will scale the resource down to. https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount",
                     "default": 0,
                     "type": "integer"
+                "minReplicas": {
+                    "title": "Min replica count",
+                    "description": "Minimum number of replicas KEDA will scale the resource down to. https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount",
+                    "default": 0,
+                    "type": "integer"
                 },
+                "maxReplicas": {
+                    "title": "Max replica count",
+                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
+                    "default": 1,
+                    "type": "integer"
+                },
+                "idleReplicas": {
+                    "title": "Idle replica count",
+                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount",
+                    "type": "integer"
                 "maxReplicas": {
                     "title": "Max replica count",
                     "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
@@ -1059,16 +1225,44 @@
             "properties": {
                 "streams": {
                     "$ref": "#/definitions/StreamsConfig"
+                "topics": {
+                    "title": "Topics",
+                    "description": "List of auto-generated Kafka Streams topics used by the streams app.",
+                    "default": [],
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": [
+                "consumerGroup",
+                "lagThreshold"
+            ]
+        },
+        "StreamsAppConfig": {
+            "title": "StreamsAppConfig",
+            "description": "StreamsBoostrap app configurations.\n\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "type": "object",
+            "properties": {
+                "streams": {
+                    "$ref": "#/definitions/StreamsConfig"
                 },
+                "nameOverride": {
+                    "title": "Nameoverride",
                 "nameOverride": {
                     "title": "Nameoverride",
                     "type": "string"
                 },
                 "autoscaling": {
                     "$ref": "#/definitions/StreamsAppAutoScaling"
+                },
+                "autoscaling": {
+                    "$ref": "#/definitions/StreamsAppAutoScaling"
                 }
             },
             "required": [
+                "streams"
                 "streams"
             ]
         },
@@ -1127,6 +1321,7 @@
                     "default": "streams-app",
                     "enum": [
                         "streams-app"
+                        "streams-app"
                     ],
                     "type": "string"
                 },
@@ -1134,6 +1329,8 @@
                     "title": "Repoconfig",
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
                     "default": {
+                        "repository_name": "bakdata-streams-bootstrap",
+                        "url": "https://bakdata.github.io/streams-bootstrap/",
                         "repository_name": "bakdata-streams-bootstrap",
                         "url": "https://bakdata.github.io/streams-bootstrap/",
                         "repo_auth_flags": {

@@ -285,7 +285,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                     },
                     "errorTopic": "resources-pipeline-with-inflate-inflated-streams-app-error",
                     "inputTopics": ["kafka-sink-connector"],
-                    "outputTopic": "streams-app",
+                    "outputTopic": "should-inflate-inflated-streams-app",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -305,7 +305,11 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                         "partitions_count": 1,
                         "type": "error",
                         "valueSchema": "com.bakdata.kafka.DeadLetter",
-                    }
+                    },
+                    "should-inflate-inflated-streams-app": {
+                        "configs": {},
+                        "type": "output",
+                    },
                 },
             },
             "type": "streams-app",
@@ -331,7 +335,7 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "from": {"topics": {"example-topic": {"type": "input"}}},
+            "from": {"components": {}, "topics": {"example-topic": {"type": "input"}}},
             "name": "resources-kafka-connect-sink-streams-app",
             "namespace": "example-namespace",
             "prefix": "resources-kafka-connect-sink-",
@@ -591,7 +595,7 @@ snapshots["TestPipeline.test_no_input_topic test-pipeline"] = {
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "from": {"topics": {".*": {"type": "input-pattern"}}},
+            "from": {"components": {}, "topics": {".*": {"type": "input-pattern"}}},
             "name": "resources-no-input-topic-pipeline-streams-app",
             "namespace": "example-namespace",
             "prefix": "resources-no-input-topic-pipeline-",
@@ -684,7 +688,7 @@ snapshots["TestPipeline.test_no_user_defined_components test-pipeline"] = {
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "from": {"topics": {"example-topic": {"type": "input"}}},
+            "from": {"components": {}, "topics": {"example-topic": {"type": "input"}}},
             "name": "resources-no-user-defined-components-streams-app",
             "namespace": "example-namespace",
             "prefix": "resources-no-user-defined-components-",
@@ -866,6 +870,544 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
     ]
 }
 
+snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
+    "components": [
+        {
+            "app": {
+                "nameOverride": "resources-read-from-component-producer1",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "extraOutputTopics": {},
+                    "outputTopic": "resources-read-from-component-producer1",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-read-from-component-producer1",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-component-producer1": {
+                        "configs": {},
+                        "type": "output",
+                    }
+                },
+            },
+            "type": "producer",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "nameOverride": "producer2",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "extraOutputTopics": {},
+                    "outputTopic": "resources-read-from-component-producer2",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "producer2",
+            "namespace": "example-namespace",
+            "prefix": "",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-component-producer2": {
+                        "configs": {},
+                        "type": "output",
+                    }
+                },
+            },
+            "type": "producer",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "autoscaling": {
+                    "consumerGroup": "filter-resources-read-from-component-inflate-step",
+                    "cooldownPeriod": 300,
+                    "enabled": True,
+                    "lagThreshold": 10000,
+                    "maxReplicas": 1,
+                    "minReplicas": 0,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
+                    "topics": ["resources-read-from-component-inflate-step"],
+                },
+                "image": "fake-registry/filter",
+                "imageTag": "2.4.1",
+                "nameOverride": "resources-read-from-component-inflate-step",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-read-from-component-inflate-step-error",
+                    "inputTopics": ["resources-read-from-component-producer2"],
+                    "outputTopic": "resources-read-from-component-inflate-step",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-read-from-component-inflate-step",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-component-inflate-step": {
+                        "configs": {"retention.ms": "-1"},
+                        "partitions_count": 50,
+                        "type": "output",
+                    },
+                    "resources-read-from-component-inflate-step-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    },
+                },
+            },
+            "type": "should-inflate",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "batch.size": "2000",
+                "behavior.on.malformed.documents": "warn",
+                "behavior.on.null.values": "delete",
+                "connection.compression": "true",
+                "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+                "key.ignore": "false",
+                "linger.ms": "5000",
+                "max.buffered.records": "20000",
+                "name": "sink-connector",
+                "read.timeout.ms": "120000",
+                "tasks.max": "1",
+                "topics": "resources-read-from-component-inflate-step",
+                "transforms.changeTopic.replacement": "resources-read-from-component-inflate-step-index-v1",
+            },
+            "name": "resources-read-from-component-inflated-sink-connector",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-kafka-connect-resetter",
+                "url": "https://bakdata.github.io/kafka-connect-resetter/",
+            },
+            "resetterValues": {},
+            "to": {
+                "models": {},
+                "topics": {
+                    "inflated-sink-connector": {
+                        "configs": {},
+                        "role": "test",
+                        "type": "extra",
+                    },
+                    "kafka-sink-connector": {"configs": {}, "type": "output"},
+                },
+            },
+            "type": "kafka-sink-connector",
+            "version": "1.0.4",
+        },
+        {
+            "app": {
+                "nameOverride": "resources-read-from-component-inflated-streams-app",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-read-from-component-inflated-streams-app-error",
+                    "inputTopics": ["kafka-sink-connector"],
+                    "outputTopic": "inflate-step-inflated-streams-app",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-read-from-component-inflated-streams-app",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "inflate-step-inflated-streams-app": {
+                        "configs": {},
+                        "type": "output",
+                    },
+                    "resources-read-from-component-inflated-streams-app-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    },
+                },
+            },
+            "type": "streams-app",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "autoscaling": {
+                    "consumerGroup": "filter-resources-read-from-component-inflate-step-without-prefix",
+                    "cooldownPeriod": 300,
+                    "enabled": True,
+                    "lagThreshold": 10000,
+                    "maxReplicas": 1,
+                    "minReplicas": 0,
+                    "offsetResetPolicy": "earliest",
+                    "pollingInterval": 30,
+                    "topics": [
+                        "resources-read-from-component-inflate-step-without-prefix"
+                    ],
+                },
+                "image": "fake-registry/filter",
+                "imageTag": "2.4.1",
+                "nameOverride": "inflate-step-without-prefix",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-read-from-component-inflate-step-without-prefix-error",
+                    "inputTopics": ["inflate-step-inflated-streams-app"],
+                    "outputTopic": "resources-read-from-component-inflate-step-without-prefix",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "inflate-step-without-prefix",
+            "namespace": "example-namespace",
+            "prefix": "",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-component-inflate-step-without-prefix": {
+                        "configs": {"retention.ms": "-1"},
+                        "partitions_count": 50,
+                        "type": "output",
+                    },
+                    "resources-read-from-component-inflate-step-without-prefix-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    },
+                },
+            },
+            "type": "should-inflate",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "batch.size": "2000",
+                "behavior.on.malformed.documents": "warn",
+                "behavior.on.null.values": "delete",
+                "connection.compression": "true",
+                "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+                "key.ignore": "false",
+                "linger.ms": "5000",
+                "max.buffered.records": "20000",
+                "name": "sink-connector",
+                "read.timeout.ms": "120000",
+                "tasks.max": "1",
+                "topics": "resources-read-from-component-inflate-step-without-prefix",
+                "transforms.changeTopic.replacement": "resources-read-from-component-inflate-step-without-prefix-index-v1",
+            },
+            "name": "resources-read-from-component-inflated-sink-connector",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-kafka-connect-resetter",
+                "url": "https://bakdata.github.io/kafka-connect-resetter/",
+            },
+            "resetterValues": {},
+            "to": {
+                "models": {},
+                "topics": {
+                    "inflated-sink-connector": {
+                        "configs": {},
+                        "role": "test",
+                        "type": "extra",
+                    },
+                    "kafka-sink-connector": {"configs": {}, "type": "output"},
+                },
+            },
+            "type": "kafka-sink-connector",
+            "version": "1.0.4",
+        },
+        {
+            "app": {
+                "nameOverride": "resources-read-from-component-inflated-streams-app",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-read-from-component-inflated-streams-app-error",
+                    "inputTopics": ["kafka-sink-connector"],
+                    "outputTopic": "inflate-step-without-prefix-inflated-streams-app",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "name": "resources-read-from-component-inflated-streams-app",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "inflate-step-without-prefix-inflated-streams-app": {
+                        "configs": {},
+                        "type": "output",
+                    },
+                    "resources-read-from-component-inflated-streams-app-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    },
+                },
+            },
+            "type": "streams-app",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "nameOverride": "resources-read-from-component-consumer1",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-read-from-component-consumer1-error",
+                    "inputTopics": ["resources-read-from-component-producer1"],
+                    "outputTopic": "resources-read-from-component-consumer1",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "from": {"components": {"producer1": {"type": "input"}}, "topics": {}},
+            "name": "resources-read-from-component-consumer1",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-component-consumer1": {
+                        "configs": {},
+                        "type": "output",
+                    },
+                    "resources-read-from-component-consumer1-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    },
+                },
+            },
+            "type": "streams-app",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "nameOverride": "resources-read-from-component-consumer2",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-read-from-component-consumer2-error",
+                    "inputTopics": [
+                        "resources-read-from-component-producer1",
+                        "resources-read-from-component-consumer1",
+                    ],
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "from": {
+                "components": {
+                    "consumer1": {"type": "input"},
+                    "producer1": {"type": "input"},
+                },
+                "topics": {},
+            },
+            "name": "resources-read-from-component-consumer2",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-component-consumer2-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    }
+                },
+            },
+            "type": "streams-app",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "nameOverride": "resources-read-from-component-consumer3",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-read-from-component-consumer3-error",
+                    "inputTopics": [
+                        "resources-read-from-component-producer1",
+                        "resources-read-from-component-producer2",
+                    ],
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "from": {
+                "components": {"producer2": {"type": "input"}},
+                "topics": {
+                    "resources-read-from-component-producer1": {"type": "input"}
+                },
+            },
+            "name": "resources-read-from-component-consumer3",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-component-consumer3-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    }
+                },
+            },
+            "type": "streams-app",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "nameOverride": "resources-read-from-component-consumer4",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-read-from-component-consumer4-error",
+                    "inputTopics": ["inflate-step-inflated-streams-app"],
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "from": {"components": {"inflate-step": {"type": "input"}}, "topics": {}},
+            "name": "resources-read-from-component-consumer4",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-component-consumer4-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    }
+                },
+            },
+            "type": "streams-app",
+            "version": "2.4.2",
+        },
+        {
+            "app": {
+                "nameOverride": "resources-read-from-component-consumer5",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "config": {
+                        "large.message.id.generator": "com.bakdata.kafka.MurmurHashIdGenerator"
+                    },
+                    "errorTopic": "resources-read-from-component-consumer5-error",
+                    "inputTopics": ["inflate-step-inflated-streams-app"],
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+            "from": {
+                "components": {"inflate-step-without-prefix": {"type": "input"}},
+                "topics": {},
+            },
+            "name": "resources-read-from-component-consumer5",
+            "namespace": "example-namespace",
+            "prefix": "resources-read-from-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "to": {
+                "models": {},
+                "topics": {
+                    "resources-read-from-component-consumer5-error": {
+                        "configs": {"cleanup.policy": "compact,delete"},
+                        "partitions_count": 1,
+                        "type": "error",
+                        "valueSchema": "com.bakdata.kafka.DeadLetter",
+                    }
+                },
+            },
+            "type": "streams-app",
+            "version": "2.4.2",
+        },
+    ]
+}
+
 snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
     "components": [
         {
@@ -1024,82 +1566,6 @@ snapshots["TestPipeline.test_substitute_component_names test-pipeline"] = {
             },
             "type": "filter",
             "version": "2.4.2",
-        },
-    ]
-}
-
-snapshots["TestPipeline.test_with_custom_config test-pipeline"] = {
-    "components": [
-        {
-            "app": {
-                "nameOverride": "resources-custom-config-app1",
-                "resources": {"limits": {"memory": "2G"}, "requests": {"memory": "2G"}},
-                "streams": {
-                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "extraOutputTopics": {},
-                    "outputTopic": "app1-test-topic",
-                    "schemaRegistryUrl": "http://localhost:8081",
-                },
-            },
-            "name": "resources-custom-config-app1",
-            "namespace": "development-namespace",
-            "prefix": "resources-custom-config-",
-            "repoConfig": {
-                "repoAuthFlags": {"insecureSkipTlsVerify": False},
-                "repositoryName": "bakdata-streams-bootstrap",
-                "url": "https://bakdata.github.io/streams-bootstrap/",
-            },
-            "to": {
-                "models": {},
-                "topics": {
-                    "app1-test-topic": {
-                        "configs": {},
-                        "partitions_count": 3,
-                        "type": "output",
-                    }
-                },
-            },
-            "type": "producer",
-            "version": "2.9.0",
-        },
-        {
-            "app": {
-                "image": "some-image",
-                "labels": {"pipeline": "resources-custom-config"},
-                "nameOverride": "resources-custom-config-app2",
-                "streams": {
-                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
-                    "errorTopic": "app2-dead-letter-topic",
-                    "inputTopics": ["app1-test-topic"],
-                    "outputTopic": "app2-test-topic",
-                    "schemaRegistryUrl": "http://localhost:8081",
-                },
-            },
-            "name": "resources-custom-config-app2",
-            "namespace": "development-namespace",
-            "prefix": "resources-custom-config-",
-            "repoConfig": {
-                "repoAuthFlags": {"insecureSkipTlsVerify": False},
-                "repositoryName": "bakdata-streams-bootstrap",
-                "url": "https://bakdata.github.io/streams-bootstrap/",
-            },
-            "to": {
-                "models": {},
-                "topics": {
-                    "app2-dead-letter-topic": {
-                        "configs": {},
-                        "partitions_count": 1,
-                        "type": "error",
-                    },
-                    "app2-test-topic": {
-                        "configs": {},
-                        "partitions_count": 3,
-                        "type": "output",
-                    },
-                },
-            },
-            "type": "streams-app",
-            "version": "2.9.0",
         },
     ]
 }
@@ -1277,7 +1743,7 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            "from": {"topics": {"example-topic": {"type": "input"}}},
+            "from": {"components": {}, "topics": {"example-topic": {"type": "input"}}},
             "name": "resources-kafka-connect-sink-streams-app-development",
             "namespace": "development-namespace",
             "prefix": "resources-kafka-connect-sink-",

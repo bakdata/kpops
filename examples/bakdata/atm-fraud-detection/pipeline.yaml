@@ -60,10 +60,10 @@
 - type: streams-app
   name: account-linker
   from:
-    topics:
-      ${pipeline_name}-fraud-detector-topic:
+    components:
+      fraud-detector:
         type: input
-      ${pipeline_name}-account-producer-topic:
+      account-producer:
         type: extra
         role: accounts
   app:
