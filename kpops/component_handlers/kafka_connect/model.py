@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import Literal
+from typing_extensions import override
 
 from pydantic import BaseConfig, BaseModel, Extra
 
@@ -65,5 +66,6 @@ class KafkaConnectResetterValues(BaseModel):
     class Config(CamelCaseConfig):
         pass
 
+    @override
     def dict(self, **_) -> dict:
         return super().dict(by_alias=True, exclude_none=True)

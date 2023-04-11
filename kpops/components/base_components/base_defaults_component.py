@@ -25,8 +25,8 @@ class BaseDefaultsComponent(BaseModel):
 
     :param type: Component type
     :type type: str
-    :param enrich: Whether to enrich component with defaults
-    :type enrich: bool
+    :param enrich: Whether to enrich component with defaults, defaults to False
+    :type enrich: bool, optional
     :param config: Pipeline configuration to be accessed by this component
     :type config: PipelineConfig
     :param handlers: Component handlers to be accessed by this component
@@ -115,8 +115,9 @@ def load_defaults(
     :type component_class: type[BaseDefaultsComponent]
     :param defaults_file_path: Path to `defaults.yaml`
     :type defaults_file_path: Path
-    :param environment_defaults_file_path: Path to `defaults_{environment}.yaml`
-    :type environment_defaults_file_path: Path
+    :param environment_defaults_file_path: Path to `defaults_{environment}.yaml`,
+        defaults to None
+    :type environment_defaults_file_path: Path, optional
     :returns: Component defaults
     :rtype: dict
     """

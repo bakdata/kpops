@@ -26,14 +26,18 @@ class PipelineComponent(BaseDefaultsComponent):
 
     :param name: Component name
     :type name: str
-    :param from_: Topic(s) from which the component will read input
-    :type from_: FromSection | None
-    :param app: Application-specific settings
-    :type app: object | None
-    :param to: Topic(s) into which the component will write output
-    :type to: ToSection | None
-    :param prefix: Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.
-    :type prefix: str
+    :param from_: Topic(s) from which the component will read input,
+        defaults to None
+    :type from_: FromSection, None, optional
+    :param app: Application-specific settings, defaults to None
+    :type app: object, None, optional
+    :param to: Topic(s) into which the component will write output,
+        defaults to None
+    :type to: ToSection, None, optional
+    :param prefix: Pipeline prefix that will prefix every component name.
+        If you wish to not have any prefix you can specify an empty string.,
+        defaults to "${pipeline_name}-"
+    :type prefix: str, optional
     """
 
     name: str = Field(default=..., description="Component name")
@@ -245,10 +249,12 @@ class PipelineComponent(BaseDefaultsComponent):
             raise ValueError("Every component must have a name in the end.")
 
     def inflate(self) -> list[PipelineComponent]:
-        """Inflate a component. This is helpful if one component should result in multiple components.
+        """Inflate a component.
 
-        To support this, override this method and return a list of components the component you result in.
-        The order of the components is the order the components will be deployed in.
+        This is helpful if one component should result in multiple components.
+        To support this, override this method and return a list of components
+        the component you result in. The order of the components is the order
+        the components will be deployed in.
         """
         return [self]
 
@@ -263,12 +269,15 @@ class PipelineComponent(BaseDefaultsComponent):
         be faked locally. Additionally, none of the server-side testing of chart
         validity (e.g. whether an API is supported) is done.
 
-        :param api_version: Kubernetes API version used for Capabilities.APIVersions, `--api_versions` in Helm
-        :type api_version: str
-        :param ca_file: verify certificates of HTTPS-enabled servers using this CA bundle, `--ca-file` in Helm
-        :type ca_file: str
-        :param cert_file: identify HTTPS client using this SSL certificate file, `--cert-file` in Helm
-        :type cert_file: str
+        :param api_version: Kubernetes API version used for
+            Capabilities.APIVersions, `--api_versions` in Helm
+        :type api_version: str, None
+        :param ca_file: verify certificates of HTTPS-enabled servers using this
+            CA bundle, `--ca-file` in Helm
+        :type ca_file: str, None
+        :param cert_file: identify HTTPS client using this SSL certificate file,
+            `--cert-file` in Helm
+        :type cert_file: str, None
         """
 
     def deploy(self, dry_run: bool) -> None:

@@ -10,9 +10,7 @@ ENV_PREFIX = "KPOPS_"
 
 
 class TopicNameConfig(BaseSettings):
-    """
-    Configures topic names.
-    """
+    """Configures topic names."""
 
     default_output_topic_name: str = Field(
         default="${pipeline_name}-${component_name}",
@@ -25,9 +23,7 @@ class TopicNameConfig(BaseSettings):
 
 
 class PipelineConfig(BaseSettings):
-    """
-    Pipeline configuration unrelated to the components.
-    """
+    """Pipeline configuration unrelated to the components."""
 
     defaults_path: Path = Field(
         default=Path("."),

@@ -36,14 +36,16 @@ class KafkaAppConfig(KubernetesAppConfig):
 
 
 class KafkaApp(KubernetesApp):
-    """
-    Base component for Kafka-based components.
+    """Base component for Kafka-based components.
+
     Producer or streaming apps should inherit from this class.
     """
 
     type: str = "kafka-app"
     schema_type: Literal["kafka-app"] = Field(  # type: ignore[assignment]
-        default="kafka-app", exclude=True
+        default="kafka-app",
+        description=__doc__.partition(":param")[0].strip(),
+        exclude=True,
     )
     app: KafkaAppConfig
     repo_config: HelmRepoConfig = HelmRepoConfig(

@@ -1,4 +1,5 @@
 from typing import AbstractSet, Any, Mapping
+from typing_extensions import override
 
 from pydantic import BaseConfig, BaseModel, Extra, Field
 
@@ -46,6 +47,7 @@ class StreamsConfig(KafkaStreamsConfig):
             self.extra_input_topics.get(role, []) + topics
         )
 
+    @override
     def dict(
         self,
         *,

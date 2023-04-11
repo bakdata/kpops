@@ -31,6 +31,8 @@ class RepoAuthFlags(BaseModel):
 
 
 class HelmRepoConfig(BaseModel):
+    """Helm chart repository configuration"""
+
     repository_name: str
     url: str
     repo_auth_flags: RepoAuthFlags = Field(default=RepoAuthFlags())
@@ -81,7 +83,10 @@ class HelmTemplate:
     @staticmethod
     def parse_source(source: str) -> str:
         """Parse source path from comment at the beginning of the YAML doc.
-        Example: # Source: chart/templates/serviceaccount.yaml
+
+        :Example:
+
+        # Source: chart/templates/serviceaccount.yaml
         """
         if not source.startswith(HELM_SOURCE_PREFIX):
             raise ValueError("Not a valid Helm template source")
