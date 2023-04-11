@@ -224,7 +224,6 @@ class TestPipeline:
         enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-
     def test_with_custom_config_with_relative_defaults_path(
         self, snapshot: SnapshotTest
     ):
