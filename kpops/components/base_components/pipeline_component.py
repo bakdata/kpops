@@ -23,6 +23,7 @@ from kpops.utils.yaml_loading import substitute
 
 class PipelineComponent(BaseDefaultsComponent):
     name: str
+    type: str = "pipeline-component"
     from_: FromSection | None = Field(default=None, alias="from", title="From")
     app: object | None = None
     to: ToSection | None = None
