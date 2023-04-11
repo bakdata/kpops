@@ -1,0 +1,12 @@
+- type: producer
+  name: account-producer
+  app:
+    replicaCount: 1
+    image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
+    imageTag: 1.0.0
+    schedule: 0 12 * * *
+    suspend: true
+    prometheus:
+      jmx:
+        enabled: false
+    debug: true
