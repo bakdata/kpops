@@ -147,7 +147,7 @@ class KafkaApp(KubernetesApp):
 
     def __uninstall_clean_up_job(self, release_name: str, dry_run: bool) -> None:
         """Uninstall clean up job
-        
+
         :param release_name: Name of the Helm release
         :type release_name: str
         :param dry_run: Whether to do a dry run of the command

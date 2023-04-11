@@ -80,7 +80,6 @@ class BaseDefaultsComponent(BaseModel):
         Merges tmp_defaults with all tmp_defaults for parent classes.
 
         :param kwargs: The init kwargs for pydantic
-        :type kwargs: dict[str, Any]
         :returns: Enriched kwargs with tmp_defaults
         :rtype: dict[str, Any]
         """
