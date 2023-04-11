@@ -148,6 +148,12 @@ class Pipeline:
     def apply_component(
         self, component_class: type[PipelineComponent], component_data: dict
     ) -> None:
+        """Instantiates, enriches and inflates pipeline component.
+        Applies input topics according to FromSection.
+
+        :param component_class: Type of pipeline component
+        :param component_data: Arguments for instantiation of pipeline component
+        """
         component = component_class(
             config=self.config,
             handlers=self.handlers,
