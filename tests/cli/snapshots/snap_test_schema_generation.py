@@ -4,11 +4,10 @@ from __future__ import unicode_literals
 
 from snapshottest import Snapshot
 
+
 snapshots = Snapshot()
 
-snapshots[
-    "TestGenSchema.test_gen_config_schema test-schema-generation"
-] = """{
+snapshots['TestGenSchema.test_gen_config_schema test-schema-generation'] = '''{
     "title": "kpops config schema",
     "$ref": "#/definitions/PipelineConfig",
     "definitions": {
@@ -238,11 +237,9 @@ snapshots[
         }
     }
 }
-"""
+'''
 
-snapshots[
-    "TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema-generation"
-] = """{
+snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema-generation'] = '''{
     "title": "kpops pipeline schema",
     "type": "array",
     "items": {
@@ -254,6 +251,7 @@ snapshots[
                 "kafka-sink-connector": "#/definitions/KafkaSinkConnector",
                 "kafka-source-connector": "#/definitions/KafkaSourceConnector",
                 "kubernetes-app": "#/definitions/KubernetesApp",
+                "pipeline-component": "#/definitions/PipelineComponent",
                 "producer": "#/definitions/ProducerApp",
                 "streams-app": "#/definitions/StreamsApp",
                 "sub-pipeline-component": "#/definitions/SubPipelineComponent",
@@ -275,6 +273,9 @@ snapshots[
             },
             {
                 "$ref": "#/definitions/KubernetesApp"
+            },
+            {
+                "$ref": "#/definitions/PipelineComponent"
             },
             {
                 "$ref": "#/definitions/ProducerApp"
@@ -891,6 +892,52 @@ snapshots[
                 "namespace"
             ]
         },
+        "PipelineComponent": {
+            "title": "PipelineComponent",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "pipeline-component",
+                    "type": "string"
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "from": {
+                    "title": "From",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ]
+                },
+                "app": {
+                    "title": "App"
+                },
+                "to": {
+                    "$ref": "#/definitions/ToSection"
+                },
+                "prefix": {
+                    "title": "Prefix",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "default": "${pipeline_name}-",
+                    "type": "string"
+                },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "pipeline-component",
+                    "enum": [
+                        "pipeline-component"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ]
+        },
         "ProducerStreamsConfig": {
             "title": "ProducerStreamsConfig",
             "type": "object",
@@ -1342,11 +1389,9 @@ snapshots[
         }
     }
 }
-"""
+'''
 
-snapshots[
-    "TestGenSchema.test_gen_pipeline_schema_without_custom_module test-schema-generation"
-] = """{
+snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-schema-generation'] = '''{
     "title": "kpops pipeline schema",
     "type": "array",
     "items": {
@@ -1358,6 +1403,7 @@ snapshots[
                 "kafka-sink-connector": "#/definitions/KafkaSinkConnector",
                 "kafka-source-connector": "#/definitions/KafkaSourceConnector",
                 "kubernetes-app": "#/definitions/KubernetesApp",
+                "pipeline-component": "#/definitions/PipelineComponent",
                 "producer": "#/definitions/ProducerApp",
                 "streams-app": "#/definitions/StreamsApp"
             }
@@ -1377,6 +1423,9 @@ snapshots[
             },
             {
                 "$ref": "#/definitions/KubernetesApp"
+            },
+            {
+                "$ref": "#/definitions/PipelineComponent"
             },
             {
                 "$ref": "#/definitions/ProducerApp"
@@ -1987,6 +2036,52 @@ snapshots[
                 "namespace"
             ]
         },
+        "PipelineComponent": {
+            "title": "PipelineComponent",
+            "type": "object",
+            "properties": {
+                "type": {
+                    "title": "Type",
+                    "default": "pipeline-component",
+                    "type": "string"
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                },
+                "from": {
+                    "title": "From",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ]
+                },
+                "app": {
+                    "title": "App"
+                },
+                "to": {
+                    "$ref": "#/definitions/ToSection"
+                },
+                "prefix": {
+                    "title": "Prefix",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "default": "${pipeline_name}-",
+                    "type": "string"
+                },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "pipeline-component",
+                    "enum": [
+                        "pipeline-component"
+                    ],
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ]
+        },
         "ProducerStreamsConfig": {
             "title": "ProducerStreamsConfig",
             "type": "object",
@@ -2346,4 +2441,4 @@ snapshots[
         }
     }
 }
-"""
+'''
