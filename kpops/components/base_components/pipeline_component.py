@@ -235,7 +235,6 @@ class PipelineComponent(BaseDefaultsComponent):
 
         Override this method to apply custom logic
         """
-
         if not to:
             return
         input_topics = [
