@@ -24,6 +24,9 @@ from kpops.utils.yaml_loading import substitute
 
 class PipelineComponent(BaseDefaultsComponent):
     type: str = "pipeline-component"
+    schema_type: Literal["pipeline-component"] = Field(  # type: ignore[assignment]
+        default="pipeline-component", exclude=True
+    )
     name: str
     from_: FromSection | None = Field(default=None, alias="from", title="From")
     app: object | None = None
@@ -31,9 +34,6 @@ class PipelineComponent(BaseDefaultsComponent):
     prefix: str = Field(
         default="${pipeline_name}-",
         description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-    )
-    schema_type: Literal["pipeline-component"] = Field(  # type: ignore[assignment]
-        default="pipeline-component", exclude=True
     )
 
     class Config(BaseConfig):
