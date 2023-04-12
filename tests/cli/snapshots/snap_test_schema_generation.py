@@ -4,11 +4,10 @@ from __future__ import unicode_literals
 
 from snapshottest import Snapshot
 
+
 snapshots = Snapshot()
 
-snapshots[
-    "TestGenSchema.test_gen_config_schema test-schema-generation"
-] = """{
+snapshots['TestGenSchema.test_gen_config_schema test-schema-generation'] = '''{
     "title": "kpops config schema",
     "$ref": "#/definitions/PipelineConfig",
     "definitions": {
@@ -238,11 +237,9 @@ snapshots[
         }
     }
 }
-"""
+'''
 
-snapshots[
-    "TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema-generation"
-] = """{
+snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema-generation'] = '''{
     "title": "kpops pipeline schema",
     "type": "array",
     "items": {
@@ -329,15 +326,23 @@ snapshots[
             "properties": {
                 "topics": {
                     "title": "Topics",
+                    "description": "Topics to read from.",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FromTopic"
+                    }
+                },
+                "components": {
+                    "title": "Components",
+                    "description": "Components to read from.",
+                    "default": {},
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "#/definitions/FromTopic"
                     }
                 }
             },
-            "required": [
-                "topics"
-            ],
             "additionalProperties": false
         },
         "KafkaStreamsConfig": {
@@ -512,6 +517,14 @@ snapshots[
                     "default": "kafka-app",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-app",
+                    "enum": [
+                        "kafka-app"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -534,14 +547,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-app",
-                    "enum": [
-                        "kafka-app"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -595,6 +600,14 @@ snapshots[
                     "default": "kafka-connector",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-connector",
+                    "enum": [
+                        "kafka-connector"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -617,14 +630,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-connector",
-                    "enum": [
-                        "kafka-connector"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -675,6 +680,14 @@ snapshots[
                     "default": "kafka-sink-connector",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-sink-connector",
+                    "enum": [
+                        "kafka-sink-connector"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -697,14 +710,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-sink-connector",
-                    "enum": [
-                        "kafka-sink-connector"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -755,6 +760,14 @@ snapshots[
                     "default": "kafka-source-connector",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-source-connector",
+                    "enum": [
+                        "kafka-source-connector"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -777,14 +790,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-source-connector",
-                    "enum": [
-                        "kafka-source-connector"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -845,6 +850,14 @@ snapshots[
                     "default": "kubernetes-app",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kubernetes-app",
+                    "enum": [
+                        "kubernetes-app"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -867,14 +880,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kubernetes-app",
-                    "enum": [
-                        "kubernetes-app"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -904,6 +909,14 @@ snapshots[
                     "default": "pipeline-component",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "pipeline-component",
+                    "enum": [
+                        "pipeline-component"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -926,14 +939,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "pipeline-component",
-                    "enum": [
-                        "pipeline-component"
-                    ],
                     "type": "string"
                 }
             },
@@ -996,6 +1001,14 @@ snapshots[
                     "default": "producer",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "producer",
+                    "enum": [
+                        "producer"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -1015,14 +1028,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "producer",
-                    "enum": [
-                        "producer"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -1232,6 +1237,14 @@ snapshots[
                     "default": "streams-app",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "streams-app",
+                    "enum": [
+                        "streams-app"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -1254,14 +1267,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "streams-app",
-                    "enum": [
-                        "streams-app"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -1307,6 +1312,14 @@ snapshots[
                     "default": "sub-pipeline-component",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "sub-pipeline-component",
+                    "enum": [
+                        "sub-pipeline-component"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -1329,14 +1342,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "sub-pipeline-component",
-                    "enum": [
-                        "sub-pipeline-component"
-                    ],
                     "type": "string"
                 }
             },
@@ -1353,6 +1358,14 @@ snapshots[
                     "default": "sub-pipeline-component-correct",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "sub-pipeline-component-correct",
+                    "enum": [
+                        "sub-pipeline-component-correct"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -1376,14 +1389,6 @@ snapshots[
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
                     "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "sub-pipeline-component-correct",
-                    "enum": [
-                        "sub-pipeline-component-correct"
-                    ],
-                    "type": "string"
                 }
             },
             "required": [
@@ -1392,11 +1397,9 @@ snapshots[
         }
     }
 }
-"""
+'''
 
-snapshots[
-    "TestGenSchema.test_gen_pipeline_schema_without_custom_module test-schema-generation"
-] = """{
+snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-schema-generation'] = '''{
     "title": "kpops pipeline schema",
     "type": "array",
     "items": {
@@ -1475,15 +1478,23 @@ snapshots[
             "properties": {
                 "topics": {
                     "title": "Topics",
+                    "description": "Topics to read from.",
+                    "default": {},
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FromTopic"
+                    }
+                },
+                "components": {
+                    "title": "Components",
+                    "description": "Components to read from.",
+                    "default": {},
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "#/definitions/FromTopic"
                     }
                 }
             },
-            "required": [
-                "topics"
-            ],
             "additionalProperties": false
         },
         "KafkaStreamsConfig": {
@@ -1658,6 +1669,14 @@ snapshots[
                     "default": "kafka-app",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-app",
+                    "enum": [
+                        "kafka-app"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -1680,14 +1699,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-app",
-                    "enum": [
-                        "kafka-app"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -1741,6 +1752,14 @@ snapshots[
                     "default": "kafka-connector",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-connector",
+                    "enum": [
+                        "kafka-connector"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -1763,14 +1782,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-connector",
-                    "enum": [
-                        "kafka-connector"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -1821,6 +1832,14 @@ snapshots[
                     "default": "kafka-sink-connector",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-sink-connector",
+                    "enum": [
+                        "kafka-sink-connector"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -1843,14 +1862,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-sink-connector",
-                    "enum": [
-                        "kafka-sink-connector"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -1901,6 +1912,14 @@ snapshots[
                     "default": "kafka-source-connector",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kafka-source-connector",
+                    "enum": [
+                        "kafka-source-connector"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -1923,14 +1942,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-source-connector",
-                    "enum": [
-                        "kafka-source-connector"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -1991,6 +2002,14 @@ snapshots[
                     "default": "kubernetes-app",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "kubernetes-app",
+                    "enum": [
+                        "kubernetes-app"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -2013,14 +2032,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kubernetes-app",
-                    "enum": [
-                        "kubernetes-app"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -2050,6 +2061,14 @@ snapshots[
                     "default": "pipeline-component",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "pipeline-component",
+                    "enum": [
+                        "pipeline-component"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -2072,14 +2091,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "pipeline-component",
-                    "enum": [
-                        "pipeline-component"
-                    ],
                     "type": "string"
                 }
             },
@@ -2142,6 +2153,14 @@ snapshots[
                     "default": "producer",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "producer",
+                    "enum": [
+                        "producer"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -2161,14 +2180,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "producer",
-                    "enum": [
-                        "producer"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -2378,6 +2389,14 @@ snapshots[
                     "default": "streams-app",
                     "type": "string"
                 },
+                "type": {
+                    "title": "Schema Type",
+                    "default": "streams-app",
+                    "enum": [
+                        "streams-app"
+                    ],
+                    "type": "string"
+                },
                 "name": {
                     "title": "Name",
                     "type": "string"
@@ -2400,14 +2419,6 @@ snapshots[
                     "title": "Prefix",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "streams-app",
-                    "enum": [
-                        "streams-app"
-                    ],
                     "type": "string"
                 },
                 "repoConfig": {
@@ -2446,4 +2457,4 @@ snapshots[
         }
     }
 }
-"""
+'''

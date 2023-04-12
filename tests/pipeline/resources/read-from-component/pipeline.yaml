@@ -1,0 +1,65 @@
+- type: producer
+  name: producer1
+  to:
+    topics:
+      ${output_topic_name}:
+        type: output
+
+- type: producer
+  name: producer2
+  prefix: ""
+  to:
+    topics:
+      ${output_topic_name}:
+        type: output
+
+- type: should-inflate
+  name: inflate-step
+
+- type: should-inflate
+  name: inflate-step-without-prefix
+  prefix: ""
+
+- type: streams-app
+  name: consumer1
+  from:
+    components:
+      producer1:
+        type: input
+  to:
+    topics:
+      ${output_topic_name}:
+        type: output
+
+- type: streams-app
+  name: consumer2
+  from:
+    components:
+      producer1:
+        type: input
+      consumer1:
+        type: input
+
+- type: streams-app
+  name: consumer3
+  from:
+    topics:
+      ${pipeline_name}-producer1:
+        type: input
+    components:
+      producer2:
+        type: input
+
+- type: streams-app
+  name: consumer4
+  from:
+    components:
+      inflate-step:
+        type: input
+
+- type: streams-app
+  name: consumer5
+  from:
+    components:
+      inflate-step-without-prefix:
+        type: input
