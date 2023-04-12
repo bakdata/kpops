@@ -222,6 +222,28 @@ class TestPipeline:
         enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
+    def test_prefix_pipeline_component(self, snapshot: SnapshotTest):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(
+                    RESOURCE_PATH
+                    / "pipeline-component-should-have-prefix/pipeline.yaml"
+                ),
+                "--defaults",
+                str(RESOURCE_PATH / "pipeline-component-should-have-prefix"),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0
+
+        enriched_pipeline = yaml.safe_load(result.stdout)
+        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
     def test_with_custom_config_with_relative_defaults_path(
         self, snapshot: SnapshotTest
     ):

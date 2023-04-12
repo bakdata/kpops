@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from functools import cached_property
+from typing import Literal
 
 from pydantic import BaseConfig, Extra, Field
 
@@ -22,6 +23,10 @@ from kpops.utils.yaml_loading import substitute
 
 
 class PipelineComponent(BaseDefaultsComponent):
+    type: str = "pipeline-component"
+    schema_type: Literal["pipeline-component"] = Field(  # type: ignore[assignment]
+        default="pipeline-component", exclude=True
+    )
     name: str
     from_: FromSection | None = Field(default=None, alias="from", title="From")
     app: object | None = None

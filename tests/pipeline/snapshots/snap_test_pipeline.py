@@ -870,6 +870,39 @@ snapshots["TestPipeline.test_pipelines_with_env_values test-pipeline"] = {
     ]
 }
 
+snapshots["TestPipeline.test_prefix_pipeline_component test-pipeline"] = {
+    "components": [
+        {
+            "app": {
+                "debug": True,
+                "image": "${DOCKER_REGISTRY}/atm-demo-accountproducer",
+                "imageTag": "1.0.0",
+                "nameOverride": "from-pipeline-component-account-producer",
+                "prometheus": {"jmx": {"enabled": False}},
+                "replicaCount": 1,
+                "schedule": "0 12 * * *",
+                "streams": {
+                    "brokers": "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092",
+                    "extraOutputTopics": {},
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+                "suspend": True,
+            },
+            "name": "from-pipeline-component-account-producer",
+            "namespace": "${NAMESPACE}",
+            "prefix": "from-pipeline-component-",
+            "repoConfig": {
+                "repoAuthFlags": {"insecureSkipTlsVerify": False},
+                "repositoryName": "bakdata-streams-bootstrap",
+                "url": "https://bakdata.github.io/streams-bootstrap/",
+            },
+            "type": "producer",
+            "version": "2.9.0",
+        }
+    ]
+}
+
+
 snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
     "components": [
         {
