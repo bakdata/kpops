@@ -12,7 +12,7 @@ from pydantic import BaseConfig, BaseModel, Field
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.utils.yaml_loading import load_yaml_file
-from kpops.utils.pydantic import describe_attr
+from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("PipelineComponentEnricher")
 
