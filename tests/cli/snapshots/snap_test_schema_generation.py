@@ -4,10 +4,11 @@ from __future__ import unicode_literals
 
 from snapshottest import Snapshot
 
-
 snapshots = Snapshot()
 
-snapshots['TestGenSchema.test_gen_config_schema test-schema-generation'] = '''{
+snapshots[
+    "TestGenSchema.test_gen_config_schema test-schema-generation"
+] = """{
     "title": "kpops config schema",
     "$ref": "#/definitions/PipelineConfig",
     "definitions": {
@@ -237,9 +238,11 @@ snapshots['TestGenSchema.test_gen_config_schema test-schema-generation'] = '''{
         }
     }
 }
-'''
+"""
 
-snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema-generation'] = '''{
+snapshots[
+    "TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema-generation"
+] = """{
     "title": "kpops pipeline schema",
     "type": "array",
     "items": {
@@ -1397,9 +1400,11 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_with_custom_module test-schema
         }
     }
 }
-'''
+"""
 
-snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-schema-generation'] = '''{
+snapshots[
+    "TestGenSchema.test_gen_pipeline_schema_without_custom_module test-schema-generation"
+] = """{
     "title": "kpops pipeline schema",
     "type": "array",
     "items": {
@@ -2457,4 +2462,4 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_without_custom_module test-sch
         }
     }
 }
-'''
+"""

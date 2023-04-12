@@ -904,7 +904,6 @@ snapshots["TestPipeline.test_prefix_pipeline_component test-pipeline"] = {
 
 
 snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
-
     "components": [
         {
             "app": {
