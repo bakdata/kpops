@@ -18,6 +18,7 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
+from kpops.utils.docstring import describe_attr
 from kpops.utils.yaml_loading import substitute
 
 
@@ -45,19 +46,19 @@ class PipelineComponent(BaseDefaultsComponent):
         default=None,
         alias="from",
         title="From",
-        description="Topic(s) from which the component will read input",
+        description=describe_attr("from_", __doc__),
     )
     app: object | None = Field(
         default=None,
-        description="Application-specific settings",
+        description=describe_attr("app", __doc__),
     )
     to: ToSection | None = Field(
         default=None,
-        description="Topic(s) into which the component will write output",
+        description=describe_attr("to", __doc__),
     )
     prefix: str = Field(
         default="${pipeline_name}-",
-        description="Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+        description=describe_attr("prefix", __doc__),
     )
 
     class Config(BaseConfig):

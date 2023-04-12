@@ -12,6 +12,7 @@ from pydantic import BaseConfig, BaseModel, Field
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.utils.yaml_loading import load_yaml_file
+from kpops.utils.pydantic import describe_attr
 
 log = logging.getLogger("PipelineComponentEnricher")
 
@@ -37,19 +38,19 @@ class BaseDefaultsComponent(BaseModel):
 
     enrich: bool = Field(
         default=False,
-        description="Whether to enrich component with defaults",
+        description=describe_attr("enrich", __doc__),
         exclude=True,
         hidden_from_schema=True,
     )
     config: PipelineConfig = Field(
         default=...,
-        description="Pipeline configuration to be accessed by this component",
+        description=describe_attr("config", __doc__),
         exclude=True,
         hidden_from_schema=True,
     )
     handlers: ComponentHandlers = Field(
         default=...,
-        description="Component handlers to be accessed by this component",
+        description=describe_attr("handlers", __doc__),
         exclude=True,
         hidden_from_schema=True,
     )
@@ -77,10 +78,8 @@ class BaseDefaultsComponent(BaseModel):
     def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
         """Merge parent components' defaults with own
 
-        Merges tmp_defaults with all tmp_defaults for parent classes.
-
         :param kwargs: The init kwargs for pydantic
-        :returns: Enriched kwargs with tmp_defaults
+        :returns: Enriched kwargs with inheritted defaults
         :rtype: dict[str, Any]
         """
         config: PipelineConfig = kwargs["config"]
@@ -92,7 +91,6 @@ class BaseDefaultsComponent(BaseModel):
                 kwargs.get("type"), fg=typer.colors.GREEN, bold=True, underline=True
             )
         )
-        # Merge tmp_defaults before we initialize the thing
         main_default_file_path, environment_default_file_path = get_defaults_file_paths(
             config
         )

@@ -79,7 +79,7 @@ class Helm:
         values: dict,
         flags: HelmUpgradeInstallFlags = HelmUpgradeInstallFlags(),
     ) -> str:
-        """Prepares and executes the helm upgrade install command"""
+        """Prepares and executes the `helm upgrade --install` command"""
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
 
