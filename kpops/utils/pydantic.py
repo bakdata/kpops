@@ -1,5 +1,7 @@
+from typing import Any
 import humps
-from pydantic import BaseConfig
+from kpops.utils.docstring import describe_class
+from pydantic import BaseConfig, BaseModel
 
 
 def to_camel(field: str) -> str:
@@ -11,3 +13,8 @@ def to_camel(field: str) -> str:
 class CamelCaseConfig(BaseConfig):
     alias_generator = to_camel
     allow_population_by_field_name = True
+
+class DescConfig(BaseConfig):
+        @staticmethod
+        def schema_extra(schema: dict[str, Any], model: type[BaseModel]):
+            schema["description"] = describe_class(model)

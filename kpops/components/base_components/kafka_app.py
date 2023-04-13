@@ -16,7 +16,7 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
 )
-from kpops.utils.pydantic import CamelCaseConfig
+from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 from kpops.utils.yaml_loading import substitute
 
 log = logging.getLogger("KafkaApp")
@@ -26,7 +26,7 @@ class KafkaStreamsConfig(BaseModel):
     brokers: str
     schema_registry_url: str | None = None
 
-    class Config(CamelCaseConfig):
+    class Config(CamelCaseConfig, DescConfig):
         extra = Extra.allow
 
 

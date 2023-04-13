@@ -5,7 +5,7 @@ from typing import Iterator
 import yaml
 from pydantic import BaseModel, Field
 
-from kpops.utils.pydantic import CamelCaseConfig
+from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 
 class HelmDiffConfig(BaseModel):
@@ -26,7 +26,7 @@ class RepoAuthFlags(BaseModel):
     ca_file: Path | None = None
     insecure_skip_tls_verify: bool = False
 
-    class Config(CamelCaseConfig):
+    class Config(CamelCaseConfig, DescConfig):
         pass
 
 
@@ -37,7 +37,7 @@ class HelmRepoConfig(BaseModel):
     url: str
     repo_auth_flags: RepoAuthFlags = Field(default=RepoAuthFlags())
 
-    class Config(CamelCaseConfig):
+    class Config(CamelCaseConfig, DescConfig):
         pass
 
 

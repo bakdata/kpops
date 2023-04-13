@@ -1,5 +1,6 @@
 from enum import Enum
 from typing import NewType
+from kpops.utils.pydantic import DescConfig
 
 from pydantic import BaseConfig, BaseModel, Extra, Field, root_validator
 
@@ -32,7 +33,7 @@ class FromTopic(BaseModel):
         description="Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
     )
 
-    class Config(BaseConfig):
+    class Config(DescConfig):
         extra = Extra.forbid
         use_enum_values = True
 
@@ -74,5 +75,5 @@ class FromSection(BaseModel):
         description="Components to read from.",
     )
 
-    class Config(BaseConfig):
+    class Config(DescConfig):
         extra = Extra.forbid

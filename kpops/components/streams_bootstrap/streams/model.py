@@ -8,7 +8,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaAppConfig,
     KafkaStreamsConfig,
 )
-from kpops.utils.pydantic import CamelCaseConfig
+from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 
 class StreamsConfig(KafkaStreamsConfig):
@@ -147,7 +147,7 @@ class StreamsAppAutoScaling(BaseModel):
         description="List of auto-generated Kafka Streams topics used by the streams app.",
     )
 
-    class Config(CamelCaseConfig):
+    class Config(CamelCaseConfig, DescConfig):
         extra = Extra.allow
 
 

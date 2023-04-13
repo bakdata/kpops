@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Literal
+from kpops.utils.pydantic import DescConfig
 
 from pydantic import BaseConfig, Extra, Field
 from typing_extensions import override
@@ -34,7 +35,7 @@ class StreamsApp(KafkaApp):
         description="Application-specific settings",
     )
 
-    class Config(BaseConfig):
+    class Config(DescConfig):
         extra = Extra.allow
 
     def __init__(self, **kwargs):

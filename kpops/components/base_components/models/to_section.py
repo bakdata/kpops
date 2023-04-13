@@ -1,7 +1,8 @@
 from enum import Enum
 from typing import Any
+from kpops.utils.pydantic import DescConfig
 
-from pydantic import BaseConfig, BaseModel, Extra, Field, root_validator
+from pydantic import BaseModel, Extra, Field, root_validator
 
 
 class OutputTopicTypes(str, Enum):
@@ -51,7 +52,7 @@ class TopicConfig(BaseModel):
         description="Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
     )
 
-    class Config(BaseConfig):
+    class Config(DescConfig):
         extra = Extra.forbid
         allow_population_by_field_name = True
         use_enum_values = True
@@ -86,5 +87,5 @@ class ToSection(BaseModel):
     models: dict[str, Any] = {}
     topics: dict[str, TopicConfig] = Field(..., description="Output topics")
 
-    class Config(BaseConfig):
+    class Config(DescConfig):
         extra = Extra.allow

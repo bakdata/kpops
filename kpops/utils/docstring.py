@@ -1,3 +1,9 @@
+import logging
+from pydantic import BaseModel
+
+log = logging.getLogger("docstring_utils")
+
+
 def describe_attr(name: str, docstr: str) -> str:
     """Read attribute description from class docstring
 
@@ -16,20 +22,23 @@ def describe_attr(name: str, docstr: str) -> str:
 
     return docstr
 
-def describe_class(docstr: str) -> str:
+
+def describe_class(class_: type[BaseModel]) -> str:
     """Returns class description from docstring
 
     Excludes parameters and return definitions
 
     Works only with reStructuredText docstrings.
 
-    :param docstr: _description_
-    :type docstr: str
-    :returns: _description_
+    :param class_: Class whose description is to be isolated
+    :type class_: type[BaseModel]
+    :returns: Class description taken from the class' docstring
     :rtype: str
     """
 
-    return _trim_description_end(docstr)
+    class_doc = _trim_description_end(class_.__doc__)
+
+    return class_doc
 
 
 def _trim_description_end(desc: str) -> str:
@@ -45,7 +54,22 @@ def _trim_description_end(desc: str) -> str:
     :returns: Isolated description
     :rtype: str
     """
-    desc_enders: list[str] = [":param ", ":type ", ":return:", ":rtype:", "defaults to "]
+    desc_enders: list[str] = [
+        ":param ",
+        ":type ",
+        ":return:",
+        ":rtype:",
+        "defaults to ",
+    ]
+
+    try:
+        if not isinstance(desc, str):
+            raise ValueError("Parameter `desc` must be a string.")
+        end_index = len(desc)
+    except (ValueError, TypeError) as error:
+        log.debug("%s, returned an empty string.", error, exc_info=True)
+        return ""
+
     end_index = len(desc)
 
     for desc_ender in desc_enders:

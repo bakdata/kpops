@@ -17,7 +17,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
-from kpops.utils.pydantic import CamelCaseConfig
+from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 log = logging.getLogger("KubernetesAppComponent")
 
@@ -27,7 +27,7 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 
 
 class KubernetesAppConfig(BaseModel):
-    class Config(CamelCaseConfig):
+    class Config(CamelCaseConfig, DescConfig):
         extra = Extra.allow
 
 

@@ -5,14 +5,15 @@ from collections import deque
 from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import Any, TypeVar
+from kpops.utils.pydantic import DescConfig
 
 import typer
-from pydantic import BaseConfig, BaseModel, Field
+from pydantic import BaseModel, Field
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
-from kpops.utils.yaml_loading import load_yaml_file
 from kpops.utils.docstring import describe_attr
+from kpops.utils.yaml_loading import load_yaml_file
 
 log = logging.getLogger("PipelineComponentEnricher")
 
@@ -55,7 +56,7 @@ class BaseDefaultsComponent(BaseModel):
         hidden_from_schema=True,
     )
 
-    class Config(BaseConfig):
+    class Config(DescConfig):
         arbitrary_types_allowed = True
 
     def __init__(self, **kwargs) -> None:
