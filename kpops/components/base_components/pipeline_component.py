@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import os
 from functools import cached_property
+from typing import Literal
 
 from pydantic import BaseConfig, Extra, Field
 
@@ -41,6 +42,10 @@ class PipelineComponent(BaseDefaultsComponent):
     :type prefix: str, optional
     """
 
+    type: str = "pipeline-component"
+    schema_type: Literal["pipeline-component"] = Field(  # type: ignore[assignment]
+        default="pipeline-component", exclude=True
+    )
     name: str = Field(default=..., description="Component name")
     from_: FromSection | None = Field(
         default=None,

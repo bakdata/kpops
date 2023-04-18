@@ -1,9 +1,10 @@
-kubernetes-app:
+pipeline-component:
   prefix: ""
+
+kubernetes-app:
   namespace: ${NAMESPACE}
 
 kafka-connector:
-  prefix: ""
   namespace: ${NAMESPACE}
 
 kafka-app:
