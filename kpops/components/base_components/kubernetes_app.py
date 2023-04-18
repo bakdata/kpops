@@ -17,6 +17,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
+from kpops.utils.docstring import describe_attr, describe_class
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 log = logging.getLogger("KubernetesAppComponent")
@@ -27,6 +28,8 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 
 
 class KubernetesAppConfig(BaseModel):
+    """Settings specific to Kubernetes Apps"""
+
     class Config(CamelCaseConfig, DescConfig):
         extra = Extra.allow
 
@@ -53,27 +56,34 @@ class KubernetesApp(PipelineComponent):
     :type version: str, None, optional
     """
 
-    type: str = Field(default="kubernetes-app", description="Component type")
+    type: str = Field(
+        default="kubernetes-app",
+        description=describe_attr("type", __doc__),
+    )
     schema_type: Literal["kubernetes-app"] = Field(  # type: ignore[assignment]
         default="kubernetes-app",
         title="Component type",
-        description=__doc__.partition(":param")[0].strip(),
+        description=describe_class(__doc__),
         exclude=True,
     )
     app: KubernetesAppConfig = Field(
         default=...,
-        description="Application-specific settings",
+        description=describe_attr("app", __doc__),
     )
     repo_config: HelmRepoConfig | None = Field(
         default=None,
-        description="Configuration of the Helm chart repo to be used for deploying the component",
+        description=describe_attr("repo_config", __doc__),
     )
     namespace: str = Field(
-        default=..., description="Namespace in which the component shall be deployed"
+        default=...,
+        description=describe_attr("namespace", __doc__),
     )
-    version: str | None = Field(default=None, description="Helm chart version")
+    version: str | None = Field(
+        default=None,
+        description=describe_attr("version", __doc__),
+    )
 
-    class Config(CamelCaseConfig):
+    class Config(CamelCaseConfig, DescConfig):
         pass
 
     def __init__(self, **kwargs):

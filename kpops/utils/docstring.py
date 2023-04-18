@@ -1,4 +1,5 @@
 import logging
+
 from pydantic import BaseModel
 
 log = logging.getLogger("docstring_utils")
@@ -11,7 +12,7 @@ def describe_attr(name: str, docstr: str) -> str:
 
     :param name: Attribute name
     :type name: str
-    :param docstr: Docstring from which to read, Class' docstring is stored in attr `__doc__`
+    :param docstr: Docstring from which to read. Note that the class' docstring is stored in attr `__doc__`
     :type docstr: str
     :returns: Description of the class attribute read from the class docstring
     :rtype: str
@@ -23,26 +24,29 @@ def describe_attr(name: str, docstr: str) -> str:
     return docstr
 
 
-def describe_class(class_: type[BaseModel]) -> str:
-    """Returns class description from docstring
+def describe_class(class_: type[BaseModel] | str) -> str:
+    """Return class description from its docstring
 
     Excludes parameters and return definitions
 
     Works only with reStructuredText docstrings.
 
-    :param class_: Class whose description is to be isolated
-    :type class_: type[BaseModel]
+    :param class_: Class whose description is to be isolated or the class' docstring
+    :type class_: type[BaseModel], str
     :returns: Class description taken from the class' docstring
     :rtype: str
     """
 
-    class_doc = _trim_description_end(class_.__doc__)
+    if isinstance(class_, str):
+        class_doc = _trim_description_end(class_)
+    else:
+        class_doc = _trim_description_end(class_.__doc__)
 
     return class_doc
 
 
 def _trim_description_end(desc: str) -> str:
-    """Removes the unwanted text that comes after a description in a docstring
+    """Remove the unwanted text that comes after a description in a docstring
 
     A description is defined here as a string of text written in natural language.
     A description ends at the occurence of a separator such as `:returns:`
@@ -66,8 +70,8 @@ def _trim_description_end(desc: str) -> str:
         if not isinstance(desc, str):
             raise ValueError("Parameter `desc` must be a string.")
         end_index = len(desc)
-    except (ValueError, TypeError) as error:
-        log.debug("%s, returned an empty string.", error, exc_info=True)
+    except (ValueError, TypeError):
+        log.debug("Returned an empty string.", exc_info=True)
         return ""
 
     end_index = len(desc)

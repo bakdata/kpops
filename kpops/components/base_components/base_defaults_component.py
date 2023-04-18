@@ -4,8 +4,7 @@ import os
 from collections import deque
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any, TypeVar
-from kpops.utils.pydantic import DescConfig
+from typing import TypeVar
 
 import typer
 from pydantic import BaseModel, Field
@@ -13,6 +12,7 @@ from pydantic import BaseModel, Field
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import DescConfig
 from kpops.utils.yaml_loading import load_yaml_file
 
 log = logging.getLogger("PipelineComponentEnricher")
@@ -35,7 +35,9 @@ class BaseDefaultsComponent(BaseModel):
     :type handlers: ComponentHandlers
     """
 
-    type: str = Field(default=..., description="Component type", const=True)
+    type: str = Field(
+        default=..., description=describe_attr("type", __doc__), const=True
+    )
 
     enrich: bool = Field(
         default=False,
@@ -61,7 +63,7 @@ class BaseDefaultsComponent(BaseModel):
 
     def __init__(self, **kwargs) -> None:
         if kwargs.get("enrich", True):
-            kwargs = self.extend_with_defaults(kwargs)
+            kwargs = self.extend_with_defaults(**kwargs)
         super().__init__(**kwargs)
 
     @classmethod  # NOTE: property as classmethod deprecated in Python 3.11
@@ -76,7 +78,7 @@ class BaseDefaultsComponent(BaseModel):
         # is not reliable
         return cls.__fields__["type"].default
 
-    def extend_with_defaults(self, kwargs: dict[str, Any]) -> dict:
+    def extend_with_defaults(self, **kwargs) -> dict:
         """Merge parent components' defaults with own
 
         :param kwargs: The init kwargs for pydantic

@@ -16,6 +16,7 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
 )
+from kpops.utils.docstring import describe_attr, describe_class
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 from kpops.utils.yaml_loading import substitute
 
@@ -23,16 +24,38 @@ log = logging.getLogger("KafkaApp")
 
 
 class KafkaStreamsConfig(BaseModel):
-    brokers: str
-    schema_registry_url: str | None = None
+    """Kafka Streams config
+
+    :param brokers: Brokers
+    :type brokers: str
+    :param schema_registry_url: URL of the schema registry, defaults to None
+    :type schema_registry_url: str, None, optional
+    """
+
+    brokers: str = Field(default=..., description=describe_attr("brokers", __doc__))
+    schema_registry_url: str | None = Field(
+        default=None, description=describe_attr("schema_registry_url", __doc__)
+    )
 
     class Config(CamelCaseConfig, DescConfig):
         extra = Extra.allow
 
 
 class KafkaAppConfig(KubernetesAppConfig):
-    streams: KafkaStreamsConfig
-    name_override: str | None
+    """Settings specific to Kafka Apps
+
+    :param streams: Kafka streams config
+    :type streams: KafkaStreamsConfig
+    :param name_override: Override name with this value, defaults to None
+    :type name_override: str, None, optional
+    """
+
+    streams: KafkaStreamsConfig = Field(
+        default=..., description=describe_attr("streams", __doc__)
+    )
+    name_override: str | None = Field(
+        default=None, description=describe_attr("name_override", __doc__)
+    )
 
 
 class KafkaApp(KubernetesApp):
@@ -59,21 +82,24 @@ class KafkaApp(KubernetesApp):
     schema_type: Literal["kafka-app"] = Field(  # type: ignore[assignment]
         default="kafka-app",
         title="Component type",
-        description=__doc__.partition(":param")[0].strip(),
+        description=describe_class(__doc__),
         exclude=True,
     )
     app: KafkaAppConfig = Field(
         default=...,
-        description="Application-specific settings",
+        description=describe_attr("app", __doc__),
     )
     repo_config: HelmRepoConfig = Field(
         default=HelmRepoConfig(
             repository_name="bakdata-streams-bootstrap",
             url="https://bakdata.github.io/streams-bootstrap/",
         ),
-        description="Configuration of the Helm chart repo to be used for deploying the component",
+        description=describe_attr("repo_config", __doc__),
     )
-    version = Field(default="2.9.0", description="Helm chart version")
+    version = Field(
+        default="2.9.0",
+        description=describe_attr("version", __doc__),
+    )
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)

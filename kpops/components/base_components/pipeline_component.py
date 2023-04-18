@@ -4,7 +4,7 @@ import os
 from functools import cached_property
 from typing import Literal
 
-from pydantic import BaseConfig, Extra, Field
+from pydantic import Extra, Field
 
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
@@ -19,7 +19,8 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
-from kpops.utils.docstring import describe_attr
+from kpops.utils.docstring import describe_attr, describe_class
+from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 from kpops.utils.yaml_loading import substitute
 
 
@@ -28,8 +29,8 @@ class PipelineComponent(BaseDefaultsComponent):
 
     :param name: Component name
     :type name: str
-    :param from_: Topic(s) from which the component will read input,
-        defaults to None
+    :param from_: Topic(s) and/or components from which the component will read
+        input, defaults to None
     :type from_: FromSection, None, optional
     :param app: Application-specific settings, defaults to None
     :type app: object, None, optional
@@ -42,9 +43,14 @@ class PipelineComponent(BaseDefaultsComponent):
     :type prefix: str, optional
     """
 
-    type: str = "pipeline-component"
+    type: str = Field(
+        default=..., description=describe_attr("type", __doc__), const=True
+    )
     schema_type: Literal["pipeline-component"] = Field(  # type: ignore[assignment]
-        default="pipeline-component", exclude=True
+        default="pipeline-component",
+        title="Component type",
+        description=describe_class(__doc__),
+        exclude=True,
     )
     name: str = Field(default=..., description="Component name")
     from_: FromSection | None = Field(
@@ -66,7 +72,7 @@ class PipelineComponent(BaseDefaultsComponent):
         description=describe_attr("prefix", __doc__),
     )
 
-    class Config(BaseConfig):
+    class Config(CamelCaseConfig, DescConfig):
         extra = Extra.allow
         keep_untouched = (cached_property,)
 

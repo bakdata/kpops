@@ -1,8 +1,10 @@
 from enum import Enum
 from typing import NewType
-from kpops.utils.pydantic import DescConfig
 
-from pydantic import BaseConfig, BaseModel, Extra, Field, root_validator
+from pydantic import BaseModel, Extra, Field, root_validator
+
+from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import DescConfig
 
 
 class InputTopicTypes(str, Enum):
@@ -27,11 +29,8 @@ class FromTopic(BaseModel):
     :type role: str | None
     """
 
-    type: InputTopicTypes = Field(..., description="Topic type")
-    role: str | None = Field(
-        default=None,
-        description="Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
-    )
+    type: InputTopicTypes = Field(..., description=describe_attr("type", __doc__))
+    role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
     class Config(DescConfig):
         extra = Extra.forbid
@@ -64,15 +63,17 @@ class FromSection(BaseModel):
 
     :param topics: Input topics
     :type topics: dict[str, FromTopic]
+    :param components: Components to read from
+    :type components: dict[ComponentName, FromTopic]
     """
 
     topics: dict[TopicName, FromTopic] = Field(
         default={},
-        description="Topics to read from.",
+        description=describe_attr("topics", __doc__),
     )
     components: dict[ComponentName, FromTopic] = Field(
         default={},
-        description="Components to read from.",
+        description=describe_attr("components", __doc__),
     )
 
     class Config(DescConfig):

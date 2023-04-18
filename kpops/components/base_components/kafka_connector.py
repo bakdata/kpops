@@ -27,6 +27,7 @@ from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
+from kpops.utils.docstring import describe_attr, describe_class
 from kpops.utils.pydantic import CamelCaseConfig
 
 log = logging.getLogger("KafkaConnector")
@@ -61,27 +62,28 @@ class KafkaConnector(PipelineComponent, ABC):
     schema_type: Literal["kafka-connector"] = Field(  # type: ignore[assignment]
         default="kafka-connector",
         title="Component type",
-        description=__doc__.partition(":param")[0].strip(),
+        description=describe_class(__doc__),
         exclude=True,
     )
     app: KafkaConnectConfig = Field(
         default=...,
-        description="Application-specific settings",
+        description=describe_attr("app", __doc__),
     )
     repo_config: HelmRepoConfig = Field(
         default=HelmRepoConfig(
             repository_name="bakdata-kafka-connect-resetter",
             url="https://bakdata.github.io/kafka-connect-resetter/",
         ),
-        description="Configuration of the Helm chart repo to be used for deploying the component",
+        description=describe_attr("repo_config", __doc__),
     )
     namespace: str = Field(
-        default=..., description="Namespace in which the component shall be deployed"
+        default=...,
+        description=describe_attr("namespace", __doc__),
     )
     version = Field(default="1.0.4", description="Helm chart version")
     resetter_values: dict = Field(
         default_factory=dict,
-        description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+        description=describe_attr("resetter_values", __doc__),
     )
 
     class Config(CamelCaseConfig):
@@ -321,16 +323,19 @@ class KafkaSourceConnector(KafkaConnector):
     :type schema_type: str, None
     """
 
-    type: str = Field(default="kafka-source-connector", description="Component type")
+    type: str = Field(
+        default="kafka-source-connector",
+        description=describe_attr("type", __doc__),
+    )
     schema_type: Literal["kafka-source-connector"] = Field(  # type: ignore[assignment]
         default="kafka-source-connector",
         title="Component type",
-        description=__doc__.partition(":param")[0].strip(),
+        description=describe_class(__doc__),
         exclude=True,
     )
     offset_topic: str | None = Field(
         default=None,
-        description="offset.storage.topic, more info: more info: https://kafka.apache.org/documentation/#connect_running",
+        description=describe_attr("offset_topic", __doc__),
     )
 
     @override
@@ -389,11 +394,14 @@ class KafkaSinkConnector(KafkaConnector):
     :type schema_type: Literal["kafka-sink-connector"], optional
     """
 
-    type: str = Field(default="kafka-sink-connector", description="Component type")
+    type: str = Field(
+        default="kafka-sink-connector",
+        description=describe_attr("type", __doc__),
+    )
     schema_type: Literal["kafka-sink-connector"] = Field(  # type: ignore[assignment]
         default="kafka-sink-connector",
         title="Component type",
-        description=__doc__.partition(":param")[0].strip(),
+        description=describe_class(__doc__),
         exclude=True,
     )
 

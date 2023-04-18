@@ -6,13 +6,13 @@ from pydantic import BaseConfig, Extra, Field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaApp
-from kpops.components.base_components.models.from_section import FromSection
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
 )
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerValues
+from kpops.utils.docstring import describe_attr, describe_class
 
 
 class ProducerApp(KafkaApp):
@@ -36,18 +36,18 @@ class ProducerApp(KafkaApp):
     schema_type: Literal["producer"] = Field(  # type: ignore[assignment]
         default="producer",
         title="Component type",
-        description=__doc__.partition(":param")[0].strip(),
+        description=describe_class(__doc__),
         exclude=True,
     )
     app: ProducerValues = Field(
         default=...,
-        description="Application-specific settings",
+        description=describe_attr("app", __doc__),
     )
     from_: None = Field(
         default=None,
         alias="from",
         title="From",
-        description=f"Producer doesn't support {FromSection.__name__}",
+        description=describe_attr("from_", __doc__),
     )
 
     class Config(BaseConfig):

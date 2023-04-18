@@ -308,7 +308,7 @@ snapshots[
         },
         "FromTopic": {
             "title": "FromTopic",
-            "description": "Input topic\\n\\n:param type: Topic type\\n:type type: InputTopicTypes\\n:param role: Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`\\n:type role: str | None",
+            "description": "Input topic",
             "type": "object",
             "properties": {
                 "type": {
@@ -321,7 +321,7 @@ snapshots[
                 },
                 "role": {
                     "title": "Role",
-                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`",
                     "type": "string"
                 }
             },
@@ -332,12 +332,12 @@ snapshots[
         },
         "FromSection": {
             "title": "FromSection",
-            "description": "Holds multiple input topics\\n\\n:param topics: Input topics\\n:type topics: dict[str, FromTopic]",
+            "description": "Holds multiple input topics",
             "type": "object",
             "properties": {
                 "topics": {
                     "title": "Topics",
-                    "description": "Topics to read from.",
+                    "description": "Input topics",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -346,7 +346,7 @@ snapshots[
                 },
                 "components": {
                     "title": "Components",
-                    "description": "Components to read from.",
+                    "description": "Components to read from",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -358,14 +358,17 @@ snapshots[
         },
         "KafkaStreamsConfig": {
             "title": "KafkaStreamsConfig",
+            "description": "Kafka Streams config",
             "type": "object",
             "properties": {
                 "brokers": {
                     "title": "Brokers",
+                    "description": "Brokers",
                     "type": "string"
                 },
                 "schemaRegistryUrl": {
                     "title": "Schemaregistryurl",
+                    "description": "URL of the schema registry,",
                     "type": "string"
                 }
             },
@@ -375,13 +378,21 @@ snapshots[
         },
         "KafkaAppConfig": {
             "title": "KafkaAppConfig",
+            "description": "Settings specific to Kafka Apps",
             "type": "object",
             "properties": {
                 "streams": {
-                    "$ref": "#/definitions/KafkaStreamsConfig"
+                    "title": "Streams",
+                    "description": "Kafka streams config",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KafkaStreamsConfig"
+                        }
+                    ]
                 },
                 "nameOverride": {
                     "title": "Nameoverride",
+                    "description": "Override name with this value,",
                     "type": "string"
                 }
             },
@@ -401,7 +412,7 @@ snapshots[
         },
         "TopicConfig": {
             "title": "TopicConfig",
-            "description": "Configure an output topic\\n\\n:param type: Topic type\\n:type type: InputTopicTypes\\n:param key_schema: Key schema class name\\n:type key_schema: str | None\\n:param partitions_count: Number of partitions into which the topic is divided\\n:type partitions_count: int | None\\n:param replication_factor: Replication topic of the topic\\n:type replication_factor: int | None\\n:param configs: Topic configs\\n:type configs: dict[str, str | int]\\n:param role: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`\\n:type role: str | None",
+            "description": "Configure an output topic",
             "type": "object",
             "properties": {
                 "type": {
@@ -461,11 +472,12 @@ snapshots[
         },
         "ToSection": {
             "title": "ToSection",
-            "description": "Holds multiple output topics\\n\\n:param models: Data models\\n:type models: dict[str, Any]\\n:param topics: Output topics\\n:type topics: dict[str, TopicConfig]",
+            "description": "Holds multiple output topics",
             "type": "object",
             "properties": {
                 "models": {
                     "title": "Models",
+                    "description": "Data models",
                     "default": {},
                     "type": "object"
                 },
@@ -484,23 +496,28 @@ snapshots[
         },
         "RepoAuthFlags": {
             "title": "RepoAuthFlags",
+            "description": "Authorisation-related flags for `helm repo`",
             "type": "object",
             "properties": {
                 "username": {
                     "title": "Username",
+                    "description": "Username,",
                     "type": "string"
                 },
                 "password": {
                     "title": "Password",
+                    "description": "Password,",
                     "type": "string"
                 },
                 "caFile": {
                     "title": "Cafile",
+                    "description": "Certificate file,",
                     "type": "string",
                     "format": "path"
                 },
                 "insecureSkipTlsVerify": {
                     "title": "Insecureskiptlsverify",
+                    "description": "If true, Kubernetes API server\'s certificate will not be checked for validity\\n        ,",
                     "default": false,
                     "type": "boolean"
                 }
@@ -508,19 +525,22 @@ snapshots[
         },
         "HelmRepoConfig": {
             "title": "HelmRepoConfig",
-            "description": "Helm chart repository configuration",
+            "description": "Helm repository configuration",
             "type": "object",
             "properties": {
                 "repositoryName": {
                     "title": "Repositoryname",
+                    "description": "Name of the Helm repository",
                     "type": "string"
                 },
                 "url": {
                     "title": "Url",
+                    "description": "URL to the Helm repository",
                     "type": "string"
                 },
                 "repoAuthFlags": {
                     "title": "Repoauthflags",
+                    "description": "Authorisation-related flags",
                     "default": {
                         "username": null,
                         "password": null,
@@ -541,7 +561,7 @@ snapshots[
         },
         "KafkaApp": {
             "title": "KafkaApp",
-            "description": "Base component for Kafka-based components.\\n\\nProducer or streaming apps should inherit from this class.\\n\\n:param type: Component type, defaults to \\"kafka-app\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"kafka-app\\"\\n:type type: Literal[\\"kafka-app\\"], optional\\n:param app: Application-specific settings\\n:type app: KafkaAppConfig\\n:param repo_config: Configuration of the Helm chart repo to be used for\\n    deploying the component,\\n    defaults to HelmRepoConfig(repository_name=\\"bakdata-streams-bootstrap\\", url=\\"https://bakdata.github.io/streams-bootstrap/\\")\\n:type repo_config: HelmRepoConfig, None, optional\\n:param version: Helm chart version, defaults to \\"2.9.0\\"\\n:type version: str, optional",
+            "description": "Base component for Kafka-based components.\\n\\n    Producer or streaming apps should inherit from this class.",
             "type": "object",
             "properties": {
                 "type": {
@@ -551,7 +571,8 @@ snapshots[
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Base component for Kafka-based components.\\n\\n    Producer or streaming apps should inherit from this class.",
                     "default": "kafka-app",
                     "enum": [
                         "kafka-app"
@@ -565,7 +586,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -583,7 +604,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -592,13 +613,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "default": {
                         "repository_name": "bakdata-streams-bootstrap",
                         "url": "https://bakdata.github.io/streams-bootstrap/",
@@ -622,7 +643,7 @@ snapshots[
                 },
                 "version": {
                     "title": "Version",
-                    "description": "Helm chart version",
+                    "description": "Helm chart version,",
                     "default": "2.9.0",
                     "type": "string"
                 }
@@ -635,6 +656,7 @@ snapshots[
         },
         "KafkaConnectConfig": {
             "title": "KafkaConnectConfig",
+            "description": "Settings specific to Kafka Connectors",
             "type": "object",
             "properties": {},
             "additionalProperties": {
@@ -643,7 +665,7 @@ snapshots[
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
-            "description": "Base class for all Kafka connectors\\n\\nShould only be used to set defaults\\n\\n:param type: Component type, defaults to \\"kafka-connector\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"kafka-connector\\"\\n:type type: Literal[\\"kafka-connector\\"], optional\\n:param app: Application-specific settings\\n:type app: KafkaAppConfig\\n:param repo_config: Configuration of the Helm chart repo to be used for\\n    deploying the component,\\n    defaults to HelmRepoConfig(repository_name=\\"bakdata-kafka-connect-resetter\\", url=\\"https://bakdata.github.io/kafka-connect-resetter/\\")\\n:type repo_config: HelmRepoConfig, None, optional\\n:param namespace: Namespace in which the component shall be deployed\\n:type namespace: str\\n:param version: Helm chart version, defaults to \\"1.0.4\\"\\n:type version: str, optional\\n:param resetter_values: Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.,\\n    defaults to dict\\n:type resetter_values: dict, optional",
+            "description": "Base class for all Kafka connectors\\n\\n    Should only be used to set defaults",
             "type": "object",
             "properties": {
                 "type": {
@@ -653,7 +675,8 @@ snapshots[
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Base class for all Kafka connectors\\n\\n    Should only be used to set defaults",
                     "default": "kafka-connector",
                     "enum": [
                         "kafka-connector"
@@ -667,7 +690,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -685,7 +708,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -694,13 +717,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "default": {
                         "repository_name": "bakdata-kafka-connect-resetter",
                         "url": "https://bakdata.github.io/kafka-connect-resetter/",
@@ -724,7 +747,7 @@ snapshots[
                 },
                 "resetterValues": {
                     "title": "Resettervalues",
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.,",
                     "type": "object"
                 },
                 "version": {
@@ -742,17 +765,18 @@ snapshots[
         },
         "KafkaSinkConnector": {
             "title": "KafkaSinkConnector",
-            "description": "Kafka sink connector model\\n\\n:param type: Component type, defaults to \\"kafka-sink-connector\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"kafka-sink-connector\\"\\n:type type: Literal[\\"kafka-sink-connector\\"], optional",
+            "description": "Kafka sink connector model",
             "type": "object",
             "properties": {
                 "type": {
                     "title": "Type",
-                    "description": "Component type",
+                    "description": "Component type,",
                     "default": "kafka-sink-connector",
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Kafka sink connector model",
                     "default": "kafka-sink-connector",
                     "enum": [
                         "kafka-sink-connector"
@@ -766,7 +790,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -784,7 +808,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -793,13 +817,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "default": {
                         "repository_name": "bakdata-kafka-connect-resetter",
                         "url": "https://bakdata.github.io/kafka-connect-resetter/",
@@ -823,7 +847,7 @@ snapshots[
                 },
                 "resetterValues": {
                     "title": "Resettervalues",
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.,",
                     "type": "object"
                 },
                 "version": {
@@ -841,17 +865,18 @@ snapshots[
         },
         "KafkaSourceConnector": {
             "title": "KafkaSourceConnector",
-            "description": "Kafka source connector model\\n\\n:param type: Component type, defaults to \\"kafka-source-connector\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"kafka-source-connector\\"\\n:type type: Literal[\\"kafka-source-connector\\"], optional\\n:param offset_topic: offset.storage.topic,\\n    more info: https://kafka.apache.org/documentation/#connect_running,\\n    defaults to None\\n:type type: str, None",
+            "description": "Kafka source connector model",
             "type": "object",
             "properties": {
                 "type": {
                     "title": "Type",
-                    "description": "Component type",
+                    "description": "Component type,",
                     "default": "kafka-source-connector",
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Kafka source connector model",
                     "default": "kafka-source-connector",
                     "enum": [
                         "kafka-source-connector"
@@ -865,7 +890,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -883,7 +908,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -892,13 +917,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "default": {
                         "repository_name": "bakdata-kafka-connect-resetter",
                         "url": "https://bakdata.github.io/kafka-connect-resetter/",
@@ -922,7 +947,7 @@ snapshots[
                 },
                 "resetterValues": {
                     "title": "Resettervalues",
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.,",
                     "type": "object"
                 },
                 "version": {
@@ -933,7 +958,7 @@ snapshots[
                 },
                 "offsetTopic": {
                     "title": "Offsettopic",
-                    "description": "offset.storage.topic, more info: more info: https://kafka.apache.org/documentation/#connect_running",
+                    "description": "offset.storage.topic,\\n        more info: https://kafka.apache.org/documentation/#connect_running,",
                     "type": "string"
                 }
             },
@@ -945,22 +970,24 @@ snapshots[
         },
         "KubernetesAppConfig": {
             "title": "KubernetesAppConfig",
+            "description": "Settings specific to Kubernetes Apps",
             "type": "object",
             "properties": {}
         },
         "KubernetesApp": {
             "title": "KubernetesApp",
-            "description": "Base class for all Kubernetes apps.\\n\\nAll built-in components are Kubernetes apps, except for the Kafka connectors.\\n\\n:param type: Component type, defaults to \\"kubernetes-app\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"kubernetes-app\\"\\n:type type: Literal[\\"kubernetes-app\\"], optional\\n:param app: Application-specific settings\\n:type app: KubernetesAppConfig\\n:param repo_config: Configuration of the Helm chart repo to be used for\\n    deploying the component, defaults to None\\n:type repo_config: HelmRepoConfig, None, optional\\n:param namespace: Namespace in which the component shall be deployed\\n:type namespace: str\\n:param version: Helm chart version, defaults to None\\n:type version: str, None, optional",
+            "description": "Base class for all Kubernetes apps.\\n\\n    All built-in components are Kubernetes apps, except for the Kafka connectors.",
             "type": "object",
             "properties": {
                 "type": {
                     "title": "Type",
-                    "description": "Component type",
+                    "description": "Component type,",
                     "default": "kubernetes-app",
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Base class for all Kubernetes apps.\\n\\n    All built-in components are Kubernetes apps, except for the Kafka connectors.",
                     "default": "kubernetes-app",
                     "enum": [
                         "kubernetes-app"
@@ -974,7 +1001,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -992,7 +1019,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -1001,13 +1028,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/HelmRepoConfig"
@@ -1021,7 +1048,7 @@ snapshots[
                 },
                 "version": {
                     "title": "Version",
-                    "description": "Helm chart version",
+                    "description": "Helm chart version,",
                     "type": "string"
                 }
             },
@@ -1033,15 +1060,17 @@ snapshots[
         },
         "PipelineComponent": {
             "title": "PipelineComponent",
+            "description": "Base class for all components",
             "type": "object",
             "properties": {
                 "type": {
                     "title": "Type",
-                    "default": "pipeline-component",
+                    "const": null,
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Base class for all components",
                     "default": "pipeline-component",
                     "enum": [
                         "pipeline-component"
@@ -1050,10 +1079,12 @@ snapshots[
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -1061,36 +1092,48 @@ snapshots[
                     ]
                 },
                 "app": {
-                    "title": "App"
+                    "title": "App",
+                    "description": "Application-specific settings,"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output,",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 }
             },
             "required": [
+                "type",
                 "name"
             ]
         },
         "ProducerStreamsConfig": {
             "title": "ProducerStreamsConfig",
+            "description": "Kafka Streams settings specific to Producer",
             "type": "object",
             "properties": {
                 "brokers": {
                     "title": "Brokers",
+                    "description": "Brokers",
                     "type": "string"
                 },
                 "schemaRegistryUrl": {
                     "title": "Schemaregistryurl",
+                    "description": "URL of the schema registry,",
                     "type": "string"
                 },
                 "extraOutputTopics": {
                     "title": "Extraoutputtopics",
+                    "description": "Extra output topics",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -1099,6 +1142,7 @@ snapshots[
                 },
                 "outputTopic": {
                     "title": "Outputtopic",
+                    "description": "Output topic,",
                     "type": "string"
                 }
             },
@@ -1108,13 +1152,21 @@ snapshots[
         },
         "ProducerValues": {
             "title": "ProducerValues",
+            "description": "Settings specific to Producers",
             "type": "object",
             "properties": {
                 "streams": {
-                    "$ref": "#/definitions/ProducerStreamsConfig"
+                    "title": "Streams",
+                    "description": "Kafka Streams settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ProducerStreamsConfig"
+                        }
+                    ]
                 },
                 "nameOverride": {
                     "title": "Nameoverride",
+                    "description": "Override name with this value,",
                     "type": "string"
                 }
             },
@@ -1124,7 +1176,7 @@ snapshots[
         },
         "ProducerApp": {
             "title": "ProducerApp",
-            "description": "Producer component\\n\\nThis producer holds configuration to use as values for the streams bootstrap\\nproducer helm chart.\\n\\n:param type: Component type, defaults to \\"producer\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"producer\\"\\n:type type: Literal[\\"producer\\"], optional\\n:param app: Application-specific settings\\n:type app: ProducerValues\\n:param from_: Producer doesn\'t support FromSection, defaults to None\\n:type from_: None, optional",
+            "description": "Producer component\\n\\n    This producer holds configuration to use as values for the streams bootstrap\\n    producer helm chart.",
             "type": "object",
             "properties": {
                 "type": {
@@ -1134,7 +1186,8 @@ snapshots[
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Producer component\\n\\n    This producer holds configuration to use as values for the streams bootstrap\\n    producer helm chart.",
                     "default": "producer",
                     "enum": [
                         "producer"
@@ -1148,7 +1201,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Producer doesn\'t support FromSection",
+                    "description": "Producer doesn\'t support FromSection,",
                     "type": "null"
                 },
                 "app": {
@@ -1162,7 +1215,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -1171,13 +1224,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "default": {
                         "repository_name": "bakdata-streams-bootstrap",
                         "url": "https://bakdata.github.io/streams-bootstrap/",
@@ -1201,7 +1254,7 @@ snapshots[
                 },
                 "version": {
                     "title": "Version",
-                    "description": "Helm chart version",
+                    "description": "Helm chart version,",
                     "default": "2.9.0",
                     "type": "string"
                 }
@@ -1219,14 +1272,17 @@ snapshots[
             "properties": {
                 "brokers": {
                     "title": "Brokers",
+                    "description": "Brokers",
                     "type": "string"
                 },
                 "schemaRegistryUrl": {
                     "title": "Schemaregistryurl",
+                    "description": "URL of the schema registry,",
                     "type": "string"
                 },
                 "inputTopics": {
                     "title": "Inputtopics",
+                    "description": "Input topics,",
                     "default": [],
                     "type": "array",
                     "items": {
@@ -1235,10 +1291,12 @@ snapshots[
                 },
                 "inputPattern": {
                     "title": "Inputpattern",
+                    "description": "Input pattern,",
                     "type": "string"
                 },
                 "extraInputTopics": {
                     "title": "Extrainputtopics",
+                    "description": "Extra input topics,",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -1250,6 +1308,7 @@ snapshots[
                 },
                 "extraInputPatterns": {
                     "title": "Extrainputpatterns",
+                    "description": "Extra input patterns,",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -1258,6 +1317,7 @@ snapshots[
                 },
                 "extraOutputTopics": {
                     "title": "Extraoutputtopics",
+                    "description": "Extra output topics,",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -1266,14 +1326,17 @@ snapshots[
                 },
                 "outputTopic": {
                     "title": "Outputtopic",
+                    "description": "Output topic,",
                     "type": "string"
                 },
                 "errorTopic": {
                     "title": "Errortopic",
+                    "description": "Error topic,",
                     "type": "string"
                 },
                 "config": {
                     "title": "Config",
+                    "description": "Configuration,",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -1287,17 +1350,17 @@ snapshots[
         },
         "StreamsAppAutoScaling": {
             "title": "StreamsAppAutoScaling",
+            "description": "Kubernetes Event-driven Autoscaling config",
             "type": "object",
             "properties": {
                 "enabled": {
                     "title": "Enabled",
-                    "description": "Whether to enable auto-scaling using KEDA.",
                     "default": false,
                     "type": "boolean"
                 },
                 "consumerGroup": {
                     "title": "Consumer group",
-                    "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag.",
+                    "description": "Name of the consumer group used for checking the\\n        offset on the topic and processing the related lag.",
                     "type": "string"
                 },
                 "lagThreshold": {
@@ -1307,42 +1370,42 @@ snapshots[
                 },
                 "pollingInterval": {
                     "title": "Polling interval",
-                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
+                    "description": "This is the interval to check each trigger on.\\n        https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval,",
                     "default": 30,
                     "type": "integer"
                 },
                 "cooldownPeriod": {
                     "title": "Cooldown period",
-                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
+                    "description": "The period to wait after the last trigger reported\\n        active before scaling the resource back to 0.\\n        https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod,",
                     "default": 300,
                     "type": "integer"
                 },
                 "offsetResetPolicy": {
                     "title": "Offset reset policy",
-                    "description": "The offset reset policy for the consumer if the the consumer group is not yet subscribed to a partition.",
+                    "description": "The offset reset policy for the consumer if the\\n        consumer group is not yet subscribed to a partition.,",
                     "default": "earliest",
                     "type": "string"
                 },
                 "minReplicas": {
                     "title": "Min replica count",
-                    "description": "Minimum number of replicas KEDA will scale the resource down to. https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount",
+                    "description": "Minimum number of replicas KEDA will scale the resource down to.\\n        \\"https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount\\",",
                     "default": 0,
                     "type": "integer"
                 },
                 "maxReplicas": {
                     "title": "Max replica count",
-                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
+                    "description": "This setting is passed to the HPA definition that KEDA\\n        will create for a given resource and holds the maximum number of replicas\\n        of the target resouce.\\n        https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount,",
                     "default": 1,
                     "type": "integer"
                 },
                 "idleReplicas": {
                     "title": "Idle replica count",
-                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount",
+                    "description": "If this property is set, KEDA will scale the resource\\n        down to this number of replicas.\\n        https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount,",
                     "type": "integer"
                 },
                 "topics": {
                     "title": "Topics",
-                    "description": "List of auto-generated Kafka Streams topics used by the streams app.",
+                    "description": "List of auto-generated Kafka Streams topics used by the streams app.,",
                     "default": [],
                     "type": "array",
                     "items": {
@@ -1357,7 +1420,7 @@ snapshots[
         },
         "StreamsAppConfig": {
             "title": "StreamsAppConfig",
-            "description": "StreamsBoostrap app configurations.\\n\\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "description": "StreamsBoostrap app configurations.\\n\\n    The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.\\n\\n    :params streams: Streams Bootstrap streams section",
             "type": "object",
             "properties": {
                 "streams": {
@@ -1365,6 +1428,7 @@ snapshots[
                 },
                 "nameOverride": {
                     "title": "Nameoverride",
+                    "description": "Override name with this value,",
                     "type": "string"
                 },
                 "autoscaling": {
@@ -1377,17 +1441,18 @@ snapshots[
         },
         "StreamsApp": {
             "title": "StreamsApp",
-            "description": "StreamsApp component that configures a streams bootstrap app\\n\\n:param type: Component type, defaults to \\"streams-app\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"streams-app\\"\\n:type type: Literal[\\"streams-app\\"], optional\\n:param app: Application-specific settings\\n:type app: StreamsAppConfig",
+            "description": "StreamsApp component that configures a streams bootstrap app",
             "type": "object",
             "properties": {
                 "type": {
                     "title": "Type",
-                    "description": "Component type",
+                    "description": "Component type,",
                     "default": "streams-app",
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "StreamsApp component that configures a streams bootstrap app",
                     "default": "streams-app",
                     "enum": [
                         "streams-app"
@@ -1401,7 +1466,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -1419,7 +1484,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -1428,13 +1493,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "default": {
                         "repository_name": "bakdata-streams-bootstrap",
                         "url": "https://bakdata.github.io/streams-bootstrap/",
@@ -1458,7 +1523,7 @@ snapshots[
                 },
                 "version": {
                     "title": "Version",
-                    "description": "Helm chart version",
+                    "description": "Helm chart version,",
                     "default": "2.9.0",
                     "type": "string"
                 }
@@ -1471,7 +1536,7 @@ snapshots[
         },
         "SubPipelineComponent": {
             "title": "SubPipelineComponent",
-            "description": "Base class for all components\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input,\\n    defaults to None\\n:type from_: FromSection, None, optional\\n:param app: Application-specific settings, defaults to None\\n:type app: object, None, optional\\n:param to: Topic(s) into which the component will write output,\\n    defaults to None\\n:type to: ToSection, None, optional\\n:param prefix: Pipeline prefix that will prefix every component name.\\n    If you wish to not have any prefix you can specify an empty string.,\\n    defaults to \\"${pipeline_name}-\\"\\n:type prefix: str, optional",
+            "description": "",
             "type": "object",
             "properties": {
                 "type": {
@@ -1494,7 +1559,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -1503,11 +1568,11 @@ snapshots[
                 },
                 "app": {
                     "title": "App",
-                    "description": "Application-specific settings"
+                    "description": "Application-specific settings,"
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -1516,7 +1581,7 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 }
@@ -1527,7 +1592,7 @@ snapshots[
         },
         "SubPipelineComponentCorrect": {
             "title": "SubPipelineComponentCorrect",
-            "description": "Base class for all components\\n\\n:param name: Component name\\n:type name: str\\n:param from_: Topic(s) from which the component will read input,\\n    defaults to None\\n:type from_: FromSection, None, optional\\n:param app: Application-specific settings, defaults to None\\n:type app: object, None, optional\\n:param to: Topic(s) into which the component will write output,\\n    defaults to None\\n:type to: ToSection, None, optional\\n:param prefix: Pipeline prefix that will prefix every component name.\\n    If you wish to not have any prefix you can specify an empty string.,\\n    defaults to \\"${pipeline_name}-\\"\\n:type prefix: str, optional",
+            "description": "",
             "type": "object",
             "properties": {
                 "type": {
@@ -1550,7 +1615,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -1559,11 +1624,11 @@ snapshots[
                 },
                 "app": {
                     "title": "App",
-                    "description": "Application-specific settings"
+                    "description": "Application-specific settings,"
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -1572,7 +1637,7 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 }
@@ -1645,7 +1710,7 @@ snapshots[
         },
         "FromTopic": {
             "title": "FromTopic",
-            "description": "Input topic\\n\\n:param type: Topic type\\n:type type: InputTopicTypes\\n:param role: Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`\\n:type role: str | None",
+            "description": "Input topic",
             "type": "object",
             "properties": {
                 "type": {
@@ -1658,7 +1723,7 @@ snapshots[
                 },
                 "role": {
                     "title": "Role",
-                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`",
                     "type": "string"
                 }
             },
@@ -1669,12 +1734,12 @@ snapshots[
         },
         "FromSection": {
             "title": "FromSection",
-            "description": "Holds multiple input topics\\n\\n:param topics: Input topics\\n:type topics: dict[str, FromTopic]",
+            "description": "Holds multiple input topics",
             "type": "object",
             "properties": {
                 "topics": {
                     "title": "Topics",
-                    "description": "Topics to read from.",
+                    "description": "Input topics",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -1683,7 +1748,7 @@ snapshots[
                 },
                 "components": {
                     "title": "Components",
-                    "description": "Components to read from.",
+                    "description": "Components to read from",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -1695,14 +1760,17 @@ snapshots[
         },
         "KafkaStreamsConfig": {
             "title": "KafkaStreamsConfig",
+            "description": "Kafka Streams config",
             "type": "object",
             "properties": {
                 "brokers": {
                     "title": "Brokers",
+                    "description": "Brokers",
                     "type": "string"
                 },
                 "schemaRegistryUrl": {
                     "title": "Schemaregistryurl",
+                    "description": "URL of the schema registry,",
                     "type": "string"
                 }
             },
@@ -1712,13 +1780,21 @@ snapshots[
         },
         "KafkaAppConfig": {
             "title": "KafkaAppConfig",
+            "description": "Settings specific to Kafka Apps",
             "type": "object",
             "properties": {
                 "streams": {
-                    "$ref": "#/definitions/KafkaStreamsConfig"
+                    "title": "Streams",
+                    "description": "Kafka streams config",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KafkaStreamsConfig"
+                        }
+                    ]
                 },
                 "nameOverride": {
                     "title": "Nameoverride",
+                    "description": "Override name with this value,",
                     "type": "string"
                 }
             },
@@ -1738,7 +1814,7 @@ snapshots[
         },
         "TopicConfig": {
             "title": "TopicConfig",
-            "description": "Configure an output topic\\n\\n:param type: Topic type\\n:type type: InputTopicTypes\\n:param key_schema: Key schema class name\\n:type key_schema: str | None\\n:param partitions_count: Number of partitions into which the topic is divided\\n:type partitions_count: int | None\\n:param replication_factor: Replication topic of the topic\\n:type replication_factor: int | None\\n:param configs: Topic configs\\n:type configs: dict[str, str | int]\\n:param role: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`\\n:type role: str | None",
+            "description": "Configure an output topic",
             "type": "object",
             "properties": {
                 "type": {
@@ -1798,11 +1874,12 @@ snapshots[
         },
         "ToSection": {
             "title": "ToSection",
-            "description": "Holds multiple output topics\\n\\n:param models: Data models\\n:type models: dict[str, Any]\\n:param topics: Output topics\\n:type topics: dict[str, TopicConfig]",
+            "description": "Holds multiple output topics",
             "type": "object",
             "properties": {
                 "models": {
                     "title": "Models",
+                    "description": "Data models",
                     "default": {},
                     "type": "object"
                 },
@@ -1821,23 +1898,28 @@ snapshots[
         },
         "RepoAuthFlags": {
             "title": "RepoAuthFlags",
+            "description": "Authorisation-related flags for `helm repo`",
             "type": "object",
             "properties": {
                 "username": {
                     "title": "Username",
+                    "description": "Username,",
                     "type": "string"
                 },
                 "password": {
                     "title": "Password",
+                    "description": "Password,",
                     "type": "string"
                 },
                 "caFile": {
                     "title": "Cafile",
+                    "description": "Certificate file,",
                     "type": "string",
                     "format": "path"
                 },
                 "insecureSkipTlsVerify": {
                     "title": "Insecureskiptlsverify",
+                    "description": "If true, Kubernetes API server\'s certificate will not be checked for validity\\n        ,",
                     "default": false,
                     "type": "boolean"
                 }
@@ -1845,19 +1927,22 @@ snapshots[
         },
         "HelmRepoConfig": {
             "title": "HelmRepoConfig",
-            "description": "Helm chart repository configuration",
+            "description": "Helm repository configuration",
             "type": "object",
             "properties": {
                 "repositoryName": {
                     "title": "Repositoryname",
+                    "description": "Name of the Helm repository",
                     "type": "string"
                 },
                 "url": {
                     "title": "Url",
+                    "description": "URL to the Helm repository",
                     "type": "string"
                 },
                 "repoAuthFlags": {
                     "title": "Repoauthflags",
+                    "description": "Authorisation-related flags",
                     "default": {
                         "username": null,
                         "password": null,
@@ -1878,7 +1963,7 @@ snapshots[
         },
         "KafkaApp": {
             "title": "KafkaApp",
-            "description": "Base component for Kafka-based components.\\n\\nProducer or streaming apps should inherit from this class.\\n\\n:param type: Component type, defaults to \\"kafka-app\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"kafka-app\\"\\n:type type: Literal[\\"kafka-app\\"], optional\\n:param app: Application-specific settings\\n:type app: KafkaAppConfig\\n:param repo_config: Configuration of the Helm chart repo to be used for\\n    deploying the component,\\n    defaults to HelmRepoConfig(repository_name=\\"bakdata-streams-bootstrap\\", url=\\"https://bakdata.github.io/streams-bootstrap/\\")\\n:type repo_config: HelmRepoConfig, None, optional\\n:param version: Helm chart version, defaults to \\"2.9.0\\"\\n:type version: str, optional",
+            "description": "Base component for Kafka-based components.\\n\\n    Producer or streaming apps should inherit from this class.",
             "type": "object",
             "properties": {
                 "type": {
@@ -1888,7 +1973,8 @@ snapshots[
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Base component for Kafka-based components.\\n\\n    Producer or streaming apps should inherit from this class.",
                     "default": "kafka-app",
                     "enum": [
                         "kafka-app"
@@ -1902,7 +1988,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -1920,7 +2006,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -1929,13 +2015,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "default": {
                         "repository_name": "bakdata-streams-bootstrap",
                         "url": "https://bakdata.github.io/streams-bootstrap/",
@@ -1959,7 +2045,7 @@ snapshots[
                 },
                 "version": {
                     "title": "Version",
-                    "description": "Helm chart version",
+                    "description": "Helm chart version,",
                     "default": "2.9.0",
                     "type": "string"
                 }
@@ -1972,6 +2058,7 @@ snapshots[
         },
         "KafkaConnectConfig": {
             "title": "KafkaConnectConfig",
+            "description": "Settings specific to Kafka Connectors",
             "type": "object",
             "properties": {},
             "additionalProperties": {
@@ -1980,7 +2067,7 @@ snapshots[
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
-            "description": "Base class for all Kafka connectors\\n\\nShould only be used to set defaults\\n\\n:param type: Component type, defaults to \\"kafka-connector\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"kafka-connector\\"\\n:type type: Literal[\\"kafka-connector\\"], optional\\n:param app: Application-specific settings\\n:type app: KafkaAppConfig\\n:param repo_config: Configuration of the Helm chart repo to be used for\\n    deploying the component,\\n    defaults to HelmRepoConfig(repository_name=\\"bakdata-kafka-connect-resetter\\", url=\\"https://bakdata.github.io/kafka-connect-resetter/\\")\\n:type repo_config: HelmRepoConfig, None, optional\\n:param namespace: Namespace in which the component shall be deployed\\n:type namespace: str\\n:param version: Helm chart version, defaults to \\"1.0.4\\"\\n:type version: str, optional\\n:param resetter_values: Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.,\\n    defaults to dict\\n:type resetter_values: dict, optional",
+            "description": "Base class for all Kafka connectors\\n\\n    Should only be used to set defaults",
             "type": "object",
             "properties": {
                 "type": {
@@ -1990,7 +2077,8 @@ snapshots[
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Base class for all Kafka connectors\\n\\n    Should only be used to set defaults",
                     "default": "kafka-connector",
                     "enum": [
                         "kafka-connector"
@@ -2004,7 +2092,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -2022,7 +2110,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -2031,13 +2119,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "default": {
                         "repository_name": "bakdata-kafka-connect-resetter",
                         "url": "https://bakdata.github.io/kafka-connect-resetter/",
@@ -2061,7 +2149,7 @@ snapshots[
                 },
                 "resetterValues": {
                     "title": "Resettervalues",
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.,",
                     "type": "object"
                 },
                 "version": {
@@ -2079,17 +2167,18 @@ snapshots[
         },
         "KafkaSinkConnector": {
             "title": "KafkaSinkConnector",
-            "description": "Kafka sink connector model\\n\\n:param type: Component type, defaults to \\"kafka-sink-connector\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"kafka-sink-connector\\"\\n:type type: Literal[\\"kafka-sink-connector\\"], optional",
+            "description": "Kafka sink connector model",
             "type": "object",
             "properties": {
                 "type": {
                     "title": "Type",
-                    "description": "Component type",
+                    "description": "Component type,",
                     "default": "kafka-sink-connector",
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Kafka sink connector model",
                     "default": "kafka-sink-connector",
                     "enum": [
                         "kafka-sink-connector"
@@ -2103,7 +2192,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -2121,7 +2210,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -2130,13 +2219,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "default": {
                         "repository_name": "bakdata-kafka-connect-resetter",
                         "url": "https://bakdata.github.io/kafka-connect-resetter/",
@@ -2160,7 +2249,7 @@ snapshots[
                 },
                 "resetterValues": {
                     "title": "Resettervalues",
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.,",
                     "type": "object"
                 },
                 "version": {
@@ -2178,17 +2267,18 @@ snapshots[
         },
         "KafkaSourceConnector": {
             "title": "KafkaSourceConnector",
-            "description": "Kafka source connector model\\n\\n:param type: Component type, defaults to \\"kafka-source-connector\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"kafka-source-connector\\"\\n:type type: Literal[\\"kafka-source-connector\\"], optional\\n:param offset_topic: offset.storage.topic,\\n    more info: https://kafka.apache.org/documentation/#connect_running,\\n    defaults to None\\n:type type: str, None",
+            "description": "Kafka source connector model",
             "type": "object",
             "properties": {
                 "type": {
                     "title": "Type",
-                    "description": "Component type",
+                    "description": "Component type,",
                     "default": "kafka-source-connector",
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Kafka source connector model",
                     "default": "kafka-source-connector",
                     "enum": [
                         "kafka-source-connector"
@@ -2202,7 +2292,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -2220,7 +2310,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -2229,13 +2319,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "default": {
                         "repository_name": "bakdata-kafka-connect-resetter",
                         "url": "https://bakdata.github.io/kafka-connect-resetter/",
@@ -2259,7 +2349,7 @@ snapshots[
                 },
                 "resetterValues": {
                     "title": "Resettervalues",
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.,",
                     "type": "object"
                 },
                 "version": {
@@ -2270,7 +2360,7 @@ snapshots[
                 },
                 "offsetTopic": {
                     "title": "Offsettopic",
-                    "description": "offset.storage.topic, more info: more info: https://kafka.apache.org/documentation/#connect_running",
+                    "description": "offset.storage.topic,\\n        more info: https://kafka.apache.org/documentation/#connect_running,",
                     "type": "string"
                 }
             },
@@ -2282,22 +2372,24 @@ snapshots[
         },
         "KubernetesAppConfig": {
             "title": "KubernetesAppConfig",
+            "description": "Settings specific to Kubernetes Apps",
             "type": "object",
             "properties": {}
         },
         "KubernetesApp": {
             "title": "KubernetesApp",
-            "description": "Base class for all Kubernetes apps.\\n\\nAll built-in components are Kubernetes apps, except for the Kafka connectors.\\n\\n:param type: Component type, defaults to \\"kubernetes-app\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"kubernetes-app\\"\\n:type type: Literal[\\"kubernetes-app\\"], optional\\n:param app: Application-specific settings\\n:type app: KubernetesAppConfig\\n:param repo_config: Configuration of the Helm chart repo to be used for\\n    deploying the component, defaults to None\\n:type repo_config: HelmRepoConfig, None, optional\\n:param namespace: Namespace in which the component shall be deployed\\n:type namespace: str\\n:param version: Helm chart version, defaults to None\\n:type version: str, None, optional",
+            "description": "Base class for all Kubernetes apps.\\n\\n    All built-in components are Kubernetes apps, except for the Kafka connectors.",
             "type": "object",
             "properties": {
                 "type": {
                     "title": "Type",
-                    "description": "Component type",
+                    "description": "Component type,",
                     "default": "kubernetes-app",
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Base class for all Kubernetes apps.\\n\\n    All built-in components are Kubernetes apps, except for the Kafka connectors.",
                     "default": "kubernetes-app",
                     "enum": [
                         "kubernetes-app"
@@ -2311,7 +2403,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -2329,7 +2421,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -2338,13 +2430,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/HelmRepoConfig"
@@ -2358,7 +2450,7 @@ snapshots[
                 },
                 "version": {
                     "title": "Version",
-                    "description": "Helm chart version",
+                    "description": "Helm chart version,",
                     "type": "string"
                 }
             },
@@ -2370,15 +2462,17 @@ snapshots[
         },
         "PipelineComponent": {
             "title": "PipelineComponent",
+            "description": "Base class for all components",
             "type": "object",
             "properties": {
                 "type": {
                     "title": "Type",
-                    "default": "pipeline-component",
+                    "const": null,
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Base class for all components",
                     "default": "pipeline-component",
                     "enum": [
                         "pipeline-component"
@@ -2387,10 +2481,12 @@ snapshots[
                 },
                 "name": {
                     "title": "Name",
+                    "description": "Component name",
                     "type": "string"
                 },
                 "from": {
                     "title": "From",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -2398,36 +2494,48 @@ snapshots[
                     ]
                 },
                 "app": {
-                    "title": "App"
+                    "title": "App",
+                    "description": "Application-specific settings,"
                 },
                 "to": {
-                    "$ref": "#/definitions/ToSection"
+                    "title": "To",
+                    "description": "Topic(s) into which the component will write output,",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ]
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 }
             },
             "required": [
+                "type",
                 "name"
             ]
         },
         "ProducerStreamsConfig": {
             "title": "ProducerStreamsConfig",
+            "description": "Kafka Streams settings specific to Producer",
             "type": "object",
             "properties": {
                 "brokers": {
                     "title": "Brokers",
+                    "description": "Brokers",
                     "type": "string"
                 },
                 "schemaRegistryUrl": {
                     "title": "Schemaregistryurl",
+                    "description": "URL of the schema registry,",
                     "type": "string"
                 },
                 "extraOutputTopics": {
                     "title": "Extraoutputtopics",
+                    "description": "Extra output topics",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -2436,6 +2544,7 @@ snapshots[
                 },
                 "outputTopic": {
                     "title": "Outputtopic",
+                    "description": "Output topic,",
                     "type": "string"
                 }
             },
@@ -2445,13 +2554,21 @@ snapshots[
         },
         "ProducerValues": {
             "title": "ProducerValues",
+            "description": "Settings specific to Producers",
             "type": "object",
             "properties": {
                 "streams": {
-                    "$ref": "#/definitions/ProducerStreamsConfig"
+                    "title": "Streams",
+                    "description": "Kafka Streams settings",
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ProducerStreamsConfig"
+                        }
+                    ]
                 },
                 "nameOverride": {
                     "title": "Nameoverride",
+                    "description": "Override name with this value,",
                     "type": "string"
                 }
             },
@@ -2461,7 +2578,7 @@ snapshots[
         },
         "ProducerApp": {
             "title": "ProducerApp",
-            "description": "Producer component\\n\\nThis producer holds configuration to use as values for the streams bootstrap\\nproducer helm chart.\\n\\n:param type: Component type, defaults to \\"producer\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"producer\\"\\n:type type: Literal[\\"producer\\"], optional\\n:param app: Application-specific settings\\n:type app: ProducerValues\\n:param from_: Producer doesn\'t support FromSection, defaults to None\\n:type from_: None, optional",
+            "description": "Producer component\\n\\n    This producer holds configuration to use as values for the streams bootstrap\\n    producer helm chart.",
             "type": "object",
             "properties": {
                 "type": {
@@ -2471,7 +2588,8 @@ snapshots[
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "Producer component\\n\\n    This producer holds configuration to use as values for the streams bootstrap\\n    producer helm chart.",
                     "default": "producer",
                     "enum": [
                         "producer"
@@ -2485,7 +2603,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Producer doesn\'t support FromSection",
+                    "description": "Producer doesn\'t support FromSection,",
                     "type": "null"
                 },
                 "app": {
@@ -2499,7 +2617,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -2508,13 +2626,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "default": {
                         "repository_name": "bakdata-streams-bootstrap",
                         "url": "https://bakdata.github.io/streams-bootstrap/",
@@ -2538,7 +2656,7 @@ snapshots[
                 },
                 "version": {
                     "title": "Version",
-                    "description": "Helm chart version",
+                    "description": "Helm chart version,",
                     "default": "2.9.0",
                     "type": "string"
                 }
@@ -2556,14 +2674,17 @@ snapshots[
             "properties": {
                 "brokers": {
                     "title": "Brokers",
+                    "description": "Brokers",
                     "type": "string"
                 },
                 "schemaRegistryUrl": {
                     "title": "Schemaregistryurl",
+                    "description": "URL of the schema registry,",
                     "type": "string"
                 },
                 "inputTopics": {
                     "title": "Inputtopics",
+                    "description": "Input topics,",
                     "default": [],
                     "type": "array",
                     "items": {
@@ -2572,10 +2693,12 @@ snapshots[
                 },
                 "inputPattern": {
                     "title": "Inputpattern",
+                    "description": "Input pattern,",
                     "type": "string"
                 },
                 "extraInputTopics": {
                     "title": "Extrainputtopics",
+                    "description": "Extra input topics,",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -2587,6 +2710,7 @@ snapshots[
                 },
                 "extraInputPatterns": {
                     "title": "Extrainputpatterns",
+                    "description": "Extra input patterns,",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -2595,6 +2719,7 @@ snapshots[
                 },
                 "extraOutputTopics": {
                     "title": "Extraoutputtopics",
+                    "description": "Extra output topics,",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -2603,14 +2728,17 @@ snapshots[
                 },
                 "outputTopic": {
                     "title": "Outputtopic",
+                    "description": "Output topic,",
                     "type": "string"
                 },
                 "errorTopic": {
                     "title": "Errortopic",
+                    "description": "Error topic,",
                     "type": "string"
                 },
                 "config": {
                     "title": "Config",
+                    "description": "Configuration,",
                     "default": {},
                     "type": "object",
                     "additionalProperties": {
@@ -2624,17 +2752,17 @@ snapshots[
         },
         "StreamsAppAutoScaling": {
             "title": "StreamsAppAutoScaling",
+            "description": "Kubernetes Event-driven Autoscaling config",
             "type": "object",
             "properties": {
                 "enabled": {
                     "title": "Enabled",
-                    "description": "Whether to enable auto-scaling using KEDA.",
                     "default": false,
                     "type": "boolean"
                 },
                 "consumerGroup": {
                     "title": "Consumer group",
-                    "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag.",
+                    "description": "Name of the consumer group used for checking the\\n        offset on the topic and processing the related lag.",
                     "type": "string"
                 },
                 "lagThreshold": {
@@ -2644,42 +2772,42 @@ snapshots[
                 },
                 "pollingInterval": {
                     "title": "Polling interval",
-                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
+                    "description": "This is the interval to check each trigger on.\\n        https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval,",
                     "default": 30,
                     "type": "integer"
                 },
                 "cooldownPeriod": {
                     "title": "Cooldown period",
-                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
+                    "description": "The period to wait after the last trigger reported\\n        active before scaling the resource back to 0.\\n        https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod,",
                     "default": 300,
                     "type": "integer"
                 },
                 "offsetResetPolicy": {
                     "title": "Offset reset policy",
-                    "description": "The offset reset policy for the consumer if the the consumer group is not yet subscribed to a partition.",
+                    "description": "The offset reset policy for the consumer if the\\n        consumer group is not yet subscribed to a partition.,",
                     "default": "earliest",
                     "type": "string"
                 },
                 "minReplicas": {
                     "title": "Min replica count",
-                    "description": "Minimum number of replicas KEDA will scale the resource down to. https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount",
+                    "description": "Minimum number of replicas KEDA will scale the resource down to.\\n        \\"https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount\\",",
                     "default": 0,
                     "type": "integer"
                 },
                 "maxReplicas": {
                     "title": "Max replica count",
-                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
+                    "description": "This setting is passed to the HPA definition that KEDA\\n        will create for a given resource and holds the maximum number of replicas\\n        of the target resouce.\\n        https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount,",
                     "default": 1,
                     "type": "integer"
                 },
                 "idleReplicas": {
                     "title": "Idle replica count",
-                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount",
+                    "description": "If this property is set, KEDA will scale the resource\\n        down to this number of replicas.\\n        https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount,",
                     "type": "integer"
                 },
                 "topics": {
                     "title": "Topics",
-                    "description": "List of auto-generated Kafka Streams topics used by the streams app.",
+                    "description": "List of auto-generated Kafka Streams topics used by the streams app.,",
                     "default": [],
                     "type": "array",
                     "items": {
@@ -2694,7 +2822,7 @@ snapshots[
         },
         "StreamsAppConfig": {
             "title": "StreamsAppConfig",
-            "description": "StreamsBoostrap app configurations.\\n\\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "description": "StreamsBoostrap app configurations.\\n\\n    The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.\\n\\n    :params streams: Streams Bootstrap streams section",
             "type": "object",
             "properties": {
                 "streams": {
@@ -2702,6 +2830,7 @@ snapshots[
                 },
                 "nameOverride": {
                     "title": "Nameoverride",
+                    "description": "Override name with this value,",
                     "type": "string"
                 },
                 "autoscaling": {
@@ -2714,17 +2843,18 @@ snapshots[
         },
         "StreamsApp": {
             "title": "StreamsApp",
-            "description": "StreamsApp component that configures a streams bootstrap app\\n\\n:param type: Component type, defaults to \\"streams-app\\"\\n:type type: str, optional\\n:param type: Used for schema generation, same as :param:`type`,\\n    defaults to \\"streams-app\\"\\n:type type: Literal[\\"streams-app\\"], optional\\n:param app: Application-specific settings\\n:type app: StreamsAppConfig",
+            "description": "StreamsApp component that configures a streams bootstrap app",
             "type": "object",
             "properties": {
                 "type": {
                     "title": "Type",
-                    "description": "Component type",
+                    "description": "Component type,",
                     "default": "streams-app",
                     "type": "string"
                 },
                 "type": {
-                    "title": "Schema Type",
+                    "title": "Component type",
+                    "description": "StreamsApp component that configures a streams bootstrap app",
                     "default": "streams-app",
                     "enum": [
                         "streams-app"
@@ -2738,7 +2868,7 @@ snapshots[
                 },
                 "from": {
                     "title": "From",
-                    "description": "Topic(s) from which the component will read input",
+                    "description": "Topic(s) and/or components from which the component will read\\n        input,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/FromSection"
@@ -2756,7 +2886,7 @@ snapshots[
                 },
                 "to": {
                     "title": "To",
-                    "description": "Topic(s) into which the component will write output",
+                    "description": "Topic(s) into which the component will write output,",
                     "allOf": [
                         {
                             "$ref": "#/definitions/ToSection"
@@ -2765,13 +2895,13 @@ snapshots[
                 },
                 "prefix": {
                     "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "description": "Pipeline prefix that will prefix every component name.\\n        If you wish to not have any prefix you can specify an empty string.,",
                     "default": "${pipeline_name}-",
                     "type": "string"
                 },
                 "repoConfig": {
                     "title": "Repoconfig",
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "description": "Configuration of the Helm chart repo to be used for\\n        deploying the component,",
                     "default": {
                         "repository_name": "bakdata-streams-bootstrap",
                         "url": "https://bakdata.github.io/streams-bootstrap/",
@@ -2795,7 +2925,7 @@ snapshots[
                 },
                 "version": {
                     "title": "Version",
-                    "description": "Helm chart version",
+                    "description": "Helm chart version,",
                     "default": "2.9.0",
                     "type": "string"
                 }

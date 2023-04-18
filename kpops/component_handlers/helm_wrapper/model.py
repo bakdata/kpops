@@ -5,6 +5,7 @@ from typing import Iterator
 import yaml
 from pydantic import BaseModel, Field
 
+from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 
@@ -21,21 +22,54 @@ class HelmDiffConfig(BaseModel):
 
 
 class RepoAuthFlags(BaseModel):
-    username: str | None = None
-    password: str | None = None
-    ca_file: Path | None = None
-    insecure_skip_tls_verify: bool = False
+    """Authorisation-related flags for `helm repo`
+
+    :param username: Username, defaults to None
+    :type username: str, None, optional
+    :param password: Password, defaults to None
+    :type password: str, None, optional
+    :param ca_file: Certificate file, defaults to None
+    :type ca_file: Path, None, optional
+    :param insecure_skip_tls_verify: If true, Kubernetes API server's certificate will not be checked for validity
+        , defaults to False
+    :type insecure_skip_tls_verify: bool, optional
+    """
+
+    username: str | None = Field(
+        default=None, description=describe_attr("username", __doc__)
+    )
+    password: str | None = Field(
+        default=None, description=describe_attr("password", __doc__)
+    )
+    ca_file: Path | None = Field(
+        default=None, description=describe_attr("ca_file", __doc__)
+    )
+    insecure_skip_tls_verify: bool = Field(
+        default=False, description=describe_attr("insecure_skip_tls_verify", __doc__)
+    )
 
     class Config(CamelCaseConfig, DescConfig):
         pass
 
 
 class HelmRepoConfig(BaseModel):
-    """Helm chart repository configuration"""
+    """Helm repository configuration
 
-    repository_name: str
-    url: str
-    repo_auth_flags: RepoAuthFlags = Field(default=RepoAuthFlags())
+    :param repository_name: Name of the Helm repository
+    :type repository_name: str
+    :param url: URL to the Helm repository
+    :type url: str
+    :param repo_auth_flags: Authorisation-related flags
+    :type repo_auth_flags: RepoAuthFlags
+    """
+
+    repository_name: str = Field(
+        default=..., description=describe_attr("repository_name", __doc__)
+    )
+    url: str = Field(default=..., description=describe_attr("url", __doc__))
+    repo_auth_flags: RepoAuthFlags = Field(
+        default=RepoAuthFlags(), description=describe_attr("repo_auth_flags", __doc__)
+    )
 
     class Config(CamelCaseConfig, DescConfig):
         pass
