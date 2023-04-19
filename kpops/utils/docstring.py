@@ -62,7 +62,7 @@ def _trim_description_end(desc: str) -> str:
     for desc_ender in desc_enders:
         if (desc_ender in desc) and (desc.index(desc_ender) < end_index):
             end_index = desc.index(desc_ender)
-    desc_split = desc[:end_index].strip().split()
+    desc_split = desc[:end_index].split()
     for line in desc_split:
         line = line.rstrip()
     desc = " ".join(desc_split)
