@@ -1065,7 +1065,8 @@ snapshots[
             "properties": {
                 "type": {
                     "title": "Type",
-                    "const": null,
+                    "default": "pipeline-component",
+                    "const": "pipeline-component",
                     "type": "string"
                 },
                 "type": {
@@ -1112,7 +1113,6 @@ snapshots[
                 }
             },
             "required": [
-                "type",
                 "name"
             ]
         },
@@ -2467,7 +2467,8 @@ snapshots[
             "properties": {
                 "type": {
                     "title": "Type",
-                    "const": null,
+                    "default": "pipeline-component",
+                    "const": "pipeline-component",
                     "type": "string"
                 },
                 "type": {
@@ -2514,7 +2515,6 @@ snapshots[
                 }
             },
             "required": [
-                "type",
                 "name"
             ]
         },

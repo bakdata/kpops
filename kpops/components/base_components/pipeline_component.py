@@ -44,7 +44,9 @@ class PipelineComponent(BaseDefaultsComponent):
     """
 
     type: str = Field(
-        default=..., description=describe_attr("type", __doc__), const=True
+        default="pipeline-component",
+        description=describe_attr("type", __doc__),
+        const=True,
     )
     schema_type: Literal["pipeline-component"] = Field(  # type: ignore[assignment]
         default="pipeline-component",
