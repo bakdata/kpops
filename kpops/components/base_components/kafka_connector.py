@@ -27,27 +27,63 @@ from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
+from kpops.utils.docstring import describe_attr, describe_class
 from kpops.utils.pydantic import CamelCaseConfig
 
 log = logging.getLogger("KafkaConnector")
 
 
 class KafkaConnector(PipelineComponent, ABC):
-    type: str = "kafka-connector"
-    schema_type: Literal["kafka-connector"] = Field(  # type: ignore[assignment]
-        default="kafka-connector", exclude=True
-    )
-    app: KafkaConnectConfig
+    """Base class for all Kafka connectors
 
-    repo_config: HelmRepoConfig = HelmRepoConfig(
-        repository_name="bakdata-kafka-connect-resetter",
-        url="https://bakdata.github.io/kafka-connect-resetter/",
+    Should only be used to set defaults
+
+    :param type: Component type, defaults to "kafka-connector"
+    :type type: str, optional
+    :param schema_type: Used for schema generation, same as :param:`type`,
+        defaults to "kafka-connector"
+    :type schema_type: Literal["kafka-connector"], optional
+    :param app: Application-specific settings
+    :type app: KafkaAppConfig
+    :param repo_config: Configuration of the Helm chart repo to be used for
+        deploying the component,
+        defaults to HelmRepoConfig(repository_name="bakdata-kafka-connect-resetter", url="https://bakdata.github.io/kafka-connect-resetter/")
+    :type repo_config: HelmRepoConfig, None, optional
+    :param namespace: Namespace in which the component shall be deployed
+    :type namespace: str
+    :param version: Helm chart version, defaults to "1.0.4"
+    :type version: str, optional
+    :param resetter_values: Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.,
+        defaults to dict
+    :type resetter_values: dict, optional
+    """
+
+    type: str = Field(default="kafka-connector", description="Component type")
+    schema_type: Literal["kafka-connector"] = Field(  # type: ignore[assignment]
+        default="kafka-connector",
+        title="Component type",
+        description=describe_class(__doc__),
+        exclude=True,
     )
-    namespace: str
-    version: str = "1.0.4"
+    app: KafkaConnectConfig = Field(
+        default=...,
+        description=describe_attr("app", __doc__),
+    )
+    repo_config: HelmRepoConfig = Field(
+        default=HelmRepoConfig(
+            repository_name="bakdata-kafka-connect-resetter",
+            url="https://bakdata.github.io/kafka-connect-resetter/",
+        ),
+        description=describe_attr("repo_config", __doc__),
+    )
+    namespace: str = Field(
+        default=...,
+        description=describe_attr("namespace", __doc__),
+    )
+    version = Field(default="1.0.4", description="Helm chart version")
     resetter_values: dict = Field(
         default_factory=dict,
-        description="Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+        description=describe_attr("resetter_values", __doc__),
     )
 
     class Config(CamelCaseConfig):
@@ -59,6 +95,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @cached_property
     def helm(self) -> Helm:
+        """Helm object that contains component-specific config such as repo"""
         helm_repo_config = self.repo_config
         helm = Helm(self.config.helm_config)
         helm.add_repo(
@@ -69,20 +106,25 @@ class KafkaConnector(PipelineComponent, ABC):
         return helm
 
     def _get_resetter_helm_chart(self) -> str:
+        """Get reseter Helm chart
+
+        :return: returns the component resetter's helm chart
+        :rtype: str
+        """
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
     @cached_property
     def helm_diff(self) -> HelmDiff:
+        """Helm diff object of last and current release of this component"""
         return HelmDiff(self.config.helm_diff_config)
 
     @property
     def kafka_connect_resetter_chart(self) -> str:
+        """Resetter chart for this component"""
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
     def prepare_connector_config(self) -> None:
-        """
-        Substitute component related variables in config
-        """
+        """Substitute component related variables in config"""
         substituted_config = self.substitute_component_variables(
             json.dumps(self.app.dict())
         )
@@ -128,14 +170,20 @@ class KafkaConnector(PipelineComponent, ABC):
         retain_clean_jobs: bool,
         **kwargs,
     ) -> None:
-        """
-        Cleans the connector from the cluster. At first, it deletes the previous cleanup job (connector resetter)
+        """Clean the connector from the cluster
+
+        At first, it deletes the previous cleanup job (connector resetter)
         to make sure that there is no running clean job in the cluster. Then it releases a cleanup job.
         If the retain_clean_jobs flag is set to false the cleanup job will be deleted.
+
         :param connector_name: Name of the connector
+        :type connector_name: str
         :param connector_type: Type of the connector (SINK or SOURCE)
+        :type connector_type: KafkaConnectorType
         :param dry_run: If the cleanup should be run in dry run mode or not
+        :type dry_run: bool
         :param retain_clean_jobs: If the cleanup job should be kept
+        :type retain_clean_jobs: bool
         :param kwargs: Other values for the KafkaConnectResetter
         """
         trimmed_name = self._get_kafka_resetter_release_name(connector_name)
@@ -167,6 +215,13 @@ class KafkaConnector(PipelineComponent, ABC):
             self.__uninstall_connect_resetter(trimmed_name, dry_run)
 
     def _get_kafka_resetter_release_name(self, connector_name: str) -> str:
+        """Get connector resetter's release name
+
+        :param connector_name: Name of the connector to be reset
+        :type connector_name: str
+        :return: The name of the resetter to be used
+        :rtype: str
+        """
         suffix = "-clean"
         clean_up_release_name = connector_name + suffix
         trimmed_name = trim_release_name(clean_up_release_name, suffix)
@@ -180,6 +235,19 @@ class KafkaConnector(PipelineComponent, ABC):
         dry_run: bool,
         **kwargs,
     ) -> str:
+        """Install connector resetter
+
+        :param release_name: Release name for the resetter
+        :type release_name: str
+        :param connector_name: Name of the connector-to-be-reset
+        :type connector_name: str
+        :param connector_type: Type of the connector
+        :type connector_type: KafkaConnectorType
+        :param dry_run: Whether to dry run the command
+        :type dry_run: bool
+        :return: The output of `helm upgrade --install`
+        :rtype: str
+        """
         return self.helm.upgrade_install(
             release_name=release_name,
             namespace=self.namespace,
@@ -204,6 +272,15 @@ class KafkaConnector(PipelineComponent, ABC):
         connector_type: KafkaConnectorType,
         **kwargs,
     ) -> dict:
+        """Get connector resetter helm chart values
+
+        :param connector_name: Name of the connector
+        :type connector_name: str
+        :param connector_type: Type of the connector
+        :type connector_type: KafkaConnectorType
+        :return: The Helm chart values of the connector resetter
+        :rtype: dict
+        """
         return {
             **KafkaConnectResetterValues(
                 config=KafkaConnectResetterConfig(
@@ -218,6 +295,13 @@ class KafkaConnector(PipelineComponent, ABC):
         }
 
     def __uninstall_connect_resetter(self, release_name: str, dry_run: bool) -> None:
+        """Uninstall connector resetter
+
+        :param release_name: Name of the release to be uninstalled
+        :type release_name: str
+        :param dry_run: Whether to do a dry run of the command
+        :type dry_run: bool
+        """
         self.helm.uninstall(
             namespace=self.namespace,
             release_name=release_name,
@@ -226,11 +310,33 @@ class KafkaConnector(PipelineComponent, ABC):
 
 
 class KafkaSourceConnector(KafkaConnector):
-    type: str = "kafka-source-connector"
-    schema_type: Literal["kafka-source-connector"] = Field(  # type: ignore[assignment]
-        default="kafka-source-connector", exclude=True
+    """Kafka source connector model
+
+    :param type: Component type, defaults to "kafka-source-connector"
+    :type type: str, optional
+    :param schema_type: Used for schema generation, same as :param:`type`,
+        defaults to "kafka-source-connector"
+    :type schema_type: Literal["kafka-source-connector"], optional
+    :param offset_topic: offset.storage.topic,
+        more info: https://kafka.apache.org/documentation/#connect_running,
+        defaults to None
+    :type schema_type: str, None
+    """
+
+    type: str = Field(
+        default="kafka-source-connector",
+        description=describe_attr("type", __doc__),
     )
-    offset_topic: str | None = None
+    schema_type: Literal["kafka-source-connector"] = Field(  # type: ignore[assignment]
+        default="kafka-source-connector",
+        title="Component type",
+        description=describe_class(__doc__),
+        exclude=True,
+    )
+    offset_topic: str | None = Field(
+        default=None,
+        description=describe_attr("offset_topic", __doc__),
+    )
 
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
@@ -264,6 +370,11 @@ class KafkaSourceConnector(KafkaConnector):
         self.__run_kafka_connect_resetter(dry_run)
 
     def __run_kafka_connect_resetter(self, dry_run: bool) -> None:
+        """Runs the connector resetter
+
+        :param dry_run: Whether to do a dry run of the command
+        :type dry_run: bool
+        """
         self._run_connect_resetter(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SOURCE,
@@ -274,9 +385,24 @@ class KafkaSourceConnector(KafkaConnector):
 
 
 class KafkaSinkConnector(KafkaConnector):
-    type: str = "kafka-sink-connector"
+    """Kafka sink connector model
+
+    :param type: Component type, defaults to "kafka-sink-connector"
+    :type type: str, optional
+    :param schema_type: Used for schema generation, same as :param:`type`,
+        defaults to "kafka-sink-connector"
+    :type schema_type: Literal["kafka-sink-connector"], optional
+    """
+
+    type: str = Field(
+        default="kafka-sink-connector",
+        description=describe_attr("type", __doc__),
+    )
     schema_type: Literal["kafka-sink-connector"] = Field(  # type: ignore[assignment]
-        default="kafka-sink-connector", exclude=True
+        default="kafka-sink-connector",
+        title="Component type",
+        description=describe_class(__doc__),
+        exclude=True,
     )
 
     @override
@@ -322,6 +448,11 @@ class KafkaSinkConnector(KafkaConnector):
     def __run_kafka_connect_resetter(
         self, dry_run: bool, delete_consumer_group: bool
     ) -> None:
+        """Runs the connector resetter
+
+        :param dry_run: Whether to do a dry run of the command
+        :type dry_run: bool
+        """
         self._run_connect_resetter(
             connector_name=self.name,
             connector_type=KafkaConnectorType.SINK,

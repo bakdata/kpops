@@ -1,12 +1,16 @@
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseConfig, BaseModel, Extra, Field, root_validator
+from pydantic import BaseModel, Extra, Field, root_validator
+
+from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import DescConfig
 
 
 class OutputTopicTypes(str, Enum):
-    """Types of output topic.
-    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.
+    """Types of output topic
+
+    Error (error topic), output (output topic), and extra topics. Every extra topic must have a role.
     """
 
     ERROR = "error"
@@ -15,23 +19,49 @@ class OutputTopicTypes(str, Enum):
 
 
 class TopicConfig(BaseModel):
-    """Configures a topic"""
+    """Configure an output topic
 
-    type: OutputTopicTypes = Field(...)
-    key_schema: str | None = Field(default=None, alias="keySchema")
-    value_schema: str | None = Field(default=None, alias="valueSchema")
-    partitions_count: int | None = None
-    replication_factor: int | None = None
-    configs: dict[str, str] = {}
-    role: str | None = None
+    :param type: Topic type
+    :type type: InputTopicTypes
+    :param key_schema: Key schema class name
+    :type key_schema: str | None
+    :param partitions_count: Number of partitions into which the topic is divided
+    :type partitions_count: int | None
+    :param replication_factor: Replication topic of the topic
+    :type replication_factor: int | None
+    :param configs: Topic configs
+    :type configs: dict[str, str | int]
+    :param role: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`
+    :type role: str | None
+    """
 
-    class Config(BaseConfig):
+    type: OutputTopicTypes = Field(..., description="Topic type")
+    key_schema: str | None = Field(
+        default=None, alias="keySchema", description="Key schema class name"
+    )
+    value_schema: str | None = Field(
+        default=None, alias="valueSchema", description="Value schema class name"
+    )
+    partitions_count: int | None = Field(
+        default=None, description="Number of partitions into which the topic is divided"
+    )
+    replication_factor: int | None = Field(
+        default=None, description="Replication topic of the topic"
+    )
+    configs: dict[str, str | int] = Field(default={}, description="Topic configs")
+    role: str | None = Field(
+        default=None,
+        description="Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+    )
+
+    class Config(DescConfig):
         extra = Extra.forbid
         allow_population_by_field_name = True
         use_enum_values = True
 
     @root_validator
     def extra_topic_role(cls, values):
+        """Ensure that cls.role is used correctly"""
         is_extra_topic: bool = values["type"] == OutputTopicTypes.EXTRA
         if is_extra_topic and not values.get("role"):
             raise ValueError(
@@ -46,12 +76,22 @@ class TopicConfig(BaseModel):
 
 
 class ToSection(BaseModel):
-    models: dict[
-        str, Any
-    ] = (
-        {}
-    )  # any because snapshot versions must be supported  # TODO: really multiple models?
-    topics: dict[str, TopicConfig]
+    """Holds multiple output topics
 
-    class Config(BaseConfig):
+    :param models: Data models
+    :type models: dict[str, Any]
+    :param topics: Output topics
+    :type topics: dict[str, TopicConfig]
+    """
+
+    # TODO: really multiple models?
+    # any because snapshot versions must be supported
+    models: dict[str, Any] = Field(
+        default={}, description=describe_attr("models", __doc__)
+    )
+    topics: dict[str, TopicConfig] = Field(
+        ..., description=describe_attr("topics", __doc__)
+    )
+
+    class Config(DescConfig):
         extra = Extra.allow

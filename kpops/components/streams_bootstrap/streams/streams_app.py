@@ -2,26 +2,44 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseConfig, Extra, Field
+from pydantic import Extra, Field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import StreamsAppConfig
+from kpops.utils.docstring import describe_attr, describe_class
+from kpops.utils.pydantic import DescConfig
 
 
 class StreamsApp(KafkaApp):
-    """
-    StreamsApp component that configures a streams bootstrap app
+    """StreamsApp component that configures a streams bootstrap app
+
+    :param type: Component type, defaults to "streams-app"
+    :type type: str, optional
+    :param schema_type: Used for schema generation, same as :param:`type`,
+        defaults to "streams-app"
+    :type schema_type: Literal["streams-app"], optional
+    :param app: Application-specific settings
+    :type app: StreamsAppConfig
     """
 
-    type: str = "streams-app"
-    schema_type: Literal["streams-app"] = Field(  # type: ignore[assignment]
-        default="streams-app", exclude=True
+    type: str = Field(
+        default="streams-app",
+        description=describe_attr("type", __doc__),
     )
-    app: StreamsAppConfig
+    schema_type: Literal["streams-app"] = Field(  # type: ignore[assignment]
+        default="streams-app",
+        title="Component type",
+        description=describe_class(__doc__),
+        exclude=True,
+    )
+    app: StreamsAppConfig = Field(
+        default=...,
+        description=describe_attr("app", __doc__),
+    )
 
-    class Config(BaseConfig):
+    class Config(DescConfig):
         extra = Extra.allow
 
     def __init__(self, **kwargs):
@@ -74,6 +92,13 @@ class StreamsApp(KafkaApp):
         self.__run_streams_clean_up_job(dry_run, delete_output=True)
 
     def __run_streams_clean_up_job(self, dry_run: bool, delete_output: bool) -> None:
+        """Run clean job for this Streams app
+
+        :param dry_run: Whether to do a dry run of the command
+        :type dry_run: bool
+        :param delete_output: Whether to delete the output of the app that is being cleaned
+        :type delete_output: bool
+        """
         values = self.to_helm_values()
         values["streams"]["deleteOutput"] = delete_output
         self._run_clean_up_job(
@@ -83,6 +108,7 @@ class StreamsApp(KafkaApp):
         )
 
     def __substitute_autoscaling_topic_names(self) -> None:
+        """Substitute autoscaling topics' names"""
         if not self.app.autoscaling:
             return
         self.app.autoscaling.topics = [
