@@ -56,7 +56,7 @@ def _trim_description_end(desc: str) -> str:
     :returns: Isolated description
     :rtype: str
     """
-    desc_enders: list = [
+    desc_enders = [
         ":param ",
         ":type ",
         ":return:",
