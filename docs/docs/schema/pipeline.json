@@ -108,10 +108,7 @@
                     "title": "Schemaregistryurl",
                     "type": "string"
                 }
-            },
-            "required": [
-                "brokers"
-            ]
+            }
         },
         "KafkaAppConfig": {
             "title": "KafkaAppConfig",
@@ -721,10 +718,7 @@
                     "title": "Outputtopic",
                     "type": "string"
                 }
-            },
-            "required": [
-                "brokers"
-            ]
+            }
         },
         "ProducerValues": {
             "title": "ProducerValues",
@@ -883,10 +877,7 @@
                         "type": "string"
                     }
                 }
-            },
-            "required": [
-                "brokers"
-            ]
+            }
         },
         "StreamsAppAutoScaling": {
             "title": "StreamsAppAutoScaling",
