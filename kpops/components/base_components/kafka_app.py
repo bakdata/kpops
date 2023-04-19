@@ -54,7 +54,7 @@ class KafkaApp(KubernetesApp):
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        if self.app.streams.schema_registry_url:
+        if self.app.streams.brokers:
             self.app.streams.brokers = substitute(
                 self.app.streams.brokers, {"broker": self.config.broker}
             )
