@@ -231,8 +231,7 @@ snapshots[
                 }
             },
             "required": [
-                "environment",
-                "broker"
+                "environment"
             ],
             "additionalProperties": false
         }
