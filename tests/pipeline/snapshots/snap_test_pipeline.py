@@ -38,7 +38,7 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
                 },
             },
             "type": "producer",
-            "version": "2.9.0",
+            "version": "2.11.2",
         },
         {
             "app": {
@@ -77,7 +77,7 @@ snapshots["TestPipeline.test_default_config test-pipeline"] = {
                 },
             },
             "type": "streams-app",
-            "version": "2.9.0",
+            "version": "2.11.2",
         },
     ]
 }
@@ -897,7 +897,7 @@ snapshots["TestPipeline.test_prefix_pipeline_component test-pipeline"] = {
                 "url": "https://bakdata.github.io/streams-bootstrap/",
             },
             "type": "producer",
-            "version": "2.9.0",
+            "version": "2.11.2",
         }
     ]
 }
@@ -1637,7 +1637,7 @@ snapshots[
                 },
             },
             "type": "producer",
-            "version": "2.9.0",
+            "version": "2.11.2",
         },
         {
             "app": {
@@ -1676,7 +1676,7 @@ snapshots[
                 },
             },
             "type": "streams-app",
-            "version": "2.9.0",
+            "version": "2.11.2",
         },
     ]
 }
@@ -1715,7 +1715,7 @@ snapshots[
                 },
             },
             "type": "producer",
-            "version": "2.9.0",
+            "version": "2.11.2",
         },
         {
             "app": {
@@ -1754,7 +1754,7 @@ snapshots[
                 },
             },
             "type": "streams-app",
-            "version": "2.9.0",
+            "version": "2.11.2",
         },
     ]
 }
@@ -1798,7 +1798,7 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
                 },
             },
             "type": "streams-app",
-            "version": "2.9.0",
+            "version": "2.11.2",
         },
         {
             "app": {

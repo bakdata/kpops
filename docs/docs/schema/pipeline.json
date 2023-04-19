@@ -108,10 +108,7 @@
                     "title": "Schemaregistryurl",
                     "type": "string"
                 }
-            },
-            "required": [
-                "brokers"
-            ]
+            }
         },
         "KafkaAppConfig": {
             "title": "KafkaAppConfig",
@@ -324,7 +321,7 @@
                 },
                 "version": {
                     "title": "Version",
-                    "default": "2.9.0",
+                    "default": "2.11.2",
                     "type": "string"
                 }
             },
@@ -721,10 +718,7 @@
                     "title": "Outputtopic",
                     "type": "string"
                 }
-            },
-            "required": [
-                "brokers"
-            ]
+            }
         },
         "ProducerValues": {
             "title": "ProducerValues",
@@ -805,7 +799,7 @@
                 },
                 "version": {
                     "title": "Version",
-                    "default": "2.9.0",
+                    "default": "2.11.2",
                     "type": "string"
                 }
             },
@@ -883,10 +877,7 @@
                         "type": "string"
                     }
                 }
-            },
-            "required": [
-                "brokers"
-            ]
+            }
         },
         "StreamsAppAutoScaling": {
             "title": "StreamsAppAutoScaling",
@@ -1044,7 +1035,7 @@
                 },
                 "version": {
                     "title": "Version",
-                    "default": "2.9.0",
+                    "default": "2.11.2",
                     "type": "string"
                 }
             },

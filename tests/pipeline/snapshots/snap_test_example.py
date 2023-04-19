@@ -44,7 +44,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
                 },
             },
             "type": "producer",
-            "version": "2.9.0",
+            "version": "2.11.2",
         },
         {
             "app": {
@@ -83,7 +83,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
                 },
             },
             "type": "producer",
-            "version": "2.9.0",
+            "version": "2.11.2",
         },
         {
             "app": {
@@ -132,7 +132,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
                 },
             },
             "type": "streams-app",
-            "version": "2.9.0",
+            "version": "2.11.2",
         },
         {
             "app": {
@@ -181,7 +181,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
                 },
             },
             "type": "streams-app",
-            "version": "2.9.0",
+            "version": "2.11.2",
         },
         {
             "app": {
@@ -240,7 +240,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
                 },
             },
             "type": "streams-app",
-            "version": "2.9.0",
+            "version": "2.11.2",
         },
         {
             "app": {

@@ -42,8 +42,8 @@ class PipelineConfig(BaseSettings):
         description="The environment you want to generate and deploy the pipeline to. "
         "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
     )
-    broker: str = Field(
-        default=...,
+    broker: str | None = Field(
+        default=None,
         env=f"{ENV_PREFIX}KAFKA_BROKER",
         description="The Kafka broker address.",
     )

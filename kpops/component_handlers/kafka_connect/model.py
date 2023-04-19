@@ -48,7 +48,7 @@ class KafkaConnectConfigErrorResponse(BaseModel):
 
 
 class KafkaConnectResetterConfig(BaseModel):
-    brokers: str
+    brokers: str | None = None
     connector: str
     delete_consumer_group: bool | None = None
     offset_topic: str | None = None
