@@ -360,10 +360,7 @@ snapshots[
                     "title": "Schemaregistryurl",
                     "type": "string"
                 }
-            },
-            "required": [
-                "brokers"
-            ]
+            }
         },
         "KafkaAppConfig": {
             "title": "KafkaAppConfig",
@@ -973,10 +970,7 @@ snapshots[
                     "title": "Outputtopic",
                     "type": "string"
                 }
-            },
-            "required": [
-                "brokers"
-            ]
+            }
         },
         "ProducerValues": {
             "title": "ProducerValues",
@@ -1135,10 +1129,7 @@ snapshots[
                         "type": "string"
                     }
                 }
-            },
-            "required": [
-                "brokers"
-            ]
+            }
         },
         "StreamsAppAutoScaling": {
             "title": "StreamsAppAutoScaling",
