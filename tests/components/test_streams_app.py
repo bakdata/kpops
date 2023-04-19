@@ -364,7 +364,9 @@ class TestStreamsApp:
                         "deleteOutput": False,
                     },
                 },
-                HelmUpgradeInstallFlags(version="2.11.2", wait=True, wait_for_jobs=True),
+                HelmUpgradeInstallFlags(
+                    version="2.11.2", wait=True, wait_for_jobs=True
+                ),
             ),
             mocker.call.helm_uninstall(
                 "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
@@ -403,7 +405,9 @@ class TestStreamsApp:
                         "deleteOutput": True,
                     },
                 },
-                HelmUpgradeInstallFlags(version="2.11.2", wait=True, wait_for_jobs=True),
+                HelmUpgradeInstallFlags(
+                    version="2.11.2", wait=True, wait_for_jobs=True
+                ),
             ),
             mocker.call.helm_uninstall(
                 "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
