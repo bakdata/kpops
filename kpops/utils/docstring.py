@@ -74,12 +74,10 @@ def _trim_description_end(desc: str) -> str:
         log.debug("Returned an empty string.", exc_info=True)
         return ""
 
-    end_index = len(desc)
-
     for desc_ender in desc_enders:
         if (desc_ender in desc) and (desc.index(desc_ender) < end_index):
             end_index = desc.index(desc_ender)
 
-    desc = desc[:end_index].strip()
+    desc = desc[:end_index].strip().rstrip(",")
 
     return desc
