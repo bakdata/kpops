@@ -23,7 +23,7 @@ log = logging.getLogger("KafkaApp")
 
 
 class KafkaStreamsConfig(BaseModel):
-    brokers: str
+    brokers: str | None = None
     schema_registry_url: str | None = None
 
     class Config(CamelCaseConfig):
@@ -50,13 +50,14 @@ class KafkaApp(KubernetesApp):
         repository_name="bakdata-streams-bootstrap",
         url="https://bakdata.github.io/streams-bootstrap/",
     )
-    version = "2.9.0"
+    version = "2.11.2"
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.app.streams.brokers = substitute(
-            self.app.streams.brokers, {"broker": self.config.broker}
-        )
+        if self.app.streams.schema_registry_url:
+            self.app.streams.brokers = substitute(
+                self.app.streams.brokers, {"broker": self.config.broker}
+            )
         if self.app.streams.schema_registry_url:
             self.app.streams.schema_registry_url = substitute(
                 self.app.streams.schema_registry_url,

@@ -324,7 +324,7 @@
                 },
                 "version": {
                     "title": "Version",
-                    "default": "2.9.0",
+                    "default": "2.11.2",
                     "type": "string"
                 }
             },
@@ -805,7 +805,7 @@
                 },
                 "version": {
                     "title": "Version",
-                    "default": "2.9.0",
+                    "default": "2.11.2",
                     "type": "string"
                 }
             },
@@ -1044,7 +1044,7 @@
                 },
                 "version": {
                     "title": "Version",
-                    "default": "2.9.0",
+                    "default": "2.11.2",
                     "type": "string"
                 }
             },
