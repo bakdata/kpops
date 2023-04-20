@@ -22,7 +22,7 @@ def describe_attr(name: str, docstr: str | None) -> str:
 
 
 def describe_object(docstr: str | None) -> str:
-    """Return free-text description from a docstring
+    """Return description from an object's docstring
 
     Excludes parameters and return definitions
 
@@ -30,7 +30,7 @@ def describe_object(docstr: str | None) -> str:
 
     :param docstr: The docstring
     :type docstr: str, None
-    :returns: Description taken from the docstiirng
+    :returns: Description taken from the docstring
     :rtype: str
     """
     if docstr is None:
@@ -38,7 +38,8 @@ def describe_object(docstr: str | None) -> str:
 
     # reST docstrings have a short description/title as their first line.
     # Optionally, they have a longer description below. Here we separate the
-    # title from the rest as `_trim_description_end()` removes all newlines.
+    # title from the rest with a newline as `_trim_description_end()`
+    # removes all newlines.
     docstr = docstr.strip()
     if "\n" in docstr:
         title_end = docstr.index("\n")
