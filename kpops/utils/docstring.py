@@ -54,7 +54,7 @@ def _trim_description_end(desc: str) -> str:
     Also removes all whitespaces and newlines and replaces them with a single space.
 
     A description is defined here as a string of text written in natural language.
-    A description ends at the occurence of a separator such as '\:returns\:'.
+    A description ends at the occurence of a separator such as ``returns``.
 
     **Works only with reStructuredText docstrings.**
 
