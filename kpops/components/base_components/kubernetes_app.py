@@ -17,7 +17,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr, describe_class
+from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 log = logging.getLogger("KubernetesAppComponent")
@@ -63,7 +63,7 @@ class KubernetesApp(PipelineComponent):
     schema_type: Literal["kubernetes-app"] = Field(  # type: ignore[assignment]
         default="kubernetes-app",
         title="Component type",
-        description=describe_class(__doc__),
+        description=describe_object(__doc__),
         exclude=True,
     )
     app: KubernetesAppConfig = Field(

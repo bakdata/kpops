@@ -8,7 +8,7 @@ from typing_extensions import override
 from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import StreamsAppConfig
-from kpops.utils.docstring import describe_attr, describe_class
+from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.pydantic import DescConfig
 
 
@@ -31,7 +31,7 @@ class StreamsApp(KafkaApp):
     schema_type: Literal["streams-app"] = Field(  # type: ignore[assignment]
         default="streams-app",
         title="Component type",
-        description=describe_class(__doc__),
+        description=describe_object(__doc__),
         exclude=True,
     )
     app: StreamsAppConfig = Field(

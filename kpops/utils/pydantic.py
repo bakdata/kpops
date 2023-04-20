@@ -3,7 +3,7 @@ from typing import Any
 import humps
 from pydantic import BaseConfig, BaseModel
 
-from kpops.utils.docstring import describe_class
+from kpops.utils.docstring import describe_object
 
 
 def to_camel(field: str) -> str:
@@ -20,4 +20,4 @@ class CamelCaseConfig(BaseConfig):
 class DescConfig(BaseConfig):
     @staticmethod
     def schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:  # type: ignore[override]
-        schema["description"] = describe_class(model.__doc__)
+        schema["description"] = describe_object(model.__doc__)

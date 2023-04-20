@@ -27,7 +27,7 @@ from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr, describe_class
+from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.pydantic import CamelCaseConfig
 
 log = logging.getLogger("KafkaConnector")
@@ -62,7 +62,7 @@ class KafkaConnector(PipelineComponent, ABC):
     schema_type: Literal["kafka-connector"] = Field(  # type: ignore[assignment]
         default="kafka-connector",
         title="Component type",
-        description=describe_class(__doc__),
+        description=describe_object(__doc__),
         exclude=True,
     )
     app: KafkaConnectConfig = Field(
@@ -330,7 +330,7 @@ class KafkaSourceConnector(KafkaConnector):
     schema_type: Literal["kafka-source-connector"] = Field(  # type: ignore[assignment]
         default="kafka-source-connector",
         title="Component type",
-        description=describe_class(__doc__),
+        description=describe_object(__doc__),
         exclude=True,
     )
     offset_topic: str | None = Field(
@@ -401,7 +401,7 @@ class KafkaSinkConnector(KafkaConnector):
     schema_type: Literal["kafka-sink-connector"] = Field(  # type: ignore[assignment]
         default="kafka-sink-connector",
         title="Component type",
-        description=describe_class(__doc__),
+        description=describe_object(__doc__),
         exclude=True,
     )
 
