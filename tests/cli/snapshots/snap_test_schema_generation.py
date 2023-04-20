@@ -561,7 +561,7 @@ snapshots[
         },
         "KafkaApp": {
             "title": "KafkaApp",
-            "description": "Base component for Kafka-based components. Producer or streaming apps should inherit from this class.",
+            "description": "Base component for Kafka-based components.\\nProducer or streaming apps should inherit from this class.",
             "type": "object",
             "properties": {
                 "type": {
@@ -572,7 +572,7 @@ snapshots[
                 },
                 "type": {
                     "title": "Component type",
-                    "description": "Base component for Kafka-based components. Producer or streaming apps should inherit from this class.",
+                    "description": "Base component for Kafka-based components.\\nProducer or streaming apps should inherit from this class.",
                     "default": "kafka-app",
                     "enum": [
                         "kafka-app"
@@ -665,7 +665,7 @@ snapshots[
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
-            "description": "Base class for all Kafka connectors Should only be used to set defaults",
+            "description": "Base class for all Kafka connectors\\nShould only be used to set defaults",
             "type": "object",
             "properties": {
                 "type": {
@@ -676,7 +676,7 @@ snapshots[
                 },
                 "type": {
                     "title": "Component type",
-                    "description": "Base class for all Kafka connectors Should only be used to set defaults",
+                    "description": "Base class for all Kafka connectors\\nShould only be used to set defaults",
                     "default": "kafka-connector",
                     "enum": [
                         "kafka-connector"
@@ -976,7 +976,7 @@ snapshots[
         },
         "KubernetesApp": {
             "title": "KubernetesApp",
-            "description": "Base class for all Kubernetes apps. All built-in components are Kubernetes apps, except for the Kafka connectors.",
+            "description": "Base class for all Kubernetes apps.\\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
             "type": "object",
             "properties": {
                 "type": {
@@ -987,7 +987,7 @@ snapshots[
                 },
                 "type": {
                     "title": "Component type",
-                    "description": "Base class for all Kubernetes apps. All built-in components are Kubernetes apps, except for the Kafka connectors.",
+                    "description": "Base class for all Kubernetes apps.\\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
                     "default": "kubernetes-app",
                     "enum": [
                         "kubernetes-app"
@@ -1176,7 +1176,7 @@ snapshots[
         },
         "ProducerApp": {
             "title": "ProducerApp",
-            "description": "Producer component This producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+            "description": "Producer component\\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
             "type": "object",
             "properties": {
                 "type": {
@@ -1187,7 +1187,7 @@ snapshots[
                 },
                 "type": {
                     "title": "Component type",
-                    "description": "Producer component This producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+                    "description": "Producer component\\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
                     "default": "producer",
                     "enum": [
                         "producer"
@@ -1420,7 +1420,7 @@ snapshots[
         },
         "StreamsAppConfig": {
             "title": "StreamsAppConfig",
-            "description": "StreamsBoostrap app configurations. The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart. :params streams: Streams Bootstrap streams section",
+            "description": "\\nStreamsBoostrap app configurations. The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart. :params streams: Streams Bootstrap streams section",
             "type": "object",
             "properties": {
                 "streams": {
@@ -1963,7 +1963,7 @@ snapshots[
         },
         "KafkaApp": {
             "title": "KafkaApp",
-            "description": "Base component for Kafka-based components. Producer or streaming apps should inherit from this class.",
+            "description": "Base component for Kafka-based components.\\nProducer or streaming apps should inherit from this class.",
             "type": "object",
             "properties": {
                 "type": {
@@ -1974,7 +1974,7 @@ snapshots[
                 },
                 "type": {
                     "title": "Component type",
-                    "description": "Base component for Kafka-based components. Producer or streaming apps should inherit from this class.",
+                    "description": "Base component for Kafka-based components.\\nProducer or streaming apps should inherit from this class.",
                     "default": "kafka-app",
                     "enum": [
                         "kafka-app"
@@ -2067,7 +2067,7 @@ snapshots[
         },
         "KafkaConnector": {
             "title": "KafkaConnector",
-            "description": "Base class for all Kafka connectors Should only be used to set defaults",
+            "description": "Base class for all Kafka connectors\\nShould only be used to set defaults",
             "type": "object",
             "properties": {
                 "type": {
@@ -2078,7 +2078,7 @@ snapshots[
                 },
                 "type": {
                     "title": "Component type",
-                    "description": "Base class for all Kafka connectors Should only be used to set defaults",
+                    "description": "Base class for all Kafka connectors\\nShould only be used to set defaults",
                     "default": "kafka-connector",
                     "enum": [
                         "kafka-connector"
@@ -2378,7 +2378,7 @@ snapshots[
         },
         "KubernetesApp": {
             "title": "KubernetesApp",
-            "description": "Base class for all Kubernetes apps. All built-in components are Kubernetes apps, except for the Kafka connectors.",
+            "description": "Base class for all Kubernetes apps.\\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
             "type": "object",
             "properties": {
                 "type": {
@@ -2389,7 +2389,7 @@ snapshots[
                 },
                 "type": {
                     "title": "Component type",
-                    "description": "Base class for all Kubernetes apps. All built-in components are Kubernetes apps, except for the Kafka connectors.",
+                    "description": "Base class for all Kubernetes apps.\\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
                     "default": "kubernetes-app",
                     "enum": [
                         "kubernetes-app"
@@ -2578,7 +2578,7 @@ snapshots[
         },
         "ProducerApp": {
             "title": "ProducerApp",
-            "description": "Producer component This producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+            "description": "Producer component\\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
             "type": "object",
             "properties": {
                 "type": {
@@ -2589,7 +2589,7 @@ snapshots[
                 },
                 "type": {
                     "title": "Component type",
-                    "description": "Producer component This producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+                    "description": "Producer component\\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
                     "default": "producer",
                     "enum": [
                         "producer"
@@ -2822,7 +2822,7 @@ snapshots[
         },
         "StreamsAppConfig": {
             "title": "StreamsAppConfig",
-            "description": "StreamsBoostrap app configurations. The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart. :params streams: Streams Bootstrap streams section",
+            "description": "\\nStreamsBoostrap app configurations. The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart. :params streams: Streams Bootstrap streams section",
             "type": "object",
             "properties": {
                 "streams": {

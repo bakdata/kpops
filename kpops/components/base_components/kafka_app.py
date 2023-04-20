@@ -16,7 +16,7 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
 )
-from kpops.utils.docstring import describe_attr, describe_class
+from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 from kpops.utils.yaml_loading import substitute
 
@@ -82,7 +82,7 @@ class KafkaApp(KubernetesApp):
     schema_type: Literal["kafka-app"] = Field(  # type: ignore[assignment]
         default="kafka-app",
         title="Component type",
-        description=describe_class(__doc__),
+        description=describe_object(__doc__),
         exclude=True,
     )
     app: KafkaAppConfig = Field(

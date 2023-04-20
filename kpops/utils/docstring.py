@@ -21,29 +21,39 @@ def describe_attr(name: str, docstr: str | None) -> str:
     return _trim_description_end(docstr)
 
 
-def describe_class(docstr: str | None) -> str:
-    """Return class description from its docstring
+def describe_object(docstr: str | None) -> str:
+    """Return free-text description from a docstring
 
     Excludes parameters and return definitions
 
     Works only with reStructuredText docstrings.
 
-    :param docstr: The class' docstring
+    :param docstr: The docstring
     :type docstr: str, None
-    :returns: Class description taken from its docstiirng
+    :returns: Description taken from the docstiirng
     :rtype: str
     """
     if docstr is None:
         return ""
+
+    # reST docstrings have a short description/title as their first line.
+    # Optionally, they have a longer description below. Here we separate the
+    # title from the rest as `_trim_description_end()` removes all newlines.
+    docstr = docstr.strip()
+    if "\n" in docstr:
+        title_end = docstr.index("\n")
+        desc = docstr[:title_end] + "\n" + _trim_description_end(docstr[title_end:])
+        return desc.rstrip()
     return _trim_description_end(docstr)
 
 
 def _trim_description_end(desc: str) -> str:
     """Remove the unwanted text that comes after a description in a docstring
 
-    A description is defined here as a string of text written in natural language.
-    A description ends at the occurence of a separator such as `:returns:`
+    Also removes all whitespaces and newlines and replaces them with a single space.
 
+    A description is defined here as a string of text written in natural language.
+    A description ends at the occurence of a separator such as `:returns:`.
     Works only with reStructuredText docstrings.
 
     :param desc: Description to be isolated, only the end will be trimmed

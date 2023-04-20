@@ -12,7 +12,7 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerValues
-from kpops.utils.docstring import describe_attr, describe_class
+from kpops.utils.docstring import describe_attr, describe_object
 
 
 class ProducerApp(KafkaApp):
@@ -36,7 +36,7 @@ class ProducerApp(KafkaApp):
     schema_type: Literal["producer"] = Field(  # type: ignore[assignment]
         default="producer",
         title="Component type",
-        description=describe_class(__doc__),
+        description=describe_object(__doc__),
         exclude=True,
     )
     app: ProducerValues = Field(
