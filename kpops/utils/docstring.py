@@ -6,11 +6,11 @@ log = logging.getLogger("docstring_utils")
 def describe_attr(name: str, docstr: str | None) -> str:
     """Read attribute description from class docstring
 
-    Works only with reStructuredText docstrings.
+    **Works only with reStructuredText docstrings.**
 
     :param name: Attribute name
     :type name: str
-    :param docstr: Docstring from which to read. Note that the class' docstring is stored in attr `__doc__`
+    :param docstr: Docstring from which to read. Note that the class' docstring is stored in attr ``__doc__``
     :type docstr: str, None
     :returns: Description of the class attribute read from the class docstring
     :rtype: str
@@ -26,7 +26,7 @@ def describe_object(docstr: str | None) -> str:
 
     Excludes parameters and return definitions
 
-    Works only with reStructuredText docstrings.
+    **Works only with reStructuredText docstrings.**
 
     :param docstr: The docstring
     :type docstr: str, None
@@ -65,7 +65,7 @@ def _trim_description_end(desc: str) -> str:
     desc_enders = [
         ":param ",
         ":type ",
-        ":return:",
+        ":returns:",
         ":rtype:",
         "defaults to ",
     ]
