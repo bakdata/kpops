@@ -1420,7 +1420,7 @@ snapshots[
         },
         "StreamsAppConfig": {
             "title": "StreamsAppConfig",
-            "description": "\\nStreamsBoostrap app configurations. The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart. :params streams: Streams Bootstrap streams section",
+            "description": "StreamsBoostrap app configurations.\\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart. :params streams: Streams Bootstrap streams section",
             "type": "object",
             "properties": {
                 "streams": {
@@ -2822,7 +2822,7 @@ snapshots[
         },
         "StreamsAppConfig": {
             "title": "StreamsAppConfig",
-            "description": "\\nStreamsBoostrap app configurations. The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart. :params streams: Streams Bootstrap streams section",
+            "description": "StreamsBoostrap app configurations.\\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart. :params streams: Streams Bootstrap streams section",
             "type": "object",
             "properties": {
                 "streams": {
