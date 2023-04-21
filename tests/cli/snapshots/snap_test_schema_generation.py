@@ -13,17 +13,401 @@ snapshots[
 snapshots[
     "TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema-generation"
 ] = """{
-    "title": "kpops pipeline schema",
-    "type": "array",
+    "definitions": {
+        "EmptyPipelineComponent": {
+            "description": "",
+            "properties": {
+                "app": {
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "type": {
+                    "default": "pipeline-component",
+                    "description": "Base class for all components",
+                    "enum": [
+                        "pipeline-component"
+                    ],
+                    "title": "Component type",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "const": "pipeline-component",
+                    "default": "pipeline-component",
+                    "title": "Type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "EmptyPipelineComponent",
+            "type": "object"
+        },
+        "FromSection": {
+            "additionalProperties": false,
+            "description": "Holds multiple input topics",
+            "properties": {
+                "components": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FromTopic"
+                    },
+                    "default": {},
+                    "description": "Components to read from",
+                    "title": "Components",
+                    "type": "object"
+                },
+                "topics": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FromTopic"
+                    },
+                    "default": {},
+                    "description": "Input topics",
+                    "title": "Topics",
+                    "type": "object"
+                }
+            },
+            "title": "FromSection",
+            "type": "object"
+        },
+        "FromTopic": {
+            "additionalProperties": false,
+            "description": "Input topic",
+            "properties": {
+                "role": {
+                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`",
+                    "title": "Role",
+                    "type": "string"
+                },
+                "type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/InputTopicTypes"
+                        }
+                    ],
+                    "description": "Topic type"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "title": "FromTopic",
+            "type": "object"
+        },
+        "InputTopicTypes": {
+            "description": "Input topic types\\n\\n    input (input topic), input_pattern (input pattern topic), extra (extra topic), extra_pattern (extra pattern topic).\\n    Every extra topic must have a role.\\n    ",
+            "enum": [
+                "input",
+                "extra",
+                "input-pattern",
+                "extra-pattern"
+            ],
+            "title": "InputTopicTypes",
+            "type": "string"
+        },
+        "OutputTopicTypes": {
+            "description": "Types of output topic\\n\\n    Error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\\n    ",
+            "enum": [
+                "error",
+                "output",
+                "extra"
+            ],
+            "title": "OutputTopicTypes",
+            "type": "string"
+        },
+        "SubPipelineComponent": {
+            "description": "",
+            "properties": {
+                "app": {
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "type": {
+                    "default": "sub-pipeline-component",
+                    "enum": [
+                        "sub-pipeline-component"
+                    ],
+                    "title": "Schema Type",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "default": "sub-pipeline-component",
+                    "title": "Type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "SubPipelineComponent",
+            "type": "object"
+        },
+        "SubPipelineComponentCorrect": {
+            "description": "",
+            "properties": {
+                "app": {
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "type": {
+                    "default": "sub-pipeline-component-correct",
+                    "enum": [
+                        "sub-pipeline-component-correct"
+                    ],
+                    "title": "Schema Type",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "default": "sub-pipeline-component-correct",
+                    "title": "Type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "SubPipelineComponentCorrect",
+            "type": "object"
+        },
+        "SubPipelineComponentCorrectDocstr": {
+            "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
+            "properties": {
+                "app": {
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "type": {
+                    "default": "sub-pipeline-component-correct-docstr",
+                    "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
+                    "enum": [
+                        "sub-pipeline-component-correct-docstr"
+                    ],
+                    "title": "Schema Type",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "const": "sub-pipeline-component-correct-docstr",
+                    "default": "sub-pipeline-component-correct-docstr",
+                    "description": "Parameter description looks correct and it is not included in the class description, terminates here",
+                    "title": "Type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "SubPipelineComponentCorrectDocstr",
+            "type": "object"
+        },
+        "ToSection": {
+            "description": "Holds multiple output topics",
+            "properties": {
+                "models": {
+                    "default": {},
+                    "description": "Data models",
+                    "title": "Models",
+                    "type": "object"
+                },
+                "topics": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/TopicConfig"
+                    },
+                    "description": "Output topics",
+                    "title": "Topics",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "topics"
+            ],
+            "title": "ToSection",
+            "type": "object"
+        },
+        "TopicConfig": {
+            "additionalProperties": false,
+            "description": "Configure an output topic",
+            "properties": {
+                "configs": {
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer"
+                            }
+                        ]
+                    },
+                    "default": {},
+                    "description": "Topic configs",
+                    "title": "Configs",
+                    "type": "object"
+                },
+                "keySchema": {
+                    "description": "Key schema class name",
+                    "title": "Keyschema",
+                    "type": "string"
+                },
+                "partitions_count": {
+                    "description": "Number of partitions into which the topic is divided",
+                    "title": "Partitions Count",
+                    "type": "integer"
+                },
+                "replication_factor": {
+                    "description": "Replication topic of the topic",
+                    "title": "Replication Factor",
+                    "type": "integer"
+                },
+                "role": {
+                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+                    "title": "Role",
+                    "type": "string"
+                },
+                "type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/OutputTopicTypes"
+                        }
+                    ],
+                    "description": "Topic type"
+                },
+                "valueSchema": {
+                    "description": "Value schema class name",
+                    "title": "Valueschema",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "title": "TopicConfig",
+            "type": "object"
+        }
+    },
     "items": {
         "discriminator": {
-            "propertyName": "type",
             "mapping": {
                 "pipeline-component": "#/definitions/EmptyPipelineComponent",
                 "sub-pipeline-component": "#/definitions/SubPipelineComponent",
                 "sub-pipeline-component-correct": "#/definitions/SubPipelineComponentCorrect",
                 "sub-pipeline-component-correct-docstr": "#/definitions/SubPipelineComponentCorrectDocstr"
-            }
+            },
+            "propertyName": "type"
         },
         "oneOf": [
             {
@@ -40,391 +424,7 @@ snapshots[
             }
         ]
     },
-    "definitions": {
-        "InputTopicTypes": {
-            "title": "InputTopicTypes",
-            "description": "Input topic types\\n\\n    input (input topic), input_pattern (input pattern topic), extra (extra topic), extra_pattern (extra pattern topic).\\n    Every extra topic must have a role.\\n    ",
-            "enum": [
-                "input",
-                "extra",
-                "input-pattern",
-                "extra-pattern"
-            ],
-            "type": "string"
-        },
-        "FromTopic": {
-            "title": "FromTopic",
-            "description": "Input topic",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "description": "Topic type",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/InputTopicTypes"
-                        }
-                    ]
-                },
-                "role": {
-                    "title": "Role",
-                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type"
-            ],
-            "additionalProperties": false
-        },
-        "FromSection": {
-            "title": "FromSection",
-            "description": "Holds multiple input topics",
-            "type": "object",
-            "properties": {
-                "topics": {
-                    "title": "Topics",
-                    "description": "Input topics",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/FromTopic"
-                    }
-                },
-                "components": {
-                    "title": "Components",
-                    "description": "Components to read from",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/FromTopic"
-                    }
-                }
-            },
-            "additionalProperties": false
-        },
-        "OutputTopicTypes": {
-            "title": "OutputTopicTypes",
-            "description": "Types of output topic\\n\\n    Error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\\n    ",
-            "enum": [
-                "error",
-                "output",
-                "extra"
-            ],
-            "type": "string"
-        },
-        "TopicConfig": {
-            "title": "TopicConfig",
-            "description": "Configure an output topic",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "description": "Topic type",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/OutputTopicTypes"
-                        }
-                    ]
-                },
-                "keySchema": {
-                    "title": "Keyschema",
-                    "description": "Key schema class name",
-                    "type": "string"
-                },
-                "valueSchema": {
-                    "title": "Valueschema",
-                    "description": "Value schema class name",
-                    "type": "string"
-                },
-                "partitions_count": {
-                    "title": "Partitions Count",
-                    "description": "Number of partitions into which the topic is divided",
-                    "type": "integer"
-                },
-                "replication_factor": {
-                    "title": "Replication Factor",
-                    "description": "Replication topic of the topic",
-                    "type": "integer"
-                },
-                "configs": {
-                    "title": "Configs",
-                    "description": "Topic configs",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "integer"
-                            }
-                        ]
-                    }
-                },
-                "role": {
-                    "title": "Role",
-                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type"
-            ],
-            "additionalProperties": false
-        },
-        "ToSection": {
-            "title": "ToSection",
-            "description": "Holds multiple output topics",
-            "type": "object",
-            "properties": {
-                "models": {
-                    "title": "Models",
-                    "description": "Data models",
-                    "default": {},
-                    "type": "object"
-                },
-                "topics": {
-                    "title": "Topics",
-                    "description": "Output topics",
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/TopicConfig"
-                    }
-                }
-            },
-            "required": [
-                "topics"
-            ]
-        },
-        "EmptyPipelineComponent": {
-            "title": "EmptyPipelineComponent",
-            "description": "",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "pipeline-component",
-                    "const": "pipeline-component",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Component type",
-                    "description": "Base class for all components",
-                    "default": "pipeline-component",
-                    "enum": [
-                        "pipeline-component"
-                    ],
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "description": "Component name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "description": "Topic(s) and/or components from which the component will read input",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ]
-                },
-                "app": {
-                    "title": "App",
-                    "description": "Application-specific settings"
-                },
-                "to": {
-                    "title": "To",
-                    "description": "Topic(s) into which the component will write output",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ToSection"
-                        }
-                    ]
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
-            ]
-        },
-        "SubPipelineComponent": {
-            "title": "SubPipelineComponent",
-            "description": "",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "sub-pipeline-component",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "sub-pipeline-component",
-                    "enum": [
-                        "sub-pipeline-component"
-                    ],
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "description": "Component name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "description": "Topic(s) and/or components from which the component will read input",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ]
-                },
-                "app": {
-                    "title": "App",
-                    "description": "Application-specific settings"
-                },
-                "to": {
-                    "title": "To",
-                    "description": "Topic(s) into which the component will write output",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ToSection"
-                        }
-                    ]
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
-            ]
-        },
-        "SubPipelineComponentCorrect": {
-            "title": "SubPipelineComponentCorrect",
-            "description": "",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "sub-pipeline-component-correct",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "sub-pipeline-component-correct",
-                    "enum": [
-                        "sub-pipeline-component-correct"
-                    ],
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "description": "Component name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "description": "Topic(s) and/or components from which the component will read input",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ]
-                },
-                "app": {
-                    "title": "App",
-                    "description": "Application-specific settings"
-                },
-                "to": {
-                    "title": "To",
-                    "description": "Topic(s) into which the component will write output",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ToSection"
-                        }
-                    ]
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
-            ]
-        },
-        "SubPipelineComponentCorrectDocstr": {
-            "title": "SubPipelineComponentCorrectDocstr",
-            "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "description": "Parameter description looks correct and it is not included in the class description, terminates here",
-                    "default": "sub-pipeline-component-correct-docstr",
-                    "const": "sub-pipeline-component-correct-docstr",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
-                    "default": "sub-pipeline-component-correct-docstr",
-                    "enum": [
-                        "sub-pipeline-component-correct-docstr"
-                    ],
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "description": "Component name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "description": "Topic(s) and/or components from which the component will read input",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ]
-                },
-                "app": {
-                    "title": "App",
-                    "description": "Application-specific settings"
-                },
-                "to": {
-                    "title": "To",
-                    "description": "Topic(s) into which the component will write output",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ToSection"
-                        }
-                    ]
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
-            ]
-        }
-    }
+    "title": "kpops pipeline schema",
+    "type": "array"
 }
 """

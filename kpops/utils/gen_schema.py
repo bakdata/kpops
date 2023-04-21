@@ -141,11 +141,14 @@ def gen_pipeline_schema(
         title="kpops pipeline schema",
         by_alias=True,
         indent=4,
+        sort_keys=True,
     ).replace("schema_type", "type")
     print(schema)
 
 
 def gen_config_schema() -> None:
     """Generate a json schema from the model of pipeline config"""
-    schema = schema_json_of(PipelineConfig, title="kpops config schema", indent=4)
+    schema = schema_json_of(
+        PipelineConfig, title="kpops config schema", indent=4, sort_keys=True
+    )
     print(schema)
