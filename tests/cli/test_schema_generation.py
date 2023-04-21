@@ -10,7 +10,7 @@ from typer.testing import CliRunner
 
 from kpops.cli.main import app
 from kpops.components.base_components import PipelineComponent
-from kpops.utils.docstring import describe_attr, describe_class
+from kpops.utils.docstring import describe_attr, describe_object
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
@@ -92,7 +92,7 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
         All
             whitespaces are      removed and replaced with a single space.
 
-    The description extraction terminates at the correct place, deletes trailing comas ,,
+    The description extraction terminates at the correct place, deletes 1 trailing coma
 
     ,
 
@@ -117,7 +117,7 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
     )
     schema_type: Literal["sub-pipeline-component-correct-docstr"] = Field(  # type: ignore[assignment]
         default="sub-pipeline-component-correct-docstr",
-        description=describe_class(__doc__),
+        description=describe_object(__doc__),
         exclude=True,
     )
 

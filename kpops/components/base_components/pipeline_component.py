@@ -19,7 +19,7 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
-from kpops.utils.docstring import describe_attr, describe_class
+from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 from kpops.utils.yaml_loading import substitute
 
@@ -51,7 +51,7 @@ class PipelineComponent(BaseDefaultsComponent):
     schema_type: Literal["pipeline-component"] = Field(  # type: ignore[assignment]
         default="pipeline-component",
         title="Component type",
-        description=describe_class(__doc__),
+        description=describe_object(__doc__),
         exclude=True,
     )
     name: str = Field(default=..., description="Component name")

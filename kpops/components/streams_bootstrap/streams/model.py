@@ -215,8 +215,7 @@ class StreamsAppAutoScaling(BaseModel):
 
 
 class StreamsAppConfig(KafkaAppConfig):
-    """
-    StreamsBoostrap app configurations.
+    """StreamsBoostrap app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.
 

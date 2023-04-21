@@ -368,7 +368,7 @@ snapshots[
         },
         "SubPipelineComponentCorrectDocstr": {
             "title": "SubPipelineComponentCorrectDocstr",
-            "description": "Newline before title is removed Summarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes trailing comas ,,",
+            "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
             "type": "object",
             "properties": {
                 "type": {
@@ -380,7 +380,7 @@ snapshots[
                 },
                 "type": {
                     "title": "Schema Type",
-                    "description": "Newline before title is removed Summarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes trailing comas ,,",
+                    "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
                     "default": "sub-pipeline-component-correct-docstr",
                     "enum": [
                         "sub-pipeline-component-correct-docstr"
