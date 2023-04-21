@@ -106,8 +106,7 @@ def _add_components(components_module: str, components: tuple = ()) -> tuple:
 
 
 def gen_pipeline_schema(
-    components_module: str | None = None,
-    include_stock_components: bool = True
+    components_module: str | None = None, include_stock_components: bool = True
 ) -> None:
     """Generate a json schema from the models of pipeline components.
 
@@ -122,12 +121,13 @@ def gen_pipeline_schema(
     if not (include_stock_components or components_module):
         log.warning("No components are provided, no schema is generated.")
         return
+    components = ()
     # Add stock components if enabled
     if include_stock_components:
         components = tuple(_find_classes("kpops.components", PipelineComponent))
     # Add custom components if provided
     if components_module:
-        components = _add_components(components_module, components)        
+        components = _add_components(components_module, components)
     # Create a type union that will hold the union of all component types
     PipelineComponents = Union[components]  # type: ignore[valid-type]
 
