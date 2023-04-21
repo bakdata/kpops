@@ -121,10 +121,11 @@ def gen_pipeline_schema(
     if not (include_stock_components or components_module):
         log.warning("No components are provided, no schema is generated.")
         return
-    components = ()
     # Add stock components if enabled
     if include_stock_components:
         components = tuple(_find_classes("kpops.components", PipelineComponent))
+    else:
+        components = ()
     # Add custom components if provided
     if components_module:
         components = _add_components(components_module, components)
@@ -145,12 +146,6 @@ def gen_pipeline_schema(
 
 
 def gen_config_schema() -> None:
-    """
-    Generate a json schema from the model of pipeline config.
-
-    :param path: The path to the directory where the schema is to be stored.
-    :type path: Path
-    :rtype: None
-    """
+    """Generate a json schema from the model of pipeline config"""
     schema = schema_json_of(PipelineConfig, title="kpops config schema", indent=4)
     print(schema)
