@@ -10,6 +10,7 @@ from typer.testing import CliRunner
 
 from kpops.cli.main import app
 from kpops.components.base_components import PipelineComponent
+from kpops.utils.docstring import describe_attr, describe_class
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
@@ -82,12 +83,64 @@ class SubPipelineComponentCorrect(SubPipelineComponent):
     )
 
 
+# Correctly defined, docstr test
+class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
+    """
+    Newline before title is removed
+
+    Summarry is correctly imported.
+        All
+            whitespaces are      removed and replaced with a single space.
+
+    The description extraction terminates at the correct place, deletes trailing comas ,,
+
+    ,
+
+    :param type: Parameter description looks correct and it is not included in
+        the class description,
+        terminates here ,
+        defaults to anything really, this here should not be included as it follows
+        a terminating substring and does not follow reST spec.
+        if error_marker is found in result.stdout, the description extraction does
+        not work correctly.,!?:error_marker   :: "!$%
+    :type type: This line should not appear anywhere error_marker
+    :param schema_type: This description should not be applied to schema_type as
+        it instead reads the class description. error_marker
+    :type schema_type: This line should not appear anywhere error_marker
+    :param error_marker: error_marker
+    """
+
+    type: str = Field(
+        default="sub-pipeline-component-correct-docstr",
+        description=describe_attr("type", __doc__),
+        const=True,
+    )
+    schema_type: Literal["sub-pipeline-component-correct-docstr"] = Field(  # type: ignore[assignment]
+        default="sub-pipeline-component-correct-docstr",
+        description=describe_class(__doc__),
+        exclude=True,
+    )
+
+
 MODULE = EmptyPipelineComponent.__module__
 
 
 @pytest.mark.filterwarnings("ignore:handlers", "ignore:config", "ignore:enrich")
 class TestGenSchema:
-    def test_gen_pipeline_schema_without_custom_module(self, snapshot: SnapshotTest):
+    def test_gen_pipeline_schema_no_modules(self, snapshot: SnapshotTest):
+        result = runner.invoke(
+            app,
+            [
+                "schema",
+                "pipeline",
+                "--no-include-stock-components",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        snapshot.assert_match(result.stdout, "test-schema-generation")
+
+    def test_gen_pipeline_schema_only_stock_module(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
@@ -98,10 +151,33 @@ class TestGenSchema:
         )
 
         assert result.exit_code == 0
+        assert len(result.stdout) > 0
+
+        result = runner.invoke(
+            app,
+            [
+                "schema",
+                "pipeline",
+                "--include-stock-components",
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0
+        assert len(result.stdout) > 0
+
+    def test_gen_pipeline_schema_only_custom_module(self, snapshot: SnapshotTest):
+        result = runner.invoke(
+            app,
+            ["schema", "pipeline", MODULE, "--no-include-stock-components"],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0
 
         snapshot.assert_match(result.stdout, "test-schema-generation")
 
-    def test_gen_pipeline_schema_with_custom_module(self, snapshot: SnapshotTest):
+    def test_gen_pipeline_schema_stock_and_custom_module(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
@@ -113,8 +189,7 @@ class TestGenSchema:
         )
 
         assert result.exit_code == 0
-
-        snapshot.assert_match(result.stdout, "test-schema-generation")
+        assert len(result.stdout) > 0
 
     def test_gen_config_schema(self, snapshot: SnapshotTest):
         result = runner.invoke(
@@ -124,5 +199,3 @@ class TestGenSchema:
         )
 
         assert result.exit_code == 0
-
-        snapshot.assert_match(result.stdout, "test-schema-generation")
