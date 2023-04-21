@@ -201,15 +201,18 @@ def schema(
         help="""
         Scope of the generated schema
         \n\n\n
-        pipeline: Schema of PipelineComponents. Always includes the built-in kpops components. To include custom components, provide [COMPONENTS_MODULES].
+        pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide [COMPONENTS_MODULES].
         \n\n\n
         config: Schema of PipelineConfig.""",
     ),
     components_module: Optional[str] = COMPONENTS_MODULES,
+    include_stock_components: bool = typer.Option(
+        default=True, help="Include the built-in KPOps components."
+    ),
 ) -> None:
     match scope:
         case SchemaScope.PIPELINE:
-            gen_pipeline_schema(components_module)
+            gen_pipeline_schema(components_module, include_stock_components)
         case SchemaScope.CONFIG:
             gen_config_schema()
 
