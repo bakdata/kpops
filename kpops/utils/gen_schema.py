@@ -32,7 +32,7 @@ schema.field_schema = field_schema
 log = logging.getLogger("")
 
 
-def is_valid_component(
+def _is_valid_component(
     defined_component_types: set[str], component: type[PipelineComponent]
 ) -> bool:
     """
@@ -76,32 +76,58 @@ def is_valid_component(
         return True
 
 
+def _add_components(components_module: str, components: tuple = ()) -> tuple:
+    """Add components to a components tuple
+
+    If an empty tuple is provided or it is not provided at all, the components
+    types from the given module are 'tupled'
+
+    :param components_module: Python module. Only the classes that inherit from
+        PipelineComponent will be considered.
+    :type components_module: str
+    :param components: Tuple of components to which to add, defaults to ()
+    :type components: tuple, optional
+    :return: Extended tuple
+    :rtype: tuple
+    """
+    # Set of existing types, against which to check the new ones
+    defined_component_types: set[str] = {
+        component.__fields__["schema_type"].default
+        for component in components
+        if component.__fields__.get("schema_type")
+    }
+    custom_components = [
+        component
+        for component in _find_classes(components_module, PipelineComponent)
+        if _is_valid_component(defined_component_types, component)
+    ]
+    components += tuple(custom_components)
+    return components
+
+
 def gen_pipeline_schema(
     components_module: str | None = None,
+    include_stock_components: bool = True
 ) -> None:
-    """
-    Generate a json schema from the models of pipeline components.
+    """Generate a json schema from the models of pipeline components.
 
-    :param components_module: Python module. Only the classes that inherit from PipelineComponent will be considered.
-    :type components_module: str or None
+    :param components_module: Python module. Only the classes that inherit from
+        PipelineComponent will be considered., defaults to None
+    :type components_module: str or None, optional
+    :param include_stock_components: Whether to include the stock components,
+        defaults to True
+    :type include_stock_components: bool, optional
     :rtype: None
     """
-
-    components = tuple(_find_classes("kpops.components", PipelineComponent))
+    if not (include_stock_components or components_module):
+        log.warning("No components are provided, no schema is generated.")
+        return
+    # Add stock components if enabled
+    if include_stock_components:
+        components = tuple(_find_classes("kpops.components", PipelineComponent))
+    # Add custom components if provided
     if components_module:
-        # record components types defined so far
-        defined_component_types: set[str] = {
-            component.__fields__["schema_type"].default
-            for component in components
-            if component.__fields__.get("schema_type")
-        }
-        custom_components = [
-            component
-            for component in _find_classes(components_module, PipelineComponent)
-            if is_valid_component(defined_component_types, component)
-        ]
-        components += tuple(custom_components)
-
+        components = _add_components(components_module, components)        
     # Create a type union that will hold the union of all component types
     PipelineComponents = Union[components]  # type: ignore[valid-type]
 
