@@ -248,8 +248,8 @@ class Pipeline:
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
-        """
-        Adds the environment name from the PipelineConfig to the pipeline.yaml path
+        """Adds the environment name from the PipelineConfig to the pipeline.yaml path
+
         :param path: Path to pipeline.yaml file
         :param config: The PipelineConfig
         :return: Absolute path to the pipeline_<environment>.yaml
@@ -258,16 +258,20 @@ class Pipeline:
 
     @staticmethod
     def set_pipeline_name_env_vars(base_dir: Path, path: Path) -> None:
-        """
-        Sets the environment variable pipeline_name relative to the given base_dir.
+        """Set the environment variable pipeline_name relative to the given base_dir.
+
         Moreover, for each sub-path an environment variable is set.
         For example, for a given path ./data/v1/dev/pipeline.yaml the pipeline_name would be
         set to data-v1-dev. Then the sub environment variables are set:
+        
         pipeline_name_0 = data
         pipeline_name_1 = v1
         pipeline_name_2 = dev
+
         :param base_dir: Base directory to the pipeline files
+        :type bas_dir: Path
         :param path: Path to pipeline.yaml file
+        :type path: Path
         """
         path_without_file = path.resolve().relative_to(base_dir.resolve()).parts[:-1]
         if not path_without_file:

@@ -87,7 +87,7 @@ class PipelineComponent(BaseDefaultsComponent):
         self.set_output_topics()
 
     def substitute_output_topic_names(self) -> None:
-        """Substitute component and topic sepcific names in output topics"""
+        """Substitute component and topic specific names in output topics"""
         if self.to:
             updated_to = {}
             for name, topic in self.to.topics.items():
