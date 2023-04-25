@@ -78,7 +78,7 @@ def _is_valid_component(
 
 def _add_components(
     components_module: str, components: tuple[type[PipelineComponent]] | None = None
-) -> tuple:
+) -> tuple[type[PipelineComponent]]:
     """Add components to a components tuple
 
     If an empty tuple is provided or it is not provided at all, the components
@@ -93,7 +93,7 @@ def _add_components(
     :rtype: tuple
     """
     if components is None:
-        components = ()
+        components = tuple()
     # Set of existing types, against which to check the new ones
     defined_component_types: set[str] = {
         component.__fields__["schema_type"].default

@@ -3,8 +3,7 @@
 
 set -o errexit
 
-SCRIPT_DIR=$(realpath ${BASH_SOURCE[0]} --canonicalize-existing)
-ROOT_DIR=${SCRIPT_DIR%/*/*}
+ROOT_DIR=$(realpath ${0%/*/*} --canonicalize-existing)
 
 # change directory to the project root directory.
 cd $ROOT_DIR
