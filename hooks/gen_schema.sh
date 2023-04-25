@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-ROOT_DIR=$(realpath ${0%/*/*} --canonicalize-existing)
+ROOT_DIR=$(realpath ${0%/*/*})
 OUTPUT="$ROOT_DIR"/docs/docs/schema
 
 # Generate pipeline schema
