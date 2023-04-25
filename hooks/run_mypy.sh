@@ -4,7 +4,7 @@
 set -o errexit
 
 scriptDir=$(realpath ${BASH_SOURCE[0]} --canonicalize-existing)
-rootDir=${scriptDir%/*/*/*}
+rootDir=${scriptDir%/*/*}
 
 # change directory to the project root directory.
 cd $rootDir
