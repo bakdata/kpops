@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-scriptDir=$(realpath ${BASH_SOURCE[0]} --canonicalize-existing)
-output="${scriptDir%/*/*}"/docs/docs/schema
+SCRIPT_DIR=$(realpath ${BASH_SOURCE[0]} --canonicalize-existing)
+OUTPUT="${SCRIPT_DIR%/*/*}"/docs/docs/schema
 
 # Generate pipeline schema
-poetry run kpops schema pipeline > "$output"/pipeline.json
+poetry run kpops schema pipeline > "$OUTPUT"/pipeline.json
 
 # Generate config schema
-poetry run kpops schema config > "$output"/config.json
+poetry run kpops schema config > "$OUTPUT"/config.json

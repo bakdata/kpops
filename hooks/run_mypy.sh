@@ -3,10 +3,10 @@
 
 set -o errexit
 
-scriptDir=$(realpath ${BASH_SOURCE[0]} --canonicalize-existing)
-rootDir=${scriptDir%/*/*}
+SCRIPT_DIR=$(realpath ${BASH_SOURCE[0]} --canonicalize-existing)
+ROOT_DIR=${SCRIPT_DIR%/*/*}
 
 # change directory to the project root directory.
-cd $rootDir
+cd $ROOT_DIR
 
 mypy --pretty kpops tests
