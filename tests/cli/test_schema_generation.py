@@ -16,7 +16,7 @@ from kpops.utils.docstring import describe_attr, describe_object
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
-runner = CliRunner(mix_stderr=False)
+runner = CliRunner()
 
 
 # schema_type and type not defined
@@ -128,7 +128,7 @@ MODULE = EmptyPipelineComponent.__module__
 
 @pytest.mark.filterwarnings("ignore:handlers", "ignore:config", "ignore:enrich")
 class TestGenSchema:
-    def test_gen_pipeline_schema_no_modules(self, snapshot: SnapshotTest):
+    def test_gen_pipeline_schema_no_modules(self, caplog):
         result = runner.invoke(
             app,
             [
@@ -138,16 +138,10 @@ class TestGenSchema:
             ],
             catch_exceptions=False,
         )
-        assert [
-            (
-                "root",
-                logging.WARNING,
-                "No components are provided, no schema is generated.",
-            )
-        ]
+        assert caplog.record_tuples == [("root", logging.WARNING, "No components are provided, no schema is generated.")]
         assert result.exit_code == 0
 
-    def test_gen_pipeline_schema_only_stock_module(self, snapshot: SnapshotTest):
+    def test_gen_pipeline_schema_only_stock_module(self):
         result = runner.invoke(
             app,
             [
@@ -184,7 +178,7 @@ class TestGenSchema:
 
         snapshot.assert_match(result.stdout, "test-schema-generation")
 
-    def test_gen_pipeline_schema_stock_and_custom_module(self, snapshot: SnapshotTest):
+    def test_gen_pipeline_schema_stock_and_custom_module(self):
         result = runner.invoke(
             app,
             [
@@ -198,7 +192,7 @@ class TestGenSchema:
         assert result.exit_code == 0
         assert result.stdout
 
-    def test_gen_config_schema(self, snapshot: SnapshotTest):
+    def test_gen_config_schema(self):
         result = runner.invoke(
             app,
             ["schema", "config"],
