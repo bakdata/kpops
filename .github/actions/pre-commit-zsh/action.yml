@@ -17,5 +17,5 @@ runs:
     - name: Run pre-commit-hooks
       shell: zsh {0}
       run: |
-        poetry run mypy pre-commit run --all-files --show-diff-on-failure
-        poetry run gen-docs pre-commit run --all-files --show-diff-on-failure
+        poetry run pre-commit run mypy --all-files --show-diff-on-failure
+        poetry run pre-commit run gen-docs --all-files --show-diff-on-failure
