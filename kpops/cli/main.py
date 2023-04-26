@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Iterator, Optional
 
 import typer
 
+from kpops import __version__
 from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
 from kpops.cli.registry import Registry
@@ -343,6 +344,21 @@ def clean(
         log_action("Clean", component)
         component.destroy(dry_run)
         component.clean(dry_run)
+
+
+def version_callback(show_version: bool) -> None:
+    if show_version:
+        typer.echo(f"KPOps {__version__}")
+        raise typer.Exit()
+
+
+@app.callback()
+def main(
+    version: bool = typer.Option(
+        False, "--version", "-V", callback=version_callback, is_eager=True
+    ),
+):
+    return
 
 
 if __name__ == "__main__":
