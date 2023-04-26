@@ -93,7 +93,9 @@ def _add_components(
     :rtype: tuple
     """
     if components is None:
-        components = tuple()
+        components = tuple()  # type: ignore[assignment]
+    # HACK: mypy doesn't narrow the tuple's type without this assertion
+    assert components is not None
     # Set of existing types, against which to check the new ones
     defined_component_types: set[str] = {
         component.__fields__["schema_type"].default
@@ -105,7 +107,7 @@ def _add_components(
         for component in _find_classes(components_module, PipelineComponent)
         if _is_valid_component(defined_component_types, component)
     ]
-    components += tuple(custom_components)
+    components += tuple(custom_components)  # type: ignore[assignment]
     return components
 
 
@@ -129,10 +131,10 @@ def gen_pipeline_schema(
     if include_stock_components:
         components = tuple(_find_classes("kpops.components", PipelineComponent))
     else:
-        components = ()
+        components = tuple()
     # Add custom components if provided
     if components_module:
-        components = _add_components(components_module, components)
+        components = _add_components(components_module, components)  # type: ignore[arg-type]
     # Create a type union that will hold the union of all component types
     PipelineComponents = Union[components]  # type: ignore[valid-type]
 
