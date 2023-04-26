@@ -55,12 +55,14 @@ jobs:
       - name: Generate docs
         run: sh ./gen_docs.sh
         shell: bash
-      
-      - name: Test pre-commit hooks on zsh
-        run: |
-          poetry run pre-commit run mypy --all-files --show-diff-on-failure
-          poetry run pre-commit run gen-docs --all-files --show-diff-on-failure
-        shell: zsh {0}
+  
+  test-on-zsh:
+    name: Test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: ./.github/actions/pre-commit-zsh
 
   publish:
     name: Publish
