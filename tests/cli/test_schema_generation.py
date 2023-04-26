@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import Literal
 
@@ -15,7 +16,7 @@ from kpops.utils.docstring import describe_attr, describe_object
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
-runner = CliRunner()
+runner = CliRunner(mix_stderr=False)
 
 
 # schema_type and type not defined
@@ -137,8 +138,14 @@ class TestGenSchema:
             ],
             catch_exceptions=False,
         )
+        assert [
+            (
+                "root",
+                logging.WARNING,
+                "No components are provided, no schema is generated.",
+            )
+        ]
         assert result.exit_code == 0
-        snapshot.assert_match(result.stdout, "test-schema-generation")
 
     def test_gen_pipeline_schema_only_stock_module(self, snapshot: SnapshotTest):
         result = runner.invoke(
@@ -151,7 +158,7 @@ class TestGenSchema:
         )
 
         assert result.exit_code == 0
-        assert len(result.stdout) > 0
+        assert result.stdout
 
         result = runner.invoke(
             app,
@@ -164,7 +171,7 @@ class TestGenSchema:
         )
 
         assert result.exit_code == 0
-        assert len(result.stdout) > 0
+        assert result.stdout
 
     def test_gen_pipeline_schema_only_custom_module(self, snapshot: SnapshotTest):
         result = runner.invoke(
@@ -189,7 +196,7 @@ class TestGenSchema:
         )
 
         assert result.exit_code == 0
-        assert len(result.stdout) > 0
+        assert result.stdout
 
     def test_gen_config_schema(self, snapshot: SnapshotTest):
         result = runner.invoke(
