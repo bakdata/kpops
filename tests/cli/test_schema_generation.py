@@ -138,7 +138,13 @@ class TestGenSchema:
             ],
             catch_exceptions=False,
         )
-        assert caplog.record_tuples == [("root", logging.WARNING, "No components are provided, no schema is generated.")]
+        assert caplog.record_tuples == [
+            (
+                "root",
+                logging.WARNING,
+                "No components are provided, no schema is generated.",
+            )
+        ]
         assert result.exit_code == 0
 
     def test_gen_pipeline_schema_only_stock_module(self):
