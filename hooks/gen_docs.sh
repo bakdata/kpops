@@ -7,4 +7,4 @@ OUTPUT="$ROOT_DIR"/docs/docs/user/references/cli-commands.md
 poetry run typer "$ROOT_DIR"/kpops/cli/main.py utils docs --name kpops --output "$OUTPUT"
 
 # Change title to "CLI Usage"
-sed -i '1s/.*/# CLI Usage/' "$OUTPUT"
+sed --in-place='' '1s/.*/# CLI Usage/' "$OUTPUT"
