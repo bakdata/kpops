@@ -57,7 +57,7 @@ jobs:
         shell: bash
   
   test-on-zsh:
-    name: Test
+    name: Test (zsh)
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v3
