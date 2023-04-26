@@ -62,7 +62,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: test pre-commit hooks in zsh
+      - name: Test pre-commit hooks in zsh
         uses: ./.github/actions/pre-commit-zsh
 
   publish:
