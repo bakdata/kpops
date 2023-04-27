@@ -355,7 +355,12 @@ def version_callback(show_version: bool) -> None:
 @app.callback()
 def main(
     version: bool = typer.Option(
-        False, "--version", "-V", callback=version_callback, is_eager=True
+        False,
+        "--version",
+        "-V",
+        help="Print KPOps version",
+        callback=version_callback,
+        is_eager=True,
     ),
 ):
     return
