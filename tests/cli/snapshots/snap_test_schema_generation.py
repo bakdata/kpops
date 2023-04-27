@@ -7,10 +7,6 @@ from snapshottest import Snapshot
 snapshots = Snapshot()
 
 snapshots[
-    "TestGenSchema.test_gen_pipeline_schema_no_modules test-schema-generation"
-] = ""
-
-snapshots[
     "TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema-generation"
 ] = """{
     "definitions": {
