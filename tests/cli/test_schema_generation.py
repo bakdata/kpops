@@ -128,7 +128,7 @@ MODULE = EmptyPipelineComponent.__module__
 
 @pytest.mark.filterwarnings("ignore:handlers", "ignore:config", "ignore:enrich")
 class TestGenSchema:
-    def test_gen_pipeline_schema_no_modules(self, caplog):
+    def test_gen_pipeline_schema_no_modules(self, caplog: pytest.LogCaptureFixture):
         result = runner.invoke(
             app,
             [
