@@ -1,9 +1,1247 @@
 {
-    "title": "kpops pipeline schema",
-    "type": "array",
+    "definitions": {
+        "FromSection": {
+            "additionalProperties": false,
+            "description": "Holds multiple input topics",
+            "properties": {
+                "components": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FromTopic"
+                    },
+                    "default": {},
+                    "description": "Components to read from",
+                    "title": "Components",
+                    "type": "object"
+                },
+                "topics": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/FromTopic"
+                    },
+                    "default": {},
+                    "description": "Input topics",
+                    "title": "Topics",
+                    "type": "object"
+                }
+            },
+            "title": "FromSection",
+            "type": "object"
+        },
+        "FromTopic": {
+            "additionalProperties": false,
+            "description": "Input topic",
+            "properties": {
+                "role": {
+                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`",
+                    "title": "Role",
+                    "type": "string"
+                },
+                "type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/InputTopicTypes"
+                        }
+                    ],
+                    "description": "Topic type"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "title": "FromTopic",
+            "type": "object"
+        },
+        "HelmRepoConfig": {
+            "description": "Helm repository configuration",
+            "properties": {
+                "repoAuthFlags": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/RepoAuthFlags"
+                        }
+                    ],
+                    "default": {
+                        "ca_file": null,
+                        "insecure_skip_tls_verify": false,
+                        "password": null,
+                        "username": null
+                    },
+                    "description": "Authorisation-related flags",
+                    "title": "Repoauthflags"
+                },
+                "repositoryName": {
+                    "description": "Name of the Helm repository",
+                    "title": "Repositoryname",
+                    "type": "string"
+                },
+                "url": {
+                    "description": "URL to the Helm repository",
+                    "title": "Url",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "repositoryName",
+                "url"
+            ],
+            "title": "HelmRepoConfig",
+            "type": "object"
+        },
+        "InputTopicTypes": {
+            "description": "Input topic types\n\n    input (input topic), input_pattern (input pattern topic), extra (extra topic), extra_pattern (extra pattern topic).\n    Every extra topic must have a role.\n    ",
+            "enum": [
+                "input",
+                "extra",
+                "input-pattern",
+                "extra-pattern"
+            ],
+            "title": "InputTopicTypes",
+            "type": "string"
+        },
+        "KafkaApp": {
+            "description": "Base component for Kafka-based components.\nProducer or streaming apps should inherit from this class.",
+            "properties": {
+                "app": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KafkaAppConfig"
+                        }
+                    ],
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "repoConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ],
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-streams-bootstrap",
+                        "url": "https://bakdata.github.io/streams-bootstrap/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "title": "Repoconfig"
+                },
+                "type": {
+                    "default": "kafka-app",
+                    "description": "Base component for Kafka-based components.\nProducer or streaming apps should inherit from this class.",
+                    "enum": [
+                        "kafka-app"
+                    ],
+                    "title": "Component type",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "default": "kafka-app",
+                    "description": "Component type",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "version": {
+                    "default": "2.9.0",
+                    "description": "Helm chart version",
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app",
+                "namespace"
+            ],
+            "title": "KafkaApp",
+            "type": "object"
+        },
+        "KafkaAppConfig": {
+            "description": "Settings specific to Kafka Apps",
+            "properties": {
+                "nameOverride": {
+                    "description": "Override name with this value",
+                    "title": "Nameoverride",
+                    "type": "string"
+                },
+                "streams": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KafkaStreamsConfig"
+                        }
+                    ],
+                    "description": "Kafka streams config",
+                    "title": "Streams"
+                }
+            },
+            "required": [
+                "streams"
+            ],
+            "title": "KafkaAppConfig",
+            "type": "object"
+        },
+        "KafkaConnectConfig": {
+            "additionalProperties": {
+                "type": "string"
+            },
+            "description": "Settings specific to Kafka Connectors",
+            "properties": {},
+            "title": "KafkaConnectConfig",
+            "type": "object"
+        },
+        "KafkaConnector": {
+            "description": "Base class for all Kafka connectors\nShould only be used to set defaults",
+            "properties": {
+                "app": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KafkaConnectConfig"
+                        }
+                    ],
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "repoConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ],
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-kafka-connect-resetter",
+                        "url": "https://bakdata.github.io/kafka-connect-resetter/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "title": "Repoconfig"
+                },
+                "resetterValues": {
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "title": "Resettervalues",
+                    "type": "object"
+                },
+                "type": {
+                    "default": "kafka-connector",
+                    "description": "Base class for all Kafka connectors\nShould only be used to set defaults",
+                    "enum": [
+                        "kafka-connector"
+                    ],
+                    "title": "Component type",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "default": "kafka-connector",
+                    "description": "Component type",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "version": {
+                    "default": "1.0.4",
+                    "description": "Helm chart version",
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app",
+                "namespace"
+            ],
+            "title": "KafkaConnector",
+            "type": "object"
+        },
+        "KafkaSinkConnector": {
+            "description": "Kafka sink connector model",
+            "properties": {
+                "app": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KafkaConnectConfig"
+                        }
+                    ],
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "repoConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ],
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-kafka-connect-resetter",
+                        "url": "https://bakdata.github.io/kafka-connect-resetter/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "title": "Repoconfig"
+                },
+                "resetterValues": {
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "title": "Resettervalues",
+                    "type": "object"
+                },
+                "type": {
+                    "default": "kafka-sink-connector",
+                    "description": "Kafka sink connector model",
+                    "enum": [
+                        "kafka-sink-connector"
+                    ],
+                    "title": "Component type",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "default": "kafka-sink-connector",
+                    "description": "Component type",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "version": {
+                    "default": "1.0.4",
+                    "description": "Helm chart version",
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app",
+                "namespace"
+            ],
+            "title": "KafkaSinkConnector",
+            "type": "object"
+        },
+        "KafkaSourceConnector": {
+            "description": "Kafka source connector model",
+            "properties": {
+                "app": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KafkaConnectConfig"
+                        }
+                    ],
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "offsetTopic": {
+                    "description": "offset.storage.topic, more info: https://kafka.apache.org/documentation/#connect_running",
+                    "title": "Offsettopic",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "repoConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ],
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-kafka-connect-resetter",
+                        "url": "https://bakdata.github.io/kafka-connect-resetter/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "title": "Repoconfig"
+                },
+                "resetterValues": {
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "title": "Resettervalues",
+                    "type": "object"
+                },
+                "type": {
+                    "default": "kafka-source-connector",
+                    "description": "Kafka source connector model",
+                    "enum": [
+                        "kafka-source-connector"
+                    ],
+                    "title": "Component type",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "default": "kafka-source-connector",
+                    "description": "Component type",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "version": {
+                    "default": "1.0.4",
+                    "description": "Helm chart version",
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app",
+                "namespace"
+            ],
+            "title": "KafkaSourceConnector",
+            "type": "object"
+        },
+        "KafkaStreamsConfig": {
+            "description": "Kafka Streams config",
+            "properties": {
+                "brokers": {
+                    "description": "Brokers",
+                    "title": "Brokers",
+                    "type": "string"
+                },
+                "schemaRegistryUrl": {
+                    "description": "URL of the schema registry",
+                    "title": "Schemaregistryurl",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "brokers"
+            ],
+            "title": "KafkaStreamsConfig",
+            "type": "object"
+        },
+        "KubernetesApp": {
+            "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
+            "properties": {
+                "app": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KubernetesAppConfig"
+                        }
+                    ],
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "repoConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ],
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "title": "Repoconfig"
+                },
+                "type": {
+                    "default": "kubernetes-app",
+                    "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
+                    "enum": [
+                        "kubernetes-app"
+                    ],
+                    "title": "Component type",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "default": "kubernetes-app",
+                    "description": "Component type",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Helm chart version",
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app",
+                "namespace"
+            ],
+            "title": "KubernetesApp",
+            "type": "object"
+        },
+        "KubernetesAppConfig": {
+            "description": "Settings specific to Kubernetes Apps",
+            "properties": {},
+            "title": "KubernetesAppConfig",
+            "type": "object"
+        },
+        "OutputTopicTypes": {
+            "description": "Types of output topic\n\n    Error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\n    ",
+            "enum": [
+                "error",
+                "output",
+                "extra"
+            ],
+            "title": "OutputTopicTypes",
+            "type": "string"
+        },
+        "PipelineComponent": {
+            "description": "Base class for all components",
+            "properties": {
+                "app": {
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "type": {
+                    "default": "pipeline-component",
+                    "description": "Base class for all components",
+                    "enum": [
+                        "pipeline-component"
+                    ],
+                    "title": "Component type",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "const": "pipeline-component",
+                    "default": "pipeline-component",
+                    "title": "Type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name"
+            ],
+            "title": "PipelineComponent",
+            "type": "object"
+        },
+        "ProducerApp": {
+            "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+            "properties": {
+                "app": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ProducerValues"
+                        }
+                    ],
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "description": "Producer doesn't support FromSection",
+                    "title": "From",
+                    "type": "null"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "repoConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ],
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-streams-bootstrap",
+                        "url": "https://bakdata.github.io/streams-bootstrap/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "title": "Repoconfig"
+                },
+                "type": {
+                    "default": "producer",
+                    "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+                    "enum": [
+                        "producer"
+                    ],
+                    "title": "Component type",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "default": "producer",
+                    "description": "Component type",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "version": {
+                    "default": "2.9.0",
+                    "description": "Helm chart version",
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app",
+                "namespace"
+            ],
+            "title": "ProducerApp",
+            "type": "object"
+        },
+        "ProducerStreamsConfig": {
+            "description": "Kafka Streams settings specific to Producer",
+            "properties": {
+                "brokers": {
+                    "description": "Brokers",
+                    "title": "Brokers",
+                    "type": "string"
+                },
+                "extraOutputTopics": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra output topics",
+                    "title": "Extraoutputtopics",
+                    "type": "object"
+                },
+                "outputTopic": {
+                    "description": "Output topic",
+                    "title": "Outputtopic",
+                    "type": "string"
+                },
+                "schemaRegistryUrl": {
+                    "description": "URL of the schema registry",
+                    "title": "Schemaregistryurl",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "brokers"
+            ],
+            "title": "ProducerStreamsConfig",
+            "type": "object"
+        },
+        "ProducerValues": {
+            "description": "Settings specific to Producers",
+            "properties": {
+                "nameOverride": {
+                    "description": "Override name with this value",
+                    "title": "Nameoverride",
+                    "type": "string"
+                },
+                "streams": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ProducerStreamsConfig"
+                        }
+                    ],
+                    "description": "Kafka Streams settings",
+                    "title": "Streams"
+                }
+            },
+            "required": [
+                "streams"
+            ],
+            "title": "ProducerValues",
+            "type": "object"
+        },
+        "RepoAuthFlags": {
+            "description": "Authorisation-related flags for `helm repo`",
+            "properties": {
+                "caFile": {
+                    "description": "Certificate file",
+                    "format": "path",
+                    "title": "Cafile",
+                    "type": "string"
+                },
+                "insecureSkipTlsVerify": {
+                    "default": false,
+                    "description": "If true, Kubernetes API server's certificate will not be checked for validity",
+                    "title": "Insecureskiptlsverify",
+                    "type": "boolean"
+                },
+                "password": {
+                    "description": "Password",
+                    "title": "Password",
+                    "type": "string"
+                },
+                "username": {
+                    "description": "Username",
+                    "title": "Username",
+                    "type": "string"
+                }
+            },
+            "title": "RepoAuthFlags",
+            "type": "object"
+        },
+        "StreamsApp": {
+            "description": "StreamsApp component that configures a streams bootstrap app",
+            "properties": {
+                "app": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/StreamsAppConfig"
+                        }
+                    ],
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "repoConfig": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ],
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-streams-bootstrap",
+                        "url": "https://bakdata.github.io/streams-bootstrap/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "title": "Repoconfig"
+                },
+                "type": {
+                    "default": "streams-app",
+                    "description": "StreamsApp component that configures a streams bootstrap app",
+                    "enum": [
+                        "streams-app"
+                    ],
+                    "title": "Component type",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "default": "streams-app",
+                    "description": "Component type",
+                    "title": "Type",
+                    "type": "string"
+                },
+                "version": {
+                    "default": "2.9.0",
+                    "description": "Helm chart version",
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "app",
+                "namespace"
+            ],
+            "title": "StreamsApp",
+            "type": "object"
+        },
+        "StreamsAppAutoScaling": {
+            "description": "Kubernetes Event-driven Autoscaling config",
+            "properties": {
+                "consumerGroup": {
+                    "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag.",
+                    "title": "Consumer group",
+                    "type": "string"
+                },
+                "cooldownPeriod": {
+                    "default": 300,
+                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
+                    "title": "Cooldown period",
+                    "type": "integer"
+                },
+                "enabled": {
+                    "default": false,
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "idleReplicas": {
+                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount",
+                    "title": "Idle replica count",
+                    "type": "integer"
+                },
+                "lagThreshold": {
+                    "description": "Average target value to trigger scaling actions.",
+                    "title": "Lag threshold",
+                    "type": "integer"
+                },
+                "maxReplicas": {
+                    "default": 1,
+                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
+                    "title": "Max replica count",
+                    "type": "integer"
+                },
+                "minReplicas": {
+                    "default": 0,
+                    "description": "Minimum number of replicas KEDA will scale the resource down to. \"https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount\"",
+                    "title": "Min replica count",
+                    "type": "integer"
+                },
+                "offsetResetPolicy": {
+                    "default": "earliest",
+                    "description": "The offset reset policy for the consumer if the consumer group is not yet subscribed to a partition.",
+                    "title": "Offset reset policy",
+                    "type": "string"
+                },
+                "pollingInterval": {
+                    "default": 30,
+                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
+                    "title": "Polling interval",
+                    "type": "integer"
+                },
+                "topics": {
+                    "default": [],
+                    "description": "List of auto-generated Kafka Streams topics used by the streams app.",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Topics",
+                    "type": "array"
+                }
+            },
+            "required": [
+                "consumerGroup",
+                "lagThreshold"
+            ],
+            "title": "StreamsAppAutoScaling",
+            "type": "object"
+        },
+        "StreamsAppConfig": {
+            "description": "StreamsBoostrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart. :params streams: Streams Bootstrap streams section",
+            "properties": {
+                "autoscaling": {
+                    "$ref": "#/definitions/StreamsAppAutoScaling"
+                },
+                "nameOverride": {
+                    "description": "Override name with this value",
+                    "title": "Nameoverride",
+                    "type": "string"
+                },
+                "streams": {
+                    "$ref": "#/definitions/StreamsConfig"
+                }
+            },
+            "required": [
+                "streams"
+            ],
+            "title": "StreamsAppConfig",
+            "type": "object"
+        },
+        "StreamsConfig": {
+            "description": "Streams Bootstrap streams section",
+            "properties": {
+                "brokers": {
+                    "description": "Brokers",
+                    "title": "Brokers",
+                    "type": "string"
+                },
+                "config": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Configuration",
+                    "title": "Config",
+                    "type": "object"
+                },
+                "errorTopic": {
+                    "description": "Error topic",
+                    "title": "Errortopic",
+                    "type": "string"
+                },
+                "extraInputPatterns": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra input patterns",
+                    "title": "Extrainputpatterns",
+                    "type": "object"
+                },
+                "extraInputTopics": {
+                    "additionalProperties": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "default": {},
+                    "description": "Extra input topics",
+                    "title": "Extrainputtopics",
+                    "type": "object"
+                },
+                "extraOutputTopics": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra output topics",
+                    "title": "Extraoutputtopics",
+                    "type": "object"
+                },
+                "inputPattern": {
+                    "description": "Input pattern",
+                    "title": "Inputpattern",
+                    "type": "string"
+                },
+                "inputTopics": {
+                    "default": [],
+                    "description": "Input topics",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Inputtopics",
+                    "type": "array"
+                },
+                "outputTopic": {
+                    "description": "Output topic",
+                    "title": "Outputtopic",
+                    "type": "string"
+                },
+                "schemaRegistryUrl": {
+                    "description": "URL of the schema registry",
+                    "title": "Schemaregistryurl",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "brokers"
+            ],
+            "title": "StreamsConfig",
+            "type": "object"
+        },
+        "ToSection": {
+            "description": "Holds multiple output topics",
+            "properties": {
+                "models": {
+                    "default": {},
+                    "description": "Data models",
+                    "title": "Models",
+                    "type": "object"
+                },
+                "topics": {
+                    "additionalProperties": {
+                        "$ref": "#/definitions/TopicConfig"
+                    },
+                    "description": "Output topics",
+                    "title": "Topics",
+                    "type": "object"
+                }
+            },
+            "required": [
+                "topics"
+            ],
+            "title": "ToSection",
+            "type": "object"
+        },
+        "TopicConfig": {
+            "additionalProperties": false,
+            "description": "Configure an output topic",
+            "properties": {
+                "configs": {
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer"
+                            }
+                        ]
+                    },
+                    "default": {},
+                    "description": "Topic configs",
+                    "title": "Configs",
+                    "type": "object"
+                },
+                "keySchema": {
+                    "description": "Key schema class name",
+                    "title": "Keyschema",
+                    "type": "string"
+                },
+                "partitions_count": {
+                    "description": "Number of partitions into which the topic is divided",
+                    "title": "Partitions Count",
+                    "type": "integer"
+                },
+                "replication_factor": {
+                    "description": "Replication topic of the topic",
+                    "title": "Replication Factor",
+                    "type": "integer"
+                },
+                "role": {
+                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+                    "title": "Role",
+                    "type": "string"
+                },
+                "type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/OutputTopicTypes"
+                        }
+                    ],
+                    "description": "Topic type"
+                },
+                "valueSchema": {
+                    "description": "Value schema class name",
+                    "title": "Valueschema",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "type"
+            ],
+            "title": "TopicConfig",
+            "type": "object"
+        }
+    },
     "items": {
         "discriminator": {
-            "propertyName": "type",
             "mapping": {
                 "kafka-app": "#/definitions/KafkaApp",
                 "kafka-connector": "#/definitions/KafkaConnector",
@@ -13,7 +1251,8 @@
                 "pipeline-component": "#/definitions/PipelineComponent",
                 "producer": "#/definitions/ProducerApp",
                 "streams-app": "#/definitions/StreamsApp"
-            }
+            },
+            "propertyName": "type"
         },
         "oneOf": [
             {
@@ -42,1017 +1281,6 @@
             }
         ]
     },
-    "definitions": {
-        "InputTopicTypes": {
-            "title": "InputTopicTypes",
-            "description": "An enumeration.",
-            "enum": [
-                "input",
-                "extra",
-                "input-pattern",
-                "extra-pattern"
-            ],
-            "type": "string"
-        },
-        "FromTopic": {
-            "title": "FromTopic",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "$ref": "#/definitions/InputTopicTypes"
-                },
-                "role": {
-                    "title": "Role",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type"
-            ],
-            "additionalProperties": false
-        },
-        "FromSection": {
-            "title": "FromSection",
-            "type": "object",
-            "properties": {
-                "topics": {
-                    "title": "Topics",
-                    "description": "Topics to read from.",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/FromTopic"
-                    }
-                },
-                "components": {
-                    "title": "Components",
-                    "description": "Components to read from.",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/FromTopic"
-                    }
-                }
-            },
-            "additionalProperties": false
-        },
-        "KafkaStreamsConfig": {
-            "title": "KafkaStreamsConfig",
-            "type": "object",
-            "properties": {
-                "brokers": {
-                    "title": "Brokers",
-                    "type": "string"
-                },
-                "schemaRegistryUrl": {
-                    "title": "Schemaregistryurl",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "brokers"
-            ]
-        },
-        "KafkaAppConfig": {
-            "title": "KafkaAppConfig",
-            "type": "object",
-            "properties": {
-                "streams": {
-                    "$ref": "#/definitions/KafkaStreamsConfig"
-                },
-                "nameOverride": {
-                    "title": "Nameoverride",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "streams"
-            ]
-        },
-        "OutputTopicTypes": {
-            "title": "OutputTopicTypes",
-            "description": "Types of output topic.\n    error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\n    ",
-            "enum": [
-                "error",
-                "output",
-                "extra"
-            ],
-            "type": "string"
-        },
-        "TopicConfig": {
-            "title": "TopicConfig",
-            "description": "Configures a topic",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "$ref": "#/definitions/OutputTopicTypes"
-                },
-                "keySchema": {
-                    "title": "Keyschema",
-                    "type": "string"
-                },
-                "valueSchema": {
-                    "title": "Valueschema",
-                    "type": "string"
-                },
-                "partitions_count": {
-                    "title": "Partitions Count",
-                    "type": "integer"
-                },
-                "replication_factor": {
-                    "title": "Replication Factor",
-                    "type": "integer"
-                },
-                "configs": {
-                    "title": "Configs",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "role": {
-                    "title": "Role",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "type"
-            ],
-            "additionalProperties": false
-        },
-        "ToSection": {
-            "title": "ToSection",
-            "type": "object",
-            "properties": {
-                "models": {
-                    "title": "Models",
-                    "default": {},
-                    "type": "object"
-                },
-                "topics": {
-                    "title": "Topics",
-                    "type": "object",
-                    "additionalProperties": {
-                        "$ref": "#/definitions/TopicConfig"
-                    }
-                }
-            },
-            "required": [
-                "topics"
-            ]
-        },
-        "RepoAuthFlags": {
-            "title": "RepoAuthFlags",
-            "type": "object",
-            "properties": {
-                "username": {
-                    "title": "Username",
-                    "type": "string"
-                },
-                "password": {
-                    "title": "Password",
-                    "type": "string"
-                },
-                "caFile": {
-                    "title": "Cafile",
-                    "type": "string",
-                    "format": "path"
-                },
-                "insecureSkipTlsVerify": {
-                    "title": "Insecureskiptlsverify",
-                    "default": false,
-                    "type": "boolean"
-                }
-            }
-        },
-        "HelmRepoConfig": {
-            "title": "HelmRepoConfig",
-            "type": "object",
-            "properties": {
-                "repositoryName": {
-                    "title": "Repositoryname",
-                    "type": "string"
-                },
-                "url": {
-                    "title": "Url",
-                    "type": "string"
-                },
-                "repoAuthFlags": {
-                    "title": "Repoauthflags",
-                    "default": {
-                        "username": null,
-                        "password": null,
-                        "ca_file": null,
-                        "insecure_skip_tls_verify": false
-                    },
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/RepoAuthFlags"
-                        }
-                    ]
-                }
-            },
-            "required": [
-                "repositoryName",
-                "url"
-            ]
-        },
-        "KafkaApp": {
-            "title": "KafkaApp",
-            "description": "Base component for Kafka-based components.\nProducer or streaming apps should inherit from this class.",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "kafka-app",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-app",
-                    "enum": [
-                        "kafka-app"
-                    ],
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ]
-                },
-                "app": {
-                    "$ref": "#/definitions/KafkaAppConfig"
-                },
-                "to": {
-                    "$ref": "#/definitions/ToSection"
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "repoConfig": {
-                    "title": "Repoconfig",
-                    "default": {
-                        "repository_name": "bakdata-streams-bootstrap",
-                        "url": "https://bakdata.github.io/streams-bootstrap/",
-                        "repo_auth_flags": {
-                            "username": null,
-                            "password": null,
-                            "ca_file": null,
-                            "insecure_skip_tls_verify": false
-                        }
-                    },
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/HelmRepoConfig"
-                        }
-                    ]
-                },
-                "namespace": {
-                    "title": "Namespace",
-                    "type": "string"
-                },
-                "version": {
-                    "title": "Version",
-                    "default": "2.9.0",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "app",
-                "namespace"
-            ]
-        },
-        "KafkaConnectConfig": {
-            "title": "KafkaConnectConfig",
-            "type": "object",
-            "properties": {},
-            "additionalProperties": {
-                "type": "string"
-            }
-        },
-        "KafkaConnector": {
-            "title": "KafkaConnector",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "kafka-connector",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-connector",
-                    "enum": [
-                        "kafka-connector"
-                    ],
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ]
-                },
-                "app": {
-                    "$ref": "#/definitions/KafkaConnectConfig"
-                },
-                "to": {
-                    "$ref": "#/definitions/ToSection"
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "repoConfig": {
-                    "title": "Repoconfig",
-                    "default": {
-                        "repository_name": "bakdata-kafka-connect-resetter",
-                        "url": "https://bakdata.github.io/kafka-connect-resetter/",
-                        "repo_auth_flags": {
-                            "username": null,
-                            "password": null,
-                            "ca_file": null,
-                            "insecure_skip_tls_verify": false
-                        }
-                    },
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/HelmRepoConfig"
-                        }
-                    ]
-                },
-                "namespace": {
-                    "title": "Namespace",
-                    "type": "string"
-                },
-                "version": {
-                    "title": "Version",
-                    "default": "1.0.4",
-                    "type": "string"
-                },
-                "resetterValues": {
-                    "title": "Resettervalues",
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
-                    "type": "object"
-                }
-            },
-            "required": [
-                "name",
-                "app",
-                "namespace"
-            ]
-        },
-        "KafkaSinkConnector": {
-            "title": "KafkaSinkConnector",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "kafka-sink-connector",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-sink-connector",
-                    "enum": [
-                        "kafka-sink-connector"
-                    ],
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ]
-                },
-                "app": {
-                    "$ref": "#/definitions/KafkaConnectConfig"
-                },
-                "to": {
-                    "$ref": "#/definitions/ToSection"
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "repoConfig": {
-                    "title": "Repoconfig",
-                    "default": {
-                        "repository_name": "bakdata-kafka-connect-resetter",
-                        "url": "https://bakdata.github.io/kafka-connect-resetter/",
-                        "repo_auth_flags": {
-                            "username": null,
-                            "password": null,
-                            "ca_file": null,
-                            "insecure_skip_tls_verify": false
-                        }
-                    },
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/HelmRepoConfig"
-                        }
-                    ]
-                },
-                "namespace": {
-                    "title": "Namespace",
-                    "type": "string"
-                },
-                "version": {
-                    "title": "Version",
-                    "default": "1.0.4",
-                    "type": "string"
-                },
-                "resetterValues": {
-                    "title": "Resettervalues",
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
-                    "type": "object"
-                }
-            },
-            "required": [
-                "name",
-                "app",
-                "namespace"
-            ]
-        },
-        "KafkaSourceConnector": {
-            "title": "KafkaSourceConnector",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "kafka-source-connector",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kafka-source-connector",
-                    "enum": [
-                        "kafka-source-connector"
-                    ],
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ]
-                },
-                "app": {
-                    "$ref": "#/definitions/KafkaConnectConfig"
-                },
-                "to": {
-                    "$ref": "#/definitions/ToSection"
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "repoConfig": {
-                    "title": "Repoconfig",
-                    "default": {
-                        "repository_name": "bakdata-kafka-connect-resetter",
-                        "url": "https://bakdata.github.io/kafka-connect-resetter/",
-                        "repo_auth_flags": {
-                            "username": null,
-                            "password": null,
-                            "ca_file": null,
-                            "insecure_skip_tls_verify": false
-                        }
-                    },
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/HelmRepoConfig"
-                        }
-                    ]
-                },
-                "namespace": {
-                    "title": "Namespace",
-                    "type": "string"
-                },
-                "version": {
-                    "title": "Version",
-                    "default": "1.0.4",
-                    "type": "string"
-                },
-                "resetterValues": {
-                    "title": "Resettervalues",
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
-                    "type": "object"
-                },
-                "offsetTopic": {
-                    "title": "Offsettopic",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "app",
-                "namespace"
-            ]
-        },
-        "KubernetesAppConfig": {
-            "title": "KubernetesAppConfig",
-            "type": "object",
-            "properties": {}
-        },
-        "KubernetesApp": {
-            "title": "KubernetesApp",
-            "description": "Base Kubernetes app",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "kubernetes-app",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "kubernetes-app",
-                    "enum": [
-                        "kubernetes-app"
-                    ],
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ]
-                },
-                "app": {
-                    "$ref": "#/definitions/KubernetesAppConfig"
-                },
-                "to": {
-                    "$ref": "#/definitions/ToSection"
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "repoConfig": {
-                    "$ref": "#/definitions/HelmRepoConfig"
-                },
-                "namespace": {
-                    "title": "Namespace",
-                    "type": "string"
-                },
-                "version": {
-                    "title": "Version",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "app",
-                "namespace"
-            ]
-        },
-        "PipelineComponent": {
-            "title": "PipelineComponent",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "pipeline-component",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "pipeline-component",
-                    "enum": [
-                        "pipeline-component"
-                    ],
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ]
-                },
-                "app": {
-                    "title": "App"
-                },
-                "to": {
-                    "$ref": "#/definitions/ToSection"
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
-            ]
-        },
-        "ProducerStreamsConfig": {
-            "title": "ProducerStreamsConfig",
-            "type": "object",
-            "properties": {
-                "brokers": {
-                    "title": "Brokers",
-                    "type": "string"
-                },
-                "schemaRegistryUrl": {
-                    "title": "Schemaregistryurl",
-                    "type": "string"
-                },
-                "extraOutputTopics": {
-                    "title": "Extraoutputtopics",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "outputTopic": {
-                    "title": "Outputtopic",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "brokers"
-            ]
-        },
-        "ProducerValues": {
-            "title": "ProducerValues",
-            "type": "object",
-            "properties": {
-                "streams": {
-                    "$ref": "#/definitions/ProducerStreamsConfig"
-                },
-                "nameOverride": {
-                    "title": "Nameoverride",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "streams"
-            ]
-        },
-        "ProducerApp": {
-            "title": "ProducerApp",
-            "description": "Producer component\n\nThis producer holds configuration to use as values for the streams bootstrap produce helm chart.",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "producer",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "producer",
-                    "enum": [
-                        "producer"
-                    ],
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "description": "Producer doesn't support FromSection",
-                    "type": "null"
-                },
-                "app": {
-                    "$ref": "#/definitions/ProducerValues"
-                },
-                "to": {
-                    "$ref": "#/definitions/ToSection"
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "repoConfig": {
-                    "title": "Repoconfig",
-                    "default": {
-                        "repository_name": "bakdata-streams-bootstrap",
-                        "url": "https://bakdata.github.io/streams-bootstrap/",
-                        "repo_auth_flags": {
-                            "username": null,
-                            "password": null,
-                            "ca_file": null,
-                            "insecure_skip_tls_verify": false
-                        }
-                    },
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/HelmRepoConfig"
-                        }
-                    ]
-                },
-                "namespace": {
-                    "title": "Namespace",
-                    "type": "string"
-                },
-                "version": {
-                    "title": "Version",
-                    "default": "2.9.0",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "app",
-                "namespace"
-            ]
-        },
-        "StreamsConfig": {
-            "title": "StreamsConfig",
-            "description": "Streams Bootstrap streams section",
-            "type": "object",
-            "properties": {
-                "brokers": {
-                    "title": "Brokers",
-                    "type": "string"
-                },
-                "schemaRegistryUrl": {
-                    "title": "Schemaregistryurl",
-                    "type": "string"
-                },
-                "inputTopics": {
-                    "title": "Inputtopics",
-                    "default": [],
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                },
-                "inputPattern": {
-                    "title": "Inputpattern",
-                    "type": "string"
-                },
-                "extraInputTopics": {
-                    "title": "Extrainputtopics",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "array",
-                        "items": {
-                            "type": "string"
-                        }
-                    }
-                },
-                "extraInputPatterns": {
-                    "title": "Extrainputpatterns",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "extraOutputTopics": {
-                    "title": "Extraoutputtopics",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                },
-                "outputTopic": {
-                    "title": "Outputtopic",
-                    "type": "string"
-                },
-                "errorTopic": {
-                    "title": "Errortopic",
-                    "type": "string"
-                },
-                "config": {
-                    "title": "Config",
-                    "default": {},
-                    "type": "object",
-                    "additionalProperties": {
-                        "type": "string"
-                    }
-                }
-            },
-            "required": [
-                "brokers"
-            ]
-        },
-        "StreamsAppAutoScaling": {
-            "title": "StreamsAppAutoScaling",
-            "type": "object",
-            "properties": {
-                "enabled": {
-                    "title": "Enabled",
-                    "description": "Whether to enable auto-scaling using KEDA.",
-                    "default": false,
-                    "type": "boolean"
-                },
-                "consumerGroup": {
-                    "title": "Consumer group",
-                    "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag.",
-                    "type": "string"
-                },
-                "lagThreshold": {
-                    "title": "Lag threshold",
-                    "description": "Average target value to trigger scaling actions.",
-                    "type": "integer"
-                },
-                "pollingInterval": {
-                    "title": "Polling interval",
-                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
-                    "default": 30,
-                    "type": "integer"
-                },
-                "cooldownPeriod": {
-                    "title": "Cooldown period",
-                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
-                    "default": 300,
-                    "type": "integer"
-                },
-                "offsetResetPolicy": {
-                    "title": "Offset reset policy",
-                    "description": "The offset reset policy for the consumer if the the consumer group is not yet subscribed to a partition.",
-                    "default": "earliest",
-                    "type": "string"
-                },
-                "minReplicas": {
-                    "title": "Min replica count",
-                    "description": "Minimum number of replicas KEDA will scale the resource down to. https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount",
-                    "default": 0,
-                    "type": "integer"
-                },
-                "maxReplicas": {
-                    "title": "Max replica count",
-                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
-                    "default": 1,
-                    "type": "integer"
-                },
-                "idleReplicas": {
-                    "title": "Idle replica count",
-                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount",
-                    "type": "integer"
-                },
-                "topics": {
-                    "title": "Topics",
-                    "description": "List of auto-generated Kafka Streams topics used by the streams app.",
-                    "default": [],
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            },
-            "required": [
-                "consumerGroup",
-                "lagThreshold"
-            ]
-        },
-        "StreamsAppConfig": {
-            "title": "StreamsAppConfig",
-            "description": "StreamsBoostrap app configurations.\n\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
-            "type": "object",
-            "properties": {
-                "streams": {
-                    "$ref": "#/definitions/StreamsConfig"
-                },
-                "nameOverride": {
-                    "title": "Nameoverride",
-                    "type": "string"
-                },
-                "autoscaling": {
-                    "$ref": "#/definitions/StreamsAppAutoScaling"
-                }
-            },
-            "required": [
-                "streams"
-            ]
-        },
-        "StreamsApp": {
-            "title": "StreamsApp",
-            "description": "StreamsApp component that configures a streams bootstrap app",
-            "type": "object",
-            "properties": {
-                "type": {
-                    "title": "Type",
-                    "default": "streams-app",
-                    "type": "string"
-                },
-                "type": {
-                    "title": "Schema Type",
-                    "default": "streams-app",
-                    "enum": [
-                        "streams-app"
-                    ],
-                    "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
-                },
-                "from": {
-                    "title": "From",
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ]
-                },
-                "app": {
-                    "$ref": "#/definitions/StreamsAppConfig"
-                },
-                "to": {
-                    "$ref": "#/definitions/ToSection"
-                },
-                "prefix": {
-                    "title": "Prefix",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "default": "${pipeline_name}-",
-                    "type": "string"
-                },
-                "repoConfig": {
-                    "title": "Repoconfig",
-                    "default": {
-                        "repository_name": "bakdata-streams-bootstrap",
-                        "url": "https://bakdata.github.io/streams-bootstrap/",
-                        "repo_auth_flags": {
-                            "username": null,
-                            "password": null,
-                            "ca_file": null,
-                            "insecure_skip_tls_verify": false
-                        }
-                    },
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/HelmRepoConfig"
-                        }
-                    ]
-                },
-                "namespace": {
-                    "title": "Namespace",
-                    "type": "string"
-                },
-                "version": {
-                    "title": "Version",
-                    "default": "2.9.0",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "app",
-                "namespace"
-            ]
-        }
-    }
+    "title": "kpops pipeline schema",
+    "type": "array"
 }

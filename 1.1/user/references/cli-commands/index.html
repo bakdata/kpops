@@ -379,6 +379,7 @@
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Options</strong>:</p>
 <ul>
+<li><code>-V, --version</code>: Print KPOps version</li>
 <li><code>--install-completion</code>: Install completion for the current shell.</li>
 <li><code>--show-completion</code>: Show completion for the current shell, to copy it or customize the installation.</li>
 <li><code>--help</code>: Show this message and exit.</li>
@@ -506,7 +507,7 @@
 <li><code>SCOPE:{pipeline|config}</code>: 
         Scope of the generated schema<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>pipeline: Schema of PipelineComponents. Always includes the built-in kpops components. To include custom components, provide [COMPONENTS_MODULES].
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide [COMPONENTS_MODULES].
 
 config: Schema of PipelineConfig.  [required]
 </code></pre></div></td></tr></table></div>
@@ -517,6 +518,7 @@ config: Schema of PipelineConfig.  [required]
 </ul>
 <p><strong>Options</strong>:</p>
 <ul>
+<li><code>--include-stock-components / --no-include-stock-components</code>: Include the built-in KPOps components.  [default: include-stock-components]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 </article>
