@@ -206,3 +206,4 @@ class TestGenSchema:
         )
 
         assert result.exit_code == 0
+        assert result.stdout
