@@ -18,7 +18,7 @@ repos:
     hooks:
       - id: mypy
         name: mypy
-        entry: ./run_mypy.sh
+        entry: ./hooks/run_mypy.sh
         language: system
         types: [python]
         require_serial: true # run once for all files
@@ -31,8 +31,15 @@ repos:
         exclude: ^tests/.*snapshots/
   - repo: local
     hooks:
+      - id: gen-schema
+        name: gen-schema
+        entry: ./hooks/gen_schema.sh
+        language: system
+        require_serial: true
+  - repo: local
+    hooks:
       - id: gen-docs
         name: gen-docs
-        entry: ./gen_docs.sh
+        entry: ./hooks/gen_docs.sh
         language: system
         require_serial: true

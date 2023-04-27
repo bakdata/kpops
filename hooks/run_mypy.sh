@@ -3,7 +3,9 @@
 
 set -o errexit
 
+ROOT_DIR=$(realpath ${0%/*/*})
+
 # change directory to the project root directory.
-cd "$(dirname "$0")"
+cd $ROOT_DIR
 
 mypy --pretty kpops tests
