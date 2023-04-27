@@ -55,12 +55,6 @@ jobs:
       - name: Generate docs
         run: sh ./gen_docs.sh
         shell: bash
-  
-  test-on-zsh:
-    name: Test (zsh)
-    runs-on: macos-latest
-    steps:
-      - uses: actions/checkout@v3
 
       - name: Test pre-commit hooks in zsh
         uses: ./.github/actions/pre-commit-zsh

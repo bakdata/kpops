@@ -1,5 +1,5 @@
 name: "Test the pre-commit shell scripts in zsh"
-description: "Only works when ran on macos"
+description: ""
 
 runs:
   using: "composite"
@@ -9,13 +9,17 @@ runs:
       with:
         poetry-version: "1.3.2"
         python-version: "3.10"
+      
+    - name: Install zsh
+      run: sudo apt-get update; sudo apt-get install zsh
+      shell: bash
 
     - name: Install dependencies
-      shell: zsh {0}
+      shell: /usr/bin/zsh{0}
       run: poetry install --no-interaction
 
     - name: Run pre-commit-hooks
-      shell: zsh {0}
+      shell: /usr/bin/zsh{0}
       run: |
         poetry run pre-commit run mypy --all-files --show-diff-on-failure
         poetry run pre-commit run gen-docs --all-files --show-diff-on-failure
