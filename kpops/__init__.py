@@ -1,3 +1,1 @@
-import importlib.metadata
-
-__version__ = importlib.metadata.version("kpops")
+__version__ = "1.1.1"
