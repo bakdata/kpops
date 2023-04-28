@@ -11,13 +11,13 @@ with redirect_stdout(StringIO()) as f:
     schema = f.getvalue()
 
 with open(PATH_TO_SCHEMA / "pipeline.json", "w") as file:
-    file = schema
+    file.write(schema)
 
 with redirect_stdout(StringIO()) as f:
     gen_config_schema()
     schema = f.getvalue()
 
 with open(PATH_TO_SCHEMA / "config.json", "w") as file:
-    file = schema
+    file.write(schema)
 
 
