@@ -1,9 +1,11 @@
+"""Generates the stock KPOps editor integration schemas"""
 from contextlib import redirect_stdout
-from pathlib import Path
-from kpops.utils.gen_schema import gen_pipeline_schema, gen_config_schema
 from io import StringIO
 
-PATH_TO_SCHEMA = Path(__file__).parents[1] / "docs/docs/schema"
+from hooks import PATH_ROOT
+from kpops.utils.gen_schema import gen_config_schema, gen_pipeline_schema
+
+PATH_TO_SCHEMA = PATH_ROOT / "docs/docs/schema"
 
 schema = ""
 with redirect_stdout(StringIO()) as f:
@@ -19,5 +21,3 @@ with redirect_stdout(StringIO()) as f:
 
 with open(PATH_TO_SCHEMA / "config.json", "w") as file:
     file.write(schema)
-
-
