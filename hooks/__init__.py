@@ -1,0 +1,22 @@
+"""KPOps pre-commit hooks"""
+from pathlib import Path
+from contextlib import contextmanager
+import os
+
+PATH_ROOT = Path(__file__).parents[1]
+
+# Taken from https://stackoverflow.com/a/24176022/11610149
+
+@contextmanager
+def cd(newdir: str | Path = PATH_ROOT):
+    """Changes current working dir to :param: newdir
+    
+    :param newdir: The desired workign directory, defaults to the root KPOps dir
+    :type newdir: str, optional
+    """
+    prevdir = os.getcwd()
+    os.chdir(os.path.expanduser(newdir))
+    try:
+        yield
+    finally:
+        os.chdir(prevdir)
