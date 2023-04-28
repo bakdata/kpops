@@ -2,8 +2,10 @@
 
 info: https://jaredkhan.com/blog/mypy-pre-commit
 """
+from sys import stderr, stdout
+
 from mypy import api
-from sys import stdout, stderr
+
 from hooks import cd
 
 # Args should contain the args that the equivalent
