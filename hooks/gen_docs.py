@@ -1,15 +1,14 @@
-from pathlib import Path
+"""Generates the whole 'generatable' KPOps documentation"""
 import subprocess
 
+from hooks import PATH_ROOT
+
 # TODO: try to use typer_cli.main.docs here instead
+subprocess.run(PATH_ROOT / "hooks/gen_docs.sh")
 
-ROOT_PATH = Path(__file__).parents[1]
-
-subprocess.run(ROOT_PATH / "hooks/gen_docs.sh")
-
-text = []
-with open(ROOT_PATH / "docs/docs/user/references/cli-commands.md", "r") as f:
+text: list[str] = []
+with open(PATH_ROOT / "docs/docs/user/references/cli-commands.md", "r") as f:
     text = f.readlines()
-text[0]="# CLI Usage\n"
-with open(ROOT_PATH / "docs/docs/user/references/cli-commands.md", "w") as f:
+text[0] = "# CLI Usage\n"
+with open(PATH_ROOT / "docs/docs/user/references/cli-commands.md", "w") as f:
     f.writelines(text)
