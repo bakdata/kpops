@@ -3,13 +3,13 @@ import subprocess
 
 from hooks import PATH_ROOT
 
-PATH_TO_MAIN = PATH_ROOT / "kpops/cli/main.py"
+PATH_KPOPS_MAIN = PATH_ROOT / "kpops/cli/main.py"
 PATH_CLI_COMMANDS_DOC = PATH_ROOT / "docs/docs/user/references/cli-commands.md"
 
 # Run typer-cli on kpops to generate doc on CLI usage
 # TODO: try to use typer_cli.main.docs here instead
 typer_args = (
-    f"typer {PATH_TO_MAIN} utils docs --name kpops --output {PATH_CLI_COMMANDS_DOC}"
+    f"typer {PATH_KPOPS_MAIN} utils docs --name kpops --output {PATH_CLI_COMMANDS_DOC}"
 )
 subprocess.run(typer_args, shell=True)
 
