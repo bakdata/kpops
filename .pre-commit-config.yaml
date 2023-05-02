@@ -14,6 +14,14 @@ repos:
     hooks:
       - id: flake8
         args: ["--config", "setup.cfg"]
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy
+        entry: python hooks/run_mypy.py
+        language: system
+        types: [python]
+        require_serial: true # run once for all files
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.1.0
     hooks:
@@ -23,12 +31,6 @@ repos:
         exclude: ^tests/.*snapshots/
   - repo: local
     hooks:
-      - id: mypy
-        name: mypy
-        entry: python hooks/run_mypy.py
-        language: system
-        types: [python]
-        require_serial: true # run once for all files
       - id: gen-schema
         name: gen-schema
         entry: python hooks/gen_schema.py
