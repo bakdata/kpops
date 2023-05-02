@@ -23,21 +23,22 @@ repos:
         exclude: ^tests/.*snapshots/
   - repo: local
     hooks:
-      - id: gen-schema
-        name: gen-schema
-        entry: python hooks/gen_schema.py
-        language: system
-        types: [python]
-        require_serial: true
-      - id: gen-docs
-        name: gen-docs
-        entry: python hooks/gen_docs.py
-        language: system
-        types: [python]
-        require_serial: true
       - id: mypy
         name: mypy
         entry: python hooks/run_mypy.py
         language: system
         types: [python]
         require_serial: true # run once for all files
+      - id: gen-schema
+        name: gen-schema
+        entry: python hooks/gen_schema.py
+        language: system
+        types: [python]
+        require_serial: true
+        pass_filenames: false
+      - id: gen-docs
+        name: gen-docs
+        entry: python hooks/gen_docs.py
+        language: system
+        types: [python]
+        require_serial: true

@@ -11,7 +11,6 @@ from hooks import cd
 # Args should contain the args that the equivalent
 # call to mypy from the shell would contain
 args = ["--pretty", "kpops", "tests", "hooks"]
-result: tuple = tuple()
 with cd():
     result = api.run(args)
 # Print normal_report to stdout
