@@ -8,6 +8,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 
 **Options**:
 
+* `-V, --version`: Print KPOps version
 * `--install-completion`: Install completion for the current shell.
 * `--show-completion`: Show completion for the current shell, to copy it or customize the installation.
 * `--help`: Show this message and exit.
@@ -169,7 +170,7 @@ $ kpops schema [OPTIONS] SCOPE:{pipeline|config} [COMPONENTS_MODULE]
 
 
 
-        pipeline: Schema of PipelineComponents. Always includes the built-in kpops components. To include custom components, provide [COMPONENTS_MODULES].
+        pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide [COMPONENTS_MODULES].
         
 
 
@@ -179,4 +180,5 @@ $ kpops schema [OPTIONS] SCOPE:{pipeline|config} [COMPONENTS_MODULE]
 
 **Options**:
 
+* `--include-stock-components / --no-include-stock-components`: Include the built-in KPOps components.  [default: include-stock-components]
 * `--help`: Show this message and exit.

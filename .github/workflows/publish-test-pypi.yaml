@@ -19,7 +19,7 @@ jobs:
 
       - name: Bump version
         id: bump_version
-        uses: bakdata/ci-templates/actions/python-poetry-bump-version@v1.5.3
+        uses: bakdata/ci-templates/actions/python-poetry-bump-version@v1.18.2
         with:
           release-type: "patch"
 

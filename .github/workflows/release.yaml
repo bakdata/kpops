@@ -15,7 +15,7 @@ on:
 
 jobs:
   release-to-pypi:
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@v1.13.2
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@v1.18.2
     with:
       release-type: ${{ github.event.inputs.release-type }}
       publish-to-test: false

@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   test:
@@ -40,6 +41,12 @@ jobs:
       - name: Typing (mypy)
         run: poetry run pre-commit run mypy --all-files
 
+      - name: Generate schema (kpops schema)
+        run: poetry run pre-commit run gen-schema --all-files --show-diff-on-failure
+
+      - name: Generate docs (typer-cli)
+        run: poetry run pre-commit run gen-docs --all-files --show-diff-on-failure
+
       # TODO: enable when PEP 604 incompatibilty is in typer is resolved https://github.com/tiangolo/typer/issues/348
       # See https://github.com/tiangolo/typer/pull/522
       # - name: Syntax (pyupgrade)
@@ -47,13 +54,6 @@ jobs:
 
       - name: Test
         run: poetry run pytest tests
-
-      - name: Install docs dependencies
-        run: poetry install --no-interaction --only docs
-
-      - name: Generate docs
-        run: sh ./gen_docs.sh
-        shell: bash
 
   publish:
     name: Publish

@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Iterator, Optional
 
 import typer
 
+from kpops import __version__
 from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
 from kpops.cli.registry import Registry
@@ -201,15 +202,18 @@ def schema(
         help="""
         Scope of the generated schema
         \n\n\n
-        pipeline: Schema of PipelineComponents. Always includes the built-in kpops components. To include custom components, provide [COMPONENTS_MODULES].
+        pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide [COMPONENTS_MODULES].
         \n\n\n
         config: Schema of PipelineConfig.""",
     ),
     components_module: Optional[str] = COMPONENTS_MODULES,
+    include_stock_components: bool = typer.Option(
+        default=True, help="Include the built-in KPOps components."
+    ),
 ) -> None:
     match scope:
         case SchemaScope.PIPELINE:
-            gen_pipeline_schema(components_module)
+            gen_pipeline_schema(components_module, include_stock_components)
         case SchemaScope.CONFIG:
             gen_config_schema()
 
@@ -343,6 +347,26 @@ def clean(
         log_action("Clean", component)
         component.destroy(dry_run)
         component.clean(dry_run)
+
+
+def version_callback(show_version: bool) -> None:
+    if show_version:
+        typer.echo(f"KPOps {__version__}")
+        raise typer.Exit()
+
+
+@app.callback()
+def main(
+    version: bool = typer.Option(
+        False,
+        "--version",
+        "-V",
+        help="Print KPOps version",
+        callback=version_callback,
+        is_eager=True,
+    ),
+):
+    ...
 
 
 if __name__ == "__main__":
