@@ -25,7 +25,7 @@ if TYPE_CHECKING:
 
 LOG_DIVIDER = "#" * 100
 
-app = typer.Typer(pretty_exceptions_show_locals=False, pretty_exceptions_enable=False)
+app = typer.Typer(pretty_exceptions_enable=False)
 
 BASE_DIR_PATH_OPTION: Path = typer.Option(
     default=Path("."),
