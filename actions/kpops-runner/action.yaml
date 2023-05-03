@@ -32,7 +32,10 @@ runs:
   steps:
     - name: Install KPOps
       shell: bash
-      run: pip install kpops==${{ inputs.kpops-version }}
+      run: |
+        echo "::group::pip install kpops package"
+        pip install kpops==${{ inputs.kpops-version }}
+        echo "::endgroup::"
 
     - name: ${{ inputs.command }} ${{ inputs.pipeline }} pipeline
       shell: bash
