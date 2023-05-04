@@ -24,6 +24,7 @@ theme:
     - search.share
     - search.suggest
     - content.tooltips
+    - content.code.copy
     - content.code.select
     - content.code.annotate
 
