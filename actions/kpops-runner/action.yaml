@@ -48,7 +48,7 @@ runs:
       shell: bash
       run: |
         echo "::group::pip install kpops package"
-        pip install kpops${{ inputs.kpops-version == 'latest' && '' || format('=={0}', inputs.kpops-version) }}
+        pip install kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}
         echo "::endgroup::"
 
     - name: ${{ inputs.command }} ${{ inputs.pipeline }} pipeline
