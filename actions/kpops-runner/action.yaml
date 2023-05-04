@@ -25,7 +25,8 @@ inputs:
     required: false
   kpops-version:
     description: "KPOps version"
-    required: true
+    required: false
+    default: "latest"
   helm-version:
     description: "Helm version"
     required: false
@@ -43,7 +44,7 @@ runs:
       shell: bash
       run: |
         echo "::group::pip install kpops package"
-        pip install kpops==${{ inputs.kpops-version }}
+        pip install kpops${{ inputs.kpops-version != 'latest' && '==' + inputs.kpops-version || inputs.kpops-version }}
         echo "::endgroup::"
 
     - name: ${{ inputs.command }} ${{ inputs.pipeline }} pipeline
