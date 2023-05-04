@@ -1,6 +1,6 @@
 # Components
 
-This section explains the different components of KPOps, their usage and configuration via [`pipeline.yaml`](../../../resources/pipeline-components/pipeline).
+This section explains the different components of KPOps, their usage and configuration in the pipeline definition [`pipeline.yaml`](../../../resources/pipeline-components/pipeline).
 
 --8<--
 ./docs/resources/architecture/components-hierarchy.md
@@ -11,6 +11,9 @@ This section explains the different components of KPOps, their usage and configu
 <!-- Uncomment when page is created. -->
 <!-- To learn more about KPOps' components hierarchy, visit the
 [architecture](/docs/developer/architecture/component-inheritance.md) page. -->
+
+!!! note "Environment-specific pipeline definitions"
+    Similarly to [defaults](../defaults/#configuration), it is possible to possible to have an unlimited amount of additional environment-specific pipeline definitions. The naming convention is the same: add a suffix of the form `_{environment}` to the filename. Learn more about environments in the [Config](../config/#__codelineno-0-10) section.
 
 ## KubernetesApp
 
