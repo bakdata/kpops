@@ -26,10 +26,19 @@ inputs:
   kpops-version:
     description: "KPOps version"
     required: true
+  helm-version:
+    description: "Helm version"
+    required: false
+    default: "latest"
 
 runs:
   using: "composite"
   steps:
+    - name: Set up Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: ${{ inputs.helm-version }}
+
     - name: Install KPOps
       shell: bash
       run: |
