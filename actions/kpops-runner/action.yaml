@@ -39,6 +39,7 @@ runs:
       uses: azure/setup-helm@v3
       with:
         version: ${{ inputs.helm-version }}
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Install KPOps
       shell: bash
