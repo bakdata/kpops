@@ -62,13 +62,14 @@ class PipelineComponents(BaseModel):
 def create_env_components_index(
     environment_components: list[dict],
 ) -> dict[str, dict]:
-    """
-    Create an index for all registered components in the project
+    """Create an index for all registered components in the project
 
-    :param environment_components: list of components
+    :param environment_components: List of all components to be included
+    :type environment_components: list[dict]
     :return: component index
+    :rtype: dict[str, dict]
     """
-    index = {}
+    index: dict[str, dict] = {}
     for component in environment_components:
         if "type" not in component or "name" not in component:
             raise ValueError(
@@ -107,6 +108,25 @@ class Pipeline:
         config: PipelineConfig,
         handlers: ComponentHandlers,
     ) -> Pipeline:
+        """Load pipeline definition from yaml
+
+        The file is often named ``pipeline.yaml``
+
+        :param base_dir: Base directory to the pipelines (default is current working directory)
+        :type base_dir: Path
+        :param path: Path to pipeline definition yaml file
+        :type path: Path
+        :param registry: Pipeline components registry
+        :type registry: Registry
+        :param config: Pipeline config
+        :type config: PipelineConfig
+        :param handlers: Component handlers
+        :type handlers: ComponentHandlers
+        :raises TypeError: The pipeline definition should contain a list of components
+        :raises TypeError: The env-specific pipeline definition should contain a list of components
+        :returns: Initialized pipeline object
+        :rtype: Pipeline
+        """
         Pipeline.set_pipeline_name_env_vars(base_dir, path)
 
         main_content = load_yaml_file(path, substitution=dict(os.environ))
@@ -127,6 +147,14 @@ class Pipeline:
         return pipeline
 
     def parse_components(self, component_list: list[dict]) -> None:
+        """Instantiate, enrich and inflate a list of components
+
+        :param component_list: List of components
+        :type component_list: list[dict]
+        :raises ValueError: Every component must have a type defined
+        :raises ParsingException: Error enriching component
+        :raises ParsingException: All undefined exceptions
+        """
         for component_data in component_list:
             try:
                 try:
@@ -148,11 +176,14 @@ class Pipeline:
     def apply_component(
         self, component_class: type[PipelineComponent], component_data: dict
     ) -> None:
-        """Instantiates, enriches and inflates pipeline component.
+        """Instantiate, enrich and inflate pipeline component.
+
         Applies input topics according to FromSection.
 
         :param component_class: Type of pipeline component
+        :type component_class: type[PipelineComponent]
         :param component_data: Arguments for instantiation of pipeline component
+        :type component_data: dict
         """
         component = component_class(
             config=self.config,
@@ -252,7 +283,7 @@ class Pipeline:
 
         :param path: Path to pipeline.yaml file
         :param config: The PipelineConfig
-        :return: Absolute path to the pipeline_<environment>.yaml
+        :returns: An absolute path to the pipeline_<environment>.yaml
         """
         return path.with_stem(f"{path.stem}_{config.environment}")
 
@@ -263,7 +294,7 @@ class Pipeline:
         Moreover, for each sub-path an environment variable is set.
         For example, for a given path ./data/v1/dev/pipeline.yaml the pipeline_name would be
         set to data-v1-dev. Then the sub environment variables are set:
-        
+
         pipeline_name_0 = data
         pipeline_name_1 = v1
         pipeline_name_2 = dev

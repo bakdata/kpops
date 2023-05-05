@@ -97,11 +97,11 @@ class PipelineComponent(BaseDefaultsComponent):
 
     @staticmethod
     def substitute_component_names(key: str, _type: str, **kwargs) -> str:
-        """Substitute component field name, e.g., `error_topic_name`
+        """Substitute component field names, e.g., ``error_topic_name``
 
         :param key: The raw input containing $-placeholders
         :type key: str
-        :param _type: The key-value mapping containing substitutions
+        :param _type: The type of the component
         :type _type: str
         :param **kwargs: Additional key-value mappings that contain substitutions
         :return: Substituted input string
@@ -113,7 +113,9 @@ class PipelineComponent(BaseDefaultsComponent):
         """Substitute component, env and topic-specific variables in topic's name
 
         :param topic_name: topic name
+        :type topic_name: str
         :return: final topic name
+        :rtype: str
         """
         error_topic_name = self.substitute_component_names(
             self.config.topic_name_config.default_error_topic_name,
