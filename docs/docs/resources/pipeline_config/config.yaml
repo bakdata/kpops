@@ -2,7 +2,7 @@
 #
 # The path to the folder containing the defaults.yaml file and the environment
 # defaults files.
-defaults_path: /path/to/defaults
+defaults_path: .
 # The environment you want to generate and deploy the pipeline to. Suffix your
 # environment files with this value (e.g. defaults_development.yaml for
 # environment=development).

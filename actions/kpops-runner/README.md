@@ -11,7 +11,7 @@ This action runs KPOps with the given config.
 | kpops-version     |    ✅    |       -       | string | KPOps version to use                                                                                                                          |
 | working-directory |    ❌    |       .       | string | root directory used by KPOps to run pipelines                                                                                                 |
 | pipeline-base-dir |    ❌    |       .       | string | directory where relative pipeline variables are initialized from                                                                              |
-| defaults          |    ❌    |   defaults    | string | defaults folder path                                                                                                                          |
+| defaults          |    ❌    |       .       | string | defaults folder path                                                                                                                          |
 | config            |    ❌    |  config.yaml  | string | config.yaml file path                                                                                                                         |
 | components        |    ❌    |       -       | string | components package path                                                                                                                       |
 

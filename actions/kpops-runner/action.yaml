@@ -16,7 +16,7 @@ inputs:
     default: "."
   defaults:
     description: "Defaults folder path"
-    default: "defaults"
+    default: "."
   config:
     description: "config.yaml file path"
     default: "config.yaml"
