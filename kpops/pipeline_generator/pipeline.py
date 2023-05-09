@@ -225,14 +225,21 @@ class Pipeline:
         self,
         component: PipelineComponent,
     ) -> PipelineComponent:
+        """Enriches a pipeline component with env-specific config
+
+        :param component: Component to be enriched
+        :type component: PipelineComponent
+        :returns: Enriched component
+        :rtype: PipelineComponent
+        """
         env_component_definition = self.env_components_index.get(component.name, {})
-        pair = update_nested_pair(
+        component_as_dict = update_nested_pair(
             env_component_definition,
             # HACK: Pydantic .dict() doesn't create jsonable dict
             json.loads(component.json(by_alias=True)),
         )
 
-        component_data = self.substitute_component_specific_variables(component, pair)
+        component_data = self.substitute_component_specific_variables(component, component_as_dict)
 
         component_class = type(component)
         return component_class(
@@ -262,13 +269,23 @@ class Pipeline:
 
     @staticmethod
     def substitute_component_specific_variables(
-        component: PipelineComponent, pair: dict  # TODO: better parameter name for pair
+        component: PipelineComponent, env_component: dict  # TODO: better parameter name for pair
     ) -> dict:
-        """Overrides component config with component config in pipeline environment definition."""
+        """Override component config with component config in pipeline environment definition.
+
+        Introduces ``${component_type}`` and ``${component_name}`` to the substitution.
+
+        :param component: Component
+        :type component: PipelineComponent
+        :param env_component: Component int the form of a dict
+        :type env_component: dict
+        :returns: Updated component config with env-specific values
+        :rtype: dict
+        """
         # HACK: why do we need an intermediate JSON object?
         component_data: dict = json.loads(
             substitute(
-                json.dumps(pair),
+                json.dumps(env_component),
                 {
                     "component_type": component.type,
                     "component_name": component.name,

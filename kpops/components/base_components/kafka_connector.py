@@ -124,7 +124,7 @@ class KafkaConnector(PipelineComponent, ABC):
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
     def prepare_connector_config(self) -> None:
-        """Substitute component related variables in config"""
+        """Substitute component-related variables in config"""
         substituted_config = self.substitute_component_variables(
             json.dumps(self.app.dict())
         )

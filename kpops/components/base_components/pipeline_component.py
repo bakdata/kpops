@@ -87,7 +87,11 @@ class PipelineComponent(BaseDefaultsComponent):
         self.set_output_topics()
 
     def substitute_output_topic_names(self) -> None:
-        """Substitute component and topic specific names in output topics"""
+        """Substitute component and topic-specific names in output topics
+        
+        Substitutes ``${component_name}``, ``${error_topic_name}``,
+        ``${output_topic_name}``, ``${component_type}`` ONLY in ``self.to.topics``.
+        """
         if self.to:
             updated_to = {}
             for name, topic in self.to.topics.items():
@@ -99,6 +103,8 @@ class PipelineComponent(BaseDefaultsComponent):
     def substitute_component_names(key: str, _type: str, **kwargs) -> str:
         """Substitute component field names, e.g., ``error_topic_name``
 
+        Introduces ``${component_type}`` = ``type_`` to the substitution.
+
         :param key: The raw input containing $-placeholders
         :type key: str
         :param _type: The type of the component
@@ -107,10 +113,16 @@ class PipelineComponent(BaseDefaultsComponent):
         :return: Substituted input string
         :rtype: str
         """
+        # QUEST: Why introduce param `_type` instead of just using `self.type`?
         return substitute(key, {"component_type": _type, **kwargs})
 
     def substitute_component_variables(self, topic_name: str) -> str:
         """Substitute component, env and topic-specific variables in topic's name
+
+        Introduces the following vars to the substitution:
+        ``${component_name}`` = ``self.name``
+        ``${error_topic_name}`` = ``default_error_topic_name`` with substituted ``${component_type}``
+        ``${output_topic_name}`` = ``default_output_topic_name`` with substituted ``${component_type}``
 
         :param topic_name: topic name
         :type topic_name: str
@@ -262,7 +274,7 @@ class PipelineComponent(BaseDefaultsComponent):
             self.apply_from_inputs(input_topic, from_topic)
 
     def substitute_name(self) -> None:
-        """Substitute $ placeholders in `self.name` with `self.type`"""
+        """Substitute ``${component_type}`` in ``self.name``"""
         if self.name:
             self.name = self.substitute_component_names(self.name, self.type)
         else:
@@ -329,5 +341,5 @@ class PipelineComponent(BaseDefaultsComponent):
         """
 
     def substitute_prefix(self) -> None:
-        """Substitute $-placeholders in self.prefix with environment variables"""
+        """Substitute $-placeholders in ``self.prefix`` with environment variables"""
         self.prefix = substitute(self.prefix, dict(os.environ))
