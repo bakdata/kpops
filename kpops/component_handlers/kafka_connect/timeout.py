@@ -1,8 +1,7 @@
-import logging
-from asyncio import CancelledError, TimeoutError
-from threading import Timer
-from typing import Callable, NoReturn, TypeVar
 import asyncio
+import logging
+from asyncio import TimeoutError
+from typing import Callable, TypeVar
 
 log = logging.getLogger("Timeout")
 
