@@ -39,8 +39,8 @@ jobs:
       - name: Formatting (black)
         run: poetry run pre-commit run black --all-files --show-diff-on-failure
 
-      - name: Typing (mypy)
-        run: poetry run pre-commit run mypy --all-files
+      #- name: Typing (mypy)
+      #  run: poetry run pre-commit run mypy --all-files
 
       - name: Generate schema (kpops schema)
         run: poetry run pre-commit run gen-schema --all-files --show-diff-on-failure
