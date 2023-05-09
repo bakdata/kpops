@@ -1,6 +1,8 @@
 import logging
-import signal
+from asyncio import CancelledError, TimeoutError
+from threading import Timer
 from typing import Callable, NoReturn, TypeVar
+import asyncio
 
 log = logging.getLogger("Timeout")
 
@@ -14,17 +16,23 @@ def timeout(func: Callable[..., T], *, secs: int = 0) -> T | None:
     :param secs: The timeout in seconds
     """
 
-    def handler(signum, frame) -> NoReturn:
-        raise TimeoutError()
+    async def main_supervisor(func, secs):
+        coro = asyncio.to_thread(func)
+        task = asyncio.create_task(coro)
+        if secs == 0:
+            return await task
+        else:
+            return await asyncio.wait_for(task, timeout=secs)
 
     # set the timeout handler
-    signal.signal(signal.SIGALRM, handler)
-    signal.alarm(secs)
+    # signal.signal(signal.SIGALRM, handler)
+    # signal.alarm(secs)
+    loop = asyncio.get_event_loop()
     try:
-        return func()
-    except TimeoutError:
+        complete = loop.run_until_complete(main_supervisor(func, secs))
+        return complete
+    except TimeoutError as e:
+        print(e)
         log.error(
             f"Kafka Connect operation {func.__name__} timed out after {secs} seconds. To increase the duration, set the `timeout` option in config.yaml."
         )
-    finally:
-        signal.alarm(0)
