@@ -167,7 +167,7 @@ class TestConnectorHandler:
 
         config = KafkaConnectConfig()
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValueError):
             handler.create_connector(CONNECTOR_NAME, config, True)
 
         connector_wrapper.validate_connector_config.assert_called_once_with(

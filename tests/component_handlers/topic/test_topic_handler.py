@@ -360,7 +360,7 @@ class TestTopicHandler:
         )
         to_section = ToSection(topics={"topic-X": topic_config})
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValueError):
             topic_handler.create_topics(to_section=to_section, dry_run=True)
             wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
 
@@ -383,7 +383,7 @@ class TestTopicHandler:
         )
         to_section = ToSection(topics={"topic-X": topic_config})
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(ValueError):
             topic_handler.create_topics(to_section=to_section, dry_run=True)
             wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
 

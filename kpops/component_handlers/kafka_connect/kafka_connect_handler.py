@@ -120,9 +120,7 @@ class KafkaConnectHandler:
                 f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors:"
             )
             log.error("\n".join(errors))
-            sys.exit(
-                1
-            )  # FIXME raise instead https://github.com/bakdata/kpops/issues/101
+            raise ValueError(f"Error creating connector {connector_name}")
         else:
             log.info(
                 f"Connector Creation: connector config for {connector_name} is valid!"
