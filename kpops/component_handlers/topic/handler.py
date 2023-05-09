@@ -1,5 +1,5 @@
 import logging
-
+import sys
 from kpops.component_handlers.topic.exception import TopicNotFoundException
 from kpops.component_handlers.topic.model import (
     TopicConfigResponse,
@@ -150,7 +150,7 @@ class TopicHandler:
             log.error(
                 f"Topic Creation: partition count of topic {topic_name} changed! Partitions count of topic {topic_name} is {partition_count}. The given partitions count {topic_spec.partitions_count}."
             )
-            exit(1)  # FIXME raise instead https://github.com/bakdata/kpops/issues/101
+            sys.exit(1)  # FIXME raise instead https://github.com/bakdata/kpops/issues/101
 
     @staticmethod
     def __check_replication_factor(
@@ -171,7 +171,7 @@ class TopicHandler:
             log.error(
                 f"Topic Creation: replication factor of topic {topic_name} changed! Replication factor of topic {topic_name} is {replication_factor}. The given replication count {topic_spec.replication_factor}."
             )
-            exit(1)  # FIXME raise instead https://github.com/bakdata/kpops/issues/101
+            sys.exit(1)  # FIXME raise instead https://github.com/bakdata/kpops/issues/101
 
     def __dry_run_topic_deletion(self, topic_name: str) -> None:
         try:
