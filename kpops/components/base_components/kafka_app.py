@@ -103,14 +103,6 @@ class KafkaApp(KubernetesApp):
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        # self.app.streams.brokers = substitute(
-        #     self.app.streams.brokers, {"broker": self.config.broker}
-        # )
-        # if self.app.streams.schema_registry_url:
-        #     self.app.streams.schema_registry_url = substitute(
-        #         self.app.streams.schema_registry_url,
-        #         {"schema_registry_url": self.config.schema_registry_url},
-        #     )
 
     @property
     def clean_up_helm_chart(self) -> str:
