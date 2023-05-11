@@ -77,8 +77,8 @@ def create_env_components_index(
                 "To override components per environment, every component should at least have a type and a name."
             )
         index[
-            PipelineComponent.substitute_component_names(
-                component["name"], component["type"], **os.environ
+            PipelineComponent.substitute(
+                component["name"], **{"component_type": component["type"]}, **os.environ
             )
         ] = component
     return index
@@ -222,11 +222,12 @@ class Pipeline:
                 enriched_component.weave_from_topics(prev_component.to)
             self.components.add(enriched_component)
 
+    # TODO: Split into 2: env and regular
     def enrich_component(
         self,
         component: PipelineComponent,
     ) -> PipelineComponent:
-        """Enriches a pipeline component with env-specific config
+        """Enriches a pipeline component with env-specific config and substitutes variables
 
         :param component: Component to be enriched
         :type component: PipelineComponent
@@ -234,13 +235,13 @@ class Pipeline:
         :rtype: PipelineComponent
         """
         env_component_definition = self.env_components_index.get(component.name, {})
-        component_as_dict = update_nested_pair(
+        env_component_as_dict = update_nested_pair(
             env_component_definition,
             # HACK: Pydantic .dict() doesn't create jsonable dict
             json.loads(component.json(by_alias=True)),
         )
 
-        component_data = self.substitute_component_specific_variables(component, component_as_dict)
+        component_data = self.substitute_component_specific_variables(component, env_component_as_dict)
 
         component_class = type(component)
         return component_class(
@@ -272,33 +273,43 @@ class Pipeline:
     def substitute_component_specific_variables(
         component: PipelineComponent, env_component_definition: dict
     ) -> dict:
-        
+        """Substitute all $-placeholders in a component
+
+        :param component: PipelineComponent
+        :type component: PipelineComponent
+        :param env_component_definition: Env-specific component description
+        :type env_component_definition: dict
+        :return: Updated component
+        :rtype: dict
+        """
+        # Generate a substitution
         substitution = gen_substitution(component)
-        component_as_dict = json.loads(component.json(by_alias=True)) # load component
-        component_data: dict = json.loads(
+        # Load component as dict
+        component_as_dict = json.loads(component.json(by_alias=True))
+        # Create jsonable dict from env component definition
+        env_component_as_dict: dict = json.loads(
             substitute(
                 json.dumps(env_component_definition),
                 substitution,
             )
         )
-        component_as_dict = update_nested_pair(component_data, component_as_dict)
+        # Merge the two component definitions prioritizing the env-specific one
+        component_as_dict = update_nested_pair(env_component_as_dict, component_as_dict)
+        # TODO: Optimize, if not repeated at all, some vars are not substituted
         substituted_component: dict = json.loads(
-            component.substitute_component_names(
+            component.substitute(
                 json.dumps(component_as_dict),
-                component.type,
                 **substitution,
                 **os.environ,
             )
         )
         substituted_component: dict = json.loads(
-            component.substitute_component_names(
+            component.substitute(
                 json.dumps(substituted_component),
-                component.type,
                 **substitution,
                 **os.environ,
             )
         )
-        # pprint(substitution)
         return substituted_component
 
     @staticmethod
@@ -339,6 +350,7 @@ class Pipeline:
 def gen_substitution(
     component: PipelineComponent
 ) -> dict:
+    # All variables that were previously introduced in the component, still hardcoded
     substitution_hardcoded = {
         "component_name": component.name,
         "component_type": component.type,
@@ -348,6 +360,10 @@ def gen_substitution(
         "broker": component.config.broker,
     }
     substitution = {}
+    # Fill with all other possible variables
+    # TODO: Fix, currently more of a proof of concept, expand nested fields. Look
+    # at `substitution_hardcoded` for an example. Is this a good way to parse the 
+    # fields at all?
     for field in component.config:
         field_as_list = list(field)
         substitution[field_as_list[0]] = field_as_list[1]
