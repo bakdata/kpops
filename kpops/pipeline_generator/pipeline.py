@@ -6,6 +6,7 @@ import os
 from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
+from pprint import pprint
 
 import yaml
 from pydantic import BaseModel
@@ -269,30 +270,36 @@ class Pipeline:
 
     @staticmethod
     def substitute_component_specific_variables(
-        component: PipelineComponent, env_component: dict  # TODO: better parameter name for pair
+        component: PipelineComponent, env_component_definition: dict
     ) -> dict:
-        """Override component config with component config in pipeline environment definition.
-
-        Introduces ``${component_type}`` and ``${component_name}`` to the substitution.
-
-        :param component: Component
-        :type component: PipelineComponent
-        :param env_component: Component int the form of a dict
-        :type env_component: dict
-        :returns: Updated component config with env-specific values
-        :rtype: dict
-        """
-        # HACK: why do we need an intermediate JSON object?
+        
+        substitution = gen_substitution(component)
+        component_as_dict = json.loads(component.json(by_alias=True)) # load component
         component_data: dict = json.loads(
             substitute(
-                json.dumps(env_component),
-                {
-                    "component_type": component.type,
-                    "component_name": component.name,
-                },
+                json.dumps(env_component_definition),
+                substitution,
             )
         )
-        return component_data
+        component_as_dict = update_nested_pair(component_data, component_as_dict)
+        substituted_component: dict = json.loads(
+            component.substitute_component_names(
+                json.dumps(component_as_dict),
+                component.type,
+                **substitution,
+                **os.environ,
+            )
+        )
+        substituted_component: dict = json.loads(
+            component.substitute_component_names(
+                json.dumps(substituted_component),
+                component.type,
+                **substitution,
+                **os.environ,
+            )
+        )
+        # pprint(substitution)
+        return substituted_component
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
@@ -328,3 +335,21 @@ class Pipeline:
         os.environ["pipeline_name"] = pipeline_name
         for level, parent in enumerate(path_without_file):
             os.environ[f"pipeline_name_{level}"] = parent
+
+def gen_substitution(
+    component: PipelineComponent
+) -> dict:
+    substitution_hardcoded = {
+        "component_name": component.name,
+        "component_type": component.type,
+        "error_topic_name": component.config.topic_name_config.default_error_topic_name,
+        "output_topic_name": component.config.topic_name_config.default_output_topic_name,
+        "schema_registry_url": component.config.schema_registry_url,
+        "broker": component.config.broker,
+    }
+    substitution = {}
+    for field in component.config:
+        field_as_list = list(field)
+        substitution[field_as_list[0]] = field_as_list[1]
+    substitution = update_nested_pair(substitution_hardcoded, substitution)
+    return substitution

@@ -44,7 +44,7 @@ class StreamsApp(KafkaApp):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.__substitute_autoscaling_topic_names()
+        # self.__substitute_autoscaling_topic_names()
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:

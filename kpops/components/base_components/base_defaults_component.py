@@ -213,9 +213,15 @@ def deduplicate(seq: Sequence[T]) -> list[T]:
 def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
     """Nested update for 2 dictionaries
 
+    Adds all new fields in ``other_dict`` to ``original_dict``.
+    Does not update existing fields.
+    To "update" a dict with new values in existing fields:
+    ``original_dict={dict_with_new_values_and_fields}``
+    ``other_dict={dict_to_be_updated}``
+
     :param original_dict: Dictionary to be updated
     :type original_dict: dict
-    :param other_dict: Mapping that contains new or updated key-value pairs
+    :param other_dict: Mapping that contains new key-value pairs
     :type other_dict: Mapping
     :return: Updated dictionary
     :rtype: dict
@@ -235,6 +241,9 @@ def update_nested(*argv: dict) -> dict:
     """Merge multiple configuration dicts.
 
     The dicts have multiple layers. These layers will be merged recursively.
+
+    The leftmost arg has the highest priority, only new fields will be added to it.
+    It "updates" the lower prio dict on the right.
 
     :param argv: n dictionaries
     :type argv: dict

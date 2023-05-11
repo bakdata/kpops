@@ -80,9 +80,9 @@ class PipelineComponent(BaseDefaultsComponent):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.substitute_output_topic_names()
-        self.substitute_name()
-        self.substitute_prefix()
+        # self.substitute_output_topic_names()
+        # self.substitute_name()
+        # self.substitute_prefix()
         self.set_input_topics()
         self.set_output_topics()
 
@@ -281,7 +281,7 @@ class PipelineComponent(BaseDefaultsComponent):
             raise ValueError("Every component must have a name in the end.")
 
     def inflate(self) -> list[PipelineComponent]:
-        """Inflate a component.
+        """Inflate a component
 
         This is helpful if one component should result in multiple components.
         To support this, override this method and return a list of components
