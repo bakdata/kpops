@@ -80,72 +80,21 @@ class PipelineComponent(BaseDefaultsComponent):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        # self.substitute_output_topic_names()
-        # self.substitute_name()
-        # self.substitute_prefix()
         self.set_input_topics()
         self.set_output_topics()
-
-    def substitute_output_topic_names(self) -> None:
-        """Substitute component and topic-specific names in output topics
-        
-        Substitutes ``${component_name}``, ``${error_topic_name}``,
-        ``${output_topic_name}``, ``${component_type}`` ONLY in ``self.to.topics``.
-        """
-        if self.to:
-            updated_to = {}
-            for name, topic in self.to.topics.items():
-                name = self.substitute_component_variables(name)
-                updated_to[name] = topic
-            self.to.topics = updated_to
-
+    
     @staticmethod
-    def substitute_component_names(key: str, _type: str, **kwargs) -> str:
-        """Substitute component field names, e.g., ``error_topic_name``
-
-        Introduces ``${component_type}`` = ``type_`` to the substitution.
+    def substitute(key: str, **kwargs) -> str:
+        """Allow for multiple substitutions to be passed
 
         :param key: The raw input containing $-placeholders
         :type key: str
-        :param _type: The type of the component
-        :type _type: str
-        :param **kwargs: Additional key-value mappings that contain substitutions
+        :param **kwargs: Substitution
         :return: Substituted input string
         :rtype: str
         """
         # QUEST: Why introduce param `_type` instead of just using `self.type`?
-        return substitute(key, {"component_type": _type, **kwargs})
-
-    def substitute_component_variables(self, topic_name: str) -> str:
-        """Substitute component, env and topic-specific variables in topic's name
-
-        Introduces the following vars to the substitution:
-        ``${component_name}`` = ``self.name``
-        ``${error_topic_name}`` = ``default_error_topic_name`` with substituted ``${component_type}``
-        ``${output_topic_name}`` = ``default_output_topic_name`` with substituted ``${component_type}``
-
-        :param topic_name: topic name
-        :type topic_name: str
-        :return: final topic name
-        :rtype: str
-        """
-        error_topic_name = self.substitute_component_names(
-            self.config.topic_name_config.default_error_topic_name,
-            self.type,
-            **os.environ,
-        )
-        output_topic_name = self.substitute_component_names(
-            self.config.topic_name_config.default_output_topic_name,
-            self.type,
-            **os.environ,
-        )
-        return self.substitute_component_names(
-            topic_name,
-            self.type,
-            component_name=self.name,
-            error_topic_name=error_topic_name,
-            output_topic_name=output_topic_name,
-        )
+        return substitute(key, {**kwargs})
 
     def add_input_topics(self, topics: list[str]) -> None:
         """Add given topics to the list of input topics.
@@ -273,13 +222,6 @@ class PipelineComponent(BaseDefaultsComponent):
         for input_topic in input_topics:
             self.apply_from_inputs(input_topic, from_topic)
 
-    def substitute_name(self) -> None:
-        """Substitute ``${component_type}`` in ``self.name``"""
-        if self.name:
-            self.name = self.substitute_component_names(self.name, self.type)
-        else:
-            raise ValueError("Every component must have a name in the end.")
-
     def inflate(self) -> list[PipelineComponent]:
         """Inflate a component
 
@@ -339,7 +281,3 @@ class PipelineComponent(BaseDefaultsComponent):
         :param dry_run: Whether to do a dry run of the command
         :type dry_run: bool
         """
-
-    def substitute_prefix(self) -> None:
-        """Substitute $-placeholders in ``self.prefix`` with environment variables"""
-        self.prefix = substitute(self.prefix, dict(os.environ))
