@@ -106,20 +106,3 @@ class StreamsApp(KafkaApp):
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
         )
-
-    def __substitute_autoscaling_topic_names(self) -> None:
-        """Substitute autoscaling topics' names
-        
-        Substitutes ``${component_name}``, ``${error_topic_name}``,
-        ``${output_topic_name}``, ``${component_type}`` ONLY in
-        ``self.app.autoscaling.topics`` and ``self.app.autoscaling.consumer_group``.
-        """
-        if not self.app.autoscaling:
-            return
-        self.app.autoscaling.topics = [
-            self.substitute_component_variables(topic)
-            for topic in self.app.autoscaling.topics
-        ]
-        self.app.autoscaling.consumer_group = self.substitute_component_variables(
-            self.app.autoscaling.consumer_group
-        )
