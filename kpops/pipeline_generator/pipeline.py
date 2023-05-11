@@ -282,7 +282,7 @@ class Pipeline:
         :return: Updated component
         :rtype: dict
         """
-        # Generate a substitution
+        # Generate a substitution from the component
         substitution = gen_substitution(component)
         # Load component as dict
         component_as_dict = json.loads(component.json(by_alias=True))

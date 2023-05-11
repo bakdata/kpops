@@ -83,6 +83,7 @@ class PipelineComponent(BaseDefaultsComponent):
         self.set_input_topics()
         self.set_output_topics()
     
+    # TODO: Move to yaml_loading
     @staticmethod
     def substitute(key: str, **kwargs) -> str:
         """Allow for multiple substitutions to be passed
