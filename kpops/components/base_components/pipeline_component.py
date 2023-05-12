@@ -20,7 +20,6 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
-from kpops.utils.yaml_loading import substitute
 
 
 class PipelineComponent(BaseDefaultsComponent):
@@ -81,20 +80,6 @@ class PipelineComponent(BaseDefaultsComponent):
         super().__init__(**kwargs)
         self.set_input_topics()
         self.set_output_topics()
-
-    # TODO: Move to yaml_loading
-    @staticmethod
-    def substitute(key: str, **kwargs) -> str:
-        """Allow for multiple substitutions to be passed
-
-        :param key: The raw input containing $-placeholders
-        :type key: str
-        :param **kwargs: Substitution
-        :return: Substituted input string
-        :rtype: str
-        """
-        # QUEST: Why introduce param `_type` instead of just using `self.type`?
-        return substitute(key, {**kwargs})
 
     def add_input_topics(self, topics: list[str]) -> None:
         """Add given topics to the list of input topics.

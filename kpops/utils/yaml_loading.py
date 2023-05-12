@@ -56,7 +56,7 @@ def substitute_nested(input: str, **kwargs) -> str:
     >>> input = "${a}, ${b}, ${c}, ${d}"
     >>> print("Substituted string: " + substitute_nested(input, **substitution))
     0, 0, 0, 0
-    
+
     :param input: The raw input containing $-placeholders
     :type input: str
     :param **kwargs: list of Mappings
