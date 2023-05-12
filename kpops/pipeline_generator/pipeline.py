@@ -6,7 +6,6 @@ import os
 from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
-from pprint import pprint
 
 import yaml
 from pydantic import BaseModel
@@ -241,7 +240,9 @@ class Pipeline:
             json.loads(component.json(by_alias=True)),
         )
 
-        component_data = self.substitute_component_specific_variables(component, env_component_as_dict)
+        component_data = self.substitute_component_specific_variables(
+            component, env_component_as_dict
+        )
 
         component_class = type(component)
         return component_class(
@@ -303,7 +304,7 @@ class Pipeline:
                 **os.environ,
             )
         )
-        substituted_component: dict = json.loads(
+        substituted_component = json.loads(
             component.substitute(
                 json.dumps(substituted_component),
                 **substitution,
@@ -347,9 +348,8 @@ class Pipeline:
         for level, parent in enumerate(path_without_file):
             os.environ[f"pipeline_name_{level}"] = parent
 
-def gen_substitution(
-    component: PipelineComponent
-) -> dict:
+
+def gen_substitution(component: PipelineComponent) -> dict:
     # All variables that were previously introduced in the component, still hardcoded
     substitution_hardcoded = {
         "component_name": component.name,
@@ -362,7 +362,7 @@ def gen_substitution(
     substitution = {}
     # Fill with all other possible variables
     # TODO: Fix, currently more of a proof of concept, expand nested fields. Look
-    # at `substitution_hardcoded` for an example. Is this a good way to parse the 
+    # at `substitution_hardcoded` for an example. Is this a good way to parse the
     # fields at all?
     for field in component.config:
         field_as_list = list(field)

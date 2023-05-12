@@ -18,7 +18,6 @@ from kpops.components.base_components.kubernetes_app import (
 )
 from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
-from kpops.utils.yaml_loading import substitute
 
 log = logging.getLogger("KafkaApp")
 

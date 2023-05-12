@@ -123,6 +123,7 @@ class KafkaConnector(PipelineComponent, ABC):
         """Resetter chart for this component"""
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
+    # TODO: Forgot to refactor before deleting `substitute_component_variables`, fix!
     def prepare_connector_config(self) -> None:
         """Substitute component-related variables in config"""
         substituted_config = self.substitute_component_variables(

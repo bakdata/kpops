@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from functools import cached_property
 from typing import Literal
 
@@ -82,7 +81,7 @@ class PipelineComponent(BaseDefaultsComponent):
         super().__init__(**kwargs)
         self.set_input_topics()
         self.set_output_topics()
-    
+
     # TODO: Move to yaml_loading
     @staticmethod
     def substitute(key: str, **kwargs) -> str:
