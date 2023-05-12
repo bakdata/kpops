@@ -1,4 +1,4 @@
-# KPOps-Runner
+# KPOps runner
 
 This action runs KPOps with the given config.
 
@@ -8,12 +8,14 @@ This action runs KPOps with the given config.
 | ----------------- | :------: | :-----------: | :----: | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | command           |    ✅    |       -       | string | KPOps command to run. generate, deploy, destroy, reset, clean are possible values. Flags such as --dry-run and --execute need to be specified |
 | pipeline          |    ✅    |       -       | string | Pipeline to run by KPOps                                                                                                                      |
-| kpops-version     |    ✅    |       -       | string | KPOps version to use                                                                                                                          |
 | working-directory |    ❌    |       .       | string | root directory used by KPOps to run pipelines                                                                                                 |
 | pipeline-base-dir |    ❌    |       .       | string | directory where relative pipeline variables are initialized from                                                                              |
 | defaults          |    ❌    |       .       | string | defaults folder path                                                                                                                          |
 | config            |    ❌    |  config.yaml  | string | config.yaml file path                                                                                                                         |
 | components        |    ❌    |       -       | string | components package path                                                                                                                       |
+| kpops-version     |    ❌    |    latest     | string | KPOps version to install                                                                                                                      |
+| helm-version      |    ❌    |    latest     | string | Helm version to install                                                                                                                       |
+| token             |    ❌    |    latest     | string | secrets.GITHUB_TOKEN, needed for setup-helm action if helm-version is set to latest                                                           |
 
 ## Usage
 
