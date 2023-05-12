@@ -17,7 +17,7 @@ from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import update_nested_pair
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.yaml_loading import load_yaml_file, substitute
+from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
 
 log = logging.getLogger("PipelineGenerator")
 
@@ -76,7 +76,7 @@ def create_env_components_index(
                 "To override components per environment, every component should at least have a type and a name."
             )
         index[
-            PipelineComponent.substitute(
+            substitute_nested(
                 component["name"], **{"component_type": component["type"]}, **os.environ
             )
         ] = component
@@ -226,23 +226,20 @@ class Pipeline:
         self,
         component: PipelineComponent,
     ) -> PipelineComponent:
-        """Enriches a pipeline component with env-specific config and substitutes variables
+        """Enrich a pipeline component with env-specific config and substitute variables
 
         :param component: Component to be enriched
         :type component: PipelineComponent
         :returns: Enriched component
         :rtype: PipelineComponent
         """
-        env_component_definition = self.env_components_index.get(component.name, {})
         env_component_as_dict = update_nested_pair(
-            env_component_definition,
+            self.env_components_index.get(component.name, {}),
             # HACK: Pydantic .dict() doesn't create jsonable dict
             json.loads(component.json(by_alias=True)),
         )
 
-        component_data = self.substitute_component_specific_variables(
-            component, env_component_as_dict
-        )
+        component_data = self.substitute_in_component(component, env_component_as_dict)
 
         component_class = type(component)
         return component_class(
@@ -271,7 +268,7 @@ class Pipeline:
         )
 
     @staticmethod
-    def substitute_component_specific_variables(
+    def substitute_in_component(
         component: PipelineComponent, env_component_definition: dict
     ) -> dict:
         """Substitute all $-placeholders in a component
@@ -296,19 +293,12 @@ class Pipeline:
         )
         # Merge the two component definitions prioritizing the env-specific one
         component_as_dict = update_nested_pair(env_component_as_dict, component_as_dict)
-        # TODO: Optimize, if not repeated at all, some vars are not substituted
+        # Substitute all vars in the component
         substituted_component: dict = json.loads(
-            component.substitute(
+            substitute_nested(
                 json.dumps(component_as_dict),
-                **substitution,
                 **os.environ,
-            )
-        )
-        substituted_component = json.loads(
-            component.substitute(
-                json.dumps(substituted_component),
                 **substitution,
-                **os.environ,
             )
         )
         return substituted_component
