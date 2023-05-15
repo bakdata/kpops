@@ -15,7 +15,11 @@ from rich.syntax import Syntax
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
-from kpops.components.base_components.base_defaults_component import update_nested_pair
+from kpops.components.base_components.base_defaults_component import (
+    inflate_mapping,
+    update_nested,
+    update_nested_pair,
+)
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
 
@@ -273,7 +277,7 @@ class Pipeline:
     ) -> dict:
         """Substitute all $-placeholders in a component
 
-        :param component: PipelineComponent
+        :param component: Pipeline component
         :type component: PipelineComponent
         :param env_component_definition: Env-specific component description
         :type env_component_definition: dict
@@ -339,23 +343,43 @@ class Pipeline:
             os.environ[f"pipeline_name_{level}"] = parent
 
 
+# NOTE: Not final implementation, not working as intended. Problems with
+# reading fields with `exclude=True` as well as the hardcoded var names.
 def gen_substitution(component: PipelineComponent) -> dict:
-    # All variables that were previously introduced in the component, still hardcoded
+    """Generate a complete substitution dict from a component
+
+    Finds all attributes that belong to a component and expands them to create
+    a mapping containing each variable name and value to substitute with.
+
+    :param component: Pipeline component
+    :type component: PipelineComponent
+    :returns: Substitution mapping of all variables related to the component.
+    :rtype: dict
+    """
+    # All variables that were previously introduced in the component by the substitution
+    # functions, still hardcoded.
     substitution_hardcoded = {
         "component_name": component.name,
         "component_type": component.type,
         "error_topic_name": component.config.topic_name_config.default_error_topic_name,
         "output_topic_name": component.config.topic_name_config.default_output_topic_name,
-        "schema_registry_url": component.config.schema_registry_url,
-        "broker": component.config.broker,
+        # "schema_registry_url": component.config.schema_registry_url,
+        # "broker": component.config.broker,
     }
-    substitution = {}
-    # Fill with all other possible variables
-    # TODO: Fix, currently more of a proof of concept, expand nested fields. Look
-    # at `substitution_hardcoded` for an example. Is this a good way to parse the
-    # fields at all?
-    for field in component.config:
-        field_as_list = list(field)
-        substitution[field_as_list[0]] = field_as_list[1]
-    substitution = update_nested_pair(substitution_hardcoded, substitution)
+    # TODO: Fill with all other possible variables
+
+    # lambda to export BaseModel to dict and flatten
+    # TODO: Fix flake8 error - avoid using `lambda`, define with `def`
+    flatten = lambda model, by_alias: inflate_mapping(
+        json.loads(model.json(by_alias=by_alias))
+    )
+
+    # A bit hardcoded to get around the exclusion property of some fields
+    # Currently only manually including component config
+    substitution_model = flatten(component, True)
+    substitution_model_config = flatten(component.config, False)
+
+    substitution = update_nested(
+        substitution_hardcoded, substitution_model, substitution_model_config
+    )
     return substitution

@@ -257,3 +257,25 @@ def update_nested(*argv: dict) -> dict:
     if len(argv) == 2:
         return update_nested_pair(argv[0], argv[1])
     return update_nested(update_nested_pair(argv[0], argv[1]), *argv[2:])
+
+
+# TODO: Move to a better place
+def inflate_mapping(nested_mapping: Mapping) -> dict:
+    """Add all nested key-value pairs to the top level of the mapping
+
+    Prioritizes the existing top-level values in a conflict with keys. Does not
+    remove any fields, only coppies existing ones and moves them up. Hence,
+    output is not exactly flat.
+
+    :param nested_mapping: Nested mapping that is to be `inflated`
+    :type nested_mapping: Mapping
+    :returns: Flattened mapping in the form of dict
+    :rtype: dict
+    """
+    top = dict()
+    for key, value in nested_mapping.items():
+        top[key] = value
+        if isinstance(value, Mapping):
+            nested = inflate_mapping(value)
+            top = update_nested_pair(top, nested)
+    return top
