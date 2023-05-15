@@ -225,7 +225,8 @@ class Pipeline:
                 enriched_component.weave_from_topics(prev_component.to)
             self.components.add(enriched_component)
 
-    # TODO: Split into 2: env and regular
+    # TODO: Split into 2: env and regular OR combine in some way with
+    # `substitute_in_component`
     def enrich_component(
         self,
         component: PipelineComponent,
@@ -273,7 +274,7 @@ class Pipeline:
 
     @staticmethod
     def substitute_in_component(
-        component: PipelineComponent, env_component_definition: dict
+        component: PipelineComponent, env_component_as_dict: dict
     ) -> dict:
         """Substitute all $-placeholders in a component
 
@@ -286,23 +287,27 @@ class Pipeline:
         """
         # Generate a substitution from the component
         substitution = gen_substitution(component)
-        # Load component as dict
-        component_as_dict = json.loads(component.json(by_alias=True))
-        # Create jsonable dict from env component definition
-        env_component_as_dict: dict = json.loads(
-            substitute(
-                json.dumps(env_component_definition),
-                substitution,
-            )
-        )
+
+        # TODO: Should this be allowed? Probably not, delete after discussion.
+        # Substitute values in the env component definition with any self-references
+        #
+        # env_component_as_dict = json.loads(
+        #     substitute_nested(
+        #         json.dumps(env_component_as_dict),
+        #         **env_component_as_dict,
+        #     )
+        # )
+
         # Merge the two component definitions prioritizing the env-specific one
-        component_as_dict = update_nested_pair(env_component_as_dict, component_as_dict)
-        # Substitute all vars in the component
+        component_as_dict = update_nested_pair(
+            env_component_as_dict,
+            json.loads(component.json(by_alias=True)),
+        )
+        # Substitute all vars in the component, avoid duplicates, prioritize component def
         substituted_component: dict = json.loads(
             substitute_nested(
                 json.dumps(component_as_dict),
-                **os.environ,
-                **substitution,
+                **update_nested_pair(substitution, os.environ),
             )
         )
         return substituted_component
