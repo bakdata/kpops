@@ -16,8 +16,6 @@ class TestExample:
                 "./examples/bakdata/atm-fraud-detection/pipeline.yaml",
                 "--pipeline-base-dir",
                 "examples",
-                "--defaults",
-                "./examples/bakdata/atm-fraud-detection/defaults",
                 "--config",
                 "./examples/bakdata/atm-fraud-detection/config.yaml",
             ],
