@@ -229,7 +229,7 @@ def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
     for key, value in other_dict.items():
         if isinstance(value, Mapping):
             nested_val = original_dict.get(key, {})
-            if nested_val is not None:
+            if nested_val is not None and isinstance(nested_val, dict):
                 original_dict[key] = update_nested_pair(nested_val, value)
         else:
             if key not in original_dict:
