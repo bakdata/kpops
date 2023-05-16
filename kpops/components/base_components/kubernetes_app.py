@@ -88,7 +88,6 @@ class KubernetesApp(PipelineComponent):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.__check_compatible_name()
 
     @cached_property
     def helm(self) -> Helm:
@@ -182,12 +181,16 @@ class KubernetesApp(PipelineComponent):
             f"Please implement the get_helm_chart() method of the {self.__module__} module."
         )
 
-    def __check_compatible_name(self) -> None:
-        """Check if the component's name `self.name` is valid for Kubernetes"""
-        if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(self.name)):  # TODO: SMARTER
-            raise ValueError(
-                f"The component name {self.name} is invalid for Kubernetes."
-            )
+    @staticmethod
+    def check_compatible_name(name: str) -> None:
+        """Check if the component's name `self.name` is valid for Kubernetes
+
+        :param name: name of the component
+        :type name: str
+        :raises ValueError: The component name is invalid for Kubernetes.
+        """
+        if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(name)):  # TODO: SMARTER
+            raise ValueError(f"The component name {name} is invalid for Kubernetes.")
 
     @override
     def dict(self, *, exclude=None, **kwargs) -> dict[str, Any]:
