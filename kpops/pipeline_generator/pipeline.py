@@ -361,6 +361,12 @@ def gen_substitution(component: PipelineComponent) -> dict:
     :returns: Substitution mapping of all variables related to the component.
     :rtype: dict
     """
+
+    # Avoid repetition by nesting func
+    def flatten(model: BaseModel, by_alias: bool) -> dict:
+        """Convert pydantic model to jsonable dict and inflate"""
+        return inflate_mapping(json.loads(model.json(by_alias=by_alias)))
+
     # All variables that were previously introduced in the component by the substitution
     # functions, still hardcoded.
     substitution_hardcoded = {
@@ -371,15 +377,9 @@ def gen_substitution(component: PipelineComponent) -> dict:
         # "schema_registry_url": component.config.schema_registry_url,
         # "broker": component.config.broker,
     }
+
     # TODO: Fill with all other possible variables
-
-    # lambda to export BaseModel to dict and flatten
-    # TODO: Fix flake8 error - avoid using `lambda`, define with `def`
-    flatten = lambda model, by_alias: inflate_mapping(
-        json.loads(model.json(by_alias=by_alias))
-    )
-
-    # A bit hardcoded to get around the exclusion property of some fields
+    # Somewhat hardcoded to get around the exclusion property of some fields
     # Currently only manually including component config
     substitution_model = flatten(component, True)
     substitution_model_config = flatten(component.config, False)
