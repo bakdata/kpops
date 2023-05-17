@@ -384,6 +384,9 @@ def gen_substitution(component: PipelineComponent) -> dict:
     }
 
     # TODO: Fill with all other possible variables
+    # TODO: Add prefix "component_" to each var here to indicate to make all 
+    # component-specific variables easily distinguishable?
+    #
     # Somewhat hardcoded to get around the exclusion property of some fields
     # Currently only manually including component config
     substitution_model = flatten(component, True)
