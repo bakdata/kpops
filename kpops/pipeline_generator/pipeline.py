@@ -257,6 +257,7 @@ class Pipeline:
         # TODO: Simplify
         if isinstance(enriched_component, KubernetesApp):
             KubernetesApp.check_compatible_name(enriched_component.name)
+
         return enriched_component
 
     def print_yaml(self, substitution: dict | None = None) -> None:
@@ -384,7 +385,7 @@ def gen_substitution(component: PipelineComponent) -> dict:
     }
 
     # TODO: Fill with all other possible variables
-    # TODO: Add prefix "component_" to each var here to indicate to make all 
+    # TODO: Add prefix "component_" to each var here to indicate to make all
     # component-specific variables easily distinguishable?
     #
     # Somewhat hardcoded to get around the exclusion property of some fields

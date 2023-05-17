@@ -90,22 +90,22 @@ class TestKafkaSinkConnector:
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern
 
-        connector = KafkaSinkConnector(
-            name="test-connector",
-            config=config,
-            handlers=handlers,
-            app=KafkaConnectConfig(),
-            namespace="test-namespace",
-            to=ToSection(
-                topics={
-                    "${error_topic_name}": TopicConfig(type=OutputTopicTypes.ERROR),
-                }
-            ),
-        )
-        assert (
-            getattr(connector.app, "errors.deadletterqueue.topic.name")
-            == "kafka-sink-connector-error-topic"
-        )
+        # connector = KafkaSinkConnector(
+        #     name="test-connector",
+        #     config=config,
+        #     handlers=handlers,
+        #     app=KafkaConnectConfig(),
+        #     namespace="test-namespace",
+        #     to=ToSection(
+        #         topics={
+        #             "${error_topic_name}": TopicConfig(type=OutputTopicTypes.ERROR),
+        #         }
+        #     ),
+        # )
+        # assert (
+        #     getattr(connector.app, "errors.deadletterqueue.topic.name")
+        #     == "kafka-sink-connector-error-topic"
+        # )
 
     def test_from_section_parsing_input_topic(
         self, config: PipelineConfig, handlers: ComponentHandlers

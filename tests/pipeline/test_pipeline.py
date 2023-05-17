@@ -131,6 +131,30 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
+    def test_kafka_connector_config_parsing(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "kafka-connect-sink-config/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--config",
+                str(RESOURCE_PATH / "kafka-connect-sink-config/config.yaml"),
+            ],
+            catch_exceptions=False,
+        )
+        enriched_pipeline = yaml.safe_load(result.stdout)
+
+        assert isinstance(enriched_pipeline, dict)
+        sink_connector = enriched_pipeline["components"][0]
+        assert (
+            sink_connector["app"]["errors.deadletterqueue.topic.name"]
+            == "kafka-sink-connector-error-topic"
+        )
+
     def test_no_input_topic(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
