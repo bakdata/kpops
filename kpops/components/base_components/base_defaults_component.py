@@ -260,6 +260,7 @@ def update_nested(*argv: dict) -> dict:
 
 
 # TODO: Move to a better place
+# TODO: Introduce a prefix to the keys that are duplicated and moved up?
 def inflate_mapping(nested_mapping: Mapping) -> dict:
     """Add all nested key-value pairs to the top level of the mapping
 

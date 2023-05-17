@@ -3,6 +3,7 @@
     labels:
       app_type: "${component_type}"
       app_name: "${component_name}"
+      app_schedule: "${schedule}"
     commandLine:
       FAKE_ARG: "fake-arg-value"
     schedule: "30 3/8 * * *"
@@ -18,9 +19,10 @@
 - type: filter
   name: "filter-app"
   app:
-    label:
+    labels:
       app_type: "${component_type}"
       app_name: "${component_name}"
+      app_resources_requests_memory: "${memory}"
     commandLine:
       TYPE: "nothing"
     resources:

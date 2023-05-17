@@ -98,7 +98,7 @@ class TestPipeline:
         enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    def test_substitute_component_names(self, snapshot: SnapshotTest):
+    def test_substitute_in_component(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
@@ -121,6 +121,13 @@ class TestPipeline:
         labels = enriched_pipeline["components"][0]["app"]["labels"]
         assert labels["app_name"] == "scheduled-producer"
         assert labels["app_type"] == "scheduled-producer"
+        assert labels["app_schedule"] == "30 3/8 * * *"
+        assert (
+            enriched_pipeline["components"][2]["app"]["labels"][
+                "app_resources_requests_memory"
+            ]
+            == "3G"
+        )
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
