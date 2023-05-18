@@ -34,7 +34,6 @@ class KubernetesAppConfig(BaseModel):
         extra = Extra.allow
 
 
-# TODO: label and annotations
 class KubernetesApp(PipelineComponent):
     """Base class for all Kubernetes apps.
 
