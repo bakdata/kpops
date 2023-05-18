@@ -108,9 +108,7 @@ class Helm:
         release_name: str,
         dry_run: bool,
     ) -> str | None:
-        """
-        Prepares and executes the helm uninstall command
-        """
+        """Prepares and executes the helm uninstall command"""
         command = [
             "helm",
             "uninstall",
@@ -134,16 +132,18 @@ class Helm:
         values: dict,
         flags: HelmTemplateFlags = HelmTemplateFlags(),
     ) -> str:
-        """
-        From HELM: Render chart templates locally and display the output.
+        """From HELM: Render chart templates locally and display the output.
 
         Any values that would normally be looked up or retrieved in-cluster will
         be faked locally. Additionally, none of the server-side testing of chart
         validity (e.g. whether an API is supported) is done.
 
-        :param str release_name: the release name for which the command is ran
-        :param str chart: Helm chart to be templated
-        :param dict[str, str] values: `values.yaml` to be used
+        :param release_name: the release name for which the command is ran
+        :type release_name: str
+        :param chart: Helm chart to be templated
+        :type chart: str
+        :param values: `values.yaml` to be used
+        :type values: dict[str, str]
         :param flags: the flags to be set for `helm template`
         :type flags: HelmTemplateFlags
         :return: the output of `helm template`
