@@ -228,7 +228,7 @@ class TestProducerApp:
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "producer-output-topic",
+                        "outputTopic": "${output_topic_name}",
                     },
                 },
                 HelmUpgradeInstallFlags(version="2.4.2", wait=True, wait_for_jobs=True),
