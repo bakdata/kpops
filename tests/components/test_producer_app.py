@@ -162,7 +162,7 @@ class TestProducerApp:
             "test-namespace", self.PRODUCER_APP_NAME, True
         )
 
-    def should_not_reset_producer_app(
+    def test_should_not_reset_producer_app(
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
@@ -188,11 +188,9 @@ class TestProducerApp:
                 True,
                 "test-namespace",
                 {
-                    "namespace": "test-namespace",
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "producer-output-topic",
-                        "deleteOutput": True,
+                        "outputTopic": "${output_topic_name}",
                     },
                 },
                 HelmUpgradeInstallFlags(version="2.4.2", wait=True, wait_for_jobs=True),
