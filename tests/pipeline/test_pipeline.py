@@ -118,6 +118,22 @@ class TestPipeline:
         enriched_pipeline = yaml.safe_load(result.stdout)
 
         assert isinstance(enriched_pipeline, dict)
+
+        path_without_file = (
+            Path(RESOURCE_PATH / "component-type-substitution/pipeline.yaml")
+            .resolve()
+            .relative_to(Path(PIPELINE_BASE_DIR).resolve())
+            .parts[:-1]
+        )
+        if not path_without_file:
+            raise ValueError("The pipeline-base-dir should not equal the pipeline-path")
+        pipeline_name = "-".join(path_without_file)
+
+        assert (
+            enriched_pipeline["components"][0]["name"]
+            == pipeline_name + "-scheduled-producer"
+        )
+
         labels = enriched_pipeline["components"][0]["app"]["labels"]
         assert labels["app_name"] == "scheduled-producer"
         assert labels["app_type"] == "scheduled-producer"
