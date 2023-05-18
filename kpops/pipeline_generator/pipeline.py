@@ -369,15 +369,15 @@ def gen_substitution(component: PipelineComponent) -> dict:
     """
 
     # Avoid repetition by nesting func
-    def flatten(model: BaseModel, by_alias: bool) -> dict:
+    def flatten(model: BaseModel, by_alias: bool, prefix: str | None = None) -> dict:
         """Convert pydantic model to jsonable dict and inflate"""
-        return inflate_mapping(json.loads(model.json(by_alias=by_alias)))
+        return inflate_mapping(json.loads(model.json(by_alias=by_alias)), prefix)
 
     # All variables that were previously introduced in the component by the substitution
     # functions, still hardcoded.
     substitution_hardcoded = {
-        "component_name": component.name,
-        "component_type": component.type,
+        # "component_name": component.name,
+        # "component_type": component.type,
         "error_topic_name": component.config.topic_name_config.default_error_topic_name,
         "output_topic_name": component.config.topic_name_config.default_output_topic_name,
         # "schema_registry_url": component.config.schema_registry_url,
@@ -385,12 +385,10 @@ def gen_substitution(component: PipelineComponent) -> dict:
     }
 
     # TODO: Fill with all other possible variables
-    # TODO: Add prefix "component_" to each var here to indicate to make all
-    # component-specific variables easily distinguishable?
     #
     # Somewhat hardcoded to get around the exclusion property of some fields
     # Currently only manually including component config
-    substitution_model = flatten(component, True)
+    substitution_model = flatten(component, True, "component")
     substitution_model_config = flatten(component.config, False)
 
     substitution = update_nested(

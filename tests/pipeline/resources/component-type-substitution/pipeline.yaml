@@ -3,7 +3,7 @@
     labels:
       app_type: "${component_type}"
       app_name: "${component_name}"
-      app_schedule: "${schedule}"
+      app_schedule: "${component_app_schedule}"
     commandLine:
       FAKE_ARG: "fake-arg-value"
     schedule: "30 3/8 * * *"
@@ -22,7 +22,7 @@
     labels:
       app_type: "${component_type}"
       app_name: "${component_name}"
-      app_resources_requests_memory: "${memory}"
+      app_resources_requests_memory: "${component_app_resources_requests_memory}"
     commandLine:
       TYPE: "nothing"
     resources:
