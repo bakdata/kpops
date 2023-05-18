@@ -289,8 +289,17 @@ class Pipeline:
         :return: Updated component
         :rtype: dict
         """
-        # Generate a substitution from the component with a certain prefix for all vars
-        substitution = gen_substitution(component, "component")
+        # All variables that were previously introduced in the component by the substitution
+        # functions, still hardcoded.
+        substitution_hardcoded = {
+            # "component_name": component.name,
+            # "component_type": component.type,
+            "error_topic_name": component.config.topic_name_config.default_error_topic_name,
+            "output_topic_name": component.config.topic_name_config.default_output_topic_name,
+            "schema_registry_url": component.config.schema_registry_url,
+            "broker": component.config.broker,
+        }
+        substitution = gen_substitution(component, "component", substitution_hardcoded)
 
         # TODO: Should this be allowed? Probably not, delete after discussion.
         # Substitute values in the env component definition with any self-references
@@ -353,53 +362,39 @@ class Pipeline:
 
 
 # TODO: Polish and test
-def gen_substitution(component: PipelineComponent, prefix: str | None = None) -> dict:
-    """Generate a complete substitution dict from a component
+def gen_substitution(
+    model: BaseModel,
+    prefix: str | None = None,
+    existing_substitution: dict | None = None,
+) -> dict:
+    """Generate a complete substitution dict from a BaseModel
 
-    Finds all attributes that belong to a component and expands them to create
-    a mapping containing each variable name and value to substitute with.
+    Finds all attributes that belong to a model and expands them to create
+    a dict containing each variable name and value to substitute with.
 
-    :param component: Pipeline component
-    :type component: PipelineComponent
+    :param model: Pydantic BaseModel
+    :type model: BaseModel
     :param prefix: Prefix the preceeds all substitution variables, defaults to None
     :type prefix: str, optional
-    :returns: Substitution mapping of all variables related to the component.
+    :param substitution: existing substitution to include
+    :type substitution: dict
+    :returns: Substitution dict of all variables related to the model.
     :rtype: dict
     """
-
-    # Avoid repetition by nesting func
-    def flatten(
-        model: BaseModel, by_alias: bool = False, prefix: str | None = None
-    ) -> dict:
-        """Convert pydantic model to jsonable dict and inflate"""
-        return inflate_mapping(json.loads(model.json(by_alias=by_alias)), prefix)
-
-    # All variables that were previously introduced in the component by the substitution
-    # functions, still hardcoded.
-    substitution_hardcoded = {
-        # "component_name": component.name,
-        # "component_type": component.type,
-        "error_topic_name": component.config.topic_name_config.default_error_topic_name,
-        "output_topic_name": component.config.topic_name_config.default_output_topic_name,
-        "schema_registry_url": component.config.schema_registry_url,
-        "broker": component.config.broker,
-    }
-
-    substitution_model = flatten(component, True, prefix)
-
-    if prefix is None:
-        prefix = ""
-    substitution_model_excluded_fields = dict()
-    for field_name, value in component:
-        if str(prefix + "_" + field_name) not in substitution_model.keys():
-            try:
-                substitution_model_excluded_fields[field_name] = flatten(value)
-            except Exception:  # FIXME: Narrow down, perhaps AttributeError?
-                substitution_model_excluded_fields[field_name] = value
-
-    substitution = update_nested(
-        substitution_hardcoded,
-        substitution_model,
-        inflate_mapping(substitution_model_excluded_fields, prefix),
+    # Check if given existing substitution is a dict
+    if existing_substitution and not isinstance(existing_substitution, dict):
+        raise TypeError("Argument existing_substitution must be a dict")
+    elif not existing_substitution:
+        existing_substitution = {}
+    # Init substitution dict
+    substitution_model = dict()
+    # For each field, recurse or save value under key=field_name
+    for field_name, value in model:
+        if isinstance(value, BaseModel):
+            substitution_model[field_name] = gen_substitution(value)
+        else:
+            substitution_model[field_name] = value
+    # Combine existing substitution with the inflated model substitution dict
+    return update_nested(
+        existing_substitution, inflate_mapping(substitution_model, prefix)
     )
-    return substitution
