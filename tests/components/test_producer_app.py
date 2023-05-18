@@ -97,7 +97,7 @@ class TestProducerApp:
             },
         )
 
-        assert producer_app.app.streams.output_topic == "producer-output-topic"
+        assert producer_app.app.streams.output_topic == "${output_topic_name}"
         assert producer_app.app.streams.extra_output_topics == {
             "first-extra-topic": "extra-topic-1"
         }
