@@ -130,7 +130,7 @@ class TestProducerApp:
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "producer-output-topic",
+                        "outputTopic": "${output_topic_name}",
                     },
                 },
                 HelmUpgradeInstallFlags(
