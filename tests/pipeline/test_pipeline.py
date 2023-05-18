@@ -128,6 +128,14 @@ class TestPipeline:
             ]
             == "3G"
         )
+        assert (
+            "resources-component-type-substitution-scheduled-producer"
+            in enriched_pipeline["components"][0]["to"]["topics"]
+        )
+        assert (
+            "resources-component-type-substitution-converter-error"
+            in enriched_pipeline["components"][1]["to"]["topics"]
+        )
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
