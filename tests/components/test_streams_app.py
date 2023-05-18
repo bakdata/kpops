@@ -212,8 +212,8 @@ class TestStreamsApp:
             "first-extra-topic": "extra-topic-1",
             "second-extra-topic": "extra-topic-2",
         }
-        assert streams_app.app.streams.output_topic == "streams-app-output-topic"
-        assert streams_app.app.streams.error_topic == "streams-app-error-topic"
+        assert streams_app.app.streams.output_topic == "${output_topic_name}"
+        assert streams_app.app.streams.error_topic == "${error_topic_name}"
 
     def test_weave_inputs_from_prev_component(
         self, config: PipelineConfig, handlers: ComponentHandlers
