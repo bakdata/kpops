@@ -4,7 +4,7 @@ import os
 from collections import deque
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import TypeVar
+from typing import Any, TypeVar
 
 import typer
 from pydantic import BaseModel, Field
@@ -259,24 +259,35 @@ def update_nested(*argv: dict) -> dict:
     return update_nested(update_nested_pair(argv[0], argv[1]), *argv[2:])
 
 
-# TODO: Move to a better place
-# TODO: Introduce a prefix to the keys that are duplicated and moved up?
-def inflate_mapping(nested_mapping: Mapping) -> dict:
+# TODO: Move to a better place? Belongs to Utils imo
+def inflate_mapping(
+    nested_mapping: Mapping[str, Any], prefix: str | None = None, separator: str = "_"
+) -> dict[str, Any]:
     """Add all nested key-value pairs to the top level of the mapping
 
-    Prioritizes the existing top-level values in a conflict with keys. Does not
-    remove any fields, only coppies existing ones and moves them up. Hence,
-    output is not exactly flat.
+    Does not remove any fields, only duplicates existing ones and moves them up
+    with a corresponding prefix.
+    Hence, output is not exactly flat.
 
     :param nested_mapping: Nested mapping that is to be `inflated`
-    :type nested_mapping: Mapping
-    :returns: Flattened mapping in the form of dict
-    :rtype: dict
+    :type nested_mapping: Mapping[str, any]
+    :param prefix: Prefix that will be applied to all top-level keys in the output., defaults to None
+    :type prefix: str, optional
+    :param separator: Separator between the prefix and the keys, defaults to "_"
+    :type separator: str, optional
+    :returns: "Flattened" mapping in the form of dict
+    :rtype: dict[str, Any]
     """
+    if not isinstance(nested_mapping, Mapping):
+        raise TypeError("Argument nested_mapping is not a Mapping")
     top = dict()
     for key, value in nested_mapping.items():
+        if not isinstance(key, str):
+            raise TypeError(f"Argument nested_mapping contains a non-str key: {key}")
+        if prefix:
+            key = prefix + separator + key
         top[key] = value
         if isinstance(value, Mapping):
-            nested = inflate_mapping(value)
-            top = update_nested_pair(top, nested)
+            nested_mapping = inflate_mapping(value, str(key))
+            top = update_nested_pair(top, nested_mapping)
     return top
