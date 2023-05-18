@@ -259,6 +259,18 @@ class Pipeline:
         return enriched_component
 
     def print_yaml(self, substitution: dict | None = None) -> None:
+        # Should enable cross-referencing between components.
+        # TODO: Discuss if needed, test
+        cross_substitution: dict = dict()
+        for component in self.components:
+            cross_substitution = update_nested_pair(
+                # Adjust prefix here if needed
+                cross_substitution,
+                gen_substitution(component, component.name),
+            )
+        if not substitution:
+            substitution = {}
+        substitution = update_nested_pair(substitution, cross_substitution)
         syntax = Syntax(
             substitute(str(self), substitution), "yaml", background_color="default"
         )
@@ -361,7 +373,7 @@ class Pipeline:
             os.environ[f"pipeline_name_{level}"] = parent
 
 
-# TODO: Polish and test
+# TODO: Test, does it belong here?
 def gen_substitution(
     model: BaseModel,
     prefix: str | None = None,
