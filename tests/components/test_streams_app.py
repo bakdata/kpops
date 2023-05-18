@@ -307,8 +307,8 @@ class TestStreamsApp:
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "streams-app-output-topic",
-                        "errorTopic": "streams-app-error-topic",
+                        "outputTopic": "${output_topic_name}",
+                        "errorTopic": "${error_topic_name}",
                     },
                 },
                 HelmUpgradeInstallFlags(
@@ -360,7 +360,7 @@ class TestStreamsApp:
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "streams-app-output-topic",
+                        "outputTopic": "${output_topic_name}",
                         "deleteOutput": False,
                     },
                 },
@@ -399,7 +399,7 @@ class TestStreamsApp:
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "streams-app-output-topic",
+                        "outputTopic": "${output_topic_name}",
                         "deleteOutput": True,
                     },
                 },
