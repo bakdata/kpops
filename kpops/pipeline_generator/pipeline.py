@@ -226,8 +226,6 @@ class Pipeline:
                 enriched_component.weave_from_topics(prev_component.to)
             self.components.add(enriched_component)
 
-    # TODO: Split into 2: env and regular OR combine in some way with
-    # `substitute_in_component`
     def enrich_component(
         self,
         component: PipelineComponent,
@@ -291,8 +289,8 @@ class Pipeline:
         :return: Updated component
         :rtype: dict
         """
-        # Generate a substitution from the component
-        substitution = gen_substitution(component)
+        # Generate a substitution from the component with a certain prefix for all vars
+        substitution = gen_substitution(component, "component")
 
         # TODO: Should this be allowed? Probably not, delete after discussion.
         # Substitute values in the env component definition with any self-references
@@ -354,9 +352,8 @@ class Pipeline:
             os.environ[f"pipeline_name_{level}"] = parent
 
 
-# NOTE: Not final implementation, not working as intended. Problems with
-# reading fields with `exclude=True` as well as the hardcoded var names.
-def gen_substitution(component: PipelineComponent) -> dict:
+# TODO: Polish and test
+def gen_substitution(component: PipelineComponent, prefix: str | None = None) -> dict:
     """Generate a complete substitution dict from a component
 
     Finds all attributes that belong to a component and expands them to create
@@ -364,12 +361,16 @@ def gen_substitution(component: PipelineComponent) -> dict:
 
     :param component: Pipeline component
     :type component: PipelineComponent
+    :param prefix: Prefix the preceeds all substitution variables, defaults to None
+    :type prefix: str, optional
     :returns: Substitution mapping of all variables related to the component.
     :rtype: dict
     """
 
     # Avoid repetition by nesting func
-    def flatten(model: BaseModel, by_alias: bool, prefix: str | None = None) -> dict:
+    def flatten(
+        model: BaseModel, by_alias: bool = False, prefix: str | None = None
+    ) -> dict:
         """Convert pydantic model to jsonable dict and inflate"""
         return inflate_mapping(json.loads(model.json(by_alias=by_alias)), prefix)
 
@@ -380,18 +381,25 @@ def gen_substitution(component: PipelineComponent) -> dict:
         # "component_type": component.type,
         "error_topic_name": component.config.topic_name_config.default_error_topic_name,
         "output_topic_name": component.config.topic_name_config.default_output_topic_name,
-        # "schema_registry_url": component.config.schema_registry_url,
-        # "broker": component.config.broker,
+        "schema_registry_url": component.config.schema_registry_url,
+        "broker": component.config.broker,
     }
 
-    # TODO: Fill with all other possible variables
-    #
-    # Somewhat hardcoded to get around the exclusion property of some fields
-    # Currently only manually including component config
-    substitution_model = flatten(component, True, "component")
-    substitution_model_config = flatten(component.config, False)
+    substitution_model = flatten(component, True, prefix)
+
+    if prefix is None:
+        prefix = ""
+    substitution_model_excluded_fields = dict()
+    for field_name, value in component:
+        if str(prefix + "_" + field_name) not in substitution_model.keys():
+            try:
+                substitution_model_excluded_fields[field_name] = flatten(value)
+            except Exception:  # FIXME: Narrow down, perhaps AttributeError?
+                substitution_model_excluded_fields[field_name] = value
 
     substitution = update_nested(
-        substitution_hardcoded, substitution_model, substitution_model_config
+        substitution_hardcoded,
+        substitution_model,
+        inflate_mapping(substitution_model_excluded_fields, prefix),
     )
     return substitution
