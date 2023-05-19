@@ -155,7 +155,7 @@ class TestPipeline:
         )
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
-    
+
     def test_substitution_in_pipeline(self):
         result = runner.invoke(
             app,
