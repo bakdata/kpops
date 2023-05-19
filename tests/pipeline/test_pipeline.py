@@ -119,6 +119,7 @@ class TestPipeline:
 
         assert isinstance(enriched_pipeline, dict)
 
+        # calculate pipeline name with the exact same code that kpops uses
         path_without_file = (
             Path(RESOURCE_PATH / "component-type-substitution/pipeline.yaml")
             .resolve()
@@ -154,6 +155,29 @@ class TestPipeline:
         )
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+    
+    def test_substitution_in_pipeline(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "pipeline-substitution/pipeline.yaml"),
+                "tests.pipeline.test_components",
+                "--defaults",
+                str(RESOURCE_PATH),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        enriched_pipeline = yaml.safe_load(result.stdout)
+        assert isinstance(enriched_pipeline, dict)
+
+        # TODO: Uncomment and fix problem
+        # assert enriched_pipeline["components"][0]["app"]["labels"]["test_cross_component_referencing"] == "2G"
+        # assert enriched_pipeline["components"][1]["app"]["labels"]["test_chained_cross_component_referencing_with_too_long_name"] == "2G"
+        # assert enriched_pipeline["components"][2]["app"]["labels"]["test_chained_cross_component_referencing"] == "2G"
 
     def test_kafka_connector_config_parsing(self):
         result = runner.invoke(

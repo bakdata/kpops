@@ -59,7 +59,7 @@ def substitute_nested(input: str, **kwargs) -> str:
 
     :param input: The raw input containing $-placeholders
     :type input: str
-    :param **kwargs: list of Mappings
+    :param **kwargs: Substitutions
     :return: Substituted input string
     :rtype: str
     """

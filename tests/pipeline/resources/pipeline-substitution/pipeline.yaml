@@ -1,0 +1,18 @@
+- type: scheduled-producer
+  app:
+    labels:
+      test_cross_component_referencing: ${${component_prefix}converter_app}
+    commandLine:
+      FAKE_ARG: "fake-arg-value"
+    schedule: "30 3/8 * * *"
+- type: converter
+  app:
+    labels:
+      test_chained_cross_component_referencing_with_too_long_name: ${${pipeline_name}}
+    commandLine:
+      CONVERT_XML: true
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G

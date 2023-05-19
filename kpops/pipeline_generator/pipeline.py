@@ -22,7 +22,7 @@ from kpops.components.base_components.base_defaults_component import (
 )
 from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
+from kpops.utils.yaml_loading import load_yaml_file, substitute_nested
 
 log = logging.getLogger("PipelineGenerator")
 
@@ -259,20 +259,32 @@ class Pipeline:
         return enriched_component
 
     def print_yaml(self, substitution: dict | None = None) -> None:
+        """Print the generated pipeline definition
+
+        :param substitution: Substitution dictionary, defaults to None
+        :type substitution: dict | None, optional
+        """
         # Should enable cross-referencing between components.
-        # TODO: Discuss if needed, test
+        # TODO: Discuss whether it is needed, test
+        # FIXME: Doesn't work at the moment, no idea why, substitution is generated correctly
         cross_substitution: dict = dict()
         for component in self.components:
             cross_substitution = update_nested_pair(
-                # Adjust prefix here if needed
                 cross_substitution,
+                # Adjust prefix here if needed
                 gen_substitution(component, component.name),
             )
         if not substitution:
             substitution = {}
         substitution = update_nested_pair(substitution, cross_substitution)
+        # for key, value in substitution.items():
+        #     line = key + ": " + str(value)
+        #     log.warning(line)
+        # log.warning(str(self))
         syntax = Syntax(
-            substitute(str(self), substitution), "yaml", background_color="default"
+            substitute_nested(str(self), **substitution),
+            "yaml",
+            background_color="default",
         )
         Console(
             width=1000  # HACK: overwrite console width to avoid truncating output
