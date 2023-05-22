@@ -1,6 +1,6 @@
 # Example `defaults.yaml` files
 
-## [ATM Fraud Pipeline](https://github.com/bakdata/kpops/tree/main/examples/bakdata/atm-fraud-detection){target=_blank}
+## [ATM Fraud Pipeline](https://github.com/bakdata/kpops/tree/main/examples/bakdata/atm-fraud-deteection){target=_blank}
 
 ??? example "defaults.yaml"
     ```yaml
