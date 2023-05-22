@@ -211,6 +211,18 @@ class TestBaseDefaultsComponent:
                 {"k1": {"bar": ""}},
                 {"k1": {"foo": 1, "bar": ""}},
             ),
+            # do not overwrite different value types, dict in ``original_dict``
+            (
+                {"k1": {"bar": ""}},
+                {"k1": 1},
+                {"k1": {"bar": ""}},
+            ),
+            # do not overwrite different value types,  dict in ``other_dict``
+            (
+                {"k1": 1},
+                {"k1": {"bar": ""}},
+                {"k1": 1},
+            ),
             # do not overwrite None
             (
                 {"k1": None},
