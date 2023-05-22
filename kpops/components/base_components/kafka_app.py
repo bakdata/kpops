@@ -100,9 +100,6 @@ class KafkaApp(KubernetesApp):
         description=describe_attr("version", __doc__),
     )
 
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
-
     @property
     def clean_up_helm_chart(self) -> str:
         """Helm chart used to destroy and clean this component"""

@@ -229,7 +229,7 @@ def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
     for key, value in other_dict.items():
         if isinstance(value, Mapping):
             nested_val = original_dict.get(key, {})
-            if nested_val is not None and isinstance(nested_val, dict):
+            if isinstance(nested_val, dict):
                 original_dict[key] = update_nested_pair(nested_val, value)
         else:
             if key not in original_dict:
@@ -280,7 +280,7 @@ def inflate_mapping(
     """
     if not isinstance(nested_mapping, Mapping):
         raise TypeError("Argument nested_mapping is not a Mapping")
-    top = dict()
+    top = {}
     for key, value in nested_mapping.items():
         if not isinstance(key, str):
             raise TypeError(f"Argument nested_mapping contains a non-str key: {key}")
