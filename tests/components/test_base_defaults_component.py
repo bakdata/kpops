@@ -217,7 +217,7 @@ class TestBaseDefaultsComponent:
                 {"k1": 1},
                 {"k1": {"bar": ""}},
             ),
-            # do not overwrite different value types,  dict in ``other_dict``
+            # do not overwrite different value types, dict in ``other_dict``
             (
                 {"k1": 1},
                 {"k1": {"bar": ""}},
