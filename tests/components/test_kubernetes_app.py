@@ -271,8 +271,9 @@ class TestKubernetesApp:
         handlers: ComponentHandlers,
         app_value: KubernetesTestValue,
     ):
-
-        with pytest.raises(ValueError, match=r"The component name .* is invalid for Kubernetes."):
+        with pytest.raises(
+            ValueError, match=r"The component name .* is invalid for Kubernetes."
+        ):
             KubernetesApp(
                 name="Not-Compatible*",
                 config=config,
@@ -281,7 +282,9 @@ class TestKubernetesApp:
                 namespace="test-namespace",
             )
 
-        with pytest.raises(ValueError, match=r"The component name .* is invalid for Kubernetes."):
+        with pytest.raises(
+            ValueError, match=r"The component name .* is invalid for Kubernetes."
+        ):
             KubernetesApp(
                 name="snake_case*",
                 config=config,
