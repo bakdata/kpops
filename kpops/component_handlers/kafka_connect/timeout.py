@@ -15,7 +15,7 @@ def timeout(func: Callable[..., T], *, secs: int = 0) -> T | None:
     :param secs: The timeout in seconds
     """
 
-    async def main_supervisor(func, secs):
+    async def main_supervisor(func: Callable[..., T], secs: int) -> T:
         runner = asyncio.to_thread(func)
         task = asyncio.create_task(runner)
         if secs == 0:
