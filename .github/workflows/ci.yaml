@@ -59,7 +59,7 @@ jobs:
         run: poetry install --with docs
 
       - name: Test docs build (mkdocs)
-        run: poetry run mkdocs build
+        run: poetry run mkdocs build -f docs/mkdocs.yml
 
   publish:
     name: Publish
