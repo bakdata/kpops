@@ -5,7 +5,7 @@
 ??? example "defaults.yaml"
     ```yaml
         --8<--
-        https://raw.githubusercontent.com/bakdata/kpops/main/examples/bakdata/atm-fraud-deteection/defaults.yaml
+        https://raw.githubusercontent.com/bakdata/kpops/main/examples/bakdata/atm-fraud-detection/defaults.yaml
         --8<--
     ```
 
