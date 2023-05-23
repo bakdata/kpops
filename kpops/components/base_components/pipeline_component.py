@@ -328,4 +328,4 @@ class PipelineComponent(BaseDefaultsComponent):
 
     def substitute_prefix(self) -> None:
         """Substitute $-placeholders in self.prefix with environment variables"""
-        self.prefix = substitute(self.prefix, dict(environ))
+        self.prefix = substitute(self.prefix, environ)

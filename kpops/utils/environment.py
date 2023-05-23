@@ -18,17 +18,19 @@ class Environment(UserDict):
             )
         super().__init__(mapping)
 
-    def _key_camel_case_transform(self, key: str) -> str:
+    @staticmethod
+    def __key_camel_case_transform(key: str) -> str:
         return str(key).lower()
 
-    def _key_identity_transform(self, key: str) -> str:
+    @staticmethod
+    def __key_identity_transform(key: str) -> str:
         return str(key)
 
     def _get_transformation(self) -> Callable[[str], str]:
         if platform.system() == "Windows":
-            return self._key_camel_case_transform
+            return Environment.__key_camel_case_transform
         else:
-            return self._key_identity_transform
+            return Environment.__key_identity_transform
 
 
 environ = Environment(os.environ)

@@ -158,7 +158,7 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
 
     kafka_app_defaults = defaults_from_yaml(Path("/path/to/defaults.yaml"), "kafka-app")
     """
-    content = load_yaml_file(path, substitution=dict(environ))
+    content = load_yaml_file(path, substitution=environ)
     if not isinstance(content, dict):
         raise TypeError(
             "Default files should be structured as map ([app type] -> [default config]"

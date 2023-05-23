@@ -109,7 +109,7 @@ class Pipeline:
     ) -> Pipeline:
         Pipeline.set_pipeline_name_env_vars(base_dir, path)
 
-        main_content = load_yaml_file(path, substitution=dict(environ))
+        main_content = load_yaml_file(path, substitution=environ)
         if not isinstance(main_content, list):
             raise TypeError(
                 f"The pipeline definition {path} should contain a list of components"
@@ -117,7 +117,7 @@ class Pipeline:
 
         env_content = []
         if (env_file := Pipeline.pipeline_filename_environment(path, config)).exists():
-            env_content = load_yaml_file(env_file, substitution=dict(environ))
+            env_content = load_yaml_file(env_file, substitution=environ)
             if not isinstance(env_content, list):
                 raise TypeError(
                     f"The pipeline definition {env_file} should contain a list of components"

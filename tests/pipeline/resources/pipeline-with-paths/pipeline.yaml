@@ -11,4 +11,4 @@
     repo_auth_flags:
       username: masked
       password: $CI_JOB_TOKEN
-      ca_file: /my-cert.cert
+      ca_file: my-cert.cert
