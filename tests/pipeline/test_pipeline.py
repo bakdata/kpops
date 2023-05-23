@@ -1,10 +1,12 @@
 from pathlib import Path
 
 import yaml
+from pydantic import BaseModel
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
+from kpops.pipeline_generator.pipeline import generate_substitution
 
 runner = CliRunner()
 
@@ -97,6 +99,36 @@ class TestPipeline:
 
         enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_substitute_in_base_model(self, snapshot: SnapshotTest):
+        class SimpleModel(BaseModel):
+            name: str
+            type_: str
+            field_nested_dict: dict
+
+        model = SimpleModel(
+            name="name",
+            type_="type",
+            field_nested_dict={
+                "value_is_none": None,
+                "value_is_str": "str",
+                "value_is_int": 0,
+                "value_is_dict": {
+                    "nested_key": "nested_value",
+                },
+            },
+            problems=99,
+        )
+        existing_substitution = {
+            "key1": "Everything",
+            "key2": "work",
+            "key3": "well",
+            "first_half": "${key1}_seems_to_${key2}",
+            "key": "${first_half}_${key3}",
+            "name": "pre-existing-name",
+        }
+        substitution = generate_substitution(model, "prefix", existing_substitution)
+        snapshot.assert_match(substitution, "test-substitution")
 
     def test_substitute_in_component(self, snapshot: SnapshotTest):
         result = runner.invoke(
