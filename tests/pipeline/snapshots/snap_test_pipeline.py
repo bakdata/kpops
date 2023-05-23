@@ -3,7 +3,7 @@
 from __future__ import unicode_literals
 
 from snapshottest import Snapshot
-
+from pathlib import Path
 snapshots = Snapshot()
 
 snapshots["TestPipeline.test_default_config test-pipeline"] = {
@@ -563,7 +563,7 @@ snapshots["TestPipeline.test_model_serialization test-pipeline"] = {
             "prefix": "resources-pipeline-with-paths-",
             "repoConfig": {
                 "repoAuthFlags": {
-                    "caFile": "/my-cert.cert",
+                    "caFile": str(Path("/my-cert.cert")),
                     "insecureSkipTlsVerify": False,
                     "password": "$CI_JOB_TOKEN",
                     "username": "masked",
