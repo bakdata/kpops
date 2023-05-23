@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Generator
 from unittest.mock import MagicMock
 
 import pytest
@@ -22,7 +23,7 @@ class PlainPipelineComponent(PipelineComponent):
 
 
 @pytest.fixture
-def prefix_to_match() -> str:
+def prefix_to_match() -> Generator[str, None, None]:
     prefix = "my-fake-prefix"
     ENV["pipeline_name"] = prefix
     yield prefix
