@@ -1,5 +1,9 @@
 import logging
-from kpops.component_handlers.topic.exception import TopicNotFoundException
+
+from kpops.component_handlers.topic.exception import (
+    TopicNotFoundException,
+    TopicTransactionError,
+)
 from kpops.component_handlers.topic.model import (
     TopicConfigResponse,
     TopicResponse,
@@ -146,10 +150,9 @@ class TopicHandler:
                 f"Topic Creation: partition count of topic {topic_name} did not change. Current partitions count {partition_count}. Updating configs."
             )
         else:
-            log.error(
+            raise TopicTransactionError(
                 f"Topic Creation: partition count of topic {topic_name} changed! Partitions count of topic {topic_name} is {partition_count}. The given partitions count {topic_spec.partitions_count}."
             )
-            raise ValueError(f"Error creating the topic {topic_name}")
 
     @staticmethod
     def __check_replication_factor(
@@ -167,10 +170,9 @@ class TopicHandler:
                 f"Topic Creation: replication factor of topic {topic_name} did not change. Current replication factor {replication_factor}. Updating configs."
             )
         else:
-            log.error(
+            raise TopicTransactionError(
                 f"Topic Creation: replication factor of topic {topic_name} changed! Replication factor of topic {topic_name} is {replication_factor}. The given replication count {topic_spec.replication_factor}."
             )
-            raise ValueError(f"Error creating the topic {topic_name}")
 
     def __dry_run_topic_deletion(self, topic_name: str) -> None:
         try:

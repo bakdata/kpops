@@ -5,7 +5,11 @@ import sys
 from typing import TYPE_CHECKING
 
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
-from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
+from kpops.component_handlers.kafka_connect.exception import (
+    ConnectorNotFoundException,
+    ConnectorStateException,
+    KafkaConnectError,
+)
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.utils.colorify import magentaify
@@ -116,11 +120,10 @@ class KafkaConnectHandler:
             connector_name, kafka_connect_config
         )
         if len(errors) > 0:
-            log.error(
-                f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors:"
+            formatted_errors = "\n".join(errors)
+            raise ConnectorStateException(
+                f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors: {formatted_errors}"
             )
-            log.error("\n".join(errors))
-            raise ValueError(f"Error creating connector {connector_name}")
         else:
             log.info(
                 f"Connector Creation: connector config for {connector_name} is valid!"
