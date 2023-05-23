@@ -94,11 +94,6 @@ class KubernetesApp(PipelineComponent):
     class Config(CamelCaseConfig, DescConfig):
         pass
 
-    # When removed, mypy throws some errors about missign arguments in
-    # `test_kubernetes_app.py`
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-
     @cached_property
     def helm(self) -> Helm:
         """Helm object that contains component-specific config such as repo"""
@@ -192,7 +187,7 @@ class KubernetesApp(PipelineComponent):
         )
 
     @root_validator()
-    def name_must_be_valid_for_kubernetes(cls, values) -> None:
+    def validate_kubernetes_name(cls, values: dict) -> dict:
         """Check if the component's name is valid for Kubernetes"""
         if (
             bool(KUBERNETES_NAME_CHECK_PATTERN.match(values["name"]))
