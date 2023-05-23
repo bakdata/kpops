@@ -7,7 +7,7 @@ from typing import Callable
 class Environment(UserDict):
     def __init__(self, mapping=None, /, **kwargs) -> None:
 
-        transformation = self._get_transformation()
+        transformation = self.__get_transformation()
         if mapping is not None:
             mapping = {transformation(key): value for key, value in mapping.items()}
         else:
@@ -26,7 +26,7 @@ class Environment(UserDict):
     def __key_identity_transform(key: str) -> str:
         return str(key)
 
-    def _get_transformation(self) -> Callable[[str], str]:
+    def __get_transformation(self) -> Callable[[str], str]:
         if platform.system() == "Windows":
             return Environment.__key_camel_case_transform
         else:
