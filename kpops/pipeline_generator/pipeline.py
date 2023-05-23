@@ -382,7 +382,8 @@ class Pipeline:
             os.environ[f"pipeline_name_{level}"] = parent
 
 
-# TODO: Test, does it belong here?
+# TODO: Does it belong here? Does it need dedicated tests? Substitution in the
+# pipeline is already covered.
 def gen_substitution(
     model: BaseModel,
     prefix: str | None = None,

@@ -180,7 +180,6 @@ class TestPipeline:
         enriched_pipeline = yaml.safe_load(result.stdout)
         assert isinstance(enriched_pipeline, dict)
 
-        # TODO: Uncomment and fix problem
         assert (
             enriched_pipeline["components"][0]["app"]["labels"][
                 "test_cross_component_referencing"
