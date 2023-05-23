@@ -153,6 +153,12 @@ class TestPipeline:
             "resources-component-type-substitution-converter-error"
             in enriched_pipeline["components"][1]["to"]["topics"]
         )
+        assert (
+            enriched_pipeline["components"][2]["app"]["labels"][
+                "test_placeholder_in_placeholder"
+            ]
+            == "filter-app-filter"
+        )
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
@@ -175,9 +181,18 @@ class TestPipeline:
         assert isinstance(enriched_pipeline, dict)
 
         # TODO: Uncomment and fix problem
-        # assert enriched_pipeline["components"][0]["app"]["labels"]["test_cross_component_referencing"] == "2G"
-        # assert enriched_pipeline["components"][1]["app"]["labels"]["test_chained_cross_component_referencing_with_too_long_name"] == "2G"
-        # assert enriched_pipeline["components"][2]["app"]["labels"]["test_chained_cross_component_referencing"] == "2G"
+        assert (
+            enriched_pipeline["components"][0]["app"]["labels"][
+                "test_cross_component_referencing"
+            ]
+            == "2G"
+        )
+        assert (
+            enriched_pipeline["components"][1]["app"]["labels"][
+                "test_chained_cross_component_referencing"
+            ]
+            == "2G"
+        )
 
     def test_kafka_connector_config_parsing(self):
         result = runner.invoke(

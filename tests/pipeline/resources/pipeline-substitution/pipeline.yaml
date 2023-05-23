@@ -1,14 +1,14 @@
 - type: scheduled-producer
   app:
     labels:
-      test_cross_component_referencing: ${${component_prefix}converter_app}
+      test_cross_component_referencing: ${converter_app_resources_limits_memory}
     commandLine:
       FAKE_ARG: "fake-arg-value"
     schedule: "30 3/8 * * *"
 - type: converter
   app:
     labels:
-      test_chained_cross_component_referencing_with_too_long_name: ${${pipeline_name}}
+      test_chained_cross_component_referencing: ${scheduled_producer_app_labels_test_cross_component_referencing}
     commandLine:
       CONVERT_XML: true
     resources:

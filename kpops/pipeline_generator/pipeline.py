@@ -261,25 +261,25 @@ class Pipeline:
         :param substitution: Substitution dictionary, defaults to None
         :type substitution: dict | None, optional
         """
-        # Should enable cross-referencing between components.
-        # TODO: Discuss whether it is needed, test
-        # FIXME: Doesn't work at the moment, no idea why, substitution is generated correctly
-        cross_substitution: dict = dict()
-        for component in self.components:
-            cross_substitution = update_nested_pair(
-                cross_substitution,
-                # Adjust prefix here if needed
-                gen_substitution(component, component.name),
-            )
+        # Enables cross-referencing between components.
+        # TODO: Discuss whether it is needed
         if not substitution:
             substitution = {}
-        substitution = update_nested_pair(substitution, cross_substitution)
-        # for key, value in substitution.items():
-        #     line = key + ": " + str(value)
-        #     log.warning(line)
-        # log.warning(str(self))
+        for component in self.components:
+            # The placeholder has to be an alphanumeric string and can contain
+            # underscores, hence dashes are replaced with underscores.
+            # Furthermore, to avoid confusion, we get rid of the component prefix
+            # that is usually applied to the name.
+            substitution_prefix = component.name.removeprefix(component.prefix).replace(
+                "-", "_"
+            )
+            substitution = update_nested_pair(
+                substitution,
+                gen_substitution(component, substitution_prefix),
+            )
+        substituted_self = substitute_nested(str(self), **substitution)
         syntax = Syntax(
-            substitute_nested(str(self), **substitution),
+            substituted_self,
             "yaml",
             background_color="default",
         )

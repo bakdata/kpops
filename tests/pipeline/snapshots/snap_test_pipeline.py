@@ -1563,6 +1563,8 @@ snapshots["TestPipeline.test_substitute_in_component test-pipeline"] = {
                     "app_name": "filter-app",
                     "app_resources_requests_memory": "3G",
                     "app_type": "filter",
+                    "filter": "filter-app-filter",
+                    "test_placeholder_in_placeholder": "filter-app-filter",
                 },
                 "nameOverride": "resources-component-type-substitution-filter-app",
                 "replicaCount": 4,
