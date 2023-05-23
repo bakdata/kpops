@@ -43,7 +43,7 @@ def substitute_nested(input: str, **kwargs) -> str:
     Will make as many passes as needed to substitute all possible placeholders.
 
     HINT: If :param input: is a ``Mapping`` that you converted into ``str``,
-    You pass it as a string, and as a ``Mapping`` to enable self-reference.
+    You can pass it as a string, and as a ``Mapping`` to enable self-reference.
 
     :Example:
 
