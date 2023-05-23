@@ -2,8 +2,6 @@
 # snapshottest: v1 - https://goo.gl/zC4yUc
 from __future__ import unicode_literals
 
-from pathlib import Path
-
 from snapshottest import Snapshot
 
 snapshots = Snapshot()
