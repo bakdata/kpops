@@ -23,7 +23,7 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
-from kpops.utils.environment import environ
+from kpops.utils.environment import ENV
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
@@ -125,7 +125,7 @@ class TestKafkaSourceConnector:
         handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
-        environ["KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"] = "kafka-connect-offsets"
+        ENV["KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"] = "kafka-connect-offsets"
         connector = KafkaSourceConnector(
             name="test-connector",
             config=config,

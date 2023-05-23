@@ -12,7 +12,7 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.environment import environ
+from kpops.utils.environment import ENV
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
@@ -22,11 +22,11 @@ class PlainPipelineComponent(PipelineComponent):
 
 
 @pytest.fixture
-def prefix_to_match():
+def prefix_to_match() -> str:
     prefix = "my-fake-prefix"
-    environ["pipeline_name"] = prefix
+    ENV["pipeline_name"] = prefix
     yield prefix
-    del environ["pipeline_name"]
+    del ENV["pipeline_name"]
 
 
 class TestPipelineComponent:
@@ -64,7 +64,7 @@ class TestPipelineComponent:
         assert "output-plain-pipeline-component" in pipeline_component.to.topics
         assert len(pipeline_component.to.topics.keys()) == 2
 
-    def test_prefix_substitution(self, prefix_to_match):
+    def test_prefix_substitution(self, prefix_to_match: str):
         pipeline_component = PlainPipelineComponent(
             name="test-pipeline-component",
             config=pipeline_config.PipelineConfig(

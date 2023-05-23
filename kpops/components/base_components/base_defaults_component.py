@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.utils.docstring import describe_attr
-from kpops.utils.environment import environ
+from kpops.utils.environment import ENV
 from kpops.utils.pydantic import DescConfig
 from kpops.utils.yaml_loading import load_yaml_file
 
@@ -158,7 +158,7 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
 
     kafka_app_defaults = defaults_from_yaml(Path("/path/to/defaults.yaml"), "kafka-app")
     """
-    content = load_yaml_file(path, substitution=environ)
+    content = load_yaml_file(path, substitution=ENV)
     if not isinstance(content, dict):
         raise TypeError(
             "Default files should be structured as map ([app type] -> [default config]"

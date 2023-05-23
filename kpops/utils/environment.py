@@ -33,4 +33,4 @@ class Environment(UserDict):
             return Environment.__key_identity_transform
 
 
-environ = Environment(os.environ)
+ENV = Environment(os.environ)

@@ -37,7 +37,7 @@ def test_normal_behaviour_get_item_as_kwargs(system, fake_environment_linux):
 def test_normal_behaviour_keys_transformation(system, fake_environment_linux):
     system.return_value = "Linux"
     environment = Environment(fake_environment_linux)
-    keys = list(environment.keys())
+    keys = set(environment.keys())
 
     assert "my" in keys
     assert "environment" in keys
