@@ -1,9 +1,10 @@
 import os
 import platform
+from collections import UserDict
 from typing import Callable
 
 
-class Environment(dict):
+class Environment(UserDict):
     def __init__(self, mapping=None, /, **kwargs) -> None:
 
         transformation = self._get_transformation()
@@ -17,10 +18,10 @@ class Environment(dict):
             )
         super().__init__(mapping)
 
-    def _key_camel_case_transform(self, key):
+    def _key_camel_case_transform(self, key: str) -> str:
         return str(key).lower()
 
-    def _key_identity_transform(self, key):
+    def _key_identity_transform(self, key: str) -> str:
         return str(key)
 
     def _get_transformation(self) -> Callable[[str], str]:

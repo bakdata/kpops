@@ -1,6 +1,8 @@
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pytest
+
 from kpops.cli import pipeline_config
 from kpops.cli.pipeline_config import TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
@@ -17,6 +19,14 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 class PlainPipelineComponent(PipelineComponent):
     type: str = "plain-pipeline-component"
+
+
+@pytest.fixture
+def prefix_to_match():
+    prefix = "my-fake-prefix"
+    environ["pipeline_name"] = prefix
+    yield prefix
+    del environ["pipeline_name"]
 
 
 class TestPipelineComponent:
@@ -54,9 +64,7 @@ class TestPipelineComponent:
         assert "output-plain-pipeline-component" in pipeline_component.to.topics
         assert len(pipeline_component.to.topics.keys()) == 2
 
-    def test_prefix_substitution(self):
-        prefix = "my-fake-prefix"
-        environ["pipeline_name"] = prefix
+    def test_prefix_substitution(self, prefix_to_match):
         pipeline_component = PlainPipelineComponent(
             name="test-pipeline-component",
             config=pipeline_config.PipelineConfig(
@@ -73,4 +81,4 @@ class TestPipelineComponent:
                 topic_handler=MagicMock(),
             ),
         )
-        assert prefix + "-" == pipeline_component.prefix
+        assert prefix_to_match + "-" == pipeline_component.prefix
