@@ -55,6 +55,12 @@ jobs:
       - name: Test
         run: poetry run pytest tests
 
+      - name: Install docs dependencies
+        run: poetry install --with docs
+
+      - name: Test docs build (mkdocs)
+        run: poetry run mkdocs build -f docs/mkdocs.yml
+
   publish:
     name: Publish
     needs: [test]
