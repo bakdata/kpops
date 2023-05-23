@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
@@ -17,6 +16,7 @@ from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import update_nested_pair
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.utils.environment import environ
 from kpops.utils.yaml_loading import load_yaml_file, substitute
 
 log = logging.getLogger("PipelineGenerator")
@@ -76,7 +76,7 @@ def create_env_components_index(
             )
         index[
             PipelineComponent.substitute_component_names(
-                component["name"], component["type"], **os.environ
+                component["name"], component["type"], **environ
             )
         ] = component
     return index
@@ -109,7 +109,7 @@ class Pipeline:
     ) -> Pipeline:
         Pipeline.set_pipeline_name_env_vars(base_dir, path)
 
-        main_content = load_yaml_file(path, substitution=dict(os.environ))
+        main_content = load_yaml_file(path, substitution=dict(environ))
         if not isinstance(main_content, list):
             raise TypeError(
                 f"The pipeline definition {path} should contain a list of components"
@@ -117,7 +117,7 @@ class Pipeline:
 
         env_content = []
         if (env_file := Pipeline.pipeline_filename_environment(path, config)).exists():
-            env_content = load_yaml_file(env_file, substitution=dict(os.environ))
+            env_content = load_yaml_file(env_file, substitution=dict(environ))
             if not isinstance(env_content, list):
                 raise TypeError(
                     f"The pipeline definition {env_file} should contain a list of components"
@@ -273,6 +273,6 @@ class Pipeline:
         if not path_without_file:
             raise ValueError("The pipeline-base-dir should not equal the pipeline-path")
         pipeline_name = "-".join(path_without_file)
-        os.environ["pipeline_name"] = pipeline_name
+        environ["pipeline_name"] = pipeline_name
         for level, parent in enumerate(path_without_file):
-            os.environ[f"pipeline_name_{level}"] = parent
+            environ[f"pipeline_name_{level}"] = parent

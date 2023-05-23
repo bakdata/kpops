@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from functools import cached_property
 from typing import Literal
 
@@ -20,6 +19,7 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.environment import environ
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 from kpops.utils.yaml_loading import substitute
 
@@ -118,12 +118,12 @@ class PipelineComponent(BaseDefaultsComponent):
         error_topic_name = self.substitute_component_names(
             self.config.topic_name_config.default_error_topic_name,
             self.type,
-            **os.environ,
+            **environ,
         )
         output_topic_name = self.substitute_component_names(
             self.config.topic_name_config.default_output_topic_name,
             self.type,
-            **os.environ,
+            **environ,
         )
         return self.substitute_component_names(
             topic_name,
@@ -328,4 +328,4 @@ class PipelineComponent(BaseDefaultsComponent):
 
     def substitute_prefix(self) -> None:
         """Substitute $-placeholders in self.prefix with environment variables"""
-        self.prefix = substitute(self.prefix, dict(os.environ))
+        self.prefix = substitute(self.prefix, dict(environ))
