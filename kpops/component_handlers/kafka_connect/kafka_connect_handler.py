@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import logging
-import sys
 from typing import TYPE_CHECKING
 
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
-from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
+from kpops.component_handlers.kafka_connect.exception import (
+    ConnectorNotFoundException,
+    ConnectorStateException,
+)
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.utils.colorify import magentaify
@@ -116,13 +118,10 @@ class KafkaConnectHandler:
             connector_name, kafka_connect_config
         )
         if len(errors) > 0:
-            log.error(
-                f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors:"
+            formatted_errors = "\n".join(errors)
+            raise ConnectorStateException(
+                f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors: {formatted_errors}"
             )
-            log.error("\n".join(errors))
-            sys.exit(
-                1
-            )  # FIXME raise instead https://github.com/bakdata/kpops/issues/101
         else:
             log.info(
                 f"Connector Creation: connector config for {connector_name} is valid!"
