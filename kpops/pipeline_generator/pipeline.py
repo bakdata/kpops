@@ -20,7 +20,6 @@ from kpops.components.base_components.base_defaults_component import (
     update_nested,
     update_nested_pair,
 )
-from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.yaml_loading import load_yaml_file, substitute_nested
 
@@ -193,6 +192,7 @@ class Pipeline:
         component = component_class(
             config=self.config,
             handlers=self.handlers,
+            validate_name=False,
             **component_data,
         )
         component = self.enrich_component(component)
@@ -252,9 +252,6 @@ class Pipeline:
             handlers=self.handlers,
             **component_data,
         )
-        # TODO: Simplify
-        if isinstance(enriched_component, KubernetesApp):
-            KubernetesApp.check_compatible_name(enriched_component.name)
 
         return enriched_component
 

@@ -5,7 +5,7 @@ import re
 from functools import cached_property
 from typing import Any, Literal
 
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra, Field, root_validator
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -44,6 +44,9 @@ class KubernetesApp(PipelineComponent):
     :param schema_type: Used for schema generation, same as :param:`type`,
         defaults to "kubernetes-app"
     :type schema_type: Literal["kubernetes-app"], optional
+    :param validate_name: Whether to check if the name of the component is
+        compatible with Kubernetes, defaults to True
+    :type validate_name: bool, optional
     :param app: Application-specific settings
     :type app: KubernetesAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for
@@ -65,6 +68,12 @@ class KubernetesApp(PipelineComponent):
         description=describe_object(__doc__),
         exclude=True,
     )
+    validate_name: bool = Field(
+        default=True,
+        description=describe_attr("check_name", __doc__),
+        exclude=True,
+        hidden_from_schema=True,
+    )
     app: KubernetesAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),
@@ -85,6 +94,8 @@ class KubernetesApp(PipelineComponent):
     class Config(CamelCaseConfig, DescConfig):
         pass
 
+    # When removed, mypy throws some errors about missign arguments in
+    # `test_kubernetes_app.py`
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
@@ -180,16 +191,17 @@ class KubernetesApp(PipelineComponent):
             f"Please implement the get_helm_chart() method of the {self.__module__} module."
         )
 
-    @staticmethod
-    def check_compatible_name(name: str) -> None:
-        """Check if the component's name `self.name` is valid for Kubernetes
-
-        :param name: name of the component
-        :type name: str
-        :raises ValueError: The component name is invalid for Kubernetes.
-        """
-        if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(name)):  # TODO: SMARTER
-            raise ValueError(f"The component name {name} is invalid for Kubernetes.")
+    @root_validator()
+    def name_must_be_valid_for_kubernetes(cls, values) -> None:
+        """Check if the component's name is valid for Kubernetes"""
+        if (
+            bool(KUBERNETES_NAME_CHECK_PATTERN.match(values["name"]))
+            or not values["validate_name"]
+        ):  # TODO: SMARTER
+            return values
+        raise ValueError(
+            f"The component name {values['name']} is invalid for Kubernetes."
+        )
 
     @override
     def dict(self, *, exclude=None, **kwargs) -> dict[str, Any]:

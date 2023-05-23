@@ -277,6 +277,7 @@ snapshots["TestExample.test_atm_fraud atm-fraud-pipeline"] = {
             },
             "resetterValues": {},
             "type": "kafka-sink-connector",
+            "validate_name": False,
             "version": "1.0.4",
         },
     ]
