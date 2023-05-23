@@ -1,14 +1,12 @@
 from __future__ import annotations
 
 import logging
-import sys
 from typing import TYPE_CHECKING
 
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     ConnectorStateException,
-    KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
 from kpops.component_handlers.kafka_connect.timeout import timeout

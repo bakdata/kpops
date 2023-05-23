@@ -7,7 +7,6 @@ from pytest_mock import MockerFixture
 from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     ConnectorStateException,
-    KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
