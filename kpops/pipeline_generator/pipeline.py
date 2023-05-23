@@ -246,14 +246,13 @@ class Pipeline:
         component_data = self.substitute_in_component(component, env_component_as_dict)
 
         component_class = type(component)
-        enriched_component = component_class(
+
+        return component_class(
             enrich=False,
             config=self.config,
             handlers=self.handlers,
             **component_data,
         )
-
-        return enriched_component
 
     def print_yaml(self, substitution: dict | None = None) -> None:
         """Print the generated pipeline definition
@@ -275,7 +274,7 @@ class Pipeline:
             )
             substitution = update_nested_pair(
                 substitution,
-                gen_substitution(component, substitution_prefix),
+                generate_substitution(component, substitution_prefix),
             )
         substituted_self = substitute_nested(str(self), **substitution)
         syntax = Syntax(
@@ -320,7 +319,9 @@ class Pipeline:
             "schema_registry_url": component.config.schema_registry_url,
             "broker": component.config.broker,
         }
-        substitution = gen_substitution(component, "component", substitution_hardcoded)
+        substitution = generate_substitution(
+            component, "component", substitution_hardcoded
+        )
 
         # TODO: Should this be allowed? Probably not, delete after discussion.
         # Substitute values in the env component definition with any self-references
@@ -384,7 +385,7 @@ class Pipeline:
 
 # TODO: Does it belong here? Does it need dedicated tests? Substitution in the
 # pipeline is already covered.
-def gen_substitution(
+def generate_substitution(
     model: BaseModel,
     prefix: str | None = None,
     existing_substitution: dict | None = None,
@@ -413,7 +414,7 @@ def gen_substitution(
     # For each field, recurse or save value under key=field_name
     for field_name, value in model:
         if isinstance(value, BaseModel):
-            substitution_model[field_name] = gen_substitution(value)
+            substitution_model[field_name] = generate_substitution(value)
         else:
             substitution_model[field_name] = value
     # Combine existing substitution with the inflated model substitution dict
