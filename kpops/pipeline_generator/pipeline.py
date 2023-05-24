@@ -79,11 +79,7 @@ def create_env_components_index(
             raise ValueError(
                 "To override components per environment, every component should at least have a type and a name."
             )
-        index[
-            substitute_nested(
-                component["name"], **{"component_type": component["type"]}, **os.environ
-            )
-        ] = component
+        index[component["name"]] = component
     return index
 
 
