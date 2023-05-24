@@ -49,7 +49,7 @@ def test_normal_behaviour_set_key(system, fake_environment_linux):
     environment = Environment(fake_environment_linux)
     environment["extra"] = "key"
 
-    keys = list(environment.keys())
+    keys = set(environment.keys())
     assert "my" in keys
     assert "environment" in keys
     assert "extra" in keys
@@ -62,7 +62,7 @@ def test_windows_behaviour_set_key(system, fake_environment_windows):
     environment = Environment(fake_environment_windows)
     environment["extra"] = "key"
 
-    keys = list(environment.keys())
+    keys = set(environment.keys())
     assert "my" in keys
     assert "environment" in keys
     assert "extra" in keys
@@ -74,7 +74,7 @@ def test_normal_behaviour_keys_transformation_kwargs(system, fake_environment_li
     system.return_value = "Linux"
     environment = Environment(**fake_environment_linux)
 
-    keys = list(environment.keys())
+    keys = set(environment.keys())
     assert "my" in keys
     assert "environment" in keys
 
@@ -84,7 +84,7 @@ def test_windows_behaviour_keys_transformation(system, fake_environment_windows)
     system.return_value = "Windows"
     environment = Environment(fake_environment_windows)
 
-    keys = list(environment.keys())
+    keys = set(environment.keys())
     assert "my" in keys
     assert "environment" in keys
 
@@ -95,7 +95,7 @@ def test_windows_behaviour_keys_transformation_as_kwargs(
 ):
     system.return_value = "Windows"
     environment = Environment(**fake_environment_windows)
-    keys = list(environment.keys())
+    keys = set(environment.keys())
     assert "my" in keys
     assert "environment" in keys
 
