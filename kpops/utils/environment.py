@@ -20,11 +20,11 @@ class Environment(UserDict):
 
     @staticmethod
     def __key_camel_case_transform(key: str) -> str:
-        return str(key).lower()
+        return key.lower()
 
     @staticmethod
     def __key_identity_transform(key: str) -> str:
-        return str(key)
+        return key
 
     def __get_transformation(self) -> Callable[[str], str]:
         if platform.system() == "Windows":
