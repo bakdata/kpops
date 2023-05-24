@@ -409,7 +409,7 @@ def generate_substitution(
     elif not existing_substitution:
         existing_substitution = {}
     # Init substitution dict
-    substitution_model = dict()
+    substitution_model = {}
     # For each field, recurse or save value under key=field_name
     for field_name, value in model:
         if isinstance(value, BaseModel):
