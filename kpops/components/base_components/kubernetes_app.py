@@ -5,7 +5,7 @@ import re
 from functools import cached_property
 from typing import Any, Literal
 
-from pydantic import BaseModel, Extra, Field, root_validator
+from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.helm import Helm
@@ -93,6 +93,10 @@ class KubernetesApp(PipelineComponent):
 
     class Config(CamelCaseConfig, DescConfig):
         pass
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.__validate_kubernetes_name()
 
     @cached_property
     def helm(self) -> Helm:
@@ -186,17 +190,16 @@ class KubernetesApp(PipelineComponent):
             f"Please implement the get_helm_chart() method of the {self.__module__} module."
         )
 
-    @root_validator()
-    def validate_kubernetes_name(cls, values: dict) -> dict:
+    # TODO: SMARTER
+    def __validate_kubernetes_name(self) -> None:
         """Check if the component's name is valid for Kubernetes"""
         if (
-            bool(KUBERNETES_NAME_CHECK_PATTERN.match(values["name"]))
-            or not values["validate_name"]
-        ):  # TODO: SMARTER
-            return values
-        raise ValueError(
-            f"The component name {values['name']} is invalid for Kubernetes."
-        )
+            not bool(KUBERNETES_NAME_CHECK_PATTERN.match(self.name))
+            and self.validate_name
+        ):
+            raise ValueError(
+                f"The component name {self.name} is invalid for Kubernetes."
+            )
 
     @override
     def dict(self, *, exclude=None, **kwargs) -> dict[str, Any]:
