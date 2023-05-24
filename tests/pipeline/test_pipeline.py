@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import yaml
@@ -106,18 +107,20 @@ class TestPipeline:
             type_: str
             field_nested_dict: dict
 
-        model = SimpleModel(
-            name="name",
-            type_="type",
-            field_nested_dict={
-                "value_is_none": None,
-                "value_is_str": "str",
-                "value_is_int": 0,
-                "value_is_dict": {
-                    "nested_key": "nested_value",
+        model = json.loads(
+            SimpleModel(
+                name="name",
+                type_="type",
+                field_nested_dict={
+                    "value_is_none": None,
+                    "value_is_str": "str",
+                    "value_is_int": 0,
+                    "value_is_dict": {
+                        "nested_key": "nested_value",
+                    },
                 },
-            },
-            problems=99,
+                problems=99,
+            ).json()
         )
         existing_substitution = {
             "key1": "Everything",

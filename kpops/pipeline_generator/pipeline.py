@@ -238,15 +238,17 @@ class Pipeline:
             # HACK: Pydantic .dict() doesn't create jsonable dict
             json.loads(component.json(by_alias=True)),
         )
+        if "validate_name" in env_component_as_dict:
+            del env_component_as_dict["validate_name"]
 
-        component_data = self.substitute_in_component(component, env_component_as_dict)
+        component_data = self.substitute_in_component(env_component_as_dict)
 
         component_class = type(component)
-
         return component_class(
             enrich=False,
             config=self.config,
             handlers=self.handlers,
+            validate_name=True,
             **component_data,
         )
 
@@ -270,7 +272,9 @@ class Pipeline:
             )
             substitution = update_nested_pair(
                 substitution,
-                generate_substitution(component, substitution_prefix),
+                generate_substitution(
+                    json.loads(component.json(by_alias=True)), substitution_prefix
+                ),
             )
         substituted_self = substitute_nested(str(self), **substitution)
         syntax = Syntax(
@@ -292,16 +296,11 @@ class Pipeline:
             )
         )
 
-    @staticmethod
-    def substitute_in_component(
-        component: PipelineComponent, env_component_as_dict: dict
-    ) -> dict:
-        """Substitute all $-placeholders in a component
+    def substitute_in_component(self, component_as_dict: dict) -> dict:
+        """Substitute all $-placeholders in a component in dict representation
 
-        :param component: Pipeline component
-        :type component: PipelineComponent
-        :param env_component_definition: Env-specific component description
-        :type env_component_definition: dict
+        :param component_as_dict: Component represented as dict
+        :type component_as_dict: dict
         :return: Updated component
         :rtype: dict
         """
@@ -310,30 +309,18 @@ class Pipeline:
         substitution_hardcoded = {
             # "component_name": component.name,
             # "component_type": component.type,
-            "error_topic_name": component.config.topic_name_config.default_error_topic_name,
-            "output_topic_name": component.config.topic_name_config.default_output_topic_name,
-            "schema_registry_url": component.config.schema_registry_url,
-            "broker": component.config.broker,
+            "error_topic_name": self.config.topic_name_config.default_error_topic_name,
+            "output_topic_name": self.config.topic_name_config.default_output_topic_name,
+            "schema_registry_url": self.config.schema_registry_url,
+            "broker": self.config.broker,
         }
+
         substitution = generate_substitution(
-            component, "component", substitution_hardcoded
+            component_as_dict,
+            "component",
+            substitution_hardcoded,
         )
 
-        # TODO: Should this be allowed? Probably not, delete after discussion.
-        # Substitute values in the env component definition with any self-references
-        #
-        # env_component_as_dict = json.loads(
-        #     substitute_nested(
-        #         json.dumps(env_component_as_dict),
-        #         **env_component_as_dict,
-        #     )
-        # )
-
-        # Merge the two component definitions prioritizing the env-specific one
-        component_as_dict = update_nested_pair(
-            env_component_as_dict,
-            json.loads(component.json(by_alias=True)),
-        )
         # Substitute all vars in the component, avoid duplicates, prioritize component def
         substituted_component: dict = json.loads(
             substitute_nested(
@@ -381,7 +368,7 @@ class Pipeline:
 
 # TODO: Does it belong here?
 def generate_substitution(
-    model: BaseModel,
+    model: dict,
     prefix: str | None = None,
     existing_substitution: dict | None = None,
 ) -> dict:
@@ -390,8 +377,8 @@ def generate_substitution(
     Finds all attributes that belong to a model and expands them to create
     a dict containing each variable name and value to substitute with.
 
-    :param model: Pydantic BaseModel
-    :type model: BaseModel
+    :param model: BaseModel as dict
+    :type model: dict
     :param prefix: Prefix the preceeds all substitution variables, defaults to None
     :type prefix: str, optional
     :param substitution: existing substitution to include
@@ -404,15 +391,5 @@ def generate_substitution(
         raise TypeError("Argument existing_substitution must be a dict")
     elif not existing_substitution:
         existing_substitution = {}
-    # Init substitution dict
-    substitution_model = {}
-    # For each field, recurse or save value under key=field_name
-    for field_name, value in model:
-        if isinstance(value, BaseModel):
-            substitution_model[field_name] = generate_substitution(value)
-        else:
-            substitution_model[field_name] = value
     # Combine existing substitution with the inflated model substitution dict
-    return update_nested(
-        existing_substitution, inflate_mapping(substitution_model, prefix)
-    )
+    return update_nested(existing_substitution, inflate_mapping(model, prefix))

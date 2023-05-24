@@ -273,6 +273,7 @@ snapshots["TestPipeline.test_inflate_pipeline test-pipeline"] = {
                 },
             },
             "type": "kafka-sink-connector",
+            "validate_name": True,
             "version": "1.0.4",
         },
         {
@@ -384,7 +385,7 @@ snapshots["TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline"
             },
             "resetterValues": {},
             "type": "kafka-sink-connector",
-            "validate_name": False,
+            "validate_name": True,
             "version": "1.0.4",
         },
     ]
@@ -1056,6 +1057,7 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                 },
             },
             "type": "kafka-sink-connector",
+            "validate_name": True,
             "version": "1.0.4",
         },
         {
@@ -1191,6 +1193,7 @@ snapshots["TestPipeline.test_read_from_component test-pipeline"] = {
                 },
             },
             "type": "kafka-sink-connector",
+            "validate_name": True,
             "version": "1.0.4",
         },
         {
@@ -1854,7 +1857,7 @@ snapshots["TestPipeline.test_with_env_defaults test-pipeline"] = {
             },
             "resetterValues": {},
             "type": "kafka-sink-connector",
-            "validate_name": False,
+            "validate_name": True,
             "version": "1.0.4",
         },
     ]
