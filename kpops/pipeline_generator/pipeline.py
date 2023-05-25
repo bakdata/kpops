@@ -31,6 +31,8 @@ class ParsingException(Exception):
 
 
 class PipelineComponents(BaseModel):
+    """Stores the pipeline components"""
+
     components: list[PipelineComponent] = []
 
     @property
@@ -242,6 +244,8 @@ class Pipeline:
             # HACK: Pydantic .dict() doesn't create jsonable dict
             json.loads(component.json(by_alias=True)),
         )
+        # TODO: Fix the name validation for Kubernetes apps! Very hacky
+        # currently, produces useless output in the printed pipeline
         if "validate_name" in env_component_as_dict:
             del env_component_as_dict["validate_name"]
 
@@ -289,23 +293,28 @@ class Pipeline:
         :return: Updated component
         :rtype: dict
         """
+        config = self.config
         # All variables that were previously introduced in the component by the substitution
         # functions, still hardcoded.
         substitution_hardcoded = {
             # "component_name": component.name,
             # "component_type": component.type,
-            "error_topic_name": self.config.topic_name_config.default_error_topic_name,
-            "output_topic_name": self.config.topic_name_config.default_output_topic_name,
-            "schema_registry_url": self.config.schema_registry_url,
-            "broker": self.config.broker,
+            "error_topic_name": config.topic_name_config.default_error_topic_name,
+            "output_topic_name": config.topic_name_config.default_output_topic_name,
+            # "schema_registry_url": self.config.schema_registry_url,
+            # "broker": self.config.broker,
         }
-
-        substitution = generate_substitution(
+        # Generate a substitution dict from the component
+        component_substitution = generate_substitution(
             component_as_dict,
             "component",
             substitution_hardcoded,
         )
-
+        # Generate a substitution dict from the pipeline config and combine it
+        # with the component-specifig substitution
+        substitution = generate_substitution(
+            json.loads(config.json()), "", component_substitution
+        )
         # Substitute all vars in the component, avoid duplicates, prioritize component def
         substituted_component: dict = json.loads(
             substitute_nested(
@@ -353,7 +362,7 @@ class Pipeline:
 
 # TODO: Does it belong here?
 def generate_substitution(
-    model: dict,
+    input: dict,
     prefix: str | None = None,
     existing_substitution: dict | None = None,
 ) -> dict:
@@ -362,8 +371,8 @@ def generate_substitution(
     Finds all attributes that belong to a model and expands them to create
     a dict containing each variable name and value to substitute with.
 
-    :param model: BaseModel as dict
-    :type model: dict
+    :param input: Dict from which to generate the substitution
+    :type input: dict
     :param prefix: Prefix the preceeds all substitution variables, defaults to None
     :type prefix: str, optional
     :param substitution: existing substitution to include
@@ -377,4 +386,4 @@ def generate_substitution(
     elif not existing_substitution:
         existing_substitution = {}
     # Combine existing substitution with the inflated model substitution dict
-    return update_nested(existing_substitution, inflate_mapping(model, prefix))
+    return update_nested(existing_substitution, inflate_mapping(input, prefix))
