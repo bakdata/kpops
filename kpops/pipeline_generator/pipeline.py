@@ -21,7 +21,7 @@ from kpops.components.base_components.base_defaults_component import (
     update_nested_pair,
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.yaml_loading import load_yaml_file, substitute_nested
+from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
 
 log = logging.getLogger("PipelineGenerator")
 
@@ -129,13 +129,17 @@ class Pipeline:
         """
         Pipeline.set_pipeline_name_env_vars(base_dir, path)
 
+        # The substitution here is not necessary at all, but in the edge case
+        # that a placeholder is used instead of "type" or "name", it could be
+        # important.
+        # TODO: Decide whether to skip substituting os.environ here.
         main_content = load_yaml_file(path, substitution=dict(os.environ))
         if not isinstance(main_content, list):
             raise TypeError(
                 f"The pipeline definition {path} should contain a list of components"
             )
-
         env_content = []
+        # Analogous to the above comment regarding substitution
         if (env_file := Pipeline.pipeline_filename_environment(path, config)).exists():
             env_content = load_yaml_file(env_file, substitution=dict(os.environ))
             if not isinstance(env_content, list):
@@ -258,27 +262,8 @@ class Pipeline:
         :param substitution: Substitution dictionary, defaults to None
         :type substitution: dict | None, optional
         """
-        # Enables cross-referencing between components.
-        # TODO: Discuss whether it is needed
-        if not substitution:
-            substitution = {}
-        for component in self.components:
-            # The placeholder has to be an alphanumeric string and can contain
-            # underscores, hence dashes are replaced with underscores.
-            # Furthermore, to avoid confusion, we get rid of the component prefix
-            # that is usually applied to the name.
-            substitution_prefix = component.name.removeprefix(component.prefix).replace(
-                "-", "_"
-            )
-            substitution = update_nested_pair(
-                substitution,
-                generate_substitution(
-                    json.loads(component.json(by_alias=True)), substitution_prefix
-                ),
-            )
-        substituted_self = substitute_nested(str(self), **substitution)
         syntax = Syntax(
-            substituted_self,
+            substitute(str(self), substitution),
             "yaml",
             background_color="default",
         )

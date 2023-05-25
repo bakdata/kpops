@@ -197,37 +197,6 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    def test_substitution_in_pipeline(self):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                "--pipeline-base-dir",
-                PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "pipeline-substitution/pipeline.yaml"),
-                "tests.pipeline.test_components",
-                "--defaults",
-                str(RESOURCE_PATH),
-            ],
-            catch_exceptions=False,
-        )
-        assert result.exit_code == 0
-        enriched_pipeline = yaml.safe_load(result.stdout)
-        assert isinstance(enriched_pipeline, dict)
-
-        assert (
-            enriched_pipeline["components"][0]["app"]["labels"][
-                "test_cross_component_referencing"
-            ]
-            == "2G"
-        )
-        assert (
-            enriched_pipeline["components"][1]["app"]["labels"][
-                "test_chained_cross_component_referencing"
-            ]
-            == "2G"
-        )
-
     def test_kafka_connector_config_parsing(self):
         result = runner.invoke(
             app,
