@@ -292,3 +292,11 @@ class TestKubernetesApp:
                 app=app_value,
                 namespace="test-namespace",
             )
+
+        assert KubernetesApp(
+            name="valid-name",
+            config=config,
+            handlers=handlers,
+            app=app_value,
+            namespace="test-namespace",
+        )
