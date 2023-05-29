@@ -265,8 +265,27 @@ class Pipeline:
         :param substitution: Substitution dictionary, defaults to None
         :type substitution: dict | None, optional
         """
+        # Enables cross-referencing between components.
+        # TODO: Discuss whether it is needed
+        if not substitution:
+            substitution = {}
+        for component in self.components:
+            # The placeholder has to be an alphanumeric string and can contain
+            # underscores, hence dashes are replaced with underscores.
+            # Furthermore, to avoid confusion, we get rid of the component prefix
+            # that is usually applied to the name.
+            substitution_prefix = component.name.removeprefix(component.prefix).replace(
+                "-", "_"
+            )
+            substitution = update_nested_pair(
+                substitution,
+                generate_substitution(
+                    json.loads(component.json(by_alias=True)), substitution_prefix
+                ),
+            )
+        substituted_self = substitute_nested(str(self), **substitution)
         syntax = Syntax(
-            substitute(str(self), substitution),
+            substituted_self,
             "yaml",
             background_color="default",
         )
