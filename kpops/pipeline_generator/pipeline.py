@@ -21,7 +21,7 @@ from kpops.components.base_components.base_defaults_component import (
     update_nested_pair,
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
+from kpops.utils.yaml_loading import load_yaml_file, substitute_nested
 
 log = logging.getLogger("PipelineGenerator")
 
