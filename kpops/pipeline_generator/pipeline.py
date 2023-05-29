@@ -256,7 +256,6 @@ class Pipeline:
             enrich=False,
             config=self.config,
             handlers=self.handlers,
-            validate_name=True,
             **component_data,
         )
 

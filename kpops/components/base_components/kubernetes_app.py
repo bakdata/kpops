@@ -95,8 +95,9 @@ class KubernetesApp(PipelineComponent):
         pass
 
     def __init__(self, **kwargs):
+        if kwargs.get("validate_name", True):
+            self.validate_kubernetes_name(kwargs.get("name", "invalid_name"))
         super().__init__(**kwargs)
-        self.__validate_kubernetes_name()
 
     @cached_property
     def helm(self) -> Helm:
@@ -191,15 +192,15 @@ class KubernetesApp(PipelineComponent):
         )
 
     # TODO: SMARTER
-    def __validate_kubernetes_name(self) -> None:
-        """Check if the component's name is valid for Kubernetes"""
-        if (
-            not bool(KUBERNETES_NAME_CHECK_PATTERN.match(self.name))
-            and self.validate_name
-        ):
-            raise ValueError(
-                f"The component name {self.name} is invalid for Kubernetes."
-            )
+    @staticmethod
+    def validate_kubernetes_name(name: str) -> None:
+        """Check if a name is valid for a Kubernetes resource
+
+        :param name: Name that is to be used for the resource
+        :type name: str
+        """
+        if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(name)):
+            raise ValueError(f"The component name {name} is invalid for Kubernetes.")
 
     @override
     def dict(self, *, exclude=None, **kwargs) -> dict[str, Any]:

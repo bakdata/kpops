@@ -1,13 +1,14 @@
 import json
 from pathlib import Path
 
+import pytest
 import yaml
 from pydantic import BaseModel
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
-from kpops.pipeline_generator.pipeline import generate_substitution
+from kpops.pipeline_generator.pipeline import ParsingException, generate_substitution
 
 runner = CliRunner()
 
@@ -468,3 +469,22 @@ class TestPipeline:
 
         enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_kubernetes_app_name_validation(self):
+        with pytest.raises((ValueError, ParsingException)):
+            runner.invoke(
+                app,
+                [
+                    "generate",
+                    "--pipeline-base-dir",
+                    PIPELINE_BASE_DIR,
+                    str(
+                        RESOURCE_PATH
+                        / "pipeline-with-illegal-kubernetes-name/pipeline.yaml"
+                    ),
+                    "tests.pipeline.test_components",
+                    "--defaults",
+                    str(RESOURCE_PATH),
+                ],
+                catch_exceptions=False,
+            )
