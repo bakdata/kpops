@@ -563,7 +563,7 @@ snapshots["TestPipeline.test_model_serialization test-pipeline"] = {
             "prefix": "resources-pipeline-with-paths-",
             "repoConfig": {
                 "repoAuthFlags": {
-                    "caFile": "/my-cert.cert",
+                    "caFile": "my-cert.cert",
                     "insecureSkipTlsVerify": False,
                     "password": "$CI_JOB_TOKEN",
                     "username": "masked",
