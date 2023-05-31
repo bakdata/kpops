@@ -198,6 +198,24 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
+    @pytest.mark.timeout(10)
+    def test_substitute_in_component_infinite_loop(self):
+        runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(
+                    RESOURCE_PATH / "component-type-substitution/infinite_pipeline.yaml"
+                ),
+                "tests.pipeline.test_components",
+                "--defaults",
+                str(RESOURCE_PATH),
+            ],
+            catch_exceptions=False,
+        )
+
     def test_kafka_connector_config_parsing(self):
         result = runner.invoke(
             app,

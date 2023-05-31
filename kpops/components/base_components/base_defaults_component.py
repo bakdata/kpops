@@ -288,6 +288,6 @@ def inflate_mapping(
             key = prefix + separator + key
         top[key] = value
         if isinstance(value, Mapping):
-            nested_mapping = inflate_mapping(value, str(key))
+            nested_mapping = inflate_mapping(value, key)
             top = update_nested_pair(top, nested_mapping)
     return top
