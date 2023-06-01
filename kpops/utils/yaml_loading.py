@@ -1,3 +1,5 @@
+import logging
+import time
 from collections.abc import Mapping
 from pathlib import Path
 from string import Template
@@ -37,10 +39,12 @@ def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str
     return Template(input).safe_substitute(**substitution)
 
 
-def substitute_nested(input: str, **kwargs) -> str:
+def substitute_nested(input: str, max_repetitions: int = 500, **kwargs) -> str:
     """Allow for multiple substitutions to be passed.
 
     Will make as many passes as needed to substitute all possible placeholders.
+
+    The current max is 20 to avoid infinte loops
 
     HINT: If :param input: is a ``Mapping`` that you converted into ``str``,
     You can pass it as a string, and as a ``Mapping`` to enable self-reference.
@@ -60,12 +64,26 @@ def substitute_nested(input: str, **kwargs) -> str:
     :param input: The raw input containing $-placeholders
     :type input: str
     :param **kwargs: Substitutions
+    :raises Exception: Substitution was repeated {counter} times and placeholders still exist, check for loops
     :return: Substituted input string
     :rtype: str
     """
     if not {**kwargs}:
         return input
     old_str, new_str = "", substitute(input, {**kwargs})
+    counter = 0
+    starting_time = time.time()
     while old_str != new_str:
         old_str, new_str = new_str, substitute(new_str, {**kwargs})
+        counter += 1
+        current_time = time.time()
+        if current_time - starting_time > 10:
+            logging.warn(
+                f"Substitution has been repeating for 10 seconds, possible loop detected. The program will exit after reaching {max_repetitions} tries."
+            )
+            starting_time = current_time
+        if counter > max_repetitions:
+            raise Exception(
+                f"Substitution was repeated {counter} times and placeholders still exist, check for loops"
+            )
     return old_str

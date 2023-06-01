@@ -1,4 +1,4 @@
-- type: scheduled-producer
+- type: converter
   app:
     labels:
       l_1: ${component_app_labels_l_2}
