@@ -127,17 +127,12 @@ class Pipeline:
         """
         Pipeline.set_pipeline_name_env_vars(base_dir, path)
 
-        # The substitution here is not necessary at all, but in the edge case
-        # that a placeholder is used instead of "type" or "name", it could be
-        # important.
-        # TODO: Decide whether to skip substituting os.environ here.
         main_content = load_yaml_file(path, substitution=dict(os.environ))
         if not isinstance(main_content, list):
             raise TypeError(
                 f"The pipeline definition {path} should contain a list of components"
             )
         env_content = []
-        # Analogous to the above comment regarding substitution
         if (env_file := Pipeline.pipeline_filename_environment(path, config)).exists():
             env_content = load_yaml_file(env_file, substitution=dict(os.environ))
             if not isinstance(env_content, list):
@@ -240,8 +235,6 @@ class Pipeline:
             # HACK: Pydantic .dict() doesn't create jsonable dict
             json.loads(component.json(by_alias=True)),
         )
-        # TODO: Fix the name validation for Kubernetes apps! Very hacky
-        # currently, produces useless output in the printed pipeline
         if "validate_name" in env_component_as_dict:
             del env_component_as_dict["validate_name"]
 
@@ -289,28 +282,21 @@ class Pipeline:
         :rtype: dict
         """
         config = self.config
-        # All variables that were previously introduced in the component by the substitution
-        # functions, still hardcoded.
+        # Leftover variables that were previously introduced in the component by the substitution
+        # functions, still hardcoded, because of their names.
+        # TODO: Get rid of them with other breaking changes
         substitution_hardcoded = {
-            # "component_name": component.name,
-            # "component_type": component.type,
             "error_topic_name": config.topic_name_config.default_error_topic_name,
             "output_topic_name": config.topic_name_config.default_output_topic_name,
-            # "schema_registry_url": self.config.schema_registry_url,
-            # "broker": self.config.broker,
         }
-        # Generate a substitution dict from the component
         component_substitution = generate_substitution(
             component_as_dict,
             "component",
             substitution_hardcoded,
         )
-        # Generate a substitution dict from the pipeline config and combine it
-        # with the component-specifig substitution
         substitution = generate_substitution(
-            json.loads(config.json()), "", component_substitution
+            json.loads(config.json()), existing_substitution=component_substitution
         )
-        # Substitute all vars in the component, avoid duplicates, prioritize component def
         substituted_component: dict = json.loads(
             substitute_nested(
                 json.dumps(component_as_dict),
@@ -321,7 +307,7 @@ class Pipeline:
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
-        """Adds the environment name from the PipelineConfig to the pipeline.yaml path
+        """Add the environment name from the PipelineConfig to the pipeline.yaml path
 
         :param path: Path to pipeline.yaml file
         :param config: The PipelineConfig

@@ -1,8 +1,11 @@
-from kpops.utils.dict_ops import generate_substitution, update_nested_pair
-from pydantic import BaseModel
-import pytest
-from snapshottest.module import SnapshotTest
 import json
+
+import pytest
+from pydantic import BaseModel
+from snapshottest.module import SnapshotTest
+
+from kpops.utils.dict_ops import generate_substitution, update_nested_pair
+
 
 class TestDictOps:
     @pytest.mark.parametrize(

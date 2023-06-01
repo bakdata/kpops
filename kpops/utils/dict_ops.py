@@ -102,8 +102,28 @@ def generate_substitution(
     :returns: Substitution dict of all variables related to the model.
     :rtype: dict
     """
-    if existing_substitution and not isinstance(existing_substitution, dict):
-        raise TypeError("Argument existing_substitution must be a dict")
-    elif not existing_substitution:
-        existing_substitution = {}
+    existing_substitution = is_dict(
+        existing_substitution,
+        "Argument ``existing_substitution`` must be of type dict or None",
+    )
     return update_nested(existing_substitution, inflate_mapping(input, prefix))
+
+
+def is_dict(d, ex_msg: str = "Argument must be of type dict or None") -> dict:
+    """Check whether the input is a ``dict``
+
+    If it is ``None``, an empty dict is returned. Else a ``TypeError`` is raised.
+
+    :param d: Input to be checked
+    :type d: Any
+    :param ex_msg: Exception message, defaults to "Argument must be of type dict"
+    :type ex_msg: str, optional
+    :raises TypeError: Argument must be of type dict or None
+    :returns: unmodified ``d`` or empty ``dict`` if d is ``None``
+    """
+    if d is None:
+        return {}
+    elif isinstance(d, dict):
+        return d
+    else:
+        raise TypeError(ex_msg)
