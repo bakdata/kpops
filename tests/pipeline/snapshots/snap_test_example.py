@@ -12,8 +12,8 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
         {
             'app': {
                 'debug': True,
-                'image': '${DOCKER_REGISTRY}/atm-demo-accountproducer',
-                'imageTag': '1.0.0',
+                'image': '${DOCKER_REGISTRY}/kafka-pipe-ops-atm-fraud-detection-accountproducer',
+                'imageTag': 'latest',
                 'nameOverride': 'account-producer',
                 'prometheus': {
                     'jmx': {
@@ -63,8 +63,8 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'REAL_TX': 19
                 },
                 'debug': True,
-                'image': '${DOCKER_REGISTRY}/atm-demo-transactionavroproducer',
-                'imageTag': '1.0.0',
+                'image': '${DOCKER_REGISTRY}/kafka-pipe-ops-atm-fraud-detection-transactionavroproducer',
+                'imageTag': 'latest',
                 'nameOverride': 'transaction-avro-producer',
                 'prometheus': {
                     'jmx': {
@@ -116,8 +116,8 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'PRODUCTIVE': False
                 },
                 'debug': True,
-                'image': '${DOCKER_REGISTRY}/atm-demo-transactionjoiner',
-                'imageTag': '1.0.0',
+                'image': '${DOCKER_REGISTRY}/kafka-pipe-ops-atm-fraud-detection-transactionjoiner',
+                'imageTag': 'latest',
                 'labels': {
                     'pipeline': 'bakdata-atm-fraud-detection'
                 },
@@ -178,8 +178,8 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'PRODUCTIVE': False
                 },
                 'debug': True,
-                'image': '${DOCKER_REGISTRY}/atm-demo-frauddetector',
-                'imageTag': '1.0.0',
+                'image': '${DOCKER_REGISTRY}/kafka-pipe-ops-atm-fraud-detection-frauddetector',
+                'imageTag': 'latest',
                 'labels': {
                     'pipeline': 'bakdata-atm-fraud-detection'
                 },
@@ -240,8 +240,8 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'PRODUCTIVE': False
                 },
                 'debug': True,
-                'image': '${DOCKER_REGISTRY}/atm-demo-accountlinker',
-                'imageTag': '1.0.0',
+                'image': '${DOCKER_REGISTRY}/kafka-pipe-ops-atm-fraud-detection-accountlinker',
+                'imageTag': 'latest',
                 'labels': {
                     'pipeline': 'bakdata-atm-fraud-detection'
                 },
