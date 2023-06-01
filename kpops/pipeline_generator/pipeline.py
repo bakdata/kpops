@@ -297,13 +297,13 @@ class Pipeline:
         substitution = generate_substitution(
             json.loads(config.json()), existing_substitution=component_substitution
         )
-        substituted_component: dict = json.loads(
+
+        return json.loads(
             substitute_nested(
                 json.dumps(component_as_dict),
                 **update_nested_pair(substitution, os.environ),
             )
         )
-        return substituted_component
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
