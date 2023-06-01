@@ -18,7 +18,7 @@ typer_args: list[str] = [
     "--output",
     str(PATH_CLI_COMMANDS_DOC),
 ]
-subprocess.run(typer_args, shell=True)
+subprocess.run(typer_args)
 
 # Replace wrong title in CLI Usage doc
 with open(PATH_CLI_COMMANDS_DOC, "r") as f:
