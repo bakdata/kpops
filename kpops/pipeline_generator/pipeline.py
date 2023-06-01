@@ -15,12 +15,8 @@ from rich.syntax import Syntax
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
-from kpops.components.base_components.base_defaults_component import (
-    inflate_mapping,
-    update_nested,
-    update_nested_pair,
-)
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.utils.dict_ops import inflate_mapping, update_nested, update_nested_pair
 from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
 
 log = logging.getLogger("PipelineGenerator")
