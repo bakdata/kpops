@@ -81,3 +81,29 @@ def inflate_mapping(
             nested_mapping = inflate_mapping(value, key)
             top = update_nested_pair(top, nested_mapping)
     return top
+
+
+def generate_substitution(
+    input: dict,
+    prefix: str | None = None,
+    existing_substitution: dict | None = None,
+) -> dict:
+    """Generate a complete substitution dict from a BaseModel
+
+    Finds all attributes that belong to a model and expands them to create
+    a dict containing each variable name and value to substitute with.
+
+    :param input: Dict from which to generate the substitution
+    :type input: dict
+    :param prefix: Prefix the preceeds all substitution variables, defaults to None
+    :type prefix: str, optional
+    :param substitution: existing substitution to include
+    :type substitution: dict
+    :returns: Substitution dict of all variables related to the model.
+    :rtype: dict
+    """
+    if existing_substitution and not isinstance(existing_substitution, dict):
+        raise TypeError("Argument existing_substitution must be a dict")
+    elif not existing_substitution:
+        existing_substitution = {}
+    return update_nested(existing_substitution, inflate_mapping(input, prefix))

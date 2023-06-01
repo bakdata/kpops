@@ -2,16 +2,16 @@ import inspect
 import logging
 import os
 from collections import deque
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Any, TypeVar
+from typing import TypeVar
 
 import typer
 from pydantic import BaseModel, Field
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
-from kpops.utils.dict_ops import update_nested, update_nested_pair
+from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfig
 from kpops.utils.yaml_loading import load_yaml_file

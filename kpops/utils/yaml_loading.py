@@ -43,8 +43,7 @@ def substitute_nested(input: str, max_repetitions: int = 500, **kwargs) -> str:
     """Allow for multiple substitutions to be passed.
 
     Will make as many passes as needed to substitute all possible placeholders.
-
-    The current max is 20 to avoid infinte loops
+    A ceiling is set to avoid infinite loops.
 
     HINT: If :param input: is a ``Mapping`` that you converted into ``str``,
     You can pass it as a string, and as a ``Mapping`` to enable self-reference.
@@ -63,6 +62,8 @@ def substitute_nested(input: str, max_repetitions: int = 500, **kwargs) -> str:
 
     :param input: The raw input containing $-placeholders
     :type input: str
+    :param max_repetitions: The max number of consecutive substitutions to be carried out, defaults to 500
+    :type max_repetitions: int, optional
     :param **kwargs: Substitutions
     :raises Exception: Substitution was repeated {counter} times and placeholders still exist, check for loops
     :return: Substituted input string

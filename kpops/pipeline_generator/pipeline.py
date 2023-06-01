@@ -16,7 +16,7 @@ from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.dict_ops import inflate_mapping, update_nested, update_nested_pair
+from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
 
 log = logging.getLogger("PipelineGenerator")
@@ -353,32 +353,3 @@ class Pipeline:
         os.environ["pipeline_name"] = pipeline_name
         for level, parent in enumerate(path_without_file):
             os.environ[f"pipeline_name_{level}"] = parent
-
-
-# TODO: Does it belong here?
-def generate_substitution(
-    input: dict,
-    prefix: str | None = None,
-    existing_substitution: dict | None = None,
-) -> dict:
-    """Generate a complete substitution dict from a BaseModel
-
-    Finds all attributes that belong to a model and expands them to create
-    a dict containing each variable name and value to substitute with.
-
-    :param input: Dict from which to generate the substitution
-    :type input: dict
-    :param prefix: Prefix the preceeds all substitution variables, defaults to None
-    :type prefix: str, optional
-    :param substitution: existing substitution to include
-    :type substitution: dict
-    :returns: Substitution dict of all variables related to the model.
-    :rtype: dict
-    """
-    # Check if given existing substitution is a dict
-    if existing_substitution and not isinstance(existing_substitution, dict):
-        raise TypeError("Argument existing_substitution must be a dict")
-    elif not existing_substitution:
-        existing_substitution = {}
-    # Combine existing substitution with the inflated model substitution dict
-    return update_nested(existing_substitution, inflate_mapping(input, prefix))
