@@ -51,7 +51,7 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
                 }
             },
             'type': 'producer',
-            'version': '2.9.0'
+            'version': '2.12.0'
         },
         {
             'app': {
@@ -99,7 +99,7 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
                 }
             },
             'type': 'streams-app',
-            'version': '2.9.0'
+            'version': '2.12.0'
         }
     ]
 }
@@ -1157,7 +1157,7 @@ snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = {
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'type': 'producer',
-            'version': '2.9.0'
+            'version': '2.12.0'
         }
     ]
 }
@@ -2086,7 +2086,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
                 }
             },
             'type': 'producer',
-            'version': '2.9.0'
+            'version': '2.12.0'
         },
         {
             'app': {
@@ -2134,7 +2134,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
                 }
             },
             'type': 'streams-app',
-            'version': '2.9.0'
+            'version': '2.12.0'
         }
     ]
 }
@@ -2183,7 +2183,7 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
                 }
             },
             'type': 'producer',
-            'version': '2.9.0'
+            'version': '2.12.0'
         },
         {
             'app': {
@@ -2231,7 +2231,7 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
                 }
             },
             'type': 'streams-app',
-            'version': '2.9.0'
+            'version': '2.12.0'
         }
     ]
 }
@@ -2294,7 +2294,7 @@ snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = {
                 }
             },
             'type': 'streams-app',
-            'version': '2.9.0'
+            'version': '2.12.0'
         },
         {
             'app': {

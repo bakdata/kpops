@@ -178,7 +178,7 @@
                     "type": "string"
                 },
                 "version": {
-                    "default": "2.9.0",
+                    "default": "2.12.0",
                     "description": "Helm chart version",
                     "title": "Version",
                     "type": "string"
@@ -785,7 +785,7 @@
                     "type": "string"
                 },
                 "version": {
-                    "default": "2.9.0",
+                    "default": "2.12.0",
                     "description": "Helm chart version",
                     "title": "Version",
                     "type": "string"
@@ -967,7 +967,7 @@
                     "type": "string"
                 },
                 "version": {
-                    "default": "2.9.0",
+                    "default": "2.12.0",
                     "description": "Helm chart version",
                     "title": "Version",
                     "type": "string"

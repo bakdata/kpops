@@ -56,7 +56,7 @@ class TestKafkaApp:
             repository_name="bakdata-streams-bootstrap",
             url="https://bakdata.github.io/streams-bootstrap/",
         )
-        assert kafka_app.version == "2.9.0"
+        assert kafka_app.version == "2.12.0"
         assert kafka_app.namespace == "test-namespace"
 
     def test_should_deploy_kafka_app(
