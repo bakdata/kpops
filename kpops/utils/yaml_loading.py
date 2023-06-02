@@ -10,7 +10,9 @@ from cachetools import cached
 from cachetools.keys import hashkey
 
 
-def generate_hashkey(file_path: Path, substitution: dict | None = None) -> tuple:
+def generate_hashkey(
+    file_path: Path, substitution: Mapping[str, Any] | None = None
+) -> tuple:
     if substitution is None:
         substitution = {}
     return hashkey(str(file_path) + str(sorted(substitution.items())))
@@ -18,7 +20,7 @@ def generate_hashkey(file_path: Path, substitution: dict | None = None) -> tuple
 
 @cached(cache={}, key=generate_hashkey)
 def load_yaml_file(
-    file_path: Path, *, substitution: dict | None = None
+    file_path: Path, *, substitution: Mapping[str, Any] | None = None
 ) -> dict | list[dict]:
     with open(file_path) as yaml_file:
         return yaml.load(substitute(yaml_file.read(), substitution), Loader=yaml.Loader)

@@ -5,5 +5,9 @@ class TopicNotFoundException(Exception):
     pass
 
 
+class TopicTransactionError(Exception):
+    pass
+
+
 class KafkaRestProxyError(RequestsException):
     pass

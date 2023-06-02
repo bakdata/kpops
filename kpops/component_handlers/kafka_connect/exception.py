@@ -5,5 +5,9 @@ class ConnectorNotFoundException(Exception):
     pass
 
 
+class ConnectorStateException(Exception):
+    pass
+
+
 class KafkaConnectError(RequestsException):
     pass
