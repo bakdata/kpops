@@ -2,8 +2,8 @@
   name: account-producer
   app:
     replicaCount: 1
-    image: ${DOCKER_REGISTRY}/kafka-pipe-ops-atm-fraud-detection-accountproducer
-    imageTag: latest
+    image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
+    imageTag: 1.0.0
     schedule: 0 12 * * *
     suspend: true
     prometheus:
@@ -15,8 +15,8 @@
   name: transaction-avro-producer
   app:
     replicaCount: 1
-    image: ${DOCKER_REGISTRY}/kafka-pipe-ops-atm-fraud-detection-transactionavroproducer
-    imageTag: latest
+    image: ${DOCKER_REGISTRY}/atm-demo-transactionavroproducer
+    imageTag: 1.0.0
     commandLine:
       REAL_TX: 19
       ITERATION: 20
@@ -31,8 +31,8 @@
   name: transaction-joiner
   app:
     replicaCount: 1
-    image: ${DOCKER_REGISTRY}/kafka-pipe-ops-atm-fraud-detection-transactionjoiner
-    imageTag: latest
+    image: ${DOCKER_REGISTRY}/atm-demo-transactionjoiner
+    imageTag: 1.0.0
     commandLine:
       PRODUCTIVE: false
     annotations:
@@ -46,8 +46,8 @@
   name: fraud-detector
   app:
     replicaCount: 1
-    image: ${DOCKER_REGISTRY}/kafka-pipe-ops-atm-fraud-detection-frauddetector
-    imageTag: latest
+    image: ${DOCKER_REGISTRY}/atm-demo-frauddetector
+    imageTag: 1.0.0
     commandLine:
       PRODUCTIVE: false
     annotations:
@@ -68,8 +68,8 @@
         role: accounts
   app:
     replicaCount: 1
-    image: ${DOCKER_REGISTRY}/kafka-pipe-ops-atm-fraud-detection-accountlinker
-    imageTag: latest
+    image: ${DOCKER_REGISTRY}/atm-demo-accountlinker
+    imageTag: 1.0.0
     commandLine:
       PRODUCTIVE: false
     annotations:
