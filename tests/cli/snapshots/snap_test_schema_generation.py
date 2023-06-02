@@ -4,11 +4,10 @@ from __future__ import unicode_literals
 
 from snapshottest import Snapshot
 
+
 snapshots = Snapshot()
 
-snapshots[
-    "TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema-generation"
-] = """{
+snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema-generation'] = '''{
     "definitions": {
         "EmptyPipelineComponent": {
             "description": "",
@@ -423,4 +422,4 @@ snapshots[
     "title": "kpops pipeline schema",
     "type": "array"
 }
-"""
+'''
