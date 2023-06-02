@@ -339,3 +339,4 @@ class Pipeline:
         ENV["pipeline_name"] = pipeline_name
         for level, parent in enumerate(path_without_file):
             ENV[f"pipeline_name_{level}"] = parent
+# just a rand comment to merge
