@@ -16,6 +16,7 @@ class InputTopicTypes(str, Enum):
 
     INPUT = "input"
     EXTRA = "extra"
+    PATTERN = "pattern"
     INPUT_PATTERN = "input-pattern"
     EXTRA_PATTERN = "extra-pattern"
 
@@ -25,11 +26,13 @@ class FromTopic(BaseModel):
 
     :param type: Topic type
     :type type: InputTopicTypes
-    :param role: Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`
+    :param role: Custom identifier belonging to a topic, provide only if `type` is `extra`, `pattern` or `extra-pattern`
     :type role: str | None
     """
 
-    type: InputTopicTypes = Field(..., description=describe_attr("type", __doc__))
+    type: InputTopicTypes = Field(
+        default=InputTopicTypes.INPUT, description=describe_attr("type", __doc__)
+    )
     role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
     class Config(DescConfig):
@@ -41,6 +44,7 @@ class FromTopic(BaseModel):
         """Ensure that cls.role is used correctly"""
         is_extra_topic = values["type"] in (
             InputTopicTypes.EXTRA,
+            InputTopicTypes.PATTERN,
             InputTopicTypes.EXTRA_PATTERN,
         )
         if is_extra_topic and not values.get("role"):

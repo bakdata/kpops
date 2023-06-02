@@ -98,7 +98,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "description": "Input topic",
             "properties": {
                 "role": {
-                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`",
+                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra`, `pattern` or `extra-pattern`",
                     "title": "Role",
                     "type": "string"
                 },
@@ -108,12 +108,10 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                             "$ref": "#/definitions/InputTopicTypes"
                         }
                     ],
+                    "default": "input",
                     "description": "Topic type"
                 }
             },
-            "required": [
-                "type"
-            ],
             "title": "FromTopic",
             "type": "object"
         },
@@ -122,6 +120,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "enum": [
                 "input",
                 "extra",
+                "pattern",
                 "input-pattern",
                 "extra-pattern"
             ],
@@ -379,6 +378,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                             "$ref": "#/definitions/OutputTopicTypes"
                         }
                     ],
+                    "default": "output",
                     "description": "Topic type"
                 },
                 "valueSchema": {
@@ -387,9 +387,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 }
             },
-            "required": [
-                "type"
-            ],
             "title": "TopicConfig",
             "type": "object"
         }

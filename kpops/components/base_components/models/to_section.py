@@ -35,7 +35,9 @@ class TopicConfig(BaseModel):
     :type role: str | None
     """
 
-    type: OutputTopicTypes = Field(..., description="Topic type")
+    type: OutputTopicTypes = Field(
+        default=OutputTopicTypes.OUTPUT, description="Topic type"
+    )
     key_schema: str | None = Field(
         default=None, alias="keySchema", description="Key schema class name"
     )
