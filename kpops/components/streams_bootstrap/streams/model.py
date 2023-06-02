@@ -158,9 +158,11 @@ class StreamsAppAutoScaling(BaseModel):
         https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount,
         defaults to None
     :type idle_replicas: int, None, optional
-    :param topics: List of auto-generated Kafka Streams topics used by the streams app.,
+    :param topics: List of auto-generated Kafka Streams topics used by the streams app,
         defaults to []
-    :type topics: list[str]
+    :type topics: list[str], optional
+    :param additional_triggers: List of additional KEDA triggers, defaults to []
+    :type additional_triggers: list[str], optional
     """
 
     enabled: bool = Field(
@@ -207,7 +209,13 @@ class StreamsAppAutoScaling(BaseModel):
     )
     topics: list[str] = Field(
         default=[],
+        title="Topics",
         description=describe_attr("topics", __doc__),
+    )
+    additional_triggers: list[str] = Field(
+        default=[],
+        title="Additional triggers",
+        description=describe_attr("additional_triggers", __doc__),
     )
 
     class Config(CamelCaseConfig, DescConfig):

@@ -154,6 +154,8 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
         {
             'app': {
                 'autoscaling': {
+                    'additionalTriggers': [
+                    ],
                     'consumerGroup': 'converter-resources-pipeline-with-inflate-converter',
                     'cooldownPeriod': 300,
                     'enabled': True,
@@ -228,6 +230,8 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
         {
             'app': {
                 'autoscaling': {
+                    'additionalTriggers': [
+                    ],
                     'consumerGroup': 'filter-resources-pipeline-with-inflate-should-inflate',
                     'cooldownPeriod': 300,
                     'enabled': True,
@@ -541,6 +545,8 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
         {
             'app': {
                 'autoscaling': {
+                    'additionalTriggers': [
+                    ],
                     'consumerGroup': 'converter-resources-first-pipeline-converter',
                     'cooldownPeriod': 300,
                     'enabled': True,
@@ -615,6 +621,8 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
         {
             'app': {
                 'autoscaling': {
+                    'additionalTriggers': [
+                    ],
                     'consumerGroup': 'filter-resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name',
                     'cooldownPeriod': 300,
                     'enabled': True,
@@ -963,6 +971,8 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
         {
             'app': {
                 'autoscaling': {
+                    'additionalTriggers': [
+                    ],
                     'consumerGroup': 'converter-resources-pipeline-with-envs-converter',
                     'cooldownPeriod': 300,
                     'enabled': True,
@@ -1037,6 +1047,8 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
         {
             'app': {
                 'autoscaling': {
+                    'additionalTriggers': [
+                    ],
                     'consumerGroup': 'filter-resources-pipeline-with-envs-filter',
                     'cooldownPeriod': 300,
                     'enabled': True,
@@ -1225,6 +1237,8 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
         {
             'app': {
                 'autoscaling': {
+                    'additionalTriggers': [
+                    ],
                     'consumerGroup': 'filter-resources-read-from-component-inflate-step',
                     'cooldownPeriod': 300,
                     'enabled': True,
@@ -1386,6 +1400,8 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
         {
             'app': {
                 'autoscaling': {
+                    'additionalTriggers': [
+                    ],
                     'consumerGroup': 'filter-resources-read-from-component-inflate-step-without-prefix',
                     'cooldownPeriod': 300,
                     'enabled': True,
@@ -1870,6 +1886,8 @@ snapshots['TestPipeline.test_substitute_component_names test-pipeline'] = {
         {
             'app': {
                 'autoscaling': {
+                    'additionalTriggers': [
+                    ],
                     'consumerGroup': 'converter-resources-component-type-substitution-converter',
                     'cooldownPeriod': 300,
                     'enabled': True,
@@ -1944,6 +1962,8 @@ snapshots['TestPipeline.test_substitute_component_names test-pipeline'] = {
         {
             'app': {
                 'autoscaling': {
+                    'additionalTriggers': [
+                    ],
                     'consumerGroup': 'filter-resources-component-type-substitution-filter-app',
                     'cooldownPeriod': 300,
                     'enabled': True,
