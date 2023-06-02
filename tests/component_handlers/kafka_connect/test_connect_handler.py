@@ -4,7 +4,10 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers.kafka_connect.exception import ConnectorNotFoundException
+from kpops.component_handlers.kafka_connect.exception import (
+    ConnectorNotFoundException,
+    ConnectorStateException,
+)
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
 )
@@ -151,9 +154,7 @@ class TestConnectorHandler:
         ]
 
     def test_should_log_invalid_config_when_create_connector_in_dry_run(
-        self,
-        renderer_diff_mock: MagicMock,
-        log_error_mock: MagicMock,
+        self, renderer_diff_mock: MagicMock
     ):
         connector_wrapper = MagicMock()
 
@@ -167,19 +168,17 @@ class TestConnectorHandler:
 
         config = KafkaConnectConfig()
 
-        with pytest.raises(SystemExit):
+        formatted_errors = "\n".join(errors)
+
+        with pytest.raises(
+            ConnectorStateException,
+            match=f"Connector Creation: validating the connector config for connector {CONNECTOR_NAME} resulted in the following errors: {formatted_errors}",
+        ):
             handler.create_connector(CONNECTOR_NAME, config, True)
 
         connector_wrapper.validate_connector_config.assert_called_once_with(
             CONNECTOR_NAME, config
         )
-
-        assert log_error_mock.mock_calls == [
-            mock.call.log_error(
-                f"Connector Creation: validating the connector config for connector {CONNECTOR_NAME} resulted in the following errors:"
-            ),
-            mock.call.log_error("\n".join(errors)),
-        ]
 
     def test_should_call_update_connector_config_when_connector_exists_not_dry_run(
         self,

@@ -7,7 +7,10 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers.topic.exception import TopicNotFoundException
+from kpops.component_handlers.topic.exception import (
+    TopicNotFoundException,
+    TopicTransactionError,
+)
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.model import (
     BrokerConfigResponse,
@@ -346,7 +349,7 @@ class TestTopicHandler:
         ]
 
     def test_should_exit_if_dry_run_and_topic_exists_different_partition_count(
-        self, log_error_mock: MagicMock, get_topic_response_mock: MagicMock
+        self, get_topic_response_mock: MagicMock
     ):
         wrapper = get_topic_response_mock
 
@@ -360,16 +363,15 @@ class TestTopicHandler:
         )
         to_section = ToSection(topics={"topic-X": topic_config})
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(
+            TopicTransactionError,
+            match="Topic Creation: partition count of topic topic-X changed! Partitions count of topic topic-X is 10. The given partitions count 200.",
+        ):
             topic_handler.create_topics(to_section=to_section, dry_run=True)
             wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
 
-        log_error_mock.assert_called_once_with(
-            "Topic Creation: partition count of topic topic-X changed! Partitions count of topic topic-X is 10. The given partitions count 200."
-        )
-
     def test_should_exit_if_dry_run_and_topic_exists_different_replication_factor(
-        self, log_error_mock: MagicMock, get_topic_response_mock: MagicMock
+        self, get_topic_response_mock: MagicMock
     ):
         wrapper = get_topic_response_mock
 
@@ -383,13 +385,12 @@ class TestTopicHandler:
         )
         to_section = ToSection(topics={"topic-X": topic_config})
 
-        with pytest.raises(SystemExit):
+        with pytest.raises(
+            TopicTransactionError,
+            match="Topic Creation: replication factor of topic topic-X changed! Replication factor of topic topic-X is 3. The given replication count 300.",
+        ):
             topic_handler.create_topics(to_section=to_section, dry_run=True)
             wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
-
-        log_error_mock.assert_called_once_with(
-            "Topic Creation: replication factor of topic topic-X changed! Replication factor of topic topic-X is 3. The given replication count 300."
-        )
 
     def test_should_log_correct_message_when_delete_existing_topic_dry_run(
         self, log_info_mock: MagicMock, get_topic_response_mock: MagicMock

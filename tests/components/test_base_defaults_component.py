@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -11,6 +10,7 @@ from kpops.components.base_components.base_defaults_component import (
     load_defaults,
     update_nested_pair,
 )
+from kpops.utils.environment import ENV
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
@@ -190,7 +190,7 @@ class TestBaseDefaultsComponent:
     def test_env_var_substitution(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
-        os.environ["pipeline_name"] = str(DEFAULTS_PATH)
+        ENV["pipeline_name"] = str(DEFAULTS_PATH)
         component = TestEnvVarModel(config=config, handlers=handlers)
 
         assert component.name == str(
