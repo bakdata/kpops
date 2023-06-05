@@ -20,7 +20,7 @@ jobs:
         with:
           github-token: ${{ secrets.GH_TOKEN }}
           config: "./.github/changelog-config.json"
-          new-tag: "1.1.5"
+          new-tag: "1.1.4"
           old-tag: "1.0.0"
           fetchReviewers: "true"
           fetchReleaseInformation: "true"
