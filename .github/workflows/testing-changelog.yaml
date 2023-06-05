@@ -1,0 +1,34 @@
+name: Testing changelog
+on:
+  workflow_dispatch:
+    inputs:
+      release-type:
+        description: "Testing changelog"
+        type: string
+
+jobs:
+  test:
+    name: Test changelog
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create changelog
+        id: build_changelog
+        uses: bakdata/ci-templates/actions/changelog-generate@main
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+          config: "./.github/changelog-config.json"
+          new-tag: "1.1.5"
+          changelog-file: ""
+          fetchReviewers: "true"
+          fetchReleaseInformation: "true"
+      - name: Use output
+        run: |
+          echo "------------------------THIS IS TAG-----------------------------"
+          echo  "${{ steps.build_changelog.outputs.single-changelog }}"
+          echo "----------------------------------------------------------------"
+          echo "------------------------THIS IS GLOBAL--------------------------"
+          echo "${{ steps.build_changelog.outputs.merged-changelog }}"
+          echo "----------------------------------------------------------------"
+        shell: bash
