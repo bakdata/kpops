@@ -102,6 +102,4 @@ def generate_substitution(
     :returns: Substitution dict of all variables related to the model.
     :rtype: dict
     """
-    if not existing_substitution:
-        existing_substitution = {}
-    return update_nested(existing_substitution, inflate_mapping(input, prefix))
+    return update_nested(existing_substitution or {}, inflate_mapping(input, prefix))
