@@ -35,6 +35,26 @@ jobs:
         uses: actions/checkout@v3
         with:
           persist-credentials: false
+          fetch-depth: 0
+
+      - name: Create changelog
+        id: build_changelog
+        uses: bakdata/ci-templates/actions/changelog-generate@fix/bug-changelog
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          config: "./.github/changelog-config.json"
+          new-tag: ${{ needs.release-to-pypi.outputs.release-tag }}
+          fetchReviewers: "true"
+          fetchReleaseInformation: "true"
+
+      - name: Commit and push changes
+        uses: bakdata/ci-templates/actions/commit-and-push@v1.17.0
+        with:
+          commit-message: "Release v${{ inputs.new-tag }}"
+          add-untracked: "true"
+          github-username: "${{ secrets.GH_USERNAME }}"
+          github-email: "${{ secrets.GH_EMAIL }}"
+          github-token: "${{ secrets.GH_TOKEN }}"
 
       - name: Create tag
         run: |
@@ -49,6 +69,7 @@ jobs:
         with:
           tag_name: "${{ needs.release-to-pypi.outputs.release-tag }}"
           name: Release v${{ needs.release-to-pypi.outputs.release-tag }}
+          body: "${{ steps.build_changelog.outputs.single-changelog }}"
           draft: false
           prerelease: false
 
