@@ -73,11 +73,11 @@ def substitute_nested(input: str, max_repetitions: int = 500, **kwargs) -> str:
     """
     if not kwargs:
         return input
-    old_str, new_str = "", substitute(input, {**kwargs})
+    old_str, new_str = "", substitute(input, kwargs)
     counter = 0
     starting_time = time.time()
     while old_str != new_str:
-        old_str, new_str = new_str, substitute(new_str, {**kwargs})
+        old_str, new_str = new_str, substitute(new_str, kwargs)
         counter += 1
         current_time = time.time()
         if current_time - starting_time > 10:
