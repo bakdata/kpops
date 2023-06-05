@@ -13,7 +13,12 @@ jobs:
     runs-on: ubuntu-22.04
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
       - name: Create changelog
         id: build_changelog
         uses: bakdata/ci-templates/actions/changelog-generate@main
