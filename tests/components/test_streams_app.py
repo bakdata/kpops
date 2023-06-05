@@ -313,11 +313,16 @@ class TestStreamsApp:
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
+                        "extraOutputTopics": {
+                            "first-extra-topic": "extra-topic-1",
+                            "second-extra-topic": "extra-topic-2",
+                        },
                         "outputTopic": "streams-app-output-topic",
                         "errorTopic": "streams-app-error-topic",
-                    },
+                    }
                 },
                 HelmUpgradeInstallFlags(
+                    create_namespace=False,
                     force=False,
                     repo_auth_flags=RepoAuthFlags(
                         username=None,
