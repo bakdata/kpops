@@ -12,6 +12,7 @@ kafka-app:
     streams:
       brokers: ${broker}
       schemaRegistryUrl: ${schema_registry_url}
+      optimizeLeaveGroupBehavior: false
 
 producer:
   to:

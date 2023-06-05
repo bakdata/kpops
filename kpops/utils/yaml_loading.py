@@ -71,7 +71,7 @@ def substitute_nested(input: str, max_repetitions: int = 500, **kwargs) -> str:
     :return: Substituted input string
     :rtype: str
     """
-    if not {**kwargs}:
+    if not kwargs:
         return input
     old_str, new_str = "", substitute(input, {**kwargs})
     counter = 0
