@@ -27,7 +27,6 @@ jobs:
           config: "./.github/changelog-config.json"
           new-tag: "1.1.5"
           fetchReviewers: "true"
-          changelog-file: "CHANGELOG.md"
           fetchReleaseInformation: "true"
       - name: Use output
         run: |
@@ -37,4 +36,8 @@ jobs:
           echo "------------------------THIS IS GLOBAL--------------------------"
           echo "${{ steps.build_changelog.outputs.merged-changelog }}"
           echo "----------------------------------------------------------------"
+        shell: bash
+
+      - name: Cat changelog
+        run: cat changelog.md
         shell: bash
