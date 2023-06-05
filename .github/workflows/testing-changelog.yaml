@@ -26,6 +26,7 @@ jobs:
           github-token: ${{ secrets.GH_TOKEN }}
           config: "./.github/changelog-config.json"
           new-tag: "1.1.5"
+          changelog-file: "CHANGELOG.md"
           fetchReviewers: "true"
           fetchReleaseInformation: "true"
       - name: Use output

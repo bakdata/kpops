@@ -1,5 +1,5 @@
 # Changelog
-## [1.1.3](https://github.com/bakdata/kpops/releases/tag/1.1.5) - Release Date: [2023-06-05]
+## [1.1.3](https://github.com/bakdata/kpops/releases/tag/1.1.3) - Release Date: [2023-04-05]
 
 ### 🚀 Features
 
