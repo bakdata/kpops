@@ -12,7 +12,6 @@ on:
 jobs:
   testing-changelog:
     runs-on: ubuntu-22.04
-    needs: release-to-pypi
     steps:
       - name: Check out repository
         uses: actions/checkout@v3
