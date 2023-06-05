@@ -1,0 +1,34 @@
+name: CI
+
+on:
+  pull_request:
+    types: [opened, ready_for_review, synchronize]
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+
+jobs:
+  testing-changelog:
+    runs-on: ubuntu-22.04
+    needs: release-to-pypi
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Create changelog
+        id: build_changelog
+        uses: bakdata/ci-templates/actions/changelog-generate@fix/bug-changelog
+        with:
+          github-token: ${{ secrets.GH_TOKEN }}
+          config: "./.github/changelog-config.json"
+          new-tag: ${{ needs.release-to-pypi.outputs.release-tag }}
+          fetchReviewers: "true"
+          fetchReleaseInformation: "true"
+
+      - name: Output changelog
+        run: cat CHANGELOG.md
