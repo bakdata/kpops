@@ -21,7 +21,7 @@ jobs:
 
       - name: Create changelog
         id: build_changelog
-        uses: bakdata/ci-templates/actions/changelog-generate@main
+        uses: bakdata/ci-templates/actions/changelog-generate@fix/bug-changelog
         with:
           github-token: ${{ secrets.GH_TOKEN }}
           config: "./.github/changelog-config.json"
