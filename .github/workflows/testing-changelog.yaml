@@ -1,10 +1,11 @@
 name: Testing changelog
 on:
+  pull_request:
+    types: [opened, ready_for_review, synchronize]
+  push:
+    branches:
+      - main
   workflow_dispatch:
-    inputs:
-      release-type:
-        description: "Testing changelog"
-        type: string
 
 jobs:
   test:
