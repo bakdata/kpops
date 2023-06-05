@@ -41,5 +41,5 @@ jobs:
       - name: Cat changelog
         run: |
           ls -lsa
-          cat changelog.md
+          cat CHANGELOG.md
         shell: bash
