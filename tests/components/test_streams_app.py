@@ -107,6 +107,11 @@ class TestStreamsApp:
             "another-pattern": "example.*"
         }
 
+        assert "extra_input_topics" in streams_app.app.streams.dict()
+        assert "extraInputTopics" in streams_app.app.streams.dict(by_alias=True)
+        assert "extraInputTopics" in streams_app.app.streams.dict(
+            by_alias=True, exclude_unset=True
+        )
         helm_values = streams_app.to_helm_values()
         streams_config = helm_values["streams"]
         assert "inputTopics" in streams_config
