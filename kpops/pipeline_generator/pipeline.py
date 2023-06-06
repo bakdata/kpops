@@ -328,7 +328,7 @@ class Pipeline:
         pipeline_name_2 = dev
 
         :param base_dir: Base directory to the pipeline files
-        :type bas_dir: Path
+        :type base_dir: Path
         :param path: Path to pipeline.yaml file
         :type path: Path
         """

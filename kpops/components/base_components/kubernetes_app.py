@@ -70,7 +70,7 @@ class KubernetesApp(PipelineComponent):
     )
     validate_name: bool = Field(
         default=True,
-        description=describe_attr("check_name", __doc__),
+        description=describe_attr("validate_name", __doc__),
         exclude=True,
         hidden_from_schema=True,
     )
