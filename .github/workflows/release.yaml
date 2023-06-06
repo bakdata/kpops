@@ -36,21 +36,12 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Create tag
-        run: |
-          git config --local user.name ${{ secrets.GH_USERNAME }}
-          git config --local user.email ${{ secrets.GH_EMAIL }}
-          git tag v${{ needs.release-to-pypi.outputs.release-tag }}
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+      - name: Tag and release
+        uses: bakdata/ci-templates/.github/workflows/tag-and-release.yaml@feature/split_actions
         with:
-          tag_name: "${{ needs.release-to-pypi.outputs.release-tag }}"
-          name: Release v${{ needs.release-to-pypi.outputs.release-tag }}
-          draft: false
-          prerelease: false
+          tag: v${{ needs.release-to-pypi.outputs.release-tag }}
+          release-text: Release for v${{ needs.release-to-pypi.outputs.release-tag }}
+          release-body: ""
 
   update-docs:
     runs-on: ubuntu-22.04
