@@ -890,7 +890,7 @@
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
 <h1 id="components">Components<a class="headerlink" href="#components" title="Permanent link">¶</a></h1>
-<p>This section explains the different components of KPOps, their usage and configuration via <a href="../../../resources/pipeline-components/pipeline"><code>pipeline.yaml</code></a>.</p>
+<p>This section explains the different components of KPOps, their usage and configuration in the pipeline definition <a href="../../../resources/pipeline-components/pipeline"><code>pipeline.yaml</code></a>.</p>
 <figure>
 <p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="../../../images/kpops-components_class-diagram.png"><img alt="kpops-component-hierarchy" src="../../../images/kpops-components_class-diagram.png"/></a>
 </p>
@@ -900,6 +900,10 @@
 <!-- Uncomment when page is created. -->
 <!-- To learn more about KPOps' components hierarchy, visit the
 [architecture](/docs/developer/architecture/component-inheritance.md) page. -->
+<div class="admonition note">
+<p class="admonition-title">Environment-specific pipeline definitions</p>
+<p>Similarly to <a href="../defaults/#configuration">defaults</a>, it is possible to have an unlimited amount of additional environment-specific pipeline definitions. The naming convention is the same: add a suffix of the form <code>_{environment}</code> to the filename. Learn more about environments in the <a href="../config/#__codelineno-0-10">Config</a> section.</p>
+</div>
 <h2 id="kubernetesapp">KubernetesApp<a class="headerlink" href="#kubernetesapp" title="Permanent link">¶</a></h2>
 <h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">¶</a></h3>
 <p>Can be used to deploy any app in Kubernetes using Helm, for example, a REST service that serves Kafka data.</p>
@@ -1713,7 +1717,7 @@
 <div class="md-dialog" data-md-component="dialog">
 <div class="md-dialog__inner md-typeset"></div>
 </div>
-<script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.share", "search.suggest", "content.tooltips", "content.code.select", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+<script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.share", "search.suggest", "content.tooltips", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
 <script src="../../../assets/javascripts/bundle.b78d2936.min.js"></script>
 <script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>
 </html>
