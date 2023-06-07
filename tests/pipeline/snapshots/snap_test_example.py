@@ -134,6 +134,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'inputTopics': [
                         'bakdata-atm-fraud-detection-transaction-avro-producer-topic'
                     ],
+                    'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-transaction-joiner-topic',
                     'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
                 }
@@ -196,6 +197,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'inputTopics': [
                         'bakdata-atm-fraud-detection-transaction-joiner-topic'
                     ],
+                    'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-fraud-detector-topic',
                     'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
                 }
@@ -263,6 +265,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'inputTopics': [
                         'bakdata-atm-fraud-detection-fraud-detector-topic'
                     ],
+                    'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-account-linker-topic',
                     'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
                 }
@@ -326,7 +329,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'insert.mode': 'insert',
                 'insert.mode.databaselevel': True,
                 'key.converter': 'org.apache.kafka.connect.storage.StringConverter',
-                'name': 'postgresql-connector',
                 'pk.mode': 'record_value',
                 'table.name.format': 'fraud_transactions',
                 'tasks.max': 1,

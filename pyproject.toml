@@ -9,18 +9,18 @@ repository = "https://github.com/bakdata/kpops"
 documentation = "https://bakdata.github.io/kpops/latest"
 keywords = ["kafka", "kubernetes", "stream-processing", "pipelines"]
 classifiers = [
-    "Environment :: Console",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
-    "Programming Language :: Python",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3 :: Only",
-    "Programming Language :: Python :: 3.10",
-    "Topic :: Software Development :: Libraries :: Python Modules",
-    "Topic :: Software Development :: Libraries",
-    "Topic :: Software Development",
-    "Intended Audience :: Developers",
-    "Typing :: Typed",
+  "Environment :: Console",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development",
+  "Intended Audience :: Developers",
+  "Typing :: Typed",
 ]
 
 [tool.poetry.scripts]
@@ -28,7 +28,7 @@ kpops = "kpops.cli.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-pydantic = { extras = ["dotenv"], version = "^1.9.1" }
+pydantic = {extras = ["dotenv"], version = "^1.10.8"}
 rich = "^12.4.4"
 PyYAML = "^6.0"
 requests = "^2.28.0"
