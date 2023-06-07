@@ -43,7 +43,7 @@ class TestTemplate:
                 "--values",
                 ANY,
                 "--version",
-                "2.9.0",
+                "2.12.0",
             ],
         )
 
@@ -85,7 +85,7 @@ class TestTemplate:
                 "--cert-file",
                 "cert-file",
                 "--version",
-                "2.9.0",
+                "2.12.0",
             ],
         )
 
