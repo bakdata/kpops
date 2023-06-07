@@ -70,16 +70,17 @@ def inflate_mapping(
     """
     if not isinstance(nested_mapping, Mapping):
         raise TypeError("Argument nested_mapping is not a Mapping")
-    top = {}
+    top: dict[str, Any] = {}
     for key, value in nested_mapping.items():
         if not isinstance(key, str):
             raise TypeError(f"Argument nested_mapping contains a non-str key: {key}")
         if prefix:
             key = prefix + separator + key
-        top[key] = value
         if isinstance(value, Mapping):
             nested_mapping = inflate_mapping(value, key)
             top = update_nested_pair(top, nested_mapping)
+        else:
+            top[key] = value
     return top
 
 

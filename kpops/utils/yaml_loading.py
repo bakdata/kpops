@@ -1,5 +1,3 @@
-import logging
-import time
 from collections.abc import Mapping
 from pathlib import Path
 from string import Template
@@ -74,19 +72,8 @@ def substitute_nested(input: str, max_repetitions: int = 500, **kwargs) -> str:
     if not kwargs:
         return input
     old_str, new_str = "", substitute(input, kwargs)
-    counter = 0
-    starting_time = time.time()
-    while old_str != new_str:
+    steps: set[str] = {old_str}
+    while new_str not in steps:
         old_str, new_str = new_str, substitute(new_str, kwargs)
-        counter += 1
-        current_time = time.time()
-        if current_time - starting_time > 10:
-            logging.warn(
-                f"Substitution has been repeating for 10 seconds, possible loop detected. The program will exit after reaching {max_repetitions} tries."
-            )
-            starting_time = current_time
-        if counter > max_repetitions:
-            raise Exception(
-                f"Substitution was repeated {counter} times and placeholders still exist, check for loops"
-            )
+        steps.add(old_str)
     return old_str

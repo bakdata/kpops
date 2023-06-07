@@ -1008,7 +1008,6 @@ dev = ["pre-commit", "pytest-asyncio", "tox"]
 name = "pytest-timeout"
 version = "2.1.0"
 description = "pytest plugin to abort hanging tests"
-category = "dev"
 optional = false
 python-versions = ">=3.6"
 files = [
@@ -1621,4 +1620,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "76e0c909230c71e062b69148e807d7f1e07e9bbeb10ac2db006d6729949d3251"
+content-hash = "fc1e50461f83005d3f32ef7fa8b37e071666274161cde78827766e434307d2e9"

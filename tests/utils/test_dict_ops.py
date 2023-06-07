@@ -88,13 +88,6 @@ class TestDictOps:
             "key2": "work",
             "key3": "well",
             "name": "pre-existing-name",
-            "prefix_field_nested_dict": {
-                "value_is_dict": {"nested_key": "nested_value"},
-                "value_is_int": 0,
-                "value_is_none": None,
-                "value_is_str": "str",
-            },
-            "prefix_field_nested_dict_value_is_dict": {"nested_key": "nested_value"},
             "prefix_field_nested_dict_value_is_dict_nested_key": "nested_value",
             "prefix_field_nested_dict_value_is_int": 0,
             "prefix_field_nested_dict_value_is_none": None,
