@@ -107,6 +107,13 @@ class TestStreamsApp:
             "another-pattern": "example.*"
         }
 
+        helm_values = streams_app.to_helm_values()
+        streams_config = helm_values["streams"]
+        assert "inputTopics" in streams_config
+        assert "extraInputTopics" in streams_config
+        assert "inputPattern" in streams_config
+        assert "extraInputPatterns" in streams_config
+
     def test_no_empty_input_topic(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
@@ -132,7 +139,6 @@ class TestStreamsApp:
         assert not streams_app.app.streams.extra_input_patterns
 
         helm_values = streams_app.to_helm_values()
-
         streams_config = helm_values["streams"]
         assert "inputTopics" not in streams_config
         assert "extraInputTopics" not in streams_config
@@ -307,11 +313,16 @@ class TestStreamsApp:
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
+                        "extraOutputTopics": {
+                            "first-extra-topic": "extra-topic-1",
+                            "second-extra-topic": "extra-topic-2",
+                        },
                         "outputTopic": "${output_topic_name}",
                         "errorTopic": "${error_topic_name}",
-                    },
+                    }
                 },
                 HelmUpgradeInstallFlags(
+                    create_namespace=False,
                     force=False,
                     repo_auth_flags=RepoAuthFlags(
                         username=None,

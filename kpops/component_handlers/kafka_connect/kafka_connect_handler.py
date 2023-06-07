@@ -103,7 +103,7 @@ class KafkaConnectHandler:
             ):
                 log.info(f"Updating config:\n{diff}")
 
-            log.debug(kafka_connect_config.dict(exclude_unset=True, exclude_none=True))
+            log.debug(kafka_connect_config.dict(exclude_none=True))
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
         except ConnectorNotFoundException:
