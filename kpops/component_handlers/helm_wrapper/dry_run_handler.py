@@ -5,7 +5,7 @@ from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 
 
 class DryRunHandler:
-    def __init__(self, helm: Helm, helm_diff: HelmDiff, namespace: str):
+    def __init__(self, helm: Helm, helm_diff: HelmDiff, namespace: str) -> None:
         self._helm = helm
         self._helm_diff = helm_diff
         self.namespace = namespace
