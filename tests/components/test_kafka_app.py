@@ -22,9 +22,7 @@ class TestKafkaApp:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
-            helm_diff_config=HelmDiffConfig(
-                enable=False,
-            ),
+            helm_diff_config=HelmDiffConfig(),
         )
 
     @pytest.fixture
@@ -78,10 +76,14 @@ class TestKafkaApp:
             },
         )
         helm_upgrade_install = mocker.patch.object(kafka_app.helm, "upgrade_install")
+        print_helm_diff = mocker.patch.object(
+            kafka_app.dry_run_handler, "print_helm_diff"
+        )
         mocker.patch.object(kafka_app, "get_helm_chart", return_value="test/test-chart")
 
-        kafka_app.deploy(True)
+        kafka_app.deploy(dry_run=True)
 
+        print_helm_diff.assert_called_once()
         helm_upgrade_install.assert_called_once_with(
             "example-name",
             "test/test-chart",
