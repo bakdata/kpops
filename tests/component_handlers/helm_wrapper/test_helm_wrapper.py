@@ -62,10 +62,12 @@ class TestHelmWrapper:
             ],
         )
 
-    def test_should_include_configured_tls_parameters_on_add(
+    def test_should_include_configured_tls_parameters_on_add_when_version_is_old(
         self, run_command: MagicMock
     ):
         helm = Helm(HelmConfig())
+        run_command.return_value = "v3.6.0+gc9f554d"
+
         helm.add_repo(
             "test-repository",
             "fake",
@@ -84,8 +86,39 @@ class TestHelmWrapper:
                     "--insecure-skip-tls-verify",
                 ],
             ),
+            mock.call(["helm", "version", "--short"]),
             mock.call(
                 ["helm", "repo", "update"],
+            ),
+        ]
+
+    def test_should_include_configured_tls_parameters_on_add_when_version_is_new(
+        self, run_command: MagicMock
+    ):
+        helm = Helm(HelmConfig())
+        run_command.return_value = "v3.12.0+gc9f554d"
+
+        helm.add_repo(
+            "test-repository",
+            "fake",
+            RepoAuthFlags(ca_file=Path("a_file.ca"), insecure_skip_tls_verify=True),
+        )
+        assert run_command.mock_calls == [
+            mock.call(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "test-repository",
+                    "fake",
+                    "--ca-file",
+                    "a_file.ca",
+                    "--insecure-skip-tls-verify",
+                ],
+            ),
+            mock.call(["helm", "version", "--short"]),
+            mock.call(
+                ["helm", "repo", "update", "test-repository"],
             ),
         ]
 
@@ -409,3 +442,19 @@ data:
                 "values.yaml",
             ],
         )
+
+    def test_should_get_helm_version(self, run_command: MagicMock):
+        helm_wrapper = Helm(helm_config=HelmConfig())
+        run_command.return_value = "v3.12.0+gc9f554d"
+
+        version = helm_wrapper.get_version()
+
+        run_command.assert_called_once_with(
+            [
+                "helm",
+                "version",
+                "--short",
+            ],
+        )
+
+        assert version == "3.12.0"

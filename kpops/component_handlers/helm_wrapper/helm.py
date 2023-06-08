@@ -68,7 +68,13 @@ class Helm:
             else:
                 raise e
 
-        self.__execute(["helm", "repo", "update"])
+        version = self.get_version()
+        _, minor, _ = map(int, version.split("."))
+
+        if minor > 7:
+            self.__execute(["helm", "repo", "update", repository_name])
+        else:
+            self.__execute(["helm", "repo", "update"])
 
     def upgrade_install(
         self,
@@ -177,6 +183,15 @@ class Helm:
             return Helm.load_manifest(stdout)
         except ReleaseNotFoundException:
             return ()
+
+    def get_version(self) -> str:
+        command = ["helm", "version", "--short"]
+        short_version = self.__execute(command)
+        version_match = re.search(r"v(\d+\.\d+\.\d+)", short_version)
+        if version_match is None:
+            raise RuntimeError("Could not parse the Helm version.")
+
+        return version_match.group(1)
 
     @staticmethod
     def load_manifest(yaml_contents: str) -> Iterator[HelmTemplate]:
