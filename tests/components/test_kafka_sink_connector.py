@@ -228,6 +228,7 @@ class TestKafkaSinkConnector:
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
+        helm_mock: MagicMock,
         dry_run_handler: MagicMock,
     ):
         connector = KafkaSinkConnector(
@@ -331,6 +332,7 @@ class TestKafkaSinkConnector:
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
+        helm_mock: MagicMock,
         dry_run_handler: MagicMock,
     ):
         connector = KafkaSinkConnector(
@@ -449,6 +451,7 @@ class TestKafkaSinkConnector:
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
+        helm_mock: MagicMock,
         dry_run_handler: MagicMock,
     ):
         connector = KafkaSinkConnector(
