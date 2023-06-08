@@ -7,7 +7,6 @@ from pytest_mock import MockerFixture
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
-    HelmDiffConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
@@ -40,9 +39,6 @@ class TestProducerApp:
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
-            ),
-            helm_diff_config=HelmDiffConfig(
-                enable=False,
             ),
         )
 
@@ -102,7 +98,7 @@ class TestProducerApp:
             "first-extra-topic": "extra-topic-1"
         }
 
-    def test_deploy_order(
+    def test_deploy_order_when_dry_run_is_false(
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
@@ -119,13 +115,13 @@ class TestProducerApp:
         mock.attach_mock(mock_create_topics, "mock_create_topics")
         mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
 
-        producer_app.deploy(dry_run=True)
+        producer_app.deploy(dry_run=False)
         assert mock.mock_calls == [
-            mocker.call.mock_create_topics(to_section=producer_app.to, dry_run=True),
+            mocker.call.mock_create_topics(to_section=producer_app.to, dry_run=False),
             mocker.call.mock_helm_upgrade_install(
                 self.PRODUCER_APP_NAME,
                 "bakdata-streams-bootstrap/producer-app",
-                True,
+                False,
                 "test-namespace",
                 {
                     "streams": {
@@ -202,7 +198,7 @@ class TestProducerApp:
             ),
         ]
 
-    def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up(
+    def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
         self, mocker: MockerFixture, producer_app: ProducerApp
     ):
         mock_helm_upgrade_install = mocker.patch.object(
@@ -214,16 +210,16 @@ class TestProducerApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
-        producer_app.clean(dry_run=True)
+        producer_app.clean(dry_run=False)
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
-                "test-namespace", self.PRODUCER_APP_CLEAN_NAME, True
+                "test-namespace", self.PRODUCER_APP_CLEAN_NAME, False
             ),
             mocker.call.helm_upgrade_install(
                 self.PRODUCER_APP_CLEAN_NAME,
                 "bakdata-streams-bootstrap/producer-app-cleanup-job",
-                True,
+                False,
                 "test-namespace",
                 {
                     "streams": {
@@ -234,6 +230,6 @@ class TestProducerApp:
                 HelmUpgradeInstallFlags(version="2.4.2", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
-                "test-namespace", self.PRODUCER_APP_CLEAN_NAME, True
+                "test-namespace", self.PRODUCER_APP_CLEAN_NAME, False
             ),
         ]

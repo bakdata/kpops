@@ -153,7 +153,7 @@ class TestKafkaSourceConnector:
             dry_run=True,
         )
 
-    def test_reset(
+    def test_reset_when_dry_run_is_true(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -222,6 +222,10 @@ class TestKafkaSourceConnector:
                     "nameOverride": CONNECTOR_NAME,
                 },
             ),
+            mocker.call.helm.get_manifest(
+                "test-connector-with-long-name-0123456789abcdef-clean", "test-namespace"
+            ),
+            mocker.call.helm.get_manifest().__iter__(),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
                 release_name=CONNECTOR_CLEAN_NAME,
@@ -231,7 +235,7 @@ class TestKafkaSourceConnector:
 
         mock_delete_topics.assert_not_called()
 
-    def test_clean(
+    def test_clean_when_dry_run_is_true(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -301,6 +305,10 @@ class TestKafkaSourceConnector:
                     "nameOverride": CONNECTOR_NAME,
                 },
             ),
+            mocker.call.helm.get_manifest(
+                "test-connector-with-long-name-0123456789abcdef-clean", "test-namespace"
+            ),
+            mocker.call.helm.get_manifest().__iter__(),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
                 release_name=CONNECTOR_CLEAN_NAME,
@@ -308,7 +316,7 @@ class TestKafkaSourceConnector:
             ),
         ]
 
-    def test_clean_without_to(
+    def test_clean_without_to_when_dry_run_is_true(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -372,6 +380,10 @@ class TestKafkaSourceConnector:
                     "nameOverride": CONNECTOR_NAME,
                 },
             ),
+            mocker.call.helm.get_manifest(
+                "test-connector-with-long-name-0123456789abcdef-clean", "test-namespace"
+            ),
+            mocker.call.helm.get_manifest().__iter__(),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
                 release_name=CONNECTOR_CLEAN_NAME,
