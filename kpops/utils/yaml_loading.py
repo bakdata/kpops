@@ -63,7 +63,7 @@ def substitute_nested(input: str, **kwargs) -> str:
     :param input: The raw input containing $-placeholders
     :type input: str
     :param **kwargs: Substitutions
-    :raises Exception: Substitution was repeated {counter} times and placeholders still exist, check for loops
+    :raises Exception: An infinite loop condition detected. Check substitution variables.
     :return: Substituted input string
     :rtype: str
     """
