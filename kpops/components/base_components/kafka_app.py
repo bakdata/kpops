@@ -96,7 +96,7 @@ class KafkaApp(KubernetesApp):
         ),
         description=describe_attr("repo_config", __doc__),
     )
-    version: str = Field(
+    version: str | None = Field(
         default="2.9.0",
         description=describe_attr("version", __doc__),
     )
