@@ -247,6 +247,7 @@ class TestKafkaSinkConnector:
 
         dry_run = True
         connector.reset(dry_run=dry_run)
+
         dry_run_handler.print_helm_diff.assert_called_once()
 
     def test_reset_when_dry_run_is_false(
