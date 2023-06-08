@@ -60,6 +60,12 @@ class TestKafkaSourceConnector:
             "kpops.components.base_components.kafka_connector.Helm"
         ).return_value
 
+    @pytest.fixture
+    def dry_run_handler(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch(
+            "kpops.components.base_components.kafka_connector.DryRunHandler"
+        ).return_value
+
     def test_from_section_raises_exception(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
@@ -157,6 +163,35 @@ class TestKafkaSourceConnector:
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
+        dry_run_handler: MagicMock,
+    ):
+        connector = KafkaSourceConnector(
+            name=CONNECTOR_NAME,
+            config=config,
+            handlers=handlers,
+            app=KafkaConnectConfig(),
+            namespace="test-namespace",
+            offset_topic="kafka-connect-offsets",
+            to=ToSection(
+                topics={
+                    "${output_topic_name}": TopicConfig(
+                        type=OutputTopicTypes.OUTPUT, partitions_count=10
+                    ),
+                }
+            ),
+        )
+
+        assert connector.handlers.connector_handler
+
+        connector.reset(dry_run=True)
+
+        dry_run_handler.print_helm_diff.assert_called_once()
+
+    def test_reset_when_dry_run_is_false(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        dry_run_handler: MagicMock,
         helm_mock: MagicMock,
         mocker: MockerFixture,
     ):
@@ -177,7 +212,6 @@ class TestKafkaSourceConnector:
         )
 
         assert connector.handlers.connector_handler
-
         mock_delete_topics = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topics"
         )
@@ -189,7 +223,7 @@ class TestKafkaSourceConnector:
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
         mock.attach_mock(helm_mock, "helm")
 
-        connector.reset(dry_run=True)
+        connector.reset(dry_run=False)
 
         assert mock.mock_calls == [
             mocker.call.helm.add_repo(
@@ -200,13 +234,13 @@ class TestKafkaSourceConnector:
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
                 release_name=CONNECTOR_CLEAN_NAME,
-                dry_run=True,
+                dry_run=False,
             ),
             mocker.call.helm.upgrade_install(
                 release_name=CONNECTOR_CLEAN_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
-                dry_run=True,
+                dry_run=False,
                 flags=HelmUpgradeInstallFlags(
                     version="1.0.4",
                     wait=True,
@@ -222,24 +256,48 @@ class TestKafkaSourceConnector:
                     "nameOverride": CONNECTOR_NAME,
                 },
             ),
-            mocker.call.helm.get_manifest(
-                "test-connector-with-long-name-0123456789abcdef-clean", "test-namespace"
-            ),
-            mocker.call.helm.get_manifest().__iter__(),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
-                dry_run=True,
+                release_name="test-connector-with-long-name-0123456789abcdef-clean",
+                dry_run=False,
             ),
         ]
-
         mock_delete_topics.assert_not_called()
+        dry_run_handler.print_helm_diff.assert_not_called()
 
     def test_clean_when_dry_run_is_true(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
+        dry_run_handler: MagicMock,
+    ):
+        connector = KafkaSourceConnector(
+            name=CONNECTOR_NAME,
+            config=config,
+            handlers=handlers,
+            app=KafkaConnectConfig(),
+            namespace="test-namespace",
+            offset_topic="kafka-connect-offsets",
+            to=ToSection(
+                topics={
+                    "${output_topic_name}": TopicConfig(
+                        type=OutputTopicTypes.OUTPUT, partitions_count=10
+                    ),
+                }
+            ),
+        )
+        assert connector.handlers.connector_handler
+
+        connector.clean(dry_run=True)
+
+        dry_run_handler.print_helm_diff.assert_called_once()
+
+    def test_clean_when_dry_run_is_false(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
         helm_mock: MagicMock,
+        dry_run_handler: MagicMock,
         mocker: MockerFixture,
     ):
         connector = KafkaSourceConnector(
@@ -271,10 +329,10 @@ class TestKafkaSourceConnector:
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
         mock.attach_mock(helm_mock, "helm")
 
-        connector.clean(dry_run=True)
+        connector.clean(dry_run=False)
 
         assert mock.mock_calls == [
-            mocker.call.mock_delete_topics(connector.to, dry_run=True),
+            mocker.call.mock_delete_topics(connector.to, dry_run=False),
             mocker.call.helm.add_repo(
                 "bakdata-kafka-connect-resetter",
                 "https://bakdata.github.io/kafka-connect-resetter/",
@@ -283,13 +341,13 @@ class TestKafkaSourceConnector:
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
                 release_name=CONNECTOR_CLEAN_NAME,
-                dry_run=True,
+                dry_run=False,
             ),
             mocker.call.helm.upgrade_install(
                 release_name=CONNECTOR_CLEAN_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
-                dry_run=True,
+                dry_run=False,
                 flags=HelmUpgradeInstallFlags(
                     version="1.0.4",
                     wait=True,
@@ -305,22 +363,21 @@ class TestKafkaSourceConnector:
                     "nameOverride": CONNECTOR_NAME,
                 },
             ),
-            mocker.call.helm.get_manifest(
-                "test-connector-with-long-name-0123456789abcdef-clean", "test-namespace"
-            ),
-            mocker.call.helm.get_manifest().__iter__(),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
                 release_name=CONNECTOR_CLEAN_NAME,
-                dry_run=True,
+                dry_run=False,
             ),
         ]
 
-    def test_clean_without_to_when_dry_run_is_true(
+        dry_run_handler.print_helm_diff.assert_not_called()
+
+    def test_clean_without_to_when_dry_run_is_false(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
+        dry_run_handler: MagicMock,
         mocker: MockerFixture,
     ):
         connector = KafkaSourceConnector(
@@ -347,7 +404,7 @@ class TestKafkaSourceConnector:
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
         mock.attach_mock(helm_mock, "helm")
 
-        connector.clean(dry_run=True)
+        connector.clean(dry_run=False)
 
         assert mock.mock_calls == [
             mocker.call.helm.add_repo(
@@ -358,13 +415,13 @@ class TestKafkaSourceConnector:
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
                 release_name=CONNECTOR_CLEAN_NAME,
-                dry_run=True,
+                dry_run=False,
             ),
             mocker.call.helm.upgrade_install(
                 release_name=CONNECTOR_CLEAN_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
-                dry_run=True,
+                dry_run=False,
                 flags=HelmUpgradeInstallFlags(
                     version="1.0.4",
                     wait=True,
@@ -380,15 +437,34 @@ class TestKafkaSourceConnector:
                     "nameOverride": CONNECTOR_NAME,
                 },
             ),
-            mocker.call.helm.get_manifest(
-                "test-connector-with-long-name-0123456789abcdef-clean", "test-namespace"
-            ),
-            mocker.call.helm.get_manifest().__iter__(),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
                 release_name=CONNECTOR_CLEAN_NAME,
-                dry_run=True,
+                dry_run=False,
             ),
         ]
 
         mock_delete_topics.assert_not_called()
+        dry_run_handler.print_helm_diff.assert_not_called()
+
+    def test_clean_without_to_when_dry_run_is_true(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        dry_run_handler: MagicMock,
+    ):
+        connector = KafkaSourceConnector(
+            name=CONNECTOR_NAME,
+            config=config,
+            handlers=handlers,
+            app=KafkaConnectConfig(),
+            namespace="test-namespace",
+            offset_topic="kafka-connect-offsets",
+        )
+        assert connector.to is None
+
+        assert connector.handlers.connector_handler
+
+        connector.clean(dry_run=True)
+
+        dry_run_handler.print_helm_diff.assert_called_once()
