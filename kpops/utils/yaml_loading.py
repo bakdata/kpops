@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Mapping
 from pathlib import Path
 from string import Template
@@ -6,6 +7,8 @@ from typing import Any
 import yaml
 from cachetools import cached
 from cachetools.keys import hashkey
+
+log = logging.getLogger("")
 
 
 def generate_hashkey(
@@ -39,7 +42,7 @@ def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str
     return Template(input).safe_substitute(**substitution)
 
 
-def substitute_nested(input: str, max_repetitions: int = 500, **kwargs) -> str:
+def substitute_nested(input: str, **kwargs) -> str:
     """Allow for multiple substitutions to be passed.
 
     Will make as many passes as needed to substitute all possible placeholders.
@@ -71,9 +74,13 @@ def substitute_nested(input: str, max_repetitions: int = 500, **kwargs) -> str:
     """
     if not kwargs:
         return input
-    old_str, new_str = "", substitute(input, kwargs)
-    steps: set[str] = {old_str}
+    new_str = substitute(input, kwargs)
+    steps = set()
     while new_str not in steps:
+        steps.add(new_str)
         old_str, new_str = new_str, substitute(new_str, kwargs)
-        steps.add(old_str)
+    if new_str != old_str:
+        raise Exception(
+            "An infinite loop condition detected. Check substitution variables."
+        )
     return old_str
