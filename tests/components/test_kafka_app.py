@@ -22,9 +22,7 @@ class TestKafkaApp:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
-            helm_diff_config=HelmDiffConfig(
-                enable=False,
-            ),
+            helm_diff_config=HelmDiffConfig(),
         )
 
     @pytest.fixture

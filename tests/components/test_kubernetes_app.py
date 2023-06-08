@@ -31,7 +31,7 @@ class TestKubernetesApp:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
-            helm_diff_config=HelmDiffConfig(enable=True),
+            helm_diff_config=HelmDiffConfig(),
         )
 
     @pytest.fixture
