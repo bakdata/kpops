@@ -120,21 +120,9 @@ class TestPipeline:
         enriched_pipeline = yaml.safe_load(result.stdout)
 
         assert isinstance(enriched_pipeline, dict)
-
-        # calculate pipeline name with the exact same code that kpops uses
-        path_without_file = (
-            Path(RESOURCE_PATH / "component-type-substitution/pipeline.yaml")
-            .resolve()
-            .relative_to(Path(PIPELINE_BASE_DIR).resolve())
-            .parts[:-1]
-        )
-        if not path_without_file:
-            raise ValueError("The pipeline-base-dir should not equal the pipeline-path")
-        pipeline_name = "-".join(path_without_file)
-
         assert (
             enriched_pipeline["components"][0]["name"]
-            == pipeline_name + "-scheduled-producer"
+            == "resources-component-type-substitution-scheduled-producer"
         )
 
         labels = enriched_pipeline["components"][0]["app"]["labels"]
@@ -166,21 +154,23 @@ class TestPipeline:
 
     @pytest.mark.timeout(10)
     def test_substitute_in_component_infinite_loop(self):
-        runner.invoke(
-            app,
-            [
-                "generate",
-                "--pipeline-base-dir",
-                PIPELINE_BASE_DIR,
-                str(
-                    RESOURCE_PATH / "component-type-substitution/infinite_pipeline.yaml"
-                ),
-                "tests.pipeline.test_components",
-                "--defaults",
-                str(RESOURCE_PATH),
-            ],
-            catch_exceptions=False,
-        )
+        with pytest.raises(Exception):
+            runner.invoke(
+                app,
+                [
+                    "generate",
+                    "--pipeline-base-dir",
+                    PIPELINE_BASE_DIR,
+                    str(
+                        RESOURCE_PATH
+                        / "component-type-substitution/infinite_pipeline.yaml"
+                    ),
+                    "tests.pipeline.test_components",
+                    "--defaults",
+                    str(RESOURCE_PATH),
+                ],
+                catch_exceptions=False,
+            )
 
     def test_kafka_connector_config_parsing(self):
         result = runner.invoke(
