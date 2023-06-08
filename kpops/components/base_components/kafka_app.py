@@ -6,7 +6,6 @@ from typing import Literal
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
@@ -148,12 +147,8 @@ class KafkaApp(KubernetesApp):
             clean_up_release_name, suffix, values, dry_run
         )
 
-        if dry_run and self.helm_diff.config.enable:
-            current_release = self.helm.get_manifest(
-                clean_up_release_name, self.namespace
-            )
-            new_release = Helm.load_manifest(stdout)
-            self.helm_diff.log_helm_diff(log, current_release, new_release)
+        if dry_run:
+            self.dry_run_handler.print_helm_diff(stdout, clean_up_release_name, log)
 
         if not retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {clean_up_release_name}")

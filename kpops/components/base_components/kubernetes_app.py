@@ -8,6 +8,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
+from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
@@ -116,6 +117,11 @@ class KubernetesApp(PipelineComponent):
         """Helm diff object of last and current release of this component"""
         return HelmDiff(self.config.helm_diff_config)
 
+    @cached_property
+    def dry_run_handler(self) -> DryRunHandler:
+        helm_diff = HelmDiff(self.config.helm_diff_config)
+        return DryRunHandler(self.helm, helm_diff, self.namespace)
+
     @property
     def helm_release_name(self) -> str:
         """The name for the Helm release. Can be overridden."""
@@ -143,8 +149,8 @@ class KubernetesApp(PipelineComponent):
                 create_namespace=self.config.create_namespace, version=self.version
             ),
         )
-        if dry_run and self.helm_diff.config.enable:
-            self.print_helm_diff(stdout)
+        if dry_run:
+            self.dry_run_handler.print_helm_diff(stdout, self.helm_release_name, log)
 
     @override
     def destroy(self, dry_run: bool) -> None:
