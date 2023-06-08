@@ -131,6 +131,7 @@ class Helm:
         self,
         release_name: str,
         chart: str,
+        namespace: str,
         values: dict,
         flags: HelmTemplateFlags = HelmTemplateFlags(),
     ) -> str:
@@ -143,6 +144,7 @@ class Helm:
 
         :param str release_name: the release name for which the command is ran
         :param str chart: Helm chart to be templated
+        :param str namespace: The namespace the command should execute in
         :param dict[str, str] values: `values.yaml` to be used
         :param flags: the flags to be set for `helm template`
         :type flags: HelmTemplateFlags
@@ -156,6 +158,8 @@ class Helm:
                 "template",
                 release_name,
                 chart,
+                "--namespace",
+                namespace,
                 "--values",
                 values_file.name,
             ]

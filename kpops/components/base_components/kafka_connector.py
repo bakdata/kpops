@@ -355,6 +355,7 @@ class KafkaSourceConnector(KafkaConnector):
         stdout = self.helm.template(
             self._get_kafka_resetter_release_name(self.name),
             self._get_resetter_helm_chart(),
+            self.namespace,
             values,
             flags,
         )
@@ -423,6 +424,7 @@ class KafkaSinkConnector(KafkaConnector):
         stdout = self.helm.template(
             self._get_kafka_resetter_release_name(self.name),
             self._get_resetter_helm_chart(),
+            self.namespace,
             values,
             flags,
         )

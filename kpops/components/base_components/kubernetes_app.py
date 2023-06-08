@@ -118,7 +118,11 @@ class KubernetesApp(PipelineComponent):
     ) -> None:
         flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
         stdout = self.helm.template(
-            self.helm_release_name, self.get_helm_chart(), self.to_helm_values(), flags
+            self.helm_release_name,
+            self.get_helm_chart(),
+            self.namespace,
+            self.to_helm_values(),
+            flags,
         )
         print(stdout)
 
