@@ -25,11 +25,11 @@ class RepoAuthFlags(BaseModel):
     """Authorisation-related flags for `helm repo`
 
     :param username: Username, defaults to None
-    :type username: str, None, optional
+    :type username: str, optional
     :param password: Password, defaults to None
-    :type password: str, None, optional
+    :type password: str, optional
     :param ca_file: Certificate file, defaults to None
-    :type ca_file: Path, None, optional
+    :type ca_file: Path, optional
     :param insecure_skip_tls_verify: If true, Kubernetes API server's certificate will not be checked for validity
         , defaults to False
     :type insecure_skip_tls_verify: bool, optional

@@ -49,11 +49,11 @@ class KubernetesApp(PipelineComponent):
     :type app: KubernetesAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to None
-    :type repo_config: HelmRepoConfig, None, optional
+    :type repo_config: HelmRepoConfig, optional
     :param namespace: Namespace in which the component shall be deployed
     :type namespace: str
     :param version: Helm chart version, defaults to None
-    :type version: str, None, optional
+    :type version: str, optional
     """
 
     type: str = Field(

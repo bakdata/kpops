@@ -48,7 +48,7 @@ class KafkaConnector(PipelineComponent, ABC):
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component,
         defaults to HelmRepoConfig(repository_name="bakdata-kafka-connect-resetter", url="https://bakdata.github.io/kafka-connect-resetter/")
-    :type repo_config: HelmRepoConfig, None, optional
+    :type repo_config: HelmRepoConfig, optional
     :param namespace: Namespace in which the component shall be deployed
     :type namespace: str
     :param version: Helm chart version, defaults to "1.0.4"
@@ -320,7 +320,7 @@ class KafkaSourceConnector(KafkaConnector):
     :param offset_topic: offset.storage.topic,
         more info: https://kafka.apache.org/documentation/#connect_running,
         defaults to None
-    :type schema_type: str, None
+    :type schema_type: str, optional
     """
 
     type: str = Field(

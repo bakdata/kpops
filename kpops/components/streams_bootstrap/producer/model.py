@@ -13,7 +13,7 @@ class ProducerStreamsConfig(KafkaStreamsConfig):
     :param extra_output_topics: Extra output topics
     :type extra_output_topics: dict[str, str], optional
     :param output_topic: Output topic, defaults to None
-    :type output_topic: str, None, optional
+    :type output_topic: str, optional
     """
 
     extra_output_topics: dict[str, str] = Field(
