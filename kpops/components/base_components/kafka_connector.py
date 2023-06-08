@@ -80,7 +80,7 @@ class KafkaConnector(PipelineComponent, ABC):
         default=...,
         description=describe_attr("namespace", __doc__),
     )
-    version = Field(default="1.0.4", description="Helm chart version")
+    version: str = Field(default="1.0.4", description="Helm chart version")
     resetter_values: dict = Field(
         default_factory=dict,
         description=describe_attr("resetter_values", __doc__),
