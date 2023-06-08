@@ -1,4 +1,3 @@
-import logging
 from collections.abc import Mapping
 from pathlib import Path
 from string import Template
@@ -7,8 +6,6 @@ from typing import Any
 import yaml
 from cachetools import cached
 from cachetools.keys import hashkey
-
-log = logging.getLogger("")
 
 
 def generate_hashkey(
@@ -65,8 +62,6 @@ def substitute_nested(input: str, **kwargs) -> str:
 
     :param input: The raw input containing $-placeholders
     :type input: str
-    :param max_repetitions: The max number of consecutive substitutions to be carried out, defaults to 500
-    :type max_repetitions: int, optional
     :param **kwargs: Substitutions
     :raises Exception: Substitution was repeated {counter} times and placeholders still exist, check for loops
     :return: Substituted input string

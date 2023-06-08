@@ -96,7 +96,7 @@ class KubernetesApp(PipelineComponent):
 
     def __init__(self, **kwargs):
         if kwargs.get("validate_name", True):
-            self.validate_kubernetes_name(kwargs.get("name", "invalid_name"))
+            self.validate_kubernetes_name(kwargs["name"])
         super().__init__(**kwargs)
 
     @cached_property
