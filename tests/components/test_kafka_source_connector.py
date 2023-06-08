@@ -161,6 +161,7 @@ class TestKafkaSourceConnector:
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
+        helm_mock: MagicMock,
         dry_run_handler: MagicMock,
     ):
         connector = KafkaSourceConnector(
@@ -267,6 +268,7 @@ class TestKafkaSourceConnector:
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
+        helm_mock: MagicMock,
         dry_run_handler: MagicMock,
     ):
         connector = KafkaSourceConnector(
@@ -449,6 +451,7 @@ class TestKafkaSourceConnector:
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
+        helm_mock: MagicMock,
         dry_run_handler: MagicMock,
     ):
         connector = KafkaSourceConnector(
