@@ -371,3 +371,40 @@ class TestPipeline:
 
         enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_short_topic_definition(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "pipeline-with-short-topics/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH / "pipeline-with-short-topics"),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0
+
+        enriched_pipeline = yaml.safe_load(result.stdout)
+
+        assert isinstance(enriched_pipeline, dict)
+        output_topics = enriched_pipeline["components"][0]["to"]["topics"]
+        input_topics = enriched_pipeline["components"][0]["from"]["topics"]
+        assert output_topics["output-topic"]["type"] == "output"
+        assert output_topics["error-topic"]["type"] == "error"
+        assert output_topics["extra-topic"]["type"] == "extra"
+        assert "role" not in output_topics["output-topic"]
+        assert "role" not in output_topics["error-topic"]
+        assert output_topics["extra-topic"]["role"] == "role"
+
+        assert input_topics["input-topic"]["type"] == "input"
+        assert input_topics["extra-topic"]["type"] == "extra"
+        assert input_topics["input-pattern"]["type"] == "input-pattern"
+        assert input_topics["extra-pattern"]["type"] == "extra-pattern"
+        assert "role" not in input_topics["input-topic"]
+        assert "role" not in input_topics["input-pattern"]
+        assert input_topics["extra-topic"]["role"] == "role"
+        assert input_topics["extra-pattern"]["role"] == "role"

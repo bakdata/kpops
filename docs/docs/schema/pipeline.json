@@ -41,7 +41,6 @@
                             "$ref": "#/definitions/InputTopicTypes"
                         }
                     ],
-                    "default": "input",
                     "description": "Topic type"
                 }
             },
@@ -1224,7 +1223,6 @@
                             "$ref": "#/definitions/OutputTopicTypes"
                         }
                     ],
-                    "default": "output",
                     "description": "Topic type"
                 },
                 "valueSchema": {

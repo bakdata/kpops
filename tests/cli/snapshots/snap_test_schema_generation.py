@@ -108,7 +108,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                             "$ref": "#/definitions/InputTopicTypes"
                         }
                     ],
-                    "default": "input",
                     "description": "Topic type"
                 }
             },
@@ -378,7 +377,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                             "$ref": "#/definitions/OutputTopicTypes"
                         }
                     ],
-                    "default": "output",
                     "description": "Topic type"
                 },
                 "valueSchema": {

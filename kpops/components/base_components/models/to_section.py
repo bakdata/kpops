@@ -35,9 +35,7 @@ class TopicConfig(BaseModel):
     :type role: str | None
     """
 
-    type: OutputTopicTypes = Field(
-        default=OutputTopicTypes.OUTPUT, description="Topic type"
-    )
+    type: OutputTopicTypes | None = Field(default=None, description="Topic type")
     key_schema: str | None = Field(
         default=None, alias="keySchema", description="Key schema class name"
     )
@@ -61,6 +59,10 @@ class TopicConfig(BaseModel):
         allow_population_by_field_name = True
         use_enum_values = True
 
+    def __init__(self, **kwargs):
+        kwargs["type"] = self.__assign_type(kwargs)
+        super().__init__(**kwargs)
+
     @root_validator
     def extra_topic_role(cls, values):
         """Ensure that cls.role is used correctly"""
@@ -75,6 +77,17 @@ class TopicConfig(BaseModel):
                 "without a role or an error topic)"
             )
         return values
+
+    @staticmethod
+    def __assign_type(kwargs: dict):
+        role = kwargs.get("role", None)
+        type_ = kwargs.get("type", None)
+        if type_ is None:
+            if role is None:
+                type_ = OutputTopicTypes.OUTPUT.value
+            else:
+                type_ = OutputTopicTypes.EXTRA.value
+        return type_
 
 
 class ToSection(BaseModel):
@@ -94,6 +107,12 @@ class ToSection(BaseModel):
     topics: dict[str, TopicConfig] = Field(
         ..., description=describe_attr("topics", __doc__)
     )
+
+    def __init__(self, **kwargs):
+        for key, value in kwargs.get("topics", {}).items():
+            if value is None:
+                kwargs["topics"][key] = TopicConfig()
+        super().__init__(**kwargs)
 
     class Config(DescConfig):
         extra = Extra.allow

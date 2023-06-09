@@ -30,8 +30,8 @@ class FromTopic(BaseModel):
     :type role: str | None
     """
 
-    type: InputTopicTypes = Field(
-        default=InputTopicTypes.INPUT, description=describe_attr("type", __doc__)
+    type: InputTopicTypes | None = Field(
+        default=None, description=describe_attr("type", __doc__)
     )
     role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
@@ -39,12 +39,34 @@ class FromTopic(BaseModel):
         extra = Extra.forbid
         use_enum_values = True
 
+    def __init__(self, **kwargs):
+        kwargs["type"] = self.__assign_type(kwargs)
+        super().__init__(**kwargs)
+
+    @staticmethod
+    def __assign_type(kwargs: dict):
+        role = kwargs.get("role", None)
+        type_ = kwargs.get("type", None)
+        match type_:
+            case None:
+                if role is None:
+                    type_ = InputTopicTypes.INPUT.value
+                else:
+                    type_ = InputTopicTypes.EXTRA.value
+            case InputTopicTypes.PATTERN:
+                if role is None:
+                    type_ = InputTopicTypes.INPUT_PATTERN.value
+                else:
+                    type_ = InputTopicTypes.EXTRA_PATTERN.value
+            case _:
+                pass
+        return type_
+
     @root_validator
     def extra_topic_role(cls, values: dict) -> dict:
         """Ensure that cls.role is used correctly"""
         is_extra_topic = values["type"] in (
             InputTopicTypes.EXTRA,
-            InputTopicTypes.PATTERN,
             InputTopicTypes.EXTRA_PATTERN,
         )
         if is_extra_topic and not values.get("role"):
@@ -79,6 +101,12 @@ class FromSection(BaseModel):
         default={},
         description=describe_attr("components", __doc__),
     )
+
+    def __init__(self, **kwargs):
+        for key, value in kwargs.get("topics", {}).items():
+            if value is None:
+                kwargs["topics"][key] = FromTopic()
+        super().__init__(**kwargs)
 
     class Config(DescConfig):
         extra = Extra.forbid
