@@ -16,6 +16,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
+    Version,
     YamlReader,
 )
 
@@ -26,6 +27,11 @@ class Helm:
     def __init__(self, helm_config: HelmConfig) -> None:
         self._context = helm_config.context
         self._debug = helm_config.debug
+        self._version = self.get_version()
+        if self._version.major < 3:
+            raise RuntimeError(
+                f"The supported Helm version is >3.x.x The current Helm version {self._version.major}.{self._version.minor}.{self._version.patch}"
+            )
 
     def add_repo(
         self,
@@ -68,10 +74,7 @@ class Helm:
             else:
                 raise e
 
-        version = self.get_version()
-        _, minor, _ = map(int, version.split("."))
-
-        if minor > 7:
+        if self._version.minor > 7:
             self.__execute(["helm", "repo", "update", repository_name])
         else:
             self.__execute(["helm", "repo", "update"])
@@ -184,14 +187,15 @@ class Helm:
         except ReleaseNotFoundException:
             return ()
 
-    def get_version(self) -> str:
+    def get_version(self) -> Version:
         command = ["helm", "version", "--short"]
         short_version = self.__execute(command)
         version_match = re.search(r"v(\d+\.\d+\.\d+)", short_version)
         if version_match is None:
             raise RuntimeError("Could not parse the Helm version.")
 
-        return version_match.group(1)
+        major, minor, patch = map(int, version_match.group(1).split("."))
+        return Version(major, minor, patch)
 
     @staticmethod
     def load_manifest(yaml_contents: str) -> Iterator[HelmTemplate]:
