@@ -404,6 +404,7 @@ data:
         helm_wrapper.template(
             release_name="test-release",
             chart="bakdata-streams-bootstrap/streams-app",
+            namespace="test-ns",
             values={"commandLine": "test"},
             flags=HelmTemplateFlags(
                 api_version="2.1.1",
@@ -417,6 +418,8 @@ data:
                 "template",
                 "test-release",
                 "bakdata-streams-bootstrap/streams-app",
+                "--namespace",
+                "test-ns",
                 "--values",
                 "values.yaml",
                 "--api-versions",
@@ -436,6 +439,7 @@ data:
         helm_wrapper.template(
             release_name="test-release",
             chart="bakdata-streams-bootstrap/streams-app",
+            namespace="test-ns",
             values={"commandLine": "test"},
             flags=HelmTemplateFlags(),
         )
@@ -445,6 +449,8 @@ data:
                 "template",
                 "test-release",
                 "bakdata-streams-bootstrap/streams-app",
+                "--namespace",
+                "test-ns",
                 "--values",
                 "values.yaml",
             ],
