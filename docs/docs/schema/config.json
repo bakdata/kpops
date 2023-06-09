@@ -21,12 +21,6 @@
         },
         "HelmDiffConfig": {
             "properties": {
-                "enable": {
-                    "default": true,
-                    "description": "Enable Helm Diff.",
-                    "title": "Enable",
-                    "type": "boolean"
-                },
                 "ignore": {
                     "description": "Set of keys that should not be checked.",
                     "example": "- name\n- imageTag",
@@ -116,7 +110,6 @@
                         }
                     ],
                     "default": {
-                        "enable": true,
                         "ignore": []
                     },
                     "description": "Configure Helm Diff.",

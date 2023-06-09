@@ -9,6 +9,7 @@ from typing import Literal, NoReturn
 from pydantic import Field
 from typing_extensions import override
 
+from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
@@ -114,9 +115,9 @@ class KafkaConnector(PipelineComponent, ABC):
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
     @cached_property
-    def helm_diff(self) -> HelmDiff:
-        """Helm diff object of last and current release of this component"""
-        return HelmDiff(self.config.helm_diff_config)
+    def dry_run_handler(self) -> DryRunHandler:
+        helm_diff = HelmDiff(self.config.helm_diff_config)
+        return DryRunHandler(self.helm, helm_diff, self.namespace)
 
     @property
     def kafka_connect_resetter_chart(self) -> str:
@@ -205,10 +206,8 @@ class KafkaConnector(PipelineComponent, ABC):
             trimmed_name, connector_name, connector_type, dry_run, **kwargs
         )
 
-        if dry_run and self.helm_diff.config.enable:
-            current_release = self.helm.get_manifest(trimmed_name, self.namespace)
-            new_release = Helm.load_manifest(stdout)
-            self.helm_diff.log_helm_diff(log, current_release, new_release)
+        if dry_run:
+            self.dry_run_handler.print_helm_diff(stdout, trimmed_name, log)
 
         if not retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
