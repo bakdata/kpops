@@ -9,7 +9,7 @@ theme:
   custom_dir: overrides
   language: "en"
   palette:
-    primary: "black"
+    primary: "custom"
   font:
     text: "Roboto"
     code: "Roboto Mono"

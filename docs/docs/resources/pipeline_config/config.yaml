@@ -39,8 +39,6 @@ helm_config:
   debug: false
 # Configure Helm Diff.
 helm_diff_config: 
-  # Enable Helm Diff.
-  enable: true
   # Set of keys that should not be checked.
   ignore: 
     - name
