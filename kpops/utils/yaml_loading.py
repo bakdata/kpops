@@ -69,7 +69,7 @@ def substitute_nested(input: str, **kwargs) -> str:
     """
     if not kwargs:
         return input
-    new_str = substitute(input, kwargs)
+    old_str, new_str = "", substitute(input, kwargs)
     steps = set()
     while new_str not in steps:
         steps.add(new_str)
