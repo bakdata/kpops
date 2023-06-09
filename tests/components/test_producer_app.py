@@ -1,5 +1,6 @@
+import logging
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import ANY, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -167,10 +168,14 @@ class TestProducerApp:
             producer_app.helm, "upgrade_install"
         )
         mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
+        mock_helm_print_helm_diff = mocker.patch.object(
+            producer_app.dry_run_handler, "print_helm_diff"
+        )
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
+        mock.attach_mock(mock_helm_print_helm_diff, "print_helm_diff")
 
         producer_app.clean(dry_run=True)
 
@@ -190,6 +195,11 @@ class TestProducerApp:
                     },
                 },
                 HelmUpgradeInstallFlags(version="2.4.2", wait=True, wait_for_jobs=True),
+            ),
+            mocker.call.print_helm_diff(
+                ANY,
+                "test-producer-app-with-long-name-0123456789abc-clean",
+                logging.getLogger("KafkaApp"),
             ),
             mocker.call.helm_uninstall(
                 "test-namespace", self.PRODUCER_APP_CLEAN_NAME, True
