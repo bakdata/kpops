@@ -64,7 +64,7 @@ class ProxyWrapper:
         response = requests.post(
             url=f"{self._host}/v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
-            json=topic_spec.dict(exclude_unset=True, exclude_none=True),
+            json=topic_spec.dict(exclude_none=True),
         )
         if response.status_code == requests.status_codes.codes.created:
             log.info(f"Topic {topic_spec.topic_name} created.")

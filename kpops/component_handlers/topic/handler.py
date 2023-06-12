@@ -213,7 +213,6 @@ class TopicHandler:
                 "replication_factor": True,
                 "configs": True,
             },
-            exclude_unset=True,
             exclude_none=True,
         )
         configs = []

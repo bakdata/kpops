@@ -48,7 +48,7 @@ class ConnectWrapper:
         :param kafka_connect_config: The config of the connector
         :return: The current connector info if successful
         """
-        config_json = kafka_connect_config.dict(exclude_none=True, exclude_unset=True)
+        config_json = kafka_connect_config.dict(exclude_none=True)
         connect_data = {"name": connector_name, "config": config_json}
         response = requests.post(
             url=f"{self._host}/connectors", headers=HEADERS, json=connect_data
@@ -99,7 +99,7 @@ class ConnectWrapper:
         :param kafka_connect_config: Configuration parameters for the connector.
         :return: Information about the connector after the change has been made.
         """
-        config_json = kafka_connect_config.dict(exclude_none=True, exclude_unset=True)
+        config_json = kafka_connect_config.dict(exclude_none=True)
         response = requests.put(
             url=f"{self._host}/connectors/{connector_name}/config",
             headers=HEADERS,
@@ -126,7 +126,7 @@ class ConnectWrapper:
     def get_connector_config(
         cls, connector_name: str, config: KafkaConnectConfig
     ) -> dict[str, Any]:
-        connector_config = config.dict(exclude_none=True, exclude_unset=True)
+        connector_config = config.dict(exclude_none=True)
         if (name := connector_config.get("name")) and name != connector_name:
             raise ValueError("Connector name should be the same as component name")
         connector_config["name"] = connector_name

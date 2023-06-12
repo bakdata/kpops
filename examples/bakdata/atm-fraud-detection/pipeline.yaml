@@ -82,7 +82,6 @@
 - type: kafka-sink-connector
   name: postgresql-connector
   app:
-    name: postgresql-connector
     connector.class: io.confluent.connect.jdbc.JdbcSinkConnector
     tasks.max: 1
     topics: ${pipeline_name}-account-linker-topic

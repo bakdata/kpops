@@ -10,10 +10,6 @@ from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 
 class HelmDiffConfig(BaseModel):
-    enable: bool = Field(
-        default=True,
-        description="Enable Helm Diff.",
-    )
     ignore: set[str] = Field(
         default_factory=set,
         description="Set of keys that should not be checked.",

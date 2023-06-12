@@ -23,6 +23,8 @@ streams-app:
   app:
     labels:
       pipeline: ${pipeline_name}
+    streams:
+      optimizeLeaveGroupBehavior: false
   to:
     topics:
       ${error_topic_name}:
