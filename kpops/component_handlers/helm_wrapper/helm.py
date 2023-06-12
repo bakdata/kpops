@@ -28,9 +28,9 @@ class Helm:
         self._context = helm_config.context
         self._debug = helm_config.debug
         self._version = self.get_version()
-        if self._version.major < 3:
+        if self._version.major != 3:
             raise RuntimeError(
-                f"The supported Helm version is >=3.x.x The current Helm version {self._version.major}.{self._version.minor}.{self._version.patch}"
+                f"The supported Helm version is 3.x.x The current Helm version {self._version.major}.{self._version.minor}.{self._version.patch}"
             )
 
     def add_repo(
