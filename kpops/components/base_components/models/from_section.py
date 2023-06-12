@@ -24,10 +24,11 @@ class InputTopicTypes(str, Enum):
 class FromTopic(BaseModel):
     """Input topic
 
-    :param type: Topic type
-    :type type: InputTopicTypes
-    :param role: Custom identifier belonging to a topic, provide only if `type` is `extra`, `pattern` or `extra-pattern`
-    :type role: str | None
+    :param type: Topic type, defaults to None
+    :type type: InputTopicTypes | None, optional
+    :param role: Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`.
+        When `role` is not `None`, `type="pattern"` is equal to `type="extra-pattern"`, defaults to None
+    :type role: str | None, optional
     """
 
     type: InputTopicTypes | None = Field(
@@ -44,7 +45,7 @@ class FromTopic(BaseModel):
         super().__init__(**kwargs)
 
     @staticmethod
-    def __assign_type(kwargs: dict):
+    def __assign_type(kwargs: dict) -> str:
         role = kwargs.get("role", None)
         type_ = kwargs.get("type", None)
         match type_:

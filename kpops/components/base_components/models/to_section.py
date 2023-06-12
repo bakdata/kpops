@@ -21,18 +21,20 @@ class OutputTopicTypes(str, Enum):
 class TopicConfig(BaseModel):
     """Configure an output topic
 
-    :param type: Topic type
-    :type type: InputTopicTypes
-    :param key_schema: Key schema class name
-    :type key_schema: str | None
-    :param partitions_count: Number of partitions into which the topic is divided
-    :type partitions_count: int | None
-    :param replication_factor: Replication topic of the topic
-    :type replication_factor: int | None
-    :param configs: Topic configs
-    :type configs: dict[str, str | int]
-    :param role: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`
-    :type role: str | None
+    :param type: Topic type, defaults to None
+    :type type: InputTopicType | None, optional
+    :param key_schema: Key schema class name, defaults to None
+    :type key_schema: str | None, optional
+    :param partitions_count: Number of partitions into which the topic is divided,
+        defaults to None
+    :type partitions_count: int | None, optional
+    :param replication_factor: Replication topic of the topic, defaults to None
+    :type replication_factor: int | None, optional
+    :param configs: Topic configs, defaults to {}
+    :type configs: dict[str, str | int], optional
+    :param role: Custom identifier belonging to one or multiple topics, provide
+        only if `type` is `extra`, defaults to None
+    :type role: str | None, optional
     """
 
     type: OutputTopicTypes | None = Field(default=None, description="Topic type")
@@ -79,7 +81,7 @@ class TopicConfig(BaseModel):
         return values
 
     @staticmethod
-    def __assign_type(kwargs: dict):
+    def __assign_type(kwargs: dict) -> str:
         role = kwargs.get("role", None)
         type_ = kwargs.get("type", None)
         if type_ is None:

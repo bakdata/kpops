@@ -98,7 +98,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "description": "Input topic",
             "properties": {
                 "role": {
-                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra`, `pattern` or `extra-pattern`",
+                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`. When `role` is not `None`, `type=\\"pattern\\"` is equal to `type=\\"extra-pattern\\"`",
                     "title": "Role",
                     "type": "string"
                 },
@@ -115,7 +115,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "object"
         },
         "InputTopicTypes": {
-            "description": "Input topic types\\n\\ninput (input topic), input_pattern (input pattern topic), extra (extra topic), extra_pattern (extra pattern topic).\\nEvery extra topic must have a role.",
+            "description": "Input topic types\\n\\n    input (input topic), input_pattern (input pattern topic), extra (extra topic), extra_pattern (extra pattern topic).\\n    Every extra topic must have a role.\\n    ",
             "enum": [
                 "input",
                 "extra",
@@ -127,7 +127,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "string"
         },
         "OutputTopicTypes": {
-            "description": "Types of output topic\\n\\nError (error topic), output (output topic), and extra topics. Every extra topic must have a role.",
+            "description": "Types of output topic\\n\\n    Error (error topic), output (output topic), and extra topics. Every extra topic must have a role.\\n    ",
             "enum": [
                 "error",
                 "output",

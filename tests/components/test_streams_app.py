@@ -178,6 +178,27 @@ class TestStreamsApp:
                 },
             )
 
+        with pytest.raises(ValueError):
+            StreamsApp(
+                name=self.STREAMS_APP_NAME,
+                config=config,
+                handlers=handlers,
+                **{
+                    "namespace": "test-namespace",
+                    "app": {
+                        "streams": {"brokers": "fake-broker:9092"},
+                    },
+                    "from": {
+                        "topics": {
+                            "topic-input": {
+                                "type": "input",
+                                "role": "role",
+                            }
+                        }
+                    },
+                },
+            )
+
     def test_set_streams_output_from_to(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
