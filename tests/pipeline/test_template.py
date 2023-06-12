@@ -20,6 +20,8 @@ class TestTemplate:
         return mocker.patch.object(Helm, "_Helm__execute")
 
     def test_default_template_config(self, run_command: MagicMock):
+        run_command.return_value = "v3.12.0+gc9f554d"
+
         result = runner.invoke(
             app,
             [
@@ -52,6 +54,8 @@ class TestTemplate:
         assert result.exit_code == 0
 
     def test_template_config_with_flags(self, run_command: MagicMock):
+        run_command.return_value = "v3.12.0+gc9f554d"
+
         result = runner.invoke(
             app,
             [

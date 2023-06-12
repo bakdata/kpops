@@ -147,3 +147,10 @@ class YamlReader:
         self.content = self.content[start:end]
         yield from self.content.splitlines()
         yield "---"  # add final divider to make parsing easier
+
+
+@dataclass
+class Version:
+    major: int
+    minor: int
+    patch: int

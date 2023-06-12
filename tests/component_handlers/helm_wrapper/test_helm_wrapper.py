@@ -12,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
+    Version,
 )
 from kpops.components.streams_bootstrap.app_type import AppType
 
@@ -33,8 +34,14 @@ class TestHelmWrapper:
     def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.component_handlers.helm_wrapper.helm.log.warning")
 
+    @pytest.fixture
+    def mock_get_version(self, mocker: MockerFixture) -> MagicMock:
+        mock_get_version = mocker.patch.object(Helm, "get_version")
+        mock_get_version.return_value = Version(major=3, minor=12, patch=0)
+        return mock_get_version
+
     def test_should_call_run_command_method_when_helm_install_with_defaults(
-        self, run_command: MagicMock
+        self, run_command: MagicMock, mock_get_version: MagicMock
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
 
@@ -62,10 +69,13 @@ class TestHelmWrapper:
             ],
         )
 
-    def test_should_include_configured_tls_parameters_on_add(
-        self, run_command: MagicMock
+    def test_should_include_configured_tls_parameters_on_add_when_version_is_old(
+        self, run_command: MagicMock, mocker: MockerFixture
     ):
+        mock_get_version = mocker.patch.object(Helm, "get_version")
+        mock_get_version.return_value = Version(major=3, minor=6, patch=0)
         helm = Helm(HelmConfig())
+
         helm.add_repo(
             "test-repository",
             "fake",
@@ -89,8 +99,36 @@ class TestHelmWrapper:
             ),
         ]
 
+    def test_should_include_configured_tls_parameters_on_add_when_version_is_new(
+        self, run_command: MagicMock, mock_get_version: MagicMock
+    ):
+        helm = Helm(HelmConfig())
+
+        helm.add_repo(
+            "test-repository",
+            "fake",
+            RepoAuthFlags(ca_file=Path("a_file.ca"), insecure_skip_tls_verify=True),
+        )
+        assert run_command.mock_calls == [
+            mock.call(
+                [
+                    "helm",
+                    "repo",
+                    "add",
+                    "test-repository",
+                    "fake",
+                    "--ca-file",
+                    "a_file.ca",
+                    "--insecure-skip-tls-verify",
+                ],
+            ),
+            mock.call(
+                ["helm", "repo", "update", "test-repository"],
+            ),
+        ]
+
     def test_should_include_configured_tls_parameters_on_update(
-        self, run_command: MagicMock
+        self, run_command: MagicMock, mock_get_version: MagicMock
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
         helm_wrapper.upgrade_install(
@@ -126,8 +164,7 @@ class TestHelmWrapper:
         )
 
     def test_should_call_run_command_method_when_helm_install_with_non_defaults(
-        self,
-        run_command: MagicMock,
+        self, run_command: MagicMock, mock_get_version: MagicMock
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
         helm_wrapper.upgrade_install(
@@ -168,7 +205,7 @@ class TestHelmWrapper:
         )
 
     def test_should_call_run_command_method_when_uninstalling_streams_app(
-        self, run_command: MagicMock
+        self, run_command: MagicMock, mock_get_version: MagicMock
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
         helm_wrapper.uninstall(
@@ -181,7 +218,10 @@ class TestHelmWrapper:
         )
 
     def test_should_log_warning_when_release_not_found(
-        self, run_command: MagicMock, log_warning_mock: MagicMock
+        self,
+        run_command: MagicMock,
+        log_warning_mock: MagicMock,
+        mock_get_version: MagicMock,
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
         run_command.side_effect = ReleaseNotFoundException()
@@ -196,7 +236,7 @@ class TestHelmWrapper:
         )
 
     def test_should_call_run_command_method_when_installing_streams_app__with_dry_run(
-        self, run_command: MagicMock
+        self, run_command: MagicMock, mock_get_version: MagicMock
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
 
@@ -326,7 +366,7 @@ NOTES:
         assert helm_templates[1].filepath == "chart/templates/test3b.yaml"
         assert helm_templates[1].template == {"foo": "bar"}
 
-    def test_get_manifest(self, run_command: MagicMock):
+    def test_get_manifest(self, run_command: MagicMock, mock_get_version: MagicMock):
         helm_wrapper = Helm(helm_config=HelmConfig())
         run_command.return_value = """Release "test-release" has been upgraded. Happy Helming!
 NAME: test-release
@@ -357,7 +397,7 @@ data:
         assert helm_wrapper.get_manifest("test-release", "test-namespace") == ()
 
     def test_should_call_run_command_method_when_helm_template_with_optional_args(
-        self, run_command: MagicMock
+        self, run_command: MagicMock, mock_get_version: MagicMock
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
 
@@ -392,7 +432,7 @@ data:
         )
 
     def test_should_call_run_command_method_when_helm_template_without_optional_args(
-        self, run_command: MagicMock
+        self, run_command: MagicMock, mock_get_version: MagicMock
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
 
@@ -414,4 +454,26 @@ data:
                 "--values",
                 "values.yaml",
             ],
+        )
+
+    def test_should_call_helm_version(self, run_command: MagicMock):
+        run_command.return_value = "v3.12.0+gc9f554d"
+        Helm(helm_config=HelmConfig())
+
+        run_command.assert_called_once_with(
+            [
+                "helm",
+                "version",
+                "--short",
+            ],
+        )
+
+    def test_should_raise_exception_if_helm_version_is_old(
+        self, run_command: MagicMock
+    ):
+        run_command.return_value = "v2.9.0+gc9f554d"
+        with pytest.raises(RuntimeError) as runtime_error:
+            Helm(helm_config=HelmConfig())
+        assert str(runtime_error.value) == (
+            "The supported Helm version is 3.x.x. The current Helm version is 2.9.0"
         )
