@@ -20,7 +20,7 @@ jobs:
       release-type: ${{ github.event.inputs.release-type }}
       publish-to-test: false
       python-version: "3.10"
-      poetry-version: "1.3.2"
+      poetry-version: "1.5.1"
     secrets:
       github-email: ${{ secrets.GH_EMAIL }}
       github-username: ${{ secrets.GH_USERNAME }}
