@@ -475,5 +475,5 @@ data:
         with pytest.raises(RuntimeError) as runtime_error:
             Helm(helm_config=HelmConfig())
         assert str(runtime_error.value) == (
-            "The supported Helm version is 3.x.x The current Helm version is 2.9.0"
+            "The supported Helm version is 3.x.x. The current Helm version is 2.9.0"
         )

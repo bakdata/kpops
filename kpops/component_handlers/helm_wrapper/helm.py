@@ -30,7 +30,7 @@ class Helm:
         self._version = self.get_version()
         if self._version.major != 3:
             raise RuntimeError(
-                f"The supported Helm version is 3.x.x The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
+                f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
             )
 
     def add_repo(
