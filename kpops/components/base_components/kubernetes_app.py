@@ -201,7 +201,6 @@ class KubernetesApp(PipelineComponent):
             f"Please implement the get_helm_chart() method of the {self.__module__} module."
         )
 
-    # TODO: SMARTER
     @staticmethod
     def validate_kubernetes_name(name: str) -> None:
         """Check if a name is valid for a Kubernetes resource
@@ -209,7 +208,7 @@ class KubernetesApp(PipelineComponent):
         :param name: Name that is to be used for the resource
         :type name: str
         """
-        if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(name)):
+        if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(name)): # TODO: Smarter
             raise ValueError(f"The component name {name} is invalid for Kubernetes.")
 
     @override
