@@ -456,8 +456,17 @@ data:
             ],
         )
 
-    def test_should_call_helm_version(self, run_command: MagicMock):
-        run_command.return_value = "v3.12.0+gc9f554d"
+    @pytest.mark.parametrize(
+        "version",
+        [
+            "v3.12.0+gc9f554d",
+            "v3.12.0",
+            "v3.12",
+            "v3",
+        ],
+    )
+    def test_should_call_helm_version(self, run_command: MagicMock, version):
+        run_command.return_value = version
         Helm(helm_config=HelmConfig())
 
         run_command.assert_called_once_with(
@@ -477,3 +486,11 @@ data:
         assert str(runtime_error.value) == (
             "The supported Helm version is 3.x.x. The current Helm version is 2.9.0"
         )
+
+    def test_should_raise_exception_if_helm_version_cannot_be_parsed(
+        self, run_command: MagicMock
+    ):
+        run_command.return_value = "123"
+        with pytest.raises(RuntimeError) as runtime_error:
+            Helm(helm_config=HelmConfig())
+        assert str(runtime_error.value) == ("Could not parse the Helm version.")
