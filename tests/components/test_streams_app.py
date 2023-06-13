@@ -237,8 +237,8 @@ class TestStreamsApp:
             "first-extra-topic": "extra-topic-1",
             "second-extra-topic": "extra-topic-2",
         }
-        assert streams_app.app.streams.output_topic == "streams-app-output-topic"
-        assert streams_app.app.streams.error_topic == "streams-app-error-topic"
+        assert streams_app.app.streams.output_topic == "${output_topic_name}"
+        assert streams_app.app.streams.error_topic == "${error_topic_name}"
 
     def test_weave_inputs_from_prev_component(
         self, config: PipelineConfig, handlers: ComponentHandlers
@@ -337,8 +337,8 @@ class TestStreamsApp:
                             "first-extra-topic": "extra-topic-1",
                             "second-extra-topic": "extra-topic-2",
                         },
-                        "outputTopic": "streams-app-output-topic",
-                        "errorTopic": "streams-app-error-topic",
+                        "outputTopic": "${output_topic_name}",
+                        "errorTopic": "${error_topic_name}",
                     }
                 },
                 HelmUpgradeInstallFlags(
@@ -394,7 +394,7 @@ class TestStreamsApp:
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "streams-app-output-topic",
+                        "outputTopic": "${output_topic_name}",
                         "deleteOutput": False,
                     },
                 },
@@ -434,7 +434,7 @@ class TestStreamsApp:
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "streams-app-output-topic",
+                        "outputTopic": "${output_topic_name}",
                         "deleteOutput": True,
                     },
                 },

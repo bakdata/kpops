@@ -35,26 +35,21 @@ class KubernetesAppConfig(BaseModel):
         extra = Extra.allow
 
 
-# TODO: label and annotations
 class KubernetesApp(PipelineComponent):
     """Base class for all Kubernetes apps.
 
     All built-in components are Kubernetes apps, except for the Kafka connectors.
 
     :param type: Component type, defaults to "kubernetes-app"
-    :type type: str, optional
     :param schema_type: Used for schema generation, same as :param:`type`,
         defaults to "kubernetes-app"
-    :type schema_type: Literal["kubernetes-app"], optional
+    :param validate_name: Whether to check if the name of the component is
+        compatible with Kubernetes, defaults to True
     :param app: Application-specific settings
-    :type app: KubernetesAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to None
-    :type repo_config: HelmRepoConfig, optional
     :param namespace: Namespace in which the component shall be deployed
-    :type namespace: str
     :param version: Helm chart version, defaults to None
-    :type version: str, optional
     """
 
     type: str = Field(
@@ -66,6 +61,12 @@ class KubernetesApp(PipelineComponent):
         title="Component type",
         description=describe_object(__doc__),
         exclude=True,
+    )
+    validate_name: bool = Field(
+        default=True,
+        description=describe_attr("validate_name", __doc__),
+        exclude=True,
+        hidden_from_schema=True,
     )
     app: KubernetesAppConfig = Field(
         default=...,
@@ -88,8 +89,9 @@ class KubernetesApp(PipelineComponent):
         pass
 
     def __init__(self, **kwargs):
+        if kwargs.get("validate_name", True):
+            self.validate_kubernetes_name(kwargs["name"])
         super().__init__(**kwargs)
-        self.__check_compatible_name()
 
     @cached_property
     def helm(self) -> Helm:
@@ -192,12 +194,15 @@ class KubernetesApp(PipelineComponent):
             f"Please implement the get_helm_chart() method of the {self.__module__} module."
         )
 
-    def __check_compatible_name(self) -> None:
-        """Check if the component's name `self.name` is valid for Kubernetes"""
-        if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(self.name)):  # TODO: SMARTER
-            raise ValueError(
-                f"The component name {self.name} is invalid for Kubernetes."
-            )
+    @staticmethod
+    def validate_kubernetes_name(name: str) -> None:
+        """Check if a name is valid for a Kubernetes resource
+
+        :param name: Name that is to be used for the resource
+        :raises ValueError: The component name {name} is invalid for Kubernetes.
+        """
+        if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(name)):
+            raise ValueError(f"The component name {name} is invalid for Kubernetes.")
 
     @override
     def dict(self, *, exclude=None, **kwargs) -> dict[str, Any]:

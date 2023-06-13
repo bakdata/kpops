@@ -457,17 +457,22 @@ data:
         )
 
     @pytest.mark.parametrize(
-        "version",
+        "raw_version, expected_version",
         [
-            "v3.12.0+gc9f554d",
-            "v3.12.0",
-            "v3.12",
-            "v3",
+            ("v3.12.0+gc9f554d", Version(3, 12, 0)),
+            ("v3.12.0", Version(3, 12, 0)),
+            ("v3.12", Version(3, 12, 0)),
+            ("v3", Version(3, 0, 0)),
         ],
     )
-    def test_should_call_helm_version(self, run_command: MagicMock, version):
-        run_command.return_value = version
-        Helm(helm_config=HelmConfig())
+    def test_should_call_helm_version(
+        self,
+        run_command: MagicMock,
+        raw_version: str,
+        expected_version: Version,
+    ):
+        run_command.return_value = raw_version
+        helm = Helm(helm_config=HelmConfig())
 
         run_command.assert_called_once_with(
             [
@@ -476,6 +481,8 @@ data:
                 "--short",
             ],
         )
+
+        assert helm._version == expected_version
 
     def test_should_raise_exception_if_helm_version_is_old(
         self, run_command: MagicMock
@@ -493,4 +500,7 @@ data:
         run_command.return_value = "123"
         with pytest.raises(RuntimeError) as runtime_error:
             Helm(helm_config=HelmConfig())
-        assert str(runtime_error.value) == ("Could not parse the Helm version.")
+        assert (
+            str(runtime_error.value)
+            == "Could not parse the Helm version.\n\nHelm output:\n123"
+        )

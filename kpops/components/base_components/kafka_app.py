@@ -17,7 +17,6 @@ from kpops.components.base_components.kubernetes_app import (
 )
 from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
-from kpops.utils.yaml_loading import substitute
 
 log = logging.getLogger("KafkaApp")
 
@@ -99,17 +98,6 @@ class KafkaApp(KubernetesApp):
         default="2.9.0",
         description=describe_attr("version", __doc__),
     )
-
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
-        self.app.streams.brokers = substitute(
-            self.app.streams.brokers, {"broker": self.config.broker}
-        )
-        if self.app.streams.schema_registry_url:
-            self.app.streams.schema_registry_url = substitute(
-                self.app.streams.schema_registry_url,
-                {"schema_registry_url": self.config.schema_registry_url},
-            )
 
     @property
     def clean_up_helm_chart(self) -> str:

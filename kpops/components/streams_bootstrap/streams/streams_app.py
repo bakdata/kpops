@@ -44,7 +44,6 @@ class StreamsApp(KafkaApp):
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.__substitute_autoscaling_topic_names()
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
@@ -105,16 +104,4 @@ class StreamsApp(KafkaApp):
             values=values,
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
-        )
-
-    def __substitute_autoscaling_topic_names(self) -> None:
-        """Substitute autoscaling topics' names"""
-        if not self.app.autoscaling:
-            return
-        self.app.autoscaling.topics = [
-            self.substitute_component_variables(topic)
-            for topic in self.app.autoscaling.topics
-        ]
-        self.app.autoscaling.consumer_group = self.substitute_component_variables(
-            self.app.autoscaling.consumer_group
         )
