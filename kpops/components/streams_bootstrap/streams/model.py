@@ -18,7 +18,7 @@ class StreamsConfig(KafkaStreamsConfig):
     :param input_topics: Input topics, defaults to []
     :type input_topics: list[str], optional
     :param input_pattern: Input pattern, defaults to None
-    :type input_pattern: str, None, optional
+    :type input_pattern: str, optional
     :param extra_input_topics: Extra input topics, defaults to {}
     :type extra_input_topics: dict[str, list[str]], optional
     :param extra_input_patterns: Extra input patterns, defaults to {}
@@ -26,9 +26,9 @@ class StreamsConfig(KafkaStreamsConfig):
     :param extra_output_topics: Extra output topics, defaults to {}
     :type extra_output_topics: dict[str, str], optional
     :param output_topic: Output topic, defaults to None
-    :type output_topic: str, None, optional
+    :type output_topic: str, optional
     :param error_topic: Error topic, defaults to None
-    :type error_topic: str, None, optional
+    :type error_topic: str, optional
     :param config: Configuration, defaults to {}
     :type config: dict[str, str], optional
     """
@@ -157,7 +157,7 @@ class StreamsAppAutoScaling(BaseModel):
         down to this number of replicas.
         https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount,
         defaults to None
-    :type idle_replicas: int, None, optional
+    :type idle_replicas: int, optional
     :param topics: List of auto-generated Kafka Streams topics used by the streams app.,
         defaults to []
     :type topics: list[str]
@@ -222,7 +222,7 @@ class StreamsAppConfig(KafkaAppConfig):
     :params streams: Streams Bootstrap streams section
     :type streams: StreamsConfig
     :params autoscaling:Kubernetes Event-driven Autoscaling config, defaults to None
-    :type autoscaling:StreamsAppAutoScaling, None, optional
+    :type autoscaling:StreamsAppAutoScaling, optional
     """
 
     streams: StreamsConfig = Field(
