@@ -154,7 +154,7 @@ class TestPipeline:
 
     @pytest.mark.timeout(0.5)
     def test_substitute_in_component_infinite_loop(self):
-        with pytest.raises(Exception):
+        with pytest.raises((ValueError, ParsingException)):
             runner.invoke(
                 app,
                 [
