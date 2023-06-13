@@ -457,17 +457,22 @@ data:
         )
 
     @pytest.mark.parametrize(
-        "version",
+        "version_object, version",
         [
-            "v3.12.0+gc9f554d",
-            "v3.12.0",
-            "v3.12",
-            "v3",
+            (Version(major=3, minor=12, patch=0), "v3.12.0+gc9f554d"),
+            (Version(major=3, minor=12, patch=0), "v3.12.0"),
+            (Version(major=3, minor=12, patch=0), "v3.12"),
+            (Version(major=3, minor=0, patch=0), "v3"),
         ],
     )
-    def test_should_call_helm_version(self, run_command: MagicMock, version):
+    def test_should_call_helm_version(
+        self,
+        run_command: MagicMock,
+        version_object,
+        version,
+    ):
         run_command.return_value = version
-        Helm(helm_config=HelmConfig())
+        helm = Helm(helm_config=HelmConfig())
 
         run_command.assert_called_once_with(
             [
@@ -476,6 +481,8 @@ data:
                 "--short",
             ],
         )
+
+        assert helm._version == version_object
 
     def test_should_raise_exception_if_helm_version_is_old(
         self, run_command: MagicMock
