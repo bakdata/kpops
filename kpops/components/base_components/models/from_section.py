@@ -107,6 +107,9 @@ class FromSection(BaseModel):
         for key, value in kwargs.get("topics", {}).items():
             if value is None:
                 kwargs["topics"][key] = FromTopic()
+        for key, value in kwargs.get("components", {}).items():
+            if value is None:
+                kwargs["components"][key] = FromTopic()
         super().__init__(**kwargs)
 
     class Config(DescConfig):
