@@ -11,7 +11,7 @@ def describe_attr(name: str, docstr: str | None) -> str:
     :param name: Attribute name
     :type name: str
     :param docstr: Docstring from which to read. Note that the class' docstring is stored in attr ``__doc__``
-    :type docstr: str, None
+    :type docstr: str, optional
     :returns: Description of the class attribute read from the class docstring
     :rtype: str
     """
@@ -29,7 +29,7 @@ def describe_object(docstr: str | None) -> str:
     **Works only with reStructuredText docstrings.**
 
     :param docstr: The docstring
-    :type docstr: str, None
+    :type docstr: str, optional
     :returns: Description taken from the docstring
     :rtype: str
     """

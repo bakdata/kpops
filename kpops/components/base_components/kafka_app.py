@@ -27,7 +27,7 @@ class KafkaStreamsConfig(BaseModel):
     :param brokers: Brokers
     :type brokers: str
     :param schema_registry_url: URL of the schema registry, defaults to None
-    :type schema_registry_url: str, None, optional
+    :type schema_registry_url: str, optional
     """
 
     brokers: str = Field(default=..., description=describe_attr("brokers", __doc__))
@@ -45,7 +45,7 @@ class KafkaAppConfig(KubernetesAppConfig):
     :param streams: Kafka streams config
     :type streams: KafkaStreamsConfig
     :param name_override: Override name with this value, defaults to None
-    :type name_override: str, None, optional
+    :type name_override: str, optional
     """
 
     streams: KafkaStreamsConfig = Field(
@@ -71,7 +71,7 @@ class KafkaApp(KubernetesApp):
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component,
         defaults to HelmRepoConfig(repository_name="bakdata-streams-bootstrap", url="https://bakdata.github.io/streams-bootstrap/")
-    :type repo_config: HelmRepoConfig, None, optional
+    :type repo_config: HelmRepoConfig, optional
     :param version: Helm chart version, defaults to "2.9.0"
     :type version: str, optional
     """
@@ -94,7 +94,7 @@ class KafkaApp(KubernetesApp):
         ),
         description=describe_attr("repo_config", __doc__),
     )
-    version = Field(
+    version: str | None = Field(
         default="2.9.0",
         description=describe_attr("version", __doc__),
     )
