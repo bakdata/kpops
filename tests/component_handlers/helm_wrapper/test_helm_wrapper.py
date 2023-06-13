@@ -500,5 +500,7 @@ data:
         run_command.return_value = "123"
         with pytest.raises(RuntimeError) as runtime_error:
             Helm(helm_config=HelmConfig())
-        expected_error = "Could not parse the Helm version.\n\nHelm output:\n123"
-        assert str(runtime_error.value) == expected_error
+        assert (
+            str(runtime_error.value)
+            == "Could not parse the Helm version.\n\nHelm output:\n123"
+        )
