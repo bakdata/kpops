@@ -208,7 +208,7 @@ class KubernetesApp(PipelineComponent):
         :param name: Name that is to be used for the resource
         :type name: str
         """
-        if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(name)): # TODO: Smarter
+        if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(name)):  # TODO: Smarter
             raise ValueError(f"The component name {name} is invalid for Kubernetes.")
 
     @override
