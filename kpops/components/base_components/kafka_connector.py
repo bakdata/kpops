@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import logging
 from abc import ABC
 from functools import cached_property
@@ -92,7 +91,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.prepare_connector_config()
 
     @cached_property
     def helm(self) -> Helm:
@@ -123,14 +121,6 @@ class KafkaConnector(PipelineComponent, ABC):
     def kafka_connect_resetter_chart(self) -> str:
         """Resetter chart for this component"""
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
-
-    def prepare_connector_config(self) -> None:
-        """Substitute component related variables in config"""
-        substituted_config = self.substitute_component_variables(
-            json.dumps(self.app.dict())
-        )
-        out: dict = json.loads(substituted_config)
-        self.app = KafkaConnectConfig(**out)
 
     @override
     def deploy(self, dry_run: bool) -> None:

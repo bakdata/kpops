@@ -193,24 +193,32 @@ class TestKubernetesApp:
         handlers: ComponentHandlers,
         app_value: KubernetesTestValue,
     ):
+        with pytest.raises(
+            ValueError, match=r"The component name .* is invalid for Kubernetes."
+        ):
+            KubernetesApp(
+                name="Not-Compatible*",
+                config=config,
+                handlers=handlers,
+                app=app_value,
+                namespace="test-namespace",
+            )
+
+        with pytest.raises(
+            ValueError, match=r"The component name .* is invalid for Kubernetes."
+        ):
+            KubernetesApp(
+                name="snake_case*",
+                config=config,
+                handlers=handlers,
+                app=app_value,
+                namespace="test-namespace",
+            )
+
         assert KubernetesApp(
-            name="example-component-with-very-long-name-longer-than-most-of-our-kubernetes-apps",
+            name="valid-name",
             config=config,
             handlers=handlers,
             app=app_value,
             namespace="test-namespace",
         )
-
-        with pytest.raises(ValueError):
-            assert KubernetesApp(
-                name="Not-Compatible*",
-                config=config,
-                handlers=handlers,
-            )
-
-        with pytest.raises(ValueError):
-            assert KubernetesApp(
-                name="snake_case",
-                config=config,
-                handlers=handlers,
-            )
