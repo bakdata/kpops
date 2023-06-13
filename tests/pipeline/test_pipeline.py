@@ -481,7 +481,6 @@ class TestPipeline:
         assert input_topics["extra-topic"]["role"] == "role"
         assert input_topics["extra-pattern"]["role"] == "role"
 
-
     def test_kubernetes_app_name_validation(self):
         with pytest.raises((ValueError, ParsingException)):
             runner.invoke(
