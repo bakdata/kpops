@@ -195,14 +195,13 @@ class Helm:
     def get_version(self) -> Version:
         command = ["helm", "version", "--short"]
         short_version = self.__execute(command)
-        version_match = re.search(r"^v(\d+(\.\d+){0,2})", short_version)
+        version_match = re.search(r"^v(\d+(?:\.\d+){0,2})", short_version)
         if version_match is None:
-            raise RuntimeError("Could not parse the Helm version.")
-        version = version_match.group(1)
-        while re.match(r"^(\d+(\.\d+)?)$", version):
-            version += ".0"
-        major, minor, patch = map(int, version.split("."))
-        return Version(major, minor, patch)
+            raise RuntimeError(
+                f"Could not parse the Helm version.\n\nHelm output:\n{short_version}"
+            )
+        version = map(int, version_match.group(1).split("."))
+        return Version(*version)
 
     @staticmethod
     def load_manifest(yaml_contents: str) -> Iterator[HelmTemplate]:

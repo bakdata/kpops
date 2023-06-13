@@ -152,5 +152,5 @@ class YamlReader:
 @dataclass
 class Version:
     major: int
-    minor: int
-    patch: int
+    minor: int = 0
+    patch: int = 0
