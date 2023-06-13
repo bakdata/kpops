@@ -18,8 +18,12 @@
   to:
     topics: # required
       ${pipeline_name}-output-topic:
-        type: output # required
-        # role: topic-role # only used if type is `extra`
+        # type: output # Implied when role is NOT specified
+      ${pipeline_name}-extra-topic:
+        # type: extra # Implied when role is specified
+        role: topic-role # only used if type is `extra`
+      ${pipeline_name}-error-topic:
+        type: error
         # Currently KPOps only supports Avro schemas.
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
