@@ -199,7 +199,7 @@ class KubernetesApp(PipelineComponent):
         """Check if a name is valid for a Kubernetes resource
 
         :param name: Name that is to be used for the resource
-        :type name: str
+        :raises ValueError: The component name {name} is invalid for Kubernetes.
         """
         if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(name)):
             raise ValueError(f"The component name {name} is invalid for Kubernetes.")
