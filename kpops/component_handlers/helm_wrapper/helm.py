@@ -117,9 +117,7 @@ class Helm:
         release_name: str,
         dry_run: bool,
     ) -> str | None:
-        """
-        Prepares and executes the helm uninstall command
-        """
+        """Prepares and executes the helm uninstall command"""
         command = [
             "helm",
             "uninstall",
@@ -144,8 +142,7 @@ class Helm:
         values: dict,
         flags: HelmTemplateFlags = HelmTemplateFlags(),
     ) -> str:
-        """
-        From HELM: Render chart templates locally and display the output.
+        """From HELM: Render chart templates locally and display the output.
 
         Any values that would normally be looked up or retrieved in-cluster will
         be faked locally. Additionally, none of the server-side testing of chart
@@ -158,7 +155,7 @@ class Helm:
         :param namespace: The Kubernetes namespace the command should execute in
         :type namespace: str
         :param values: `values.yaml` to be used
-        :type values: dict[str, str]
+        :type values: dict
         :param flags: the flags to be set for `helm template`, defaults to HelmTemplateFlags()
         :type flags: HelmTemplateFlags, optional
         :return: the output of `helm template`

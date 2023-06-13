@@ -1,7 +1,7 @@
 import inspect
 import logging
 from collections import deque
-from collections.abc import Mapping, Sequence
+from collections.abc import Sequence
 from pathlib import Path
 from typing import TypeVar
 
@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
+from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
 from kpops.utils.pydantic import DescConfig
@@ -208,43 +209,3 @@ def deduplicate(seq: Sequence[T]) -> list[T]:
     :rtype: list[T]
     """
     return list(dict.fromkeys(seq))
-
-
-def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
-    """Nested update for 2 dictionaries
-
-    :param original_dict: Dictionary to be updated
-    :type original_dict: dict
-    :param other_dict: Mapping that contains new or updated key-value pairs
-    :type other_dict: Mapping
-    :return: Updated dictionary
-    :rtype: dict
-    """
-    for key, value in other_dict.items():
-        if isinstance(value, Mapping):
-            nested_val = original_dict.get(key, {})
-            if nested_val is not None:
-                original_dict[key] = update_nested_pair(nested_val, value)
-        else:
-            if key not in original_dict:
-                original_dict[key] = value
-    return original_dict
-
-
-def update_nested(*argv: dict) -> dict:
-    """Merge multiple configuration dicts.
-
-    The dicts have multiple layers. These layers will be merged recursively.
-
-    :param argv: n dictionaries
-    :type argv: dict
-    :returns: Merged configuration dict
-    :rtype: dict
-    """
-    if len(argv) == 0:
-        return {}
-    if len(argv) == 1:
-        return argv[0]
-    if len(argv) == 2:
-        return update_nested_pair(argv[0], argv[1])
-    return update_nested(update_nested_pair(argv[0], argv[1]), *argv[2:])

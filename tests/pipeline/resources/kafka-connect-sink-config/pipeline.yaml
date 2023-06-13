@@ -1,0 +1,7 @@
+- type: kafka-sink-connector
+  namespace: test-namespace
+  name: test-connector
+  to:
+    topics:
+      ${error_topic_name}:
+        type: error

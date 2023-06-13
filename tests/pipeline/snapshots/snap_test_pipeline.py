@@ -1816,7 +1816,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
     ]
 }
 
-snapshots['TestPipeline.test_substitute_component_names test-pipeline'] = {
+snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
     'components': [
         {
             'app': {
@@ -1827,6 +1827,7 @@ snapshots['TestPipeline.test_substitute_component_names test-pipeline'] = {
                 'imageTag': '0.0.1',
                 'labels': {
                     'app_name': 'scheduled-producer',
+                    'app_schedule': '30 3/8 * * *',
                     'app_type': 'scheduled-producer'
                 },
                 'nameOverride': 'resources-component-type-substitution-scheduled-producer',
@@ -1961,9 +1962,12 @@ snapshots['TestPipeline.test_substitute_component_names test-pipeline'] = {
                 },
                 'image': 'fake-registry/filter',
                 'imageTag': '2.4.1',
-                'label': {
+                'labels': {
                     'app_name': 'filter-app',
-                    'app_type': 'filter'
+                    'app_resources_requests_memory': '3G',
+                    'app_type': 'filter',
+                    'filter': 'filter-app-filter',
+                    'test_placeholder_in_placeholder': 'filter-app-filter'
                 },
                 'nameOverride': 'resources-component-type-substitution-filter-app',
                 'replicaCount': 4,

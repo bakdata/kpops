@@ -1,10 +1,12 @@
 from pathlib import Path
 
+import pytest
 import yaml
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
+from kpops.pipeline_generator.pipeline import ParsingException
 
 runner = CliRunner()
 
@@ -98,7 +100,7 @@ class TestPipeline:
         enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    def test_substitute_component_names(self, snapshot: SnapshotTest):
+    def test_substitute_in_component(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
@@ -118,11 +120,81 @@ class TestPipeline:
         enriched_pipeline = yaml.safe_load(result.stdout)
 
         assert isinstance(enriched_pipeline, dict)
+        assert (
+            enriched_pipeline["components"][0]["name"]
+            == "resources-component-type-substitution-scheduled-producer"
+        )
+
         labels = enriched_pipeline["components"][0]["app"]["labels"]
         assert labels["app_name"] == "scheduled-producer"
         assert labels["app_type"] == "scheduled-producer"
+        assert labels["app_schedule"] == "30 3/8 * * *"
+        assert (
+            enriched_pipeline["components"][2]["app"]["labels"][
+                "app_resources_requests_memory"
+            ]
+            == "3G"
+        )
+        assert (
+            "resources-component-type-substitution-scheduled-producer"
+            in enriched_pipeline["components"][0]["to"]["topics"]
+        )
+        assert (
+            "resources-component-type-substitution-converter-error"
+            in enriched_pipeline["components"][1]["to"]["topics"]
+        )
+        assert (
+            enriched_pipeline["components"][2]["app"]["labels"][
+                "test_placeholder_in_placeholder"
+            ]
+            == "filter-app-filter"
+        )
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    @pytest.mark.timeout(0.5)
+    def test_substitute_in_component_infinite_loop(self):
+        with pytest.raises((ValueError, ParsingException)):
+            runner.invoke(
+                app,
+                [
+                    "generate",
+                    "--pipeline-base-dir",
+                    PIPELINE_BASE_DIR,
+                    str(
+                        RESOURCE_PATH
+                        / "component-type-substitution/infinite_pipeline.yaml"
+                    ),
+                    "tests.pipeline.test_components",
+                    "--defaults",
+                    str(RESOURCE_PATH),
+                ],
+                catch_exceptions=False,
+            )
+
+    def test_kafka_connector_config_parsing(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "kafka-connect-sink-config/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--config",
+                str(RESOURCE_PATH / "kafka-connect-sink-config/config.yaml"),
+            ],
+            catch_exceptions=False,
+        )
+        enriched_pipeline = yaml.safe_load(result.stdout)
+
+        assert isinstance(enriched_pipeline, dict)
+        sink_connector = enriched_pipeline["components"][0]
+        assert (
+            sink_connector["app"]["errors.deadletterqueue.topic.name"]
+            == "kafka-sink-connector-error-topic"
+        )
 
     def test_no_input_topic(self, snapshot: SnapshotTest):
         result = runner.invoke(
@@ -371,3 +443,22 @@ class TestPipeline:
 
         enriched_pipeline = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_kubernetes_app_name_validation(self):
+        with pytest.raises((ValueError, ParsingException)):
+            runner.invoke(
+                app,
+                [
+                    "generate",
+                    "--pipeline-base-dir",
+                    PIPELINE_BASE_DIR,
+                    str(
+                        RESOURCE_PATH
+                        / "pipeline-with-illegal-kubernetes-name/pipeline.yaml"
+                    ),
+                    "tests.pipeline.test_components",
+                    "--defaults",
+                    str(RESOURCE_PATH),
+                ],
+                catch_exceptions=False,
+            )

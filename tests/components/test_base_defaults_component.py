@@ -8,7 +8,6 @@ from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
     load_defaults,
-    update_nested_pair,
 )
 from kpops.utils.environment import ENV
 
@@ -196,34 +195,3 @@ class TestBaseDefaultsComponent:
         assert component.name == str(
             DEFAULTS_PATH
         ), "Environment variables should be substituted"
-
-    @pytest.mark.parametrize(
-        ("d1", "d2", "expected"),
-        [
-            (
-                {},
-                {},
-                {},
-            ),
-            # deep update nested dicts
-            (
-                {"k1": {"foo": 1}},
-                {"k1": {"bar": ""}},
-                {"k1": {"foo": 1, "bar": ""}},
-            ),
-            # do not overwrite None
-            (
-                {"k1": None},
-                {"k1": {"foo": "bar"}},
-                {"k1": None},
-            ),
-            # do not overwrite existing values
-            (
-                {"k1": 1},
-                {"k1": 2},
-                {"k1": 1},
-            ),
-        ],
-    )
-    def test_update_nested_pair(self, d1: dict, d2: dict, expected: dict):
-        assert update_nested_pair(d1, d2) == expected

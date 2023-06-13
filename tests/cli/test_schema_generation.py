@@ -126,7 +126,9 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
 MODULE = EmptyPipelineComponent.__module__
 
 
-@pytest.mark.filterwarnings("ignore:handlers", "ignore:config", "ignore:enrich")
+@pytest.mark.filterwarnings(
+    "ignore:handlers", "ignore:config", "ignore:enrich", "ignore:validate_name"
+)
 class TestGenSchema:
     def test_gen_pipeline_schema_no_modules(self, caplog: pytest.LogCaptureFixture):
         result = runner.invoke(

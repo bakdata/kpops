@@ -26,6 +26,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'extraOutputTopics': {
                     },
+                    'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-account-producer-topic',
                     'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
                 },
@@ -77,6 +78,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'extraOutputTopics': {
                     },
+                    'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-transaction-avro-producer-topic',
                     'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
                 },
