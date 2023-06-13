@@ -41,22 +41,15 @@ class KubernetesApp(PipelineComponent):
     All built-in components are Kubernetes apps, except for the Kafka connectors.
 
     :param type: Component type, defaults to "kubernetes-app"
-    :type type: str, optional
     :param schema_type: Used for schema generation, same as :param:`type`,
         defaults to "kubernetes-app"
-    :type schema_type: Literal["kubernetes-app"], optional
     :param validate_name: Whether to check if the name of the component is
         compatible with Kubernetes, defaults to True
-    :type validate_name: bool, optional
     :param app: Application-specific settings
-    :type app: KubernetesAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to None
-    :type repo_config: HelmRepoConfig, optional
     :param namespace: Namespace in which the component shall be deployed
-    :type namespace: str
     :param version: Helm chart version, defaults to None
-    :type version: str, optional
     """
 
     type: str = Field(
