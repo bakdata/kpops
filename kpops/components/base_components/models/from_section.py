@@ -40,11 +40,11 @@ class FromTopic(BaseModel):
         extra = Extra.forbid
         use_enum_values = True
 
-    def __init__(self, **kwargs):
-        kwargs["type"] = self.__assign_type(
-            kwargs.get("type", None), kwargs.get("role", None)
-        )
-        super().__init__(**kwargs)
+    def __init__(
+        self, type: InputTopicTypes | None = None, role: str | None = None, **kwargs
+    ):
+        type = self.__assign_type(type, role)
+        super().__init__(type=type, role=role, **kwargs)
 
     @staticmethod
     def __assign_type(
@@ -52,13 +52,13 @@ class FromTopic(BaseModel):
     ) -> InputTopicTypes:
         match type_, role:
             case None, None:
-                type_ = InputTopicTypes.INPUT
+                return InputTopicTypes.INPUT
             case None, _:
-                type_ = InputTopicTypes.EXTRA
+                return InputTopicTypes.EXTRA
             case InputTopicTypes.PATTERN, None:
-                type_ = InputTopicTypes.INPUT_PATTERN
+                return InputTopicTypes.INPUT_PATTERN
             case InputTopicTypes.PATTERN, _:
-                type_ = InputTopicTypes.EXTRA_PATTERN
+                return InputTopicTypes.EXTRA_PATTERN
             case _, _:
                 return type_  # type: ignore[return-value]
         return type_  # type: ignore[return-value]

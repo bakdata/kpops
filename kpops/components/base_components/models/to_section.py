@@ -76,11 +76,11 @@ class TopicConfig(BaseModel):
             )
         return values
 
-    def __init__(self, **kwargs):
-        kwargs["type"] = self.__assign_type(
-            kwargs.get("type", None), kwargs.get("role", None)
-        )
-        super().__init__(**kwargs)
+    def __init__(
+        self, type: OutputTopicTypes | None = None, role: str | None = None, **kwargs
+    ):
+        type = self.__assign_type(type, role)
+        super().__init__(type=type, role=role, **kwargs)
 
     @staticmethod
     def __assign_type(
