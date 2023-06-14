@@ -40,44 +40,41 @@ class FromTopic(BaseModel):
         extra = Extra.forbid
         use_enum_values = True
 
-    def __init__(
-        self, type: InputTopicTypes | None = None, role: str | None = None, **kwargs
-    ) -> None:
-        type = self.__assign_type(type, role)
-        super().__init__(type=type, role=role, **kwargs)
-
-    @staticmethod
-    def __assign_type(
-        type_: InputTopicTypes | None, role: str | None
-    ) -> InputTopicTypes:
-        match type_, role:
-            case None, None:
-                return InputTopicTypes.INPUT
-            case None, _:
-                return InputTopicTypes.EXTRA
-            case InputTopicTypes.PATTERN, None:
-                return InputTopicTypes.INPUT_PATTERN
-            case InputTopicTypes.PATTERN, _:
-                return InputTopicTypes.EXTRA_PATTERN
-            case _, _:
-                return type_  # type: ignore[return-value]
-        return type_  # type: ignore[return-value]
-
     @root_validator
     def extra_topic_role(cls, values: dict) -> dict:
-        """Ensure that cls.role is used correctly"""
-        is_extra_topic = values["type"] in (
-            InputTopicTypes.EXTRA,
-            InputTopicTypes.EXTRA_PATTERN,
-        )
-        if is_extra_topic and not values.get("role"):
-            raise ValueError(
-                "If you define an extra input component, extra input topic, or extra input pattern, you have to define a role."
-            )
-        if not is_extra_topic and values.get("role"):
-            raise ValueError(
-                "If you do not define an input component, input topic, or input pattern, the role is unnecessary."
-            )
+        """Ensure that cls.role is used correctly, assign type if needed"""
+        type_ = values.get("type", None)
+        role = values.get("role", None) is not None
+        # Assign type
+        match type_, role:
+            case None, False:
+                values["type"] = InputTopicTypes.INPUT
+                return values
+            case None, True:
+                values["type"] = InputTopicTypes.EXTRA
+                return values
+            case InputTopicTypes.PATTERN, False:
+                values["type"] = InputTopicTypes.INPUT_PATTERN
+                return values
+            case InputTopicTypes.PATTERN, True:
+                values["type"] = InputTopicTypes.EXTRA_PATTERN
+                return values
+            case _, _:
+                is_input_topic = values["type"] not in (
+                    InputTopicTypes.EXTRA,
+                    InputTopicTypes.EXTRA_PATTERN,
+                )
+        match is_input_topic, role:
+            case True, True:
+                raise ValueError(
+                    "If you define an extra input component, extra input topic, or extra input pattern, you have to define a role."
+                )
+            case False, False:
+                raise ValueError(
+                    "If you do not define an extra input component, input topic, or input pattern, the role is unnecessary."
+                )
+            case _, _:
+                return values
         return values
 
 
