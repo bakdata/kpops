@@ -26,6 +26,15 @@ repos:
         types: [python]
         require_serial: true # run once for all files
         exclude: ^tests/.*snapshots/
+  - repo: local
+    hooks:
+      - id: pyright
+        name: pyright
+        entry: python hooks/run_pyright.py
+        language: system
+        types: [python]
+        require_serial: true # run once for all files
+        exclude: ^tests/.*snapshots/
   - repo: https://github.com/asottile/pyupgrade
     rev: v3.1.0
     hooks:
