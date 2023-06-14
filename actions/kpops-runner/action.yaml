@@ -34,10 +34,20 @@ inputs:
   token:
     description: "secrets.GITHUB_TOKEN, needed for setup-helm action if helm-version is set to latest"
     required: false
+  python-version:
+    description: "Python version"
+    required: false
+    default: "3.10.6"
 
 runs:
   using: "composite"
   steps:
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-verion }} 
+        cache: 'pip'
+
     - name: Set up Helm
       uses: azure/setup-helm@v3
       with:
