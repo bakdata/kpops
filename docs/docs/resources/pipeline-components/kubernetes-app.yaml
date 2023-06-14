@@ -27,7 +27,7 @@
       other-producer:
         # type: extra # Implied when role is specified
         role: some-role 
-      component-as-pattern:
+      component-as-input-pattern:
         type: pattern # Implied that type is input-pattern when role is NOT specified
       component-as-extra-pattern:
         type: pattern # Implied that type is extra-pattern when role is specified
