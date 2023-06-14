@@ -27,7 +27,7 @@ class FromTopic(BaseModel):
     :param type: Topic type, defaults to None
     :type type: InputTopicTypes | None, optional
     :param role: Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`.
-        When `role` is not `None`, `type="pattern"` is equal to `type="extra-pattern"`, defaults to None
+        When `role` is not `None`, `type: pattern` is equal to `type: extra-pattern`, defaults to None
     :type role: str | None, optional
     """
 
