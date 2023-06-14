@@ -86,12 +86,12 @@ class TopicConfig(BaseModel):
     def __assign_type(
         type_: OutputTopicTypes | None, role: str | None
     ) -> OutputTopicTypes:
-        if type_ is None:
-            if role is None:
-                type_ = OutputTopicTypes.OUTPUT
-            else:
-                type_ = OutputTopicTypes.EXTRA
-        return type_
+        match type_, role:
+            case None, None:
+                return OutputTopicTypes.OUTPUT
+            case None, _:
+                return OutputTopicTypes.EXTRA
+        return type_  # type: ignore[return-value]
 
 
 class ToSection(BaseModel):
