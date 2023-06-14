@@ -13,10 +13,28 @@ kubernetes-app:
     commandLine: {} # Example
   # Topic(s) from which the component will read input
   from:
-    topics:
+    topics: # required
       ${pipeline_name}-input-topic:
-        type: input
-        # role: topic-role # only used if type is `extra` or `extra-pattern`
+        # type: input # Implied when role is NOT specified
+      ${pipeline_name}-extra-topic:
+        # type: extra # Implied when role is specified
+        role: topic-role # only used if type is `extra` or `extra-pattern`
+      ${pipeline_name}-input-pattern-topic:
+        type: pattern # Implied that type is input-pattern when role is NOT specified
+      ${pipeline_name}-input-pattern-topic:
+        type: pattern # Implied that type is extra-pattern when role is specified
+        role: some-role
+    components: # read from specific component
+      account-producer:
+        # type: output # Implied when role is NOT specified
+      other-producer:
+        # type: extra # Implied when role is specified
+        role: some-role # only used if type is `extra`
+      component-as-pattern:
+        type: pattern # Implied that type is input-pattern when role is NOT specified
+      component-as-extra-pattern:
+        type: pattern # Implied that type is extra-pattern when role is specified
+        role: some-role
   # Topic(s) into which the component will write output
   to:
     topics: # required
