@@ -98,7 +98,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "description": "Input topic",
             "properties": {
                 "role": {
-                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`. When `role` is not `None`, `type: pattern` is equal to `type: extra-pattern`",
+                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`. When `role` is defined, `type: pattern` is equal to `type: extra-pattern`",
                     "title": "Role",
                     "type": "string"
                 },
