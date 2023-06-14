@@ -89,9 +89,6 @@ class KafkaConnector(PipelineComponent, ABC):
     class Config(CamelCaseConfig):
         pass
 
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
-
     @cached_property
     def helm(self) -> Helm:
         """Helm object that contains component-specific config such as repo"""
