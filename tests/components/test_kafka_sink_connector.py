@@ -20,6 +20,7 @@ from kpops.components.base_components.models.from_section import (
     FromSection,
     FromTopic,
     InputTopicTypes,
+    TopicName,
 )
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
@@ -97,8 +98,8 @@ class TestKafkaSinkConnector:
     def test_from_section_parsing_input_topic(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
-        topic1 = "connector-topic1"
-        topic2 = "connector-topic2"
+        topic1 = TopicName("connector-topic1")
+        topic2 = TopicName("connector-topic2")
         connector = KafkaSinkConnector(
             name="test-connector",
             config=config,
@@ -121,7 +122,7 @@ class TestKafkaSinkConnector:
     def test_from_section_parsing_input_pattern(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
-        topic_pattern = ".*"
+        topic_pattern = TopicName(".*")
         connector = KafkaSinkConnector(
             name="test-connector",
             config=config,
