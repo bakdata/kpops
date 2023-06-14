@@ -62,7 +62,7 @@
   from:
     components:
       fraud-detector:
-        type: ~
+        type: input
       account-producer:
         role: accounts
   app:

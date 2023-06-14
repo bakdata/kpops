@@ -15,7 +15,7 @@ kubernetes-app:
   from:
     topics: # required
       ${pipeline_name}-input-topic:
-        # type: input # Implied when role is NOT specified
+        type: input
       ${pipeline_name}-extra-topic:
         # type: extra # Implied when role is specified
         role: topic-role # only used if type is `extra` or `extra-pattern`
@@ -26,7 +26,7 @@ kubernetes-app:
         role: some-role
     components: # read from specific component
       account-producer:
-        # type: output # Implied when role is NOT specified
+        type: output # Implied when role is NOT specified
       other-producer:
         # type: extra # Implied when role is specified
         role: some-role # only used if type is `extra`
@@ -39,7 +39,7 @@ kubernetes-app:
   to:
     topics: # required
       ${pipeline_name}-output-topic:
-        # type: output # Implied when role is NOT specified
+        type: output
       ${pipeline_name}-extra-topic:
         # type: extra # Implied when role is specified
         role: topic-role # only used if type is `extra`
@@ -50,7 +50,7 @@ kubernetes-app:
         valueSchema: value-schema
         partitions_count: 1
         replication_factor: 1
-        configs: 
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model

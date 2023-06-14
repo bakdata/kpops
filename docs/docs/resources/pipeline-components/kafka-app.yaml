@@ -18,7 +18,7 @@
   to:
     topics: # required
       ${pipeline_name}-output-topic:
-        # type: output # Implied when role is NOT specified
+        type: output
       ${pipeline_name}-extra-topic:
         # type: extra # Implied when role is specified
         role: topic-role # only used if type is `extra`
@@ -29,7 +29,7 @@
         valueSchema: value-schema
         partitions_count: 1
         replication_factor: 1
-        configs: 
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model

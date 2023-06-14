@@ -11,7 +11,7 @@
   from:
     topics: # required
       ${pipeline_name}-input-topic:
-        # type: input # Implied when role is NOT specified
+        type: input
       ${pipeline_name}-extra-topic:
         # type: extra # Implied when role is specified
         role: topic-role # only used if type is `extra` or `extra-pattern`
@@ -22,7 +22,7 @@
         role: some-role
     components: # read from specific component
       account-producer:
-        # type: output # Implied when role is NOT specified
+        type: output # Implied when role is NOT specified
       other-producer:
         # type: extra # Implied when role is specified
         role: some-role # only used if type is `extra`
@@ -33,9 +33,15 @@
         role: some-role
   # Topic(s) into which the component will write output
   to:
-    topics:
+    topics: # required
       ${pipeline_name}-output-topic:
-        type: error # required
+        type: output
+      ${pipeline_name}-extra-topic:
+        # type: extra # Implied when role is specified
+        role: topic-role # only used if type is `extra`
+      ${pipeline_name}-error-topic:
+        type: error
+        # Currently KPOps only supports Avro schemas.
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
         partitions_count: 1

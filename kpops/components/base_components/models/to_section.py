@@ -78,7 +78,7 @@ class TopicConfig(BaseModel):
 
     def __init__(
         self, type: OutputTopicTypes | None = None, role: str | None = None, **kwargs
-    ):
+    ) -> None:
         type = self.__assign_type(type, role)
         super().__init__(type=type, role=role, **kwargs)
 
