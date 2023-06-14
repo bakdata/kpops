@@ -178,6 +178,7 @@ class TestStreamsApp:
                 },
             )
 
+        # An exception should be raised when both role and type are defined and type is not extra
         with pytest.raises(ValueError):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
