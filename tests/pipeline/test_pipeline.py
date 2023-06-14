@@ -460,9 +460,8 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
-        assert isinstance(enriched_pipeline, dict)
         output_topics = enriched_pipeline["components"][0]["to"]["topics"]
         input_topics = enriched_pipeline["components"][0]["from"]["topics"]
         assert output_topics["output-topic"]["type"] == "output"

@@ -111,7 +111,7 @@ class ToSection(BaseModel):
     )
 
     def __init__(self, **kwargs):
-        for key, value in kwargs.get("topics", {}).items():
+        for key, value in kwargs["topics"].items():
             if value is None:
                 kwargs["topics"][key] = TopicConfig()
         super().__init__(**kwargs)
