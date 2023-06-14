@@ -5,6 +5,7 @@ import logging
 from functools import cached_property
 
 from schema_registry.client import SchemaRegistryClient
+from schema_registry.client.schema import AvroSchema
 
 from kpops.cli.exception import ClassNotFoundError
 from kpops.cli.pipeline_config import PipelineConfig
@@ -138,8 +139,13 @@ class SchemaHandler:
             if not self.schema_registry_client.test_compatibility(
                 subject=subject, schema=schema
             ):
+                schema_str = (
+                    schema.flat_schema
+                    if isinstance(schema, AvroSchema)
+                    else str(schema)
+                )
                 raise Exception(
-                    f"Schema is not compatible for {subject} and model {schema_class}. \n {json.dumps(schema.flat_schema, indent=4)}"
+                    f"Schema is not compatible for {subject} and model {schema_class}. \n {json.dumps(schema_str, indent=4)}"
                 )
         else:
             log.debug(
