@@ -39,7 +39,6 @@ inputs:
     description: "secrets.GITHUB_TOKEN, needed for setup-helm action if helm-version is set to latest"
     required: false
 
-
 runs:
   using: "composite"
   steps:
