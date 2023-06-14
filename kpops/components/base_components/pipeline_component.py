@@ -76,7 +76,7 @@ class PipelineComponent(BaseDefaultsComponent):
         extra = Extra.allow
         keep_untouched = (cached_property,)
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.set_input_topics()
         self.set_output_topics()
