@@ -35,9 +35,9 @@ inputs:
     description: "secrets.GITHUB_TOKEN, needed for setup-helm action if helm-version is set to latest"
     required: false
   python-version:
-    description: "Python version"
+    description: "Python version to install (Defaults to the latest stable version of Python 3.11)"
     required: false
-    default: "3.x"
+    default: "3.11.x"
 
 runs:
   using: "composite"
