@@ -21,7 +21,7 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install python and set up Poetry
+    - name: Install Python and set up Poetry
       uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.2
       with:
         poetry-version: "1.5.1"
