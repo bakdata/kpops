@@ -18,7 +18,7 @@
         role: topic-role
       ${pipeline_name}-input-pattern-topic:
         type: pattern # Implied that type is input-pattern when role is NOT specified
-      ${pipeline_name}-input-pattern-topic:
+      ${pipeline_name}-extra-pattern-topic:
         type: pattern # Implied that type is extra-pattern when role is specified
         role: some-role
     components: # read from specific component
