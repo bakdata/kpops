@@ -16,6 +16,7 @@ streams-app: # inherits from kafka
   to:
     topics:
       output-topic:
+        type: ~
       error-topic:
         type: error
       extra-topic:
@@ -23,6 +24,7 @@ streams-app: # inherits from kafka
   from:
     topics:
       input-topic:
+        type: ~
       extra-topic:
         role: role
       input-pattern:
@@ -30,3 +32,4 @@ streams-app: # inherits from kafka
       extra-pattern:
         type: pattern
         role: role
+    

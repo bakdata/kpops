@@ -41,27 +41,27 @@ class FromTopic(BaseModel):
         use_enum_values = True
 
     def __init__(self, **kwargs):
-        kwargs["type"] = self.__assign_type(kwargs)
+        kwargs["type"] = self.__assign_type(
+            kwargs.get("type", None), kwargs.get("role", None)
+        )
         super().__init__(**kwargs)
 
     @staticmethod
-    def __assign_type(kwargs: dict) -> str:
-        role = kwargs.get("role", None)
-        type_ = kwargs.get("type", None)
-        match type_:
-            case None:
-                if role is None:
-                    type_ = InputTopicTypes.INPUT.value
-                else:
-                    type_ = InputTopicTypes.EXTRA.value
-            case InputTopicTypes.PATTERN:
-                if role is None:
-                    type_ = InputTopicTypes.INPUT_PATTERN.value
-                else:
-                    type_ = InputTopicTypes.EXTRA_PATTERN.value
-            case _:
-                pass
-        return type_
+    def __assign_type(
+        type_: InputTopicTypes | None, role: str | None
+    ) -> InputTopicTypes:
+        match type_, role:
+            case None, None:
+                type_ = InputTopicTypes.INPUT
+            case None, _:
+                type_ = InputTopicTypes.EXTRA
+            case InputTopicTypes.PATTERN, None:
+                type_ = InputTopicTypes.INPUT_PATTERN
+            case InputTopicTypes.PATTERN, _:
+                type_ = InputTopicTypes.EXTRA_PATTERN
+            case _, _:
+                return type_  # type: ignore[return-value]
+        return type_  # type: ignore[return-value]
 
     @root_validator
     def extra_topic_role(cls, values: dict) -> dict:
@@ -102,15 +102,6 @@ class FromSection(BaseModel):
         default={},
         description=describe_attr("components", __doc__),
     )
-
-    def __init__(self, **kwargs):
-        for key, value in kwargs.get("topics", {}).items():
-            if value is None:
-                kwargs["topics"][key] = FromTopic()
-        for key, value in kwargs.get("components", {}).items():
-            if value is None:
-                kwargs["components"][key] = FromTopic()
-        super().__init__(**kwargs)
 
     class Config(DescConfig):
         extra = Extra.forbid

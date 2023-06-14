@@ -1,2 +1,25 @@
+- type: producer
+  name: component-input
+
+- type: producer
+  name: component-extra
+
+- type: producer
+  name: component-input-pattern
+
+- type: producer
+  name: component-extra-pattern
+
 - type: streams-app
   name: simple-app
+  from:
+    components:
+          component-input:
+            type: ~
+          component-extra:
+            role: role
+          component-input-pattern:
+            type: pattern
+          component-extra-pattern:
+            type: pattern
+            role: role

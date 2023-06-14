@@ -462,8 +462,9 @@ class TestPipeline:
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
-        output_topics = enriched_pipeline["components"][0]["to"]["topics"]
-        input_topics = enriched_pipeline["components"][0]["from"]["topics"]
+        output_topics = enriched_pipeline["components"][4]["to"]["topics"]
+        input_topics = enriched_pipeline["components"][4]["from"]["topics"]
+        input_components = enriched_pipeline["components"][4]["from"]["components"]
         assert output_topics["output-topic"]["type"] == "output"
         assert output_topics["error-topic"]["type"] == "error"
         assert output_topics["extra-topic"]["type"] == "extra"
@@ -479,6 +480,15 @@ class TestPipeline:
         assert "role" not in input_topics["input-pattern"]
         assert input_topics["extra-topic"]["role"] == "role"
         assert input_topics["extra-pattern"]["role"] == "role"
+
+        assert input_components["component-input"]["type"] == "input"
+        assert input_components["component-extra"]["type"] == "extra"
+        assert input_components["component-input-pattern"]["type"] == "input-pattern"
+        assert input_components["component-extra-pattern"]["type"] == "extra-pattern"
+        assert "role" not in input_components["component-input"]
+        assert "role" not in input_components["component-input-pattern"]
+        assert input_components["component-extra"]["role"] == "role"
+        assert input_components["component-extra-pattern"]["role"] == "role"
 
     def test_kubernetes_app_name_validation(self):
         with pytest.raises((ValueError, ParsingException)):
