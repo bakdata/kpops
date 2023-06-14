@@ -15,7 +15,7 @@
   from:
     components:
           component-input:
-            type: ~
+            type: null
           component-extra:
             role: role
           component-input-pattern:
