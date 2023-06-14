@@ -16,7 +16,7 @@ This action runs KPOps with the given config.
 | kpops-version     |    ❌    |    latest     | string | KPOps version to install                                                                                                                      |
 | helm-version      |    ❌    |    latest     | string | Helm version to install                                                                                                                       |
 | token             |    ❌    |    latest     | string | secrets.GITHUB_TOKEN, needed for setup-helm action if helm-version is set to latest                                                           |
-| python-version             |    ❌    |    "3.10.6"     | string | Python version to install
+| python-version             |    ❌    |    "3.x"     | string | Python version to install (Defaults to the latest stable version of Python for specified major version)
 
 ## Usage
 
