@@ -23,6 +23,10 @@ inputs:
   components:
     description: "Components package path"
     required: false
+  python-version:
+    description: "Python version to install (Defaults to the latest stable version of Python 3.11)"
+    required: false
+    default: "3.11.x"
   kpops-version:
     description: "KPOps version"
     required: false
@@ -34,10 +38,7 @@ inputs:
   token:
     description: "secrets.GITHUB_TOKEN, needed for setup-helm action if helm-version is set to latest"
     required: false
-  python-version:
-    description: "Python version to install (Defaults to the latest stable version of Python 3.11)"
-    required: false
-    default: "3.11.x"
+
 
 runs:
   using: "composite"

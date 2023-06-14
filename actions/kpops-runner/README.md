@@ -13,10 +13,10 @@ This action runs KPOps with the given config.
 | defaults          |    ❌     |       .       | string | defaults folder path                                                                                                                          |
 | config            |    ❌     |  config.yaml  | string | config.yaml file path                                                                                                                         |
 | components        |    ❌     |       -       | string | components package path                                                                                                                       |
+| python-version    |    ❌     |   "3.11.x"    | string | Python version to install (Defaults to the latest stable version of Python 3.11)                                                              |
 | kpops-version     |    ❌     |    latest     | string | KPOps version to install                                                                                                                      |
 | helm-version      |    ❌     |    latest     | string | Helm version to install                                                                                                                       |
 | token             |    ❌     |    latest     | string | secrets.GITHUB_TOKEN, needed for setup-helm action if helm-version is set to latest                                                           |
-| python-version    |    ❌     |   "3.11.x"    | string | Python version to install (Defaults to the latest stable version of Python 3.11)                                                              |
 
 ## Usage
 
