@@ -66,7 +66,7 @@
         type: input
       ${pipeline_name}-extra-topic:
         # type: extra # Implied when role is specified
-        role: topic-role # only used if type is `extra` or `extra-pattern`
+        role: topic-role `extra-pattern`
       ${pipeline_name}-input-pattern-topic:
         type: pattern # Implied that type is input-pattern when role is NOT specified
       ${pipeline_name}-input-pattern-topic:
@@ -77,7 +77,7 @@
         type: output # Implied when role is NOT specified
       other-producer:
         # type: extra # Implied when role is specified
-        role: some-role # only used if type is `extra`
+        role: some-role 
       component-as-pattern:
         type: pattern # Implied that type is input-pattern when role is NOT specified
       component-as-extra-pattern:
@@ -87,13 +87,12 @@
   to:
     topics: # required
       ${pipeline_name}-output-topic:
-        type: output
+        type: output # Implied when role is NOT specified
       ${pipeline_name}-extra-topic:
-        # type: extra # Implied when role is specified
-        role: topic-role # only used if type is `extra`
+        role: topic-role # Implies `type: extra`; Will throw an error if another type is defined
       ${pipeline_name}-error-topic:
         type: error
-        # Currently KPOps only supports Avro schemas.
+        # Currently KPOps supports Avro and JSON schemas.
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
         partitions_count: 1

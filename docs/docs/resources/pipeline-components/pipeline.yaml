@@ -13,23 +13,22 @@
     topics: # required
       ${pipeline_name}-input-topic:
         type: input # required
-        # role: topic-role # only used if type is `extra` or `extra-pattern`
+        # role: topic-role
   # Topic(s) into which the component will write output
   to:
     topics: # required
       ${pipeline_name}-output-topic:
-        # type: output # Implied when role is NOT specified
+        type: output # Implied when role is NOT specified
       ${pipeline_name}-extra-topic:
-        # type: extra # Implied when role is specified
-        role: topic-role # only used if type is `extra`
+        role: topic-role # Implies `type: extra`; Will throw an error if another type is defined
       ${pipeline_name}-error-topic:
         type: error
-        # Currently KPOps only supports Avro schemas.
+        # Currently KPOps supports Avro and JSON schemas.
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
         partitions_count: 1
         replication_factor: 1
-        configs: 
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
@@ -67,8 +66,8 @@
     topics: # required
       ${pipeline_name}-output-topic:
         type: output # required
-        # role: topic-role # only used if type is `extra`
-        # Currently KPOps only supports Avro schemas.
+        # role: topic-role 
+        # Currently KPOps supports Avro and JSON schemas.
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
         partitions_count: 1
@@ -156,13 +155,12 @@
     topics: # required
       ${pipeline_name}-input-topic:
         type: input # required
-        # role: topic-role # only used if type is `extra` or `extra-pattern`
+        # role: topic-role
   # Topic(s) into which the component will write output
   to:
     topics: # required
       ${pipeline_name}-output-topic:
-        type: output # required
-        # role: topic-role # only used if type is `extra`
+        type: output
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
         partitions_count: 1
@@ -207,7 +205,7 @@
     topics: # required
       ${pipeline_name}-output-topic:
         type: output # required
-        # role: topic-role # only used if type is `extra`
+        # role: topic-role 
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
         partitions_count: 1
@@ -244,7 +242,7 @@
     topics: # required
       ${pipeline_name}-output-topic:
         type: output # required
-        # role: topic-role # only used if type is `extra`
+        # role: topic-role 
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
         partitions_count: 1
@@ -287,7 +285,7 @@
     topics: # required
       ${pipeline_name}-input-topic:
         type: input # required
-        # role: topic-role # only used if type is `extra`
+        # role: topic-role 
   # Topic(s) into which the component will write output
   to:
     topics: # required
