@@ -11,6 +11,7 @@ from schema_registry.client.utils import SchemaVersion
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
+from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -69,7 +70,7 @@ def topic_config() -> TopicConfig:
 
 @pytest.fixture()
 def to_section(topic_config: TopicConfig) -> ToSection:
-    return ToSection(topics={"topic-X": topic_config})
+    return ToSection(topics={TopicName("topic-X"): topic_config})
 
 
 def test_load_schema_handler():

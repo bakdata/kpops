@@ -27,7 +27,7 @@ class TopicHandler:
         self.proxy_wrapper = proxy_wrapper
 
     def create_topics(self, to_section: ToSection, dry_run: bool) -> None:
-        topics: dict[str, TopicConfig] = to_section.topics
+        topics = to_section.topics
         for topic_name, topic_config in topics.items():
             topic_spec = self.__prepare_body(topic_name, topic_config)
             if dry_run:
@@ -66,7 +66,7 @@ class TopicHandler:
                     self.proxy_wrapper.create_topic(topic_spec=topic_spec)
 
     def delete_topics(self, to_section: ToSection, dry_run: bool) -> None:
-        topics: dict[str, TopicConfig] = to_section.topics
+        topics = to_section.topics
         for topic_name in topics.keys():
             if dry_run:
                 self.__dry_run_topic_deletion(topic_name=topic_name)

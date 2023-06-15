@@ -12,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
 )
 from kpops.components import StreamsApp
+from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -237,12 +238,16 @@ class TestStreamsApp:
         streams_app.weave_from_topics(
             ToSection(
                 topics={
-                    "prev-output-topic": TopicConfig(
+                    TopicName("prev-output-topic"): TopicConfig(
                         type=OutputTopicTypes.OUTPUT, partitions_count=10
                     ),
-                    "b": TopicConfig(type=OutputTopicTypes.OUTPUT, partitions_count=10),
-                    "a": TopicConfig(type=OutputTopicTypes.OUTPUT, partitions_count=10),
-                    "prev-error-topic": TopicConfig(
+                    TopicName("b"): TopicConfig(
+                        type=OutputTopicTypes.OUTPUT, partitions_count=10
+                    ),
+                    TopicName("a"): TopicConfig(
+                        type=OutputTopicTypes.OUTPUT, partitions_count=10
+                    ),
+                    TopicName("prev-error-topic"): TopicConfig(
                         type=OutputTopicTypes.ERROR, partitions_count=10
                     ),
                 }

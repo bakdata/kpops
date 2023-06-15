@@ -72,12 +72,31 @@ class TestKafkaSinkConnector:
             "kpops.components.base_components.kafka_connector.DryRunHandler"
         ).return_value
 
+    @pytest.fixture
+    def connector(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ) -> KafkaSinkConnector:
+        return KafkaSinkConnector(
+            name=CONNECTOR_NAME,
+            config=config,
+            handlers=handlers,
+            app=KafkaConnectConfig(),
+            namespace="test-namespace",
+            to=ToSection(
+                topics={
+                    TopicName("${output_topic_name}"): TopicConfig(
+                        type=OutputTopicTypes.OUTPUT, partitions_count=10
+                    ),
+                }
+            ),
+        )
+
     def test_connector_config_parsing(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         topic_name = "connector-topic"
         connector = KafkaSinkConnector(
-            name="test-connector",
+            name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
             app=KafkaConnectConfig(**{"topics": topic_name}),
@@ -87,7 +106,7 @@ class TestKafkaSinkConnector:
 
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
-            name="test-connector",
+            name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
             app=KafkaConnectConfig(**{"topics.regex": topic_pattern}),
@@ -101,7 +120,7 @@ class TestKafkaSinkConnector:
         topic1 = TopicName("connector-topic1")
         topic2 = TopicName("connector-topic2")
         connector = KafkaSinkConnector(
-            name="test-connector",
+            name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
             app=KafkaConnectConfig(),
@@ -124,7 +143,7 @@ class TestKafkaSinkConnector:
     ):
         topic_pattern = TopicName(".*")
         connector = KafkaSinkConnector(
-            name="test-connector",
+            name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
             app=KafkaConnectConfig(),
@@ -137,25 +156,9 @@ class TestKafkaSinkConnector:
 
     def test_deploy_order(
         self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        connector: KafkaSinkConnector,
         mocker: MockerFixture,
     ):
-        connector = KafkaSinkConnector(
-            name="test-connector",
-            config=config,
-            handlers=handlers,
-            app=KafkaConnectConfig(),
-            namespace="test-namespace",
-            to=ToSection(
-                topics={
-                    "${output_topic_name}": TopicConfig(
-                        type=OutputTopicTypes.OUTPUT, partitions_count=10
-                    ),
-                }
-            ),
-        )
-
         mock_create_topics = mocker.patch.object(
             connector.handlers.topic_handler, "create_topics"
         )
@@ -170,7 +173,7 @@ class TestKafkaSinkConnector:
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=connector.to, dry_run=True),
             mocker.call.mock_create_connector(
-                connector_name="test-connector",
+                connector_name=CONNECTOR_NAME,
                 kafka_connect_config=connector.app,
                 dry_run=True,
             ),
@@ -178,25 +181,9 @@ class TestKafkaSinkConnector:
 
     def test_destroy(
         self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        connector: KafkaSinkConnector,
         mocker: MockerFixture,
     ):
-        connector = KafkaSinkConnector(
-            name="test-connector",
-            config=config,
-            handlers=handlers,
-            app=KafkaConnectConfig(),
-            namespace="test-namespace",
-            to=ToSection(
-                topics={
-                    "${output_topic_name}": TopicConfig(
-                        type=OutputTopicTypes.OUTPUT, partitions_count=10
-                    ),
-                }
-            ),
-        )
-
         mock_destroy_connector = mocker.patch.object(
             connector.handlers.connector_handler, "destroy_connector"
         )
@@ -204,31 +191,15 @@ class TestKafkaSinkConnector:
         connector.destroy(dry_run=True)
 
         mock_destroy_connector.assert_called_once_with(
-            connector_name="test-connector",
+            connector_name=CONNECTOR_NAME,
             dry_run=True,
         )
 
     def test_reset_when_dry_run_is_true(
         self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        connector: KafkaSinkConnector,
         dry_run_handler: MagicMock,
     ):
-        connector = KafkaSinkConnector(
-            name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app=KafkaConnectConfig(),
-            namespace="test-namespace",
-            to=ToSection(
-                topics={
-                    "${output_topic_name}": TopicConfig(
-                        type=OutputTopicTypes.OUTPUT, partitions_count=10
-                    ),
-                }
-            ),
-        )
-
         dry_run = True
         connector.reset(dry_run=dry_run)
 
@@ -236,27 +207,11 @@ class TestKafkaSinkConnector:
 
     def test_reset_when_dry_run_is_false(
         self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        connector: KafkaSinkConnector,
         helm_mock: MagicMock,
         dry_run_handler: MagicMock,
         mocker: MockerFixture,
     ):
-        connector = KafkaSinkConnector(
-            name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app=KafkaConnectConfig(),
-            namespace="test-namespace",
-            to=ToSection(
-                topics={
-                    "${output_topic_name}": TopicConfig(
-                        type=OutputTopicTypes.OUTPUT, partitions_count=10
-                    ),
-                }
-            ),
-        )
-
         mock_delete_topics = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topics"
         )
@@ -313,31 +268,16 @@ class TestKafkaSinkConnector:
 
     def test_clean_when_dry_run_is_true(
         self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        connector: KafkaSinkConnector,
         dry_run_handler: MagicMock,
     ):
-        connector = KafkaSinkConnector(
-            name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app=KafkaConnectConfig(),
-            namespace="test-namespace",
-            to=ToSection(
-                topics={
-                    "${output_topic_name}": TopicConfig(
-                        type=OutputTopicTypes.OUTPUT, partitions_count=10
-                    ),
-                }
-            ),
-        )
-
         dry_run = True
         connector.clean(dry_run=dry_run)
         dry_run_handler.print_helm_diff.assert_called_once()
 
     def test_clean_when_dry_run_is_false(
         self,
+        connector: KafkaSinkConnector,
         config: PipelineConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
@@ -353,7 +293,7 @@ class TestKafkaSinkConnector:
             namespace="test-namespace",
             to=ToSection(
                 topics={
-                    "${output_topic_name}": TopicConfig(
+                    TopicName("${output_topic_name}"): TopicConfig(
                         type=OutputTopicTypes.OUTPUT, partitions_count=10
                     ),
                 }
