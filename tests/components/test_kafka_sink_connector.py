@@ -60,7 +60,7 @@ class TestKafkaSinkConnector:
             topic_handler=MagicMock(),
         )
 
-    @pytest.fixture
+    @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
             "kpops.components.base_components.kafka_connector.Helm"
