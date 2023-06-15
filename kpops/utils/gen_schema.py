@@ -132,7 +132,7 @@ def gen_pipeline_schema(
         components = tuple()
     # Add custom components if provided
     if components_module:
-        components = _add_components(components_module, components)  # type: ignore[arg-type]
+        components = _add_components(components_module, components)
     # Create a type union that will hold the union of all component types
     PipelineComponents = Union[components]  # type: ignore[valid-type]
 

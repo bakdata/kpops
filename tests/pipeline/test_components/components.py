@@ -70,7 +70,7 @@ class InflateStep(StreamsApp):
                         name="inflated-streams-app",
                         config=self.config,
                         handlers=self.handlers,
-                        to=ToSection(
+                        to=ToSection(  # type: ignore
                             topics={
                                 TopicName(
                                     f"{self.name}-" + "${component_name}"

@@ -48,7 +48,7 @@ class PipelineComponents(BaseModel):
     def __bool__(self) -> bool:
         return bool(self.components)
 
-    def __iter__(self) -> Iterator[PipelineComponent]:  # type: ignore[override]
+    def __iter__(self) -> Iterator[PipelineComponent]:
         return iter(self.components)
 
     @staticmethod

@@ -21,7 +21,7 @@ class KafkaConnectConfig(BaseModel):
 
         @override
         @staticmethod
-        def schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:  # type: ignore[override]
+        def schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
             schema["description"] = describe_object(model.__doc__)
             schema["additionalProperties"] = {"type": "string"}
 
