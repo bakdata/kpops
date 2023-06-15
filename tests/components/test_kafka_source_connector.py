@@ -17,6 +17,7 @@ from kpops.components.base_components.models.from_section import (
     FromSection,
     FromTopic,
     InputTopicTypes,
+    TopicName,
 )
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
@@ -76,7 +77,9 @@ class TestKafkaSourceConnector:
                 namespace="test-namespace",
                 from_=FromSection(
                     topics={
-                        "connector-topic": FromTopic(type=InputTopicTypes.INPUT),
+                        TopicName("connector-topic"): FromTopic(
+                            type=InputTopicTypes.INPUT
+                        ),
                     }
                 ),
             )
