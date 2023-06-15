@@ -86,13 +86,9 @@ def test_load_schema_handler():
         is None
     )
 
-    assert (
-        type(
-            SchemaHandler.load_schema_handler(
-                TEST_SCHEMA_PROVIDER_MODULE, config_enable
-            )
-        )
-        is SchemaHandler
+    assert isinstance(
+        SchemaHandler.load_schema_handler(TEST_SCHEMA_PROVIDER_MODULE, config_enable),
+        SchemaHandler,
     )
 
 
