@@ -10,8 +10,7 @@ from kpops.utils.pydantic import DescConfig
 class InputTopicTypes(str, Enum):
     """Input topic types
 
-    input (input topic), input_pattern (input pattern topic), extra (extra topic), extra_pattern (extra pattern topic).
-    Every extra topic must have a role.
+    INPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)
     """
 
     INPUT = "input"
@@ -23,8 +22,8 @@ class FromTopic(BaseModel):
 
     :param type: Topic type, defaults to None
     :type type: InputTopicTypes | None, optional
-    :param role: Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`.
-        When `role` is defined, `type: pattern` is equal to `type: extra-pattern`, defaults to None
+    :param role: Custom identifier belonging to a topic;
+        define only if `type` is `pattern` or `None`, defaults to None
     :type role: str | None, optional
     """
 
@@ -47,7 +46,7 @@ class FromTopic(BaseModel):
                 return values
             case InputTopicTypes.INPUT, True:
                 raise ValueError(
-                    "`type: input` requires `role: null`. Definition of `role` can be omitted in this case."
+                    "Define role only if `type` is `pattern` or `None`"
                 )
         return values
 

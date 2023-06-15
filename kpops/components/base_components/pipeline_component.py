@@ -185,7 +185,7 @@ class PipelineComponent(BaseDefaultsComponent):
                 self.set_output_topic(name)
             case OutputTopicTypes.ERROR:
                 self.set_error_topic(name)
-            case OutputTopicTypes.EXTRA if topic.role:
+            case None:
                 self.add_extra_output_topic(name, topic.role)
 
     def weave_from_topics(

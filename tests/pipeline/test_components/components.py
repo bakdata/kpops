@@ -59,7 +59,7 @@ class InflateStep(StreamsApp):
                                     type=OutputTopicTypes.OUTPUT
                                 ),
                                 "${component_name}": TopicConfig(
-                                    type=OutputTopicTypes.EXTRA, role="test"
+                                    type=None, role="test"
                                 ),
                             }
                         ),

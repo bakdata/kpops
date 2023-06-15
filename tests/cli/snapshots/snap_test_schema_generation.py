@@ -98,7 +98,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "description": "Input topic",
             "properties": {
                 "role": {
-                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`. When `role` is defined, `type: pattern` is equal to `type: extra-pattern`",
+                    "description": "Custom identifier belonging to a topic; provide only if `type` is `pattern` or `None`",
                     "title": "Role",
                     "type": "string"
                 },
@@ -124,11 +124,10 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "string"
         },
         "OutputTopicTypes": {
-            "description": "Types of output topic\\n\\nError (error topic), output (output topic), and extra topics. Every extra topic must have a role.",
+            "description": "Types of output topic\\n\\nOUTPUT (output topic)\\nError (error topic)",
             "enum": [
-                "error",
                 "output",
-                "extra"
+                "error"
             ],
             "title": "OutputTopicTypes",
             "type": "string"
@@ -364,7 +363,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "integer"
                 },
                 "role": {
-                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+                    "description": "Custom identifier belonging to one or multiple topics, define only if `type` is undefined",
                     "title": "Role",
                     "type": "string"
                 },
@@ -377,7 +376,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "description": "Topic type"
                 },
                 "valueSchema": {
-                    "description": "Value schema class name",
                     "title": "Valueschema",
                     "type": "string"
                 }

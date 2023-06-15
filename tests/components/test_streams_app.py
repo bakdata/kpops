@@ -144,7 +144,7 @@ class TestStreamsApp:
         assert "extraInputPatterns" not in streams_config
 
     def test_should_validate(self, config: PipelineConfig, handlers: ComponentHandlers):
-        # An exception should be raised when both role and type are defined and type is not extra
+        # An exception should be raised when both role and type are defined and type is input
         with pytest.raises(ValueError):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
@@ -159,6 +159,28 @@ class TestStreamsApp:
                         "topics": {
                             "topic-input": {
                                 "type": "input",
+                                "role": "role",
+                            }
+                        }
+                    },
+                },
+            )
+
+        # An exception should be raised when both role and type are defined and type is error
+        with pytest.raises(ValueError):
+            StreamsApp(
+                name=self.STREAMS_APP_NAME,
+                config=config,
+                handlers=handlers,
+                **{
+                    "namespace": "test-namespace",
+                    "app": {
+                        "streams": {"brokers": "fake-broker:9092"},
+                    },
+                    "to": {
+                        "topics": {
+                            "topic-input": {
+                                "type": "error",
                                 "role": "role",
                             }
                         }
@@ -187,12 +209,10 @@ class TestStreamsApp:
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="first-extra-topic",
                             partitions_count=10,
                         ),
                         "extra-topic-2": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="second-extra-topic",
                             partitions_count=10,
                         ),
@@ -263,12 +283,10 @@ class TestStreamsApp:
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="first-extra-topic",
                             partitions_count=10,
                         ),
                         "extra-topic-2": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="second-extra-topic",
                             partitions_count=10,
                         ),
