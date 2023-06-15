@@ -32,7 +32,7 @@ class SchemaHandler:
                 raise ValueError(
                     f"The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your {SchemaProvider.__name__} implementation exists."
                 )
-            schema_provider_class = find_class(self.components_module, SchemaProvider)  # type: ignore[type-abstract]
+            schema_provider_class = find_class(self.components_module, SchemaProvider)
             return schema_provider_class()  # pyright: ignore[reportGeneralTypeIssues]
         except ClassNotFoundError:
             raise ValueError(

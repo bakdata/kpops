@@ -31,7 +31,7 @@ class PipelineComponentNoSchemaType(EmptyPipelineComponent):
 
 class SubPipelineComponent(EmptyPipelineComponent):
     type: str = "sub-pipeline-component"
-    schema_type: Literal["sub-pipeline-component"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["sub-pipeline-component"] = Field(
         default="sub-pipeline-component", exclude=True
     )
 
@@ -49,13 +49,15 @@ class SubPipelineComponentNoSchemaTypeNoType(SubPipelineComponent):
 # schema_type not Literal
 class SubPipelineComponentBadSchemaTypeDef(SubPipelineComponent):
     type: str = "sub-pipeline-component-bad-schema-type-def"
-    schema_type: str = "sub-pipeline-component-bad-schema-type-def"  # type: ignore [assignment]
+    schema_type: str = "sub-pipeline-component-bad-schema-type-def"
 
 
 # schema_type Literal arg not same as default value
 class SubPipelineComponentBadSchemaTypeNoMatchDefault(SubPipelineComponent):
     type: str = "sub-pipeline-component-bad-schema-type-no-match-default"
-    schema_type: Literal["sub-pipeline-component-bad-schema-type-no-match-default-NO-MATCH"] = Field(  # type: ignore[assignment]
+    schema_type: Literal[
+        "sub-pipeline-component-bad-schema-type-no-match-default-NO-MATCH"
+    ] = Field(
         default="sub-pipeline-component-bad-schema-type-no-match-default", exclude=True
     )
 
@@ -63,7 +65,9 @@ class SubPipelineComponentBadSchemaTypeNoMatchDefault(SubPipelineComponent):
 # schema_type not matching type
 class SubPipelineComponentBadSchemaTypeDefNotMatching(SubPipelineComponent):
     type: str = "sub-pipeline-component-not-matching"
-    schema_type: Literal["sub-pipeline-component-bad-schema-type-def-not-matching"] = Field(  # type: ignore[assignment]
+    schema_type: Literal[
+        "sub-pipeline-component-bad-schema-type-def-not-matching"
+    ] = Field(
         default="sub-pipeline-component-bad-schema-type-def-not-matching", exclude=True
     )
 
@@ -71,15 +75,15 @@ class SubPipelineComponentBadSchemaTypeDefNotMatching(SubPipelineComponent):
 # schema_type no default
 class SubPipelineComponentBadSchemaTypeMissingDefault(SubPipelineComponent):
     type: str = "sub-pipeline-component-bad-schema-type-default-not-set"
-    schema_type: Literal["sub-pipeline-component-bad-schema-type-default-not-set"] = Field(  # type: ignore[assignment]
-        exclude=True
-    )
+    schema_type: Literal[
+        "sub-pipeline-component-bad-schema-type-default-not-set"
+    ] = Field(exclude=True)
 
 
 # Correctly defined
 class SubPipelineComponentCorrect(SubPipelineComponent):
     type: str = "sub-pipeline-component-correct"
-    schema_type: Literal["sub-pipeline-component-correct"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["sub-pipeline-component-correct"] = Field(
         default="sub-pipeline-component-correct", exclude=True
     )
 
@@ -116,7 +120,7 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
         description=describe_attr("type", __doc__),
         const=True,
     )
-    schema_type: Literal["sub-pipeline-component-correct-docstr"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["sub-pipeline-component-correct-docstr"] = Field(
         default="sub-pipeline-component-correct-docstr",
         description=describe_object(__doc__),
         exclude=True,

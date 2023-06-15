@@ -13,6 +13,11 @@ from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
 
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
+
 if TYPE_CHECKING:
     from kpops.cli.pipeline_config import PipelineConfig
 
@@ -143,9 +148,7 @@ class KafkaConnectHandler:
             )
 
     @classmethod
-    def from_pipeline_config(
-        cls, pipeline_config: PipelineConfig
-    ) -> KafkaConnectHandler:  # TODO: annotate as typing.Self once mypy supports it
+    def from_pipeline_config(cls, pipeline_config: PipelineConfig) -> Self:
         return cls(
             connect_wrapper=ConnectWrapper(host=pipeline_config.kafka_connect_host),
             timeout=pipeline_config.timeout,

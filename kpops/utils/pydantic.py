@@ -9,7 +9,7 @@ from kpops.utils.docstring import describe_object
 def to_camel(field: str) -> str:
     if field == "schema_type":
         return field
-    return humps.camelize(field)  # type: ignore
+    return humps.camelize(field)
 
 
 class CamelCaseConfig(BaseConfig):
@@ -19,5 +19,5 @@ class CamelCaseConfig(BaseConfig):
 
 class DescConfig(BaseConfig):
     @staticmethod
-    def schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:  # type: ignore[override]
+    def schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
         schema["description"] = describe_object(model.__doc__)
