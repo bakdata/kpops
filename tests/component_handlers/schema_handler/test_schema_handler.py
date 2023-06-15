@@ -57,6 +57,21 @@ def schema_registry_mock(mocker: MockerFixture) -> MagicMock:
     return schema_registry_mock.return_value
 
 
+@pytest.fixture()
+def topic_config() -> TopicConfig:
+    return TopicConfig(
+        type=OutputTopicTypes.OUTPUT,
+        # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
+        key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
+        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",  # pyright: ignore[reportGeneralTypeIssues]
+    ).copy()
+
+
+@pytest.fixture()
+def to_section(topic_config: TopicConfig) -> ToSection:
+    return ToSection(topics={"topic-X": topic_config}).copy()
+
+
 def test_load_schema_handler():
     config_enable = PipelineConfig(
         defaults_path=Path("fake"),
@@ -149,18 +164,11 @@ def test_should_raise_value_error_when_schema_provider_is_called_and_components_
 
 
 def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
-    log_info_mock: MagicMock, schema_registry_mock: MagicMock
+    to_section: ToSection, log_info_mock: MagicMock, schema_registry_mock: MagicMock
 ):
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
-        key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
-        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",  # pyright: ignore[reportGeneralTypeIssues]
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
 
     schema_registry_mock.get_versions.return_value = []
 
@@ -173,18 +181,14 @@ def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
 
 
 def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
-    log_info_mock: MagicMock, schema_registry_mock: MagicMock
+    topic_config: TopicConfig,
+    to_section: ToSection,
+    log_info_mock: MagicMock,
+    schema_registry_mock: MagicMock,
 ):
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
-        key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
-        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",  # pyright: ignore[reportGeneralTypeIssues]
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
 
     schema_registry_mock.get_versions.return_value = [1, 2, 3]
     schema_registry_mock.check_version.return_value = None
@@ -199,6 +203,8 @@ def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
 
 
 def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatible_and_dry_run_true(
+    topic_config: TopicConfig,
+    to_section: ToSection,
     schema_registry_mock: MagicMock,
 ):
     schema_provider = TestSchemaProvider()
@@ -206,13 +212,6 @@ def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatibl
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
-        key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
-        value_schema=schema_class,  # pyright: ignore[reportGeneralTypeIssues]
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
 
     schema_registry_mock.get_versions.return_value = [1, 2, 3]
     schema_registry_mock.check_version.return_value = None
@@ -242,20 +241,17 @@ def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatibl
 
 
 def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_version_and_dry_run_true(
-    log_info_mock: MagicMock, log_debug_mock: MagicMock, schema_registry_mock: MagicMock
+    topic_config: TopicConfig,
+    to_section: ToSection,
+    log_info_mock: MagicMock,
+    log_debug_mock: MagicMock,
+    schema_registry_mock: MagicMock,
 ):
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
-        key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
-        value_schema=schema_class,  # pyright: ignore[reportGeneralTypeIssues]
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
     schema = schema_provider.provide_schema(schema_class, {})
     registered_version = SchemaVersion(topic_config.value_schema, 1, schema, 1)
 
@@ -280,7 +276,10 @@ def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_ve
 
 
 def test_should_submit_non_existing_schema_when_not_dry(
-    log_info_mock: MagicMock, schema_registry_mock: MagicMock
+    topic_config: TopicConfig,
+    to_section: ToSection,
+    log_info_mock: MagicMock,
+    schema_registry_mock: MagicMock,
 ):
     schema_provider = TestSchemaProvider()
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
@@ -288,13 +287,6 @@ def test_should_submit_non_existing_schema_when_not_dry(
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
-        key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
-        value_schema=schema_class,  # pyright: ignore[reportGeneralTypeIssues]
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
 
     schema_registry_mock.get_versions.return_value = []
 
@@ -312,18 +304,13 @@ def test_should_submit_non_existing_schema_when_not_dry(
 
 
 def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
-    log_info_mock: MagicMock, schema_registry_mock: MagicMock
+    to_section: ToSection,
+    log_info_mock: MagicMock,
+    schema_registry_mock: MagicMock,
 ):
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
-        key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
-        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",  # pyright: ignore[reportGeneralTypeIssues]
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
 
     schema_registry_mock.get_versions.return_value = []
 
@@ -336,17 +323,12 @@ def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     schema_registry_mock.delete_subject.assert_not_called()
 
 
-def test_should_delete_schemas_when_not_in_dry_run(schema_registry_mock: MagicMock):
+def test_should_delete_schemas_when_not_in_dry_run(
+    to_section: ToSection, schema_registry_mock: MagicMock
+):
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
-        key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
-        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",  # pyright: ignore[reportGeneralTypeIssues]
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
 
     schema_registry_mock.get_versions.return_value = []
 
