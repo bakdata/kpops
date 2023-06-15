@@ -106,7 +106,7 @@ class TestKafkaSinkConnector:
             handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
-            from_=FromSection(
+            from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                 topics={
                     topic1: FromTopic(type=InputTopicTypes.INPUT),
                     topic2: FromTopic(type=InputTopicTypes.INPUT),
@@ -129,7 +129,7 @@ class TestKafkaSinkConnector:
             handlers=handlers,
             app=KafkaConnectConfig(),
             namespace="test-namespace",
-            from_=FromSection(
+            from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                 topics={topic_pattern: FromTopic(type=InputTopicTypes.INPUT_PATTERN)}
             ),
         )

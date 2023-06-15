@@ -75,7 +75,7 @@ class TestKafkaSourceConnector:
                 handlers=handlers,
                 app=KafkaConnectConfig(),
                 namespace="test-namespace",
-                from_=FromSection(
+                from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                     topics={
                         TopicName("connector-topic"): FromTopic(
                             type=InputTopicTypes.INPUT
