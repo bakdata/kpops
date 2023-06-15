@@ -24,5 +24,5 @@ class TestExample:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "atm-fraud-pipeline")
