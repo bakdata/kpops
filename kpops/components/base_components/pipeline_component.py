@@ -155,7 +155,9 @@ class PipelineComponent(BaseDefaultsComponent):
         """
         match topic.type:
             case None:
-                self.add_extra_input_topic(topic.role, [name])
+                self.add_extra_input_topic(
+                    topic.role, [name]  # pyright: ignore [reportGeneralTypeIssues]
+                )
             case InputTopicTypes.INPUT:
                 self.add_input_topics([name])
             case InputTopicTypes.PATTERN if topic.role:
@@ -186,7 +188,9 @@ class PipelineComponent(BaseDefaultsComponent):
             case OutputTopicTypes.ERROR:
                 self.set_error_topic(name)
             case None:
-                self.add_extra_output_topic(name, topic.role)
+                self.add_extra_output_topic(
+                    name, topic.role  # pyright: ignore [reportGeneralTypeIssues]
+                )
 
     def weave_from_topics(
         self,

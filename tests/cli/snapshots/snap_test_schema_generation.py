@@ -98,7 +98,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "description": "Input topic",
             "properties": {
                 "role": {
-                    "description": "Custom identifier belonging to a topic; provide only if `type` is `pattern` or `None`",
+                    "description": "Custom identifier belonging to a topic; define only if `type` is `pattern` or `None`",
                     "title": "Role",
                     "type": "string"
                 },
@@ -115,7 +115,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "object"
         },
         "InputTopicTypes": {
-            "description": "Input topic types\\n\\ninput (input topic), input_pattern (input pattern topic), extra (extra topic), extra_pattern (extra pattern topic).\\nEvery extra topic must have a role.",
+            "description": "Input topic types\\n\\nINPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)",
             "enum": [
                 "input",
                 "pattern"
@@ -124,7 +124,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "string"
         },
         "OutputTopicTypes": {
-            "description": "Types of output topic\\n\\nOUTPUT (output topic)\\nError (error topic)",
+            "description": "Types of output topic\\n\\nOUTPUT (output topic), ERROR (error topic)",
             "enum": [
                 "output",
                 "error"

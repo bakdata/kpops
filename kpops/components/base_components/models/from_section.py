@@ -46,9 +46,7 @@ class FromTopic(BaseModel):
                 values["type"] = InputTopicTypes.INPUT
                 return values
             case InputTopicTypes.INPUT, True:
-                raise ValueError(
-                    "Define role only if `type` is `pattern` or `None`"
-                )
+                raise ValueError("Define role only if `type` is `pattern` or `None`")
         return values
 
 
