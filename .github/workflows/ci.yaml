@@ -42,6 +42,9 @@ jobs:
       - name: Typing (mypy)
         run: poetry run pre-commit run mypy --all-files
 
+      - name: Typing (pyright)
+        run: poetry run pre-commit run pyright --all-files
+
       - name: Generate schema (kpops schema)
         run: poetry run pre-commit run gen-schema --all-files --show-diff-on-failure
 

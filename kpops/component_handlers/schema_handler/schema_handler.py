@@ -5,6 +5,7 @@ import logging
 from functools import cached_property
 
 from schema_registry.client import SchemaRegistryClient
+from schema_registry.client.schema import AvroSchema
 
 from kpops.cli.exception import ClassNotFoundError
 from kpops.cli.pipeline_config import PipelineConfig
@@ -32,7 +33,7 @@ class SchemaHandler:
                     f"The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your {SchemaProvider.__name__} implementation exists."
                 )
             schema_provider_class = find_class(self.components_module, SchemaProvider)  # type: ignore[type-abstract]
-            return schema_provider_class()
+            return schema_provider_class()  # pyright: ignore[reportGeneralTypeIssues]
         except ClassNotFoundError:
             raise ValueError(
                 f"No schema provider found in components module {self.components_module}. "
@@ -138,8 +139,13 @@ class SchemaHandler:
             if not self.schema_registry_client.test_compatibility(
                 subject=subject, schema=schema
             ):
+                schema_str = (
+                    schema.flat_schema
+                    if isinstance(schema, AvroSchema)
+                    else str(schema)
+                )
                 raise Exception(
-                    f"Schema is not compatible for {subject} and model {schema_class}. \n {json.dumps(schema.flat_schema, indent=4)}"
+                    f"Schema is not compatible for {subject} and model {schema_class}. \n {json.dumps(schema_str, indent=4)}"
                 )
         else:
             log.debug(

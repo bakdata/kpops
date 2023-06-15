@@ -934,6 +934,24 @@ markdown = ">=3.2"
 pyyaml = "*"
 
 [[package]]
+name = "pyright"
+version = "1.1.314"
+description = "Command line wrapper for pyright"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "pyright-1.1.314-py3-none-any.whl", hash = "sha256:5008a2e04b71e35c5f1b78b16adae9d012601197442ae6c798e9bb3456d1eecb"},
+    {file = "pyright-1.1.314.tar.gz", hash = "sha256:bd104c206fe40eaf5f836efa9027f07cc0efcbc452e6d22dfae36759c5fd28b3"},
+]
+
+[package.dependencies]
+nodeenv = ">=1.6.0"
+
+[package.extras]
+all = ["twine (>=3.4.1)"]
+dev = ["twine (>=3.4.1)"]
+
+[[package]]
 name = "pyrsistent"
 version = "0.19.2"
 description = "Persistent/Functional/Immutable data structures"
@@ -1620,4 +1638,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "fc1e50461f83005d3f32ef7fa8b37e071666274161cde78827766e434307d2e9"
+content-hash = "961df9b75500b501859c1e649605c171bc13d8deeb46f00ac58dc7810d30bb1e"

@@ -18,6 +18,7 @@ from kpops.component_handlers.topic.model import (
     TopicResponse,
     TopicSpec,
 )
+from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -101,7 +102,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.create_topics(to_section=to_section, dry_run=False)
 
@@ -130,7 +131,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "delete", "delete.retention.ms": "123456789"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.create_topics(to_section=to_section, dry_run=False)
 
@@ -157,7 +158,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "delete", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.create_topics(to_section=to_section, dry_run=False)
 
@@ -179,7 +180,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.create_topics(to_section=to_section, dry_run=False)
 
@@ -200,7 +201,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"compression.type": "gzip", "cleanup.policy": "compact"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.create_topics(to_section=to_section, dry_run=False)
 
@@ -222,7 +223,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.create_topics(to_section=to_section, dry_run=False)
 
@@ -243,7 +244,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.create_topics(to_section=to_section, dry_run=True)
 
@@ -264,7 +265,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.create_topics(to_section=to_section, dry_run=True)
 
@@ -289,7 +290,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.create_topics(to_section=to_section, dry_run=True)
         wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
@@ -323,7 +324,7 @@ class TestTopicHandler:
             type=OutputTopicTypes.OUTPUT,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.create_topics(to_section=to_section, dry_run=True)
         wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
@@ -361,7 +362,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         with pytest.raises(
             TopicTransactionError,
@@ -383,7 +384,7 @@ class TestTopicHandler:
             replication_factor=300,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         with pytest.raises(
             TopicTransactionError,
@@ -405,7 +406,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.delete_topics(to_section, True)
 
@@ -430,7 +431,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.delete_topics(to_section, True)
 
@@ -449,7 +450,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
 
         topic_handler.delete_topics(to_section, False)
 
@@ -472,7 +473,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        to_section = ToSection(topics={"topic-X": topic_config})
+        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
         topic_handler.delete_topics(to_section, False)
 
         wrapper.get_topic.assert_called_once_with(topic_name="topic-X")
