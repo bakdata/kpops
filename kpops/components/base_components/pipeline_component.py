@@ -46,7 +46,7 @@ class PipelineComponent(BaseDefaultsComponent):
         description=describe_attr("type", __doc__),
         const=True,
     )
-    schema_type: Literal["pipeline-component"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["pipeline-component"] = Field(
         default="pipeline-component",
         title="Component type",
         description=describe_object(__doc__),
@@ -76,7 +76,7 @@ class PipelineComponent(BaseDefaultsComponent):
         extra = Extra.allow
         keep_untouched = (cached_property,)
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
         self.set_input_topics()
         self.set_output_topics()

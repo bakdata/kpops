@@ -28,7 +28,7 @@ class StreamsApp(KafkaApp):
         default="streams-app",
         description=describe_attr("type", __doc__),
     )
-    schema_type: Literal["streams-app"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["streams-app"] = Field(
         default="streams-app",
         title="Component type",
         description=describe_object(__doc__),
@@ -41,9 +41,6 @@ class StreamsApp(KafkaApp):
 
     class Config(DescConfig):
         extra = Extra.allow
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:

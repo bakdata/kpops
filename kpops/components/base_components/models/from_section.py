@@ -3,6 +3,7 @@ from typing import NewType
 
 from pydantic import BaseModel, Extra, Field, root_validator
 
+from kpops.components.base_components.models import TopicName
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfig
 
@@ -51,7 +52,6 @@ class FromTopic(BaseModel):
         return values
 
 
-TopicName = NewType("TopicName", str)
 ComponentName = NewType("ComponentName", str)
 
 

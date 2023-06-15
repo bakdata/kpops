@@ -56,7 +56,7 @@ class KubernetesApp(PipelineComponent):
         default="kubernetes-app",
         description=describe_attr("type", __doc__),
     )
-    schema_type: Literal["kubernetes-app"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["kubernetes-app"] = Field(
         default="kubernetes-app",
         title="Component type",
         description=describe_object(__doc__),

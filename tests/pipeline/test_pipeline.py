@@ -32,7 +32,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
@@ -53,7 +53,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
         assert (
             enriched_pipeline["components"][0]["name"]
@@ -77,7 +77,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_inflate_pipeline(self, snapshot: SnapshotTest):
@@ -97,7 +97,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_substitute_in_component(self, snapshot: SnapshotTest):
@@ -117,9 +117,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
-
-        assert isinstance(enriched_pipeline, dict)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline["components"][0]["name"]
             == "resources-component-type-substitution-scheduled-producer"
@@ -187,9 +185,7 @@ class TestPipeline:
             ],
             catch_exceptions=False,
         )
-        enriched_pipeline = yaml.safe_load(result.stdout)
-
-        assert isinstance(enriched_pipeline, dict)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         sink_connector = enriched_pipeline["components"][0]
         assert (
             sink_connector["app"]["errors.deadletterqueue.topic.name"]
@@ -213,7 +209,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_no_user_defined_components(self, snapshot: SnapshotTest):
@@ -232,7 +228,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_kafka_connect_sink_weave_from_topics(self, snapshot: SnapshotTest):
@@ -252,7 +248,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_read_from_component(self, snapshot: SnapshotTest):
@@ -272,7 +268,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_with_env_defaults(self, snapshot: SnapshotTest):
@@ -291,7 +287,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_prefix_pipeline_component(self, snapshot: SnapshotTest):
@@ -313,7 +309,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_with_custom_config_with_relative_defaults_path(
@@ -334,9 +330,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
-        assert isinstance(enriched_pipeline, dict)
-
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline["components"][0]
         output_topic = producer_details["app"]["streams"]["outputTopic"]
         assert output_topic == "app1-test-topic"
@@ -353,7 +347,7 @@ class TestPipeline:
         self, snapshot: SnapshotTest
     ):
         with open(RESOURCE_PATH / "custom-config/config.yaml", "r") as rel_config_yaml:
-            config_dict = yaml.safe_load(rel_config_yaml)
+            config_dict: dict = yaml.safe_load(rel_config_yaml)
         config_dict["defaults_path"] = str(
             (RESOURCE_PATH / "no-topics-defaults").absolute()
         )
@@ -376,9 +370,7 @@ class TestPipeline:
 
             assert result.exit_code == 0
 
-            enriched_pipeline = yaml.safe_load(result.stdout)
-            assert isinstance(enriched_pipeline, dict)
-
+            enriched_pipeline: dict = yaml.safe_load(result.stdout)
             producer_details = enriched_pipeline["components"][0]
             output_topic = producer_details["app"]["streams"]["outputTopic"]
             assert output_topic == "app1-test-topic"
@@ -409,9 +401,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
-        assert isinstance(enriched_pipeline, dict)
-
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline["components"][0]
         output_topic = producer_details["app"]["streams"]["outputTopic"]
         assert output_topic == "resources-custom-config-app1"
@@ -441,7 +431,7 @@ class TestPipeline:
 
         assert result.exit_code == 0
 
-        enriched_pipeline = yaml.safe_load(result.stdout)
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_short_topic_definition(self):
