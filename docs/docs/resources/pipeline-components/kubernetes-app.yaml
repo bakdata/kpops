@@ -12,25 +12,23 @@
   from:
     topics: # required
       ${pipeline_name}-input-topic:
-        # type: input # Implied when role is NOT specified
+        type: input # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
       ${pipeline_name}-extra-topic:
-        # type: extra # Implied when role is specified
-        role: topic-role
+        role: topic-role # Implies `type` to be extra
       ${pipeline_name}-input-pattern-topic:
-        type: pattern # Implied that type is input-pattern when role is NOT specified
+        type: pattern # Implied to be an input pattern if `role` is undefined
       ${pipeline_name}-extra-pattern-topic:
-        type: pattern # Implied that type is extra-pattern when role is specified
+        type: pattern # Implied to be an extra pattern if `role` undefined
         role: some-role
     components: # read from specific component
       account-producer:
-        # type: output # Implied when role is NOT specified
+        type: output # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
       other-producer:
-        # type: extra # Implied when role is specified
-        role: some-role 
+        role: some-role # Implies `type` to be extra
       component-as-input-pattern:
-        type: pattern # Implied that type is input-pattern when role is NOT specified
+        type: pattern # Implied to be an input pattern if `role` is undefined
       component-as-extra-pattern:
-        type: pattern # Implied that type is extra-pattern when role is specified
+        type: pattern # Implied to be an extra pattern if `role` undefined
         role: some-role
   # Topic(s) into which the component will write output
   to:
@@ -38,7 +36,7 @@
       ${pipeline_name}-output-topic:
         type: output # Implied when role is NOT specified
       ${pipeline_name}-extra-topic:
-        role: topic-role # Implies `type: extra`; Will throw an error if another type is defined
+        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
       ${pipeline_name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.

@@ -20,7 +20,7 @@
       ${pipeline_name}-output-topic:
         type: output # Implied when role is NOT specified
       ${pipeline_name}-extra-topic:
-        role: topic-role # Implies `type: extra`; Will throw an error if another type is defined
+        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
       ${pipeline_name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.
