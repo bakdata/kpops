@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Self
 
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import (
@@ -143,9 +143,7 @@ class KafkaConnectHandler:
             )
 
     @classmethod
-    def from_pipeline_config(
-        cls, pipeline_config: PipelineConfig
-    ) -> KafkaConnectHandler:  # TODO: annotate as typing.Self once mypy supports it
+    def from_pipeline_config(cls, pipeline_config: PipelineConfig) -> Self:
         return cls(
             connect_wrapper=ConnectWrapper(host=pipeline_config.kafka_connect_host),
             timeout=pipeline_config.timeout,

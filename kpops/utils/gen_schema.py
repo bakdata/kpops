@@ -93,9 +93,7 @@ def _add_components(
     :rtype: tuple
     """
     if components is None:
-        components = tuple()  # type: ignore[assignment]
-    # HACK: mypy doesn't narrow the tuple's type without this assertion
-    assert components is not None
+        components = tuple()
     # Set of existing types, against which to check the new ones
     defined_component_types: set[str] = {
         component.__fields__["schema_type"].default
@@ -107,7 +105,7 @@ def _add_components(
         for component in _find_classes(components_module, PipelineComponent)
         if _is_valid_component(defined_component_types, component)
     ]
-    components += tuple(custom_components)  # type: ignore[assignment]
+    components += tuple(custom_components)
     return components
 
 
