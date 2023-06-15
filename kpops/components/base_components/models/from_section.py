@@ -43,10 +43,9 @@ class FromTopic(BaseModel):
     @root_validator
     def extra_topic_role(cls, values: dict) -> dict:
         """Ensure that cls.role is used correctly, assign type if needed"""
-        type_ = values.get("type", None)
-        role = values.get("role", None) is not None
+        has_role = values["role"] is not None
         # Assign type
-        match type_, role:
+        match values["type"], has_role:
             case None, False:
                 values["type"] = InputTopicTypes.INPUT
                 return values
@@ -59,22 +58,20 @@ class FromTopic(BaseModel):
             case InputTopicTypes.PATTERN, True:
                 values["type"] = InputTopicTypes.EXTRA_PATTERN
                 return values
-            case _, _:
-                is_input_topic = values["type"] not in (
-                    InputTopicTypes.EXTRA,
-                    InputTopicTypes.EXTRA_PATTERN,
-                )
-        match is_input_topic, role:
-            case True, True:
+
+        is_extra_topic = values["type"] in (
+            InputTopicTypes.EXTRA,
+            InputTopicTypes.EXTRA_PATTERN,
+        )
+        match is_extra_topic, has_role:
+            case True, False:
                 raise ValueError(
                     "If you define an extra input component, extra input topic, or extra input pattern, you have to define a role."
                 )
-            case False, False:
+            case False, True:
                 raise ValueError(
                     "If you do not define an extra input component, input topic, or input pattern, the role is unnecessary."
                 )
-            case _, _:
-                return values
         return values
 
 
