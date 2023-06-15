@@ -22,10 +22,8 @@ class FromTopic(BaseModel):
     """Input topic
 
     :param type: Topic type, defaults to None
-    :type type: InputTopicTypes | None, optional
     :param role: Custom identifier belonging to a topic;
         define only if `type` is `pattern` or `None`, defaults to None
-    :type role: str | None, optional
     """
 
     type: InputTopicTypes | None = Field(
