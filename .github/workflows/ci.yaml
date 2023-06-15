@@ -39,9 +39,6 @@ jobs:
       - name: Formatting (black)
         run: poetry run pre-commit run black --all-files --show-diff-on-failure
 
-      - name: Typing (mypy)
-        run: poetry run pre-commit run mypy --all-files
-
       - name: Typing (pyright)
         run: poetry run pre-commit run pyright --all-files
 
