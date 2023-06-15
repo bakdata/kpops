@@ -64,12 +64,12 @@ def topic_config() -> TopicConfig:
         # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
         key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
         value_schema="com.bakdata.kpops.test.SchemaHandlerTest",  # pyright: ignore[reportGeneralTypeIssues]
-    ).copy()
+    )
 
 
 @pytest.fixture()
 def to_section(topic_config: TopicConfig) -> ToSection:
-    return ToSection(topics={"topic-X": topic_config}).copy()
+    return ToSection(topics={"topic-X": topic_config})
 
 
 def test_load_schema_handler():
