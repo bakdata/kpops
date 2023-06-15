@@ -275,8 +275,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'from': {
                 'components': {
                     'account-producer': {
-                        'role': 'accounts',
-                        'type': 'extra'
+                        'role': 'accounts'
                     },
                     'fraud-detector': {
                         'type': 'input'

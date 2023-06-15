@@ -473,18 +473,18 @@ class TestPipeline:
         assert output_topics["extra-topic"]["role"] == "role"
 
         assert input_topics["input-topic"]["type"] == "input"
-        assert input_topics["extra-topic"]["type"] == "extra"
-        assert input_topics["input-pattern"]["type"] == "input-pattern"
-        assert input_topics["extra-pattern"]["type"] == "extra-pattern"
+        assert "type" not in input_topics["extra-topic"]
+        assert input_topics["input-pattern"]["type"] == "pattern"
+        assert input_topics["extra-pattern"]["type"] == "pattern"
         assert "role" not in input_topics["input-topic"]
         assert "role" not in input_topics["input-pattern"]
         assert input_topics["extra-topic"]["role"] == "role"
         assert input_topics["extra-pattern"]["role"] == "role"
 
         assert input_components["component-input"]["type"] == "input"
-        assert input_components["component-extra"]["type"] == "extra"
-        assert input_components["component-input-pattern"]["type"] == "input-pattern"
-        assert input_components["component-extra-pattern"]["type"] == "extra-pattern"
+        assert "type" not in input_components["component-extra"]
+        assert input_components["component-input-pattern"]["type"] == "pattern"
+        assert input_components["component-extra-pattern"]["type"] == "pattern"
         assert "role" not in input_components["component-input"]
         assert "role" not in input_components["component-input-pattern"]
         assert input_components["component-extra"]["role"] == "role"

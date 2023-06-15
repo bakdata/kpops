@@ -753,7 +753,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                 },
                 'topics': {
                     '.*': {
-                        'type': 'input-pattern'
+                        'type': 'pattern'
                     }
                 }
             },

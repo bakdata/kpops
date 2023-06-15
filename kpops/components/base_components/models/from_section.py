@@ -15,10 +15,7 @@ class InputTopicTypes(str, Enum):
     """
 
     INPUT = "input"
-    EXTRA = "extra"
     PATTERN = "pattern"
-    INPUT_PATTERN = "input-pattern"
-    EXTRA_PATTERN = "extra-pattern"
 
 
 class FromTopic(BaseModel):
@@ -43,34 +40,14 @@ class FromTopic(BaseModel):
     @root_validator
     def extra_topic_role(cls, values: dict) -> dict:
         """Ensure that cls.role is used correctly, assign type if needed"""
-        has_role = values["role"] is not None
-        # Assign type
+        has_role = bool(values["role"])
         match values["type"], has_role:
             case None, False:
                 values["type"] = InputTopicTypes.INPUT
                 return values
-            case None, True:
-                values["type"] = InputTopicTypes.EXTRA
-                return values
-            case InputTopicTypes.PATTERN, False:
-                values["type"] = InputTopicTypes.INPUT_PATTERN
-                return values
-            case InputTopicTypes.PATTERN, True:
-                values["type"] = InputTopicTypes.EXTRA_PATTERN
-                return values
-
-        is_extra_topic = values["type"] in (
-            InputTopicTypes.EXTRA,
-            InputTopicTypes.EXTRA_PATTERN,
-        )
-        match is_extra_topic, has_role:
-            case True, False:
+            case InputTopicTypes.INPUT, True:
                 raise ValueError(
-                    "If you define an extra input component, extra input topic, or extra input pattern, you have to define a role."
-                )
-            case False, True:
-                raise ValueError(
-                    "If you do not define an extra input component, input topic, or input pattern, the role is unnecessary."
+                    "`type: input` requires `role: null`. Definition of `role` can be omitted in this case."
                 )
         return values
 

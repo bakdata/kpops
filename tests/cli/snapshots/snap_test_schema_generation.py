@@ -118,10 +118,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "description": "Input topic types\\n\\ninput (input topic), input_pattern (input pattern topic), extra (extra topic), extra_pattern (extra pattern topic).\\nEvery extra topic must have a role.",
             "enum": [
                 "input",
-                "extra",
-                "pattern",
-                "input-pattern",
-                "extra-pattern"
+                "pattern"
             ],
             "title": "InputTopicTypes",
             "type": "string"

@@ -16,21 +16,13 @@ class StreamsConfig(KafkaStreamsConfig):
     """Streams Bootstrap streams section
 
     :param input_topics: Input topics, defaults to []
-    :type input_topics: list[str], optional
     :param input_pattern: Input pattern, defaults to None
-    :type input_pattern: str, optional
     :param extra_input_topics: Extra input topics, defaults to {}
-    :type extra_input_topics: dict[str, list[str]], optional
     :param extra_input_patterns: Extra input patterns, defaults to {}
-    :type extra_input_patterns: dict[str, str], optional
     :param extra_output_topics: Extra output topics, defaults to {}
-    :type extra_output_topics: dict[str, str], optional
     :param output_topic: Output topic, defaults to None
-    :type output_topic: str, optional
     :param error_topic: Error topic, defaults to None
-    :type error_topic: str, optional
     :param config: Configuration, defaults to {}
-    :type config: dict[str, str], optional
     """
 
     input_topics: list[str] = Field(

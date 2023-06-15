@@ -154,14 +154,14 @@ class PipelineComponent(BaseDefaultsComponent):
         :type topic: FromTopic
         """
         match topic.type:
+            case None:
+                self.add_extra_input_topic(topic.role, [name])
             case InputTopicTypes.INPUT:
                 self.add_input_topics([name])
-            case InputTopicTypes.EXTRA if topic.role:
-                self.add_extra_input_topic(topic.role, [name])
-            case InputTopicTypes.INPUT_PATTERN:
-                self.set_input_pattern(name)
-            case InputTopicTypes.EXTRA_PATTERN if topic.role:
+            case InputTopicTypes.PATTERN if topic.role:
                 self.add_extra_input_pattern(topic.role, name)
+            case InputTopicTypes.PATTERN:
+                self.set_input_pattern(name)
 
     def set_output_topics(self) -> None:
         """Put values of config.to into the producer config section of streams bootstrap

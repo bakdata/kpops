@@ -83,12 +83,12 @@ class TestStreamsApp:
                         "example-input": {"type": "input"},
                         "b": {"type": "input"},
                         "a": {"type": "input"},
-                        "topic-extra2": {"type": "extra", "role": "role2"},
-                        "topic-extra3": {"type": "extra", "role": "role2"},
-                        "topic-extra": {"type": "extra", "role": "role1"},
-                        ".*": {"type": "input-pattern"},
+                        "topic-extra2": {"role": "role2"},
+                        "topic-extra3": {"role": "role2"},
+                        "topic-extra": {"role": "role1"},
+                        ".*": {"type": "pattern"},
                         "example.*": {
-                            "type": "extra-pattern",
+                            "type": "pattern",
                             "role": "another-pattern",
                         },
                     }
@@ -107,7 +107,7 @@ class TestStreamsApp:
 
         helm_values = streams_app.to_helm_values()
         streams_config = helm_values["streams"]
-        assert "inputTopics" in streams_config
+        assert streams_config["inputTopics"]
         assert "extraInputTopics" in streams_config
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" in streams_config
@@ -126,7 +126,7 @@ class TestStreamsApp:
                 },
                 "from": {
                     "topics": {
-                        ".*": {"type": "input-pattern"},
+                        ".*": {"type": "pattern"},
                     }
                 },
             },
@@ -144,40 +144,6 @@ class TestStreamsApp:
         assert "extraInputPatterns" not in streams_config
 
     def test_should_validate(self, config: PipelineConfig, handlers: ComponentHandlers):
-        with pytest.raises(ValueError):
-            StreamsApp(
-                name=self.STREAMS_APP_NAME,
-                config=config,
-                handlers=handlers,
-                **{
-                    "namespace": "test-namespace",
-                    "app": {
-                        "streams": {"brokers": "fake-broker:9092"},
-                    },
-                    "from": {
-                        "topics": {
-                            "topic-extra": {
-                                "type": "extra",
-                            }
-                        }
-                    },
-                },
-            )
-
-        with pytest.raises(ValueError):
-            StreamsApp(
-                name=self.STREAMS_APP_NAME,
-                config=config,
-                handlers=handlers,
-                **{
-                    "namespace": "test-namespace",
-                    "app": {
-                        "streams": {"brokers": "fake-broker:9092"},
-                    },
-                    "from": {"topics": {"example.*": {"type": "extra-pattern"}}},
-                },
-            )
-
         # An exception should be raised when both role and type are defined and type is not extra
         with pytest.raises(ValueError):
             StreamsApp(
