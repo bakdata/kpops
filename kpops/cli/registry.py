@@ -51,6 +51,7 @@ def _find_classes(module_name: str, baseclass: type[T]) -> Iterator[type[T]]:
     module = importlib.import_module(module_name)
     for _, _class in inspect.getmembers(module, inspect.isclass):
         if issubclass(_class, baseclass):
+            # filter out internal kpops classes unless specifically requested
             if _class.__module__.startswith("kpops.") and not module_name.startswith(
                 "kpops."
             ):
