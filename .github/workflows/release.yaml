@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-22.04
     uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@v1.22.0
     with:
-      release-type: ${{inputs.release-type}}
+      release-type: ${{ inputs.release-type }}
       poetry-version: "1.5.1"
       changelog: true
       changelog-config: "./.github/changelog-config.json"
