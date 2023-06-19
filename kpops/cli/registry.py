@@ -50,5 +50,9 @@ def find_class(module_name: str, baseclass: type[T]) -> type[T]:
 def _find_classes(module_name: str, baseclass: type[T]) -> Iterator[type[T]]:
     module = importlib.import_module(module_name)
     for _, _class in inspect.getmembers(module, inspect.isclass):
-        if issubclass(_class, baseclass) and module_name in _class.__module__:
+        if issubclass(_class, baseclass):
+            if _class.__module__.startswith("kpops.") and not module_name.startswith(
+                "kpops."
+            ):
+                continue
             yield _class
