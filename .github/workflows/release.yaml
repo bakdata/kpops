@@ -14,34 +14,18 @@ on:
           - major
 
 jobs:
-  release-to-pypi:
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@v1.18.2
-    with:
-      release-type: ${{ github.event.inputs.release-type }}
-      publish-to-test: false
-      python-version: "3.10"
-      poetry-version: "1.3.2"
-    secrets:
-      github-email: ${{ secrets.GH_EMAIL }}
-      github-username: ${{ secrets.GH_USERNAME }}
-      github-token: ${{ secrets.GH_TOKEN }}
-      pypi-token: ${{ secrets.PYPI_TOKEN }}
-
   create-github-release-push-tag:
     runs-on: ubuntu-22.04
-    needs: release-to-pypi
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-        with:
-          persist-credentials: false
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@1.22.0
+    with:
+      release-type: ${{inputs.release-type}}
+      poetry-version: 1.5.1
+      changelog: true
 
-      - name: Tag and release
-        uses: bakdata/ci-templates/.github/workflows/tag-and-release.yaml@feature/split_actions
-        with:
-          tag: v${{ needs.release-to-pypi.outputs.release-tag }}
-          release-text: Release for v${{ needs.release-to-pypi.outputs.release-tag }}
-          release-body: ""
+    secrets:
+      github-username: "${{ secrets.GH_USERNAME }}"
+      github-email: "${{ secrets.GH_EMAIL }}"
+      github-token: "${{ secrets.GH_TOKEN }}"
 
   update-docs:
     runs-on: ubuntu-22.04

@@ -1,0 +1,12 @@
+  release-to-pypi:
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@v1.18.2
+    with:
+      release-type: ${{ github.event.inputs.release-type }}
+      publish-to-test: false
+      python-version: "3.10"
+      poetry-version: "1.3.2"
+    secrets:
+      github-email: ${{ secrets.GH_EMAIL }}
+      github-username: ${{ secrets.GH_USERNAME }}
+      github-token: ${{ secrets.GH_TOKEN }}
+      pypi-token: ${{ secrets.PYPI_TOKEN }}
