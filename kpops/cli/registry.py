@@ -8,8 +8,11 @@ from collections.abc import Iterator
 from dataclasses import dataclass, field
 from typing import TypeVar
 
+from kpops import __name__
 from kpops.cli.exception import ClassNotFoundError
 from kpops.components.base_components.pipeline_component import PipelineComponent
+
+KPOPS_MODULE = __name__ + "."
 
 T = TypeVar("T")
 ClassDict = dict[str, type[T]]  # type -> class
@@ -52,8 +55,8 @@ def _find_classes(module_name: str, baseclass: type[T]) -> Iterator[type[T]]:
     for _, _class in inspect.getmembers(module, inspect.isclass):
         if issubclass(_class, baseclass):
             # filter out internal kpops classes unless specifically requested
-            if _class.__module__.startswith("kpops.") and not module_name.startswith(
-                "kpops."
-            ):
+            if _class.__module__.startswith(
+                KPOPS_MODULE
+            ) and not module_name.startswith(KPOPS_MODULE):
                 continue
             yield _class
