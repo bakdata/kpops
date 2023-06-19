@@ -14,10 +14,10 @@ from rich.syntax import Syntax
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
-from kpops.components.base_components.base_defaults_component import update_nested_pair
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
-from kpops.utils.yaml_loading import load_yaml_file, substitute
+from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
 
 log = logging.getLogger("PipelineGenerator")
 
@@ -27,6 +27,8 @@ class ParsingException(Exception):
 
 
 class PipelineComponents(BaseModel):
+    """Stores the pipeline components"""
+
     components: list[PipelineComponent] = []
 
     @property
@@ -46,7 +48,7 @@ class PipelineComponents(BaseModel):
     def __bool__(self) -> bool:
         return bool(self.components)
 
-    def __iter__(self) -> Iterator[PipelineComponent]:  # type: ignore[override]
+    def __iter__(self) -> Iterator[PipelineComponent]:
         return iter(self.components)
 
     @staticmethod
@@ -62,23 +64,20 @@ class PipelineComponents(BaseModel):
 def create_env_components_index(
     environment_components: list[dict],
 ) -> dict[str, dict]:
-    """
-    Create an index for all registered components in the project
+    """Create an index for all registered components in the project
 
-    :param environment_components: list of components
+    :param environment_components: List of all components to be included
+    :type environment_components: list[dict]
     :return: component index
+    :rtype: dict[str, dict]
     """
-    index = {}
+    index: dict[str, dict] = {}
     for component in environment_components:
         if "type" not in component or "name" not in component:
             raise ValueError(
                 "To override components per environment, every component should at least have a type and a name."
             )
-        index[
-            PipelineComponent.substitute_component_names(
-                component["name"], component["type"], **ENV
-            )
-        ] = component
+        index[component["name"]] = component
     return index
 
 
@@ -107,6 +106,25 @@ class Pipeline:
         config: PipelineConfig,
         handlers: ComponentHandlers,
     ) -> Pipeline:
+        """Load pipeline definition from yaml
+
+        The file is often named ``pipeline.yaml``
+
+        :param base_dir: Base directory to the pipelines (default is current working directory)
+        :type base_dir: Path
+        :param path: Path to pipeline definition yaml file
+        :type path: Path
+        :param registry: Pipeline components registry
+        :type registry: Registry
+        :param config: Pipeline config
+        :type config: PipelineConfig
+        :param handlers: Component handlers
+        :type handlers: ComponentHandlers
+        :raises TypeError: The pipeline definition should contain a list of components
+        :raises TypeError: The env-specific pipeline definition should contain a list of components
+        :returns: Initialized pipeline object
+        :rtype: Pipeline
+        """
         Pipeline.set_pipeline_name_env_vars(base_dir, path)
 
         main_content = load_yaml_file(path, substitution=ENV)
@@ -114,7 +132,6 @@ class Pipeline:
             raise TypeError(
                 f"The pipeline definition {path} should contain a list of components"
             )
-
         env_content = []
         if (env_file := Pipeline.pipeline_filename_environment(path, config)).exists():
             env_content = load_yaml_file(env_file, substitution=ENV)
@@ -127,6 +144,14 @@ class Pipeline:
         return pipeline
 
     def parse_components(self, component_list: list[dict]) -> None:
+        """Instantiate, enrich and inflate a list of components
+
+        :param component_list: List of components
+        :type component_list: list[dict]
+        :raises ValueError: Every component must have a type defined
+        :raises ParsingException: Error enriching component
+        :raises ParsingException: All undefined exceptions
+        """
         for component_data in component_list:
             try:
                 try:
@@ -148,15 +173,19 @@ class Pipeline:
     def apply_component(
         self, component_class: type[PipelineComponent], component_data: dict
     ) -> None:
-        """Instantiates, enriches and inflates pipeline component.
+        """Instantiate, enrich and inflate pipeline component.
+
         Applies input topics according to FromSection.
 
         :param component_class: Type of pipeline component
+        :type component_class: type[PipelineComponent]
         :param component_data: Arguments for instantiation of pipeline component
+        :type component_data: dict
         """
         component = component_class(
             config=self.config,
             handlers=self.handlers,
+            validate_name=False,
             **component_data,
         )
         component = self.enrich_component(component)
@@ -194,14 +223,22 @@ class Pipeline:
         self,
         component: PipelineComponent,
     ) -> PipelineComponent:
-        env_component_definition = self.env_components_index.get(component.name, {})
-        pair = update_nested_pair(
-            env_component_definition,
+        """Enrich a pipeline component with env-specific config and substitute variables
+
+        :param component: Component to be enriched
+        :type component: PipelineComponent
+        :returns: Enriched component
+        :rtype: PipelineComponent
+        """
+        env_component_as_dict = update_nested_pair(
+            self.env_components_index.get(component.name, {}),
             # HACK: Pydantic .dict() doesn't create jsonable dict
             json.loads(component.json(by_alias=True)),
         )
+        if "validate_name" in env_component_as_dict:
+            del env_component_as_dict["validate_name"]
 
-        component_data = self.substitute_component_specific_variables(component, pair)
+        component_data = self.substitute_in_component(env_component_as_dict)
 
         component_class = type(component)
         return component_class(
@@ -212,8 +249,15 @@ class Pipeline:
         )
 
     def print_yaml(self, substitution: dict | None = None) -> None:
+        """Print the generated pipeline definition
+
+        :param substitution: Substitution dictionary, defaults to None
+        :type substitution: dict | None, optional
+        """
         syntax = Syntax(
-            substitute(str(self), substitution), "yaml", background_color="default"
+            substitute(str(self), substitution),
+            "yaml",
+            background_color="default",
         )
         Console(
             width=1000  # HACK: overwrite console width to avoid truncating output
@@ -229,45 +273,64 @@ class Pipeline:
             )
         )
 
-    @staticmethod
-    def substitute_component_specific_variables(
-        component: PipelineComponent, pair: dict  # TODO: better parameter name for pair
-    ) -> dict:
-        """Overrides component config with component config in pipeline environment definition."""
-        # HACK: why do we need an intermediate JSON object?
-        component_data: dict = json.loads(
-            substitute(
-                json.dumps(pair),
-                {
-                    "component_type": component.type,
-                    "component_name": component.name,
-                },
+    def substitute_in_component(self, component_as_dict: dict) -> dict:
+        """Substitute all $-placeholders in a component in dict representation
+
+        :param component_as_dict: Component represented as dict
+        :type component_as_dict: dict
+        :return: Updated component
+        :rtype: dict
+        """
+        config = self.config
+        # Leftover variables that were previously introduced in the component by the substitution
+        # functions, still hardcoded, because of their names.
+        # TODO: Get rid of them
+        substitution_hardcoded = {
+            "error_topic_name": config.topic_name_config.default_error_topic_name,
+            "output_topic_name": config.topic_name_config.default_output_topic_name,
+        }
+        component_substitution = generate_substitution(
+            component_as_dict,
+            "component",
+            substitution_hardcoded,
+        )
+        substitution = generate_substitution(
+            json.loads(config.json()), existing_substitution=component_substitution
+        )
+
+        return json.loads(
+            substitute_nested(
+                json.dumps(component_as_dict),
+                **update_nested_pair(substitution, ENV),
             )
         )
-        return component_data
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
-        """
-        Adds the environment name from the PipelineConfig to the pipeline.yaml path
+        """Add the environment name from the PipelineConfig to the pipeline.yaml path
+
         :param path: Path to pipeline.yaml file
         :param config: The PipelineConfig
-        :return: Absolute path to the pipeline_<environment>.yaml
+        :returns: An absolute path to the pipeline_<environment>.yaml
         """
         return path.with_stem(f"{path.stem}_{config.environment}")
 
     @staticmethod
     def set_pipeline_name_env_vars(base_dir: Path, path: Path) -> None:
-        """
-        Sets the environment variable pipeline_name relative to the given base_dir.
+        """Set the environment variable pipeline_name relative to the given base_dir.
+
         Moreover, for each sub-path an environment variable is set.
         For example, for a given path ./data/v1/dev/pipeline.yaml the pipeline_name would be
         set to data-v1-dev. Then the sub environment variables are set:
+
         pipeline_name_0 = data
         pipeline_name_1 = v1
         pipeline_name_2 = dev
+
         :param base_dir: Base directory to the pipeline files
+        :type base_dir: Path
         :param path: Path to pipeline.yaml file
+        :type path: Path
         """
         path_without_file = path.resolve().relative_to(base_dir.resolve()).parts[:-1]
         if not path_without_file:

@@ -19,9 +19,7 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.docstring import describe_attr, describe_object
-from kpops.utils.environment import ENV
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
-from kpops.utils.yaml_loading import substitute
 
 
 class PipelineComponent(BaseDefaultsComponent):
@@ -31,12 +29,12 @@ class PipelineComponent(BaseDefaultsComponent):
     :type name: str
     :param from_: Topic(s) and/or components from which the component will read
         input, defaults to None
-    :type from_: FromSection, None, optional
+    :type from_: FromSection, optional
     :param app: Application-specific settings, defaults to None
-    :type app: object, None, optional
+    :type app: object, optional
     :param to: Topic(s) into which the component will write output,
         defaults to None
-    :type to: ToSection, None, optional
+    :type to: ToSection, optional
     :param prefix: Pipeline prefix that will prefix every component name.
         If you wish to not have any prefix you can specify an empty string.,
         defaults to "${pipeline_name}-"
@@ -48,7 +46,7 @@ class PipelineComponent(BaseDefaultsComponent):
         description=describe_attr("type", __doc__),
         const=True,
     )
-    schema_type: Literal["pipeline-component"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["pipeline-component"] = Field(
         default="pipeline-component",
         title="Component type",
         description=describe_object(__doc__),
@@ -78,60 +76,10 @@ class PipelineComponent(BaseDefaultsComponent):
         extra = Extra.allow
         keep_untouched = (cached_property,)
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
-        self.substitute_output_topic_names()
-        self.substitute_name()
-        self.substitute_prefix()
         self.set_input_topics()
         self.set_output_topics()
-
-    def substitute_output_topic_names(self) -> None:
-        """Substitute component and topic sepcific names in output topics"""
-        if self.to:
-            updated_to = {}
-            for name, topic in self.to.topics.items():
-                name = self.substitute_component_variables(name)
-                updated_to[name] = topic
-            self.to.topics = updated_to
-
-    @staticmethod
-    def substitute_component_names(key: str, _type: str, **kwargs) -> str:
-        """Substitute component field name, e.g., `error_topic_name`
-
-        :param key: The raw input containing $-placeholders
-        :type key: str
-        :param _type: The key-value mapping containing substitutions
-        :type _type: str
-        :param **kwargs: Additional key-value mappings that contain substitutions
-        :return: Substituted input string
-        :rtype: str
-        """
-        return substitute(key, {"component_type": _type, **kwargs})
-
-    def substitute_component_variables(self, topic_name: str) -> str:
-        """Substitute component, env and topic-specific variables in topic's name
-
-        :param topic_name: topic name
-        :return: final topic name
-        """
-        error_topic_name = self.substitute_component_names(
-            self.config.topic_name_config.default_error_topic_name,
-            self.type,
-            **ENV,
-        )
-        output_topic_name = self.substitute_component_names(
-            self.config.topic_name_config.default_output_topic_name,
-            self.type,
-            **ENV,
-        )
-        return self.substitute_component_names(
-            topic_name,
-            self.type,
-            component_name=self.name,
-            error_topic_name=error_topic_name,
-            output_topic_name=output_topic_name,
-        )
 
     def add_input_topics(self, topics: list[str]) -> None:
         """Add given topics to the list of input topics.
@@ -259,15 +207,8 @@ class PipelineComponent(BaseDefaultsComponent):
         for input_topic in input_topics:
             self.apply_from_inputs(input_topic, from_topic)
 
-    def substitute_name(self) -> None:
-        """Substitute $ placeholders in `self.name` with `self.type`"""
-        if self.name:
-            self.name = self.substitute_component_names(self.name, self.type)
-        else:
-            raise ValueError("Every component must have a name in the end.")
-
     def inflate(self) -> list[PipelineComponent]:
-        """Inflate a component.
+        """Inflate a component
 
         This is helpful if one component should result in multiple components.
         To support this, override this method and return a list of components
@@ -289,13 +230,13 @@ class PipelineComponent(BaseDefaultsComponent):
 
         :param api_version: Kubernetes API version used for
             Capabilities.APIVersions, `--api_versions` in Helm
-        :type api_version: str, None
+        :type api_version: str, optional
         :param ca_file: verify certificates of HTTPS-enabled servers using this
             CA bundle, `--ca-file` in Helm
-        :type ca_file: str, None
+        :type ca_file: str, optional
         :param cert_file: identify HTTPS client using this SSL certificate file,
             `--cert-file` in Helm
-        :type cert_file: str, None
+        :type cert_file: str, optional
         """
 
     def deploy(self, dry_run: bool) -> None:
@@ -325,7 +266,3 @@ class PipelineComponent(BaseDefaultsComponent):
         :param dry_run: Whether to do a dry run of the command
         :type dry_run: bool
         """
-
-    def substitute_prefix(self) -> None:
-        """Substitute $-placeholders in self.prefix with environment variables"""
-        self.prefix = substitute(self.prefix, ENV)

@@ -16,6 +16,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
+    Version,
     YamlReader,
 )
 
@@ -26,6 +27,11 @@ class Helm:
     def __init__(self, helm_config: HelmConfig) -> None:
         self._context = helm_config.context
         self._debug = helm_config.debug
+        self._version = self.get_version()
+        if self._version.major != 3:
+            raise RuntimeError(
+                f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
+            )
 
     def add_repo(
         self,
@@ -68,7 +74,10 @@ class Helm:
             else:
                 raise e
 
-        self.__execute(["helm", "repo", "update"])
+        if self._version.minor > 7:
+            self.__execute(["helm", "repo", "update", repository_name])
+        else:
+            self.__execute(["helm", "repo", "update"])
 
     def upgrade_install(
         self,
@@ -108,9 +117,7 @@ class Helm:
         release_name: str,
         dry_run: bool,
     ) -> str | None:
-        """
-        Prepares and executes the helm uninstall command
-        """
+        """Prepares and executes the helm uninstall command"""
         command = [
             "helm",
             "uninstall",
@@ -131,21 +138,26 @@ class Helm:
         self,
         release_name: str,
         chart: str,
+        namespace: str,
         values: dict,
         flags: HelmTemplateFlags = HelmTemplateFlags(),
     ) -> str:
-        """
-        From HELM: Render chart templates locally and display the output.
+        """From HELM: Render chart templates locally and display the output.
 
         Any values that would normally be looked up or retrieved in-cluster will
         be faked locally. Additionally, none of the server-side testing of chart
         validity (e.g. whether an API is supported) is done.
 
         :param str release_name: the release name for which the command is ran
-        :param str chart: Helm chart to be templated
-        :param dict[str, str] values: `values.yaml` to be used
-        :param flags: the flags to be set for `helm template`
-        :type flags: HelmTemplateFlags
+        :type release_name: str
+        :param chart: Helm chart to be templated
+        :type chart: str
+        :param namespace: The Kubernetes namespace the command should execute in
+        :type namespace: str
+        :param values: `values.yaml` to be used
+        :type values: dict
+        :param flags: the flags to be set for `helm template`, defaults to HelmTemplateFlags()
+        :type flags: HelmTemplateFlags, optional
         :return: the output of `helm template`
         :rtype: str
         """
@@ -156,6 +168,8 @@ class Helm:
                 "template",
                 release_name,
                 chart,
+                "--namespace",
+                namespace,
                 "--values",
                 values_file.name,
             ]
@@ -177,6 +191,17 @@ class Helm:
             return Helm.load_manifest(stdout)
         except ReleaseNotFoundException:
             return ()
+
+    def get_version(self) -> Version:
+        command = ["helm", "version", "--short"]
+        short_version = self.__execute(command)
+        version_match = re.search(r"^v(\d+(?:\.\d+){0,2})", short_version)
+        if version_match is None:
+            raise RuntimeError(
+                f"Could not parse the Helm version.\n\nHelm output:\n{short_version}"
+            )
+        version = map(int, version_match.group(1).split("."))
+        return Version(*version)
 
     @staticmethod
     def load_manifest(yaml_contents: str) -> Iterator[HelmTemplate]:

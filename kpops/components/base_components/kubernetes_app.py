@@ -8,6 +8,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
+from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
@@ -34,37 +35,38 @@ class KubernetesAppConfig(BaseModel):
         extra = Extra.allow
 
 
-# TODO: label and annotations
 class KubernetesApp(PipelineComponent):
     """Base class for all Kubernetes apps.
 
     All built-in components are Kubernetes apps, except for the Kafka connectors.
 
     :param type: Component type, defaults to "kubernetes-app"
-    :type type: str, optional
     :param schema_type: Used for schema generation, same as :param:`type`,
         defaults to "kubernetes-app"
-    :type schema_type: Literal["kubernetes-app"], optional
+    :param validate_name: Whether to check if the name of the component is
+        compatible with Kubernetes, defaults to True
     :param app: Application-specific settings
-    :type app: KubernetesAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to None
-    :type repo_config: HelmRepoConfig, None, optional
     :param namespace: Namespace in which the component shall be deployed
-    :type namespace: str
     :param version: Helm chart version, defaults to None
-    :type version: str, None, optional
     """
 
     type: str = Field(
         default="kubernetes-app",
         description=describe_attr("type", __doc__),
     )
-    schema_type: Literal["kubernetes-app"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["kubernetes-app"] = Field(
         default="kubernetes-app",
         title="Component type",
         description=describe_object(__doc__),
         exclude=True,
+    )
+    validate_name: bool = Field(
+        default=True,
+        description=describe_attr("validate_name", __doc__),
+        exclude=True,
+        hidden_from_schema=True,
     )
     app: KubernetesAppConfig = Field(
         default=...,
@@ -87,8 +89,9 @@ class KubernetesApp(PipelineComponent):
         pass
 
     def __init__(self, **kwargs):
+        if kwargs.get("validate_name", True):
+            self.validate_kubernetes_name(kwargs["name"])
         super().__init__(**kwargs)
-        self.__check_compatible_name()
 
     @cached_property
     def helm(self) -> Helm:
@@ -107,6 +110,11 @@ class KubernetesApp(PipelineComponent):
         """Helm diff object of last and current release of this component"""
         return HelmDiff(self.config.helm_diff_config)
 
+    @cached_property
+    def dry_run_handler(self) -> DryRunHandler:
+        helm_diff = HelmDiff(self.config.helm_diff_config)
+        return DryRunHandler(self.helm, helm_diff, self.namespace)
+
     @property
     def helm_release_name(self) -> str:
         """The name for the Helm release. Can be overridden."""
@@ -118,7 +126,11 @@ class KubernetesApp(PipelineComponent):
     ) -> None:
         flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
         stdout = self.helm.template(
-            self.helm_release_name, self.get_helm_chart(), self.to_helm_values(), flags
+            self.helm_release_name,
+            self.get_helm_chart(),
+            self.namespace,
+            self.to_helm_values(),
+            flags,
         )
         print(stdout)
 
@@ -134,8 +146,8 @@ class KubernetesApp(PipelineComponent):
                 create_namespace=self.config.create_namespace, version=self.version
             ),
         )
-        if dry_run and self.helm_diff.config.enable:
-            self.print_helm_diff(stdout)
+        if dry_run:
+            self.dry_run_handler.print_helm_diff(stdout, self.helm_release_name, log)
 
     @override
     def destroy(self, dry_run: bool) -> None:
@@ -154,7 +166,7 @@ class KubernetesApp(PipelineComponent):
         :returns: Thte values to be used by Helm
         :rtype: dict
         """
-        return self.app.dict(by_alias=True, exclude_none=True, exclude_unset=True)
+        return self.app.dict(by_alias=True, exclude_none=True, exclude_defaults=True)
 
     def print_helm_diff(self, stdout: str) -> None:
         """Print the diff of the last and current release of this component
@@ -182,12 +194,15 @@ class KubernetesApp(PipelineComponent):
             f"Please implement the get_helm_chart() method of the {self.__module__} module."
         )
 
-    def __check_compatible_name(self) -> None:
-        """Check if the component's name `self.name` is valid for Kubernetes"""
-        if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(self.name)):  # TODO: SMARTER
-            raise ValueError(
-                f"The component name {self.name} is invalid for Kubernetes."
-            )
+    @staticmethod
+    def validate_kubernetes_name(name: str) -> None:
+        """Check if a name is valid for a Kubernetes resource
+
+        :param name: Name that is to be used for the resource
+        :raises ValueError: The component name {name} is invalid for Kubernetes.
+        """
+        if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(name)):
+            raise ValueError(f"The component name {name} is invalid for Kubernetes.")
 
     @override
     def dict(self, *, exclude=None, **kwargs) -> dict[str, Any]:

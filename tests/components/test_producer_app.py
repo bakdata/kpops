@@ -1,5 +1,6 @@
+import logging
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import ANY, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -7,7 +8,6 @@ from pytest_mock import MockerFixture
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
-    HelmDiffConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
@@ -40,9 +40,6 @@ class TestProducerApp:
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
-            ),
-            helm_diff_config=HelmDiffConfig(
-                enable=False,
             ),
         )
 
@@ -97,12 +94,12 @@ class TestProducerApp:
             },
         )
 
-        assert producer_app.app.streams.output_topic == "producer-output-topic"
+        assert producer_app.app.streams.output_topic == "${output_topic_name}"
         assert producer_app.app.streams.extra_output_topics == {
             "first-extra-topic": "extra-topic-1"
         }
 
-    def test_deploy_order(
+    def test_deploy_order_when_dry_run_is_false(
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
@@ -119,18 +116,18 @@ class TestProducerApp:
         mock.attach_mock(mock_create_topics, "mock_create_topics")
         mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
 
-        producer_app.deploy(dry_run=True)
+        producer_app.deploy(dry_run=False)
         assert mock.mock_calls == [
-            mocker.call.mock_create_topics(to_section=producer_app.to, dry_run=True),
+            mocker.call.mock_create_topics(to_section=producer_app.to, dry_run=False),
             mocker.call.mock_helm_upgrade_install(
                 self.PRODUCER_APP_NAME,
                 "bakdata-streams-bootstrap/producer-app",
-                True,
+                False,
                 "test-namespace",
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "producer-output-topic",
+                        "outputTopic": "${output_topic_name}",
                     },
                 },
                 HelmUpgradeInstallFlags(
@@ -162,7 +159,7 @@ class TestProducerApp:
             "test-namespace", self.PRODUCER_APP_NAME, True
         )
 
-    def should_not_reset_producer_app(
+    def test_should_not_reset_producer_app(
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
@@ -171,10 +168,14 @@ class TestProducerApp:
             producer_app.helm, "upgrade_install"
         )
         mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
+        mock_helm_print_helm_diff = mocker.patch.object(
+            producer_app.dry_run_handler, "print_helm_diff"
+        )
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
+        mock.attach_mock(mock_helm_print_helm_diff, "print_helm_diff")
 
         producer_app.clean(dry_run=True)
 
@@ -188,21 +189,24 @@ class TestProducerApp:
                 True,
                 "test-namespace",
                 {
-                    "namespace": "test-namespace",
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "producer-output-topic",
-                        "deleteOutput": True,
+                        "outputTopic": "${output_topic_name}",
                     },
                 },
                 HelmUpgradeInstallFlags(version="2.4.2", wait=True, wait_for_jobs=True),
+            ),
+            mocker.call.print_helm_diff(
+                ANY,
+                "test-producer-app-with-long-name-0123456789abc-clean",
+                logging.getLogger("KafkaApp"),
             ),
             mocker.call.helm_uninstall(
                 "test-namespace", self.PRODUCER_APP_CLEAN_NAME, True
             ),
         ]
 
-    def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up(
+    def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
         self, mocker: MockerFixture, producer_app: ProducerApp
     ):
         mock_helm_upgrade_install = mocker.patch.object(
@@ -214,26 +218,26 @@ class TestProducerApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
-        producer_app.clean(dry_run=True)
+        producer_app.clean(dry_run=False)
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
-                "test-namespace", self.PRODUCER_APP_CLEAN_NAME, True
+                "test-namespace", self.PRODUCER_APP_CLEAN_NAME, False
             ),
             mocker.call.helm_upgrade_install(
                 self.PRODUCER_APP_CLEAN_NAME,
                 "bakdata-streams-bootstrap/producer-app-cleanup-job",
-                True,
+                False,
                 "test-namespace",
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "producer-output-topic",
+                        "outputTopic": "${output_topic_name}",
                     },
                 },
                 HelmUpgradeInstallFlags(version="2.4.2", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
-                "test-namespace", self.PRODUCER_APP_CLEAN_NAME, True
+                "test-namespace", self.PRODUCER_APP_CLEAN_NAME, False
             ),
         ]

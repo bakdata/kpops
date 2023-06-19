@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import json
 import logging
 from abc import ABC
 from functools import cached_property
@@ -9,6 +8,7 @@ from typing import Literal, NoReturn
 from pydantic import Field
 from typing_extensions import override
 
+from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
@@ -48,7 +48,7 @@ class KafkaConnector(PipelineComponent, ABC):
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component,
         defaults to HelmRepoConfig(repository_name="bakdata-kafka-connect-resetter", url="https://bakdata.github.io/kafka-connect-resetter/")
-    :type repo_config: HelmRepoConfig, None, optional
+    :type repo_config: HelmRepoConfig, optional
     :param namespace: Namespace in which the component shall be deployed
     :type namespace: str
     :param version: Helm chart version, defaults to "1.0.4"
@@ -59,7 +59,7 @@ class KafkaConnector(PipelineComponent, ABC):
     """
 
     type: str = Field(default="kafka-connector", description="Component type")
-    schema_type: Literal["kafka-connector"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["kafka-connector"] = Field(
         default="kafka-connector",
         title="Component type",
         description=describe_object(__doc__),
@@ -80,7 +80,7 @@ class KafkaConnector(PipelineComponent, ABC):
         default=...,
         description=describe_attr("namespace", __doc__),
     )
-    version = Field(default="1.0.4", description="Helm chart version")
+    version: str | None = Field(default="1.0.4", description="Helm chart version")
     resetter_values: dict = Field(
         default_factory=dict,
         description=describe_attr("resetter_values", __doc__),
@@ -88,10 +88,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
     class Config(CamelCaseConfig):
         pass
-
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
-        self.prepare_connector_config()
 
     @cached_property
     def helm(self) -> Helm:
@@ -114,22 +110,14 @@ class KafkaConnector(PipelineComponent, ABC):
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
     @cached_property
-    def helm_diff(self) -> HelmDiff:
-        """Helm diff object of last and current release of this component"""
-        return HelmDiff(self.config.helm_diff_config)
+    def dry_run_handler(self) -> DryRunHandler:
+        helm_diff = HelmDiff(self.config.helm_diff_config)
+        return DryRunHandler(self.helm, helm_diff, self.namespace)
 
     @property
     def kafka_connect_resetter_chart(self) -> str:
         """Resetter chart for this component"""
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
-
-    def prepare_connector_config(self) -> None:
-        """Substitute component related variables in config"""
-        substituted_config = self.substitute_component_variables(
-            json.dumps(self.app.dict())
-        )
-        out: dict = json.loads(substituted_config)
-        self.app = KafkaConnectConfig(**out)
 
     @override
     def deploy(self, dry_run: bool) -> None:
@@ -205,10 +193,8 @@ class KafkaConnector(PipelineComponent, ABC):
             trimmed_name, connector_name, connector_type, dry_run, **kwargs
         )
 
-        if dry_run and self.helm_diff.config.enable:
-            current_release = self.helm.get_manifest(trimmed_name, self.namespace)
-            new_release = Helm.load_manifest(stdout)
-            self.helm_diff.log_helm_diff(log, current_release, new_release)
+        if dry_run:
+            self.dry_run_handler.print_helm_diff(stdout, trimmed_name, log)
 
         if not retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
@@ -320,14 +306,14 @@ class KafkaSourceConnector(KafkaConnector):
     :param offset_topic: offset.storage.topic,
         more info: https://kafka.apache.org/documentation/#connect_running,
         defaults to None
-    :type schema_type: str, None
+    :type schema_type: str, optional
     """
 
     type: str = Field(
         default="kafka-source-connector",
         description=describe_attr("type", __doc__),
     )
-    schema_type: Literal["kafka-source-connector"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["kafka-source-connector"] = Field(
         default="kafka-source-connector",
         title="Component type",
         description=describe_object(__doc__),
@@ -355,6 +341,7 @@ class KafkaSourceConnector(KafkaConnector):
         stdout = self.helm.template(
             self._get_kafka_resetter_release_name(self.name),
             self._get_resetter_helm_chart(),
+            self.namespace,
             values,
             flags,
         )
@@ -398,7 +385,7 @@ class KafkaSinkConnector(KafkaConnector):
         default="kafka-sink-connector",
         description=describe_attr("type", __doc__),
     )
-    schema_type: Literal["kafka-sink-connector"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["kafka-sink-connector"] = Field(
         default="kafka-sink-connector",
         title="Component type",
         description=describe_object(__doc__),
@@ -423,6 +410,7 @@ class KafkaSinkConnector(KafkaConnector):
         stdout = self.helm.template(
             self._get_kafka_resetter_release_name(self.name),
             self._get_resetter_helm_chart(),
+            self.namespace,
             values,
             flags,
         )

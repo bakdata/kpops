@@ -12,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
 )
 from kpops.components import StreamsApp
+from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -42,9 +43,7 @@ class TestStreamsApp:
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
             ),
-            helm_diff_config=HelmDiffConfig(
-                enable=False,
-            ),
+            helm_diff_config=HelmDiffConfig(),
         )
 
     @pytest.fixture
@@ -107,6 +106,13 @@ class TestStreamsApp:
             "another-pattern": "example.*"
         }
 
+        helm_values = streams_app.to_helm_values()
+        streams_config = helm_values["streams"]
+        assert "inputTopics" in streams_config
+        assert "extraInputTopics" in streams_config
+        assert "inputPattern" in streams_config
+        assert "extraInputPatterns" in streams_config
+
     def test_no_empty_input_topic(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
@@ -132,7 +138,6 @@ class TestStreamsApp:
         assert not streams_app.app.streams.extra_input_patterns
 
         helm_values = streams_app.to_helm_values()
-
         streams_config = helm_values["streams"]
         assert "inputTopics" not in streams_config
         assert "extraInputTopics" not in streams_config
@@ -212,8 +217,8 @@ class TestStreamsApp:
             "first-extra-topic": "extra-topic-1",
             "second-extra-topic": "extra-topic-2",
         }
-        assert streams_app.app.streams.output_topic == "streams-app-output-topic"
-        assert streams_app.app.streams.error_topic == "streams-app-error-topic"
+        assert streams_app.app.streams.output_topic == "${output_topic_name}"
+        assert streams_app.app.streams.error_topic == "${error_topic_name}"
 
     def test_weave_inputs_from_prev_component(
         self, config: PipelineConfig, handlers: ComponentHandlers
@@ -233,12 +238,16 @@ class TestStreamsApp:
         streams_app.weave_from_topics(
             ToSection(
                 topics={
-                    "prev-output-topic": TopicConfig(
+                    TopicName("prev-output-topic"): TopicConfig(
                         type=OutputTopicTypes.OUTPUT, partitions_count=10
                     ),
-                    "b": TopicConfig(type=OutputTopicTypes.OUTPUT, partitions_count=10),
-                    "a": TopicConfig(type=OutputTopicTypes.OUTPUT, partitions_count=10),
-                    "prev-error-topic": TopicConfig(
+                    TopicName("b"): TopicConfig(
+                        type=OutputTopicTypes.OUTPUT, partitions_count=10
+                    ),
+                    TopicName("a"): TopicConfig(
+                        type=OutputTopicTypes.OUTPUT, partitions_count=10
+                    ),
+                    TopicName("prev-error-topic"): TopicConfig(
                         type=OutputTopicTypes.ERROR, partitions_count=10
                     ),
                 }
@@ -247,7 +256,7 @@ class TestStreamsApp:
 
         assert streams_app.app.streams.input_topics == ["prev-output-topic", "b", "a"]
 
-    def test_deploy_order(
+    def test_deploy_order_when_dry_run_is_false(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -295,23 +304,29 @@ class TestStreamsApp:
         mock.attach_mock(mock_create_topics, "mock_create_topics")
         mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
 
-        streams_app.deploy(dry_run=True)
+        dry_run = False
+        streams_app.deploy(dry_run=dry_run)
 
         assert mock.mock_calls == [
-            mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=True),
+            mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=dry_run),
             mocker.call.mock_helm_upgrade_install(
                 self.STREAMS_APP_NAME,
                 "bakdata-streams-bootstrap/streams-app",
-                True,
+                dry_run,
                 "test-namespace",
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "streams-app-output-topic",
-                        "errorTopic": "streams-app-error-topic",
-                    },
+                        "extraOutputTopics": {
+                            "first-extra-topic": "extra-topic-1",
+                            "second-extra-topic": "extra-topic-2",
+                        },
+                        "outputTopic": "${output_topic_name}",
+                        "errorTopic": "${error_topic_name}",
+                    }
                 },
                 HelmUpgradeInstallFlags(
+                    create_namespace=False,
                     force=False,
                     repo_auth_flags=RepoAuthFlags(
                         username=None,
@@ -336,7 +351,9 @@ class TestStreamsApp:
             "test-namespace", self.STREAMS_APP_NAME, True
         )
 
-    def test_reset(self, streams_app: StreamsApp, mocker: MockerFixture):
+    def test_reset_when_dry_run_is_false(
+        self, streams_app: StreamsApp, mocker: MockerFixture
+    ):
         mock_helm_upgrade_install = mocker.patch.object(
             streams_app.helm, "upgrade_install"
         )
@@ -346,28 +363,29 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
-        streams_app.reset(dry_run=True)
+        dry_run = False
+        streams_app.reset(dry_run=dry_run)
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
+                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
             ),
             mocker.call.helm_upgrade_install(
                 self.STREAMS_APP_CLEAN_NAME,
                 "bakdata-streams-bootstrap/streams-app-cleanup-job",
-                True,
+                dry_run,
                 "test-namespace",
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "streams-app-output-topic",
+                        "outputTopic": "${output_topic_name}",
                         "deleteOutput": False,
                     },
                 },
                 HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
+                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
             ),
         ]
 
@@ -385,27 +403,28 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
-        streams_app.clean(dry_run=True)
+        dry_run = False
+        streams_app.clean(dry_run=dry_run)
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
+                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
             ),
             mocker.call.helm_upgrade_install(
                 self.STREAMS_APP_CLEAN_NAME,
                 "bakdata-streams-bootstrap/streams-app-cleanup-job",
-                True,
+                dry_run,
                 "test-namespace",
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "streams-app-output-topic",
+                        "outputTopic": "${output_topic_name}",
                         "deleteOutput": True,
                     },
                 },
                 HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, True
+                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
             ),
         ]

@@ -19,9 +19,9 @@ repos:
         exclude: ^tests/.*snapshots/
   - repo: local
     hooks:
-      - id: mypy
-        name: mypy
-        entry: python hooks/run_mypy.py
+      - id: pyright
+        name: pyright
+        entry: pyright
         language: system
         types: [python]
         require_serial: true # run once for all files

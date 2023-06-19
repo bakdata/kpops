@@ -6,6 +6,14 @@
 <!-- Additional styles for landing page -->
 <style>
 
+    :root {
+        --md-primary-fg-color: #000;
+    }
+
+    body {
+        background: #a599ff;
+    }
+
     /* Application header should be static for the landing page */
     .md-header {
         position: initial;
@@ -25,7 +33,6 @@
         position: relative;
         min-height: 100vh;
         min-width: 100vw;
-        background: #FFFFFF;
     }
 
     .mdx-hero__content {
@@ -80,6 +87,7 @@
         overflow: hidden;
         padding-bottom: 56.25%;
     }
+
     .video-wrapper > iframe {
         position: absolute;
         top: 0;
@@ -97,9 +105,8 @@
     <div class="md-typeset">
         <div class="mdx-hero">
 
-<!--            TODO: Image for KPOps website-->
-<!--            <img class="md-hero__image" src="assets/images/kpops-background.svg"-->
-<!--                 alt="KPOps background image"/>-->
+            <img class="md-hero__image" src="assets/images/kpops-background.svg"
+                 alt="KPOps background image"/>
             <div class="md-grid mdx-hero__content">
                 <h1>KPOps Documentation</h1>
 

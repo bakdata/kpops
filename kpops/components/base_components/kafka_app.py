@@ -6,7 +6,6 @@ from typing import Literal
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
@@ -18,7 +17,6 @@ from kpops.components.base_components.kubernetes_app import (
 )
 from kpops.utils.docstring import describe_attr, describe_object
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
-from kpops.utils.yaml_loading import substitute
 
 log = logging.getLogger("KafkaApp")
 
@@ -29,7 +27,7 @@ class KafkaStreamsConfig(BaseModel):
     :param brokers: Brokers
     :type brokers: str
     :param schema_registry_url: URL of the schema registry, defaults to None
-    :type schema_registry_url: str, None, optional
+    :type schema_registry_url: str, optional
     """
 
     brokers: str = Field(default=..., description=describe_attr("brokers", __doc__))
@@ -47,7 +45,7 @@ class KafkaAppConfig(KubernetesAppConfig):
     :param streams: Kafka streams config
     :type streams: KafkaStreamsConfig
     :param name_override: Override name with this value, defaults to None
-    :type name_override: str, None, optional
+    :type name_override: str, optional
     """
 
     streams: KafkaStreamsConfig = Field(
@@ -73,13 +71,13 @@ class KafkaApp(KubernetesApp):
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component,
         defaults to HelmRepoConfig(repository_name="bakdata-streams-bootstrap", url="https://bakdata.github.io/streams-bootstrap/")
-    :type repo_config: HelmRepoConfig, None, optional
+    :type repo_config: HelmRepoConfig, optional
     :param version: Helm chart version, defaults to "2.9.0"
     :type version: str, optional
     """
 
     type: str = Field(default="kafka-app", description="Component type")
-    schema_type: Literal["kafka-app"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["kafka-app"] = Field(
         default="kafka-app",
         title="Component type",
         description=describe_object(__doc__),
@@ -96,21 +94,10 @@ class KafkaApp(KubernetesApp):
         ),
         description=describe_attr("repo_config", __doc__),
     )
-    version = Field(
+    version: str | None = Field(
         default="2.9.0",
         description=describe_attr("version", __doc__),
     )
-
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
-        self.app.streams.brokers = substitute(
-            self.app.streams.brokers, {"broker": self.config.broker}
-        )
-        if self.app.streams.schema_registry_url:
-            self.app.streams.schema_registry_url = substitute(
-                self.app.streams.schema_registry_url,
-                {"schema_registry_url": self.config.schema_registry_url},
-            )
 
     @property
     def clean_up_helm_chart(self) -> str:
@@ -160,12 +147,8 @@ class KafkaApp(KubernetesApp):
             clean_up_release_name, suffix, values, dry_run
         )
 
-        if dry_run and self.helm_diff.config.enable:
-            current_release = self.helm.get_manifest(
-                clean_up_release_name, self.namespace
-            )
-            new_release = Helm.load_manifest(stdout)
-            self.helm_diff.log_helm_diff(log, current_release, new_release)
+        if dry_run:
+            self.dry_run_handler.print_helm_diff(stdout, clean_up_release_name, log)
 
         if not retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {clean_up_release_name}")

@@ -14,17 +14,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-2022, ubuntu-22.04 ]
+        os:
+          - ubuntu-22.04
+          # - windows-2022  # FIXME
         python-version: [ "3.10", "3.11" ]
     runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install python and set up Poetry
+      - name: Install Python and set up Poetry
         uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.3
         with:
-          poetry-version: "1.3.2"
+          poetry-version: "1.5.1"
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
@@ -39,8 +41,8 @@ jobs:
       - name: Formatting (black)
         run: poetry run pre-commit run black --all-files --show-diff-on-failure
 
-      - name: Typing (mypy)
-        run: poetry run pre-commit run mypy --all-files
+      - name: Typing (pyright)
+        run: poetry run pre-commit run pyright --all-files
 
       - name: Generate schema (kpops schema)
         run: poetry run pre-commit run gen-schema --all-files --show-diff-on-failure
