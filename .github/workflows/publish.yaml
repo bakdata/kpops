@@ -11,4 +11,4 @@ jobs:
       publish-to-test: false
       poetry-version: "1.5.1"
     secrets:
-      pypi-token: "${{ secrets.TEST_PYPI_TOKEN }}"
+      pypi-token: "${{ secrets.PYPI_TOKEN }}"
