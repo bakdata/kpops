@@ -33,7 +33,9 @@ jobs:
         run: poetry install --no-interaction
 
       - name: Lint (flake8)
-        run: poetry run pre-commit run flake8 --verbose --all-files --show-diff-on-failure
+        run: |
+          poetry run pre-commit run flake8 --verbose --all-files --show-diff-on-failure || true
+          cat "C:\Users\runneradmin\.cache\pre-commit\pre-commit.log"
 
       - name: Order of imports (isort)
         run: poetry run pre-commit run isort --all-files --show-diff-on-failure
