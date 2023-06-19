@@ -26,16 +26,14 @@ jobs:
       - name: Install Python and set up Poetry
         uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.3
         with:
-          poetry-version: "1.5.1"
+          poetry-version: "1.1.15"
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: poetry install --no-interaction
 
       - name: Lint (flake8)
-        run: |
-          poetry run pre-commit run flake8 --verbose --all-files --show-diff-on-failure || true
-          cat "C:\Users\runneradmin\.cache\pre-commit\pre-commit.log"
+        run: poetry run pre-commit run flake8 --verbose --all-files --show-diff-on-failure
 
       - name: Order of imports (isort)
         run: poetry run pre-commit run isort --all-files --show-diff-on-failure
