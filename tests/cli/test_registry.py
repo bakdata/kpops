@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 import pytest
+from sih_kpops_utils.schema_provider import SchemaProvider
 
 from kpops.cli.registry import ClassNotFoundError, Registry, _find_classes, find_class
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from tests.cli.resources.module import CustomSchemaProvider
 
 
 class SubComponent(PipelineComponent):
@@ -50,6 +52,7 @@ def test_find_builtin_classes():
 def test_find_class():
     assert find_class(MODULE, SubComponent) is SubComponent
     assert find_class(MODULE, PipelineComponent) is SubComponent
+    assert find_class(MODULE, SchemaProvider) is CustomSchemaProvider
     with pytest.raises(ClassNotFoundError):
         find_class(MODULE, dict)
 
