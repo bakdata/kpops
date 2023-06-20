@@ -1,4 +1,4 @@
-name: Release to PyPI, GitHub, and update docs
+name: Release to GitHub and update docs
 
 on:
   workflow_dispatch:
@@ -14,47 +14,22 @@ on:
           - major
 
 jobs:
-  release-to-pypi:
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@v1.18.2
-    with:
-      release-type: ${{ github.event.inputs.release-type }}
-      publish-to-test: false
-      python-version: "3.10"
-      poetry-version: "1.5.1"
-    secrets:
-      github-email: ${{ secrets.GH_EMAIL }}
-      github-username: ${{ secrets.GH_USERNAME }}
-      github-token: ${{ secrets.GH_TOKEN }}
-      pypi-token: ${{ secrets.PYPI_TOKEN }}
-
   create-github-release-push-tag:
-    runs-on: ubuntu-22.04
-    needs: release-to-pypi
-    steps:
-      - name: Check out repository
-        uses: actions/checkout@v3
-        with:
-          persist-credentials: false
-
-      - name: Create tag
-        run: |
-          git config --local user.name ${{ secrets.GH_USERNAME }}
-          git config --local user.email ${{ secrets.GH_EMAIL }}
-          git tag v${{ needs.release-to-pypi.outputs.release-tag }}
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        with:
-          tag_name: "${{ needs.release-to-pypi.outputs.release-tag }}"
-          name: Release v${{ needs.release-to-pypi.outputs.release-tag }}
-          draft: false
-          prerelease: false
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@v1.23.0
+    name: Release
+    with:
+      release-type: ${{ inputs.release-type }}
+      poetry-version: "1.5.1"
+      changelog: true
+      changelog-config: "./.github/changelog-config.json"
+    secrets:
+      github-username: "${{ secrets.GH_USERNAME }}"
+      github-email: "${{ secrets.GH_EMAIL }}"
+      github-token: "${{ secrets.GH_TOKEN }}"
 
   update-docs:
     runs-on: ubuntu-22.04
-    needs: release-to-pypi
+    needs: create-github-release-push-tag
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
