@@ -10,4 +10,4 @@ from kpops.component_handlers.schema_handler.schema_provider import (
 
 class CustomSchemaProvider(SchemaProvider):
     def provide_schema(self, schema_class: str, models: dict[str, Any]) -> Schema:
-        return AvroSchema()
+        return AvroSchema({})
