@@ -1,4 +1,4 @@
-name: Release to PyPI, GitHub, and update docs
+name: Release to GitHub and update docs
 
 on:
   workflow_dispatch:
@@ -15,9 +15,8 @@ on:
 
 jobs:
   create-github-release-push-tag:
-    runs-on: ubuntu-22.04
     uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@v1.23.0
-    name: build project and create GitHub release
+    name: Release
     with:
       release-type: ${{ inputs.release-type }}
       poetry-version: "1.5.1"
@@ -30,7 +29,7 @@ jobs:
 
   update-docs:
     runs-on: ubuntu-22.04
-    needs: release-to-pypi
+    needs: create-github-release-push-tag
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
