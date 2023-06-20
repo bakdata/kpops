@@ -1,9 +1,9 @@
 from __future__ import annotations
 
 import pytest
-from sih_kpops_utils.schema_provider import SchemaProvider
 
 from kpops.cli.registry import ClassNotFoundError, Registry, _find_classes, find_class
+from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from tests.cli.resources.module import CustomSchemaProvider
 
