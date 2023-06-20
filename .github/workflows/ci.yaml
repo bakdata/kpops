@@ -69,4 +69,4 @@ jobs:
     needs: [test]
     uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@v1.25.0
     secrets:
-      test-pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
+      pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
