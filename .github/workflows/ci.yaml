@@ -64,7 +64,7 @@ jobs:
       - name: Test docs build (mkdocs)
         run: poetry run mkdocs build -f docs/mkdocs.yml
 
-  publish:
+  publish-snapshot-version:
     name: Publish Snapshot to TestPyPI
     needs: [test]
     uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@v1.25.0
