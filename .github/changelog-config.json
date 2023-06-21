@@ -7,7 +7,7 @@
     ],
     "ignore_labels": ["ignore"],
     "sort": {"order": "ASC", "on_property": "mergedAt"},
-    "template": "# [${{TO_TAG}}](https://github.com/bakdata/kpops/releases/tag/${{TO_TAG}}) - Release Date: ${{TO_TAG_DATE}}\n\n${{CHANGELOG}}\n\n<summary>Uncategorized</summary>\n\n${{UNCATEGORIZED}}",
+    "template": "# [${{TO_TAG}}](https://github.com/bakdata/kpops/releases/tag/${{TO_TAG}}) - Release Date: ${{TO_TAG_DATE}}\n\n${{CHANGELOG}}\n\n## 🌀 Miscellaneous\n\n${{UNCATEGORIZED}}",
     "pr_template": "- ${{TITLE}} - [#${{NUMBER}}](${{URL}})\n",
     "empty_template": "- no changes!"
 }
