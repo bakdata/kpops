@@ -109,7 +109,7 @@ class KubernetesApp(PipelineComponent):
 
     @override
     def _validate_custom(self, **kwargs) -> None:
-        self.validate_kubernetes_name(kwargs["name"])
+        self.validate_kubernetes_name(self.name)
 
     @override
     def template(

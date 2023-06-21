@@ -71,11 +71,11 @@ class BaseDefaultsComponent(BaseModel):
         arbitrary_types_allowed = True
 
     def __init__(self, **kwargs) -> None:
-        # if kwargs.get("validate", True):
-        self._validate_custom(**kwargs)
         if kwargs.get("enrich", True):
             kwargs = self.extend_with_defaults(**kwargs)
         super().__init__(**kwargs)
+        if kwargs.get("validate", True):
+            self._validate_custom(**kwargs)
 
     @classmethod  # NOTE: property as classmethod deprecated in Python 3.11
     def get_component_type(cls) -> str:
