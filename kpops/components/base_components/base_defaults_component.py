@@ -35,6 +35,7 @@ class BaseDefaultsComponent(BaseModel):
     :param handlers: Component handlers to be accessed by this component
     :type handlers: ComponentHandlers
     :param validate: Whether to run custom validation on the component, defaults to True
+    :type validate: bool, optional
     """
 
     type: str = Field(
