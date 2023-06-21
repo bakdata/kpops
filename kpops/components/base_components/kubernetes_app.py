@@ -43,8 +43,6 @@ class KubernetesApp(PipelineComponent):
     :param type: Component type, defaults to "kubernetes-app"
     :param schema_type: Used for schema generation, same as :param:`type`,
         defaults to "kubernetes-app"
-    :param validate: Whether to check if the name of the component is
-        compatible with Kubernetes, defaults to True
     :param app: Application-specific settings
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to None
@@ -61,13 +59,6 @@ class KubernetesApp(PipelineComponent):
         title="Component type",
         description=describe_object(__doc__),
         exclude=True,
-    )
-    _validate: bool = Field(
-        alias="validate",
-        default=True,
-        description=describe_attr("validate", __doc__),
-        exclude=True,
-        hidden_from_schema=True,
     )
     app: KubernetesAppConfig = Field(
         default=...,
@@ -88,11 +79,6 @@ class KubernetesApp(PipelineComponent):
 
     class Config(CamelCaseConfig, DescConfig):
         pass
-
-    def __init__(self, **kwargs):
-        if kwargs.get("validate", True):
-            self.validate_kubernetes_name(kwargs["name"])
-        super().__init__(**kwargs)
 
     @cached_property
     def helm(self) -> Helm:
@@ -120,6 +106,10 @@ class KubernetesApp(PipelineComponent):
     def helm_release_name(self) -> str:
         """The name for the Helm release. Can be overridden."""
         return self.name
+
+    @override
+    def _validate_custom(self, **kwargs) -> None:
+        self.validate_kubernetes_name(kwargs["name"])
 
     @override
     def template(
