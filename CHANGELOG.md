@@ -1,4 +1,18 @@
 # Changelog
+## [1.2.2](https://github.com/bakdata/kpops/releases/tag/1.2.2) - Release Date: [2023-06-21]
+
+
+
+### 🌀 Miscellaneous
+
+- Create workflow to lint CI - [#260](https://github.com/bakdata/kpops/pull/260)
+
+- Fix update docs when releasing - [#261](https://github.com/bakdata/kpops/pull/261)
+
+- Rename change log message for uncategorized issues - [#262](https://github.com/bakdata/kpops/pull/262)
+
+
+
 ## [1.2.1](https://github.com/bakdata/kpops/releases/tag/1.2.1) - Release Date: [2023-06-21]
 
 
