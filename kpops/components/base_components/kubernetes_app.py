@@ -43,7 +43,7 @@ class KubernetesApp(PipelineComponent):
     :param type: Component type, defaults to "kubernetes-app"
     :param schema_type: Used for schema generation, same as :param:`type`,
         defaults to "kubernetes-app"
-    :param validate_name: Whether to check if the name of the component is
+    :param validate: Whether to check if the name of the component is
         compatible with Kubernetes, defaults to True
     :param app: Application-specific settings
     :param repo_config: Configuration of the Helm chart repo to be used for
@@ -62,9 +62,10 @@ class KubernetesApp(PipelineComponent):
         description=describe_object(__doc__),
         exclude=True,
     )
-    validate_name: bool = Field(
+    _validate: bool = Field(
+        alias="validate",
         default=True,
-        description=describe_attr("validate_name", __doc__),
+        description=describe_attr("validate", __doc__),
         exclude=True,
         hidden_from_schema=True,
     )
@@ -89,7 +90,7 @@ class KubernetesApp(PipelineComponent):
         pass
 
     def __init__(self, **kwargs):
-        if kwargs.get("validate_name", True):
+        if kwargs.get("validate", True):
             self.validate_kubernetes_name(kwargs["name"])
         super().__init__(**kwargs)
 

@@ -185,7 +185,7 @@ class Pipeline:
         component = component_class(
             config=self.config,
             handlers=self.handlers,
-            validate_name=False,
+            validate=False,
             **component_data,
         )
         component = self.enrich_component(component)
@@ -235,8 +235,8 @@ class Pipeline:
             # HACK: Pydantic .dict() doesn't create jsonable dict
             json.loads(component.json(by_alias=True)),
         )
-        if "validate_name" in env_component_as_dict:
-            del env_component_as_dict["validate_name"]
+        if "validate" in env_component_as_dict:
+            del env_component_as_dict["validate"]
 
         component_data = self.substitute_in_component(env_component_as_dict)
 
