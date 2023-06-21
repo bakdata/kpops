@@ -39,7 +39,7 @@ jobs:
       - name: Update gh-pages
         uses: ./.github/actions/update-docs
         with:
-          tag: ${{ needs.create-github-release-push-tag.outputs.release-tag }}
+          tag: ${{ needs.create-github-release-push-tag.outputs.release-version }}
           username: ${{ secrets.GH_USERNAME }}
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}
