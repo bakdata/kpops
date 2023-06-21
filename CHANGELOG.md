@@ -1,4 +1,14 @@
 # Changelog
+## [1.2.1](https://github.com/bakdata/kpops/releases/tag/1.2.1) - Release Date: [2023-06-21]
+
+
+
+<summary>Uncategorized</summary>
+
+- Fix update docs in release workflow - [#258](https://github.com/bakdata/kpops/pull/258)
+
+
+
 ## [1.2.0](https://github.com/bakdata/kpops/releases/tag/1.2.0) - Release Date: [2023-06-21]
 
 ### 🚀 Features
