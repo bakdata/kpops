@@ -122,6 +122,13 @@ class BaseDefaultsComponent(BaseModel):
         """
         pass
 
+    def dict(self, *, exclude=None, **kwargs) -> dict:
+        # HACK: exclude validate field
+        if exclude is None:
+            exclude = set()
+        exclude.add("validate")
+        return super().dict(exclude=exclude, **kwargs)
+
 
 def load_defaults(
     component_class: type[BaseDefaultsComponent],
