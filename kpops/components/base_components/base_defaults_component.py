@@ -60,7 +60,7 @@ class BaseDefaultsComponent(BaseModel):
         exclude=True,
         hidden_from_schema=True,
     )
-    _validate: bool = Field(
+    validate_: bool = Field(
         alias="validate",
         default=True,
         description=describe_attr("validate", __doc__),
@@ -121,13 +121,6 @@ class BaseDefaultsComponent(BaseModel):
         :param kwargs: The init kwargs for the component
         """
         pass
-
-    def dict(self, *, exclude=None, **kwargs) -> dict:
-        # HACK: exclude validate field
-        if exclude is None:
-            exclude = set()
-        exclude.add("validate")
-        return super().dict(exclude=exclude, **kwargs)
 
 
 def load_defaults(
