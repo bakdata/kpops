@@ -115,7 +115,10 @@ class BaseDefaultsComponent(BaseModel):
         return kwargs
 
     def _validate_custom(self, **kwargs) -> None:
-        """Run custom validation on component."""
+        """Run custom validation on component.
+
+        :param kwargs: The init kwargs for the component
+        """
         pass
 
 
