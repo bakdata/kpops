@@ -44,7 +44,6 @@ kubernetes-app:
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "1.0.0" # Helm chart version
-#
 # Base component for Kafka-based components.
 #
 # Parent of: ProducerApp, StreamsApp
@@ -55,7 +54,6 @@ kafka-app:
       brokers: ${broker}
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name
-#
 # StreamsApp component that configures a streams bootstrap app.
 #
 # Child of: KafkaApp
@@ -114,7 +112,6 @@ streams-app:
       topics: # List of auto-generated Kafka Streams topics used by the streams app.
         - topic1
         - topic2
-#
 # Holds configuration to use as values for the streams bootstrap producer Helm
 # chart.
 #
@@ -129,7 +126,18 @@ producer:
       extraOutputTopics: 
         output_role1: output_topic1
         output_role2: output_topic2
+# Kafka source connector
 #
+# Child of: KafkaConnector
+kafka-source-connector:
+  # offset.storage.topic
+  # https://kafka.apache.org/documentation/#connect_running
+  offsetTopic: offset_topic
+# Kafka sink connector
+#
+# Child of: KafkaConnector
+kafka-sink-connector:
+  # No settings differ from `kafka-connector`
 # Kafka connector
 #
 # Parent of: KafkaSinkConnector, KafkaSourceConnector
@@ -177,17 +185,3 @@ kafka-connector:
   # Image Tag etc.
   resetterValues:
     imageTag: "1.2.3"
-#
-# Kafka source connector
-#
-# Child of: KafkaConnector
-kafka-source-connector:
-  # offset.storage.topic
-  # https://kafka.apache.org/documentation/#connect_running
-  offsetTopic: offset_topic
-#
-# Kafka sink connector
-#
-# Child of: KafkaConnector
-kafka-sink-connector:
-  # No settings differ from `kafka-connector`

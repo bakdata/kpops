@@ -14,9 +14,11 @@
       ${pipeline_name}-input-topic:
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
+    components: # read from specific component
+      - producer
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -28,14 +30,15 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # Helm repository configuration
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:
     repositoryName: my-repo # required
     url: https://bakdata.github.io/ # required
-    repoAuthFlags: 
+    repoAuthFlags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -53,7 +56,7 @@
       brokers: ${broker} # required
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
-    imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
+    imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app 
   # Topic(s) from which the component will read input
   # from: # Not advised to ever be used in `kafka-app` as it isn't supported by
   # `producer`
@@ -112,11 +115,11 @@
           - input_topic4
       extraInputPatterns:
         pattern_role1: input_pattern1
-      extraOutputTopics: 
+      extraOutputTopics:
         output_role1: output_topic1
         output_role2: output_topic2
       errorTopic: error-topic
-      config: 
+      config:
         my.streams.config: my.value
     nameOverride: override-with-this-name # streams-app-specific
     autoscaling: # streams-app-specific
@@ -152,9 +155,11 @@
       ${pipeline_name}-input-topic:
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
+    components: # read from specific component
+      - producer
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -162,11 +167,11 @@
         valueSchema: value-schema
         partitions_count: 1
         replication_factor: 1
-        configs: 
+        configs:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration, the default value is given here
@@ -283,9 +288,11 @@
       ${pipeline_name}-input-topic:
         type: input # required
         # role: topic-role # only used if type is `extra`
+    components: # read from specific component
+      - producer
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: error # required
         keySchema: key-schema # must implement SchemaProvider to use
@@ -296,14 +303,14 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration for resetter
   repoConfig:
     repositoryName: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags: 
+    repoAuthFlags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
