@@ -1,4 +1,22 @@
 # Changelog
+## [1.2.3](https://github.com/bakdata/kpops/releases/tag/1.2.3) - Release Date: [2023-06-22]
+
+### 🐛 Fixes
+
+- Refactor custom component validation & hide field from kpops output - [#265](https://github.com/bakdata/kpops/pull/265)
+
+
+### 🏭 Refactor
+
+- Refactor custom component validation & hide field from kpops output - [#265](https://github.com/bakdata/kpops/pull/265)
+
+
+
+
+### 🌀 Miscellaneous
+
+
+
 ## [1.2.2](https://github.com/bakdata/kpops/releases/tag/1.2.2) - Release Date: [2023-06-21]
 
 
