@@ -4,26 +4,24 @@ from unittest import mock
 from unittest.mock import MagicMock
 
 import pytest
+from pydantic import BaseModel
 from pytest_mock import MockerFixture
+from schema_registry.client.schema import AvroSchema
 from schema_registry.client.utils import SchemaVersion
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
+from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
     ToSection,
 )
 from kpops.utils.colorify import greenify, magentaify
-from tests.cli.test_registry import SubComponent
-from tests.component_handlers.schema_handler.resources.module import (
-    CustomSchemaProvider,
-)
 from tests.pipeline.test_components import TestSchemaProvider
 
-NON_EXISTING_PROVIDER_MODULE = SubComponent.__module__
-SCHEMA_PROVIDER_MODULE = CustomSchemaProvider.__module__
+NON_EXISTING_PROVIDER_MODULE = BaseModel.__module__
 TEST_SCHEMA_PROVIDER_MODULE = TestSchemaProvider.__module__
 
 
@@ -56,6 +54,21 @@ def schema_registry_mock(mocker: MockerFixture) -> MagicMock:
     return schema_registry_mock.return_value
 
 
+@pytest.fixture()
+def topic_config() -> TopicConfig:
+    return TopicConfig(
+        type=OutputTopicTypes.OUTPUT,
+        # pyright has no way of validating these aliased Pydantic fields because we're also using the allow_population_by_field_name setting
+        key_schema=None,  # pyright: ignore[reportGeneralTypeIssues]
+        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",  # pyright: ignore[reportGeneralTypeIssues]
+    )
+
+
+@pytest.fixture()
+def to_section(topic_config: TopicConfig) -> ToSection:
+    return ToSection(topics={TopicName("topic-X"): topic_config})
+
+
 def test_load_schema_handler():
     config_enable = PipelineConfig(
         defaults_path=Path("fake"),
@@ -70,13 +83,9 @@ def test_load_schema_handler():
         is None
     )
 
-    assert (
-        type(
-            SchemaHandler.load_schema_handler(
-                TEST_SCHEMA_PROVIDER_MODULE, config_enable
-            )
-        )
-        is SchemaHandler
+    assert isinstance(
+        SchemaHandler.load_schema_handler(TEST_SCHEMA_PROVIDER_MODULE, config_enable),
+        SchemaHandler,
     )
 
 
@@ -114,7 +123,7 @@ def test_should_raise_value_error_if_schema_provider_class_not_found():
 
     assert (
         str(value_error.value)
-        == "No schema provider found in components module tests.cli.test_registry. "
+        == "No schema provider found in components module pydantic.main. "
         "Please implement the abstract method in "
         f"{SchemaProvider.__module__}.{SchemaProvider.__name__}."
     )
@@ -148,17 +157,11 @@ def test_should_raise_value_error_when_schema_provider_is_called_and_components_
 
 
 def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
-    log_info_mock: MagicMock, schema_registry_mock: MagicMock
+    to_section: ToSection, log_info_mock: MagicMock, schema_registry_mock: MagicMock
 ):
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        key_schema=None,
-        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
 
     schema_registry_mock.get_versions.return_value = []
 
@@ -171,17 +174,14 @@ def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
 
 
 def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
-    log_info_mock: MagicMock, schema_registry_mock: MagicMock
+    topic_config: TopicConfig,
+    to_section: ToSection,
+    log_info_mock: MagicMock,
+    schema_registry_mock: MagicMock,
 ):
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        key_schema=None,
-        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
 
     schema_registry_mock.get_versions.return_value = [1, 2, 3]
     schema_registry_mock.check_version.return_value = None
@@ -196,19 +196,15 @@ def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
 
 
 def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatible_and_dry_run_true(
-    log_info_mock: MagicMock, schema_registry_mock: MagicMock
+    topic_config: TopicConfig,
+    to_section: ToSection,
+    schema_registry_mock: MagicMock,
 ):
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        key_schema=None,
-        value_schema=schema_class,
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
 
     schema_registry_mock.get_versions.return_value = [1, 2, 3]
     schema_registry_mock.check_version.return_value = None
@@ -217,29 +213,38 @@ def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatibl
     with pytest.raises(Exception) as exception:
         schema_handler.submit_schemas(to_section, True)
 
+    assert "Schema is not compatible for" in str(exception.value)
+    EXPECTED_SCHEMA = {
+        "type": "record",
+        "name": "KPOps.Employee",
+        "fields": [
+            {"name": "Name", "type": "string"},
+            {"name": "Age", "type": "int"},
+        ],
+    }
     schema = schema_provider.provide_schema(schema_class, {})
+    assert isinstance(schema, AvroSchema)
+    assert schema.flat_schema == EXPECTED_SCHEMA
     assert (
         str(exception.value)
-        == f"Schema is not compatible for topic-X-value and model {topic_config.value_schema}. \n {json.dumps(schema.flat_schema, indent=4)}"
+        == f"Schema is not compatible for topic-X-value and model {topic_config.value_schema}. \n {json.dumps(EXPECTED_SCHEMA, indent=4)}"
     )
 
     schema_registry_mock.register.assert_not_called()
 
 
 def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_version_and_dry_run_true(
-    log_info_mock: MagicMock, log_debug_mock: MagicMock, schema_registry_mock: MagicMock
+    topic_config: TopicConfig,
+    to_section: ToSection,
+    log_info_mock: MagicMock,
+    log_debug_mock: MagicMock,
+    schema_registry_mock: MagicMock,
 ):
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        key_schema=None,
-        value_schema=schema_class,
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
     schema = schema_provider.provide_schema(schema_class, {})
     registered_version = SchemaVersion(topic_config.value_schema, 1, schema, 1)
 
@@ -264,7 +269,10 @@ def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_ve
 
 
 def test_should_submit_non_existing_schema_when_not_dry(
-    log_info_mock: MagicMock, schema_registry_mock: MagicMock
+    topic_config: TopicConfig,
+    to_section: ToSection,
+    log_info_mock: MagicMock,
+    schema_registry_mock: MagicMock,
 ):
     schema_provider = TestSchemaProvider()
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
@@ -272,12 +280,6 @@ def test_should_submit_non_existing_schema_when_not_dry(
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        key_schema=None,
-        value_schema=schema_class,
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
 
     schema_registry_mock.get_versions.return_value = []
 
@@ -295,17 +297,13 @@ def test_should_submit_non_existing_schema_when_not_dry(
 
 
 def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
-    log_info_mock: MagicMock, schema_registry_mock: MagicMock
+    to_section: ToSection,
+    log_info_mock: MagicMock,
+    schema_registry_mock: MagicMock,
 ):
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        key_schema=None,
-        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
 
     schema_registry_mock.get_versions.return_value = []
 
@@ -319,17 +317,11 @@ def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
 
 
 def test_should_delete_schemas_when_not_in_dry_run(
-    log_info_mock: MagicMock, schema_registry_mock: MagicMock
+    to_section: ToSection, schema_registry_mock: MagicMock
 ):
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
-    topic_config = TopicConfig(
-        type=OutputTopicTypes.OUTPUT,
-        key_schema=None,
-        value_schema="com.bakdata.kpops.test.SchemaHandlerTest",
-    )
-    to_section = ToSection(topics={"topic-X": topic_config})
 
     schema_registry_mock.get_versions.return_value = []
 

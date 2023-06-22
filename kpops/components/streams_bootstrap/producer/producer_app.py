@@ -33,7 +33,7 @@ class ProducerApp(KafkaApp):
     """
 
     type: str = Field(default="producer", description="Component type")
-    schema_type: Literal["producer"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["producer"] = Field(
         default="producer",
         title="Component type",
         description=describe_object(__doc__),

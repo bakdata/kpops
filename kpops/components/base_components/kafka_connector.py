@@ -59,7 +59,7 @@ class KafkaConnector(PipelineComponent, ABC):
     """
 
     type: str = Field(default="kafka-connector", description="Component type")
-    schema_type: Literal["kafka-connector"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["kafka-connector"] = Field(
         default="kafka-connector",
         title="Component type",
         description=describe_object(__doc__),
@@ -88,9 +88,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
     class Config(CamelCaseConfig):
         pass
-
-    def __init__(self, **kwargs) -> None:
-        super().__init__(**kwargs)
 
     @cached_property
     def helm(self) -> Helm:
@@ -316,7 +313,7 @@ class KafkaSourceConnector(KafkaConnector):
         default="kafka-source-connector",
         description=describe_attr("type", __doc__),
     )
-    schema_type: Literal["kafka-source-connector"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["kafka-source-connector"] = Field(
         default="kafka-source-connector",
         title="Component type",
         description=describe_object(__doc__),
@@ -388,7 +385,7 @@ class KafkaSinkConnector(KafkaConnector):
         default="kafka-sink-connector",
         description=describe_attr("type", __doc__),
     )
-    schema_type: Literal["kafka-sink-connector"] = Field(  # type: ignore[assignment]
+    schema_type: Literal["kafka-sink-connector"] = Field(
         default="kafka-sink-connector",
         title="Component type",
         description=describe_object(__doc__),

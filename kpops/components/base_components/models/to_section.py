@@ -3,6 +3,7 @@ from typing import Any
 
 from pydantic import BaseModel, Extra, Field, root_validator
 
+from kpops.components.base_components.models import TopicName
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfig
 
@@ -89,7 +90,7 @@ class ToSection(BaseModel):
     models: dict[str, Any] = Field(
         default={}, description=describe_attr("models", __doc__)
     )
-    topics: dict[str, TopicConfig] = Field(
+    topics: dict[TopicName, TopicConfig] = Field(
         ..., description=describe_attr("topics", __doc__)
     )
 

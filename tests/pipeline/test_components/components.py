@@ -9,6 +9,7 @@ from kpops.component_handlers.schema_handler.schema_provider import (
 )
 from kpops.components import KafkaSinkConnector
 from kpops.components.base_components import PipelineComponent
+from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -55,10 +56,10 @@ class InflateStep(StreamsApp):
                         },
                         to=ToSection(
                             topics={
-                                "${component_type}": TopicConfig(
+                                TopicName("${component_type}"): TopicConfig(
                                     type=OutputTopicTypes.OUTPUT
                                 ),
-                                "${component_name}": TopicConfig(
+                                TopicName("${component_name}"): TopicConfig(
                                     type=OutputTopicTypes.EXTRA, role="test"
                                 ),
                             }
@@ -69,12 +70,11 @@ class InflateStep(StreamsApp):
                         name="inflated-streams-app",
                         config=self.config,
                         handlers=self.handlers,
-                        to=ToSection(
+                        to=ToSection(  # type: ignore
                             topics={
-                                f"{self.name}-"
-                                + "${component_name}": TopicConfig(
-                                    type=OutputTopicTypes.OUTPUT
-                                )
+                                TopicName(
+                                    f"{self.name}-" + "${component_name}"
+                                ): TopicConfig(type=OutputTopicTypes.OUTPUT)
                             }
                         ).dict(),
                     )
