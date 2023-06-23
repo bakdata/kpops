@@ -15,3 +15,6 @@ producer:
         output_role1: output_topic1
         output_role2: output_topic2
     nameOverride: override-with-this-name # kafka-app-specific
+  # While the producer does inherit from kafka-app, it does not need a `from`
+  # section, hence it is not allowed to define it.
+  # from:

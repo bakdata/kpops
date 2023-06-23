@@ -1,6 +1,7 @@
 """Generates the whole 'generatable' KPOps documentation"""
 import os
 import subprocess
+from enum import Enum
 from pathlib import Path
 
 from hooks import PATH_ROOT
@@ -9,6 +10,32 @@ PATH_KPOPS_MAIN = PATH_ROOT / "kpops/cli/main.py"
 PATH_CLI_COMMANDS_DOC = PATH_ROOT / "docs/docs/user/references/cli-commands.md"
 PATH_DOCS_RESOURCES = PATH_ROOT / "docs/docs/resources"
 PATH_DOCS_PIPELINE_COMPONENTS = PATH_DOCS_RESOURCES / "pipeline-components"
+SECTIONS_ORDER = [
+    "type",
+    "name",
+    "namespace",
+    "app",
+    "from",
+    "to",
+    "prefix",
+    "repo-config",
+    "version",
+    "resetter-values",
+    "offset-topic",
+]
+
+
+# class Section(Enum):
+#     TYPE = "type"
+#     NAME = "name"
+#     NAMESPACE = "namespace"
+#     APP = "app"
+#     TO = "to"
+#     PREFIX = "prefix"
+#     REPO_CONFIG = "repo-config"
+#     VERSION = "version"
+#     RESETTER_VALUES = "resetter-values"
+#     OFFSET_TOPIC = "offset-topic"
 
 
 def concatenate_text_files(*file_paths: Path, target: Path):
@@ -56,6 +83,15 @@ pipeline_component_defaults = os.listdir(
     PATH_DOCS_RESOURCES / "pipeline-defaults/headers"
 )
 
+def sort_(to_be_ordered: list[str], ordering: list[str]):
+    res = []
+    for rule in ordering:
+        for subject in to_be_ordered:
+            if subject.startswith(rule + "-"):
+                res.append(subject)
+    return res
+
+definition_sections = sort_(definition_sections, SECTIONS_ORDER)
 
 for file in pipeline_components:
     component_name = file.removesuffix(".yaml")
@@ -67,21 +103,19 @@ for file in pipeline_components:
         PATH_DOCS_PIPELINE_COMPONENTS / "sections" / section
         for section in definition_sections
         if component_name in section
-        or (
-            component_name == "kafka-connector"
-            and ("kubernetes-app" in section)
-            and (
-                component_name + section.removeprefix("kubernetes-app")
-                not in definition_sections
-            )
-        )
     ]
     # Concatenate defaults sections into component-specific default files
     concatenate_text_files(
         *(defaults_sections_paths),
         target=PATH_DOCS_RESOURCES / "pipeline-defaults/" / component_defaults_name,
     )
-
+# # kafka-connector is an edge case
+# kafka_connector_sections = [
+#     ""
+# ]
+# concatenate_text_files(
+#     *()
+# )
 
 # Concatenate components into a full pipeline def
 concatenate_text_files(

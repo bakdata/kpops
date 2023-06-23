@@ -3,6 +3,7 @@
 # Parent of: KafkaApp
 # Child of: PipelineComponent
 kubernetes-app:
+  namespace: namespace # required
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example.
   app: # required
@@ -17,20 +18,6 @@ kubernetes-app:
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
       - producer
-  namespace: namespace # required
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repoConfig:
-    repositoryName: my-repo # required
-    url: https://bakdata.github.io/ # required
-    repoAuthFlags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
   # Topic(s) into which the component will write output
   to:
     topics:
@@ -45,4 +32,17 @@ kubernetes-app:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repoConfig:
+    repositoryName: my-repo # required
+    url: https://bakdata.github.io/ # required
+    repoAuthFlags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
   version: "1.0.0" # Helm chart version

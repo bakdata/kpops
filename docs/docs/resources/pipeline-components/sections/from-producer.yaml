@@ -1,0 +1,3 @@
+  # While the producer does inherit from kafka-app, it does not need a `from`
+  # section, hence it is not allowed to define it.
+  # from:
