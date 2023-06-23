@@ -1,9 +1,3 @@
-# Holds configuration to use as values for the streams bootstrap producer Helm
-# chart.
-#
-# Child of: KafkaApp
-# More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
-producer:
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required

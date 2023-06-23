@@ -1,5 +1,0 @@
-    # `app` contains application-specific settings, hence it does not have a rigid
-    # structure. The fields below are just an example. Extensive documentation on
-    # sink connectors: https://kafka.apache.org/documentation/#sinkconnectconfigs
-    app: # required
-      tasks.max: 1

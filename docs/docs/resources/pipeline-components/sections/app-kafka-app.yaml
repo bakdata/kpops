@@ -1,8 +1,3 @@
-# Base component for Kafka-based components.
-#
-# Parent of: ProducerApp, StreamsApp
-# Child of: KubernetesApp
-kafka-app:
   # `app` can contain application-specific settings, hence  the user is free to
   # add the key-value pairs they need.
   app: # required
@@ -10,4 +5,3 @@ kafka-app:
       brokers: ${broker} # required
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
-  version: "2.12.0" # Helm chart version
