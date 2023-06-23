@@ -1,0 +1,6 @@
+    # `app` contains application-specific settings, hence it does not have a rigid
+    # structure. The fields below are just an example.
+    app: # required
+      image: exampleImage # Example
+      debug: false # Example
+      commandLine: {} # Example
