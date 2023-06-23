@@ -1,6 +1,6 @@
 # Kafka sink connector
 - type: kafka-sink-connector
-  name: kafka-sink-connector # required,
+  name: kafka-sink-connector # required
   namespace: namespace # required, clean up jobs for the connector will run here
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example. Extensive documentation on

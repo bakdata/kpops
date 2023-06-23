@@ -1,4 +1,5 @@
 """Generates the whole 'generatable' KPOps documentation"""
+import os
 import subprocess
 from pathlib import Path
 
@@ -7,6 +8,7 @@ from hooks import PATH_ROOT
 PATH_KPOPS_MAIN = PATH_ROOT / "kpops/cli/main.py"
 PATH_CLI_COMMANDS_DOC = PATH_ROOT / "docs/docs/user/references/cli-commands.md"
 PATH_DOCS_RESOURCES = PATH_ROOT / "docs/docs/resources"
+PATH_DOCS_PIPELINE_COMPONENTS = PATH_DOCS_RESOURCES / "pipeline-components"
 
 
 def concatenate_text_files(*file_paths: Path, target: Path):
@@ -46,22 +48,51 @@ text[0] = "# CLI Usage\n"
 with open(PATH_CLI_COMMANDS_DOC, "w") as f:
     f.writelines(text)
 
-# Concatenate individual examples into the complete files
-pipeline_components = (
-    "kubernetes-app.yaml",
-    "kafka-app.yaml",
-    "streams-app.yaml",
-    "producer.yaml",
-    "kafka-source-connector.yaml",
-    "kafka-sink-connector.yaml",
+# Concatenate sections -> individual component examples -> multi-component examples
+
+definition_sections = os.listdir(PATH_DOCS_PIPELINE_COMPONENTS / "sections")
+pipeline_components = os.listdir(PATH_DOCS_PIPELINE_COMPONENTS / "headers")
+pipeline_component_defaults = os.listdir(
+    PATH_DOCS_RESOURCES / "pipeline-defaults/headers"
 )
-pipeline_component_defaults = (
-    "defaults-" + f for f in (*pipeline_components, "kafka-connector.yaml")
-)
+
+
+for file in pipeline_components:
+    component_name = file.removesuffix(".yaml")
+    component_defaults_name = "defaults-" + file
+
+    defaults_sections_paths = [
+        PATH_DOCS_RESOURCES / "pipeline-defaults/headers" / component_defaults_name
+    ] + [
+        PATH_DOCS_PIPELINE_COMPONENTS / "sections" / section
+        for section in definition_sections
+        if component_name in section
+        or (
+            component_name == "kafka-connector"
+            and ("kubernetes-app" in section)
+            and (
+                component_name + section.removeprefix("kubernetes-app")
+                not in definition_sections
+            )
+        )
+    ]
+    # Concatenate defaults sections into component-specific default files
+    concatenate_text_files(
+        *(defaults_sections_paths),
+        target=PATH_DOCS_RESOURCES / "pipeline-defaults/" / component_defaults_name,
+    )
+
+
+# Concatenate components into a full pipeline def
 concatenate_text_files(
-    *(PATH_DOCS_RESOURCES / "pipeline-components" / s for s in pipeline_components),
-    target=PATH_DOCS_RESOURCES / "pipeline-components" / "pipeline.yaml",
+    *(
+        PATH_DOCS_PIPELINE_COMPONENTS / s
+        for s in pipeline_components
+        if "kafka-connector" not in s
+    ),
+    target=PATH_DOCS_PIPELINE_COMPONENTS / "pipeline.yaml",
 )
+# Concatenate component-specific defaults into a full defaults file
 concatenate_text_files(
     *(
         PATH_DOCS_RESOURCES / "pipeline-defaults" / s

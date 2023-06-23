@@ -2,6 +2,12 @@
 #
 # Child of: KafkaConnector
 kafka-source-connector:
-  # offset.storage.topic
-  # https://kafka.apache.org/documentation/#connect_running
-  offsetTopic: offset_topic
+    # `app` contains application-specific settings, hence it does not have a rigid
+    # structure. The fields below are just an example. Extensive documentation on
+    # source connectors: https://kafka.apache.org/documentation/#sourceconnectconfigs
+    app: # required
+      tasks.max: 1
+      errors.tolerance: none
+    # offset.storage.topic
+    # https://kafka.apache.org/documentation/#connect_running
+    offsetTopic: offset_topic

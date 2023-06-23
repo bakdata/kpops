@@ -2,7 +2,8 @@
     repoConfig:
       repositoryName: my-repo # required
       url: https://bakdata.github.io/kafka-connect-resetter/ # required
-      repoAuthFlags:
+      repoAuthFlags: 
         username: user
         password: pass
-        ca_file: /home/user/path/to/ca-f
+        ca_file: /home/user/path/to/ca-file
+        insecure_skip_tls_verify: false
