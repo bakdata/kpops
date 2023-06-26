@@ -144,6 +144,7 @@ def gen_pipeline_schema(
         Sequence[AnnotatedPipelineComponents],
         title="kpops pipeline schema",
         by_alias=True,
+        indent=4,
         sort_keys=True,
     ).replace("schema_type", "type")
     print(schema)
