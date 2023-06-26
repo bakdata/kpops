@@ -58,11 +58,13 @@ class KafkaConnector(PipelineComponent, ABC):
     :type resetter_values: dict, optional
     """
 
-    type: str = Field(default="kafka-connector", description="Component type")
+    type: str = Field(
+        default="kafka-connector", description=describe_attr("type", __doc__)
+    )
     schema_type: Literal["kafka-connector"] = Field(
         default="kafka-connector",
         title="Component type",
-        description=describe_object(__doc__),
+        description=describe_attr("schema_type", __doc__),
         exclude=True,
     )
     app: KafkaConnectConfig = Field(
@@ -80,7 +82,9 @@ class KafkaConnector(PipelineComponent, ABC):
         default=...,
         description=describe_attr("namespace", __doc__),
     )
-    version: str | None = Field(default="1.0.4", description="Helm chart version")
+    version: str | None = Field(
+        default="1.0.4", description=describe_attr("version", __doc__)
+    )
     resetter_values: dict = Field(
         default_factory=dict,
         description=describe_attr("resetter_values", __doc__),

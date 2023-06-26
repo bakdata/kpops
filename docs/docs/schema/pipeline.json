@@ -288,7 +288,7 @@
                 },
                 "type": {
                     "default": "kafka-connector",
-                    "description": "Base class for all Kafka connectors\nShould only be used to set defaults",
+                    "description": "Used for schema generation, same as :param:`type`",
                     "enum": [
                         "kafka-connector"
                     ],
@@ -709,7 +709,7 @@
             "type": "object"
         },
         "ProducerApp": {
-            "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+            "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -762,7 +762,7 @@
                 },
                 "type": {
                     "default": "producer",
-                    "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+                    "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
                     "enum": [
                         "producer"
                     ],
