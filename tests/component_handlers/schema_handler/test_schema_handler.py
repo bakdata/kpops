@@ -4,6 +4,7 @@ from unittest import mock
 from unittest.mock import MagicMock
 
 import pytest
+from pydantic import BaseModel
 from pytest_mock import MockerFixture
 from schema_registry.client.schema import AvroSchema
 from schema_registry.client.utils import SchemaVersion
@@ -18,14 +19,9 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.colorify import greenify, magentaify
-from tests.cli.test_registry import SubComponent
-from tests.component_handlers.schema_handler.resources.module import (
-    CustomSchemaProvider,
-)
 from tests.pipeline.test_components import TestSchemaProvider
 
-NON_EXISTING_PROVIDER_MODULE = SubComponent.__module__
-SCHEMA_PROVIDER_MODULE = CustomSchemaProvider.__module__
+NON_EXISTING_PROVIDER_MODULE = BaseModel.__module__
 TEST_SCHEMA_PROVIDER_MODULE = TestSchemaProvider.__module__
 
 
@@ -127,7 +123,7 @@ def test_should_raise_value_error_if_schema_provider_class_not_found():
 
     assert (
         str(value_error.value)
-        == "No schema provider found in components module tests.cli.test_registry. "
+        == "No schema provider found in components module pydantic.main. "
         "Please implement the abstract method in "
         f"{SchemaProvider.__module__}.{SchemaProvider.__name__}."
     )
