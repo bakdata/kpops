@@ -2,14 +2,7 @@
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
 - type: streams-app # required
   name: streams-app # required
-  # Topic(s) from which the component will read input
-  from:
-    topics: # required
-      ${pipeline_name}-input-topic:
-        type: input # required
-        # role: topic-role # only used if type is `extra` or `extra-pattern`
-    components: # read from specific component
-      - producer
+  namespace: namespace # required
   # No arbitrary keys are allowed under `app`here
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
@@ -66,6 +59,14 @@
       topics: # List of auto-generated Kafka Streams topics used by the streams app.
         - topic1
         - topic2
+  # Topic(s) from which the component will read input
+  from:
+    topics: # required
+      ${pipeline_name}-input-topic:
+        type: input # required
+        # role: topic-role # only used if type is `extra` or `extra-pattern`
+    components: # read from specific component
+      - producer
   # Topic(s) into which the component will write output
   to:
     topics:
@@ -93,5 +94,4 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  namespace: namespace # required
   version: "2.12.0" # Helm chart version

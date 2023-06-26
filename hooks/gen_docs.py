@@ -20,20 +20,20 @@ COMPONENTS_FIELDS = {
     component.get_component_type(): component.__fields__.keys()
     for component in KPOPS_COMPONENTS
 }
-print(COMPONENTS_FIELDS)
-# SECTIONS_ORDER = [
-#     "type",
-#     "name",
-#     "namespace",
-#     "app",
-#     "from",
-#     "to",
-#     "prefix",
-#     "repo-config",
-#     "version",
-#     "resetter-values",
-#     "offset-topic",
-# ]
+
+SECTIONS_ORDER = [
+    "type",
+    "name",
+    "namespace",
+    "app",
+    "from_",
+    "to",
+    "prefix",
+    "repo_config",
+    "version",
+    "resetter_values",
+    "offset_topic",
+]
 
 #####################
 # EXAMPLES          #
@@ -55,12 +55,10 @@ def get_sections(
         section = target_section + "-" + component + ".yaml"
         if section in sections:
             component_sections.append(section)
-            continue
         elif not include_inherited and INHERITANCE_REF[component] == "pipeline-component":
             section = target_section + ".yaml"
             if section in sections:
                 component_sections.append(section)
-                continue
         elif include_inherited:
             while component != "pipeline-component":
                 component = INHERITANCE_REF[component]
@@ -68,12 +66,12 @@ def get_sections(
                 if section in sections:
                     component_sections.append(section)
                     break
-                else:
+                elif component == "pipeline-component":
                     section = target_section + ".yaml"
                     if section in sections:
                         component_sections.append(section)
                         break
-    return component_sections
+    return sort_(component_sections, SECTIONS_ORDER)
 
 
 def concatenate_text_files(*file_paths: Path, target: Path):
@@ -102,14 +100,13 @@ pipeline_component_defaults = os.listdir(
 )
 
 
-# def sort_(to_be_ordered: list[str], ordering: list[str]):
-#     res = []
-#     for rule in ordering:
-#         for subject in to_be_ordered:
-#             if subject.startswith(rule + "-"):
-#                 res.append(subject)
-#     return res
-
+def sort_(to_be_ordered: list[str], ordering: list[str]):
+    res = []
+    for rule in ordering:
+        for subject in to_be_ordered:
+            if subject.startswith(rule + "-") or subject.startswith(rule + "."):
+                res.append(subject)
+    return res
 
 for file in pipeline_components:
     component_name = file.removesuffix(".yaml")

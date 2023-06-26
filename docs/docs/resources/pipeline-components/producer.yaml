@@ -4,9 +4,7 @@
 # https://github.com/bakdata/streams-bootstrap
 - type: producer
   name: producer # required
-  # While the producer does inherit from kafka-app, it does not need a `from`
-  # section, hence it is not allowed to define it.
-  # from:
+  namespace: namespace # required
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
@@ -18,6 +16,9 @@
         output_role1: output_topic1
         output_role2: output_topic2
     nameOverride: override-with-this-name # kafka-app-specific
+  # While the producer does inherit from kafka-app, it does not need a `from`
+  # section, hence it is not allowed to define it.
+  # from:
   # Topic(s) into which the component will write output
   to:
     topics:
@@ -45,5 +46,4 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  namespace: namespace # required
   version: "2.12.0" # Helm chart version

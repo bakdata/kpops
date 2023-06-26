@@ -1,6 +1,13 @@
 # Base Kubernetes App
 - type: kubernetes-app
   name: kubernetes-app # required
+  namespace: namespace # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example.
+  app: # required
+    image: exampleImage # Example
+    debug: false # Example
+    commandLine: {} # Example
   # Topic(s) from which the component will read input
   from:
     topics: # required
@@ -9,12 +16,6 @@
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
       - producer
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example.
-  app: # required
-    image: exampleImage # Example
-    debug: false # Example
-    commandLine: {} # Example
   # Topic(s) into which the component will write output
   to:
     topics:
@@ -42,5 +43,4 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  namespace: namespace # required
   version: "1.0.0" # Helm chart version
