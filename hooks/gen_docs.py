@@ -20,7 +20,6 @@ COMPONENTS_FIELDS = {
     component.get_component_type(): component.__fields__.keys()
     for component in KPOPS_COMPONENTS
 }
-
 SECTIONS_ORDER = [
     "type",
     "name",
@@ -47,6 +46,8 @@ def get_sections(
 
     :param component_name: Component name
     :param sections: Available section files, names with extension, no path
+    :param include_inherited: Whether to include sections that can be defined in
+        a parent component defaults
     :returns: The applicable sections
     """
     component_sections: list[str] = []
@@ -55,7 +56,9 @@ def get_sections(
         section = target_section + "-" + component + ".yaml"
         if section in sections:
             component_sections.append(section)
-        elif not include_inherited and INHERITANCE_REF[component] == "pipeline-component":
+        elif (
+            not include_inherited and INHERITANCE_REF[component] == "pipeline-component"
+        ):
             section = target_section + ".yaml"
             if section in sections:
                 component_sections.append(section)
@@ -71,10 +74,11 @@ def get_sections(
                     if section in sections:
                         component_sections.append(section)
                         break
-    return sort_(component_sections, SECTIONS_ORDER)
+    component_sections.sort(key=component_section_position_in_definition)
+    return component_sections
 
 
-def concatenate_text_files(*file_paths: Path, target: Path):
+def concatenate_text_files(*file_paths: Path, target: Path) -> None:
     """Concatenates the given files into one
 
     :param *file_paths: Files to be conatenated. The order of the inputs will be
@@ -90,67 +94,69 @@ def concatenate_text_files(*file_paths: Path, target: Path):
         f.write(res)
 
 
-# Concatenate sections -> individual component examples -> multi-component examples
+def component_section_position_in_definition(key: str) -> int:
+    """Returns a positional value for a given str if found in the list of
+    component definition sections
 
-# Collect file names
-definition_sections = os.listdir(PATH_DOCS_PIPELINE_COMPONENTS / "sections")
-pipeline_components = os.listdir(PATH_DOCS_PIPELINE_COMPONENTS / "headers")
+    :param key: A value to look for in the list of sections
+    :return: The corresponding position or 0 if not found
+    """
+    for section in SECTIONS_ORDER:
+        if key.startswith((section + "-", section + ".")):
+            return SECTIONS_ORDER.index(section)
+    return 0
+
+
+components_definition_sections = os.listdir(PATH_DOCS_PIPELINE_COMPONENTS / "sections")
+pipeline_component_file_names = os.listdir(PATH_DOCS_PIPELINE_COMPONENTS / "headers")
 pipeline_component_defaults = os.listdir(
     PATH_DOCS_RESOURCES / "pipeline-defaults/headers"
 )
 
 
-def sort_(to_be_ordered: list[str], ordering: list[str]):
-    res = []
-    for rule in ordering:
-        for subject in to_be_ordered:
-            if subject.startswith(rule + "-") or subject.startswith(rule + "."):
-                res.append(subject)
-    return res
+for component_file_name in pipeline_component_file_names:
+    component_name = component_file_name.removesuffix(".yaml")
+    component_defaults_name = "defaults-" + component_file_name
+    component_sections = get_sections(
+        component_name, components_definition_sections, True
+    )
+    component_sections_not_inheritted = get_sections(
+        component_name, components_definition_sections
+    )
 
-for file in pipeline_components:
-    component_name = file.removesuffix(".yaml")
-    component_defaults_name = "defaults-" + file
-
-    # defaults
-    sections_defaults = get_sections(component_name, definition_sections)
     defaults_sections_paths = [
         PATH_DOCS_RESOURCES / "pipeline-defaults/headers" / component_defaults_name
     ] + [
         PATH_DOCS_PIPELINE_COMPONENTS / "sections" / section
-        for section in sections_defaults
+        for section in component_sections_not_inheritted
     ]
-
-    # Concatenate defaults sections into component-specific default files
+    sections_paths = [
+        PATH_DOCS_RESOURCES / "pipeline-components/headers" / component_file_name
+    ] + [
+        PATH_DOCS_PIPELINE_COMPONENTS / "sections" / section
+        for section in component_sections
+    ]
     concatenate_text_files(
         *(defaults_sections_paths),
         target=PATH_DOCS_RESOURCES / "pipeline-defaults/" / component_defaults_name,
     )
-    # pipeline components
-    sections = get_sections(component_name, definition_sections, True)
-    sections_paths = [PATH_DOCS_RESOURCES / "pipeline-components/headers" / file] + [
-        PATH_DOCS_PIPELINE_COMPONENTS / "sections" / section for section in sections
-    ]
-    # Concatenate defaults sections into component-specific default files
     concatenate_text_files(
         *(sections_paths),
-        target=PATH_DOCS_RESOURCES / "pipeline-components/" / file,
+        target=PATH_DOCS_RESOURCES / "pipeline-components/" / component_file_name,
     )
 
-# Concatenate components into a full pipeline def
 concatenate_text_files(
     *(
-        PATH_DOCS_PIPELINE_COMPONENTS / s
-        for s in pipeline_components
-        if "kafka-connector" not in s
+        PATH_DOCS_PIPELINE_COMPONENTS / component
+        for component in pipeline_component_file_names
+        if "kafka-connector" not in component # Shouldn't be used in the pipeline def
     ),
     target=PATH_DOCS_PIPELINE_COMPONENTS / "pipeline.yaml",
 )
-# Concatenate component-specific defaults into a full defaults file
 concatenate_text_files(
     *(
-        PATH_DOCS_RESOURCES / "pipeline-defaults" / s
-        for s in pipeline_component_defaults
+        PATH_DOCS_RESOURCES / "pipeline-defaults" / component
+        for component in pipeline_component_defaults
     ),
     target=PATH_DOCS_RESOURCES / "pipeline-defaults" / "defaults.yaml",
 )
