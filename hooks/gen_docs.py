@@ -149,7 +149,7 @@ concatenate_text_files(
     *(
         PATH_DOCS_PIPELINE_COMPONENTS / component
         for component in pipeline_component_file_names
-        if "kafka-connector" not in component # Shouldn't be used in the pipeline def
+        if "kafka-connector" not in component  # Shouldn't be used in the pipeline def
     ),
     target=PATH_DOCS_PIPELINE_COMPONENTS / "pipeline.yaml",
 )

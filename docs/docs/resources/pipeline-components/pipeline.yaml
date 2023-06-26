@@ -243,10 +243,9 @@
   namespace: namespace # required
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example. Extensive documentation on
-  # source connectors: https://kafka.apache.org/documentation/#sourceconnectconfigs
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
   app: # required
     tasks.max: 1
-    errors.tolerance: none
   # The source connector has no `from` section
   # from:
   # Topic(s) into which the component will write output
@@ -289,7 +288,7 @@
   namespace: namespace # required
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example. Extensive documentation on
-  # sink connectors: https://kafka.apache.org/documentation/#sinkconnectconfigs
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
   app: # required
     tasks.max: 1
   # Topic(s) from which the component will read input
