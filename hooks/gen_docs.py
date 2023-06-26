@@ -1,10 +1,7 @@
 """Generates the whole 'generatable' KPOps documentation"""
 import os
 import subprocess
-from enum import Enum
-from multiprocessing import Value
 from pathlib import Path
-from pprint import pprint
 
 from hooks import PATH_ROOT
 from kpops.cli.registry import _find_classes
@@ -24,7 +21,6 @@ COMPONENTS_FIELDS = {
     for component in KPOPS_COMPONENTS
 }
 
-
 # SECTIONS_ORDER = [
 #     "type",
 #     "name",
@@ -39,14 +35,15 @@ COMPONENTS_FIELDS = {
 #     "offset-topic",
 # ]
 
-pprint(COMPONENTS_FIELDS)
-
 #####################
 # EXAMPLES          #
 #####################
 
-def get_sections(component_name: str, sections: list[str]) -> list[str]:
-    """Find all sections that apply to a component from a list
+
+def get_sections(
+    component_name: str, sections: list[str], include_inherited: bool = False
+) -> list[str]:
+    """Find all sections that are specific to a component from a list
 
     :param component_name: Component name
     :param sections: Available section files, names with extension, no path
@@ -54,8 +51,17 @@ def get_sections(component_name: str, sections: list[str]) -> list[str]:
     """
     component_sections: list[str] = []
     for target_section in COMPONENTS_FIELDS[component_name]:
-        if (section := target_section + "-" + component_name + ".yaml") in sections:
+        component = component_name
+        section = target_section + "-" + component + ".yaml"
+        if section in sections:
             component_sections.append(section)
+        elif include_inherited:
+            while component != "pipeline-component":
+                component = INHERITANCE_REF[component]
+                section = target_section + "-" + component + ".yaml"
+                if section in sections:
+                    component_sections.append(section)
+                    print("Appended to " + component + ": " + section)
     return component_sections
 
 
@@ -97,15 +103,30 @@ pipeline_component_defaults = os.listdir(
 for file in pipeline_components:
     component_name = file.removesuffix(".yaml")
     component_defaults_name = "defaults-" + file
-    # component_sections = sort_(definition_sections, COMPONENTS_FIELDS[component_name])
-    sections = get_sections(component_name, definition_sections)
+
+    # defaults
+    sections_defaults = get_sections(component_name, definition_sections)
     defaults_sections_paths = [
         PATH_DOCS_RESOURCES / "pipeline-defaults/headers" / component_defaults_name
-    ] + [PATH_DOCS_PIPELINE_COMPONENTS / "sections" / section for section in sections]
+    ] + [
+        PATH_DOCS_PIPELINE_COMPONENTS / "sections" / section
+        for section in sections_defaults
+    ]
+
     # Concatenate defaults sections into component-specific default files
     concatenate_text_files(
         *(defaults_sections_paths),
         target=PATH_DOCS_RESOURCES / "pipeline-defaults/" / component_defaults_name,
+    )
+    # pipeline components
+    sections = get_sections(component_name, definition_sections, True)
+    sections_paths = [PATH_DOCS_RESOURCES / "pipeline-components/headers" / file] + [
+        PATH_DOCS_PIPELINE_COMPONENTS / "sections" / section for section in sections
+    ]
+    # Concatenate defaults sections into component-specific default files
+    concatenate_text_files(
+        *(sections_paths),
+        target=PATH_DOCS_RESOURCES / "pipeline-components/" / file,
     )
 
 # Concatenate components into a full pipeline def

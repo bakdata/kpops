@@ -4,7 +4,9 @@
 # https://github.com/bakdata/streams-bootstrap
 - type: producer
   name: producer # required
-  namespace: namespace # required
+  # While the producer does inherit from kafka-app, it does not need a `from`
+  # section, hence it is not allowed to define it.
+  # from:
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
@@ -18,7 +20,7 @@
     nameOverride: override-with-this-name # kafka-app-specific
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -30,16 +32,19 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # Helm repository configuration, the default value is given here
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:
-    repositoryName: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
+    repositoryName: my-repo # required
+    url: https://bakdata.github.io/ # required
+    repoAuthFlags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  version: "2.7.0" # Helm chart version
+  namespace: namespace # required
+  version: "2.12.0" # Helm chart version
+  version: "1.0.0" # Helm chart version
