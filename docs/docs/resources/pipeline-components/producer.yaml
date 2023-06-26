@@ -47,4 +47,3 @@
       insecure_skip_tls_verify: false
   namespace: namespace # required
   version: "2.12.0" # Helm chart version
-  version: "1.0.0" # Helm chart version

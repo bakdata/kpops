@@ -20,7 +20,7 @@ COMPONENTS_FIELDS = {
     component.get_component_type(): component.__fields__.keys()
     for component in KPOPS_COMPONENTS
 }
-
+print(COMPONENTS_FIELDS)
 # SECTIONS_ORDER = [
 #     "type",
 #     "name",
@@ -55,13 +55,24 @@ def get_sections(
         section = target_section + "-" + component + ".yaml"
         if section in sections:
             component_sections.append(section)
+            continue
+        elif not include_inherited and INHERITANCE_REF[component] == "pipeline-component":
+            section = target_section + ".yaml"
+            if section in sections:
+                component_sections.append(section)
+                continue
         elif include_inherited:
             while component != "pipeline-component":
                 component = INHERITANCE_REF[component]
                 section = target_section + "-" + component + ".yaml"
                 if section in sections:
                     component_sections.append(section)
-                    print("Appended to " + component + ": " + section)
+                    break
+                else:
+                    section = target_section + ".yaml"
+                    if section in sections:
+                        component_sections.append(section)
+                        break
     return component_sections
 
 
