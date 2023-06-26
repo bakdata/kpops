@@ -20,7 +20,7 @@
   # `from` section, hence it does not support it.
   # Topic(s) into which the component will write output
   to:
-    topics:
+    topics: # required
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -38,9 +38,9 @@
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:
-    repositoryName: my-repo # required
-    url: https://bakdata.github.io/ # required
-    repoAuthFlags:
+    repositoryName: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file

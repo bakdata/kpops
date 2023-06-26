@@ -9,16 +9,17 @@
     debug: false # Example
     commandLine: {} # Example
   # Topic(s) from which the component will read input
-  from:
-    topics: # required
+  from: # Must not be null
+    topics: # read from topic
       ${pipeline_name}-input-topic:
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
-      - producer
+      producer:
+        type: input # required
   # Topic(s) into which the component will write output
   to:
-    topics:
+    topics: # required
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -36,9 +37,9 @@
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:
-    repositoryName: my-repo # required
-    url: https://bakdata.github.io/ # required
-    repoAuthFlags:
+    repositoryName: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -57,16 +58,17 @@
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
   # Topic(s) from which the component will read input
-  from:
-    topics: # required
+  from: # Must not be null
+    topics: # read from topic
       ${pipeline_name}-input-topic:
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
-      - producer
+      producer:
+        type: input # required
   # Topic(s) into which the component will write output
   to:
-    topics:
+    topics: # required
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -84,9 +86,9 @@
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:
-    repositoryName: my-repo # required
-    url: https://bakdata.github.io/ # required
-    repoAuthFlags:
+    repositoryName: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -154,16 +156,17 @@
         - topic1
         - topic2
   # Topic(s) from which the component will read input
-  from:
-    topics: # required
+  from: # Must not be null
+    topics: # read from topic
       ${pipeline_name}-input-topic:
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
-      - producer
+      producer:
+        type: input # required
   # Topic(s) into which the component will write output
   to:
-    topics:
+    topics: # required
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -181,9 +184,9 @@
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:
-    repositoryName: my-repo # required
-    url: https://bakdata.github.io/ # required
-    repoAuthFlags:
+    repositoryName: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -211,7 +214,7 @@
   # `from` section, hence it does not support it.
   # Topic(s) into which the component will write output
   to:
-    topics:
+    topics: # required
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -229,9 +232,9 @@
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:
-    repositoryName: my-repo # required
-    url: https://bakdata.github.io/ # required
-    repoAuthFlags:
+    repositoryName: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -250,7 +253,7 @@
   # from:
   # Topic(s) into which the component will write output
   to:
-    topics:
+    topics: # required
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -292,16 +295,17 @@
   app: # required
     tasks.max: 1
   # Topic(s) from which the component will read input
-  from:
-    topics: # required
+  from: # Must not be null
+    topics: # read from topic
       ${pipeline_name}-input-topic:
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
-      - producer
+      producer:
+        type: input # required
   # Topic(s) into which the component will write output
   to:
-    topics:
+    topics: # required
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`

@@ -11,7 +11,7 @@
   # from:
   # Topic(s) into which the component will write output
   to:
-    topics:
+    topics: # required
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
