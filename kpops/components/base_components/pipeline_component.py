@@ -202,7 +202,7 @@ class PipelineComponent(BaseDefaultsComponent):
         input_topics = [
             topic_name
             for topic_name, topic_config in to.topics.items()
-            if topic_config.type == OutputTopicTypes.OUTPUT
+            if topic_config.type != OutputTopicTypes.ERROR and not topic_config.role
         ]
         for input_topic in input_topics:
             self.apply_from_inputs(input_topic, from_topic)
