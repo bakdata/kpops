@@ -34,6 +34,8 @@ class BaseDefaultsComponent(BaseModel):
     :type config: PipelineConfig
     :param handlers: Component handlers to be accessed by this component
     :type handlers: ComponentHandlers
+    :param validate: Whether to run custom validation on the component, defaults to True
+    :type validate: bool, optional
     """
 
     type: str = Field(
@@ -57,6 +59,13 @@ class BaseDefaultsComponent(BaseModel):
         exclude=True,
         hidden_from_schema=True,
     )
+    validate_: bool = Field(
+        alias="validate",
+        default=True,
+        description=describe_attr("validate", __doc__),
+        exclude=True,
+        hidden_from_schema=True,
+    )
 
     class Config(DescConfig):
         arbitrary_types_allowed = True
@@ -65,6 +74,8 @@ class BaseDefaultsComponent(BaseModel):
         if kwargs.get("enrich", True):
             kwargs = self.extend_with_defaults(**kwargs)
         super().__init__(**kwargs)
+        if kwargs.get("validate", True):
+            self._validate_custom(**kwargs)
 
     @classmethod  # NOTE: property as classmethod deprecated in Python 3.11
     def get_component_type(cls) -> str:
@@ -102,6 +113,13 @@ class BaseDefaultsComponent(BaseModel):
         )
         kwargs = update_nested(kwargs, defaults)
         return kwargs
+
+    def _validate_custom(self, **kwargs) -> None:
+        """Run custom validation on component.
+
+        :param kwargs: The init kwargs for the component
+        """
+        pass
 
 
 def load_defaults(

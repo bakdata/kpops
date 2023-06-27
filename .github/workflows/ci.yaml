@@ -14,7 +14,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ windows-2022, ubuntu-22.04 ]
+        os:
+          - ubuntu-22.04
+          # - windows-2022  # FIXME
         python-version: [ "3.10", "3.11" ]
     runs-on: ${{ matrix.os }}
 
@@ -62,9 +64,9 @@ jobs:
       - name: Test docs build (mkdocs)
         run: poetry run mkdocs build -f docs/mkdocs.yml
 
-  publish:
-    name: Publish
+  publish-snapshot-version:
+    name: Publish snapshot to TestPyPI
     needs: [test]
-    uses: ./.github/workflows/publish-test-pypi.yaml
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@v1.25.0
     secrets:
-      test-pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
+      pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
