@@ -49,8 +49,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-account-producer-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
-                        'type': 'output'
+                        'partitions_count': 3
                     }
                 }
             },
@@ -101,8 +100,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-transaction-avro-producer-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
-                        'type': 'output'
+                        'partitions_count': 3
                     }
                 }
             },
@@ -133,9 +131,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'errorTopic': 'bakdata-atm-fraud-detection-transaction-joiner-dead-letter-topic',
-                    'inputTopics': [
-                        'bakdata-atm-fraud-detection-transaction-avro-producer-topic'
-                    ],
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-transaction-joiner-topic',
                     'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
@@ -164,8 +159,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-transaction-joiner-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
-                        'type': 'output'
+                        'partitions_count': 3
                     }
                 }
             },
@@ -196,9 +190,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'errorTopic': 'bakdata-atm-fraud-detection-fraud-detector-dead-letter-topic',
-                    'inputTopics': [
-                        'bakdata-atm-fraud-detection-transaction-joiner-topic'
-                    ],
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-fraud-detector-topic',
                     'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
@@ -227,8 +218,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-fraud-detector-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
-                        'type': 'output'
+                        'partitions_count': 3
                     }
                 }
             },
@@ -259,14 +249,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'errorTopic': 'bakdata-atm-fraud-detection-account-linker-dead-letter-topic',
-                    'extraInputTopics': {
-                        'accounts': [
-                            'bakdata-atm-fraud-detection-account-producer-topic'
-                        ]
-                    },
-                    'inputTopics': [
-                        'bakdata-atm-fraud-detection-fraud-detector-topic'
-                    ],
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-account-linker-topic',
                     'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
@@ -307,8 +289,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-account-linker-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
-                        'type': 'output'
+                        'partitions_count': 3
                     }
                 }
             },

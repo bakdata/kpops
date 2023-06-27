@@ -455,14 +455,14 @@ class TestPipeline:
         output_topics = enriched_pipeline["components"][4]["to"]["topics"]
         input_topics = enriched_pipeline["components"][4]["from"]["topics"]
         input_components = enriched_pipeline["components"][4]["from"]["components"]
-        assert output_topics["output-topic"]["type"] == "output"
+        assert "type" not in output_topics["output-topic"]
         assert output_topics["error-topic"]["type"] == "error"
         assert "type" not in output_topics["extra-topic"]
         assert "role" not in output_topics["output-topic"]
         assert "role" not in output_topics["error-topic"]
         assert output_topics["extra-topic"]["role"] == "role"
 
-        assert input_topics["input-topic"]["type"] == "input"
+        assert "type" not in ["input-topic"]
         assert "type" not in input_topics["extra-topic"]
         assert input_topics["input-pattern"]["type"] == "pattern"
         assert input_topics["extra-pattern"]["type"] == "pattern"
@@ -471,7 +471,7 @@ class TestPipeline:
         assert input_topics["extra-topic"]["role"] == "role"
         assert input_topics["extra-pattern"]["role"] == "role"
 
-        assert input_components["component-input"]["type"] == "input"
+        assert "type" not in input_components["component-input"]
         assert "type" not in input_components["component-extra"]
         assert input_components["component-input-pattern"]["type"] == "pattern"
         assert input_components["component-extra-pattern"]["type"] == "pattern"

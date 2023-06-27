@@ -63,12 +63,8 @@ class TopicConfig(BaseModel):
     @root_validator
     def extra_topic_role(cls, values):
         """Ensure that cls.role is used correctly, assign type if needed"""
-        match bool(values["type"]), bool(values["role"]):
-            case False, False:
-                values["type"] = OutputTopicTypes.OUTPUT
-                return values
-            case True, True:
-                raise ValueError("Define `role` only if `type` is undefined")
+        if values["type"] and values["role"]:
+            raise ValueError("Define `role` only if `type` is undefined")
         return values
 
 

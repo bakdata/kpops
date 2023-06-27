@@ -38,13 +38,8 @@ class FromTopic(BaseModel):
     @root_validator
     def extra_topic_role(cls, values: dict) -> dict:
         """Ensure that cls.role is used correctly, assign type if needed"""
-        has_role = bool(values["role"])
-        match values["type"], has_role:
-            case None, False:
-                values["type"] = InputTopicTypes.INPUT
-                return values
-            case InputTopicTypes.INPUT, True:
-                raise ValueError("Define role only if `type` is `pattern` or `None`")
+        if values["type"] == InputTopicTypes.INPUT and values["role"]:
+            raise ValueError("Define role only if `type` is `pattern` or `None`")
         return values
 
 
