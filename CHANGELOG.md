@@ -1,4 +1,15 @@
 # Changelog
+## [1.2.4](https://github.com/bakdata/kpops/releases/tag/1.2.4) - Release Date: [2023-06-27]
+
+### 🌀 Miscellaneous
+
+- Update changelog action to contain miscellaneous PRs - [#269](https://github.com/bakdata/kpops/pull/269)
+
+
+
+
+
+
 ## [1.2.3](https://github.com/bakdata/kpops/releases/tag/1.2.3) - Release Date: [2023-06-22]
 
 ### 🐛 Fixes
