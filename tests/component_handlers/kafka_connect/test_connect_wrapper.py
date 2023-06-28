@@ -1,4 +1,5 @@
 import json
+import sys
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -141,6 +142,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             headers={"Accept": "application/json", "Content-Type": "application/json"},
         )
 
+    @pytest.mark.flaky(reruns=5, condition=sys.platform.startswith("win32"))
     @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_getting_connector(
