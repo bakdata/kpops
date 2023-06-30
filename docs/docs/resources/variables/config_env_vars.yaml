@@ -1,0 +1,7 @@
+broker: KPOPS_KAFKA_BROKER
+environment: KPOPS_ENVIRONMENT
+kafka_connect_host: KPOPS_CONNECT_HOST
+kafka_rest_host: KPOPS_REST_PROXY_HOST
+retain_clean_jobs: KPOPS_RETAIN_CLEAN_JOBS
+schema_registry_url: KPOPS_SCHEMA_REGISTRY_URL
+timeout: KPOPS_TIMEOUT
