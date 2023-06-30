@@ -1,0 +1,29 @@
+kubernetes-app.yaml:
+- namespace.yaml
+- app-kubernetes-app.yaml
+- from_.yaml
+- to.yaml
+- prefix.yaml
+- repo_config-kubernetes-app.yaml
+- version.yaml
+kafka-app.yaml:
+- app-kafka-app.yaml
+- version-kafka-app.yaml
+streams-app.yaml:
+- app-streams-app.yaml
+producer.yaml:
+- app-producer.yaml
+- from_-producer.yaml
+kafka-source-connector.yaml:
+- from_-kafka-source-connector.yaml
+- offset_topic-kafka-source-connector.yaml
+kafka-sink-connector.yaml: []
+kafka-connector.yaml:
+- namespace.yaml
+- app-kafka-connector.yaml
+- from_.yaml
+- to.yaml
+- prefix.yaml
+- repo_config-kafka-connector.yaml
+- version-kafka-connector.yaml
+- resetter_values.yaml
