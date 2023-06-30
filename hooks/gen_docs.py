@@ -182,9 +182,11 @@ def get_sections(exist_changes: bool) -> tuple[list[str], list[str]]:
 
 components_definition_sections = os.listdir(PATH_DOCS_COMPONENTS / "sections")
 pipeline_component_file_names = os.listdir(PATH_DOCS_COMPONENTS / "headers")
+pipeline_component_file_names.sort()
 pipeline_component_defaults = os.listdir(
     PATH_DOCS_RESOURCES / "pipeline-defaults/headers"
 )
+pipeline_component_defaults.sort()
 is_change_present = check_for_changes_in_kpops_component_structure()
 
 try:

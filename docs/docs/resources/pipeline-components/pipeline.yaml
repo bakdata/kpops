@@ -1,3 +1,146 @@
+# Base component for Kafka-based components.
+# Producer or streaming apps should inherit from this class.
+- type: kafka-app # required
+  name: kafka-app # required
+  namespace: namespace # required
+  # `app` can contain application-specific settings, hence  the user is free to
+  # add the key-value pairs they need.
+  app: # required
+    streams: # required
+      brokers: ${broker} # required
+      schemaRegistryUrl: ${schema_registry_url}
+    nameOverride: override-with-this-name # kafka-app-specific
+  # Topic(s) from which the component will read input
+  from: # Must not be null
+    topics: # read from topic
+      ${pipeline_name}-input-topic:
+        type: input # required
+        # role: topic-role # only used if type is `extra` or `extra-pattern`
+    components: # read from specific component
+      producer:
+        type: input # required
+  # Topic(s) into which the component will write output
+  to:
+    topics: # required
+      ${pipeline_name}-output-topic:
+        type: output # required
+        # role: topic-role # only used if type is `extra`
+        keySchema: key-schema # must implement SchemaProvider to use
+        valueSchema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repoConfig:
+    repositoryName: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "2.12.0" # Helm chart version
+# Kafka sink connector
+- type: kafka-sink-connector
+  name: kafka-sink-connector # required
+  namespace: namespace # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example. Extensive documentation on
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
+  app: # required
+    tasks.max: 1
+  # Topic(s) from which the component will read input
+  from: # Must not be null
+    topics: # read from topic
+      ${pipeline_name}-input-topic:
+        type: input # required
+        # role: topic-role # only used if type is `extra` or `extra-pattern`
+    components: # read from specific component
+      producer:
+        type: input # required
+  # Topic(s) into which the component will write output
+  to:
+    topics: # required
+      ${pipeline_name}-output-topic:
+        type: output # required
+        # role: topic-role # only used if type is `extra`
+        keySchema: key-schema # must implement SchemaProvider to use
+        valueSchema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
+  # Helm repository configuration for resetter
+  repoConfig:
+    repositoryName: my-repo # required
+    url: https://bakdata.github.io/kafka-connect-resetter/ # required
+    repoAuthFlags: 
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "1.0.6" # Helm chart version
+  # Overriding Kafka Connect Resetter Helm values. E.g. to override the
+  # Image Tag etc.
+  resetterValues:
+    imageTag: "1.2.3"
+# Kafka source connector
+- type: kafka-source-connector # required
+  name: kafka-source-connector # required
+  namespace: namespace # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example. Extensive documentation on
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
+  app: # required
+    tasks.max: 1
+  # The source connector has no `from` section
+  # from:
+  # Topic(s) into which the component will write output
+  to:
+    topics: # required
+      ${pipeline_name}-output-topic:
+        type: output # required
+        # role: topic-role # only used if type is `extra`
+        keySchema: key-schema # must implement SchemaProvider to use
+        valueSchema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
+  # Helm repository configuration for resetter
+  repoConfig:
+    repositoryName: my-repo # required
+    url: https://bakdata.github.io/kafka-connect-resetter/ # required
+    repoAuthFlags: 
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "1.0.6" # Helm chart version
+  # Overriding Kafka Connect Resetter Helm values. E.g. to override the
+  # Image Tag etc.
+  resetterValues:
+    imageTag: "1.2.3"
+  # offset.storage.topic
+  # https://kafka.apache.org/documentation/#connect_running
+  offsetTopic: offset_topic
 # Base Kubernetes App
 - type: kubernetes-app
   name: kubernetes-app # required
@@ -45,27 +188,26 @@
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "1.0.0" # Helm chart version
-# Base component for Kafka-based components.
-# Producer or streaming apps should inherit from this class.
-- type: kafka-app # required
-  name: kafka-app # required
+# Holds configuration to use as values for the streams bootstrap producer Helm
+# chart.
+# More documentation on ProducersApp:
+# https://github.com/bakdata/streams-bootstrap
+- type: producer
+  name: producer # required
   namespace: namespace # required
-  # `app` can contain application-specific settings, hence  the user is free to
-  # add the key-value pairs they need.
+  # Allowed configs:
+  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
-    streams: # required
+    streams: # required, producer-specific
       brokers: ${broker} # required
       schemaRegistryUrl: ${schema_registry_url}
+      outputTopic: output_topic
+      extraOutputTopics: 
+        output_role1: output_topic1
+        output_role2: output_topic2
     nameOverride: override-with-this-name # kafka-app-specific
-  # Topic(s) from which the component will read input
-  from: # Must not be null
-    topics: # read from topic
-      ${pipeline_name}-input-topic:
-        type: input # required
-        # role: topic-role # only used if type is `extra` or `extra-pattern`
-    components: # read from specific component
-      producer:
-        type: input # required
+  # from: # While the producer does inherit from kafka-app, it does not need a
+  # `from` section, hence it does not support it.
   # Topic(s) into which the component will write output
   to:
     topics: # required
@@ -192,145 +334,3 @@
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "2.12.0" # Helm chart version
-# Holds configuration to use as values for the streams bootstrap producer Helm
-# chart.
-# More documentation on ProducersApp:
-# https://github.com/bakdata/streams-bootstrap
-- type: producer
-  name: producer # required
-  namespace: namespace # required
-  # Allowed configs:
-  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
-  app: # required
-    streams: # required, producer-specific
-      brokers: ${broker} # required
-      schemaRegistryUrl: ${schema_registry_url}
-      outputTopic: output_topic
-      extraOutputTopics: 
-        output_role1: output_topic1
-        output_role2: output_topic2
-    nameOverride: override-with-this-name # kafka-app-specific
-  # from: # While the producer does inherit from kafka-app, it does not need a
-  # `from` section, hence it does not support it.
-  # Topic(s) into which the component will write output
-  to:
-    topics: # required
-      ${pipeline_name}-output-topic:
-        type: output # required
-        # role: topic-role # only used if type is `extra`
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
-        partitions_count: 1
-        replication_factor: 1
-        configs: # https://kafka.apache.org/documentation/#topicconfigs
-          cleanup.policy: compact
-    models: # SchemaProvider is initiated with the values given here
-      model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repoConfig:
-    repositoryName: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "2.12.0" # Helm chart version
-# Kafka source connector
-- type: kafka-source-connector # required
-  name: kafka-source-connector # required
-  namespace: namespace # required
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example. Extensive documentation on
-  # connectors: https://kafka.apache.org/documentation/#connectconfigs
-  app: # required
-    tasks.max: 1
-  # The source connector has no `from` section
-  # from:
-  # Topic(s) into which the component will write output
-  to:
-    topics: # required
-      ${pipeline_name}-output-topic:
-        type: output # required
-        # role: topic-role # only used if type is `extra`
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
-        partitions_count: 1
-        replication_factor: 1
-        configs: # https://kafka.apache.org/documentation/#topicconfigs
-          cleanup.policy: compact
-    models: # SchemaProvider is initiated with the values given here
-      model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
-  # Helm repository configuration for resetter
-  repoConfig:
-    repositoryName: my-repo # required
-    url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags: 
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "1.0.6" # Helm chart version
-  # Overriding Kafka Connect Resetter Helm values. E.g. to override the
-  # Image Tag etc.
-  resetterValues:
-    imageTag: "1.2.3"
-  # offset.storage.topic
-  # https://kafka.apache.org/documentation/#connect_running
-  offsetTopic: offset_topic
-# Kafka sink connector
-- type: kafka-sink-connector
-  name: kafka-sink-connector # required
-  namespace: namespace # required
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example. Extensive documentation on
-  # connectors: https://kafka.apache.org/documentation/#connectconfigs
-  app: # required
-    tasks.max: 1
-  # Topic(s) from which the component will read input
-  from: # Must not be null
-    topics: # read from topic
-      ${pipeline_name}-input-topic:
-        type: input # required
-        # role: topic-role # only used if type is `extra` or `extra-pattern`
-    components: # read from specific component
-      producer:
-        type: input # required
-  # Topic(s) into which the component will write output
-  to:
-    topics: # required
-      ${pipeline_name}-output-topic:
-        type: output # required
-        # role: topic-role # only used if type is `extra`
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
-        partitions_count: 1
-        replication_factor: 1
-        configs: # https://kafka.apache.org/documentation/#topicconfigs
-          cleanup.policy: compact
-    models: # SchemaProvider is initiated with the values given here
-      model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
-  # Helm repository configuration for resetter
-  repoConfig:
-    repositoryName: my-repo # required
-    url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags: 
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "1.0.6" # Helm chart version
-  # Overriding Kafka Connect Resetter Helm values. E.g. to override the
-  # Image Tag etc.
-  resetterValues:
-    imageTag: "1.2.3"
