@@ -86,4 +86,6 @@ nav:
       - Config: user/references/config.md
       - Defaults: user/references/defaults.md
       - Editor integration: user/references/editor-integration.md
-      - Variables: user/references/variables.md
+      - Variables: 
+        - Environment variables: user/references/variables/environment_variables.md
+        - Substitution variables: user/references/variables/substitution.md
