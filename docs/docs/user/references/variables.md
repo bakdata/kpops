@@ -15,7 +15,7 @@ All of them are prefixed with `component_` and follow the following form: `compo
 ??? Example
     ```yaml
       --8<--
-      ./docs/resources/pipeline-components/kubernetes-app.yaml
+      ./docs/resources/variables/variable_substitution.yaml
       --8<--
     ```
 
