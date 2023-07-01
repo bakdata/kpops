@@ -14,27 +14,9 @@ PATH_DOCS_RESOURCES = PATH_ROOT / "docs/docs/resources"
 PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
 
 
-# Run typer-cli on kpops to generate doc on CLI usage
-# TODO: try to use typer_cli.main.docs here instead
-typer_args: list[str] = [
-    "typer",
-    str(PATH_KPOPS_MAIN),
-    "utils",
-    "docs",
-    "--name",
-    "kpops",
-    "--output",
-    str(PATH_CLI_COMMANDS_DOC),
-]
-subprocess.run(typer_args)
-
-# Replace wrong title in CLI Usage doc
-with open(PATH_CLI_COMMANDS_DOC, "r") as f:
-    text = f.readlines()
-text[0] = "# CLI Usage\n"
-with open(PATH_CLI_COMMANDS_DOC, "w") as f:
-    f.writelines(text)
-
+#####################
+# EXAMPLES          #
+#####################
 
 # copy examples from tests resources
 shutil.copyfile(
@@ -84,3 +66,29 @@ for item in vars_in_main:
         ) as f:  # delete the contents of the file
             f.write(f"# {var.help}\n")
             f.write(f"{var.envvar} = {var.default}\n")
+
+
+#####################
+# CLI-USAGE         #
+#####################
+
+# Run typer-cli on kpops to generate doc on CLI usage
+# TODO: try to use typer_cli.main.docs here instead
+typer_args: list[str] = [
+    "typer",
+    str(PATH_KPOPS_MAIN),
+    "utils",
+    "docs",
+    "--name",
+    "kpops",
+    "--output",
+    str(PATH_CLI_COMMANDS_DOC),
+]
+subprocess.run(typer_args)
+
+# Replace wrong title in CLI Usage doc
+with open(PATH_CLI_COMMANDS_DOC, "r") as f:
+    text = f.readlines()
+text[0] = "# CLI Usage\n"
+with open(PATH_CLI_COMMANDS_DOC, "w") as f:
+    f.writelines(text)
