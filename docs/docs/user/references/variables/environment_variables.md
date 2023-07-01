@@ -4,11 +4,16 @@ Environment variables can be set by using the [export](https://www.unix.com/man-
 
 ## [Config](../config.md)
 
-```yaml title="Exhaustive list of all config-related environment variables"
+```py title="Exhaustive list of all config-related environment variables"
 --8<--
-./docs/resources/variables/config_env_vars.yaml
+./docs/resources/variables/config_env_vars.env
 --8<--
 ```
 
-## CLI  
-Please refer to [CLI Usage](../cli-commands.md)
+## [CLI](../cli-commands.md)
+
+```py title="Exhaustive list of all cli-related environment variables"
+--8<--
+./docs/resources/variables/cli_env_vars.env
+--8<--
+```
