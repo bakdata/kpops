@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import cast
+from typing import ClassVar, cast
 from unittest.mock import patch
 
 from kpops.cli.main import get_steps_to_apply
@@ -14,7 +14,7 @@ def tests_filter_steps_to_apply(log_info):
         prefix: str = "example-prefix-"
 
     class TestPipeline:
-        components = [
+        components: ClassVar[TestComponent] = [
             TestComponent("example-prefix-example1"),
             TestComponent("example-prefix-example2"),
             TestComponent("example-prefix-example3"),
