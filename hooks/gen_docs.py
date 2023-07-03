@@ -98,13 +98,15 @@ shutil.copyfile(
 config_env_vars_file_path = PATH_DOCS_VARIABLES / "config_env_vars.env"
 config_env_vars_title = "Pipeline config environment variables"
 config_env_vars_description = (
-    "The default setup is shown."
-    "These variables are an alternative to the settings in `config.yaml`."
+    "The default setup is shown. "
+    "These variables are an alternative to the settings in `config.yaml`. "
     "Variables marked as required can instead be set in the pipeline config."
 )
 write_title_to_file(
     config_env_vars_file_path, config_env_vars_title, config_env_vars_description
 )
+# NOTE: This does not see nested fields, hence if there are env vars in a class like
+# TopicConfig(), they wil not be listed. Possible fix with recursion.
 config_fields = PipelineConfig.__fields__
 for config_field_name, config_field in config_fields.items():
     config_field_info = PipelineConfig.Config.get_field_info(config_field.name)
@@ -132,7 +134,7 @@ cli_env_vars_file_path = PATH_DOCS_VARIABLES / "cli_env_vars.env"
 cli_env_vars_title = "CLI Environment variables"
 cli_env_vars_description = (
     "The default setup is shown. These variables are a lower priority alternative to the commands' flags. "
-    "If a variable is set, the corresponding flag does not have to be specified in commands."
+    "If a variable is set, the corresponding flag does not have to be specified in commands. "
     "Variables marked as required can instead be set as flags."
 )
 write_title_to_file(
