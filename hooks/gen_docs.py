@@ -14,9 +14,17 @@ PATH_DOCS_RESOURCES = PATH_ROOT / "docs/docs/resources"
 #####################
 
 # Keep the example editor-integration settings up to date.
-with open(PATH_DOCS_RESOURCES / "editor_integration/settings_template.json", "r") as template:
-    with open(PATH_DOCS_RESOURCES / "editor_integration/settings.json", "w+") as settings:
-        settings.write(substitute(template.read(), {"kpops_version": ".".join(__version__.split(".")[:2])}))
+with open(
+    PATH_DOCS_RESOURCES / "editor_integration/settings_template.json", "r"
+) as template:
+    with open(
+        PATH_DOCS_RESOURCES / "editor_integration/settings.json", "w+"
+    ) as settings:
+        settings.write(
+            substitute(
+                template.read(), {"kpops_version": ".".join(__version__.split(".")[:2])}
+            )
+        )
 
 #####################
 # CLI-USAGE         #
@@ -42,6 +50,3 @@ with open(PATH_CLI_COMMANDS_DOC, "r") as f:
 text[0] = "# CLI Usage\n"
 with open(PATH_CLI_COMMANDS_DOC, "w") as f:
     f.writelines(text)
-
-
-
