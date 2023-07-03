@@ -88,4 +88,4 @@ nav:
       - Editor integration: user/references/editor-integration.md
       - Variables: 
         - Environment variables: user/references/variables/environment_variables.md
-        - Substitution variables: user/references/variables/substitution.md
+        - Substitution: user/references/variables/substitution.md

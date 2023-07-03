@@ -37,7 +37,7 @@ def write_title_to_file(
         #
         # Multi-line description of length 70
         # second line
-        # 
+        #
         VAR = None
 
     :param file_path: Path to the file
