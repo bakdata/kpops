@@ -89,10 +89,18 @@ def add_env_var_to_file(
                     initial_indent=f"{comment_symbol} ",
                     subsequent_indent=f"{comment_symbol} ",
                 )
-                if env_var_value == Ellipsis:
-                    env_var_value = f"... {comment_symbol} No default value, required"
                 f.write(section + "\n")
-        f.write(f"{env_var_name} = {env_var_value}\n")
+            # Dotenv has no `null` or `None` values, just leave the name of
+            # the var alone there and it will be skipepd when reading
+            # https://saurabh-kumar.com/python-dotenv/#file-format
+            if env_var_value == Ellipsis:
+                env_var_value = f" {comment_symbol} No default value, required"
+            elif env_var_value is None:
+                env_var_value = f" {comment_symbol} No default value, not required"
+            else:
+                env_var_value = f"={env_var_value}"
+
+        f.write(f"{env_var_name}{env_var_value}\n")
 
 
 # copy examples from tests resources
@@ -125,7 +133,7 @@ for config_field_name, config_field in config_fields.items():
             or "No description available, please refer to the pipeline config documentation."
         )
     )
-    config_field_default = config_field.field_info.default or "None"
+    config_field_default = None or config_field.field_info.default
     if config_env_var := config_field_info.get(
         "env"
     ) or config_field.field_info.extra.get("env"):
