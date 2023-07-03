@@ -139,8 +139,10 @@ def check_for_changes_in_kpops_component_structure() -> bool:
     if kpops_new_structure != kpops_structure:
         with open(PATH_DOCS_KPOPS_STRUCTURE, "w+") as f:
             yaml.dump(kpops_new_structure, f)
-        with open(PATH_DOCS_COMPONENTS_DEPENDENCIES, "w+"): pass
-        with open(PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS, "w+"): pass
+        with open(PATH_DOCS_COMPONENTS_DEPENDENCIES, "w+"):
+            pass
+        with open(PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS, "w+"):
+            pass
         print("KPOps components' structure has changed, updating dependencies.")
         return True
     return False
