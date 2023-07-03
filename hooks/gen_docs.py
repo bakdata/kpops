@@ -1,6 +1,9 @@
 """Generates the whole 'generatable' KPOps documentation"""
 import shutil
 import subprocess
+from pathlib import Path
+from textwrap import fill
+from typing import Any
 
 from typer.models import ArgumentInfo, OptionInfo
 
@@ -18,6 +21,73 @@ PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
 # EXAMPLES          #
 #####################
 
+
+def write_title_to_file(
+    file_path: Path, title: str, description: str, comment_symbol: str = "#"
+) -> None:
+    """Overwrite a file with a title and description as comments
+
+    All previous contents will be erased!
+
+    Example output:
+
+
+
+    :param file_path: Path to the file
+    :param title: Title
+    :param description: File description
+    :param comment_symbol: Symbol to use for comments, defaults to "#"
+    """
+    with open(file_path, "w+") as f:
+        text = (
+            f"{comment_symbol} "
+            + title
+            + f"\n{comment_symbol}\n"
+            + fill(
+                text=description,
+                initial_indent=f"{comment_symbol} ",
+                subsequent_indent=f"{comment_symbol} ",
+            )
+            + f"\n{comment_symbol}\n"
+        )
+        f.write(text)
+
+
+def add_env_var_to_file(
+    file_path: Path,
+    description: str | list[str] | None,
+    env_var_name: str,
+    env_var_value: Any,
+    comment_symbol: str = "#",
+) -> None:
+    """Adds an env var record and a description for it.
+
+    If the value provided is ellipsis, a comment saying that
+    the value is required is added
+
+    :param file_path: Path to the file
+    :param description: Variable description. If multiple sections are desired,
+        provide them in a list.
+    :param env_var_name: Name of the env variable
+    :param env_var_value: Value to be assigned of the env var
+    :param comment_symbol: Symbol to use for comments, defaults to "#"
+    """
+    with open(file_path, "a") as f:
+        if description is not None:
+            if isinstance(description, str):
+                description = [description]
+            for section in description:
+                section = fill(
+                    text=section,
+                    initial_indent=f"{comment_symbol} ",
+                    subsequent_indent=f"{comment_symbol} ",
+                )
+                if env_var_value == Ellipsis:
+                    env_var_value = f"... {comment_symbol} No default value, required"
+                f.write(section + "\n")
+        f.write(f"{env_var_name} = {env_var_value}\n")
+
+
 # copy examples from tests resources
 shutil.copyfile(
     PATH_ROOT / "tests/pipeline/resources/component-type-substitution/pipeline.yaml",
@@ -25,47 +95,76 @@ shutil.copyfile(
 )
 
 # find all config-related env variables and write them into a file
-with open(PATH_DOCS_VARIABLES / "config_env_vars.env", "w+") as f:
-    f.write(
-        "# Pipeline config environment variables\n#\n# The default setup is shown."
-        "\n# These variables are an alternative to the settings in `config.yaml`.\n#\n"
+config_env_vars_file_path = PATH_DOCS_VARIABLES / "config_env_vars.env"
+config_env_vars_title = "Pipeline config environment variables"
+config_env_vars_description = (
+    "The default setup is shown."
+    "These variables are an alternative to the settings in `config.yaml`."
+    "Variables marked as required can instead be set in the pipeline config."
+)
+write_title_to_file(
+    config_env_vars_file_path, config_env_vars_title, config_env_vars_description
+)
+config_fields = PipelineConfig.__fields__
+for config_field_name, config_field in config_fields.items():
+    config_field_info = PipelineConfig.Config.get_field_info(config_field.name)
+    config_field_description: str = (
+        config_field_name
+        + ": "
+        + (
+            config_field.field_info.description
+            or "No description available, please refer to the pipeline config documentation."
+        )
     )
-fields = PipelineConfig.__fields__
-env_vars: dict[str, str] = {}
-for name, field in fields.items():
-    field_info_from_config = PipelineConfig.Config.get_field_info(field.name)
-    env = field_info_from_config.get("env") or field.field_info.extra.get("env")
-    description = (
-        field.field_info.description
-        or "No description available, please refer to the pipeline config documentation."
-    )
-    default = field.field_info.default or "None"
-    if env:
-        with open(PATH_DOCS_VARIABLES / "config_env_vars.env", "a") as f:
-            f.write(f"# {name}: {description}\n")
-            f.write(f"{env} = {default}\n")
+    config_field_default = config_field.field_info.default or "None"
+    if config_env_var := config_field_info.get(
+        "env"
+    ) or config_field.field_info.extra.get("env"):
+        add_env_var_to_file(
+            file_path=config_env_vars_file_path,
+            description=config_field_description,
+            env_var_name=config_env_var,
+            env_var_value=config_field_default,
+        )
 
 # find all cli-related env variables, write them into a file
-vars_in_main = [item for item in dir(main) if not item.startswith("__")]
-with open(
-    PATH_DOCS_VARIABLES / "cli_env_vars.env", "w+"
-) as f:  # delete the contents of the file
-    f.write(
-        "# CLI Environment variables\n#\n# The default setup is shown.\n"
-        "# These variables are an alternative to the commands' flags.\n#\n"
-    )
-for item in vars_in_main:
-    var = getattr(main, item)
+cli_env_vars_file_path = PATH_DOCS_VARIABLES / "cli_env_vars.env"
+cli_env_vars_title = "CLI Environment variables"
+cli_env_vars_description = (
+    "The default setup is shown. These variables are a lower priority alternative to the commands' flags. "
+    "If a variable is set, the corresponding flag does not have to be specified in commands."
+    "Variables marked as required can instead be set as flags."
+)
+write_title_to_file(
+    cli_env_vars_file_path, cli_env_vars_title, cli_env_vars_description
+)
+for var_in_main_name in dir(main):
+    var_in_main = getattr(main, var_in_main_name)
     if (
-        not item.startswith("__")
-        and isinstance(var, (OptionInfo, ArgumentInfo))
-        and var.envvar
+        not var_in_main_name.startswith("__")
+        and isinstance(var_in_main, (OptionInfo, ArgumentInfo))
+        and var_in_main.envvar
     ):
-        with open(
-            PATH_DOCS_VARIABLES / "cli_env_vars.env", "a"
-        ) as f:  # delete the contents of the file
-            f.write(f"# {var.help}\n")
-            f.write(f"{var.envvar} = {var.default}\n")
+        cli_env_var_description: list[str] = [
+            var_in_main.help
+            or "No description available, please refer to the CLI Usage documentation"
+        ]
+        if isinstance(var_in_main.envvar, list):
+            var_in_main_envvar = var_in_main.envvar[0]
+            if len(var_in_main.envvar)>1:
+                cli_env_var_description = (
+                    cli_env_var_description
+                    + ["The following variables are equivalent:"]
+                    + [", ".join([f"`{var_name}`" for var_name in var_in_main.envvar[1:]])]
+                )
+        else:
+            var_in_main_envvar = var_in_main.envvar
+        add_env_var_to_file(
+            file_path=cli_env_vars_file_path,
+            description=cli_env_var_description,
+            env_var_name=var_in_main_envvar,
+            env_var_value=var_in_main.default,
+        )
 
 
 #####################
