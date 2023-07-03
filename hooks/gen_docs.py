@@ -151,11 +151,15 @@ for var_in_main_name in dir(main):
         ]
         if isinstance(var_in_main.envvar, list):
             var_in_main_envvar = var_in_main.envvar[0]
-            if len(var_in_main.envvar)>1:
+            if len(var_in_main.envvar) > 1:
                 cli_env_var_description = (
                     cli_env_var_description
                     + ["The following variables are equivalent:"]
-                    + [", ".join([f"`{var_name}`" for var_name in var_in_main.envvar[1:]])]
+                    + [
+                        ", ".join(
+                            [f"`{var_name}`" for var_name in var_in_main.envvar[1:]]
+                        )
+                    ]
                 )
         else:
             var_in_main_envvar = var_in_main.envvar
