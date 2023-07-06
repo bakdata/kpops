@@ -4,7 +4,8 @@ import os
 import subprocess
 from pathlib import Path
 from typing import NamedTuple, cast
-
+import typer
+import sys
 import yaml
 
 from hooks import PATH_ROOT
@@ -54,6 +55,20 @@ log = logging.getLogger("DocumentationGenerator")
 #####################
 # EXAMPLES          #
 #####################
+
+DANGEROUS_FILES_TO_CHANGE = {PATH_DOCS_COMPONENTS_DEPENDENCIES, PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS, PATH_DOCS_KPOPS_STRUCTURE}
+if not {str(file.relative_to(PATH_ROOT)) for file in DANGEROUS_FILES_TO_CHANGE}.isdisjoint(set(sys.argv)):
+    is_change_present = True
+    PATH_DOCS_COMPONENTS_DEPENDENCIES.unlink(missing_ok=True)
+    PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS.unlink(missing_ok=True)
+    log.warning(
+        typer.style(
+            "Changes in the dependency dir detected",
+            fg=typer.colors.RED,
+        )
+    )
+else:
+    is_change_present = False
 
 COMPONENTS_DEFINITION_SECTIONS = os.listdir(PATH_DOCS_COMPONENTS / "sections")
 PIPELINE_COMPONENT_FILE_NAMES = sorted(os.listdir(PATH_DOCS_COMPONENTS / "headers"))
@@ -153,6 +168,7 @@ def check_for_changes_in_kpops_component_structure() -> bool:
         "kpops_components_fields": KPOPS_COMPONENTS_FIELDS,
     }
     if kpops_new_structure != kpops_structure:
+        Path(PATH_DOCS_COMPONENTS / "dependencies").mkdir(parents=True, exist_ok=True)
         with open(PATH_DOCS_KPOPS_STRUCTURE, "w+") as f:
             yaml.dump(kpops_new_structure, f)
         PATH_DOCS_COMPONENTS_DEPENDENCIES.unlink(missing_ok=True)
@@ -191,7 +207,7 @@ def get_sections(component_name: str, exist_changes: bool) -> KpopsComponent:
     return KpopsComponent(component_sections, component_sections_not_inheritted)
 
 
-is_change_present = check_for_changes_in_kpops_component_structure()
+is_change_present = is_change_present or check_for_changes_in_kpops_component_structure()
 try:
     PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(PATH_DOCS_COMPONENTS_DEPENDENCIES)
     DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(
