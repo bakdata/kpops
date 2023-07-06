@@ -1,13 +1,15 @@
 """Generates the whole 'generatable' KPOps documentation"""
+import logging
 import os
 import subprocess
 from pathlib import Path
+from typing import NamedTuple, cast
 
 import yaml
 
 from hooks import PATH_ROOT
 from kpops.cli.registry import _find_classes
-from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components import KafkaConnector, PipelineComponent
 from kpops.utils.yaml_loading import load_yaml_file
 
 PATH_KPOPS_MAIN = PATH_ROOT / "kpops/cli/main.py"
@@ -22,8 +24,10 @@ PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS = (
 )
 PATH_DOCS_KPOPS_STRUCTURE = PATH_DOCS_COMPONENTS / "dependencies/kpops_structure.yaml"
 KPOPS_COMPONENTS = tuple(_find_classes("kpops.components", PipelineComponent))
-KPOPS_COMPONENTS_INHERITANCE_REF: dict = {
-    component.get_component_type(): component.__base__.get_component_type()  # type: ignore[reportGeneralTypeIssues]
+KPOPS_COMPONENTS_INHERITANCE_REF = {
+    component.get_component_type(): cast(
+        type[PipelineComponent], component.__base__
+    ).get_component_type()
     for component in KPOPS_COMPONENTS
 }
 KPOPS_COMPONENTS_FIELDS = {
@@ -45,9 +49,23 @@ SECTIONS_ORDER = [
     "offset_topic",
 ]
 
+log = logging.getLogger("DocumentationGenerator")
+
 #####################
 # EXAMPLES          #
 #####################
+
+COMPONENTS_DEFINITION_SECTIONS = os.listdir(PATH_DOCS_COMPONENTS / "sections")
+PIPELINE_COMPONENT_FILE_NAMES = sorted(os.listdir(PATH_DOCS_COMPONENTS / "headers"))
+PIPELINE_COMPONENT_DEFAULTS = sorted(
+    os.listdir(PATH_DOCS_RESOURCES / "pipeline-defaults/headers")
+)
+
+
+class KpopsComponent(NamedTuple):
+    # name: str
+    attrs: list[str]
+    specific_attrs: list[str]
 
 
 def filter_sections(
@@ -69,19 +87,20 @@ def filter_sections(
             component_sections.append(section)
         elif (
             not include_inherited
-            and KPOPS_COMPONENTS_INHERITANCE_REF[component] == "pipeline-component"
+            and KPOPS_COMPONENTS_INHERITANCE_REF[component]
+            == PipelineComponent.get_component_type()
         ):
             section = target_section + ".yaml"
             if section in sections:
                 component_sections.append(section)
         elif include_inherited:
-            while component != "pipeline-component":
+            while component != PipelineComponent.get_component_type():
                 component = KPOPS_COMPONENTS_INHERITANCE_REF[component]
                 section = target_section + "-" + component + ".yaml"
                 if section in sections:
                     component_sections.append(section)
                     break
-                elif component == "pipeline-component":
+                elif component == PipelineComponent.get_component_type():
                     section = target_section + ".yaml"
                     if section in sections:
                         component_sections.append(section)
@@ -98,12 +117,9 @@ def concatenate_text_files(*file_paths: Path, target: Path) -> None:
     :param target: File to store the result in. Note that any previous contents
         will be deleted.
     """
-    res = ""
-    for file in file_paths:
-        with open(file, "r") as f:
-            res += f.read()
-    with open(target, "w+") as f:
-        f.write(res)
+    with target.open("w+") as f:
+        for source in file_paths:
+            f.write(source.read_text())
 
 
 def component_section_position_in_definition(key: str) -> int:
@@ -139,86 +155,58 @@ def check_for_changes_in_kpops_component_structure() -> bool:
     if kpops_new_structure != kpops_structure:
         with open(PATH_DOCS_KPOPS_STRUCTURE, "w+") as f:
             yaml.dump(kpops_new_structure, f)
-        with open(PATH_DOCS_COMPONENTS_DEPENDENCIES, "w+"):
-            pass
-        with open(PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS, "w+"):
-            pass
-        print("KPOps components' structure has changed, updating dependencies.")
+        PATH_DOCS_COMPONENTS_DEPENDENCIES.unlink(missing_ok=True)
+        PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS.unlink(missing_ok=True)
+        log.warning("KPOps components' structure has changed, updating dependencies.")
         return True
     return False
 
 
-def get_sections(exist_changes: bool) -> tuple[list[str], list[str]]:
+def get_sections(component_name: str, exist_changes: bool) -> KpopsComponent:
     """Returns the sections specific to a component
 
     :param exist_changes: Whether there have been changes to the components
         structure or hierarchy
     :returns: A tuple containing lists of all sections and defaults-related sections
     """
+    component_file_name = component_name + ".yaml"
     if exist_changes:
         component_sections = filter_sections(
-            component_name, components_definition_sections, True
+            component_name, COMPONENTS_DEFINITION_SECTIONS, True
         )
         component_sections_not_inheritted = filter_sections(
-            component_name, components_definition_sections
+            component_name, COMPONENTS_DEFINITION_SECTIONS
         )
-        with open(
-            PATH_DOCS_COMPONENTS_DEPENDENCIES,
-            "a",
-        ) as f:
+        with PATH_DOCS_COMPONENTS_DEPENDENCIES.open("a") as f:
             yaml.dump({component_file_name: component_sections}, f)
-        with open(
-            PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS,
-            "a",
-        ) as f:
+        with PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS.open("a") as f:
             yaml.dump({component_file_name: component_sections_not_inheritted}, f)
     else:
-        component_sections: list[str] = pipeline_component_dependencies[
+        component_sections: list[str] = PIPELINE_COMPONENT_DEPENDENCIES[
             component_file_name
         ]
         component_sections_not_inheritted: list[
             str
-        ] = defaults_pipeline_component_dependencies[component_file_name]
-    return component_sections, component_sections_not_inheritted
+        ] = DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES[component_file_name]
+    return KpopsComponent(component_sections, component_sections_not_inheritted)
 
 
-components_definition_sections = os.listdir(PATH_DOCS_COMPONENTS / "sections")
-pipeline_component_file_names = os.listdir(PATH_DOCS_COMPONENTS / "headers")
-pipeline_component_file_names.sort()
-pipeline_component_defaults = os.listdir(
-    PATH_DOCS_RESOURCES / "pipeline-defaults/headers"
-)
-pipeline_component_defaults.sort()
 is_change_present = check_for_changes_in_kpops_component_structure()
-
 try:
-    pipeline_component_dependencies_temp = load_yaml_file(
-        PATH_DOCS_COMPONENTS_DEPENDENCIES
-    )
-    defaults_pipeline_component_dependencies_temp = load_yaml_file(
+    PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(PATH_DOCS_COMPONENTS_DEPENDENCIES)
+    DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(
         PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS
-    )
-    assert isinstance(pipeline_component_dependencies_temp, dict)
-    assert isinstance(defaults_pipeline_component_dependencies_temp, dict)
-    # HACK: Otherwise pyright cannot see that the type is narrowed right after initializing the vars
-    pipeline_component_dependencies: dict = pipeline_component_dependencies_temp
-    defaults_pipeline_component_dependencies: dict = (
-        defaults_pipeline_component_dependencies_temp
     )
 except OSError:
     is_change_present = True
-except AssertionError:
-    raise TypeError(
-        f"The following files must be a mapping: \n{PATH_DOCS_COMPONENTS_DEPENDENCIES}\n{PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS}"
-    )
 
-
-for component_file_name in pipeline_component_file_names:
+for component_file_name in PIPELINE_COMPONENT_FILE_NAMES:
     component_name = component_file_name.removesuffix(".yaml")
     component_defaults_name = "defaults-" + component_file_name
 
     component_sections, component_sections_not_inheritted = get_sections(
-        is_change_present
+        component_name,
+        is_change_present,
     )
 
     defaults_sections_paths = [
@@ -236,21 +224,22 @@ for component_file_name in pipeline_component_file_names:
     )
     concatenate_text_files(
         *(sections_paths),
-        target=PATH_DOCS_RESOURCES / "pipeline-components/" / component_file_name,
+        target=PATH_DOCS_RESOURCES / "pipeline-components" / component_file_name,
     )
 
 concatenate_text_files(
     *(
         PATH_DOCS_COMPONENTS / component
-        for component in pipeline_component_file_names
-        if "kafka-connector" not in component  # Shouldn't be used in the pipeline def
+        for component in PIPELINE_COMPONENT_FILE_NAMES
+        if KafkaConnector.get_component_type()
+        not in component  # Shouldn't be used in the pipeline def
     ),
     target=PATH_DOCS_COMPONENTS / "pipeline.yaml",
 )
 concatenate_text_files(
     *(
         PATH_DOCS_RESOURCES / "pipeline-defaults" / component
-        for component in pipeline_component_defaults
+        for component in PIPELINE_COMPONENT_DEFAULTS
     ),
     target=PATH_DOCS_RESOURCES / "pipeline-defaults" / "defaults.yaml",
 )
