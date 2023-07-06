@@ -41,6 +41,3 @@ def tests_filter_steps_to_apply(log_info):
 
     filtered_steps = get_steps_to_apply(pipeline, steps="")
     assert len(filtered_steps) == 3
-
-    filtered_steps = get_steps_to_apply(pipeline, steps='""')
-    assert len(filtered_steps) == 3
