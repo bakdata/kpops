@@ -1,3 +1,39 @@
+kafka-app.yaml:
+- namespace.yaml
+- app-kafka-app.yaml
+- from_.yaml
+- to.yaml
+- prefix.yaml
+- repo_config-kubernetes-app.yaml
+- version-kafka-app.yaml
+kafka-connector.yaml:
+- namespace.yaml
+- app-kafka-connector.yaml
+- from_.yaml
+- to.yaml
+- prefix.yaml
+- repo_config-kafka-connector.yaml
+- version-kafka-connector.yaml
+- resetter_values.yaml
+kafka-sink-connector.yaml:
+- namespace.yaml
+- app-kafka-connector.yaml
+- from_.yaml
+- to.yaml
+- prefix.yaml
+- repo_config-kafka-connector.yaml
+- version-kafka-connector.yaml
+- resetter_values.yaml
+kafka-source-connector.yaml:
+- namespace.yaml
+- app-kafka-connector.yaml
+- from_-kafka-source-connector.yaml
+- to.yaml
+- prefix.yaml
+- repo_config-kafka-connector.yaml
+- version-kafka-connector.yaml
+- resetter_values.yaml
+- offset_topic-kafka-source-connector.yaml
 kubernetes-app.yaml:
 - namespace.yaml
 - app-kubernetes-app.yaml
@@ -6,10 +42,10 @@ kubernetes-app.yaml:
 - prefix.yaml
 - repo_config-kubernetes-app.yaml
 - version.yaml
-kafka-app.yaml:
+producer.yaml:
 - namespace.yaml
-- app-kafka-app.yaml
-- from_.yaml
+- app-producer.yaml
+- from_-producer.yaml
 - to.yaml
 - prefix.yaml
 - repo_config-kubernetes-app.yaml
@@ -22,39 +58,3 @@ streams-app.yaml:
 - prefix.yaml
 - repo_config-kubernetes-app.yaml
 - version-kafka-app.yaml
-producer.yaml:
-- namespace.yaml
-- app-producer.yaml
-- from_-producer.yaml
-- to.yaml
-- prefix.yaml
-- repo_config-kubernetes-app.yaml
-- version-kafka-app.yaml
-kafka-source-connector.yaml:
-- namespace.yaml
-- app-kafka-connector.yaml
-- from_-kafka-source-connector.yaml
-- to.yaml
-- prefix.yaml
-- repo_config-kafka-connector.yaml
-- version-kafka-connector.yaml
-- resetter_values.yaml
-- offset_topic-kafka-source-connector.yaml
-kafka-sink-connector.yaml:
-- namespace.yaml
-- app-kafka-connector.yaml
-- from_.yaml
-- to.yaml
-- prefix.yaml
-- repo_config-kafka-connector.yaml
-- version-kafka-connector.yaml
-- resetter_values.yaml
-kafka-connector.yaml:
-- namespace.yaml
-- app-kafka-connector.yaml
-- from_.yaml
-- to.yaml
-- prefix.yaml
-- repo_config-kafka-connector.yaml
-- version-kafka-connector.yaml
-- resetter_values.yaml
