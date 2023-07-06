@@ -288,7 +288,7 @@
                 },
                 "type": {
                     "default": "kafka-connector",
-                    "description": "Used for schema generation, same as :param:`type`",
+                    "description": "Base class for all Kafka connectors\nShould only be used to set defaults",
                     "enum": [
                         "kafka-connector"
                     ],
