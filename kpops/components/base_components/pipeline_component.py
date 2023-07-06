@@ -52,7 +52,7 @@ class PipelineComponent(BaseDefaultsComponent):
         description=describe_object(__doc__),
         exclude=True,
     )
-    name: str = Field(default=..., description="Component name")
+    name: str = Field(default=..., description=describe_attr("name", __doc__))
     from_: FromSection | None = Field(
         default=None,
         alias="from",

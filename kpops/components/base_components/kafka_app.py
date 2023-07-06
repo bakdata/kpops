@@ -76,7 +76,7 @@ class KafkaApp(KubernetesApp):
     :type version: str, optional
     """
 
-    type: str = Field(default="kafka-app", description="Component type")
+    type: str = Field(default="kafka-app", description=describe_attr("type", __doc__))
     schema_type: Literal["kafka-app"] = Field(
         default="kafka-app",
         title="Component type",
