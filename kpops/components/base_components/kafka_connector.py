@@ -64,7 +64,7 @@ class KafkaConnector(PipelineComponent, ABC):
     schema_type: Literal["kafka-connector"] = Field(
         default="kafka-connector",
         title="Component type",
-        description=describe_attr("schema_type", __doc__),
+        description=describe_object(__doc__),
         exclude=True,
     )
     app: KafkaConnectConfig = Field(
