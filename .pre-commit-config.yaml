@@ -47,5 +47,13 @@ repos:
         name: gen-docs
         entry: python hooks/gen_docs.py
         language: system
-        files: ^docs/docs/resources/pipeline-(?:(?:components|defaults)/headers|components/sections)/.*\.yaml|kpops/cli/main\.py|hooks/gen_docs\.py$
+        files: >
+          (?x)^(
+            kpops/cli/main\.py
+            | hooks/gen_docs\.py
+            | docs/docs/resources/pipeline-defaults/headers/.*\.yaml
+            | docs/docs/resources/pipeline-components/headers/.*\.yaml
+            | docs/docs/resources/pipeline-components/sections/.*\.yaml
+            | docs/docs/resources/pipeline-components/dependencies/.*\.yaml
+          )$
         require_serial: true
