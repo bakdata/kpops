@@ -47,6 +47,5 @@ repos:
         name: gen-docs
         entry: python hooks/gen_docs.py
         language: system
-        types: [python]
+        files: ^docs/docs/resources/pipeline-(?:(?:components|defaults)/headers|components/sections)/.*\.yaml|kpops/cli/main\.py|hooks/gen_docs\.py$
         require_serial: true
-        exclude: ^tests/.*snapshots/
