@@ -32,7 +32,7 @@ steps:
 ```
 
 It is possible to execute the KPOps runner on
- a dev version from the [test.pypi](https://test.pypi.org/project/kpops/#history).
+a dev version from the [test.pypi](https://test.pypi.org/project/kpops/#history).
 
 ```yaml
 steps:
