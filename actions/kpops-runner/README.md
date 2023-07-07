@@ -28,5 +28,19 @@ steps:
       command: deploy --execute
       working-directory: home/my-kpops-root-dir
       pipeline: pipelines/my-pipeline-file.yaml
-      kpops-version: 1.1.2
+      kpops-version: 1.2.3
+```
+
+It is possible to execute the KPOps runner on
+a dev version from the [test.pypi](https://test.pypi.org/project/kpops/#history).
+
+```yaml
+steps:
+  - name: Deploy Kafka pipeline
+    uses: bakdata/kpops/actions/kpops-runner@main
+    with:
+      command: deploy --execute
+      working-directory: home/my-kpops-root-dir
+      pipeline: pipelines/my-pipeline-file.yaml
+      kpops-version: 1.2.5.dev20230707132709 -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/
 ```
