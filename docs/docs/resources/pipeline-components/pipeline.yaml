@@ -50,7 +50,7 @@
   # add the key-value pairs they need.
   app: # required
     streams: # required
-      brokers: ${broker} # required
+      brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
     imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
@@ -96,7 +96,7 @@
   app: # required
     # Streams Bootstrap streams section
     streams: # required, streams-app-specific
-      brokers: ${broker} # required
+      brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
       inputTopics:
         - topic1
@@ -190,7 +190,7 @@
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
     streams: # required, producer-specific
-      brokers: ${broker} # required
+      brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
       outputTopic: output_topic
       extraOutputTopics: 

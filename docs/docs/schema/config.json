@@ -39,13 +39,14 @@
             "additionalProperties": false,
             "description": "Pipeline configuration unrelated to the components.",
             "properties": {
-                "broker": {
-                    "description": "The Kafka broker address.",
-                    "env": "KPOPS_KAFKA_BROKER",
+                "brokers": {
+                    "description": "The comma separated Kafka brokers address.",
+                    "env": "KPOPS_KAFKA_BROKERS",
                     "env_names": [
-                        "kpops_kafka_broker"
+                        "kpops_kafka_brokers"
                     ],
-                    "title": "Broker",
+                    "example": "broker1:9092,broker2:9092,broker3:9092",
+                    "title": "Brokers",
                     "type": "string"
                 },
                 "create_namespace": {
@@ -187,7 +188,7 @@
             },
             "required": [
                 "environment",
-                "broker"
+                "brokers"
             ],
             "title": "PipelineConfig",
             "type": "object"
