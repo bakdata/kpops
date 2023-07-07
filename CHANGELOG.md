@@ -1,4 +1,30 @@
 # Changelog
+## [1.3.0](https://github.com/bakdata/kpops/releases/tag/1.3.0) - Release Date: [2023-07-07]
+
+### 🏭 Refactor
+
+- Plural broker field in pipeline config - [#278](https://github.com/bakdata/kpops/pull/278)
+
+
+### 📝 Documentation
+
+- Update KPOps runner readme for dev versions - [#279](https://github.com/bakdata/kpops/pull/279)
+
+
+### 🏗️ Breaking changes
+
+- Plural broker field in pipeline config - [#278](https://github.com/bakdata/kpops/pull/278)
+
+
+### 🌀 Miscellaneous
+
+- Add breaking changes section to change log config - [#280](https://github.com/bakdata/kpops/pull/280)
+
+
+
+
+
+
 ## [1.2.4](https://github.com/bakdata/kpops/releases/tag/1.2.4) - Release Date: [2023-06-27]
 
 ### 🌀 Miscellaneous
