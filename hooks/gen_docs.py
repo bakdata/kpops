@@ -131,16 +131,16 @@ def filter_sections(
     return component_sections
 
 
-def concatenate_text_files(*file_paths: Path, target: Path) -> None:
+def concatenate_text_files(*sources: Path, target: Path) -> None:
     """Concatenate the given files into one
 
-    :param *file_paths: Files to be conatenated. The order of the inputs will be
+    :param *sources: Files to be conatenated. The order of the inputs will be
         retained in the result
     :param target: File to store the result in. Note that any previous contents
         will be deleted.
     """
     with target.open("w+") as f:
-        for source in file_paths:
+        for source in sources:
             f.write(source.read_text())
 
 
