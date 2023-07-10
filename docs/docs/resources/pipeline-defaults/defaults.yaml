@@ -52,7 +52,7 @@ kubernetes-app:
 kafka-app:
   app:
     streams:
-      brokers: ${broker}
+      brokers: ${brokers}
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name
 #
