@@ -69,7 +69,7 @@ if not {
     is_change_present = True
     for dangerous_file in DANGEROUS_FILES_TO_CHANGE:
         dangerous_file.unlink(missing_ok=True)
-    if not ".gitignore" in SYS_ARGV:
+    if ".gitignore" not in SYS_ARGV:
         log.warning(
             typer.style(
                 "\nPossible changes in the dependency dir detected."
@@ -185,7 +185,7 @@ def check_for_changes_in_kpops_component_structure() -> bool:
             yaml.dump(kpops_new_structure, f)
         PATH_DOCS_COMPONENTS_DEPENDENCIES.unlink(missing_ok=True)
         PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS.unlink(missing_ok=True)
-        if not ".gitignore" in SYS_ARGV:
+        if ".gitignore" not in SYS_ARGV:
             log.warning(
                 typer.style(
                     "\nKPOps components' structure has likely changed, updating dependencies."
@@ -229,7 +229,9 @@ def get_sections(component_name: str, exist_changes: bool) -> KpopsComponent:
     return KpopsComponent(component_sections, component_sections_not_inheritted)
 
 
-is_change_present = check_for_changes_in_kpops_component_structure() or is_change_present
+is_change_present = (
+    check_for_changes_in_kpops_component_structure() or is_change_present
+)
 
 try:
     PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(PATH_DOCS_COMPONENTS_DEPENDENCIES)
