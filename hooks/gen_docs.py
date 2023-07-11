@@ -62,22 +62,22 @@ DANGEROUS_FILES_TO_CHANGE = {
     PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS,
     PATH_DOCS_KPOPS_STRUCTURE,
 }
-print(DANGEROUS_FILES_TO_CHANGE)
-print(set(sys.argv))
+SYS_ARGV = set(sys.argv)
 if not {
     str(file.relative_to(PATH_ROOT)) for file in DANGEROUS_FILES_TO_CHANGE
-}.isdisjoint(set(sys.argv)):
+}.isdisjoint(SYS_ARGV):
     is_change_present = True
     for dangerous_file in DANGEROUS_FILES_TO_CHANGE:
         dangerous_file.unlink(missing_ok=True)
-    log.warning(
-        typer.style(
-            "\n\nChanges in the dependency dir detected."
-            "\n\nIt should not be edited in any way manually."
-            "\n\nTO RESET DELETE THE DEPENDENCY DIR MANUALLY\n\n",
-            fg=typer.colors.RED,
+    if not ".gitignore" in SYS_ARGV:
+        log.warning(
+            typer.style(
+                "\nPossible changes in the dependency dir detected."
+                " It should not be edited in any way manually."
+                "\nTO RESET, DELETE THE DEPENDENCY DIR MANUALLY\n",
+                fg=typer.colors.RED,
+            )
         )
-    )
 else:
     is_change_present = False
 
@@ -146,6 +146,7 @@ def concatenate_text_files(*sources: Path, target: Path) -> None:
     with target.open("w+") as f:
         for source in sources:
             f.write(source.read_text())
+    log.debug(f"Successfully generated {target}")
 
 
 def component_section_position_in_definition(key: str) -> int:
@@ -180,11 +181,21 @@ def check_for_changes_in_kpops_component_structure() -> bool:
     }
     if kpops_new_structure != kpops_structure:
         (PATH_DOCS_COMPONENTS / "dependencies").mkdir(parents=True, exist_ok=True)
-        with open(PATH_DOCS_KPOPS_STRUCTURE, "w+") as f:
+        with PATH_DOCS_KPOPS_STRUCTURE.open("w+") as f:
             yaml.dump(kpops_new_structure, f)
         PATH_DOCS_COMPONENTS_DEPENDENCIES.unlink(missing_ok=True)
         PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS.unlink(missing_ok=True)
-        log.warning("KPOps components' structure has changed, updating dependencies.")
+        if not ".gitignore" in SYS_ARGV:
+            log.warning(
+                typer.style(
+                    "\nKPOps components' structure has likely changed, updating dependencies."
+                    "\nIn case you didn't change the structure, make sure that you didn't"
+                    " manually introduce changes in the dependency dir.\n",
+                    fg=typer.colors.YELLOW,
+                )
+            )
+        else:
+            log.debug("Dependency files updated.")
         return True
     return False
 

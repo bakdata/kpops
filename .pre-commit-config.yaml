@@ -47,7 +47,7 @@ repos:
         name: gen-docs
         entry: python hooks/gen_docs.py
         language: system
-        files: >
+        files: > # contains `.gitignore` as an indicator whether the script is ran with `--all-files`
           (?x)^(
             kpops/cli/main\.py
             | hooks/gen_docs\.py
@@ -55,5 +55,6 @@ repos:
             | docs/docs/resources/pipeline-components/headers/.*\.yaml
             | docs/docs/resources/pipeline-components/sections/.*\.yaml
             | docs/docs/resources/pipeline-components/dependencies/.*\.yaml
+            | .gitignore
           )$
         require_serial: true
