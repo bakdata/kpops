@@ -220,12 +220,14 @@ def get_sections(component_name: str, exist_changes: bool) -> KpopsComponent:
         with PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS.open("a") as f:
             yaml.dump({component_file_name: component_sections_not_inheritted}, f)
     else:
-        component_sections: list[str] = PIPELINE_COMPONENT_DEPENDENCIES[
+        component_sections: list[str] = PIPELINE_COMPONENT_DEPENDENCIES[  # type: ignore [reportGeneralTypeIssues]
             component_file_name
         ]
         component_sections_not_inheritted: list[
             str
-        ] = DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES[component_file_name]
+        ] = DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES[  # type: ignore [reportGeneralTypeIssues]
+            component_file_name
+        ]
     return KpopsComponent(component_sections, component_sections_not_inheritted)
 
 
