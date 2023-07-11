@@ -257,6 +257,7 @@ class Pipeline:
             substitute(str(self), substitution),
             "yaml",
             background_color="default",
+            theme="ansi_dark",
         )
         Console(
             width=1000  # HACK: overwrite console width to avoid truncating output
