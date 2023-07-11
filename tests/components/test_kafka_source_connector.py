@@ -41,7 +41,7 @@ class TestKafkaSourceConnector:
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
             ),
-            broker="broker:9092",
+            brokers="broker:9092",
             helm_diff_config=HelmDiffConfig(),
         )
 

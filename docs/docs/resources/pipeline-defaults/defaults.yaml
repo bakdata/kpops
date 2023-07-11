@@ -7,7 +7,7 @@ kafka-app:
   # add the key-value pairs they need.
   app: # required
     streams: # required
-      brokers: ${broker} # required
+      brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
   version: "2.12.0" # Helm chart version
@@ -135,7 +135,7 @@ producer:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
     streams: # required, producer-specific
-      brokers: ${broker} # required
+      brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
       outputTopic: output_topic
       extraOutputTopics: 
@@ -155,7 +155,7 @@ streams-app:
   app: # required
     # Streams Bootstrap streams section
     streams: # required, streams-app-specific
-      brokers: ${broker} # required
+      brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
       inputTopics:
         - topic1

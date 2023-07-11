@@ -8,7 +8,7 @@ producer:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
     streams: # required, producer-specific
-      brokers: ${broker} # required
+      brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
       outputTopic: output_topic
       extraOutputTopics: 

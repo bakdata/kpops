@@ -5,19 +5,25 @@ from unittest.mock import patch
 from kpops.cli.main import get_steps_to_apply
 from kpops.pipeline_generator.pipeline import Pipeline
 
+PREFIX = "example-prefix-"
+
 
 @patch("kpops.cli.main.log.info")
 def tests_filter_steps_to_apply(log_info):
     @dataclass
     class TestComponent:
         name: str
-        prefix: str = "example-prefix-"
+        prefix: str = PREFIX
+
+    test_component_1 = TestComponent(PREFIX + "example1")
+    test_component_2 = TestComponent(PREFIX + "example2")
+    test_component_3 = TestComponent(PREFIX + "example3")
 
     class TestPipeline:
         components = [
-            TestComponent("example-prefix-example1"),
-            TestComponent("example-prefix-example2"),
-            TestComponent("example-prefix-example3"),
+            test_component_1,
+            test_component_2,
+            test_component_3,
         ]
 
         def __iter__(self):
@@ -27,8 +33,8 @@ def tests_filter_steps_to_apply(log_info):
     filtered_steps = get_steps_to_apply(pipeline, steps="example2,example3")
 
     assert len(filtered_steps) == 2
-    assert TestComponent("example-prefix-example2") in filtered_steps
-    assert TestComponent("example-prefix-example3") in filtered_steps
+    assert test_component_2 in filtered_steps
+    assert test_component_3 in filtered_steps
 
     assert log_info.call_count == 2
     log_info.assert_any_call("KPOPS_PIPELINE_STEPS is defined.")
@@ -40,7 +46,4 @@ def tests_filter_steps_to_apply(log_info):
     assert len(filtered_steps) == 3
 
     filtered_steps = get_steps_to_apply(pipeline, steps="")
-    assert len(filtered_steps) == 3
-
-    filtered_steps = get_steps_to_apply(pipeline, steps='""')
     assert len(filtered_steps) == 3

@@ -9,7 +9,7 @@
   app: # required
     # Streams Bootstrap streams section
     streams: # required, streams-app-specific
-      brokers: ${broker} # required
+      brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
       inputTopics:
         - topic1

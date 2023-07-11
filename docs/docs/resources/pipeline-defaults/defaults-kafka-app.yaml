@@ -7,7 +7,7 @@ kafka-app:
   # add the key-value pairs they need.
   app: # required
     streams: # required
-      brokers: ${broker} # required
+      brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
   version: "2.12.0" # Helm chart version
