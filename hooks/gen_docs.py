@@ -32,6 +32,14 @@ KPOPS_COMPONENTS_INHERITANCE_REF = {
     ).get_component_type()
     for component in KPOPS_COMPONENTS
 }
+# KPOPS_COMPONENTS_INHERITANCE_REF = {
+#     component.get_component_type(): [
+#         base.get_component_type()
+#         for base in component.__bases__
+#         if isinstance(base, PipelineComponent)
+#     ]
+#     for component in KPOPS_COMPONENTS
+# }
 KPOPS_COMPONENTS_FIELDS = {
     # `set` to make it pickleable
     component.get_component_type(): set(component.__fields__.keys())
@@ -107,32 +115,33 @@ def filter_sections(
     """
     component_sections: list[str] = []
     for target_section in KPOPS_COMPONENTS_FIELDS[component_name]:
-        component = component_name
-        section = target_section + "-" + component + ".yaml"
-        if section in sections:
+        if section := filter_section(component_name, sections, target_section):
             component_sections.append(section)
-        elif (
-            not include_inherited
-            and KPOPS_COMPONENTS_INHERITANCE_REF[component]
-            == PipelineComponent.get_component_type()
-        ):
-            section = target_section + ".yaml"
-            if section in sections:
-                component_sections.append(section)
         elif include_inherited:
-            while component != PipelineComponent.get_component_type():
-                component = KPOPS_COMPONENTS_INHERITANCE_REF[component]
-                section = target_section + "-" + component + ".yaml"
-                if section in sections:
+            temp_component_name = component_name
+            while (temp_component_name := KPOPS_COMPONENTS_INHERITANCE_REF[temp_component_name]) != PipelineComponent.get_component_type():
+                if section := filter_section(temp_component_name, sections, target_section):
                     component_sections.append(section)
                     break
-                elif component == PipelineComponent.get_component_type():
-                    section = target_section + ".yaml"
-                    if section in sections:
-                        component_sections.append(section)
-                        break
     component_sections.sort(key=component_section_position_in_definition)
     return component_sections
+
+
+def filter_section(component_name: str, sections: list[str], target_section: str) -> str | None:
+    """Find target section that is specific to a component from a list
+    
+    :param component_name: Component name
+    :param sections: Available section files, names with extension, no path
+    :param target_section: Section to look for
+    :returns: The applicable section or None if no section found
+    """
+    section = target_section + "-" + component_name + ".yaml"
+    if section in sections:
+        return section
+    elif KPOPS_COMPONENTS_INHERITANCE_REF[component_name] == PipelineComponent.get_component_type():
+        section = target_section + ".yaml"
+        if section in sections:
+            return section
 
 
 def concatenate_text_files(*sources: Path, target: Path) -> None:
