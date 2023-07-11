@@ -175,7 +175,7 @@ def check_for_changes_in_kpops_component_structure() -> bool:
         "kpops_components_fields": KPOPS_COMPONENTS_FIELDS,
     }
     if kpops_new_structure != kpops_structure:
-        Path(PATH_DOCS_COMPONENTS / "dependencies").mkdir(parents=True, exist_ok=True)
+        (PATH_DOCS_COMPONENTS / "dependencies").mkdir(parents=True, exist_ok=True)
         with open(PATH_DOCS_KPOPS_STRUCTURE, "w+") as f:
             yaml.dump(kpops_new_structure, f)
         PATH_DOCS_COMPONENTS_DEPENDENCIES.unlink(missing_ok=True)
