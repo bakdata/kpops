@@ -1,4 +1,26 @@
 # Changelog
+## [1.3.1](https://github.com/bakdata/kpops/releases/tag/1.3.1) - Release Date: [2023-07-11]
+
+### 🏭 Refactor
+
+- Remove workaround for pipeline steps - [#276](https://github.com/bakdata/kpops/pull/276)
+
+
+### 🌀 Miscellaneous
+
+- Update codeowners - [#281](https://github.com/bakdata/kpops/pull/281)
+
+- Reactivate Windows CI - [#255](https://github.com/bakdata/kpops/pull/255)
+
+- Downgrade Poetry version on the Windows CI pipeline - [#286](https://github.com/bakdata/kpops/pull/286)
+
+- Set ANSI theme for output of `kpops generate` - [#289](https://github.com/bakdata/kpops/pull/289)
+
+
+
+
+
+
 ## [1.3.0](https://github.com/bakdata/kpops/releases/tag/1.3.0) - Release Date: [2023-07-07]
 
 ### 🏭 Refactor
