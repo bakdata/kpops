@@ -5,14 +5,13 @@ import sys
 from pathlib import Path
 from typing import NamedTuple, cast
 
-import typer
 import yaml
 
 from hooks import PATH_ROOT
 from kpops.cli.registry import _find_classes
 from kpops.components import KafkaConnector, PipelineComponent
+from kpops.utils.colorify import redify, yellowify
 from kpops.utils.yaml_loading import load_yaml_file
-from kpops.utils.colorify import yellowify, redify
 
 PATH_KPOPS_MAIN = PATH_ROOT / "kpops/cli/main.py"
 PATH_CLI_COMMANDS_DOC = PATH_ROOT / "docs/docs/user/references/cli-commands.md"
