@@ -57,10 +57,6 @@ class PipelineComponent(BaseDefaultsComponent):
         default="${pipeline_name}-",
         description=describe_attr("prefix", __doc__),
     )
-    app: object | None = Field(
-        default=None,
-        description=describe_attr("app", __doc__),
-    )
     from_: FromSection | None = Field(
         default=None,
         alias="from",
