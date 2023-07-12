@@ -12,6 +12,7 @@ from hooks import PATH_ROOT
 from kpops.cli.registry import _find_classes
 from kpops.components import KafkaConnector, PipelineComponent
 from kpops.utils.yaml_loading import load_yaml_file
+from kpops.utils.colorify import yellowify, redify
 
 PATH_KPOPS_MAIN = PATH_ROOT / "kpops/cli/main.py"
 PATH_CLI_COMMANDS_DOC = PATH_ROOT / "docs/docs/user/references/cli-commands.md"
@@ -76,11 +77,10 @@ if not {
     # Don't display warning if `-a` flag suspected in `pre-commit run`
     if ".gitignore" not in SYS_ARGV:
         log.warning(
-            typer.style(
+            redify(
                 "\nPossible changes in the dependency dir detected."
                 " It should not be edited in any way manually."
-                "\nTO RESET, DELETE THE DEPENDENCY DIR MANUALLY\n",
-                fg=typer.colors.RED,
+                "\nTO RESET, DELETE THE DEPENDENCY DIR MANUALLY\n"
             )
         )
 else:
