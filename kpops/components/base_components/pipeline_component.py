@@ -27,18 +27,18 @@ class PipelineComponent(BaseDefaultsComponent):
 
     :param name: Component name
     :type name: str
-    :param from_: Topic(s) and/or components from which the component will read
-        input, defaults to None
-    :type from_: FromSection, optional
-    :param app: Application-specific settings, defaults to None
-    :type app: object, optional
-    :param to: Topic(s) into which the component will write output,
-        defaults to None
-    :type to: ToSection, optional
     :param prefix: Pipeline prefix that will prefix every component name.
         If you wish to not have any prefix you can specify an empty string.,
         defaults to "${pipeline_name}-"
     :type prefix: str, optional
+    :param app: Application-specific settings, defaults to None
+    :type app: object, optional
+    :param from_: Topic(s) and/or components from which the component will read
+        input, defaults to None
+    :type from_: FromSection, optional
+    :param to: Topic(s) into which the component will write output,
+        defaults to None
+    :type to: ToSection, optional
     """
 
     type: str = Field(
@@ -52,24 +52,24 @@ class PipelineComponent(BaseDefaultsComponent):
         description=describe_object(__doc__),
         exclude=True,
     )
-    name: str = Field(default=..., description="Component name")
+    name: str = Field(default=..., description=describe_attr("name", __doc__))
+    prefix: str = Field(
+        default="${pipeline_name}-",
+        description=describe_attr("prefix", __doc__),
+    )
+    app: object | None = Field(
+        default=None,
+        description=describe_attr("app", __doc__),
+    )
     from_: FromSection | None = Field(
         default=None,
         alias="from",
         title="From",
         description=describe_attr("from_", __doc__),
     )
-    app: object | None = Field(
-        default=None,
-        description=describe_attr("app", __doc__),
-    )
     to: ToSection | None = Field(
         default=None,
         description=describe_attr("to", __doc__),
-    )
-    prefix: str = Field(
-        default="${pipeline_name}-",
-        description=describe_attr("prefix", __doc__),
     )
 
     class Config(CamelCaseConfig, DescConfig):
