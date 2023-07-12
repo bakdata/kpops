@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+from collections import Counter
 from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
@@ -57,8 +58,11 @@ class PipelineComponents(BaseModel):
 
     def validate_unique_names(self) -> None:
         step_names = [component.name for component in self.components]
-        if len(step_names) != len(set(step_names)):
-            raise ValidationError(f"step names should be unique {step_names}")
+        duplicates = [name for name, count in Counter(step_names).items() if count > 1]
+        if duplicates:
+            raise ValidationError(
+                f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
+            )
 
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:
