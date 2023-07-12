@@ -47,14 +47,20 @@ repos:
         name: gen-docs
         entry: python hooks/gen_docs.py
         language: system
-        files: > # contains `.gitignore` as an indicator whether the script is ran with `--all-files`
+        # .gitignore -- indicates whether the script is ran with `--all-files`
+        # hooks/gen_docs.py -- hook's behavior is possibly changed
+        # kpops/cli/main.py -- typer-cli has to generate the CLI Usage reference
+        # docs/.../.yaml -- examples changed or dependencies edited
+        # kpops/components/... -- KPOps components possibly changed
+        files: >`
           (?x)^(
-            kpops/cli/main\.py
+            .gitignore
             | hooks/gen_docs\.py
             | docs/docs/resources/pipeline-defaults/headers/.*\.yaml
             | docs/docs/resources/pipeline-components/headers/.*\.yaml
             | docs/docs/resources/pipeline-components/sections/.*\.yaml
             | docs/docs/resources/pipeline-components/dependencies/.*\.yaml
-            | .gitignore
+            | kpops/cli/main\.py
+            | kpops/components/.*\.py
           )$
         require_serial: true
