@@ -52,7 +52,7 @@ repos:
         # kpops/cli/main.py -- typer-cli has to generate the CLI Usage reference
         # docs/.../.yaml -- examples changed or dependencies edited
         # kpops/components/... -- KPOps components possibly changed
-        files: >`
+        files: >
           (?x)^(
             .gitignore
             | hooks/gen_docs\.py
