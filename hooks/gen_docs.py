@@ -57,18 +57,18 @@ DANGEROUS_FILES_TO_CHANGE = {
 }
 # All args provided to the script
 # Pre-commit passes changed files as args
-SYS_ARGV = set(sys.argv)
+SCRIPT_ARGUMENTS = set(sys.argv)
 # Dependency files should not be changed manually
 # Set `is_change_present` to indicate that dependencies need to be regenerated
 # and delete the old dependency files
 if not {
     str(file.relative_to(PATH_ROOT)) for file in DANGEROUS_FILES_TO_CHANGE
-}.isdisjoint(SYS_ARGV):
+}.isdisjoint(SCRIPT_ARGUMENTS):
     is_change_present = True
     for dangerous_file in DANGEROUS_FILES_TO_CHANGE:
         dangerous_file.unlink(missing_ok=True)
     # Don't display warning if `-a` flag suspected in `pre-commit run`
-    if ".gitignore" not in SYS_ARGV:
+    if ".gitignore" not in SCRIPT_ARGUMENTS:
         log.warning(
             redify(
                 "\nPossible changes in the dependency dir detected."
@@ -196,7 +196,7 @@ def check_for_changes_in_kpops_component_structure() -> bool:
             yaml.dump(kpops_new_structure, f)
         PATH_DOCS_COMPONENTS_DEPENDENCIES.unlink(missing_ok=True)
         PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS.unlink(missing_ok=True)
-        if ".gitignore" not in SYS_ARGV:
+        if ".gitignore" not in SCRIPT_ARGUMENTS:
             log.warning(
                 yellowify(
                     "\nKPOps components' structure has likely changed, updating dependencies."
