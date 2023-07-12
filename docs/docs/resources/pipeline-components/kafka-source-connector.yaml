@@ -1,14 +1,13 @@
 # Kafka source connector
 - type: kafka-source-connector # required
   name: kafka-source-connector # required
-  namespace: namespace # required
+  # The source connector has no `from` section
+  # from:
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example. Extensive documentation on
   # connectors: https://kafka.apache.org/documentation/#connectconfigs
   app: # required
     tasks.max: 1
-  # The source connector has no `from` section
-  # from:
   # Topic(s) into which the component will write output
   to:
     topics: # required
@@ -35,6 +34,7 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
+  namespace: namespace # required
   version: "1.0.6" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.

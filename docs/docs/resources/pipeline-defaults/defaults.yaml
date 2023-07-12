@@ -16,12 +16,6 @@ kafka-app:
 # Parent of: KafkaSinkConnector, KafkaSourceConnector
 # Child of: PipelineComponent
 kafka-connector:
-  namespace: namespace # required
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example. Extensive documentation on
-  # connectors: https://kafka.apache.org/documentation/#connectconfigs
-  app: # required
-    tasks.max: 1
   # Topic(s) from which the component will read input
   from: # Must not be null
     topics: # read from topic
@@ -31,6 +25,11 @@ kafka-connector:
     components: # read from specific component
       producer:
         type: input # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example. Extensive documentation on
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
+  app: # required
+    tasks.max: 1
   # Topic(s) into which the component will write output
   to:
     topics: # required
@@ -57,6 +56,7 @@ kafka-connector:
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
+  namespace: namespace # required
   version: "1.0.6" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
@@ -81,13 +81,6 @@ kafka-source-connector:
 # Parent of: KafkaApp
 # Child of: PipelineComponent
 kubernetes-app:
-  namespace: namespace # required
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example.
-  app: # required
-    image: exampleImage # Example
-    debug: false # Example
-    commandLine: {} # Example
   # Topic(s) from which the component will read input
   from: # Must not be null
     topics: # read from topic
@@ -97,6 +90,12 @@ kubernetes-app:
     components: # read from specific component
       producer:
         type: input # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example.
+  app: # required
+    image: exampleImage # Example
+    debug: false # Example
+    commandLine: {} # Example
   # Topic(s) into which the component will write output
   to:
     topics: # required
@@ -124,6 +123,7 @@ kubernetes-app:
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
+  namespace: namespace # required
   version: "1.0.0" # Helm chart version
 # Holds configuration to use as values for the streams bootstrap producer Helm
 # chart.
@@ -131,6 +131,8 @@ kubernetes-app:
 # Child of: KafkaApp
 # More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
 producer:
+  # from: # While the producer does inherit from kafka-app, it does not need a
+  # `from` section, hence it does not support it.
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
@@ -142,8 +144,6 @@ producer:
         output_role1: output_topic1
         output_role2: output_topic2
     nameOverride: override-with-this-name # kafka-app-specific
-  # from: # While the producer does inherit from kafka-app, it does not need a
-  # `from` section, hence it does not support it.
 # StreamsApp component that configures a streams bootstrap app.
 #
 # Child of: KafkaApp

@@ -10,6 +10,7 @@ import yaml
 from hooks import PATH_ROOT
 from kpops.cli.registry import _find_classes
 from kpops.components import KafkaConnector, PipelineComponent
+from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.utils.colorify import redify, yellowify
 from kpops.utils.yaml_loading import load_yaml_file
 
@@ -32,23 +33,16 @@ KPOPS_COMPONENTS_INHERITANCE_REF = {
     for component in KPOPS_COMPONENTS
 }
 KPOPS_COMPONENTS_SECTIONS = {
-    # `set` to make it pickleable
-    component.get_component_type(): set(component.__fields__.keys())
+    component.get_component_type(): [
+        field_name
+        for field_name, model in component.__fields__.items()
+        if not model.field_info.exclude
+    ]
     for component in KPOPS_COMPONENTS
 }
-KPOPS_COMPONENTS_SECTIONS_ORDER = [
-    "type",
-    "name",
-    "namespace",
-    "app",
-    "from_",
-    "to",
-    "prefix",
-    "repo_config",
-    "version",
-    "resetter_values",
-    "offset_topic",
-]
+KPOPS_COMPONENTS_SECTIONS_ORDER = deduplicate(
+    [field for fields in KPOPS_COMPONENTS_SECTIONS.values() for field in fields]
+)
 
 log = logging.getLogger("DocumentationGenerator")
 
@@ -95,7 +89,6 @@ PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
 
 
 class KpopsComponent(NamedTuple):
-    # name: str
     attrs: list[str]
     specific_attrs: list[str]
 
