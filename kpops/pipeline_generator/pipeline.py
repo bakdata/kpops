@@ -58,7 +58,7 @@ class PipelineComponents(BaseModel):
     def validate_unique_names(self) -> None:
         step_names = [component.name for component in self.components]
         if len(step_names) != len(set(step_names)):
-            raise ValidationError("step names should be unique")
+            raise ValidationError(f"step names should be unique {step_names}")
 
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:
