@@ -148,7 +148,20 @@ class YamlReader:
         yield from self.content.splitlines()
         yield "---"  # add final divider to make parsing easier
 
-    def __get_manifest_content(self):
+    def __get_manifest_content(self) -> str:
+        """
+        Reads the manifest section of Helm stdout. `helm upgrade --install` output message contains of three sections
+        in the following order:
+
+        - HOOKS
+        - MANIFEST
+        - NOTES (optional)
+
+        The content of the manifest is used to create the diff. If a NOTES.txt exists in the Helm chart, the NOTES
+        section will be included in the output.
+
+        :return: The content of the manifest section
+        """
         manifest_start = self.content.index(HELM_MANIFEST) + len(HELM_MANIFEST)
         manifest_end = (
             self.content.index(HELM_NOTES) if HELM_NOTES in self.content else -1
