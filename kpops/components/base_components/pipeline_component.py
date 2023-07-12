@@ -31,8 +31,6 @@ class PipelineComponent(BaseDefaultsComponent):
         If you wish to not have any prefix you can specify an empty string.,
         defaults to "${pipeline_name}-"
     :type prefix: str, optional
-    :param app: Application-specific settings, defaults to None
-    :type app: object, optional
     :param from_: Topic(s) and/or components from which the component will read
         input, defaults to None
     :type from_: FromSection, optional
