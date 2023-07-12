@@ -88,9 +88,11 @@ else:
     is_change_present = False
 
 COMPONENTS_DEFINITION_SECTIONS = list((PATH_DOCS_COMPONENTS / "sections").iterdir())
-PIPELINE_COMPONENT_FILE_NAMES = sorted(
-    [header.name for header in (PATH_DOCS_COMPONENTS / "headers").iterdir()]
-)
+PIPELINE_COMPONENT_HEADER_FILES = sorted(list((PATH_DOCS_COMPONENTS / "headers").iterdir()))
+# PIPELINE_COMPONENT_FILES_NAMES = [
+#     file.name
+#     for file in PIPELINE_COMPONENT_FILES
+# ]
 PIPELINE_COMPONENT_DEFAULTS = sorted(
     os.listdir(PATH_DOCS_RESOURCES / "pipeline-defaults/headers")
 )
@@ -266,12 +268,13 @@ try:
 except OSError:
     is_change_present = True
 
-for component_file_name in PIPELINE_COMPONENT_FILE_NAMES:
-    component_name = component_file_name.removesuffix(".yaml")
+for component_file in PIPELINE_COMPONENT_HEADER_FILES:
+    component_file_name = component_file.name
+    component_type = component_file.stem
     component_defaults_name = "defaults-" + component_file_name
 
     component_sections, component_sections_not_inheritted = get_sections(
-        component_name,
+        component_type,
         is_change_present,
     )
 
@@ -282,7 +285,7 @@ for component_file_name in PIPELINE_COMPONENT_FILE_NAMES:
         for section in component_sections_not_inheritted
     ]
     sections_paths = [
-        PATH_DOCS_RESOURCES / "pipeline-components/headers" / component_file_name
+        component_file
     ] + [PATH_DOCS_COMPONENTS / "sections" / section for section in component_sections]
     concatenate_text_files(
         *(defaults_sections_paths),
@@ -292,13 +295,11 @@ for component_file_name in PIPELINE_COMPONENT_FILE_NAMES:
         *(sections_paths),
         target=PATH_DOCS_RESOURCES / "pipeline-components" / component_file_name,
     )
-
 concatenate_text_files(
     *(
-        PATH_DOCS_COMPONENTS / component
-        for component in PIPELINE_COMPONENT_FILE_NAMES
-        if KafkaConnector.get_component_type()
-        not in component  # Shouldn't be used in the pipeline def
+        component_file.parents[1] / component_file.name
+        for component_file in PIPELINE_COMPONENT_HEADER_FILES
+        if KafkaConnector.get_component_type() != component_file.stem  # Shouldn't be used in the pipeline def
     ),
     target=PATH_DOCS_COMPONENTS / "pipeline.yaml",
 )
