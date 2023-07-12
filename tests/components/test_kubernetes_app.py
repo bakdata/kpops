@@ -69,6 +69,7 @@ class TestKubernetesApp:
         mocker: MockerFixture,
         helm_mock: MagicMock,
         app_value: KubernetesTestValue,
+        dry_run_handler: MagicMock,
     ):
         kubernetes_app = KubernetesApp(
             name="test-kubernetes-apps",

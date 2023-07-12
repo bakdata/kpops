@@ -276,22 +276,15 @@ class TestHelmWrapper:
                 f"validate_console_output() raised ReleaseNotFoundException unexpectedly!\nError message: {ReleaseNotFoundException}"
             )
 
-    def test_load_manifest(self):
+    def test_helm_template_load(self):
         stdout = """---
-# Resource: chart/templates/test1.yaml
-"""
-        with pytest.raises(ValueError):
-            helm_templates = list(Helm.load_manifest(stdout))
-            assert len(helm_templates) == 0
-
-        stdout = """---
-# Source: chart/templates/test2.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-    labels:
-        foo: bar
-"""
+        # Source: chart/templates/test2.yaml
+        apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+            labels:
+                foo: bar
+        """
 
         helm_template = HelmTemplate.load("test2.yaml", stdout)
         assert helm_template.filepath == "test2.yaml"
@@ -301,18 +294,9 @@ metadata:
             "metadata": {"labels": {"foo": "bar"}},
         }
 
-        helm_templates = list(Helm.load_manifest(stdout))
-        assert len(helm_templates) == 1
-        helm_template = helm_templates[0]
-        assert isinstance(helm_template, HelmTemplate)
-        assert helm_template.filepath == "chart/templates/test2.yaml"
-        assert helm_template.template == {
-            "apiVersion": "v1",
-            "kind": "ServiceAccount",
-            "metadata": {"labels": {"foo": "bar"}},
-        }
-
-        stdout = """---
+    def test_load_manifest_with_no_notes(self):
+        stdout = """MANIFEST:
+---
 # Source: chart/templates/test3a.yaml
 data:
     - a: 1
@@ -331,6 +315,16 @@ foo: bar
         assert helm_templates[1].filepath == "chart/templates/test3b.yaml"
         assert helm_templates[1].template == {"foo": "bar"}
 
+    def test_raise_value_error_when_helm_content_is_invalid(self):
+        stdout = """---
+            # Resource: chart/templates/test1.yaml
+            """
+        with pytest.raises(ValueError) as value_error:
+            list(Helm.load_manifest(stdout))
+        assert str(value_error.value) == f"The Helm stdout is not valid:\n {stdout}"
+
+    def test_load_manifest(self):
+
         stdout = """Release "test" has been upgraded. Happy Helming!
 NAME: test
 LAST DEPLOYED: Wed Nov 23 16:37:17 2022
@@ -339,6 +333,25 @@ STATUS: pending-upgrade
 REVISION: 8
 TEST SUITE: None
 HOOKS:
+---
+# Source: chart/templates/test/test-connection.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "random-test-connection"
+  annotations:
+    "helm.sh/hook": test
+spec:
+  containers:
+    - name: wget
+      image: busybox
+      command: ['wget']
+      args: ['random:80']
+---
+# Source: chart/templates/test-hook.yaml
+apiVersion: batch/v1
+  annotations:
+    "helm.sh/hook": post-install
 MANIFEST:
 ---
 # Source: chart/templates/test3a.yaml
@@ -362,7 +375,6 @@ NOTES:
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
         )
         assert helm_templates[0].filepath == "chart/templates/test3a.yaml"
-        assert helm_templates[0].template == {"data": [{"a": 1}, {"b": 2}]}
         assert helm_templates[1].filepath == "chart/templates/test3b.yaml"
         assert helm_templates[1].template == {"foo": "bar"}
 
@@ -370,6 +382,7 @@ NOTES:
         helm_wrapper = Helm(helm_config=HelmConfig())
         run_command.return_value = """Release "test-release" has been upgraded. Happy Helming!
 NAME: test-release
+MANIFEST:
 ---
 # Source: chart/templates/test.yaml
 data:
