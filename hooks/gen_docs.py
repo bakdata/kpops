@@ -88,13 +88,11 @@ else:
     is_change_present = False
 
 COMPONENTS_DEFINITION_SECTIONS = list((PATH_DOCS_COMPONENTS / "sections").iterdir())
-PIPELINE_COMPONENT_HEADER_FILES = sorted(list((PATH_DOCS_COMPONENTS / "headers").iterdir()))
-# PIPELINE_COMPONENT_FILES_NAMES = [
-#     file.name
-#     for file in PIPELINE_COMPONENT_FILES
-# ]
-PIPELINE_COMPONENT_DEFAULTS = sorted(
-    os.listdir(PATH_DOCS_RESOURCES / "pipeline-defaults/headers")
+PIPELINE_COMPONENT_HEADER_FILES = sorted(
+    list((PATH_DOCS_COMPONENTS / "headers").iterdir())
+)
+PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
+    list((PATH_DOCS_RESOURCES / "pipeline-defaults/headers").iterdir())
 )
 
 
@@ -284,9 +282,9 @@ for component_file in PIPELINE_COMPONENT_HEADER_FILES:
         PATH_DOCS_COMPONENTS / "sections" / section
         for section in component_sections_not_inheritted
     ]
-    sections_paths = [
-        component_file
-    ] + [PATH_DOCS_COMPONENTS / "sections" / section for section in component_sections]
+    sections_paths = [component_file] + [
+        PATH_DOCS_COMPONENTS / "sections" / section for section in component_sections
+    ]
     concatenate_text_files(
         *(defaults_sections_paths),
         target=PATH_DOCS_RESOURCES / "pipeline-defaults/" / component_defaults_name,
@@ -299,14 +297,15 @@ concatenate_text_files(
     *(
         component_file.parents[1] / component_file.name
         for component_file in PIPELINE_COMPONENT_HEADER_FILES
-        if KafkaConnector.get_component_type() != component_file.stem  # Shouldn't be used in the pipeline def
+        if KafkaConnector.get_component_type()
+        != component_file.stem  # Shouldn't be used in the pipeline def
     ),
     target=PATH_DOCS_COMPONENTS / "pipeline.yaml",
 )
 concatenate_text_files(
     *(
-        PATH_DOCS_RESOURCES / "pipeline-defaults" / component
-        for component in PIPELINE_COMPONENT_DEFAULTS
+        component.parents[1] / component.name
+        for component in PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES
     ),
     target=PATH_DOCS_RESOURCES / "pipeline-defaults" / "defaults.yaml",
 )
