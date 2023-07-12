@@ -79,6 +79,7 @@ if not {
 else:
     is_change_present = False
 
+# Paths to all manually maintaned examples
 COMPONENTS_DEFINITION_SECTIONS = list((PATH_DOCS_COMPONENTS / "sections").iterdir())
 PIPELINE_COMPONENT_HEADER_FILES = sorted(
     list((PATH_DOCS_COMPONENTS / "headers").iterdir())
@@ -89,6 +90,11 @@ PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
 
 
 class KpopsComponent(NamedTuple):
+    """Stores the names of components fields
+    
+    :param attrs: All fields
+    :param specific_attrs: Fields that are NOT inherited
+    """
     attrs: list[str]
     specific_attrs: list[str]
 
@@ -243,11 +249,13 @@ def get_sections(component_name: str, exist_changes: bool) -> KpopsComponent:
         ]
     return KpopsComponent(component_sections, component_sections_not_inherited)
 
-
+# Always check for changes in the component structure, but even
+# if none found, True if the dependency files have been modified.
 is_change_present = (
     check_for_changes_in_kpops_component_structure() or is_change_present
 )
 
+# If some or all of dependencies cannot be loaded, likely relevant changes are present
 try:
     PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(PATH_DOCS_COMPONENTS_DEPENDENCIES)
     DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(
@@ -256,13 +264,13 @@ try:
 except OSError:
     is_change_present = True
 
+
 for component_file in PIPELINE_COMPONENT_HEADER_FILES:
     component_file_name = component_file.name
-    component_type = component_file.stem
     component_defaults_name = "defaults-" + component_file_name
 
     component_sections, component_sections_not_inheritted = get_sections(
-        component_type,
+        component_file.stem,
         is_change_present,
     )
 
