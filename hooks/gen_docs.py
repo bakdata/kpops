@@ -232,23 +232,23 @@ def get_sections(component_name: str, exist_changes: bool) -> KpopsComponent:
         component_sections = filter_sections(
             component_name, component_definition_sections_names, True
         )
-        component_sections_not_inheritted = filter_sections(
+        component_sections_not_inherited = filter_sections(
             component_name, component_definition_sections_names
         )
         with PATH_DOCS_COMPONENTS_DEPENDENCIES.open("a") as f:
             yaml.dump({component_file_name: component_sections}, f)
         with PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS.open("a") as f:
-            yaml.dump({component_file_name: component_sections_not_inheritted}, f)
+            yaml.dump({component_file_name: component_sections_not_inherited}, f)
     else:
         component_sections: list[str] = PIPELINE_COMPONENT_DEPENDENCIES[  # type: ignore [reportGeneralTypeIssues]
             component_file_name
         ]
-        component_sections_not_inheritted: list[
+        component_sections_not_inherited: list[
             str
         ] = DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES[  # type: ignore [reportGeneralTypeIssues]
             component_file_name
         ]
-    return KpopsComponent(component_sections, component_sections_not_inheritted)
+    return KpopsComponent(component_sections, component_sections_not_inherited)
 
 
 is_change_present = (
