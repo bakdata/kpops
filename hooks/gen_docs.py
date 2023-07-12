@@ -32,12 +32,12 @@ KPOPS_COMPONENTS_INHERITANCE_REF = {
     ).get_component_type()
     for component in KPOPS_COMPONENTS
 }
-KPOPS_COMPONENTS_FIELDS = {
+KPOPS_COMPONENTS_SECTIONS = {
     # `set` to make it pickleable
     component.get_component_type(): set(component.__fields__.keys())
     for component in KPOPS_COMPONENTS
 }
-SECTIONS_ORDER = [
+KPOPS_COMPONENTS_SECTIONS_ORDER = [
     "type",
     "name",
     "namespace",
@@ -62,13 +62,19 @@ DANGEROUS_FILES_TO_CHANGE = {
     PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS,
     PATH_DOCS_KPOPS_STRUCTURE,
 }
+# All args provided to the script
+# Pre-commit passes changed files as args
 SYS_ARGV = set(sys.argv)
+# Dependency files should not be changed manually
+# Set `is_change_present` to indicate that dependencies need to be regenerated
+# and delete the old dependency files
 if not {
     str(file.relative_to(PATH_ROOT)) for file in DANGEROUS_FILES_TO_CHANGE
 }.isdisjoint(SYS_ARGV):
     is_change_present = True
     for dangerous_file in DANGEROUS_FILES_TO_CHANGE:
         dangerous_file.unlink(missing_ok=True)
+    # Don't display warning if `-a` flag suspected in `pre-commit run`
     if ".gitignore" not in SYS_ARGV:
         log.warning(
             typer.style(
@@ -81,8 +87,10 @@ if not {
 else:
     is_change_present = False
 
-COMPONENTS_DEFINITION_SECTIONS = os.listdir(PATH_DOCS_COMPONENTS / "sections")
-PIPELINE_COMPONENT_FILE_NAMES = sorted(os.listdir(PATH_DOCS_COMPONENTS / "headers"))
+COMPONENTS_DEFINITION_SECTIONS = list((PATH_DOCS_COMPONENTS / "sections").iterdir())
+PIPELINE_COMPONENT_FILE_NAMES = sorted(
+    [header.name for header in (PATH_DOCS_COMPONENTS / "headers").iterdir()]
+)
 PIPELINE_COMPONENT_DEFAULTS = sorted(
     os.listdir(PATH_DOCS_RESOURCES / "pipeline-defaults/headers")
 )
@@ -106,7 +114,7 @@ def filter_sections(
     :returns: The applicable sections
     """
     component_sections: list[str] = []
-    for target_section in KPOPS_COMPONENTS_FIELDS[component_name]:
+    for target_section in KPOPS_COMPONENTS_SECTIONS[component_name]:
         if section := filter_section(component_name, sections, target_section):
             component_sections.append(section)
         elif include_inherited:
@@ -168,9 +176,9 @@ def component_section_position_in_definition(key: str) -> int:
     :param key: A value to look for in the list of sections
     :returns: The corresponding position or 0 if not found
     """
-    for section in SECTIONS_ORDER:
+    for section in KPOPS_COMPONENTS_SECTIONS_ORDER:
         if key.startswith((section + "-", section + ".")):
-            return SECTIONS_ORDER.index(section)
+            return KPOPS_COMPONENTS_SECTIONS_ORDER.index(section)
     return 0
 
 
@@ -189,7 +197,7 @@ def check_for_changes_in_kpops_component_structure() -> bool:
         kpops_structure = None
     kpops_new_structure = {
         "kpops_components_inheritance_ref": KPOPS_COMPONENTS_INHERITANCE_REF,
-        "kpops_components_fields": KPOPS_COMPONENTS_FIELDS,
+        "kpops_components_fields": KPOPS_COMPONENTS_SECTIONS,
     }
     if kpops_new_structure != kpops_structure:
         (PATH_DOCS_COMPONENTS / "dependencies").mkdir(parents=True, exist_ok=True)
@@ -219,13 +227,16 @@ def get_sections(component_name: str, exist_changes: bool) -> KpopsComponent:
         structure or hierarchy
     :returns: A tuple containing lists of all sections and defaults-related sections
     """
+    component_definition_sections_names = [
+        section.name for section in COMPONENTS_DEFINITION_SECTIONS
+    ]
     component_file_name = component_name + ".yaml"
     if exist_changes:
         component_sections = filter_sections(
-            component_name, COMPONENTS_DEFINITION_SECTIONS, True
+            component_name, component_definition_sections_names, True
         )
         component_sections_not_inheritted = filter_sections(
-            component_name, COMPONENTS_DEFINITION_SECTIONS
+            component_name, component_definition_sections_names
         )
         with PATH_DOCS_COMPONENTS_DEPENDENCIES.open("a") as f:
             yaml.dump({component_file_name: component_sections}, f)
