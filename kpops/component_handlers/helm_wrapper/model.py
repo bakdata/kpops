@@ -139,7 +139,6 @@ class YamlReader:
     content: str
 
     def __iter__(self) -> Iterator[str]:
-        # discard all output before template documents
         if HELM_MANIFEST in self.content:
             self.content = self.__get_manifest_content()
         else:
