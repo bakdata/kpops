@@ -26,6 +26,10 @@ class ParsingException(Exception):
     pass
 
 
+class ValidationError(Exception):
+    pass
+
+
 class PipelineComponents(BaseModel):
     """Stores the pipeline components"""
 
@@ -50,6 +54,11 @@ class PipelineComponents(BaseModel):
 
     def __iter__(self) -> Iterator[PipelineComponent]:
         return iter(self.components)
+
+    def validate_unique_names(self) -> None:
+        step_names = [component.name for component in self.components]
+        if len(step_names) != len(set(step_names)):
+            raise ValidationError("step names should be unique")
 
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:
@@ -96,6 +105,7 @@ class Pipeline:
         self.registry = registry
         self.env_components_index = create_env_components_index(environment_components)
         self.parse_components(component_list)
+        self.validate()
 
     @classmethod
     def load_from_yaml(
@@ -304,6 +314,9 @@ class Pipeline:
                 **update_nested_pair(substitution, ENV),
             )
         )
+
+    def validate(self) -> None:
+        self.components.validate_unique_names()
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
