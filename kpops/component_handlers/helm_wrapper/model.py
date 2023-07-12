@@ -141,14 +141,14 @@ class YamlReader:
     def __iter__(self) -> Iterator[str]:
         # discard all output before template documents
         if HELM_MANIFEST in self.content:
-            self.content = self.parse_manifest_content()
+            self.content = self.get_manifest_content()
         else:
             raise ValueError(f"The Helm stdout is not valid:\n {self.content}")
 
         yield from self.content.splitlines()
         yield "---"  # add final divider to make parsing easier
 
-    def parse_manifest_content(self):
+    def get_manifest_content(self):
         manifest_start = self.content.index(HELM_MANIFEST)
         manifest_end = (
             self.content.index(HELM_NOTES) if HELM_NOTES in self.content else -1
