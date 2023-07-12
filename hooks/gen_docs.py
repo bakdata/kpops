@@ -206,11 +206,10 @@ def check_for_changes_in_kpops_component_structure() -> bool:
         PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS.unlink(missing_ok=True)
         if ".gitignore" not in SYS_ARGV:
             log.warning(
-                typer.style(
+                yellowify(
                     "\nKPOps components' structure has likely changed, updating dependencies."
                     "\nIn case you didn't change the structure, make sure that you didn't"
-                    " manually introduce changes in the dependency dir.\n",
-                    fg=typer.colors.YELLOW,
+                    " manually introduce changes in the dependency dir.\n"
                 )
             )
         else:
