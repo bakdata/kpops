@@ -1,6 +1,5 @@
 """Generates the whole 'generatable' KPOps documentation"""
 import logging
-import os
 import subprocess
 import sys
 from pathlib import Path
