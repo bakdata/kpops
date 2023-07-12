@@ -1,6 +1,6 @@
 environment: development
 defaults_path: ..
-broker: "broker:9092"
+brokers: "broker:9092"
 topic_name_config: 
   default_error_topic_name: ${component_type}-error-topic
   default_output_topic_name: ${component_type}-output-topic

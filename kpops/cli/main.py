@@ -154,11 +154,9 @@ def filter_steps_to_apply(
 def get_steps_to_apply(
     pipeline: Pipeline, steps: str | None
 ) -> list[PipelineComponent]:
-    return (
-        list(pipeline)
-        if not steps or steps == '""'  # workaround to allow "" as empty value for CI
-        else filter_steps_to_apply(pipeline, steps=parse_steps(steps))
-    )
+    if steps:
+        return filter_steps_to_apply(pipeline, steps=parse_steps(steps))
+    return list(pipeline)
 
 
 def reverse_pipeline_steps(pipeline, steps) -> Iterator[PipelineComponent]:

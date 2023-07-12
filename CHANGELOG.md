@@ -1,4 +1,52 @@
 # Changelog
+## [1.3.1](https://github.com/bakdata/kpops/releases/tag/1.3.1) - Release Date: [2023-07-11]
+
+### 🏭 Refactor
+
+- Remove workaround for pipeline steps - [#276](https://github.com/bakdata/kpops/pull/276)
+
+
+### 🌀 Miscellaneous
+
+- Update codeowners - [#281](https://github.com/bakdata/kpops/pull/281)
+
+- Reactivate Windows CI - [#255](https://github.com/bakdata/kpops/pull/255)
+
+- Downgrade Poetry version on the Windows CI pipeline - [#286](https://github.com/bakdata/kpops/pull/286)
+
+- Set ANSI theme for output of `kpops generate` - [#289](https://github.com/bakdata/kpops/pull/289)
+
+
+
+
+
+
+## [1.3.0](https://github.com/bakdata/kpops/releases/tag/1.3.0) - Release Date: [2023-07-07]
+
+### 🏭 Refactor
+
+- Plural broker field in pipeline config - [#278](https://github.com/bakdata/kpops/pull/278)
+
+
+### 📝 Documentation
+
+- Update KPOps runner readme for dev versions - [#279](https://github.com/bakdata/kpops/pull/279)
+
+
+### 🏗️ Breaking changes
+
+- Plural broker field in pipeline config - [#278](https://github.com/bakdata/kpops/pull/278)
+
+
+### 🌀 Miscellaneous
+
+- Add breaking changes section to change log config - [#280](https://github.com/bakdata/kpops/pull/280)
+
+
+
+
+
+
 ## [1.2.4](https://github.com/bakdata/kpops/releases/tag/1.2.4) - Release Date: [2023-06-27]
 
 ### 🌀 Miscellaneous
