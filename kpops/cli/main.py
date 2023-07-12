@@ -235,7 +235,7 @@ def generate(
     cert_file: Optional[str] = typer.Option(
         None, help="Identify HTTPS client using this SSL certificate file"
     ),
-):
+) -> Pipeline:
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
