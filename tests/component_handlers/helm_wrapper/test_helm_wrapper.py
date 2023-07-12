@@ -278,13 +278,13 @@ class TestHelmWrapper:
 
     def test_helm_template_load(self):
         stdout = """---
-        # Source: chart/templates/test2.yaml
-        apiVersion: v1
-        kind: ServiceAccount
-        metadata:
-            labels:
-                foo: bar
-        """
+# Source: chart/templates/test2.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+    labels:
+        foo: bar
+"""
 
         helm_template = HelmTemplate.load("test2.yaml", stdout)
         assert helm_template.filepath == "test2.yaml"
