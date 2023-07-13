@@ -26,10 +26,7 @@ class DescConfig(BaseConfig):
 class ExtraCamelCaseModel(BaseModel):
     @root_validator(pre=True)
     def extra_fields_to_camel(cls, values: dict[str, Any]) -> dict[str, Any]:
-        camel_case_values = {}
-        for key, value in values.items():
-            camel_case_values[to_camel(key)] = value
-        return camel_case_values
+        return {to_camel(key): value for key, value in values.items()}
 
     class Config(CamelCaseConfig, DescConfig):
         extra = Extra.allow
