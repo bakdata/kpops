@@ -31,9 +31,9 @@ class PipelineComponent(BaseDefaultsComponent):
         If you wish to not have any prefix you can specify an empty string.,
         defaults to "${pipeline_name}-"
     :type prefix: str, optional
-    :param from: Topic(s) and/or components from which the component will read
+    :param from_: Topic(s) and/or components from which the component will read
         input, defaults to None
-    :type from: FromSection, optional
+    :type from_: FromSection, optional
     :param to: Topic(s) into which the component will write output,
         defaults to None
     :type to: ToSection, optional
@@ -59,7 +59,7 @@ class PipelineComponent(BaseDefaultsComponent):
         default=None,
         alias="from",
         title="From",
-        description=describe_attr("from", __doc__),
+        description=describe_attr("from_", __doc__),
     )
     to: ToSection | None = Field(
         default=None,
