@@ -56,12 +56,6 @@ class TestKubernetesApp:
     def app_value(self) -> KubernetesTestValue:
         return KubernetesTestValue(**{"name_override": "test-value"})
 
-    @pytest.fixture
-    def dry_run_handler(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kubernetes_app.DryRunHandler"
-        ).return_value
-
     def test_should_lazy_load_helm_wrapper_and_not_repo_add(
         self,
         config: PipelineConfig,
@@ -69,7 +63,6 @@ class TestKubernetesApp:
         mocker: MockerFixture,
         helm_mock: MagicMock,
         app_value: KubernetesTestValue,
-        dry_run_handler: MagicMock,
     ):
         kubernetes_app = KubernetesApp(
             name="test-kubernetes-apps",
@@ -83,14 +76,14 @@ class TestKubernetesApp:
             kubernetes_app, "get_helm_chart", return_value="test/test-chart"
         )
 
-        kubernetes_app.deploy(True)
+        kubernetes_app.deploy(False)
 
         helm_mock.add_repo.assert_not_called()
 
         helm_mock.upgrade_install.assert_called_once_with(
             "test-kubernetes-apps",
             "test/test-chart",
-            True,
+            False,
             "test-namespace",
             {"nameOverride": "test-value"},
             HelmUpgradeInstallFlags(),
