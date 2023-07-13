@@ -11,6 +11,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
+    ParseError,
     RepoAuthFlags,
     Version,
 )
@@ -315,13 +316,13 @@ foo: bar
         assert helm_templates[1].filepath == "chart/templates/test3b.yaml"
         assert helm_templates[1].template == {"foo": "bar"}
 
-    def test_raise_value_error_when_helm_content_is_invalid(self):
+    def test_raise_parse_error_when_helm_content_is_invalid(self):
         stdout = """---
             # Resource: chart/templates/test1.yaml
             """
-        with pytest.raises(ValueError) as value_error:
+        with pytest.raises(ParseError) as value_error:
             list(Helm.load_manifest(stdout))
-        assert str(value_error.value) == f"The Helm stdout is not valid:\n {stdout}"
+        assert str(value_error.value) == f"Failed to parse Helm stdout:\n {stdout}"
 
     def test_load_manifest(self):
 

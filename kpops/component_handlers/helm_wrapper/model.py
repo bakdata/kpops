@@ -5,6 +5,7 @@ from typing import Iterator
 import yaml
 from pydantic import BaseModel, Field
 
+from kpops.component_handlers.helm_wrapper.exception import ParseError
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
@@ -134,20 +135,16 @@ HELM_NOTES = "\n\nNOTES:\n"
 HELM_MANIFEST = "MANIFEST:\n"
 
 
-@dataclass
-class YamlReader:
+@dataclass(frozen=True)
+class HelmChart:
     content: str
 
     def __iter__(self) -> Iterator[str]:
-        if HELM_MANIFEST in self.content:
-            self.content = self.__get_manifest_content()
-        else:
-            raise ValueError(f"The Helm stdout is not valid:\n {self.content}")
-
-        yield from self.content.splitlines()
+        yield from self.manifest.splitlines()
         yield "---"  # add final divider to make parsing easier
 
-    def __get_manifest_content(self) -> str:
+    @property
+    def manifest(self) -> str:
         """
         Reads the manifest section of Helm stdout. `helm upgrade --install` output message contains three sections
         in the following order:
@@ -161,14 +158,18 @@ class YamlReader:
 
         :return: The content of the manifest section
         """
+        if HELM_MANIFEST not in self.content:
+            raise ParseError(f"Failed to parse Helm stdout:\n {self.content}")
+
         manifest_start = self.content.index(HELM_MANIFEST) + len(HELM_MANIFEST)
         manifest_end = (
             self.content.index(HELM_NOTES) if HELM_NOTES in self.content else -1
         )
+
         return self.content[manifest_start:manifest_end]
 
 
-@dataclass
+@dataclass(frozen=True)
 class Version:
     major: int
     minor: int = 0
