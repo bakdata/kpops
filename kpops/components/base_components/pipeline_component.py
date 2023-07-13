@@ -19,7 +19,7 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.docstring import describe_attr, describe_object
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import DescConfig
 
 
 class PipelineComponent(BaseDefaultsComponent):
@@ -72,9 +72,7 @@ class PipelineComponent(BaseDefaultsComponent):
         description=describe_attr("prefix", __doc__),
     )
 
-    class Config(
-        CamelCaseConfig, DescConfig
-    ):  # TODO: why camel case for all components by default?
+    class Config(DescConfig):
         extra = Extra.allow
         keep_untouched = (cached_property,)
 
