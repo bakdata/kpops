@@ -380,11 +380,11 @@ NOTES:
         assert helm_templates[1].filepath == "chart/templates/test3b.yaml"
         assert helm_templates[1].template == {"foo": "bar"}
 
-    def test_get_manifest(self, run_command: MagicMock, mock_get_version: MagicMock):
+    def test_helm_get_manifest(
+        self, run_command: MagicMock, mock_get_version: MagicMock
+    ):
         helm_wrapper = Helm(helm_config=HelmConfig())
-        run_command.return_value = """Release "test-release" has been upgraded. Happy Helming!
-NAME: test-release
-MANIFEST:
+        run_command.return_value = """
 ---
 # Source: chart/templates/test.yaml
 data:

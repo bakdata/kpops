@@ -156,6 +156,9 @@ class HelmChart:
         The content of the manifest is used to create the diff. If a NOTES.txt exists in the Helm chart, the NOTES
         section will be included in the output.
 
+        It is important to note that `helm get manifest` command only returns the manifests without the MANIFEST header
+        in the stdout.
+
         :return: The content of the manifest section
         """
         manifest_start = (
