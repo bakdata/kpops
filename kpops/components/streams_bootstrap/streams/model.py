@@ -1,6 +1,6 @@
 from typing import AbstractSet, Any, Mapping
 
-from pydantic import BaseModel, Extra, Field
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.components.base_components.base_defaults_component import deduplicate
@@ -9,7 +9,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaStreamsConfig,
 )
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import ExtraCamelCaseModel
 
 
 class StreamsConfig(KafkaStreamsConfig):
@@ -120,7 +120,7 @@ class StreamsConfig(KafkaStreamsConfig):
         )
 
 
-class StreamsAppAutoScaling(BaseModel):
+class StreamsAppAutoScaling(ExtraCamelCaseModel):
     """Kubernetes Event-driven Autoscaling config
 
     :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
@@ -209,9 +209,6 @@ class StreamsAppAutoScaling(BaseModel):
         default=[],
         description=describe_attr("topics", __doc__),
     )
-
-    class Config(CamelCaseConfig, DescConfig):
-        extra = Extra.allow
 
 
 class StreamsAppConfig(KafkaAppConfig):

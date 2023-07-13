@@ -72,7 +72,9 @@ class PipelineComponent(BaseDefaultsComponent):
         description=describe_attr("prefix", __doc__),
     )
 
-    class Config(CamelCaseConfig, DescConfig):
+    class Config(
+        CamelCaseConfig, DescConfig
+    ):  # TODO: why camel case for all components by default?
         extra = Extra.allow
         keep_untouched = (cached_property,)
 

@@ -5,7 +5,7 @@ import re
 from functools import cached_property
 from typing import Any, Literal
 
-from pydantic import BaseModel, Extra, Field, root_validator
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -19,7 +19,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr, describe_object
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig, to_camel
+from kpops.utils.pydantic import CamelCaseConfig, DescConfig, ExtraCamelCaseModel
 
 log = logging.getLogger("KubernetesAppComponent")
 
@@ -28,18 +28,8 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 )
 
 
-class KubernetesAppConfig(BaseModel):
+class KubernetesAppConfig(ExtraCamelCaseModel):
     """Settings specific to Kubernetes Apps"""
-
-    @root_validator(pre=True)
-    def extra_fields_to_camel(cls, values: dict[str, Any]) -> dict[str, Any]:
-        camel_case_values = {}
-        for key, value in values.items():
-            camel_case_values[to_camel(key)] = value
-        return camel_case_values
-
-    class Config(CamelCaseConfig, DescConfig):
-        extra = Extra.allow
 
 
 class KubernetesApp(PipelineComponent):
