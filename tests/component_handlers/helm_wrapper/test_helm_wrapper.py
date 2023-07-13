@@ -320,10 +320,9 @@ foo: bar
         stdout = """---
             # Resource: chart/templates/test1.yaml
             """
-        with pytest.raises(ParseError) as parse_error:
+        with pytest.raises(ParseError, match="Not a valid Helm template source"):
             helm_template = list(Helm.load_manifest(stdout))
             assert len(helm_template) == 0
-            assert str(parse_error.value) == "Not a valid Helm template source"
 
     def test_load_manifest(self):
 
@@ -377,6 +376,7 @@ NOTES:
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
         )
         assert helm_templates[0].filepath == "chart/templates/test3a.yaml"
+        assert helm_templates[0].template == {"data": [{"a": 1}, {"b": 2}]}
         assert helm_templates[1].filepath == "chart/templates/test3b.yaml"
         assert helm_templates[1].template == {"foo": "bar"}
 
