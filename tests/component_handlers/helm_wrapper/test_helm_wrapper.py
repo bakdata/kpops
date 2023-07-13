@@ -1,4 +1,5 @@
 from pathlib import Path
+from textwrap import dedent
 from unittest import mock
 from unittest.mock import MagicMock
 
@@ -278,14 +279,17 @@ class TestHelmWrapper:
             )
 
     def test_helm_template_load(self):
-        stdout = """---
-# Source: chart/templates/test2.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-    labels:
-        foo: bar
-"""
+        stdout = dedent(
+            """
+            ---
+            # Source: chart/templates/test2.yaml
+            apiVersion: v1
+            kind: ServiceAccount
+            metadata:
+                labels:
+                    foo: bar
+            """
+        )
 
         helm_template = HelmTemplate.load("test2.yaml", stdout)
         assert helm_template.filepath == "test2.yaml"
@@ -296,16 +300,19 @@ metadata:
         }
 
     def test_load_manifest_with_no_notes(self):
-        stdout = """MANIFEST:
----
-# Source: chart/templates/test3a.yaml
-data:
-    - a: 1
-    - b: 2
----
-# Source: chart/templates/test3b.yaml
-foo: bar
-"""
+        stdout = dedent(
+            """
+            MANIFEST:
+            ---
+            # Source: chart/templates/test3a.yaml
+            data:
+                - a: 1
+                - b: 2
+            ---
+            # Source: chart/templates/test3b.yaml
+            foo: bar
+            """
+        )
         helm_templates = list(Helm.load_manifest(stdout))
         assert len(helm_templates) == 2
         assert all(
@@ -317,59 +324,64 @@ foo: bar
         assert helm_templates[1].template == {"foo": "bar"}
 
     def test_raise_parse_error_when_helm_content_is_invalid(self):
-        stdout = """---
+        stdout = dedent(
+            """
+            ---
             # Resource: chart/templates/test1.yaml
             """
+        )
         with pytest.raises(ParseError, match="Not a valid Helm template source"):
             helm_template = list(Helm.load_manifest(stdout))
             assert len(helm_template) == 0
 
     def test_load_manifest(self):
+        stdout = dedent(
+            """
+            Release "test" has been upgraded. Happy Helming!
+            NAME: test
+            LAST DEPLOYED: Wed Nov 23 16:37:17 2022
+            NAMESPACE: test-namespace
+            STATUS: pending-upgrade
+            REVISION: 8
+            TEST SUITE: None
+            HOOKS:
+            ---
+            # Source: chart/templates/test/test-connection.yaml
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: "random-test-connection"
+              annotations:
+                "helm.sh/hook": test
+            spec:
+              containers:
+                - name: wget
+                  image: busybox
+                  command: ['wget']
+                  args: ['random:80']
+            ---
+            # Source: chart/templates/test-hook.yaml
+            apiVersion: batch/v1
+              annotations:
+                "helm.sh/hook": post-install
+            MANIFEST:
+            ---
+            # Source: chart/templates/test3a.yaml
+            data:
+                - a: 1
+                - b: 2
+            ---
+            # Source: chart/templates/test3b.yaml
+            foo: bar
 
-        stdout = """Release "test" has been upgraded. Happy Helming!
-NAME: test
-LAST DEPLOYED: Wed Nov 23 16:37:17 2022
-NAMESPACE: test-namespace
-STATUS: pending-upgrade
-REVISION: 8
-TEST SUITE: None
-HOOKS:
----
-# Source: chart/templates/test/test-connection.yaml
-apiVersion: v1
-kind: Pod
-metadata:
-  name: "random-test-connection"
-  annotations:
-    "helm.sh/hook": test
-spec:
-  containers:
-    - name: wget
-      image: busybox
-      command: ['wget']
-      args: ['random:80']
----
-# Source: chart/templates/test-hook.yaml
-apiVersion: batch/v1
-  annotations:
-    "helm.sh/hook": post-install
-MANIFEST:
----
-# Source: chart/templates/test3a.yaml
-data:
-    - a: 1
-    - b: 2
----
-# Source: chart/templates/test3b.yaml
-foo: bar
+            NOTES:
+            1. Get the application URL by running these commands:
 
-NOTES:
-1. Get the application URL by running these commands:
+                NOTES:
 
-    NOTES:
-
-    test
-"""
+                test
+            """
+        )
         helm_templates = list(Helm.load_manifest(stdout))
         assert len(helm_templates) == 2
         assert all(
@@ -384,13 +396,15 @@ NOTES:
         self, run_command: MagicMock, mock_get_version: MagicMock
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
-        run_command.return_value = """
----
-# Source: chart/templates/test.yaml
-data:
-    - a: 1
-    - b: 2
-"""
+        run_command.return_value = dedent(
+            """
+            ---
+            # Source: chart/templates/test.yaml
+            data:
+                - a: 1
+                - b: 2
+            """
+        )
         helm_templates = list(
             helm_wrapper.get_manifest("test-release", "test-namespace")
         )
