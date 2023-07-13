@@ -1,4 +1,5 @@
 from pathlib import Path
+from textwrap import dedent
 from unittest import mock
 from unittest.mock import MagicMock
 
@@ -11,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
+    ParseError,
     RepoAuthFlags,
     Version,
 )
@@ -276,22 +278,18 @@ class TestHelmWrapper:
                 f"validate_console_output() raised ReleaseNotFoundException unexpectedly!\nError message: {ReleaseNotFoundException}"
             )
 
-    def test_load_manifest(self):
-        stdout = """---
-# Resource: chart/templates/test1.yaml
-"""
-        with pytest.raises(ValueError):
-            helm_templates = list(Helm.load_manifest(stdout))
-            assert len(helm_templates) == 0
-
-        stdout = """---
-# Source: chart/templates/test2.yaml
-apiVersion: v1
-kind: ServiceAccount
-metadata:
-    labels:
-        foo: bar
-"""
+    def test_helm_template_load(self):
+        stdout = dedent(
+            """
+            ---
+            # Source: chart/templates/test2.yaml
+            apiVersion: v1
+            kind: ServiceAccount
+            metadata:
+                labels:
+                    foo: bar
+            """
+        )
 
         helm_template = HelmTemplate.load("test2.yaml", stdout)
         assert helm_template.filepath == "test2.yaml"
@@ -301,26 +299,20 @@ metadata:
             "metadata": {"labels": {"foo": "bar"}},
         }
 
-        helm_templates = list(Helm.load_manifest(stdout))
-        assert len(helm_templates) == 1
-        helm_template = helm_templates[0]
-        assert isinstance(helm_template, HelmTemplate)
-        assert helm_template.filepath == "chart/templates/test2.yaml"
-        assert helm_template.template == {
-            "apiVersion": "v1",
-            "kind": "ServiceAccount",
-            "metadata": {"labels": {"foo": "bar"}},
-        }
-
-        stdout = """---
-# Source: chart/templates/test3a.yaml
-data:
-    - a: 1
-    - b: 2
----
-# Source: chart/templates/test3b.yaml
-foo: bar
-"""
+    def test_load_manifest_with_no_notes(self):
+        stdout = dedent(
+            """
+            MANIFEST:
+            ---
+            # Source: chart/templates/test3a.yaml
+            data:
+                - a: 1
+                - b: 2
+            ---
+            # Source: chart/templates/test3b.yaml
+            foo: bar
+            """
+        )
         helm_templates = list(Helm.load_manifest(stdout))
         assert len(helm_templates) == 2
         assert all(
@@ -331,31 +323,65 @@ foo: bar
         assert helm_templates[1].filepath == "chart/templates/test3b.yaml"
         assert helm_templates[1].template == {"foo": "bar"}
 
-        stdout = """Release "test" has been upgraded. Happy Helming!
-NAME: test
-LAST DEPLOYED: Wed Nov 23 16:37:17 2022
-NAMESPACE: test-namespace
-STATUS: pending-upgrade
-REVISION: 8
-TEST SUITE: None
-HOOKS:
-MANIFEST:
----
-# Source: chart/templates/test3a.yaml
-data:
-    - a: 1
-    - b: 2
----
-# Source: chart/templates/test3b.yaml
-foo: bar
+    def test_raise_parse_error_when_helm_content_is_invalid(self):
+        stdout = dedent(
+            """
+            ---
+            # Resource: chart/templates/test1.yaml
+            """
+        )
+        with pytest.raises(ParseError, match="Not a valid Helm template source"):
+            helm_template = list(Helm.load_manifest(stdout))
+            assert len(helm_template) == 0
 
-NOTES:
-1. Get the application URL by running these commands:
+    def test_load_manifest(self):
+        stdout = dedent(
+            """
+            Release "test" has been upgraded. Happy Helming!
+            NAME: test
+            LAST DEPLOYED: Wed Nov 23 16:37:17 2022
+            NAMESPACE: test-namespace
+            STATUS: pending-upgrade
+            REVISION: 8
+            TEST SUITE: None
+            HOOKS:
+            ---
+            # Source: chart/templates/test/test-connection.yaml
+            apiVersion: v1
+            kind: Pod
+            metadata:
+              name: "random-test-connection"
+              annotations:
+                "helm.sh/hook": test
+            spec:
+              containers:
+                - name: wget
+                  image: busybox
+                  command: ['wget']
+                  args: ['random:80']
+            ---
+            # Source: chart/templates/test-hook.yaml
+            apiVersion: batch/v1
+              annotations:
+                "helm.sh/hook": post-install
+            MANIFEST:
+            ---
+            # Source: chart/templates/test3a.yaml
+            data:
+                - a: 1
+                - b: 2
+            ---
+            # Source: chart/templates/test3b.yaml
+            foo: bar
 
-    NOTES:
+            NOTES:
+            1. Get the application URL by running these commands:
 
-    test
-"""
+                NOTES:
+
+                test
+            """
+        )
         helm_templates = list(Helm.load_manifest(stdout))
         assert len(helm_templates) == 2
         assert all(
@@ -366,16 +392,19 @@ NOTES:
         assert helm_templates[1].filepath == "chart/templates/test3b.yaml"
         assert helm_templates[1].template == {"foo": "bar"}
 
-    def test_get_manifest(self, run_command: MagicMock, mock_get_version: MagicMock):
+    def test_helm_get_manifest(
+        self, run_command: MagicMock, mock_get_version: MagicMock
+    ):
         helm_wrapper = Helm(helm_config=HelmConfig())
-        run_command.return_value = """Release "test-release" has been upgraded. Happy Helming!
-NAME: test-release
----
-# Source: chart/templates/test.yaml
-data:
-    - a: 1
-    - b: 2
-"""
+        run_command.return_value = dedent(
+            """
+            ---
+            # Source: chart/templates/test.yaml
+            data:
+                - a: 1
+                - b: 2
+            """
+        )
         helm_templates = list(
             helm_wrapper.get_manifest("test-release", "test-namespace")
         )
@@ -488,19 +517,17 @@ data:
         self, run_command: MagicMock
     ):
         run_command.return_value = "v2.9.0+gc9f554d"
-        with pytest.raises(RuntimeError) as runtime_error:
+        with pytest.raises(
+            RuntimeError,
+            match="The supported Helm version is 3.x.x. The current Helm version is 2.9.0",
+        ):
             Helm(helm_config=HelmConfig())
-        assert str(runtime_error.value) == (
-            "The supported Helm version is 3.x.x. The current Helm version is 2.9.0"
-        )
 
     def test_should_raise_exception_if_helm_version_cannot_be_parsed(
         self, run_command: MagicMock
     ):
         run_command.return_value = "123"
-        with pytest.raises(RuntimeError) as runtime_error:
+        with pytest.raises(
+            RuntimeError, match="Could not parse the Helm version.\n\nHelm output:\n123"
+        ):
             Helm(helm_config=HelmConfig())
-        assert (
-            str(runtime_error.value)
-            == "Could not parse the Helm version.\n\nHelm output:\n123"
-        )

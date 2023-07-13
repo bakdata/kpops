@@ -5,6 +5,7 @@ from typing import Iterator
 import yaml
 from pydantic import BaseModel, Field
 
+from kpops.component_handlers.helm_wrapper.exception import ParseError
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
@@ -94,15 +95,15 @@ class HelmUpgradeInstallFlags:
     wait_for_jobs: bool = False
 
 
-HELM_SOURCE_PREFIX = "# Source: "
-
-
 @dataclass
 class HelmTemplateFlags:
     api_version: str | None = None
     ca_file: str | None = None
     cert_file: str | None = None
     version: str | None = None
+
+
+HELM_SOURCE_PREFIX = "# Source: "
 
 
 @dataclass
@@ -119,7 +120,7 @@ class HelmTemplate:
         # Source: chart/templates/serviceaccount.yaml
         """
         if not source.startswith(HELM_SOURCE_PREFIX):
-            raise ValueError("Not a valid Helm template source")
+            raise ParseError("Not a valid Helm template source")
         return source.removeprefix(HELM_SOURCE_PREFIX).strip()
 
     @classmethod
@@ -131,25 +132,49 @@ class HelmTemplate:
 # Indicates the beginning of `NOTES:` section in the output of `helm install` or
 # `helm upgrade`
 HELM_NOTES = "\n\nNOTES:\n"
+HELM_MANIFEST = "MANIFEST:\n"
 
 
-@dataclass
-class YamlReader:
+@dataclass(frozen=True)
+class HelmChart:
     content: str
 
     def __iter__(self) -> Iterator[str]:
-        # discard all output before template documents
-        start = self.content.index("---")
-        if HELM_NOTES in self.content:
-            end = self.content.index(HELM_NOTES)
-        else:
-            end = -1
-        self.content = self.content[start:end]
-        yield from self.content.splitlines()
+        yield from self.manifest.splitlines()
         yield "---"  # add final divider to make parsing easier
 
+    @property
+    def manifest(self) -> str:
+        """
+        Reads the manifest section of Helm stdout. `helm upgrade --install` output message contains three sections
+        in the following order:
 
-@dataclass
+        - HOOKS
+        - MANIFEST
+        - NOTES (optional)
+
+        The content of the manifest is used to create the diff. If a NOTES.txt exists in the Helm chart, the NOTES
+        section will be included in the output.
+
+        It is important to note that the `helm get manifest` command only returns the manifests without the MANIFEST
+        header in the stdout. Instead, the output starts with `---`.
+
+        :return: The content of the manifest section
+        """
+        manifest_start = (
+            self.content.index(HELM_MANIFEST) + len(HELM_MANIFEST)
+            if HELM_MANIFEST in self.content
+            else self.content.index("---")
+        )
+
+        manifest_end = (
+            self.content.index(HELM_NOTES) if HELM_NOTES in self.content else -1
+        )
+
+        return self.content[manifest_start:manifest_end]
+
+
+@dataclass(frozen=True)
 class Version:
     major: int
     minor: int = 0
