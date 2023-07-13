@@ -503,19 +503,17 @@ data:
         self, run_command: MagicMock
     ):
         run_command.return_value = "v2.9.0+gc9f554d"
-        with pytest.raises(RuntimeError) as runtime_error:
+        with pytest.raises(
+            RuntimeError,
+            match="The supported Helm version is 3.x.x. The current Helm version is 2.9.0",
+        ):
             Helm(helm_config=HelmConfig())
-        assert str(runtime_error.value) == (
-            "The supported Helm version is 3.x.x. The current Helm version is 2.9.0"
-        )
 
     def test_should_raise_exception_if_helm_version_cannot_be_parsed(
         self, run_command: MagicMock
     ):
         run_command.return_value = "123"
-        with pytest.raises(RuntimeError) as runtime_error:
+        with pytest.raises(
+            RuntimeError, match="Could not parse the Helm version.\n\nHelm output:\n123"
+        ):
             Helm(helm_config=HelmConfig())
-        assert (
-            str(runtime_error.value)
-            == "Could not parse the Helm version.\n\nHelm output:\n123"
-        )
