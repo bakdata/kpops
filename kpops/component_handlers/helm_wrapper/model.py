@@ -95,15 +95,15 @@ class HelmUpgradeInstallFlags:
     wait_for_jobs: bool = False
 
 
-HELM_SOURCE_PREFIX = "# Source: "
-
-
 @dataclass
 class HelmTemplateFlags:
     api_version: str | None = None
     ca_file: str | None = None
     cert_file: str | None = None
     version: str | None = None
+
+
+HELM_SOURCE_PREFIX = "# Source: "
 
 
 @dataclass
@@ -120,7 +120,7 @@ class HelmTemplate:
         # Source: chart/templates/serviceaccount.yaml
         """
         if not source.startswith(HELM_SOURCE_PREFIX):
-            raise ValueError("Not a valid Helm template source")
+            raise ParseError("Not a valid Helm template source")
         return source.removeprefix(HELM_SOURCE_PREFIX).strip()
 
     @classmethod
@@ -158,10 +158,12 @@ class HelmChart:
 
         :return: The content of the manifest section
         """
-        if HELM_MANIFEST not in self.content:
-            raise ParseError(f"Failed to parse Helm stdout:\n {self.content}")
+        manifest_start = (
+            self.content.index(HELM_MANIFEST) + len(HELM_MANIFEST)
+            if HELM_MANIFEST in self.content
+            else self.content.index("---")
+        )
 
-        manifest_start = self.content.index(HELM_MANIFEST) + len(HELM_MANIFEST)
         manifest_end = (
             self.content.index(HELM_NOTES) if HELM_NOTES in self.content else -1
         )

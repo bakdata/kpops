@@ -320,9 +320,10 @@ foo: bar
         stdout = """---
             # Resource: chart/templates/test1.yaml
             """
-        with pytest.raises(ParseError) as value_error:
-            list(Helm.load_manifest(stdout))
-        assert str(value_error.value) == f"Failed to parse Helm stdout:\n {stdout}"
+        with pytest.raises(ParseError) as parse_error:
+            helm_template = list(Helm.load_manifest(stdout))
+            assert len(helm_template) == 0
+            assert str(parse_error.value) == "Not a valid Helm template source"
 
     def test_load_manifest(self):
 
