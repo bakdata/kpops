@@ -1,6 +1,6 @@
 from typing import AbstractSet, Any, Mapping
 
-from pydantic import BaseConfig, BaseModel, Extra, Field
+from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
 
 from kpops.components.base_components.base_defaults_component import deduplicate
@@ -233,6 +233,3 @@ class StreamsAppConfig(KafkaAppConfig):
         default=None,
         description=describe_attr("autoscaling", __doc__),
     )
-
-    class Config(BaseConfig):
-        extra = Extra.allow

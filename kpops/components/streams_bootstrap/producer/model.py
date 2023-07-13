@@ -1,4 +1,4 @@
-from pydantic import BaseConfig, Extra, Field
+from pydantic import Field
 
 from kpops.components.base_components.kafka_app import (
     KafkaAppConfig,
@@ -34,6 +34,3 @@ class ProducerValues(KafkaAppConfig):
     streams: ProducerStreamsConfig = Field(
         default=..., description=describe_attr("streams", __doc__)
     )
-
-    class Config(BaseConfig):
-        extra = Extra.allow
