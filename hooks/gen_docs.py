@@ -1,4 +1,4 @@
-"""Generates the whole 'generatable' KPOps documentation"""
+"""Generates the whole 'generatable' KPOps documentation."""
 import logging
 import subprocess
 import sys
@@ -27,7 +27,8 @@ PATH_DOCS_KPOPS_STRUCTURE = PATH_DOCS_COMPONENTS / "dependencies/kpops_structure
 KPOPS_COMPONENTS = tuple(_find_classes("kpops.components", PipelineComponent))
 KPOPS_COMPONENTS_INHERITANCE_REF = {
     component.get_component_type(): cast(
-        type[PipelineComponent], component.__base__
+        type[PipelineComponent],
+        component.__base__,
     ).get_component_type()
     for component in KPOPS_COMPONENTS
 }
@@ -69,24 +70,22 @@ if not {
             redify(
                 "\nPossible changes in the dependency dir detected."
                 " It should not be edited in any way manually."
-                "\nTO RESET, DELETE THE DEPENDENCY DIR MANUALLY\n"
-            )
+                "\nTO RESET, DELETE THE DEPENDENCY DIR MANUALLY\n",
+            ),
         )
 else:
     is_change_present = False
 
 # Paths to all manually maintaned examples
 COMPONENTS_DEFINITION_SECTIONS = list((PATH_DOCS_COMPONENTS / "sections").iterdir())
-PIPELINE_COMPONENT_HEADER_FILES = sorted(
-    list((PATH_DOCS_COMPONENTS / "headers").iterdir())
-)
+PIPELINE_COMPONENT_HEADER_FILES = sorted((PATH_DOCS_COMPONENTS / "headers").iterdir())
 PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
-    list((PATH_DOCS_RESOURCES / "pipeline-defaults/headers").iterdir())
+    (PATH_DOCS_RESOURCES / "pipeline-defaults/headers").iterdir(),
 )
 
 
 class KpopsComponent(NamedTuple):
-    """Stores the names of components fields
+    """Stores the names of components fields.
 
     :param attrs: All fields
     :param specific_attrs: Fields that are NOT inherited
@@ -97,9 +96,12 @@ class KpopsComponent(NamedTuple):
 
 
 def filter_sections(
-    component_name: str, sections: list[str], include_inherited: bool = False
+    component_name: str,
+    sections: list[str],
+    *,
+    include_inherited: bool = False,
 ) -> list[str]:
-    """Find all sections that are specific to a component from a list
+    """Find all sections that are specific to a component from a list.
 
     :param component_name: Component name
     :param sections: Available section files, names with extension, no path
@@ -119,7 +121,9 @@ def filter_sections(
                 ]
             ) != PipelineComponent.get_component_type():
                 if section := filter_section(
-                    temp_component_name, sections, target_section
+                    temp_component_name,
+                    sections,
+                    target_section,
                 ):
                     component_sections.append(section)
                     break
@@ -127,9 +131,11 @@ def filter_sections(
 
 
 def filter_section(
-    component_name: str, sections: list[str], target_section: str
+    component_name: str,
+    sections: list[str],
+    target_section: str,
 ) -> str | None:
-    """Find target section that is specific to a component from a list
+    """Find target section that is specific to a component from a list.
 
     :param component_name: Component name
     :param sections: Available section files, names with extension, no path
@@ -139,17 +145,19 @@ def filter_section(
     section = target_section + "-" + component_name + ".yaml"
     if section in sections:
         return section
-    elif (
+    if (
         KPOPS_COMPONENTS_INHERITANCE_REF[component_name]
         == PipelineComponent.get_component_type()
     ):
         section = target_section + ".yaml"
         if section in sections:
             return section
+        return None
+    return None
 
 
 def concatenate_text_files(*sources: Path, target: Path) -> None:
-    """Concatenate the given files into one
+    """Concatenate the given files into one.
 
     :param *sources: Files to be conatenated. The order of the inputs will be
         retained in the result
@@ -159,11 +167,11 @@ def concatenate_text_files(*sources: Path, target: Path) -> None:
     with target.open("w+") as f:
         for source in sources:
             f.write(source.read_text())
-    log.debug(f"Successfully generated {target}")
+    log.debug("Successfully generated %s", target)
 
 
 def check_for_changes_in_kpops_component_structure() -> bool:
-    """Detect changes in the hierarchy or the structure of KPOps' components
+    """Detect changes in the hierarchy or the structure of KPOps' components.
 
     If a change is detected, a new structure yaml is written and the dependency
     reference yamls are emptied.
@@ -190,8 +198,8 @@ def check_for_changes_in_kpops_component_structure() -> bool:
                 yellowify(
                     "\nKPOps components' structure has likely changed, updating dependencies."
                     "\nIn case you didn't change the structure, make sure that you didn't"
-                    " manually introduce changes in the dependency dir.\n"
-                )
+                    " manually introduce changes in the dependency dir.\n",
+                ),
             )
         else:
             log.debug("Dependency files updated.")
@@ -199,8 +207,8 @@ def check_for_changes_in_kpops_component_structure() -> bool:
     return False
 
 
-def get_sections(component_name: str, exist_changes: bool) -> KpopsComponent:
-    """Returns the sections specific to a component
+def get_sections(component_name: str, *, exist_changes: bool) -> KpopsComponent:
+    """Return the sections specific to a component.
 
     :param exist_changes: Whether there have been changes to the components
         structure or hierarchy
@@ -212,10 +220,13 @@ def get_sections(component_name: str, exist_changes: bool) -> KpopsComponent:
     component_file_name = component_name + ".yaml"
     if exist_changes:
         component_sections = filter_sections(
-            component_name, component_definition_sections_names, True
+            component_name,
+            component_definition_sections_names,
+            include_inherited=True,
         )
         component_sections_not_inherited = filter_sections(
-            component_name, component_definition_sections_names
+            component_name,
+            component_definition_sections_names,
         )
         with PATH_DOCS_COMPONENTS_DEPENDENCIES.open("a") as f:
             yaml.dump({component_file_name: component_sections}, f)
@@ -243,7 +254,7 @@ is_change_present = (
 try:
     PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(PATH_DOCS_COMPONENTS_DEPENDENCIES)
     DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(
-        PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS
+        PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS,
     )
 except OSError:
     is_change_present = True
@@ -255,11 +266,11 @@ for component_file in PIPELINE_COMPONENT_HEADER_FILES:
 
     component_sections, component_sections_not_inheritted = get_sections(
         component_file.stem,
-        is_change_present,
+        exist_changes=is_change_present,
     )
 
     defaults_sections_paths = [
-        PATH_DOCS_RESOURCES / "pipeline-defaults/headers" / component_defaults_name
+        PATH_DOCS_RESOURCES / "pipeline-defaults/headers" / component_defaults_name,
     ] + [
         PATH_DOCS_COMPONENTS / "sections" / section
         for section in component_sections_not_inheritted
@@ -297,7 +308,8 @@ concatenate_text_files(
 #####################
 
 # Run typer-cli on kpops to generate doc on CLI usage
-# TODO: try to use typer_cli.main.docs here instead
+# TODO(@sujuka99): try to use typer_cli.main.docs here instead
+# https://github.com/bakdata/kpops/issues/297
 typer_args: list[str] = [
     "typer",
     str(PATH_KPOPS_MAIN),
@@ -311,8 +323,8 @@ typer_args: list[str] = [
 subprocess.run(typer_args)
 
 # Replace wrong title in CLI Usage doc
-with open(PATH_CLI_COMMANDS_DOC, "r") as f:
+with PATH_CLI_COMMANDS_DOC.open("r") as f:
     text = f.readlines()
 text[0] = "# CLI Usage\n"
-with open(PATH_CLI_COMMANDS_DOC, "w") as f:
+with PATH_CLI_COMMANDS_DOC.open("w") as f:
     f.writelines(text)
