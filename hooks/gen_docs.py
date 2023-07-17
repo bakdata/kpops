@@ -43,13 +43,6 @@ KPOPS_COMPONENTS_SECTIONS = {
 KPOPS_COMPONENTS_SECTIONS_ORDER = deduplicate(
     [field for fields in KPOPS_COMPONENTS_SECTIONS.values() for field in fields]
 )
-
-log = logging.getLogger("DocumentationGenerator")
-
-#####################
-# EXAMPLES          #
-#####################
-
 DANGEROUS_FILES_TO_CHANGE = {
     PATH_DOCS_COMPONENTS_DEPENDENCIES,
     PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS,
@@ -57,6 +50,13 @@ DANGEROUS_FILES_TO_CHANGE = {
 }
 # All args provided to the script
 # Pre-commit passes changed files as args
+
+log = logging.getLogger("DocumentationGenerator")
+
+#####################
+# EXAMPLES          #
+#####################
+
 SCRIPT_ARGUMENTS = set(sys.argv)
 # Dependency files should not be changed manually
 # Set `is_change_present` to indicate that dependencies need to be regenerated
