@@ -10,7 +10,6 @@ import yaml
 from hooks import PATH_ROOT
 from kpops.cli.registry import _find_classes
 from kpops.components import KafkaConnector, PipelineComponent
-from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.utils.colorify import redify, yellowify
 from kpops.utils.yaml_loading import load_yaml_file
 
@@ -40,9 +39,6 @@ KPOPS_COMPONENTS_SECTIONS = {
     ]
     for component in KPOPS_COMPONENTS
 }
-KPOPS_COMPONENTS_SECTIONS_ORDER = deduplicate(
-    [field for fields in KPOPS_COMPONENTS_SECTIONS.values() for field in fields]
-)
 DANGEROUS_FILES_TO_CHANGE = {
     PATH_DOCS_COMPONENTS_DEPENDENCIES,
     PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS,
@@ -91,10 +87,11 @@ PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
 
 class KpopsComponent(NamedTuple):
     """Stores the names of components fields
-    
+
     :param attrs: All fields
     :param specific_attrs: Fields that are NOT inherited
     """
+
     attrs: list[str]
     specific_attrs: list[str]
 
@@ -126,7 +123,6 @@ def filter_sections(
                 ):
                     component_sections.append(section)
                     break
-    component_sections.sort(key=component_section_position_in_definition)
     return component_sections
 
 
@@ -164,19 +160,6 @@ def concatenate_text_files(*sources: Path, target: Path) -> None:
         for source in sources:
             f.write(source.read_text())
     log.debug(f"Successfully generated {target}")
-
-
-def component_section_position_in_definition(key: str) -> int:
-    """Returns a positional value for a given str if found in the list of
-    component definition sections
-
-    :param key: A value to look for in the list of sections
-    :returns: The corresponding position or 0 if not found
-    """
-    for section in KPOPS_COMPONENTS_SECTIONS_ORDER:
-        if key.startswith((section + "-", section + ".")):
-            return KPOPS_COMPONENTS_SECTIONS_ORDER.index(section)
-    return 0
 
 
 def check_for_changes_in_kpops_component_structure() -> bool:
@@ -248,6 +231,7 @@ def get_sections(component_name: str, exist_changes: bool) -> KpopsComponent:
             component_file_name
         ]
     return KpopsComponent(component_sections, component_sections_not_inherited)
+
 
 # Always check for changes in the component structure, but even
 # if none found, True if the dependency files have been modified.
