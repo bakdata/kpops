@@ -140,7 +140,7 @@ def append_csv_to_dotenv_file(
             )
             env_var = env_var._replace(
                 description=fill(
-                    text=env_var.description,
+                    text=env_var.description or "",
                     initial_indent=f"{comment_symbol} ",
                     subsequent_indent=f"{comment_symbol} ",
                 )
