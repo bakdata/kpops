@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import ClassVar, cast
+from typing import cast
 from unittest.mock import patch
 
 from kpops.cli.main import get_steps_to_apply

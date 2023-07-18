@@ -1,12 +1,12 @@
 """Generates the whole 'generatable' KPOps documentation."""
 import csv
-from io import TextIOWrapper
 import shutil
 import subprocess
+from dataclasses import dataclass
 from enum import StrEnum
 from pathlib import Path
 from textwrap import fill
-from typing import Any, NamedTuple
+from typing import Any
 
 from pytablewriter import MarkdownTableWriter
 from typer.models import ArgumentInfo, OptionInfo
@@ -26,7 +26,10 @@ PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
 #####################
 
 
-class EnvVar(NamedTuple):
+@dataclass
+class EnvVar:
+    """Environment variable's properties."""
+
     name: str
     default_value: Any
     required: bool
@@ -35,6 +38,8 @@ class EnvVar(NamedTuple):
 
 
 class EnvVarAttrs(StrEnum):
+    """The attr names are used as columns for the markdown tables."""
+
     NAME = "Name"
     DEFAULT_VALUE = "Default Value"
     REQUIRED = "Required"
@@ -43,7 +48,11 @@ class EnvVarAttrs(StrEnum):
 
 
 def csv_append_env_var(
-    file: Path, name: str, default_value, description: str | list[str] | None, *args
+    file: Path,
+    name: str,
+    default_value: Any,
+    description: str | list[str] | None,
+    *args: Any,
 ) -> None:
     """Append env variable record to a chosen .csv file, create it if doesn't exist.
 
@@ -70,7 +79,7 @@ def csv_append_env_var(
         default_value = ""
     with file.open("a+") as csv_file:
         csv.writer(csv_file).writerow(
-            [name, default_value, required, formatted_description, *list(args)]
+            [name, default_value, required, formatted_description, *list(args)],
         )
 
 
@@ -100,7 +109,7 @@ def write_title_to_dotenv_file(
     :param description: File description
     :param comment_symbol: Symbol to use for comments, defaults to "#"
     """
-    with open(file_path, "w+") as f:
+    with file_path.open("w+") as f:
         text = (
             f"{comment_symbol} "
             + title
@@ -119,7 +128,7 @@ def append_csv_to_dotenv_file(
     source: Path,
     target: Path,
 ) -> None:
-    """Parses csv file looking for a env variable records and appends them into a dotenv file
+    """Parse csv file looking for a env variable records and append them into a dotenv file.
 
     :param source: csv file to read from
     :param target: dotenv file to wread into
@@ -129,26 +138,24 @@ def append_csv_to_dotenv_file(
         r = csv.reader(s_target)
         columns = next(r)
         for line in r:
-            record = dict(zip(columns, line))
+            record = dict(zip(columns, line, strict=True))
             env_var = EnvVar(
                 name=record[EnvVarAttrs.NAME],
                 default_value=record[EnvVarAttrs.DEFAULT_VALUE],
                 required=record[EnvVarAttrs.REQUIRED] == "True",
                 description=record[EnvVarAttrs.DESCRIPTION],
                 corresponding_setting_name=record.get(
-                    EnvVarAttrs.CORRESPONDING_SETTING_NAME
+                    EnvVarAttrs.CORRESPONDING_SETTING_NAME,
                 ),
             )
-            env_var = env_var._replace(
-                description=fill(
-                    text=env_var.description or "",
-                    initial_indent=f"{comment_symbol} ",
-                    subsequent_indent=f"{comment_symbol} ",
-                )
+            env_var.description = fill(
+                text=env_var.description or "",
+                initial_indent=f"{comment_symbol} ",
+                subsequent_indent=f"{comment_symbol} ",
             )
             if env_var.corresponding_setting_name:
-                env_var = env_var._replace(
-                    description=f"# {env_var.corresponding_setting_name}\n{env_var.description}"
+                env_var.description = (
+                    f"# {env_var.corresponding_setting_name}\n{env_var.description}"
                 )
             # Dotenv has no `null` or `None` values, just leave the name of
             # the var alone there and it will be skipepd when reading
@@ -159,7 +166,7 @@ def append_csv_to_dotenv_file(
                 default_value = f" {comment_symbol} No default value, not required"
             else:
                 default_value = f"={env_var.default_value}"
-            env_var = env_var._replace(default_value=default_value)
+            env_var.default_value = default_value
             with target.open("a") as f_target:
                 f_target.write(
                     f"{env_var.description}\n"
@@ -167,8 +174,14 @@ def append_csv_to_dotenv_file(
                 )
 
 
-def write_csv_to_md_file(source: Path, target: Path, title: str | None, description: str | None = None, heading: str = "###"):
-    """Write csv data from a file into a markdown file
+def write_csv_to_md_file(
+    source: Path,
+    target: Path,
+    title: str | None,
+    description: str | None = None,
+    heading: str = "###",
+) -> None:
+    """Write csv data from a file into a markdown file.
 
     :param source: path to csv file to read from
     :param target: path to md file to overwrite or create
@@ -211,7 +224,7 @@ with PATH_CONFIG_ENV_VARS_CSV_FILE.open("w+") as f:
             EnvVarAttrs.REQUIRED,
             EnvVarAttrs.DESCRIPTION,
             EnvVarAttrs.CORRESPONDING_SETTING_NAME,
-        ]
+        ],
     )
 write_title_to_dotenv_file(
     PATH_CONFIG_ENV_VARS_DOTENV_FILE,
@@ -239,9 +252,15 @@ for config_field_name, config_field in config_fields.items():
             config_field_name,
         )
 append_csv_to_dotenv_file(
-    PATH_CONFIG_ENV_VARS_CSV_FILE, PATH_CONFIG_ENV_VARS_DOTENV_FILE
+    PATH_CONFIG_ENV_VARS_CSV_FILE,
+    PATH_CONFIG_ENV_VARS_DOTENV_FILE,
 )
-write_csv_to_md_file(PATH_CONFIG_ENV_VARS_CSV_FILE, PATH_CONFIG_ENV_VARS_MD_FILE, CONFIG_ENV_VARS_TITLE, CONFIG_ENV_VARS_DESCRIPTION)
+write_csv_to_md_file(
+    PATH_CONFIG_ENV_VARS_CSV_FILE,
+    PATH_CONFIG_ENV_VARS_MD_FILE,
+    CONFIG_ENV_VARS_TITLE,
+    CONFIG_ENV_VARS_DESCRIPTION,
+)
 PATH_CONFIG_ENV_VARS_CSV_FILE.unlink(missing_ok=True)
 
 # find all cli-related env variables, write them into a file
@@ -262,7 +281,7 @@ with PATH_CLI_ENV_VARS_CSV_FILE.open("w+") as f:
             EnvVarAttrs.DEFAULT_VALUE,
             EnvVarAttrs.REQUIRED,
             EnvVarAttrs.DESCRIPTION,
-        ]
+        ],
     )
 write_title_to_dotenv_file(
     PATH_CLI_ENV_VARS_DOTFILES_FILE,
@@ -297,7 +316,12 @@ for var_in_main_name in dir(main):
             cli_env_var_description,
         )
 append_csv_to_dotenv_file(PATH_CLI_ENV_VARS_CSV_FILE, PATH_CLI_ENV_VARS_DOTFILES_FILE)
-write_csv_to_md_file(PATH_CLI_ENV_VARS_CSV_FILE, PATH_CLI_ENV_VARS_MD_FILE, CLI_ENV_VARS_TITLE, CLI_ENV_VARS_DESCRIPTION)
+write_csv_to_md_file(
+    PATH_CLI_ENV_VARS_CSV_FILE,
+    PATH_CLI_ENV_VARS_MD_FILE,
+    CLI_ENV_VARS_TITLE,
+    CLI_ENV_VARS_DESCRIPTION,
+)
 # Delete the csv file, it is not useful anymore
 PATH_CLI_ENV_VARS_CSV_FILE.unlink(missing_ok=True)
 
@@ -306,7 +330,8 @@ PATH_CLI_ENV_VARS_CSV_FILE.unlink(missing_ok=True)
 #####################
 
 # Run typer-cli on kpops to generate doc on CLI usage
-# TODO: try to use typer_cli.main.docs here instead
+# TODO(@sujuka99): try to use typer_cli.main.docs here instead
+# https://github.com/bakdata/kpops/issues/297
 typer_args: list[str] = [
     "typer",
     str(PATH_KPOPS_MAIN),
@@ -320,8 +345,8 @@ typer_args: list[str] = [
 subprocess.run(typer_args)
 
 # Replace wrong title in CLI Usage doc
-with open(PATH_CLI_COMMANDS_DOC, "r") as f:
+with PATH_CLI_COMMANDS_DOC.open("r") as f:
     text = f.readlines()
 text[0] = "# CLI Usage\n"
-with open(PATH_CLI_COMMANDS_DOC, "w") as f:
+with PATH_CLI_COMMANDS_DOC.open("w") as f:
     f.writelines(text)
