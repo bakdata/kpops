@@ -76,7 +76,7 @@ if not {
 else:
     is_change_present = False
 
-# Paths to all manually maintaned examples
+# Paths to all manually maintained examples
 COMPONENTS_DEFINITION_SECTIONS = list((PATH_DOCS_COMPONENTS / "sections").iterdir())
 PIPELINE_COMPONENT_HEADER_FILES = sorted((PATH_DOCS_COMPONENTS / "headers").iterdir())
 PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
@@ -264,7 +264,7 @@ for component_file in PIPELINE_COMPONENT_HEADER_FILES:
     component_file_name = component_file.name
     component_defaults_name = "defaults-" + component_file_name
 
-    component_sections, component_sections_not_inheritted = get_sections(
+    component_sections, component_sections_not_inherited = get_sections(
         component_file.stem,
         exist_changes=is_change_present,
     )
@@ -273,7 +273,7 @@ for component_file in PIPELINE_COMPONENT_HEADER_FILES:
         PATH_DOCS_RESOURCES / "pipeline-defaults/headers" / component_defaults_name,
     ] + [
         PATH_DOCS_COMPONENTS / "sections" / section
-        for section in component_sections_not_inheritted
+        for section in component_sections_not_inherited
     ]
     sections_paths = [component_file] + [
         PATH_DOCS_COMPONENTS / "sections" / section for section in component_sections
@@ -290,8 +290,8 @@ concatenate_text_files(
     *(
         component_file.parents[1] / component_file.name
         for component_file in PIPELINE_COMPONENT_HEADER_FILES
-        if KafkaConnector.get_component_type()
-        != component_file.stem  # Shouldn't be used in the pipeline def
+        if component_file.stem
+        != KafkaConnector.get_component_type()  # Shouldn't be used in the pipeline def
     ),
     target=PATH_DOCS_COMPONENTS / "pipeline.yaml",
 )
