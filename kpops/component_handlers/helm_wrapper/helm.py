@@ -11,13 +11,13 @@ import yaml
 
 from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundException
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmChart,
     HelmConfig,
     HelmTemplate,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
     Version,
-    YamlReader,
 )
 
 log = logging.getLogger("Helm")
@@ -208,7 +208,7 @@ class Helm:
         is_beginning: bool = False
         template_name = None
         current_yaml_doc: list[str] = []
-        for line in YamlReader(yaml_contents):
+        for line in HelmChart(yaml_contents):
             if line.startswith("---"):
                 is_beginning = True
                 if template_name and current_yaml_doc:

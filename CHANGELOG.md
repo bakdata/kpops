@@ -1,4 +1,15 @@
 # Changelog
+## [1.3.2](https://github.com/bakdata/kpops/releases/tag/1.3.2) - Release Date: [2023-07-13]
+
+### 🐛 Fixes
+
+- Exclude Helm tests from dry-run diff - [#293](https://github.com/bakdata/kpops/pull/293)
+
+
+
+
+
+
 ## [1.3.1](https://github.com/bakdata/kpops/releases/tag/1.3.1) - Release Date: [2023-07-11]
 
 ### 🏭 Refactor
