@@ -1,7 +1,0 @@
-Name,Default Value,Required,Description,Setting name
-KPOPS_PIPELINE_BASE_DIR,.,False,"Base directory to the pipelines (default is current working
-directory)"
-KPOPS_CONFIG_PATH,config.yaml,False,Path to the config.yaml file
-KPOPS_DEFAULT_PATH,,False,Path to defaults folder
-KPOPS_PIPELINE_PATH,,True,Path to YAML with pipeline definition
-KPOPS_PIPELINE_STEPS,,False,Comma separated list of steps to apply the command on

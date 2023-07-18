@@ -167,15 +167,23 @@ def append_csv_to_dotenv_file(
                 )
 
 
-def write_md_table_to_file(source: Path, target: Path, title: str, description: str | None = None, heading: str = "###"):
+def write_csv_to_md_file(source: Path, target: Path, title: str | None, description: str | None = None, heading: str = "###"):
+    """Write csv data from a file into a markdown file
+
+    :param source: path to csv file to read from
+    :param target: path to md file to overwrite or create
+    :param title: Title for the table, optional
+
+    """
     with target.open("w+") as f:
-        f.write(
-            f"{heading} {title}\n"
-            f"\n{description}",
-        )
+        if title:
+            f.write(f"{heading} {title}\n")
+        if description:
+            f.write(f"\n{description}\n")
         writer = MarkdownTableWriter()
         writer.from_csv(str(source))
-        writer.dump(output=f, close_after_write=True)
+        writer.table_name = ""
+        writer.dump(output=f)
 
 
 # copy examples from tests resources
@@ -233,10 +241,12 @@ for config_field_name, config_field in config_fields.items():
 append_csv_to_dotenv_file(
     PATH_CONFIG_ENV_VARS_CSV_FILE, PATH_CONFIG_ENV_VARS_DOTENV_FILE
 )
-write_md_table_to_file(PATH_CONFIG_ENV_VARS_CSV_FILE, PATH_CONFIG_ENV_VARS_MD_FILE, CONFIG_ENV_VARS_TITLE, CONFIG_ENV_VARS_DESCRIPTION)
+write_csv_to_md_file(PATH_CONFIG_ENV_VARS_CSV_FILE, PATH_CONFIG_ENV_VARS_MD_FILE, CONFIG_ENV_VARS_TITLE, CONFIG_ENV_VARS_DESCRIPTION)
+PATH_CONFIG_ENV_VARS_CSV_FILE.unlink(missing_ok=True)
 
 # find all cli-related env variables, write them into a file
 PATH_CLI_ENV_VARS_DOTFILES_FILE = PATH_DOCS_VARIABLES / "cli_env_vars.env"
+PATH_CLI_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "cli_env_vars.md"
 PATH_CLI_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_cli_env_vars.csv"
 CLI_ENV_VARS_TITLE = "CLI Environment variables"
 CLI_ENV_VARS_DESCRIPTION = (
@@ -252,7 +262,6 @@ with PATH_CLI_ENV_VARS_CSV_FILE.open("w+") as f:
             EnvVarAttrs.DEFAULT_VALUE,
             EnvVarAttrs.REQUIRED,
             EnvVarAttrs.DESCRIPTION,
-            EnvVarAttrs.CORRESPONDING_SETTING_NAME,
         ]
     )
 write_title_to_dotenv_file(
@@ -288,7 +297,9 @@ for var_in_main_name in dir(main):
             cli_env_var_description,
         )
 append_csv_to_dotenv_file(PATH_CLI_ENV_VARS_CSV_FILE, PATH_CLI_ENV_VARS_DOTFILES_FILE)
-
+write_csv_to_md_file(PATH_CLI_ENV_VARS_CSV_FILE, PATH_CLI_ENV_VARS_MD_FILE, CLI_ENV_VARS_TITLE, CLI_ENV_VARS_DESCRIPTION)
+# Delete the csv file, it is not useful anymore
+PATH_CLI_ENV_VARS_CSV_FILE.unlink(missing_ok=True)
 
 #####################
 # CLI-USAGE         #

@@ -1,6 +1,6 @@
 ### Pipeline config environment variables
 
-The default setup is shown. These variables are an alternative to the settings in `config.yaml`. Variables marked as required can instead be set in the pipeline config.# temp_config_env_vars
+The default setup is shown. These variables are an alternative to the settings in `config.yaml`. Variables marked as required can instead be set in the pipeline config.
 |          Name           |Default Value|Required|                                                                                Description                                                                                 |   Setting name    |
 |-------------------------|-------------|--------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------|
 |KPOPS_ENVIRONMENT        |             |True    |The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).|environment        |
