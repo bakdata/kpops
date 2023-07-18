@@ -1,11 +1,11 @@
 {
     "categories": [
+        {"title": "## 🏗️ Breaking changes", "labels": ["breaking-change"]},
         {"title": "## 🚀 Features", "labels": ["type/enhancement"]},
         {"title": "## 🐛 Fixes", "labels": ["type/bug"]},
         {"title": "## 🧪 Dependencies", "labels": ["type/update"]},
         {"title": "## 🏭 Refactor", "labels": ["type/refactor"]},
         {"title": "## 📝 Documentation", "labels": ["area/documentation"]},
-        {"title": "## 🏗️ Breaking changes", "labels": ["breaking-change"]},
         {"title": "## 🌀 Miscellaneous", "labels": []}
     ],
     "ignore_labels": ["ignore"],

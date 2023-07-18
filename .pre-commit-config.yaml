@@ -5,11 +5,14 @@ repos:
       - id: isort
         args: ["--settings", "setup.cfg"]
         exclude: ^tests/.*snapshots/
-  - repo: https://github.com/psf/black
-    rev: 22.10.0
+  - repo: local
     hooks:
       - id: black
-        language_version: python3
+        name: black
+        entry: black
+        language: system
+        types_or: [python, pyi]
+        require_serial: true # run once for all files
         exclude: ^tests/.*snapshots/
   - repo: https://github.com/pycqa/flake8
     rev: 5.0.4
