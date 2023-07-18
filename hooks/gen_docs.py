@@ -40,6 +40,7 @@ KPOPS_COMPONENTS_SECTIONS = {
     ]
     for component in KPOPS_COMPONENTS
 }
+# Dependency files should not be changed manually
 DANGEROUS_FILES_TO_CHANGE = {
     PATH_DOCS_COMPONENTS_DEPENDENCIES,
     PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS,
@@ -55,13 +56,13 @@ log = logging.getLogger("DocumentationGenerator")
 #####################
 
 SCRIPT_ARGUMENTS = set(sys.argv)
-# Dependency files should not be changed manually
-# Set `is_change_present` to indicate that dependencies need to be regenerated
-# and delete the old dependency files
+# Check if the dependencies have been modified
 if not {
     str(file.relative_to(PATH_ROOT)) for file in DANGEROUS_FILES_TO_CHANGE
 }.isdisjoint(SCRIPT_ARGUMENTS):
+    # Set `is_change_present` to indicate that dependencies need to be regenerated
     is_change_present = True
+    # Delete the old dependency files
     for dangerous_file in DANGEROUS_FILES_TO_CHANGE:
         dangerous_file.unlink(missing_ok=True)
     # Don't display warning if `-a` flag suspected in `pre-commit run`
@@ -259,11 +260,11 @@ try:
 except OSError:
     is_change_present = True
 
-
+# For each component, use the section files to build an example
+# pipeline.yaml and defaults.yaml
 for component_file in PIPELINE_COMPONENT_HEADER_FILES:
-    component_file_name = component_file.name
-    component_defaults_name = "defaults-" + component_file_name
-
+    component_defaults_name = f"defaults-{component_file.name}"
+    # Component-specific sections for pipeline def and defaults
     component_sections, component_sections_not_inherited = get_sections(
         component_file.stem,
         exist_changes=is_change_present,
@@ -284,8 +285,9 @@ for component_file in PIPELINE_COMPONENT_HEADER_FILES:
     )
     concatenate_text_files(
         *(sections_paths),
-        target=PATH_DOCS_RESOURCES / "pipeline-components" / component_file_name,
+        target=PATH_DOCS_RESOURCES / "pipeline-components" / component_file.name,
     )
+# Concatenate all component-specific pipeline definitions into 1 complete pipeline.yaml
 concatenate_text_files(
     *(
         component_file.parents[1] / component_file.name
@@ -295,6 +297,7 @@ concatenate_text_files(
     ),
     target=PATH_DOCS_COMPONENTS / "pipeline.yaml",
 )
+# Concatenate all component-specific defaults into 1 complete defaults.yaml
 concatenate_text_files(
     *(
         component.parents[1] / component.name
