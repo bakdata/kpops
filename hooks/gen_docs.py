@@ -1,7 +1,8 @@
 """Generates the whole 'generatable' KPOps documentation."""
+import csv
+from io import TextIOWrapper
 import shutil
 import subprocess
-from csv import reader, writer
 from enum import StrEnum
 from pathlib import Path
 from textwrap import fill
@@ -68,7 +69,7 @@ def csv_append_env_var(
     elif default_value is None:
         default_value = ""
     with file.open("a+") as csv_file:
-        writer(csv_file).writerow(
+        csv.writer(csv_file).writerow(
             [name, default_value, required, formatted_description, *list(args)]
         )
 
@@ -125,7 +126,7 @@ def append_csv_to_dotenv_file(
     """
     comment_symbol = "#"  # Comments in .env start with a `#`
     with source.open("r") as s_target:
-        r = reader(s_target)
+        r = csv.reader(s_target)
         columns = next(r)
         for line in r:
             record = dict(zip(columns, line))
@@ -166,12 +167,15 @@ def append_csv_to_dotenv_file(
                 )
 
 
-def write_md_table_to_file(title, description, headers):  # TODO(@sujuka99): implement
-    MarkdownTableWriter(
-        table_name=title,
-        headers=headers,
-        value_matrix=[],
-    )
+def write_md_table_to_file(source: Path, target: Path, title: str, description: str | None = None, heading: str = "###"):
+    with target.open("w+") as f:
+        f.write(
+            f"{heading} {title}\n"
+            f"\n{description}",
+        )
+        writer = MarkdownTableWriter()
+        writer.from_csv(str(source))
+        writer.dump(output=f, close_after_write=True)
 
 
 # copy examples from tests resources
@@ -182,6 +186,7 @@ shutil.copyfile(
 
 # find all config-related env variables and write them into a file
 PATH_CONFIG_ENV_VARS_DOTENV_FILE = PATH_DOCS_VARIABLES / "config_env_vars.env"
+PATH_CONFIG_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "config_env_vars.md"
 PATH_CONFIG_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_config_env_vars.csv"
 CONFIG_ENV_VARS_TITLE = "Pipeline config environment variables"
 CONFIG_ENV_VARS_DESCRIPTION = (
@@ -191,7 +196,7 @@ CONFIG_ENV_VARS_DESCRIPTION = (
 )
 # Overwrite the temp csv file
 with PATH_CONFIG_ENV_VARS_CSV_FILE.open("w+") as f:
-    writer(f).writerow(
+    csv.writer(f).writerow(
         [
             EnvVarAttrs.NAME,
             EnvVarAttrs.DEFAULT_VALUE,
@@ -228,6 +233,7 @@ for config_field_name, config_field in config_fields.items():
 append_csv_to_dotenv_file(
     PATH_CONFIG_ENV_VARS_CSV_FILE, PATH_CONFIG_ENV_VARS_DOTENV_FILE
 )
+write_md_table_to_file(PATH_CONFIG_ENV_VARS_CSV_FILE, PATH_CONFIG_ENV_VARS_MD_FILE, CONFIG_ENV_VARS_TITLE, CONFIG_ENV_VARS_DESCRIPTION)
 
 # find all cli-related env variables, write them into a file
 PATH_CLI_ENV_VARS_DOTFILES_FILE = PATH_DOCS_VARIABLES / "cli_env_vars.env"
@@ -240,7 +246,7 @@ CLI_ENV_VARS_DESCRIPTION = (
 )
 # Overwrite the temp csv file
 with PATH_CLI_ENV_VARS_CSV_FILE.open("w+") as f:
-    writer(f).writerow(
+    csv.writer(f).writerow(
         [
             EnvVarAttrs.NAME,
             EnvVarAttrs.DEFAULT_VALUE,
