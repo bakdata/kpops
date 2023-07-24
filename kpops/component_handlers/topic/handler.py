@@ -30,7 +30,9 @@ class TopicHandler:
         for topic_name, topic_config in to_section.topics.items():
             topic_spec = self.__prepare_body(topic_name, topic_config)
             if dry_run:
-                await self.__dry_run_topic_creation(topic_name, topic_spec, topic_config)
+                await self.__dry_run_topic_creation(
+                    topic_name, topic_spec, topic_config
+                )
             else:
                 try:
                     await self.proxy_wrapper.get_topic(topic_name=topic_name)

@@ -280,7 +280,7 @@ def deploy(
     async def async_deploy():
         for component in steps_to_apply:
             log_action("Deploy", component)
-            component.deploy(dry_run)
+            await component.deploy(dry_run)
 
     asyncio.run(async_deploy())
 

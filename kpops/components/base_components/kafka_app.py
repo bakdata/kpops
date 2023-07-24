@@ -107,7 +107,7 @@ class KafkaApp(KubernetesApp):
     @override
     async def deploy(self, dry_run: bool) -> None:
         if self.to:
-            self.handlers.topic_handler.create_topics(
+            await self.handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
             )
 

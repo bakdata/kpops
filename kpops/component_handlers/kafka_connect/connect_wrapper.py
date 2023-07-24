@@ -1,8 +1,8 @@
+import asyncio
 import logging
-import time
-from time import sleep
 from typing import Any
 
+import httpx
 import requests
 
 from kpops.component_handlers.kafka_connect.exception import (
@@ -38,7 +38,7 @@ class ConnectWrapper:
     def host(self) -> str:
         return self._host
 
-    def create_connector(
+    async def create_connector(
         self, connector_name: str, kafka_connect_config: KafkaConnectConfig
     ) -> KafkaConnectResponse:
         """
@@ -51,9 +51,12 @@ class ConnectWrapper:
         config_json = kafka_connect_config.dict(exclude_none=True)
         connect_data = {"name": connector_name, "config": config_json}
 
-        response = requests.post(
+        client = httpx.AsyncClient()
+        response = await client.post(
             url=f"{self._host}/connectors", headers=HEADERS, json=connect_data
         )
+        await client.aclose()
+
         if response.status_code == requests.status_codes.codes.created:
             log.info(f"Connector {connector_name} created.")
             log.debug(response.json())
@@ -62,20 +65,22 @@ class ConnectWrapper:
             log.warning(
                 "Rebalancing in progress while creating a connector... Retrying..."
             )
-            time.sleep(1)
-            self.create_connector(connector_name, kafka_connect_config)
+            await asyncio.sleep(1)
+            await self.create_connector(connector_name, kafka_connect_config)
         raise KafkaConnectError(response)
 
-    def get_connector(self, connector_name: str) -> KafkaConnectResponse:
+    async def get_connector(self, connector_name: str) -> KafkaConnectResponse:
         """
         Get information about the connector.
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
         :param connector_name: Nameof the crated connector
         :return: Information about the connector
         """
-        response = requests.get(
+        client = httpx.AsyncClient()
+        response = await client.get(
             url=f"{self._host}/connectors/{connector_name}", headers=HEADERS
         )
+        await client.aclose()
         if response.status_code == requests.status_codes.codes.ok:
             log.info(f"Connector {connector_name} exists.")
             log.debug(response.json())
@@ -87,11 +92,11 @@ class ConnectWrapper:
             log.warning(
                 "Rebalancing in progress while getting a connector... Retrying..."
             )
-            sleep(1)
-            self.get_connector(connector_name)
+            await asyncio.sleep(1)
+            await self.get_connector(connector_name)
         raise KafkaConnectError(response)
 
-    def update_connector_config(
+    async def update_connector_config(
         self, connector_name: str, kafka_connect_config: KafkaConnectConfig
     ) -> KafkaConnectResponse:
         """
@@ -101,11 +106,14 @@ class ConnectWrapper:
         :return: Information about the connector after the change has been made.
         """
         config_json = kafka_connect_config.dict(exclude_none=True)
-        response = requests.put(
+        client = httpx.AsyncClient()
+        response = await client.put(
             url=f"{self._host}/connectors/{connector_name}/config",
             headers=HEADERS,
             json=config_json,
         )
+        await client.aclose()
+
         data: dict = response.json()
         if response.status_code == requests.status_codes.codes.ok:
             log.info(f"Config for connector {connector_name} updated.")
@@ -119,8 +127,8 @@ class ConnectWrapper:
             log.warning(
                 "Rebalancing in progress while updating a connector... Retrying..."
             )
-            sleep(1)
-            self.update_connector_config(connector_name, kafka_connect_config)
+            await asyncio.sleep(1)
+            await self.update_connector_config(connector_name, kafka_connect_config)
         raise KafkaConnectError(response)
 
     @classmethod
@@ -133,7 +141,7 @@ class ConnectWrapper:
         connector_config["name"] = connector_name
         return connector_config
 
-    def validate_connector_config(
+    async def validate_connector_config(
         self, connector_name: str, kafka_connect_config: KafkaConnectConfig
     ) -> list[str]:
         """
@@ -145,12 +153,14 @@ class ConnectWrapper:
 
         config_json = self.get_connector_config(connector_name, kafka_connect_config)
         connector_class = ConnectWrapper.get_connector_class_name(config_json)
+        client = httpx.AsyncClient()
 
-        response = requests.put(
+        response = await client.put(
             url=f"{self._host}/connector-plugins/{connector_class}/config/validate",
             headers=HEADERS,
             json=config_json,
         )
+        await client.aclose()
 
         if response.status_code == requests.status_codes.codes.ok:
             kafka_connect_error_response = KafkaConnectConfigErrorResponse(
@@ -168,14 +178,16 @@ class ConnectWrapper:
             return errors
         raise KafkaConnectError(response)
 
-    def delete_connector(self, connector_name: str) -> None:
+    async def delete_connector(self, connector_name: str) -> None:
         """
         Deletes a connector, halting all tasks and deleting its configuration.
         API Reference:https://docs.confluent.io/platform/current/connect/references/restapi.html#delete--connectors-(string-name)-
         """
-        response = requests.delete(
+        client = httpx.AsyncClient()
+        response = await client.delete(
             url=f"{self._host}/connectors/{connector_name}", headers=HEADERS
         )
+        await client.aclose()
         if response.status_code == requests.status_codes.codes.no_content:
             log.info(f"Connector {connector_name} deleted.")
             return
@@ -186,8 +198,8 @@ class ConnectWrapper:
             log.warning(
                 "Rebalancing in progress while deleting a connector... Retrying..."
             )
-            sleep(1)
-            self.delete_connector(connector_name)
+            await asyncio.sleep(1)
+            await self.delete_connector(connector_name)
         raise KafkaConnectError(response)
 
     @staticmethod

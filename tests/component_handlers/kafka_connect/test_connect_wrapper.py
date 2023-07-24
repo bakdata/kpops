@@ -1,11 +1,11 @@
 import json
 import sys
-import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-import responses
+import pytest_asyncio
+from pytest_httpx import HTTPXMock
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
@@ -25,9 +25,9 @@ HOST = "http://localhost:8083"
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
-class TestConnectorApiWrapper(unittest.TestCase):
-    @pytest.fixture(autouse=True)
-    def setup(self):
+class TestConnectorApiWrapper:
+    @pytest_asyncio.fixture(autouse=True)
+    async def setup(self):
         config = PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
@@ -48,8 +48,9 @@ class TestConnectorApiWrapper(unittest.TestCase):
             == "The Kafka Connect host is not set. Please set the host in the config."
         )
 
-    @patch("requests.post")
-    def test_should_create_post_requests_for_given_connector_configuration(
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.post")
+    async def test_should_create_post_requests_for_given_connector_configuration(
         self, mock_post: MagicMock
     ):
         configs = {
@@ -63,7 +64,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
         }
 
         with pytest.raises(KafkaConnectError):
-            self.connect_wrapper.create_connector(
+            await self.connect_wrapper.create_connector(
                 "test-connector", kafka_connect_config=KafkaConnectConfig(**configs)
             )
 
@@ -76,8 +77,10 @@ class TestConnectorApiWrapper(unittest.TestCase):
             },
         )
 
-    @responses.activate
-    def test_should_return_correct_response_when_connector_created(self):
+    @pytest.mark.asyncio
+    async def test_should_return_correct_response_when_connector_created(
+        self, httpx_mock
+    ):
         actual_response = {
             "name": "hdfs-sink-connector",
             "config": {
@@ -96,34 +99,37 @@ class TestConnectorApiWrapper(unittest.TestCase):
                 {"connector": "hdfs-sink-connector", "task": 3},
             ],
         }
-        responses.add(
-            responses.POST,
-            f"{HOST}/connectors",
+        httpx_mock.add_response(
+            method="POST",
+            url=f"{HOST}/connectors",
             headers=HEADERS,
             json=actual_response,
-            status=201,
+            status_code=201,
         )
-        expected_response = self.connect_wrapper.create_connector(
+        expected_response = await self.connect_wrapper.create_connector(
             "test-connector", kafka_connect_config=KafkaConnectConfig()
         )
-        self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
+        assert KafkaConnectResponse(**actual_response) == expected_response
 
-    @responses.activate
+    @pytest.mark.asyncio
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
-    def test_should_raise_connector_exists_exception_when_connector_exists(
-        self, log_warning: MagicMock
+    async def test_should_raise_connector_exists_exception_when_connector_exists(
+        self, log_warning: MagicMock, httpx_mock: HTTPXMock
     ):
-        responses.add(
-            responses.POST,
-            f"{HOST}/connectors",
+        httpx_mock.add_response(
+            method="POST",
+            url=f"{HOST}/connectors",
             json={},
-            status=409,
+            status_code=409,
         )
 
-        timeout(
-            lambda: self.connect_wrapper.create_connector(
+        async def create_connector_locally():
+            await self.connect_wrapper.create_connector(
                 "test-name", KafkaConnectConfig()
-            ),
+            )
+
+        await timeout(
+            create_connector_locally(),
             secs=1,
         )
 
@@ -131,11 +137,14 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "Rebalancing in progress while creating a connector... Retrying..."
         )
 
-    @patch("requests.get")
-    def test_should_create_correct_get_connector_request(self, mock_get: MagicMock):
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.get")
+    async def test_should_create_correct_get_connector_request(
+        self, mock_get: MagicMock
+    ):
         connector_name = "test-connector"
         with pytest.raises(KafkaConnectError):
-            self.connect_wrapper.get_connector(connector_name)
+            await self.connect_wrapper.get_connector(connector_name)
 
         mock_get.assert_called_with(
             url=f"{HOST}/connectors/{connector_name}",
@@ -143,10 +152,10 @@ class TestConnectorApiWrapper(unittest.TestCase):
         )
 
     @pytest.mark.flaky(reruns=5, condition=sys.platform.startswith("win32"))
-    @responses.activate
+    @pytest.mark.asyncio
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    def test_should_return_correct_response_when_getting_connector(
-        self, log_info: MagicMock
+    async def test_should_return_correct_response_when_getting_connector(
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -168,39 +177,40 @@ class TestConnectorApiWrapper(unittest.TestCase):
                 {"connector": "hdfs-sink-connector", "task": 3},
             ],
         }
-        responses.add(
-            responses.GET,
-            f"{HOST}/connectors/{connector_name}",
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json=actual_response,
-            status=200,
+            status_code=200,
         )
-        expected_response = self.connect_wrapper.get_connector(connector_name)
-        self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
+        expected_response = await self.connect_wrapper.get_connector(connector_name)
+        assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {connector_name} exists.")
 
-    @responses.activate
+    @pytest.mark.asyncio
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    def test_should_raise_connector_not_found_when_getting_connector(
-        self, log_info: MagicMock
+    async def test_should_raise_connector_not_found_when_getting_connector(
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
-        responses.add(
-            responses.GET,
-            f"{HOST}/connectors/{connector_name}",
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
-            status=404,
+            status_code=404,
         )
         with pytest.raises(ConnectorNotFoundException):
-            self.connect_wrapper.get_connector(connector_name)
+            await self.connect_wrapper.get_connector(connector_name)
 
         log_info.assert_called_once_with(
             f"The named connector {connector_name} does not exists."
         )
 
-    def test_should_raise_connector_name_do_not_match(self):
+    @pytest.mark.asyncio
+    async def test_should_raise_connector_name_do_not_match(self):
         configs = {
             "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
             "tasks.max": "1",
@@ -208,7 +218,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "name": "OtherWrongName",
         }
         with pytest.raises(ValueError) as value_error:
-            self.connect_wrapper.validate_connector_config(
+            await self.connect_wrapper.validate_connector_config(
                 "FileStreamSinkConnector",
                 kafka_connect_config=KafkaConnectConfig(**configs),
             )
@@ -218,23 +228,26 @@ class TestConnectorApiWrapper(unittest.TestCase):
             == "Connector name should be the same as component name"
         )
 
-    @responses.activate
+    @pytest.mark.asyncio
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
-    def test_should_raise_rebalance_in_progress_when_getting_connector(
-        self, log_warning: MagicMock
+    async def test_should_raise_rebalance_in_progress_when_getting_connector(
+        self, log_warning: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
-        responses.add(
-            responses.GET,
-            f"{HOST}/connectors/{connector_name}",
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
-            status=409,
+            status_code=409,
         )
 
-        timeout(
-            lambda: self.connect_wrapper.get_connector(connector_name),
+        async def get_connector_locally():
+            return await self.connect_wrapper.get_connector(connector_name)
+
+        await timeout(
+            get_connector_locally(),
             secs=1,
         )
 
@@ -242,8 +255,11 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "Rebalancing in progress while getting a connector... Retrying..."
         )
 
-    @patch("requests.put")
-    def test_should_create_correct_update_connector_request(self, mock_put: MagicMock):
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.put")
+    async def test_should_create_correct_update_connector_request(
+        self, mock_put: MagicMock
+    ):
         connector_name = "test-connector"
         configs = {
             "batch.size": "50",
@@ -255,7 +271,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
         }
         with pytest.raises(KafkaConnectError):
-            self.connect_wrapper.update_connector_config(
+            await self.connect_wrapper.update_connector_config(
                 connector_name,
                 KafkaConnectConfig(**configs),
             )
@@ -266,10 +282,10 @@ class TestConnectorApiWrapper(unittest.TestCase):
             json=KafkaConnectConfig(**configs).dict(),
         )
 
-    @responses.activate
+    @pytest.mark.asyncio
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    def test_should_return_correct_response_when_update_connector(
-        self, log_info: MagicMock
+    async def test_should_return_correct_response_when_update_connector(
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -291,25 +307,25 @@ class TestConnectorApiWrapper(unittest.TestCase):
                 {"connector": "hdfs-sink-connector", "task": 3},
             ],
         }
-        responses.add(
-            responses.PUT,
-            f"{HOST}/connectors/{connector_name}/config",
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{HOST}/connectors/{connector_name}/config",
             headers=HEADERS,
             json=actual_response,
-            status=200,
+            status_code=200,
         )
-        expected_response = self.connect_wrapper.update_connector_config(
+        expected_response = await self.connect_wrapper.update_connector_config(
             connector_name, KafkaConnectConfig()
         )
-        self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
+        assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(
             f"Config for connector {connector_name} updated."
         )
 
-    @responses.activate
+    @pytest.mark.asyncio
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    def test_should_return_correct_response_when_update_connector_created(
-        self, log_info: MagicMock
+    async def test_should_return_correct_response_when_update_connector_created(
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -331,38 +347,41 @@ class TestConnectorApiWrapper(unittest.TestCase):
                 {"connector": "hdfs-sink-connector", "task": 3},
             ],
         }
-        responses.add(
-            responses.PUT,
-            f"{HOST}/connectors/{connector_name}/config",
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{HOST}/connectors/{connector_name}/config",
             headers=HEADERS,
             json=actual_response,
-            status=201,
+            status_code=201,
         )
-        expected_response = self.connect_wrapper.update_connector_config(
+        expected_response = await self.connect_wrapper.update_connector_config(
             connector_name, KafkaConnectConfig()
         )
-        self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
+        assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {connector_name} created.")
 
-    @responses.activate
+    @pytest.mark.asyncio
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
-    def test_should_raise_connector_exists_exception_when_update_connector(
-        self, log_warning: MagicMock
+    async def test_should_raise_connector_exists_exception_when_update_connector(
+        self, log_warning: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
-        responses.add(
-            responses.PUT,
-            f"{HOST}/connectors/{connector_name}/config",
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{HOST}/connectors/{connector_name}/config",
             headers=HEADERS,
             json={},
-            status=409,
+            status_code=409,
         )
 
-        timeout(
-            lambda: self.connect_wrapper.update_connector_config(
+        async def update_connector_locally():
+            await self.connect_wrapper.update_connector_config(
                 connector_name, KafkaConnectConfig()
-            ),
+            )
+
+        await timeout(
+            update_connector_locally(),
             secs=1,
         )
 
@@ -370,23 +389,24 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "Rebalancing in progress while updating a connector... Retrying..."
         )
 
-    @patch("requests.delete")
-    def test_should_create_correct_delete_connector_request(
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.delete")
+    async def test_should_create_correct_delete_connector_request(
         self, mock_delete: MagicMock
     ):
         connector_name = "test-connector"
         with pytest.raises(KafkaConnectError):
-            self.connect_wrapper.delete_connector(connector_name)
+            await self.connect_wrapper.delete_connector(connector_name)
 
         mock_delete.assert_called_with(
             url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
         )
 
-    @responses.activate
+    @pytest.mark.asyncio
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    def test_should_return_correct_response_when_deleting_connector(
-        self, log_info: MagicMock
+    async def test_should_return_correct_response_when_deleting_connector(
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -408,55 +428,58 @@ class TestConnectorApiWrapper(unittest.TestCase):
                 {"connector": "hdfs-sink-connector", "task": 3},
             ],
         }
-        responses.add(
-            responses.DELETE,
-            f"{HOST}/connectors/{connector_name}",
+        httpx_mock.add_response(
+            method="DELETE",
+            url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json=actual_response,
-            status=204,
+            status_code=204,
         )
-        self.connect_wrapper.delete_connector(connector_name)
+        await self.connect_wrapper.delete_connector(connector_name)
 
         log_info.assert_called_once_with(f"Connector {connector_name} deleted.")
 
-    @responses.activate
+    @pytest.mark.asyncio
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
-    def test_should_raise_connector_not_found_when_deleting_connector(
-        self, log_info: MagicMock
+    async def test_should_raise_connector_not_found_when_deleting_connector(
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
-        responses.add(
-            responses.DELETE,
-            f"{HOST}/connectors/{connector_name}",
+        httpx_mock.add_response(
+            method="DELETE",
+            url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
-            status=404,
+            status_code=404,
         )
         with pytest.raises(ConnectorNotFoundException):
-            self.connect_wrapper.delete_connector(connector_name)
+            await self.connect_wrapper.delete_connector(connector_name)
 
         log_info.assert_called_once_with(
             f"The named connector {connector_name} does not exists."
         )
 
-    @responses.activate
+    @pytest.mark.asyncio
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
-    def test_should_raise_rebalance_in_progress_when_deleting_connector(
-        self, log_warning: MagicMock
+    async def test_should_raise_rebalance_in_progress_when_deleting_connector(
+        self, log_warning: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
-        responses.add(
-            responses.DELETE,
-            f"{HOST}/connectors/{connector_name}",
+        httpx_mock.add_response(
+            method="DELETE",
+            url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
-            status=409,
+            status_code=409,
         )
 
-        timeout(
-            lambda: self.connect_wrapper.delete_connector(connector_name),
+        async def delete_connector_locally():
+            await self.connect_wrapper.delete_connector(connector_name)
+
+        await timeout(
+            delete_connector_locally(),
             secs=1,
         )
 
@@ -464,8 +487,9 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "Rebalancing in progress while deleting a connector... Retrying..."
         )
 
-    @patch("requests.put")
-    def test_should_create_correct_validate_connector_config_request(
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.put")
+    async def test_should_create_correct_validate_connector_config_request(
         self, mock_put: MagicMock
     ):
         configs = {
@@ -475,7 +499,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "name": "FileStreamSinkConnector",
         }
         with pytest.raises(KafkaConnectError):
-            self.connect_wrapper.validate_connector_config(
+            await self.connect_wrapper.validate_connector_config(
                 "FileStreamSinkConnector",
                 kafka_connect_config=KafkaConnectConfig(**configs),
             )
@@ -486,8 +510,9 @@ class TestConnectorApiWrapper(unittest.TestCase):
             json=KafkaConnectConfig(**configs).dict(),
         )
 
-    @patch("requests.put")
-    def test_should_create_correct_validate_connector_config_and_name_gets_added(
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.put")
+    async def test_should_create_correct_validate_connector_config_and_name_gets_added(
         self, mock_put: MagicMock
     ):
         connector_name = "FileStreamSinkConnector"
@@ -497,7 +522,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "topics": "test-topic",
         }
         with pytest.raises(KafkaConnectError):
-            self.connect_wrapper.validate_connector_config(
+            await self.connect_wrapper.validate_connector_config(
                 connector_name,
                 kafka_connect_config=KafkaConnectConfig(**configs),
             )
@@ -508,18 +533,19 @@ class TestConnectorApiWrapper(unittest.TestCase):
             json=KafkaConnectConfig(**{"name": connector_name, **configs}).dict(),
         )
 
-    @responses.activate
-    def test_should_parse_validate_connector_config(self):
+    @pytest.mark.asyncio
+    async def test_should_parse_validate_connector_config(self, httpx_mock: HTTPXMock):
         with open(
             DEFAULTS_PATH / "connect_validation_response.json",
         ) as f:
             actual_response = json.load(f)
-        responses.add(
-            responses.PUT,
-            f"{HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
+
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
             headers=HEADERS,
             json=actual_response,
-            status=200,
+            status_code=200,
         )
 
         configs = {
@@ -527,7 +553,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "tasks.max": "1",
             "topics": "test-topic",
         }
-        errors = self.connect_wrapper.validate_connector_config(
+        errors = await self.connect_wrapper.validate_connector_config(
             "FileStreamSinkConnector",
             kafka_connect_config=KafkaConnectConfig(**configs),
         )
