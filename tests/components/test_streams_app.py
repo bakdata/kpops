@@ -256,7 +256,8 @@ class TestStreamsApp:
 
         assert streams_app.app.streams.input_topics == ["prev-output-topic", "b", "a"]
 
-    def test_deploy_order_when_dry_run_is_false(
+    @pytest.mark.asyncio
+    async def test_deploy_order_when_dry_run_is_false(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -305,7 +306,7 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
 
         dry_run = False
-        streams_app.deploy(dry_run=dry_run)
+        await streams_app.deploy(dry_run=dry_run)
 
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=dry_run),

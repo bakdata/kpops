@@ -239,7 +239,7 @@ class PipelineComponent(BaseDefaultsComponent):
         :type cert_file: str, optional
         """
 
-    def deploy(self, dry_run: bool) -> None:
+    async def deploy(self, dry_run: bool) -> None:
         """Deploy the component (self) to the k8s cluster
 
         :param dry_run: Whether to do a dry run of the command

@@ -1,7 +1,8 @@
 import logging
-from functools import cached_property
 
+import httpx
 import requests
+from async_property import async_cached_property
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.topic.exception import (
@@ -33,8 +34,8 @@ class ProxyWrapper:
 
         self._host = pipeline_config.kafka_rest_host
 
-    @cached_property
-    def cluster_id(self) -> str:
+    @async_cached_property
+    async def cluster_id(self) -> str:
         """
         Gets the Kafka cluster ID by sending a requests to Kafka REST proxy.
         More information about the cluster ID can be found here:
@@ -44,7 +45,9 @@ class ProxyWrapper:
         bootstrap.servers configuration. Therefore, only one Kafka cluster will be returned.
         :return: The Kafka cluster ID.
         """
-        response = requests.get(url=f"{self._host}/v3/clusters")
+        client = httpx.AsyncClient()
+        response = await client.get(url=f"{self._host}/v3/clusters")
+        await client.aclose()
         if response.status_code == requests.status_codes.codes.ok:
             cluster_information = response.json()
             return cluster_information["data"][0]["cluster_id"]
@@ -55,17 +58,19 @@ class ProxyWrapper:
     def host(self) -> str:
         return self._host
 
-    def create_topic(self, topic_spec: TopicSpec) -> None:
+    async def create_topic(self, topic_spec: TopicSpec) -> None:
         """
         Creates a topic.
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#post--clusters-cluster_id-topics
         :param topic_spec: The topic specification.
         """
-        response = requests.post(
+        client = httpx.AsyncClient()
+        response = await client.post(
             url=f"{self._host}/v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec.dict(exclude_none=True),
         )
+        await client.aclose()
         if response.status_code == requests.status_codes.codes.created:
             log.info(f"Topic {topic_spec.topic_name} created.")
             log.debug(response.json())
@@ -73,59 +78,66 @@ class ProxyWrapper:
 
         raise KafkaRestProxyError(response)
 
-    def delete_topic(self, topic_name: str) -> None:
+    async def delete_topic(self, topic_name: str) -> None:
         """
         Deletes a topic
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#delete--clusters-cluster_id-topics-topic_name
         :param topic_name: Name of the topic
         """
-        response = requests.delete(
+
+        client = httpx.AsyncClient()
+        response = await client.delete(
             url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
+        await client.aclose()
         if response.status_code == requests.status_codes.codes.no_content:
             log.info(f"Topic {topic_name} deleted.")
             return
 
         raise KafkaRestProxyError(response)
 
-    def get_topic(self, topic_name: str) -> TopicResponse:
+    async def get_topic(self, topic_name: str) -> TopicResponse:
         """
         Returns the topic with the given topic_name.
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#get--clusters-cluster_id-topics-topic_name
         :param topic_name: The topic name.
         :return: Response of the get topic API
         """
-        response = requests.get(
-            url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
-            headers=HEADERS,
-        )
-        if response.status_code == requests.status_codes.codes.ok:
-            log.debug(f"Topic {topic_name} found.")
-            log.debug(response.json())
-            return TopicResponse(**response.json())
+        async with httpx.AsyncClient() as client:
+            response = await client.get(
+                url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
+                headers=HEADERS,
+            )
+            if response.status_code == requests.status_codes.codes.ok:
+                log.debug(f"Topic {topic_name} found.")
+                log.debug(response.json())
+                return TopicResponse(**response.json())
 
-        elif (
-            response.status_code == requests.status_codes.codes.not_found
-            and response.json()["error_code"] == 40403
-        ):
-            log.debug(f"Topic {topic_name} not found.")
-            log.debug(response.json())
-            raise TopicNotFoundException()
+            elif (
+                response.status_code == requests.status_codes.codes.not_found
+                and response.json()["error_code"] == 40403
+            ):
+                log.debug(f"Topic {topic_name} not found.")
+                log.debug(response.json())
+                raise TopicNotFoundException()
 
-        raise KafkaRestProxyError(response)
+            raise KafkaRestProxyError(response)
 
-    def get_topic_config(self, topic_name: str) -> TopicConfigResponse:
+    async def get_topic_config(self, topic_name: str) -> TopicConfigResponse:
         """
         Return the config with the given topic_name.
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#acl-v3
         :param topic_name: The topic name.
         :return: The topic configuration.
         """
-        response = requests.get(
+
+        client = httpx.AsyncClient()
+        response = await client.get(
             url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",
             headers=HEADERS,
         )
+        await client.aclose()
 
         if response.status_code == requests.status_codes.codes.ok:
             log.debug(f"Configs for {topic_name} found.")
@@ -142,34 +154,41 @@ class ProxyWrapper:
 
         raise KafkaRestProxyError(response)
 
-    def batch_alter_topic_config(self, topic_name: str, json_body: list[dict]) -> None:
+    async def batch_alter_topic_config(
+        self, topic_name: str, json_body: list[dict]
+    ) -> None:
         """
         Reset config of given config_name param to the default value on the kafka server.
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#post--clusters-cluster_id-topics-topic_name-configs-alter
         :param topic_name: The topic name.
         :param config_name: The configuration parameter name.
         """
-        response = requests.post(
+        client = httpx.AsyncClient()
+        response = await client.post(
             url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={"data": json_body},
         )
+        await client.aclose()
+
         if response.status_code == requests.status_codes.codes.no_content:
             log.info(f"Config of topic {topic_name} was altered.")
             return
 
         raise KafkaRestProxyError(response)
 
-    def get_broker_config(self) -> BrokerConfigResponse:
+    async def get_broker_config(self) -> BrokerConfigResponse:
         """
         Return the list of configuration parameters for all the brokers in the given Kafka cluster.
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#get--clusters-cluster_id-brokers---configs
         :return: The broker configuration.
         """
-        response = requests.get(
+        client = httpx.AsyncClient()
+        response = await client.get(
             url=f"{self.host}/v3/clusters/{self.cluster_id}/brokers/-/configs",
             headers=HEADERS,
         )
+        await client.aclose()
 
         if response.status_code == requests.status_codes.codes.ok:
             log.debug("Broker configs found.")

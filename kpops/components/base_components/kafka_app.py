@@ -105,7 +105,7 @@ class KafkaApp(KubernetesApp):
         raise NotImplementedError()
 
     @override
-    def deploy(self, dry_run: bool) -> None:
+    async def deploy(self, dry_run: bool) -> None:
         if self.to:
             self.handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
@@ -115,7 +115,7 @@ class KafkaApp(KubernetesApp):
                 self.handlers.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
-        super().deploy(dry_run)
+        await super().deploy(dry_run)
 
     def _run_clean_up_job(
         self,

@@ -99,7 +99,8 @@ class TestProducerApp:
             "first-extra-topic": "extra-topic-1"
         }
 
-    def test_deploy_order_when_dry_run_is_false(
+    @pytest.mark.asyncio
+    async def test_deploy_order_when_dry_run_is_false(
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
@@ -116,7 +117,7 @@ class TestProducerApp:
         mock.attach_mock(mock_create_topics, "mock_create_topics")
         mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
 
-        producer_app.deploy(dry_run=False)
+        await producer_app.deploy(dry_run=False)
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=producer_app.to, dry_run=False),
             mocker.call.mock_helm_upgrade_install(

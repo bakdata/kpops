@@ -50,6 +50,7 @@ class ConnectWrapper:
         """
         config_json = kafka_connect_config.dict(exclude_none=True)
         connect_data = {"name": connector_name, "config": config_json}
+
         response = requests.post(
             url=f"{self._host}/connectors", headers=HEADERS, json=connect_data
         )

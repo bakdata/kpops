@@ -4,7 +4,9 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
+import pytest_asyncio
 import responses
+from pytest_httpx import HTTPXMock
 from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig
@@ -29,9 +31,8 @@ class TestProxyWrapper:
     def log_debug_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.component_handlers.topic.proxy_wrapper.log.debug")
 
-    @pytest.fixture(autouse=True)
-    @responses.activate
-    def setup(self):
+    @pytest_asyncio.fixture(autouse=True)
+    async def setup(self, httpx_mock: HTTPXMock):
         config = PipelineConfig(
             defaults_path=DEFAULTS_PATH, environment="development", kafka_rest_host=HOST
         )
@@ -42,16 +43,17 @@ class TestProxyWrapper:
         ) as f:
             cluster_response = json.load(f)
 
-        responses.add(
-            responses.GET,
-            f"{HOST}/v3/clusters",
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{HOST}/v3/clusters",
             json=cluster_response,
-            status=200,
+            status_code=200,
         )
         assert self.proxy_wrapper.host == HOST
-        assert self.proxy_wrapper.cluster_id == "cluster-1"
+        assert await self.proxy_wrapper.cluster_id == "cluster-1"
 
-    def test_should_raise_exception_when_host_is_not_set(self):
+    @pytest.mark.asyncio
+    async def test_should_raise_exception_when_host_is_not_set(self):
         config = PipelineConfig(defaults_path=DEFAULTS_PATH, environment="development")
         config.kafka_rest_host = None
         with pytest.raises(ValueError) as exception:
@@ -61,8 +63,9 @@ class TestProxyWrapper:
             == "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
         )
 
-    @patch("requests.post")
-    def test_should_create_topic_with_all_topic_configuration(
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.post")
+    async def test_should_create_topic_with_all_topic_configuration(
         self, mock_post: MagicMock
     ):
         topic_spec = {
@@ -76,7 +79,7 @@ class TestProxyWrapper:
         }
 
         with pytest.raises(KafkaRestProxyError):
-            self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
+            await self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
 
         mock_post.assert_called_with(
             url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",

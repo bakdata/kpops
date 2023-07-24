@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterator, Optional
@@ -275,9 +276,13 @@ def deploy(
     )
 
     steps_to_apply = get_steps_to_apply(pipeline, steps)
-    for component in steps_to_apply:
-        log_action("Deploy", component)
-        component.deploy(dry_run)
+
+    async def async_deploy():
+        for component in steps_to_apply:
+            log_action("Deploy", component)
+            component.deploy(dry_run)
+
+    asyncio.run(async_deploy())
 
 
 @app.command(help="Destroy pipeline steps")

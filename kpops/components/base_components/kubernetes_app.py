@@ -126,7 +126,7 @@ class KubernetesApp(PipelineComponent):
         print(stdout)
 
     @override
-    def deploy(self, dry_run: bool) -> None:
+    async def deploy(self, dry_run: bool) -> None:
         stdout = self.helm.upgrade_install(
             self.helm_release_name,
             self.get_helm_chart(),

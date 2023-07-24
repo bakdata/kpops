@@ -154,7 +154,8 @@ class TestKafkaSinkConnector:
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern
 
-    def test_deploy_order(
+    @pytest.mark.asyncio
+    async def test_deploy_order(
         self,
         connector: KafkaSinkConnector,
         mocker: MockerFixture,
@@ -169,7 +170,7 @@ class TestKafkaSinkConnector:
         mock = mocker.MagicMock()
         mock.attach_mock(mock_create_topics, "mock_create_topics")
         mock.attach_mock(mock_create_connector, "mock_create_connector")
-        connector.deploy(dry_run=True)
+        await connector.deploy(dry_run=True)
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=connector.to, dry_run=True),
             mocker.call.mock_create_connector(
