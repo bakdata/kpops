@@ -78,6 +78,19 @@ DRY_RUN: bool = typer.Option(
     help="Whether to dry run the command or execute it",
 )
 
+
+class FilterType(str, Enum):
+    INCLUDE = "include"
+    EXCLUDE = "exclude"
+
+
+FILTER_TYPE: FilterType = typer.Option(
+    FilterType.INCLUDE,
+    case_sensitive=False,
+    help="If the --pipeline-steps option should include/exclude the steps",
+)
+
+
 COMPONENTS_MODULES: str | None = typer.Argument(
     default=None,
     help="Custom Python module containing your project-specific components",
@@ -132,36 +145,36 @@ def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
     return [step.name.removeprefix(step.prefix) for step in steps_to_apply]
 
 
-class FilterType(Enum):
-    INCLUDE = 1
-    EXCLUDE = 2
-
-
-FILTER_TYPE = typer.Option(
-    FilterType.INCLUDE,
-    help="If the --pipeline-steps option should include/exclude the steps",
-)
+def filter_component(
+    pipeline: Pipeline, steps: set[str], filter_type: FilterType
+) -> list:
+    filtered_steps = []
+    if filter_type == FilterType.INCLUDE:
+        filtered_steps = list(
+            filter(
+                lambda component: component.name.removeprefix(component.prefix)
+                in steps,
+                pipeline,
+            )
+        )
+        log.info(f"Including the following steps: {get_step_names(filtered_steps)}")
+    elif filter_type == FilterType.EXCLUDE:
+        filtered_steps = list(
+            filter(
+                lambda component: component.name.removeprefix(component.prefix)
+                not in steps,
+                pipeline,
+            )
+        )
+        log.info(f"Excluding the following steps: {get_step_names(filtered_steps)}")
+    return filtered_steps
 
 
 def filter_steps_to_apply(
     pipeline: Pipeline, steps: set[str], filter_type: FilterType
 ) -> list[PipelineComponent]:
-    skipped_steps: list[str] = []
-
-    def filter_component(component: PipelineComponent) -> bool:
-        step_name = component.name.removeprefix(component.prefix)
-        filter_flag = True if filter_type == FilterType.INCLUDE else False
-        if step_name in steps:
-            return filter_flag
-        skipped_steps.append(step_name)
-        return not filter_flag
-
-    steps_to_apply = list(filter(filter_component, pipeline))
     log.info("KPOPS_PIPELINE_STEPS is defined.")
-    log.info(
-        f"Including only on the following steps: {get_step_names(steps_to_apply)}"
-        f", \n ignoring {skipped_steps}"
-    )
+    steps_to_apply = filter_component(pipeline, steps, filter_type)
     return steps_to_apply
 
 
