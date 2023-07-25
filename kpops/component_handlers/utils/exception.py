@@ -5,7 +5,7 @@ import httpx
 log = logging.getLogger("RequestException")
 
 
-class RequestsException(Exception):
+class HttpxException(Exception):
     def __init__(self, response: httpx.Response) -> None:
         self.error_code = response.status_code
         self.error_msg = "Something went wrong!"
