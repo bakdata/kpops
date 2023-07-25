@@ -87,7 +87,7 @@ class FilterType(str, Enum):
 FILTER_TYPE: FilterType = typer.Option(
     default=FilterType.include,
     case_sensitive=False,
-    help="If the --pipeline-steps option should include/exclude the steps",
+    help="If the --steps option should include/exclude the steps",
 )
 
 
