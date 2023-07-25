@@ -80,12 +80,12 @@ DRY_RUN: bool = typer.Option(
 
 
 class FilterType(str, Enum):
-    INCLUDE = "include"
-    EXCLUDE = "exclude"
+    include = "include"
+    exclude = "exclude"
 
 
 FILTER_TYPE: FilterType = typer.Option(
-    FilterType.INCLUDE,
+    FilterType.include,
     case_sensitive=False,
     help="If the --pipeline-steps option should include/exclude the steps",
 )
@@ -148,7 +148,7 @@ def filter_component(
     pipeline: Pipeline, steps: set[str], filter_type: FilterType
 ) -> list:
     filtered_steps = []
-    if filter_type == FilterType.INCLUDE:
+    if filter_type == FilterType.include:
         filtered_steps = list(
             filter(
                 lambda component: component.name.removeprefix(component.prefix)
@@ -157,7 +157,7 @@ def filter_component(
             )
         )
         log.info(f"Including the following steps: {get_step_names(filtered_steps)}")
-    elif filter_type == FilterType.EXCLUDE:
+    elif filter_type == FilterType.exclude:
         filtered_steps = list(
             filter(
                 lambda component: component.name.removeprefix(component.prefix)
