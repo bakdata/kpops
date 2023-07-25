@@ -57,8 +57,8 @@ class PipelineComponents(BaseModel):
         with suppress(
             AttributeError  # Some components like Kafka Connect do not have a name_override attribute
         ):
-            if component.app and getattr(component.app, "name_override") is None:
-                setattr(component.app, "name_override", component.name)
+            if (app := getattr(component, "app")) and app.name_override is None:
+                app.name_override = component.name
 
 
 def create_env_components_index(
