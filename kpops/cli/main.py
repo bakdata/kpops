@@ -80,12 +80,12 @@ DRY_RUN: bool = typer.Option(
 
 
 class FilterType(str, Enum):
-    include = "include"
-    exclude = "exclude"
+    INCLUDE = "include"
+    EXCLUDE = "exclude"
 
 
 FILTER_TYPE: FilterType = typer.Option(
-    default=FilterType.include.value,
+    default=FilterType.INCLUDE.value,
     case_sensitive=False,
     help="If the --steps option should include/exclude the steps",
 )
@@ -145,37 +145,26 @@ def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
     return [step.name.removeprefix(step.prefix) for step in steps_to_apply]
 
 
-def filter_component(
-    pipeline: Pipeline, steps: set[str], filter_type: FilterType
-) -> list[PipelineComponent]:
-    filtered_steps = []
-    if filter_type == FilterType.include:
-        filtered_steps = list(
-            filter(
-                lambda component: component.name.removeprefix(component.prefix)
-                in steps,
-                pipeline,
-            )
-        )
-        log.info(f"Including the following steps: {get_step_names(filtered_steps)}")
-    elif filter_type == FilterType.exclude:
-        filtered_steps = list(
-            filter(
-                lambda component: component.name.removeprefix(component.prefix)
-                not in steps,
-                pipeline,
-            )
-        )
-        log.info(f"Excluding the following steps: {get_step_names(filtered_steps)}")
-    return filtered_steps
-
-
 def filter_steps_to_apply(
     pipeline: Pipeline, steps: set[str], filter_type: FilterType
 ) -> list[PipelineComponent]:
     log.info("KPOPS_PIPELINE_STEPS is defined.")
-    steps_to_apply = filter_component(pipeline, steps, filter_type)
-    return steps_to_apply
+
+    def is_in_steps(component: PipelineComponent) -> bool:
+        return component.name.removeprefix(component.prefix) in steps
+
+    filtered_steps = [
+        component
+        for component in pipeline
+        if (
+            is_in_steps(component)
+            if filter_type is FilterType.INCLUDE
+            else not is_in_steps(component)
+        )
+    ]
+    operation = "Including" if filter_type is FilterType.INCLUDE else "Excluding"
+    log.info(f"{operation} the following steps: {get_step_names(filtered_steps)}")
+    return filtered_steps
 
 
 def get_steps_to_apply(
