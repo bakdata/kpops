@@ -2,7 +2,7 @@ import logging
 
 import httpx
 
-log = logging.getLogger("RequestException")
+log = logging.getLogger("HttpxException")
 
 
 class HttpxException(Exception):
