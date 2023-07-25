@@ -43,6 +43,7 @@ $ kpops clean [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
+* `--filter-type [include|exclude]`: If the --pipeline-steps option should include/exclude the steps  [default: FilterType.INCLUDE]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: [default: no-verbose]
 * `--help`: Show this message and exit.
@@ -70,6 +71,7 @@ $ kpops deploy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--verbose / --no-verbose`: [default: no-verbose]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
+* `--filter-type [include|exclude]`: If the --pipeline-steps option should include/exclude the steps  [default: FilterType.INCLUDE]
 * `--help`: Show this message and exit.
 
 ## `kpops destroy`
@@ -93,6 +95,7 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
+* `--filter-type [include|exclude]`: If the --pipeline-steps option should include/exclude the steps  [default: FilterType.INCLUDE]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: [default: no-verbose]
 * `--help`: Show this message and exit.
@@ -120,6 +123,7 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
 * `--template / --no-template`: Run Helm template  [default: no-template]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
+* `--filter-type [include|exclude]`: If the --pipeline-steps option should include/exclude the steps  [default: FilterType.INCLUDE]
 * `--api-version TEXT`: Kubernetes API version used for Capabilities.APIVersions
 * `--ca-file TEXT`: Verify certificates of HTTPS-enabled servers using this CA bundle
 * `--cert-file TEXT`: Identify HTTPS client using this SSL certificate file
@@ -146,6 +150,7 @@ $ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
+* `--filter-type [include|exclude]`: If the --pipeline-steps option should include/exclude the steps  [default: FilterType.INCLUDE]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: [default: no-verbose]
 * `--help`: Show this message and exit.

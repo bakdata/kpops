@@ -40,9 +40,7 @@ def tests_filter_steps_to_apply(log_info):
 
     assert log_info.call_count == 2
     log_info.assert_any_call("KPOPS_PIPELINE_STEPS is defined.")
-    log_info.assert_any_call(
-        "Including only on the following steps: ['example2', 'example3'], \n ignoring ['example1']"
-    )
+    log_info.assert_any_call("Including the following steps: ['example2', 'example3']")
 
     filtered_steps = get_steps_to_apply(pipeline, None, FilterType.INCLUDE)
     assert len(filtered_steps) == 3
@@ -82,12 +80,10 @@ def tests_filter_steps_to_exclude(log_info):
 
     assert log_info.call_count == 2
     log_info.assert_any_call("KPOPS_PIPELINE_STEPS is defined.")
-    log_info.assert_any_call(
-        "Including only on the following steps: ['example1'], \n ignoring ['example2', 'example3']"
-    )
+    log_info.assert_any_call("Excluding the following steps: ['example1']")
 
     filtered_steps = get_steps_to_apply(pipeline, None, FilterType.EXCLUDE)
-    assert len(filtered_steps) == 0
+    assert len(filtered_steps) == 3
 
     filtered_steps = get_steps_to_apply(pipeline, "", FilterType.EXCLUDE)
-    assert len(filtered_steps) == 0
+    assert len(filtered_steps) == 3
