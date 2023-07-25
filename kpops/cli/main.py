@@ -146,7 +146,7 @@ def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
 
 def filter_component(
     pipeline: Pipeline, steps: set[str], filter_type: FilterType
-) -> list:
+) -> list[PipelineComponent]:
     filtered_steps = []
     if filter_type == FilterType.include:
         filtered_steps = list(
