@@ -653,10 +653,6 @@
         "PipelineComponent": {
             "description": "Base class for all components",
             "properties": {
-                "app": {
-                    "description": "Application-specific settings",
-                    "title": "App"
-                },
                 "from": {
                     "allOf": [
                         {
