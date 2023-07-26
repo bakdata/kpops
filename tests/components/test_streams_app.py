@@ -301,7 +301,7 @@ class TestStreamsApp:
             streams_app.helm, "upgrade_install"
         )
 
-        mock = mocker.MagicMock()
+        mock = mocker.AsyncMock()
         mock.attach_mock(mock_create_topics, "mock_create_topics")
         mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
 

@@ -1,7 +1,6 @@
 import logging
 
 import httpx
-import requests
 from async_property import async_cached_property
 
 from kpops.cli.pipeline_config import PipelineConfig
@@ -48,7 +47,7 @@ class ProxyWrapper:
         client = httpx.AsyncClient()
         response = await client.get(url=f"{self._host}/v3/clusters")
         await client.aclose()
-        if response.status_code == requests.status_codes.codes.ok:
+        if response.status_code == httpx.codes.OK:
             cluster_information = response.json()
             return cluster_information["data"][0]["cluster_id"]
 
@@ -71,7 +70,7 @@ class ProxyWrapper:
             json=topic_spec.dict(exclude_none=True),
         )
         await client.aclose()
-        if response.status_code == requests.status_codes.codes.created:
+        if response.status_code == httpx.codes.CREATED:
             log.info(f"Topic {topic_spec.topic_name} created.")
             log.debug(response.json())
             return
@@ -84,14 +83,13 @@ class ProxyWrapper:
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#delete--clusters-cluster_id-topics-topic_name
         :param topic_name: Name of the topic
         """
-
         client = httpx.AsyncClient()
         response = await client.delete(
             url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
         await client.aclose()
-        if response.status_code == requests.status_codes.codes.no_content:
+        if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Topic {topic_name} deleted.")
             return
 
@@ -104,25 +102,27 @@ class ProxyWrapper:
         :param topic_name: The topic name.
         :return: Response of the get topic API
         """
-        async with httpx.AsyncClient() as client:
-            response = await client.get(
-                url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
-                headers=HEADERS,
-            )
-            if response.status_code == requests.status_codes.codes.ok:
-                log.debug(f"Topic {topic_name} found.")
-                log.debug(response.json())
-                return TopicResponse(**response.json())
 
-            elif (
-                response.status_code == requests.status_codes.codes.not_found
-                and response.json()["error_code"] == 40403
-            ):
-                log.debug(f"Topic {topic_name} not found.")
-                log.debug(response.json())
-                raise TopicNotFoundException()
+        client = httpx.AsyncClient()
+        response = await client.get(
+            url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
+            headers=HEADERS,
+        )
 
-            raise KafkaRestProxyError(response)
+        if response.status_code == httpx.codes.OK:
+            log.debug(f"Topic {topic_name} found.")
+            log.debug(response.json())
+            return TopicResponse(**response.json())
+
+        elif (
+            response.status_code == httpx.codes.NOT_FOUND
+            and response.json()["error_code"] == 40403
+        ):
+            log.debug(f"Topic {topic_name} not found.")
+            log.debug(response.json())
+            raise TopicNotFoundException()
+
+        raise KafkaRestProxyError(response)
 
     async def get_topic_config(self, topic_name: str) -> TopicConfigResponse:
         """
@@ -139,13 +139,13 @@ class ProxyWrapper:
         )
         await client.aclose()
 
-        if response.status_code == requests.status_codes.codes.ok:
+        if response.status_code == httpx.codes.OK:
             log.debug(f"Configs for {topic_name} found.")
             log.debug(response.json())
             return TopicConfigResponse(**response.json())
 
         elif (
-            response.status_code == requests.status_codes.codes.not_found
+            response.status_code == httpx.codes.NOT_FOUND
             and response.json()["error_code"] == 40403
         ):
             log.debug(f"Configs for {topic_name} not found.")
@@ -171,7 +171,7 @@ class ProxyWrapper:
         )
         await client.aclose()
 
-        if response.status_code == requests.status_codes.codes.no_content:
+        if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Config of topic {topic_name} was altered.")
             return
 
@@ -190,7 +190,7 @@ class ProxyWrapper:
         )
         await client.aclose()
 
-        if response.status_code == requests.status_codes.codes.ok:
+        if response.status_code == httpx.codes.OK:
             log.debug("Broker configs found.")
             log.debug(response.json())
             return BrokerConfigResponse(**response.json())

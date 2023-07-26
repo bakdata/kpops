@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import MagicMock, call
+from unittest.mock import MagicMock, call, AsyncMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -55,9 +55,9 @@ class TestKafkaSinkConnector:
     @pytest.fixture
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
+            schema_handler=AsyncMock(),
+            connector_handler=AsyncMock(),
+            topic_handler=AsyncMock(),
         )
 
     @pytest.fixture(autouse=True)
@@ -167,7 +167,7 @@ class TestKafkaSinkConnector:
             connector.handlers.connector_handler, "create_connector"
         )
 
-        mock = mocker.MagicMock()
+        mock = mocker.AsyncMock()
         mock.attach_mock(mock_create_topics, "mock_create_topics")
         mock.attach_mock(mock_create_connector, "mock_create_connector")
         await connector.deploy(dry_run=True)
