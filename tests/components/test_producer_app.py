@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from unittest.mock import ANY, MagicMock
+from unittest.mock import ANY, MagicMock, AsyncMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -27,9 +27,9 @@ class TestProducerApp:
     @pytest.fixture
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
+            schema_handler=AsyncMock(),
+            connector_handler=AsyncMock(),
+            topic_handler=AsyncMock(),
         )
 
     @pytest.fixture
