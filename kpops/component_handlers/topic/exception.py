@@ -1,4 +1,4 @@
-from kpops.component_handlers.utils.exception import RequestsException
+from kpops.component_handlers.utils.exception import HttpxException
 
 
 class TopicNotFoundException(Exception):
@@ -9,5 +9,5 @@ class TopicTransactionError(Exception):
     pass
 
 
-class KafkaRestProxyError(RequestsException):
+class KafkaRestProxyError(HttpxException):
     pass
