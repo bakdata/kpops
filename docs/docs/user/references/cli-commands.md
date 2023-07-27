@@ -16,11 +16,12 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 **Commands**:
 
 * `clean`: Clean pipeline steps
+* `clean-reprocess`: Cleans and deploys pipeline steps
 * `deploy`: Deploy pipeline steps
 * `destroy`: Destroy pipeline steps
 * `generate`: Enriches pipelines steps with defaults.
-* `reprocess`: Cleans and deploys pipeline steps
 * `reset`: Reset pipeline steps
+* `reset-reprocess`: Resets and deploys pipeline steps
 * `schema`: Generate json schema.
 
 ## `kpops clean`
@@ -31,6 +32,31 @@ Clean pipeline steps
 
 ```console
 $ kpops clean [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
+```
+
+**Arguments**:
+
+* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
+
+**Options**:
+
+* `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
+* `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
+* `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
+* `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
+* `--verbose / --no-verbose`: [default: no-verbose]
+* `--help`: Show this message and exit.
+
+## `kpops clean-reprocess`
+
+Cleans and deploys pipeline steps
+
+**Usage**:
+
+```console
+$ kpops clean-reprocess [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 ```
 
 **Arguments**:
@@ -126,14 +152,14 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--cert-file TEXT`: Identify HTTPS client using this SSL certificate file
 * `--help`: Show this message and exit.
 
-## `kpops reprocess`
+## `kpops reset`
 
-Cleans and deploys pipeline steps
+Reset pipeline steps
 
 **Usage**:
 
 ```console
-$ kpops reprocess [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
+$ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 ```
 
 **Arguments**:
@@ -151,14 +177,14 @@ $ kpops reprocess [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--verbose / --no-verbose`: [default: no-verbose]
 * `--help`: Show this message and exit.
 
-## `kpops reset`
+## `kpops reset-reprocess`
 
-Reset pipeline steps
+Resets and deploys pipeline steps
 
 **Usage**:
 
 ```console
-$ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
+$ kpops reset-reprocess [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 ```
 
 **Arguments**:

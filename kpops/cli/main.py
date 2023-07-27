@@ -345,8 +345,42 @@ def clean(
         component.clean(dry_run)
 
 
+@app.command(help="Resets and deploys pipeline steps")
+def reset_reprocess(
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    pipeline_path: Path = PIPELINE_PATH_ARG,
+    components_module: Optional[str] = COMPONENTS_MODULES,
+    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
+    config: Path = CONFIG_PATH_OPTION,
+    steps: Optional[str] = PIPELINE_STEPS,
+    dry_run: bool = DRY_RUN,
+    verbose: bool = False,
+):
+    reset(
+        pipeline_base_dir,
+        pipeline_path,
+        components_module,
+        defaults,
+        config,
+        steps,
+        dry_run,
+        verbose,
+    )
+
+    deploy(
+        pipeline_base_dir,
+        pipeline_path,
+        components_module,
+        defaults,
+        config,
+        steps,
+        dry_run,
+        verbose,
+    )
+
+
 @app.command(help="Cleans and deploys pipeline steps")
-def reprocess(
+def clean_reprocess(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
