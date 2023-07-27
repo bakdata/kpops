@@ -83,6 +83,7 @@ COMPONENTS_MODULES: str | None = typer.Argument(
 )
 
 logger = logging.getLogger()
+logging.getLogger("httpx").setLevel(logging.WARNING)
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(CustomFormatter())
 logger.addHandler(stream_handler)
