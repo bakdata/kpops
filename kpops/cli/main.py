@@ -265,9 +265,9 @@ def deploy(
     components_module: Optional[str] = COMPONENTS_MODULES,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    verbose: bool = False,
-    dry_run: bool = DRY_RUN,
     steps: Optional[str] = PIPELINE_STEPS,
+    dry_run: bool = DRY_RUN,
+    verbose: bool = False,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
@@ -343,6 +343,40 @@ def clean(
         log_action("Clean", component)
         component.destroy(dry_run)
         component.clean(dry_run)
+
+
+@app.command(help="Cleans and deploys pipeline steps")
+def reprocess(
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    pipeline_path: Path = PIPELINE_PATH_ARG,
+    components_module: Optional[str] = COMPONENTS_MODULES,
+    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
+    config: Path = CONFIG_PATH_OPTION,
+    steps: Optional[str] = PIPELINE_STEPS,
+    dry_run: bool = DRY_RUN,
+    verbose: bool = False,
+):
+    clean(
+        pipeline_base_dir,
+        pipeline_path,
+        components_module,
+        defaults,
+        config,
+        steps,
+        dry_run,
+        verbose,
+    )
+
+    deploy(
+        pipeline_base_dir,
+        pipeline_path,
+        components_module,
+        defaults,
+        config,
+        steps,
+        dry_run,
+        verbose,
+    )
 
 
 def version_callback(show_version: bool) -> None:
