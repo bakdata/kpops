@@ -1,11 +1,10 @@
 import json
 import sys
-import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
 import pytest
-import responses
+from pytest_httpx import HTTPXMock
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
@@ -25,7 +24,7 @@ HOST = "http://localhost:8083"
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
-class TestConnectorApiWrapper(unittest.TestCase):
+class TestConnectorApiWrapper:
     @pytest.fixture(autouse=True)
     def setup(self):
         config = PipelineConfig(
@@ -48,7 +47,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             == "The Kafka Connect host is not set. Please set the host in the config."
         )
 
-    @patch("requests.post")
+    @patch("httpx.post")
     def test_should_create_post_requests_for_given_connector_configuration(
         self, mock_post: MagicMock
     ):
@@ -76,8 +75,9 @@ class TestConnectorApiWrapper(unittest.TestCase):
             },
         )
 
-    @responses.activate
-    def test_should_return_correct_response_when_connector_created(self):
+    def test_should_return_correct_response_when_connector_created(
+        self, httpx_mock: HTTPXMock
+    ):
         actual_response = {
             "name": "hdfs-sink-connector",
             "config": {
@@ -96,28 +96,27 @@ class TestConnectorApiWrapper(unittest.TestCase):
                 {"connector": "hdfs-sink-connector", "task": 3},
             ],
         }
-        responses.add(
-            responses.POST,
-            f"{HOST}/connectors",
+        httpx_mock.add_response(
+            method="POST",
+            url=f"{HOST}/connectors",
             headers=HEADERS,
             json=actual_response,
-            status=201,
+            status_code=201,
         )
         expected_response = self.connect_wrapper.create_connector(
             "test-connector", kafka_connect_config=KafkaConnectConfig()
         )
-        self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
+        assert KafkaConnectResponse(**actual_response) == expected_response
 
-    @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_connector_exists_exception_when_connector_exists(
-        self, log_warning: MagicMock
+        self, log_warning: MagicMock, httpx_mock: HTTPXMock
     ):
-        responses.add(
-            responses.POST,
-            f"{HOST}/connectors",
+        httpx_mock.add_response(
+            method="POST",
+            url=f"{HOST}/connectors",
             json={},
-            status=409,
+            status_code=409,
         )
 
         timeout(
@@ -131,7 +130,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "Rebalancing in progress while creating a connector... Retrying..."
         )
 
-    @patch("requests.get")
+    @patch("httpx.get")
     def test_should_create_correct_get_connector_request(self, mock_get: MagicMock):
         connector_name = "test-connector"
         with pytest.raises(KafkaConnectError):
@@ -143,10 +142,9 @@ class TestConnectorApiWrapper(unittest.TestCase):
         )
 
     @pytest.mark.flaky(reruns=5, condition=sys.platform.startswith("win32"))
-    @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_getting_connector(
-        self, log_info: MagicMock
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -168,30 +166,29 @@ class TestConnectorApiWrapper(unittest.TestCase):
                 {"connector": "hdfs-sink-connector", "task": 3},
             ],
         }
-        responses.add(
-            responses.GET,
-            f"{HOST}/connectors/{connector_name}",
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json=actual_response,
-            status=200,
+            status_code=200,
         )
         expected_response = self.connect_wrapper.get_connector(connector_name)
-        self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
+        assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {connector_name} exists.")
 
-    @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_raise_connector_not_found_when_getting_connector(
-        self, log_info: MagicMock
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
-        responses.add(
-            responses.GET,
-            f"{HOST}/connectors/{connector_name}",
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
-            status=404,
+            status_code=404,
         )
         with pytest.raises(ConnectorNotFoundException):
             self.connect_wrapper.get_connector(connector_name)
@@ -218,19 +215,18 @@ class TestConnectorApiWrapper(unittest.TestCase):
             == "Connector name should be the same as component name"
         )
 
-    @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_rebalance_in_progress_when_getting_connector(
-        self, log_warning: MagicMock
+        self, log_warning: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
-        responses.add(
-            responses.GET,
-            f"{HOST}/connectors/{connector_name}",
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
-            status=409,
+            status_code=409,
         )
 
         timeout(
@@ -242,7 +238,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "Rebalancing in progress while getting a connector... Retrying..."
         )
 
-    @patch("requests.put")
+    @patch("httpx.put")
     def test_should_create_correct_update_connector_request(self, mock_put: MagicMock):
         connector_name = "test-connector"
         configs = {
@@ -266,10 +262,9 @@ class TestConnectorApiWrapper(unittest.TestCase):
             json=KafkaConnectConfig(**configs).dict(),
         )
 
-    @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_update_connector(
-        self, log_info: MagicMock
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -291,25 +286,24 @@ class TestConnectorApiWrapper(unittest.TestCase):
                 {"connector": "hdfs-sink-connector", "task": 3},
             ],
         }
-        responses.add(
-            responses.PUT,
-            f"{HOST}/connectors/{connector_name}/config",
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{HOST}/connectors/{connector_name}/config",
             headers=HEADERS,
             json=actual_response,
-            status=200,
+            status_code=200,
         )
         expected_response = self.connect_wrapper.update_connector_config(
             connector_name, KafkaConnectConfig()
         )
-        self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
+        assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(
             f"Config for connector {connector_name} updated."
         )
 
-    @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_update_connector_created(
-        self, log_info: MagicMock
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -331,32 +325,31 @@ class TestConnectorApiWrapper(unittest.TestCase):
                 {"connector": "hdfs-sink-connector", "task": 3},
             ],
         }
-        responses.add(
-            responses.PUT,
-            f"{HOST}/connectors/{connector_name}/config",
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{HOST}/connectors/{connector_name}/config",
             headers=HEADERS,
             json=actual_response,
-            status=201,
+            status_code=201,
         )
         expected_response = self.connect_wrapper.update_connector_config(
             connector_name, KafkaConnectConfig()
         )
-        self.assertEqual(KafkaConnectResponse(**actual_response), expected_response)
+        assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {connector_name} created.")
 
-    @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_connector_exists_exception_when_update_connector(
-        self, log_warning: MagicMock
+        self, log_warning: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
-        responses.add(
-            responses.PUT,
-            f"{HOST}/connectors/{connector_name}/config",
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{HOST}/connectors/{connector_name}/config",
             headers=HEADERS,
             json={},
-            status=409,
+            status_code=409,
         )
 
         timeout(
@@ -370,7 +363,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "Rebalancing in progress while updating a connector... Retrying..."
         )
 
-    @patch("requests.delete")
+    @patch("httpx.delete")
     def test_should_create_correct_delete_connector_request(
         self, mock_delete: MagicMock
     ):
@@ -383,10 +376,9 @@ class TestConnectorApiWrapper(unittest.TestCase):
             headers=HEADERS,
         )
 
-    @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_deleting_connector(
-        self, log_info: MagicMock
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -408,30 +400,29 @@ class TestConnectorApiWrapper(unittest.TestCase):
                 {"connector": "hdfs-sink-connector", "task": 3},
             ],
         }
-        responses.add(
-            responses.DELETE,
-            f"{HOST}/connectors/{connector_name}",
+        httpx_mock.add_response(
+            method="DELETE",
+            url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json=actual_response,
-            status=204,
+            status_code=204,
         )
         self.connect_wrapper.delete_connector(connector_name)
 
         log_info.assert_called_once_with(f"Connector {connector_name} deleted.")
 
-    @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_raise_connector_not_found_when_deleting_connector(
-        self, log_info: MagicMock
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
-        responses.add(
-            responses.DELETE,
-            f"{HOST}/connectors/{connector_name}",
+        httpx_mock.add_response(
+            method="DELETE",
+            url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
-            status=404,
+            status_code=404,
         )
         with pytest.raises(ConnectorNotFoundException):
             self.connect_wrapper.delete_connector(connector_name)
@@ -440,19 +431,18 @@ class TestConnectorApiWrapper(unittest.TestCase):
             f"The named connector {connector_name} does not exists."
         )
 
-    @responses.activate
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_rebalance_in_progress_when_deleting_connector(
-        self, log_warning: MagicMock
+        self, log_warning: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
-        responses.add(
-            responses.DELETE,
-            f"{HOST}/connectors/{connector_name}",
+        httpx_mock.add_response(
+            method="DELETE",
+            url=f"{HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
-            status=409,
+            status_code=409,
         )
 
         timeout(
@@ -464,7 +454,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             "Rebalancing in progress while deleting a connector... Retrying..."
         )
 
-    @patch("requests.put")
+    @patch("httpx.put")
     def test_should_create_correct_validate_connector_config_request(
         self, mock_put: MagicMock
     ):
@@ -486,7 +476,7 @@ class TestConnectorApiWrapper(unittest.TestCase):
             json=KafkaConnectConfig(**configs).dict(),
         )
 
-    @patch("requests.put")
+    @patch("httpx.put")
     def test_should_create_correct_validate_connector_config_and_name_gets_added(
         self, mock_put: MagicMock
     ):
@@ -508,18 +498,17 @@ class TestConnectorApiWrapper(unittest.TestCase):
             json=KafkaConnectConfig(**{"name": connector_name, **configs}).dict(),
         )
 
-    @responses.activate
-    def test_should_parse_validate_connector_config(self):
+    def test_should_parse_validate_connector_config(self, httpx_mock: HTTPXMock):
         with open(
             DEFAULTS_PATH / "connect_validation_response.json",
         ) as f:
             actual_response = json.load(f)
-        responses.add(
-            responses.PUT,
-            f"{HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
+        httpx_mock.add_response(
+            method="PUT",
+            url=f"{HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
             headers=HEADERS,
             json=actual_response,
-            status=200,
+            status_code=200,
         )
 
         configs = {
