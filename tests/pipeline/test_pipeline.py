@@ -22,7 +22,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "first-pipeline/pipeline.yaml"),
+                str(RESOURCE_PATH / "first-pipeline"),
                 "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
@@ -43,7 +43,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "name_prefix_concatenation/pipeline.yaml"),
+                str(RESOURCE_PATH / "name_prefix_concatenation"),
                 "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
@@ -67,7 +67,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "pipeline-with-envs/pipeline.yaml"),
+                str(RESOURCE_PATH / "pipeline-with-envs"),
                 "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
@@ -87,7 +87,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "pipeline-with-inflate/pipeline.yaml"),
+                str(RESOURCE_PATH / "pipeline-with-inflate"),
                 "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
@@ -107,7 +107,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "component-type-substitution/pipeline.yaml"),
+                str(RESOURCE_PATH / "component-type-substitution"),
                 "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
@@ -159,10 +159,7 @@ class TestPipeline:
                     "generate",
                     "--pipeline-base-dir",
                     PIPELINE_BASE_DIR,
-                    str(
-                        RESOURCE_PATH
-                        / "component-type-substitution/infinite_pipeline.yaml"
-                    ),
+                    str(RESOURCE_PATH / "infinite-component-type-substitution"),
                     "tests.pipeline.test_components",
                     "--defaults",
                     str(RESOURCE_PATH),
@@ -177,7 +174,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "kafka-connect-sink-config/pipeline.yaml"),
+                str(RESOURCE_PATH / "kafka-connect-sink-config"),
                 "--defaults",
                 str(RESOURCE_PATH),
                 "--config",
@@ -199,7 +196,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "no-input-topic-pipeline/pipeline.yaml"),
+                str(RESOURCE_PATH / "no-input-topic-pipeline"),
                 "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
@@ -219,7 +216,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "no-user-defined-components/pipeline.yaml"),
+                str(RESOURCE_PATH / "no-user-defined-components"),
                 "--defaults",
                 str(RESOURCE_PATH),
             ],
@@ -239,7 +236,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "kafka-connect-sink/pipeline.yaml"),
+                str(RESOURCE_PATH / "kafka-connect-sink"),
                 "--defaults",
                 str(RESOURCE_PATH),
             ],
@@ -258,7 +255,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "read-from-component/pipeline.yaml"),
+                str(RESOURCE_PATH / "read-from-component"),
                 "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
@@ -278,7 +275,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "kafka-connect-sink/pipeline.yaml"),
+                str(RESOURCE_PATH / "kafka-connect-sink"),
                 "--defaults",
                 str(RESOURCE_PATH / "pipeline-with-env-defaults"),
             ],
@@ -297,10 +294,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(
-                    RESOURCE_PATH
-                    / "pipeline-component-should-have-prefix/pipeline.yaml"
-                ),
+                str(RESOURCE_PATH / "pipeline-component-should-have-prefix"),
                 "--defaults",
                 str(RESOURCE_PATH / "pipeline-component-should-have-prefix"),
             ],
@@ -321,7 +315,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
                 "--config",
                 str(RESOURCE_PATH / "custom-config/config.yaml"),
             ],
@@ -361,7 +355,7 @@ class TestPipeline:
                     "generate",
                     "--pipeline-base-dir",
                     PIPELINE_BASE_DIR,
-                    str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                    str(RESOURCE_PATH / "custom-config"),
                     "--config",
                     str(temp_config_path),
                 ],
@@ -392,7 +386,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
             ],
@@ -422,7 +416,7 @@ class TestPipeline:
                 "generate",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
-                str(RESOURCE_PATH / "pipeline-with-paths/pipeline.yaml"),
+                str(RESOURCE_PATH / "pipeline-with-paths"),
                 "--defaults",
                 str(RESOURCE_PATH),
             ],
@@ -442,13 +436,31 @@ class TestPipeline:
                     "generate",
                     "--pipeline-base-dir",
                     PIPELINE_BASE_DIR,
-                    str(
-                        RESOURCE_PATH
-                        / "pipeline-with-illegal-kubernetes-name/pipeline.yaml"
-                    ),
+                    str(RESOURCE_PATH / "pipeline-with-illegal-kubernetes-name"),
                     "tests.pipeline.test_components",
                     "--defaults",
                     str(RESOURCE_PATH),
                 ],
                 catch_exceptions=False,
             )
+
+    def test_load_multiple_pipelines(self, snapshot: SnapshotTest):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "multiple-pipelines"),
+                "tests.pipeline.test_components",
+                "--defaults",
+                str(RESOURCE_PATH),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0
+
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+
+        snapshot.assert_match(enriched_pipeline, "test-pipeline")

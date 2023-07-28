@@ -1,0 +1,18 @@
+# Parse Connector topics from previous component output topic
+- type: streams-app
+  from:
+    topics:
+      example-topic:
+        type: input
+  app:
+    image: fake-image
+  to:
+    topics:
+      example-output:
+        type: output
+
+- type: kafka-sink-connector
+  namespace: example-namespace
+  name: es-sink-connector
+  app:
+    connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector

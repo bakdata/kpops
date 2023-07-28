@@ -13,7 +13,7 @@ class TestExample:
             app,
             [
                 "generate",
-                "./examples/bakdata/atm-fraud-detection/pipeline.yaml",
+                "./examples/bakdata/atm-fraud-detection",
                 "--pipeline-base-dir",
                 "examples",
                 "--config",

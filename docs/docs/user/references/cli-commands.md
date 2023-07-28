@@ -34,7 +34,7 @@ $ kpops clean [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 
 **Arguments**:
 
-* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `PIPELINE_PATH`: Path to folder containing multiple YAML with pipeline definitions  [env var: KPOPS_PIPELINE_PATH;required]
 * `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
 
 **Options**:
@@ -59,7 +59,7 @@ $ kpops deploy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 
 **Arguments**:
 
-* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `PIPELINE_PATH`: Path to folder containing multiple YAML with pipeline definitions  [env var: KPOPS_PIPELINE_PATH;required]
 * `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
 
 **Options**:
@@ -84,7 +84,7 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 
 **Arguments**:
 
-* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `PIPELINE_PATH`: Path to folder containing multiple YAML with pipeline definitions  [env var: KPOPS_PIPELINE_PATH;required]
 * `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
 
 **Options**:
@@ -109,7 +109,7 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 
 **Arguments**:
 
-* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `PIPELINE_PATH`: Path to folder containing multiple YAML with pipeline definitions  [env var: KPOPS_PIPELINE_PATH;required]
 * `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
 
 **Options**:
@@ -137,7 +137,7 @@ $ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 
 **Arguments**:
 
-* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `PIPELINE_PATH`: Path to folder containing multiple YAML with pipeline definitions  [env var: KPOPS_PIPELINE_PATH;required]
 * `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
 
 **Options**:
