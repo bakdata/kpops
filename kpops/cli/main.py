@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterator, Optional
 
+import dtyper
 import typer
 
 from kpops import __version__
@@ -25,7 +26,7 @@ if TYPE_CHECKING:
 
 LOG_DIVIDER = "#" * 100
 
-app = typer.Typer(pretty_exceptions_enable=False)
+app = dtyper.Typer(pretty_exceptions_enable=False)
 
 BASE_DIR_PATH_OPTION: Path = typer.Option(
     default=Path("."),
@@ -76,6 +77,8 @@ DRY_RUN: bool = typer.Option(
     "--dry-run/--execute",
     help="Whether to dry run the command or execute it",
 )
+
+VERBOSE_OPTION = typer.Option(False, help="Enable verbose printing")
 
 COMPONENTS_MODULES: str | None = typer.Argument(
     default=None,
@@ -219,12 +222,12 @@ def schema(
     help="Enriches pipelines steps with defaults. The output is used as input for the deploy/destroy/... commands."
 )
 def generate(
-    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    verbose: bool = typer.Option(False, help="Enable verbose printing"),
+    verbose: bool = VERBOSE_OPTION,
     template: bool = typer.Option(False, help="Run Helm template"),
     steps: Optional[str] = PIPELINE_STEPS,
     api_version: Optional[str] = typer.Option(
@@ -261,13 +264,13 @@ def generate(
 
 @app.command(help="Deploy pipeline steps")
 def deploy(
-    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    verbose: bool = False,
     dry_run: bool = DRY_RUN,
+    verbose: bool = VERBOSE_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
@@ -283,14 +286,14 @@ def deploy(
 
 @app.command(help="Destroy pipeline steps")
 def destroy(
-    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
+    verbose: bool = VERBOSE_OPTION,
     dry_run: bool = DRY_RUN,
-    verbose: bool = False,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
@@ -304,14 +307,14 @@ def destroy(
 
 @app.command(help="Reset pipeline steps")
 def reset(
-    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     dry_run: bool = DRY_RUN,
-    verbose: bool = False,
+    verbose: bool = VERBOSE_OPTION,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
@@ -326,14 +329,14 @@ def reset(
 
 @app.command(help="Clean pipeline steps")
 def clean(
-    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     dry_run: bool = DRY_RUN,
-    verbose: bool = False,
+    verbose: bool = VERBOSE_OPTION,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
