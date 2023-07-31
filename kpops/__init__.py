@@ -1,12 +1,12 @@
 __version__ = "1.3.2"
 
-# re-export public API functions
+# export public API functions
 from kpops.cli.main import clean, deploy, destroy, generate, reset
 
 __all__ = (
-    generate,
-    deploy,
-    destroy,
-    reset,
-    clean,
+    "generate",
+    "deploy",
+    "destroy",
+    "reset",
+    "clean",
 )
