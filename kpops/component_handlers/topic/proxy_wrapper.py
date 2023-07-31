@@ -84,7 +84,7 @@ class ProxyWrapper:
         :param topic_name: Name of the topic
         """
         response = await self._client.delete(
-            url=f"/v3/clusters/{self.cluster_id}/topics/{topic_name}",
+            url=f"/v3/clusters/{await self.cluster_id}/topics/{topic_name}",  # type: ignore
             headers=HEADERS,
         )
 
@@ -103,7 +103,7 @@ class ProxyWrapper:
         """
 
         response = await self._client.get(
-            url=f"/v3/clusters/{self.cluster_id}/topics/{topic_name}",
+            url=f"/v3/clusters/{await self.cluster_id}/topics/{topic_name}",  # type: ignore
             headers=HEADERS,
         )
 
@@ -131,7 +131,7 @@ class ProxyWrapper:
         """
 
         response = await self._client.get(
-            url=f"/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",
+            url=f"/v3/clusters/{await self.cluster_id}/topics/{topic_name}/configs",  # type: ignore
             headers=HEADERS,
         )
 
@@ -160,7 +160,7 @@ class ProxyWrapper:
         :param config_name: The configuration parameter name.
         """
         response = await self._client.post(
-            url=f"/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",
+            url=f"/v3/clusters/{await self.cluster_id}/topics/{topic_name}/configs:alter",  # type: ignore
             headers=HEADERS,
             json={"data": json_body},
         )
@@ -178,7 +178,7 @@ class ProxyWrapper:
         :return: The broker configuration.
         """
         response = await self._client.get(
-            url=f"/v3/clusters/{self.cluster_id}/brokers/-/configs",
+            url=f"/v3/clusters/{await self.cluster_id}/brokers/-/configs",  # type: ignore
             headers=HEADERS,
         )
 
