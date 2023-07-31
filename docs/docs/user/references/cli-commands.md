@@ -21,7 +21,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `destroy`: Destroy pipeline steps
 * `generate`: Enriches pipelines steps with defaults.
 * `reset`: Reset pipeline steps
-* `reset-clean`: Resets and deploys pipeline steps
+* `reset-deploy`: Resets and deploys pipeline steps
 * `schema`: Generate json schema.
 
 ## `kpops clean`
@@ -177,14 +177,14 @@ $ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--verbose / --no-verbose`: [default: no-verbose]
 * `--help`: Show this message and exit.
 
-## `kpops reset-clean`
+## `kpops reset-deploy`
 
 Resets and deploys pipeline steps
 
 **Usage**:
 
 ```console
-$ kpops reset-clean [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
+$ kpops reset-deploy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 ```
 
 **Arguments**:

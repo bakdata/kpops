@@ -347,7 +347,7 @@ def clean(
 
 
 @app.command(help="Resets and deploys pipeline steps")
-def reset_clean(
+def reset_deploy(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
