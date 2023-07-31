@@ -52,7 +52,7 @@ class ConnectWrapper:
         connect_data = {"name": connector_name, "config": config_json}
 
         response = await self._client.post(
-            url=f"/connectors", headers=HEADERS, json=connect_data
+            url="/connectors", headers=HEADERS, json=connect_data
         )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_name} created.")

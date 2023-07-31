@@ -25,7 +25,6 @@ class ProxyWrapper:
     Wraps Kafka REST Proxy APIs
     """
 
-
     def __init__(self, pipeline_config: PipelineConfig) -> None:
         if not pipeline_config.kafka_rest_host:
             raise ValueError(
@@ -33,8 +32,6 @@ class ProxyWrapper:
             )
         self._client = httpx.AsyncClient(base_url=pipeline_config.kafka_rest_host)
         self._host = pipeline_config.kafka_rest_host
-
-
 
     @async_cached_property
     async def cluster_id(self) -> str:

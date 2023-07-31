@@ -69,7 +69,7 @@ class TestConnectorApiWrapper:
             )
 
         mock_post.assert_called_with(
-            url=f"/connectors",
+            url="/connectors",
             headers=HEADERS,
             json={
                 "name": "test-connector",
@@ -505,7 +505,7 @@ class TestConnectorApiWrapper:
             )
 
         mock_put.assert_called_with(
-            url=f"/connector-plugins/FileStreamSinkConnector/config/validate",
+            url="/connector-plugins/FileStreamSinkConnector/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
             json=KafkaConnectConfig(**configs).dict(),
         )
