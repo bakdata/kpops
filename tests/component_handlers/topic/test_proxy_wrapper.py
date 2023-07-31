@@ -81,7 +81,7 @@ class TestProxyWrapper:
             await self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
 
         mock_post.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
+            url=f"/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec,
         )
@@ -97,7 +97,7 @@ class TestProxyWrapper:
             await self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
 
         mock_post.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
+            url=f"/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec,
         )
@@ -111,7 +111,7 @@ class TestProxyWrapper:
             await self.proxy_wrapper.get_topic(topic_name=topic_name)
 
         mock_get.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
+            url=f"/v3/clusters/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
 
@@ -130,7 +130,7 @@ class TestProxyWrapper:
             )
 
         mock_put.assert_called_with(
-            url=f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
+            url=f"/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={
                 "data": [
@@ -149,7 +149,7 @@ class TestProxyWrapper:
             await self.proxy_wrapper.delete_topic(topic_name=topic_name)
 
         mock_delete.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
+            url=f"/v3/clusters/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
 
@@ -160,7 +160,7 @@ class TestProxyWrapper:
             await self.proxy_wrapper.get_broker_config()
 
         mock_get.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/brokers/-/configs",
+            url=f"/v3/clusters/{self.proxy_wrapper.cluster_id}/brokers/-/configs",
             headers=HEADERS,
         )
 

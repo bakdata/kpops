@@ -69,7 +69,7 @@ class TestConnectorApiWrapper:
             )
 
         mock_post.assert_called_with(
-            url=f"{HOST}/connectors",
+            url=f"/connectors",
             headers=HEADERS,
             json={
                 "name": "test-connector",
@@ -147,7 +147,7 @@ class TestConnectorApiWrapper:
             await self.connect_wrapper.get_connector(connector_name)
 
         mock_get.assert_called_with(
-            url=f"{HOST}/connectors/{connector_name}",
+            url=f"/connectors/{connector_name}",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
         )
 
@@ -277,7 +277,7 @@ class TestConnectorApiWrapper:
             )
 
         mock_put.assert_called_with(
-            url=f"{HOST}/connectors/{connector_name}/config",
+            url=f"/connectors/{connector_name}/config",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
             json=KafkaConnectConfig(**configs).dict(),
         )
@@ -399,7 +399,7 @@ class TestConnectorApiWrapper:
             await self.connect_wrapper.delete_connector(connector_name)
 
         mock_delete.assert_called_with(
-            url=f"{HOST}/connectors/{connector_name}",
+            url=f"/connectors/{connector_name}",
             headers=HEADERS,
         )
 
@@ -505,7 +505,7 @@ class TestConnectorApiWrapper:
             )
 
         mock_put.assert_called_with(
-            url=f"{HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
+            url=f"/connector-plugins/FileStreamSinkConnector/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
             json=KafkaConnectConfig(**configs).dict(),
         )
@@ -528,7 +528,7 @@ class TestConnectorApiWrapper:
             )
 
         mock_put.assert_called_with(
-            url=f"{HOST}/connector-plugins/{connector_name}/config/validate",
+            url=f"/connector-plugins/{connector_name}/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
             json=KafkaConnectConfig(**{"name": connector_name, **configs}).dict(),
         )

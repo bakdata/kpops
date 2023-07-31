@@ -31,6 +31,7 @@ class ConnectWrapper:
             )
             log.error(error_message)
             raise RuntimeError(error_message)
+        self._client = httpx.AsyncClient(base_url=host)
         self._host: str = host
 
     @property
@@ -50,11 +51,9 @@ class ConnectWrapper:
         config_json = kafka_connect_config.dict(exclude_none=True)
         connect_data = {"name": connector_name, "config": config_json}
 
-        client = httpx.AsyncClient()
-        response = await client.post(
-            url=f"{self._host}/connectors", headers=HEADERS, json=connect_data
+        response = await self._client.post(
+            url=f"/connectors", headers=HEADERS, json=connect_data
         )
-        await client.aclose()
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_name} created.")
             log.debug(response.json())
@@ -74,11 +73,9 @@ class ConnectWrapper:
         :param connector_name: Nameof the crated connector
         :return: Information about the connector
         """
-        client = httpx.AsyncClient()
-        response = await client.get(
-            url=f"{self._host}/connectors/{connector_name}", headers=HEADERS
+        response = await self._client.get(
+            url=f"/connectors/{connector_name}", headers=HEADERS
         )
-        await client.aclose()
         if response.status_code == httpx.codes.OK:
             log.info(f"Connector {connector_name} exists.")
             log.debug(response.json())
@@ -104,13 +101,11 @@ class ConnectWrapper:
         :return: Information about the connector after the change has been made.
         """
         config_json = kafka_connect_config.dict(exclude_none=True)
-        client = httpx.AsyncClient()
-        response = await client.put(
-            url=f"{self._host}/connectors/{connector_name}/config",
+        response = await self._client.put(
+            url=f"/connectors/{connector_name}/config",
             headers=HEADERS,
             json=config_json,
         )
-        await client.aclose()
 
         data: dict = response.json()
         if response.status_code == httpx.codes.OK:
@@ -151,14 +146,12 @@ class ConnectWrapper:
 
         config_json = self.get_connector_config(connector_name, kafka_connect_config)
         connector_class = ConnectWrapper.get_connector_class_name(config_json)
-        client = httpx.AsyncClient()
 
-        response = await client.put(
-            url=f"{self._host}/connector-plugins/{connector_class}/config/validate",
+        response = await self._client.put(
+            url=f"/connector-plugins/{connector_class}/config/validate",
             headers=HEADERS,
             json=config_json,
         )
-        await client.aclose()
 
         if response.status_code == httpx.codes.OK:
             kafka_connect_error_response = KafkaConnectConfigErrorResponse(
@@ -181,11 +174,9 @@ class ConnectWrapper:
         Deletes a connector, halting all tasks and deleting its configuration.
         API Reference:https://docs.confluent.io/platform/current/connect/references/restapi.html#delete--connectors-(string-name)-
         """
-        client = httpx.AsyncClient()
-        response = await client.delete(
-            url=f"{self._host}/connectors/{connector_name}", headers=HEADERS
+        response = await self._client.delete(
+            url=f"/connectors/{connector_name}", headers=HEADERS
         )
-        await client.aclose()
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Connector {connector_name} deleted.")
             return
