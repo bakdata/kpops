@@ -44,7 +44,7 @@ class ProxyWrapper:
         bootstrap.servers configuration. Therefore, only one Kafka cluster will be returned.
         :return: The Kafka cluster ID.
         """
-        response = await self._client.get(url=f"{self._host}/v3/clusters")
+        response = await self._client.get(url="/v3/clusters")
 
         if response.status_code == httpx.codes.OK:
             cluster_information = response.json()
