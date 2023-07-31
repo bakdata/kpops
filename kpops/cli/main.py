@@ -302,9 +302,13 @@ def destroy(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps)
-    for component in pipeline_steps:
-        log_action("Destroy", component)
-        component.destroy(dry_run)
+
+    async def async_destroy():
+        for component in pipeline_steps:
+            log_action("Destroy", component)
+            await component.destroy(dry_run)
+
+    asyncio.run(async_destroy())
 
 
 @app.command(help="Reset pipeline steps")
@@ -323,10 +327,14 @@ def reset(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps)
-    for component in pipeline_steps:
-        log_action("Reset", component)
-        component.destroy(dry_run)
-        component.reset(dry_run)
+
+    async def async_reset():
+        for component in pipeline_steps:
+            log_action("Reset", component)
+            await component.destroy(dry_run)
+            await component.reset(dry_run)
+
+    asyncio.run(async_reset())
 
 
 @app.command(help="Clean pipeline steps")
@@ -345,10 +353,14 @@ def clean(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps)
-    for component in pipeline_steps:
-        log_action("Clean", component)
-        component.destroy(dry_run)
-        component.clean(dry_run)
+
+    async def async_clean():
+        for component in pipeline_steps:
+            log_action("Clean", component)
+            await component.destroy(dry_run)
+            await component.clean(dry_run)
+
+    asyncio.run(async_clean())
 
 
 def version_callback(show_version: bool) -> None:

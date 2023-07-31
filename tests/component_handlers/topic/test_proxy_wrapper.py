@@ -49,7 +49,7 @@ class TestProxyWrapper:
             status_code=200,
         )
         assert self.proxy_wrapper.host == HOST
-        assert await self.proxy_wrapper.cluster_id == "cluster-1"
+        assert await self.proxy_wrapper.cluster_id == "cluster-1"  # type: ignore
 
     @pytest.mark.asyncio
     async def test_should_raise_exception_when_host_is_not_set(self):

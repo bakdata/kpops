@@ -240,21 +240,21 @@ class PipelineComponent(BaseDefaultsComponent):
         :type dry_run: bool
         """
 
-    def destroy(self, dry_run: bool) -> None:
+    async def destroy(self, dry_run: bool) -> None:
         """Uninstall the component (self) from the k8s cluster
 
         :param dry_run: Whether to do a dry run of the command
         :type dry_run: bool
         """
 
-    def reset(self, dry_run: bool) -> None:
+    async def reset(self, dry_run: bool) -> None:
         """Reset component (self) state
 
         :param dry_run: Whether to do a dry run of the command
         :type dry_run: bool
         """
 
-    def clean(self, dry_run: bool) -> None:
+    async def clean(self, dry_run: bool) -> None:
         """Remove component (self) and any trace of it
 
         :param dry_run: Whether to do a dry run of the command

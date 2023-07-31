@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import MagicMock, AsyncMock
+from unittest.mock import AsyncMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -343,16 +343,18 @@ class TestStreamsApp:
             ),
         ]
 
-    def test_destroy(self, streams_app: StreamsApp, mocker: MockerFixture):
+    @pytest.mark.asyncio
+    async def test_destroy(self, streams_app: StreamsApp, mocker: MockerFixture):
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
-        streams_app.destroy(dry_run=True)
+        await streams_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
             "test-namespace", self.STREAMS_APP_NAME, True
         )
 
-    def test_reset_when_dry_run_is_false(
+    @pytest.mark.asyncio
+    async def test_reset_when_dry_run_is_false(
         self, streams_app: StreamsApp, mocker: MockerFixture
     ):
         mock_helm_upgrade_install = mocker.patch.object(
@@ -365,7 +367,7 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
         dry_run = False
-        streams_app.reset(dry_run=dry_run)
+        await streams_app.reset(dry_run=dry_run)
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
@@ -390,7 +392,8 @@ class TestStreamsApp:
             ),
         ]
 
-    def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
+    @pytest.mark.asyncio
+    async def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
         streams_app: StreamsApp,
         mocker: MockerFixture,
@@ -405,7 +408,7 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
         dry_run = False
-        streams_app.clean(dry_run=dry_run)
+        await streams_app.clean(dry_run=dry_run)
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(

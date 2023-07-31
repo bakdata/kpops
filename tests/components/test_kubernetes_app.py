@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -37,9 +37,9 @@ class TestKubernetesApp:
     @pytest.fixture
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
+            schema_handler=AsyncMock(),
+            connector_handler=AsyncMock(),
+            topic_handler=AsyncMock(),
         )
 
     @pytest.fixture
@@ -157,7 +157,8 @@ class TestKubernetesApp:
             == str(error.value)
         )
 
-    def test_should_call_helm_uninstall_when_destroying_kubernetes_app(
+    @pytest.mark.asyncio
+    async def test_should_call_helm_uninstall_when_destroying_kubernetes_app(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -176,7 +177,7 @@ class TestKubernetesApp:
         stdout = 'KubernetesAppComponent - release "test-kubernetes-apps" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
-        kubernetes_app.destroy(True)
+        await kubernetes_app.destroy(True)
 
         helm_mock.uninstall.assert_called_once_with(
             "test-namespace", "test-kubernetes-apps", True

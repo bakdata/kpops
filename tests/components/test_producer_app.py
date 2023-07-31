@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from unittest.mock import ANY, MagicMock, AsyncMock
+from unittest.mock import ANY, AsyncMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -147,20 +147,22 @@ class TestProducerApp:
             ),
         ]
 
-    def test_destroy(
+    @pytest.mark.asyncio
+    async def test_destroy(
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
     ):
         mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
 
-        producer_app.destroy(dry_run=True)
+        await producer_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
             "test-namespace", self.PRODUCER_APP_NAME, True
         )
 
-    def test_should_not_reset_producer_app(
+    @pytest.mark.asyncio
+    async def test_should_not_reset_producer_app(
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
@@ -178,7 +180,7 @@ class TestProducerApp:
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
         mock.attach_mock(mock_helm_print_helm_diff, "print_helm_diff")
 
-        producer_app.clean(dry_run=True)
+        await producer_app.clean(dry_run=True)
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
@@ -207,7 +209,8 @@ class TestProducerApp:
             ),
         ]
 
-    def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
+    @pytest.mark.asyncio
+    async def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
         self, mocker: MockerFixture, producer_app: ProducerApp
     ):
         mock_helm_upgrade_install = mocker.patch.object(
@@ -219,7 +222,7 @@ class TestProducerApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
-        producer_app.clean(dry_run=False)
+        await producer_app.clean(dry_run=False)
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(

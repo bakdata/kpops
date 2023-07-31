@@ -142,7 +142,7 @@ class KubernetesApp(PipelineComponent):
             self.dry_run_handler.print_helm_diff(stdout, self.helm_release_name, log)
 
     @override
-    def destroy(self, dry_run: bool) -> None:
+    async def destroy(self, dry_run: bool) -> None:
         stdout = self.helm.uninstall(
             self.namespace,
             self.helm_release_name,
