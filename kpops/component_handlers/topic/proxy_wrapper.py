@@ -62,8 +62,6 @@ class ProxyWrapper:
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#post--clusters-cluster_id-topics
         :param topic_spec: The topic specification.
         """
-        print("This is the cluster id")
-        print(self.cluster_id)
         response = await self._client.post(
             url=f"/v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
