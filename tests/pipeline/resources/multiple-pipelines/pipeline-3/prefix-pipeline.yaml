@@ -1,12 +1,12 @@
-- type: streams-app
-  name: my-streams-app
+- type: streams-app-3
+  name: ${pipeline_name_0}-streams-app
   from:
     topics:
       example-topic:
         type: input
   app:
-    image: fake-image
+    image: fake-image-3
   to:
     topics:
-      example-output:
+      example-output-3:
         type: output

@@ -6,7 +6,7 @@ from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
-from kpops.pipeline_generator.pipeline import ParsingException
+from kpops.pipeline_generator.exception import ParsingException
 
 runner = CliRunner()
 

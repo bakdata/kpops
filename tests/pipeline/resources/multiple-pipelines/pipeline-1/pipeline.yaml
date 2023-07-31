@@ -7,6 +7,7 @@
     commandLine:
       FAKE_ARG: "fake-arg-value"
     schedule: "30 3/8 * * *"
+
 - type: converter
   app:
     commandLine:
@@ -16,6 +17,7 @@
         memory: 2G
       requests:
         memory: 2G
+
 - type: filter
   name: "filter-app"
   app:

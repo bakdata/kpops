@@ -697,6 +697,152 @@ snapshots['TestPipeline.test_load_multiple_pipelines test-pipeline'] = {
             },
             'type': 'filter',
             'version': '2.4.2'
+        },
+        {
+            'app': {
+                'image': 'resources-multiple-pipelines-pipeline-2_fake-image-2',
+                'nameOverride': 'resources-multiple-pipelines-pipeline-2-resources-multiple-pipelines-pipeline-2',
+                'streams': {
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'config': {
+                        'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
+                    },
+                    'errorTopic': 'resources-multiple-pipelines-pipeline-2-resources-multiple-pipelines-pipeline-2-error',
+                    'inputTopics': [
+                        'example-topic'
+                    ],
+                    'outputTopic': 'example-output',
+                    'schemaRegistryUrl': 'http://localhost:8081'
+                }
+            },
+            'from': {
+                'components': {
+                },
+                'topics': {
+                    'example-topic': {
+                        'type': 'input'
+                    }
+                }
+            },
+            'name': 'resources-multiple-pipelines-pipeline-2-resources-multiple-pipelines-pipeline-2',
+            'namespace': 'example-namespace',
+            'prefix': 'resources-multiple-pipelines-pipeline-2-',
+            'repoConfig': {
+                'repoAuthFlags': {
+                    'insecureSkipTlsVerify': False
+                },
+                'repositoryName': 'bakdata-streams-bootstrap',
+                'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'example-output': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    },
+                    'resources-multiple-pipelines-pipeline-2-resources-multiple-pipelines-pipeline-2-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
+            },
+            'type': 'streams-app-2',
+            'version': '2.4.2'
+        },
+        {
+            'app': {
+                'batch.size': '2000',
+                'behavior.on.malformed.documents': 'warn',
+                'behavior.on.null.values': 'delete',
+                'connection.compression': 'true',
+                'connector.class': 'io.confluent.connect.elasticsearch.ElasticsearchSinkConnector',
+                'key.ignore': 'false',
+                'linger.ms': '5000',
+                'max.buffered.records': '20000',
+                'name': 'sink-connector',
+                'read.timeout.ms': '120000',
+                'tasks.max': '1',
+                'topics': 'example-output'
+            },
+            'name': 'resources-multiple-pipelines-pipeline-2-es-sink-connector',
+            'namespace': 'example-namespace',
+            'prefix': 'resources-multiple-pipelines-pipeline-2-',
+            'repoConfig': {
+                'repoAuthFlags': {
+                    'insecureSkipTlsVerify': False
+                },
+                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'url': 'https://bakdata.github.io/kafka-connect-resetter/'
+            },
+            'resetterValues': {
+            },
+            'type': 'kafka-sink-connector',
+            'version': '1.0.4'
+        },
+        {
+            'app': {
+                'image': 'fake-image-3',
+                'nameOverride': 'resources-multiple-pipelines-pipeline-3-resources-streams-app',
+                'streams': {
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'config': {
+                        'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
+                    },
+                    'errorTopic': 'resources-multiple-pipelines-pipeline-3-resources-streams-app-error',
+                    'inputTopics': [
+                        'example-topic'
+                    ],
+                    'outputTopic': 'example-output-3',
+                    'schemaRegistryUrl': 'http://localhost:8081'
+                }
+            },
+            'from': {
+                'components': {
+                },
+                'topics': {
+                    'example-topic': {
+                        'type': 'input'
+                    }
+                }
+            },
+            'name': 'resources-multiple-pipelines-pipeline-3-resources-streams-app',
+            'namespace': 'example-namespace',
+            'prefix': 'resources-multiple-pipelines-pipeline-3-',
+            'repoConfig': {
+                'repoAuthFlags': {
+                    'insecureSkipTlsVerify': False
+                },
+                'repositoryName': 'bakdata-streams-bootstrap',
+                'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'example-output-3': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    },
+                    'resources-multiple-pipelines-pipeline-3-resources-streams-app-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
+            },
+            'type': 'streams-app-3',
+            'version': '2.4.2'
         }
     ]
 }

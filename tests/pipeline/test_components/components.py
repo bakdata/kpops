@@ -26,6 +26,14 @@ class Converter(StreamsApp):
     type: str = "converter"
 
 
+class StreamsApp2(StreamsApp):
+    type: str = "streams-app-2"
+
+
+class StreamsApp3(StreamsApp):
+    type: str = "streams-app-3"
+
+
 class SubStreamsApp(StreamsApp):
     """Intermediary subclass of StreamsApp used for Filter."""
 

@@ -1,11 +1,12 @@
 # Parse Connector topics from previous component output topic
-- type: streams-app
+- type: streams-app-2
+  name: ${pipeline_name}
   from:
     topics:
       example-topic:
         type: input
   app:
-    image: fake-image
+    image: ${pipeline_name}_fake-image-2
   to:
     topics:
       example-output:

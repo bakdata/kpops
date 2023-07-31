@@ -95,7 +95,7 @@ log = logging.getLogger("")
 
 def setup_pipeline(
     pipeline_base_dir: Path,
-    pipeline_path: Path,
+    pipeline_path: list[Path],
     handlers: ComponentHandlers,
     registry: Registry,
     pipeline_config: PipelineConfig,
@@ -223,17 +223,20 @@ def schema(
 def find_pipeline_yaml_files(pipeline_folder_path: Path) -> list[Path]:
     patterns = [
         os.path.join(
-            pipeline_folder_path, "**", "pipeline.yaml"
-        ),  # Files named pipeline.yaml
-        os.path.join(
             pipeline_folder_path, "**", "*pipeline.yaml"
         ),  # Files ending with pipeline.yaml
     ]
-    return [
-        Path(file)
-        for pattern in patterns
-        for file in glob.glob(str(pattern), recursive=True)
-    ]
+    pipeline_files = sorted(
+        set(
+            [
+                Path(file)
+                for pattern in patterns
+                for file in glob.glob(str(pattern), recursive=True)
+            ]
+        )
+    )
+    log.info(f"Pipeline files ditected: {pipeline_files}")
+    return pipeline_files
 
 
 @app.command(
@@ -264,24 +267,24 @@ def generate(
 
     pipeline_yaml_files = find_pipeline_yaml_files(pipeline_path)
 
-    for pipeline_file in pipeline_yaml_files:
-        pipeline = setup_pipeline(
-            pipeline_base_dir, pipeline_file, handlers, registry, pipeline_config
-        )
-        pipeline.print_yaml()
+    pipeline = setup_pipeline(
+        pipeline_base_dir, pipeline_yaml_files, handlers, registry, pipeline_config
+    )
 
-        if template:
-            steps_to_apply = get_steps_to_apply(pipeline, steps)
-            for component in steps_to_apply:
-                component.template(api_version, ca_file, cert_file)
-        elif cert_file or ca_file or api_version or steps:
-            log.warning(
-                "The following flags are considered only when `--template` is set: \n \
-                    '--cert-file'\n \
-                    '--ca-file'\n \
-                    '--api-version'\n \
-                    '--steps'"
-            )
+    pipeline.print_yaml()
+
+    if template:
+        steps_to_apply = get_steps_to_apply(pipeline, steps)
+        for component in steps_to_apply:
+            component.template(api_version, ca_file, cert_file)
+    elif cert_file or ca_file or api_version or steps:
+        log.warning(
+            "The following flags are considered only when `--template` is set: \n \
+                '--cert-file'\n \
+                '--ca-file'\n \
+                '--api-version'\n \
+                '--steps'"
+        )
 
 
 @app.command(help="Deploy pipeline steps")
@@ -298,8 +301,11 @@ def deploy(
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     handlers = setup_handlers(components_module, pipeline_config)
     registry = find_modules(components_module)
+
+    pipeline_yaml_files = find_pipeline_yaml_files(pipeline_path)
+
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, handlers, registry, pipeline_config
+        pipeline_base_dir, pipeline_yaml_files, handlers, registry, pipeline_config
     )
 
     steps_to_apply = get_steps_to_apply(pipeline, steps)
@@ -322,8 +328,10 @@ def destroy(
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     handlers = setup_handlers(components_module, pipeline_config)
     registry = find_modules(components_module)
+    pipeline_yaml_files = find_pipeline_yaml_files(pipeline_path)
+
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, handlers, registry, pipeline_config
+        pipeline_base_dir, pipeline_yaml_files, handlers, registry, pipeline_config
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps)
     for component in pipeline_steps:
@@ -345,8 +353,10 @@ def reset(
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     handlers = setup_handlers(components_module, pipeline_config)
     registry = find_modules(components_module)
+    pipeline_yaml_files = find_pipeline_yaml_files(pipeline_path)
+
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, handlers, registry, pipeline_config
+        pipeline_base_dir, pipeline_yaml_files, handlers, registry, pipeline_config
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps)
     for component in pipeline_steps:
@@ -369,8 +379,10 @@ def clean(
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     handlers = setup_handlers(components_module, pipeline_config)
     registry = find_modules(components_module)
+    pipeline_yaml_files = find_pipeline_yaml_files(pipeline_path)
+
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, handlers, registry, pipeline_config
+        pipeline_base_dir, pipeline_yaml_files, handlers, registry, pipeline_config
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps)
     for component in pipeline_steps:
