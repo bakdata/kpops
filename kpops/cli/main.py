@@ -188,7 +188,7 @@ def create_pipeline_config(
     return pipeline_config
 
 
-@app.command(
+@app.command(  # pyright: ignore[reportGeneralTypeIssues]
     help="""
     Generate json schema.
 
@@ -218,7 +218,7 @@ def schema(
             gen_config_schema()
 
 
-@app.command(
+@app.command(  # pyright: ignore[reportGeneralTypeIssues]
     help="Enriches pipelines steps with defaults. The output is used as input for the deploy/destroy/... commands."
 )
 def generate(
@@ -262,7 +262,7 @@ def generate(
     return pipeline
 
 
-@app.command(help="Deploy pipeline steps")
+@app.command(help="Deploy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues]
 def deploy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
@@ -284,7 +284,7 @@ def deploy(
         component.deploy(dry_run)
 
 
-@app.command(help="Destroy pipeline steps")
+@app.command(help="Destroy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues]
 def destroy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
@@ -305,7 +305,7 @@ def destroy(
         component.destroy(dry_run)
 
 
-@app.command(help="Reset pipeline steps")
+@app.command(help="Reset pipeline steps")  # pyright: ignore[reportGeneralTypeIssues]
 def reset(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
@@ -327,7 +327,7 @@ def reset(
         component.reset(dry_run)
 
 
-@app.command(help="Clean pipeline steps")
+@app.command(help="Clean pipeline steps")  # pyright: ignore[reportGeneralTypeIssues]
 def clean(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
