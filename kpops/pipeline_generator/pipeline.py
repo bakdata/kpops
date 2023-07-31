@@ -95,9 +95,10 @@ class Pipeline:
                 main_content, registry, config, handlers
             ).create_components(env_content)
             pipeline_components_list.append(pipeline_components.components)
-        flattened_list = list(chain(*pipeline_components_list))
-        pipeline_components = PipelineComponents()
-        pipeline_components.components = flattened_list
+
+        pipeline_components = PipelineComponents(
+            **{"components": list(chain(*pipeline_components_list))}
+        )
         return Pipeline(pipeline_components)
 
     def print_yaml(self, substitution: dict | None = None) -> None:
