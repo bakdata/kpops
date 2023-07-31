@@ -1,4 +1,5 @@
 import json
+from functools import cached_property
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import Registry
@@ -15,28 +16,30 @@ class PipelineComponentFactory:
     def __init__(
         self,
         component_list: list[dict],
+        environment_components: list[dict],
         registry: Registry,
         config: PipelineConfig,
         handlers: ComponentHandlers,
     ) -> None:
         self._component_list = component_list
+        self._environment_components = environment_components
         self._handlers = handlers
         self._config = config
         self._registry = registry
         self._components = PipelineComponents()
 
-    def create_components(
-        self,
-        environment_components: list[dict],
-    ) -> PipelineComponents:
-        env_components_index = self.create_env_components_index(environment_components)
-        self.parse_components(env_components_index)
+    @cached_property
+    def _env_components_index(self) -> dict[str, dict]:
+        if len(self._environment_components) > 0:
+            return self.__create_env_components_index()
+        return {}
+
+    @property
+    def components(self) -> PipelineComponents:
+        self.__parse_components()
         return self._components
 
-    @staticmethod
-    def create_env_components_index(
-        environment_components: list[dict],
-    ) -> dict[str, dict]:
+    def __create_env_components_index(self) -> dict[str, dict]:
         """Create an index for all registered components in the project
 
         :param environment_components: List of all components to be included
@@ -45,7 +48,7 @@ class PipelineComponentFactory:
         :rtype: dict[str, dict]
         """
         index: dict[str, dict] = {}
-        for component in environment_components:
+        for component in self._environment_components:
             if "type" not in component or "name" not in component:
                 raise ValueError(
                     "To override components per environment, every component should at least have a type and a name."
@@ -53,7 +56,7 @@ class PipelineComponentFactory:
             index[component["name"]] = component
         return index
 
-    def parse_components(self, env_components_index: dict[str, dict]) -> None:
+    def __parse_components(self) -> None:
         """Instantiate, enrich and inflate a list of components
 
         :param component_list: List of components
@@ -72,9 +75,7 @@ class PipelineComponentFactory:
                     )
                 component_class = self._registry[component_type]
 
-                self.apply_component(
-                    component_class, component_data, env_components_index
-                )
+                self.__apply_component(component_class, component_data)
             except Exception as ex:
                 if "name" in component_data:
                     raise ParsingException(
@@ -83,11 +84,10 @@ class PipelineComponentFactory:
                 else:
                     raise ParsingException() from ex
 
-    def apply_component(
+    def __apply_component(
         self,
         component_class: type[PipelineComponent],
         component_data: dict,
-        env_components_index: dict[str, dict],
     ) -> None:
         """Instantiate, enrich and inflate pipeline component.
 
@@ -104,13 +104,11 @@ class PipelineComponentFactory:
             validate=False,
             **component_data,
         )
-        component = self.enrich_component(component, env_components_index)
+        component = self.__enrich_component(component)
 
         # inflate & enrich components
         for inflated_component in component.inflate():  # TODO: recursively
-            enriched_component = self.enrich_component(
-                inflated_component, env_components_index
-            )
+            enriched_component = self.__enrich_component(inflated_component)
             if enriched_component.from_:
                 # read from specified components
                 for (
@@ -137,10 +135,9 @@ class PipelineComponentFactory:
                 enriched_component.weave_from_topics(prev_component.to)
             self._components.add(enriched_component)
 
-    def enrich_component(
+    def __enrich_component(
         self,
         component: PipelineComponent,
-        env_components_index: dict[str, dict],
     ) -> PipelineComponent:
         """Enrich a pipeline component with env-specific config and substitute variables
 
@@ -151,12 +148,12 @@ class PipelineComponentFactory:
         """
         component.validate_ = True
         env_component_as_dict = update_nested_pair(
-            env_components_index.get(component.name, {}),
+            self._env_components_index.get(component.name, {}),
             # HACK: Pydantic .dict() doesn't create jsonable dict
             json.loads(component.json(by_alias=True)),
         )
 
-        component_data = self.substitute_in_component(env_component_as_dict)
+        component_data = self.__substitute_in_component(env_component_as_dict)
 
         component_class = type(component)
         return component_class(
@@ -166,7 +163,7 @@ class PipelineComponentFactory:
             **component_data,
         )
 
-    def substitute_in_component(self, component_as_dict: dict) -> dict:
+    def __substitute_in_component(self, component_as_dict: dict) -> dict:
         """Substitute all $-placeholders in a component in dict representation
 
         :param component_as_dict: Component represented as dict

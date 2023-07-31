@@ -75,25 +75,31 @@ class Pipeline:
         :rtype: Pipeline
         """
         pipeline_components_list = []
-        env_content = []
+        environment_components_content = []
         for path in paths:
             Pipeline.set_pipeline_name_env_vars(base_dir, path)
-            main_content = load_yaml_file(path, substitution=ENV)
-            if not isinstance(main_content, list):
+            component_list = load_yaml_file(path, substitution=ENV)
+            if not isinstance(component_list, list):
                 raise TypeError(
                     f"The pipeline definition {path} should contain a list of components"
                 )
             if (
                 env_file := Pipeline.pipeline_filename_environment(path, config)
             ).exists():
-                env_content = load_yaml_file(env_file, substitution=ENV)
-                if not isinstance(env_content, list):
+                environment_components_content = load_yaml_file(
+                    env_file, substitution=ENV
+                )
+                if not isinstance(environment_components_content, list):
                     raise TypeError(
                         f"The pipeline definition {env_file} should contain a list of components"
                     )
             pipeline_components = PipelineComponentFactory(
-                main_content, registry, config, handlers
-            ).create_components(env_content)
+                component_list,
+                environment_components_content,
+                registry,
+                config,
+                handlers,
+            )
             pipeline_components_list.append(pipeline_components.components)
 
         pipeline_components = PipelineComponents(
