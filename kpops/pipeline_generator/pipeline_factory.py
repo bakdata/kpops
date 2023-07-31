@@ -6,7 +6,7 @@ from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components import PipelineComponent
 from kpops.pipeline_generator.exception import ParsingException
-from kpops.pipeline_generator.pipeline_components import PipelineComponents
+from kpops.pipeline_generator.model import PipelineComponents
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
 from kpops.utils.yaml_loading import substitute_nested

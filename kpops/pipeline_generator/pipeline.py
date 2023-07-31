@@ -14,7 +14,7 @@ from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.pipeline_generator.pipeline_components import PipelineComponents
+from kpops.pipeline_generator.model import PipelineComponents
 from kpops.pipeline_generator.pipeline_factory import PipelineComponentFactory
 from kpops.utils.environment import ENV
 from kpops.utils.yaml_loading import load_yaml_file, substitute
