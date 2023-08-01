@@ -2,7 +2,7 @@ import logging
 from enum import Enum
 from typing import Annotated, Any, Literal, Sequence, Union, get_args, get_origin
 
-from pydantic import BaseConfig, Field, schema, schema_json_of
+from pydantic import Field, schema, schema_json_of
 from pydantic.fields import ModelField
 from pydantic.schema import SkipField
 
@@ -139,16 +139,9 @@ def gen_pipeline_schema(
     # dynamically assign schema type discriminator
     for component in components:
         component_type = component.get_component_type()
-        field_info = component.__fields__["type"].field_info
-        field_info.description = describe_object(component.__doc__)
-        component.__fields__["type"] = ModelField(
-            name="type",
-            type_=Literal[component_type],  # type: ignore
-            required=False,
-            default=component_type,
-            field_info=field_info,
-            class_validators=None,
-            model_config=BaseConfig,
+        component.__fields__["type"].type_ = Literal[component_type]  # type: ignore
+        component.__fields__["type"].field_info.description = describe_object(
+            component.__doc__
         )
 
     AnnotatedPipelineComponents = Annotated[
