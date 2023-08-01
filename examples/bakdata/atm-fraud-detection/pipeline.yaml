@@ -1,61 +1,31 @@
 - type: producer
   name: account-producer
   app:
-    replica_count: 1
     image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
-    image_tag: 1.0.0
     schedule: 0 12 * * *
-    suspend: true
-    prometheus:
-      jmx:
-        enabled: false
-    debug: true
 
 - type: producer
   name: transaction-avro-producer
   app:
-    replica_count: 1
     image: ${DOCKER_REGISTRY}/atm-demo-transactionavroproducer
-    image_tag: 1.0.0
     command_line:
       REAL_TX: 19
       ITERATION: 20
     schedule: 0 12 * * *
-    suspend: true
-    prometheus:
-      jmx:
-        enabled: false
-    debug: true
 
 - type: streams-app
   name: transaction-joiner
   app:
-    replica_count: 1
     image: ${DOCKER_REGISTRY}/atm-demo-transactionjoiner
-    image_tag: 1.0.0
-    command_line:
-      PRODUCTIVE: false
     annotations:
       consumerGroup: atm-transactionjoiner-atm-fraud-joinedtransactions-topic
-    prometheus:
-      jmx:
-        enabled: false
-    debug: true
 
 - type: streams-app
   name: fraud-detector
   app:
-    replica_count: 1
     image: ${DOCKER_REGISTRY}/atm-demo-frauddetector
-    image_tag: 1.0.0
-    command_line:
-      PRODUCTIVE: false
     annotations:
       consumerGroup: atm-frauddetector-atm-fraud-possiblefraudtransactions-topic
-    prometheus:
-      jmx:
-        enabled: false
-    debug: true
 
 - type: streams-app
   name: account-linker
@@ -67,17 +37,9 @@
         type: extra
         role: accounts
   app:
-    replicaCount: 1
     image: ${DOCKER_REGISTRY}/atm-demo-accountlinker
-    image_tag: 1.0.0
-    command_line:
-      PRODUCTIVE: false
     annotations:
       consumerGroup: atm-accountlinker-atm-fraud-output-topic
-    prometheus:
-      jmx:
-        enabled: false
-    debug: true
 
 - type: kafka-sink-connector
   name: postgresql-connector

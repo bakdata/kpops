@@ -3,6 +3,9 @@ pipeline-component:
 
 kubernetes-app:
   namespace: ${NAMESPACE}
+  app:
+    image_tag: "1.0.0"
+    replica_count: 1
 
 kafka-connector:
   namespace: ${NAMESPACE}
@@ -13,8 +16,14 @@ kafka-app:
       brokers: ${brokers}
       schemaRegistryUrl: ${schema_registry_url}
       optimizeLeaveGroupBehavior: false
+    prometheus:
+      jmx:
+        enabled: false
+    debug: true
 
 producer:
+  app:
+    suspend: true
   to:
     topics:
       ${output_topic_name}:
@@ -25,8 +34,8 @@ streams-app:
   app:
     labels:
       pipeline: ${pipeline_name}
-    streams:
-      optimizeLeaveGroupBehavior: false
+    command_line:
+      PRODUCTIVE: false
   to:
     topics:
       ${error_topic_name}:
