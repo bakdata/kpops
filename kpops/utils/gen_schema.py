@@ -77,11 +77,11 @@ def _add_components(
     defined_component_types: set[str] = {
         component.get_component_type() for component in components
     }
-    custom_components = [
+    custom_components = (
         component
         for component in _find_classes(components_module, PipelineComponent)
         if _is_valid_component(defined_component_types, component)
-    ]
+    )
     components += tuple(custom_components)
     return components
 
