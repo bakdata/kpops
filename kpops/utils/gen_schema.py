@@ -2,13 +2,14 @@ import logging
 from enum import Enum
 from typing import Annotated, Any, Literal, Sequence, Union, get_args, get_origin
 
-from pydantic import Field, schema, schema_json_of
+from pydantic import BaseConfig, Field, schema, schema_json_of
 from pydantic.fields import ModelField
 from pydantic.schema import SkipField
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.utils.docstring import describe_object
 
 
 class SchemaScope(str, Enum):
@@ -126,15 +127,29 @@ def gen_pipeline_schema(
         log.warning("No components are provided, no schema is generated.")
         return
     # Add stock components if enabled
+    components: tuple[type[PipelineComponent]] = tuple()
     if include_stock_components:
         components = tuple(_find_classes("kpops.components", PipelineComponent))
-    else:
-        components = tuple()
     # Add custom components if provided
     if components_module:
         components = _add_components(components_module, components)
     # Create a type union that will hold the union of all component types
     PipelineComponents = Union[components]  # type: ignore[valid-type]
+
+    # dynamically assign schema type discriminator
+    for component in components:
+        component_type = component.get_component_type()
+        field_info = component.__fields__["schema_type"].field_info
+        field_info.description = describe_object(component.__doc__)
+        component.__fields__["schema_type"] = ModelField(
+            name="schema_type",
+            type_=Literal[component_type],  # type: ignore
+            required=False,
+            default=component_type,
+            field_info=field_info,
+            class_validators=None,
+            model_config=BaseConfig,
+        )
 
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="schema_type")
