@@ -259,7 +259,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "enum": [
                         "sub-pipeline-component-correct-docstr"
                     ],
-                    "title": "Type",
+                    "title": "Parameter description looks correct and it is not included in the class description, terminates here",
                     "type": "string"
                 }
             },
