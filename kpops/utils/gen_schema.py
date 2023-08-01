@@ -1,6 +1,6 @@
 import logging
 from enum import Enum
-from typing import Annotated, Any, Literal, Sequence, Union, get_args, get_origin
+from typing import Annotated, Any, Literal, Sequence, Union
 
 from pydantic import Field, schema, schema_json_of
 from pydantic.fields import ModelField
@@ -46,34 +46,12 @@ def _is_valid_component(
     :return: Whether component is valid for schema generation
     :rtype: bool
     """
-    component_name = component.__name__
     component_type = component.get_component_type()
-    schema_type = component.__fields__.get("schema_type")
-    if not schema_type:
-        log.warning(f"SKIPPED {component_name}, schema_type is not defined")
-        return False
-    schema_type_default = schema_type.field_info.default
-    if (
-        get_origin(schema_type.type_) is not Literal
-        or len(get_args(schema_type.type_)) != 1
-    ):
-        log.warning(
-            f"SKIPPED {component_name}, schema_type must be a Literal with 1 argument of type str."
-        )
-        return False
-    elif get_args(schema_type.type_)[0] != schema_type_default:
-        log.warning(
-            f"SKIPPED {component_name}, schema_type default value must match Literal arg"
-        )
-        return False
-    elif schema_type_default != component_type:
-        log.warning(f"SKIPPED {component_name}, schema_type != type.")
-        return False
-    elif schema_type_default in defined_component_types:
-        log.warning(f"SKIPPED {component_name}, schema_type must be unique.")
+    if component_type in defined_component_types:
+        log.warning(f"SKIPPED {component.__name__}, component type must be unique.")
         return False
     else:
-        defined_component_types.add(schema_type_default)
+        defined_component_types.add(component_type)
         return True
 
 
@@ -97,9 +75,9 @@ def _add_components(
         components = tuple()
     # Set of existing types, against which to check the new ones
     defined_component_types: set[str] = {
-        component.__fields__["schema_type"].default
+        component.__fields__["type"].default
         for component in components
-        if component.__fields__.get("schema_type")
+        if component.__fields__.get("type")
     }
     custom_components = [
         component
