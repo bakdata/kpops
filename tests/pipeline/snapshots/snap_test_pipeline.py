@@ -45,7 +45,7 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
                     'resources-custom-config-app1': {
                         'configs': {
                         },
-                        'partitions_count': 3,
+                        'partitionsCount': 3,
                         'type': 'output'
                     }
                 }
@@ -87,13 +87,13 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
                     'resources-custom-config-app2': {
                         'configs': {
                         },
-                        'partitions_count': 3,
+                        'partitionsCount': 3,
                         'type': 'output'
                     },
                     'resources-custom-config-app2-error': {
                         'configs': {
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error'
                     }
                 }
@@ -142,7 +142,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 12,
+                        'partitionsCount': 12,
                         'type': 'output',
                         'valueSchema': 'com.bakdata.fake.Produced'
                     }
@@ -209,14 +209,14 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                             'cleanup.policy': 'compact,delete',
                             'retention.ms': '-1'
                         },
-                        'partitions_count': 50,
+                        'partitionsCount': 50,
                         'type': 'output'
                     },
                     'resources-pipeline-with-inflate-converter-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 10,
+                        'partitionsCount': 10,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -283,14 +283,14 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                         'configs': {
                             'retention.ms': '-1'
                         },
-                        'partitions_count': 50,
+                        'partitionsCount': 50,
                         'type': 'output'
                     },
                     'resources-pipeline-with-inflate-should-inflate-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -381,7 +381,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     },
@@ -449,7 +449,7 @@ snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -529,7 +529,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 12,
+                        'partitionsCount': 12,
                         'type': 'output',
                         'valueSchema': 'com.bakdata.fake.Produced'
                     }
@@ -596,14 +596,14 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
                             'cleanup.policy': 'compact,delete',
                             'retention.ms': '-1'
                         },
-                        'partitions_count': 50,
+                        'partitionsCount': 50,
                         'type': 'output'
                     },
                     'resources-first-pipeline-converter-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 10,
+                        'partitionsCount': 10,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -670,14 +670,14 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
                         'configs': {
                             'retention.ms': '-1'
                         },
-                        'partitions_count': 50,
+                        'partitionsCount': 50,
                         'type': 'output'
                     },
                     'resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -780,7 +780,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -832,7 +832,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     },
@@ -901,7 +901,7 @@ snapshots['TestPipeline.test_no_user_defined_components test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -951,7 +951,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 12,
+                        'partitionsCount': 12,
                         'type': 'output',
                         'valueSchema': 'com.bakdata.fake.Produced'
                     }
@@ -1018,14 +1018,14 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
                             'cleanup.policy': 'compact,delete',
                             'retention.ms': '-1'
                         },
-                        'partitions_count': 50,
+                        'partitionsCount': 50,
                         'type': 'output'
                     },
                     'resources-pipeline-with-envs-converter-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 10,
+                        'partitionsCount': 10,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -1092,14 +1092,14 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
                         'configs': {
                             'retention.ms': '-1'
                         },
-                        'partitions_count': 50,
+                        'partitionsCount': 50,
                         'type': 'output'
                     },
                     'resources-pipeline-with-envs-filter-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -1271,14 +1271,14 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'configs': {
                             'retention.ms': '-1'
                         },
-                        'partitions_count': 50,
+                        'partitionsCount': 50,
                         'type': 'output'
                     },
                     'resources-read-from-component-inflate-step-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -1374,7 +1374,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -1432,14 +1432,14 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'configs': {
                             'retention.ms': '-1'
                         },
-                        'partitions_count': 50,
+                        'partitionsCount': 50,
                         'type': 'output'
                     },
                     'resources-read-from-component-inflate-step-without-prefix-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -1535,7 +1535,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -1592,7 +1592,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -1647,7 +1647,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -1702,7 +1702,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -1753,7 +1753,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -1804,7 +1804,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -1859,7 +1859,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 12,
+                        'partitionsCount': 12,
                         'type': 'output',
                         'valueSchema': 'com.bakdata.fake.Produced'
                     }
@@ -1926,14 +1926,14 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
                             'cleanup.policy': 'compact,delete',
                             'retention.ms': '-1'
                         },
-                        'partitions_count': 50,
+                        'partitionsCount': 50,
                         'type': 'output'
                     },
                     'resources-component-type-substitution-converter-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 10,
+                        'partitionsCount': 10,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -2007,14 +2007,14 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
                         'configs': {
                             'retention.ms': '-1'
                         },
-                        'partitions_count': 50,
+                        'partitionsCount': 50,
                         'type': 'output'
                     },
                     'resources-component-type-substitution-filter-app-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
@@ -2064,7 +2064,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
                     'app1-test-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
+                        'partitionsCount': 3,
                         'type': 'output'
                     }
                 }
@@ -2106,13 +2106,13 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
                     'app2-dead-letter-topic': {
                         'configs': {
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error'
                     },
                     'app2-test-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
+                        'partitionsCount': 3,
                         'type': 'output'
                     }
                 }
@@ -2161,7 +2161,7 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
                     'app1-test-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
+                        'partitionsCount': 3,
                         'type': 'output'
                     }
                 }
@@ -2203,13 +2203,13 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
                     'app2-dead-letter-topic': {
                         'configs': {
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error'
                     },
                     'app2-test-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
+                        'partitionsCount': 3,
                         'type': 'output'
                     }
                 }
@@ -2271,7 +2271,7 @@ snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
-                        'partitions_count': 1,
+                        'partitionsCount': 1,
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     }
