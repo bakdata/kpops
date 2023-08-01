@@ -37,7 +37,6 @@ cachetools = "^5.2.0"
 dictdiffer = "^0.9.0"
 python-schema-registry-client = "^2.4.1"
 httpx = "^0.24.1"
-async-property = "^0.2.2"
 
 
 [tool.poetry.group.dev.dependencies]

@@ -79,7 +79,7 @@ class TestConnectorApiWrapper:
 
     @pytest.mark.asyncio
     async def test_should_return_correct_response_when_connector_created(
-        self, httpx_mock
+        self, httpx_mock: HTTPXMock
     ):
         actual_response = {
             "name": "hdfs-sink-connector",

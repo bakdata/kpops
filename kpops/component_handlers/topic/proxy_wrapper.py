@@ -1,7 +1,7 @@
 import logging
+from functools import cached_property
 
 import httpx
-from async_property import async_cached_property
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.topic.exception import (
@@ -31,10 +31,11 @@ class ProxyWrapper:
                 "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
             )
         self._client = httpx.AsyncClient(base_url=pipeline_config.kafka_rest_host)
+        self._sync_client = httpx.Client(base_url=pipeline_config.kafka_rest_host)
         self._host = pipeline_config.kafka_rest_host
 
-    @async_cached_property
-    async def cluster_id(self) -> str:
+    @cached_property
+    def cluster_id(self) -> str:
         """
         Gets the Kafka cluster ID by sending a requests to Kafka REST proxy.
         More information about the cluster ID can be found here:
@@ -44,7 +45,7 @@ class ProxyWrapper:
         bootstrap.servers configuration. Therefore, only one Kafka cluster will be returned.
         :return: The Kafka cluster ID.
         """
-        response = await self._client.get(url="/v3/clusters")
+        response = self._sync_client.get(url="/v3/clusters")
 
         if response.status_code == httpx.codes.OK:
             cluster_information = response.json()
@@ -82,7 +83,7 @@ class ProxyWrapper:
         :param topic_name: Name of the topic
         """
         response = await self._client.delete(
-            url=f"/v3/clusters/{await self.cluster_id}/topics/{topic_name}",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
+            url=f"/v3/clusters/{self.cluster_id}/topics/{topic_name}",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
             headers=HEADERS,
         )
 
@@ -101,7 +102,7 @@ class ProxyWrapper:
         """
 
         response = await self._client.get(
-            url=f"/v3/clusters/{await self.cluster_id}/topics/{topic_name}",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
+            url=f"/v3/clusters/{self.cluster_id}/topics/{topic_name}",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
             headers=HEADERS,
         )
 
@@ -129,7 +130,7 @@ class ProxyWrapper:
         """
 
         response = await self._client.get(
-            url=f"/v3/clusters/{await self.cluster_id}/topics/{topic_name}/configs",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
+            url=f"/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
             headers=HEADERS,
         )
 
@@ -158,7 +159,7 @@ class ProxyWrapper:
         :param config_name: The configuration parameter name.
         """
         response = await self._client.post(
-            url=f"/v3/clusters/{await self.cluster_id}/topics/{topic_name}/configs:alter",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
+            url=f"/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
             headers=HEADERS,
             json={"data": json_body},
         )
@@ -176,7 +177,7 @@ class ProxyWrapper:
         :return: The broker configuration.
         """
         response = await self._client.get(
-            url=f"/v3/clusters/{await self.cluster_id}/brokers/-/configs",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
+            url=f"/v3/clusters/{self.cluster_id}/brokers/-/configs",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
             headers=HEADERS,
         )
 

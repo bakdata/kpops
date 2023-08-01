@@ -41,6 +41,10 @@ class TestConnectorHandler:
         )
 
     @pytest.fixture
+    def connector_wrapper(self):
+        return AsyncMock()
+
+    @pytest.fixture
     def renderer_diff_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
             "kpops.component_handlers.kafka_connect.kafka_connect_handler.render_diff"
@@ -58,8 +62,8 @@ class TestConnectorHandler:
         self,
         renderer_diff_mock: MagicMock,
         log_info_mock: MagicMock,
+        connector_wrapper: AsyncMock,
     ):
-        connector_wrapper = AsyncMock()
         handler = self.connector_handler(connector_wrapper)
         renderer_diff_mock.return_value = None
 
@@ -81,10 +85,8 @@ class TestConnectorHandler:
 
     @pytest.mark.asyncio
     async def test_should_log_correct_message_when_create_connector_and_connector_not_exists_in_dry_run(
-        self,
-        log_info_mock: MagicMock,
+        self, log_info_mock: MagicMock, connector_wrapper: AsyncMock
     ):
-        connector_wrapper = AsyncMock()
         handler = self.connector_handler(connector_wrapper)
 
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
@@ -112,10 +114,8 @@ class TestConnectorHandler:
 
     @pytest.mark.asyncio
     async def test_should_log_correct_message_when_create_connector_and_connector_exists_in_dry_run(
-        self,
-        log_info_mock: MagicMock,
+        self, log_info_mock: MagicMock, connector_wrapper: AsyncMock
     ):
-        connector_wrapper = AsyncMock()
         handler = self.connector_handler(connector_wrapper)
 
         actual_response = {
@@ -158,10 +158,8 @@ class TestConnectorHandler:
 
     @pytest.mark.asyncio
     async def test_should_log_invalid_config_when_create_connector_in_dry_run(
-        self, renderer_diff_mock: MagicMock
+        self, renderer_diff_mock: MagicMock, connector_wrapper: AsyncMock
     ):
-        connector_wrapper = AsyncMock()
-
         errors = [
             "Missing required configuration file which has no default value.",
             "Missing connector name.",
@@ -186,9 +184,8 @@ class TestConnectorHandler:
 
     @pytest.mark.asyncio
     async def test_should_call_update_connector_config_when_connector_exists_not_dry_run(
-        self,
+        self, connector_wrapper: AsyncMock
     ):
-        connector_wrapper = AsyncMock()
         handler = self.connector_handler(connector_wrapper)
 
         config = KafkaConnectConfig()
@@ -201,10 +198,8 @@ class TestConnectorHandler:
 
     @pytest.mark.asyncio
     async def test_should_call_create_connector_when_connector_does_not_exists_not_dry_run(
-        self,
+        self, connector_wrapper: AsyncMock
     ):
-        connector_wrapper = AsyncMock()
-
         handler = self.connector_handler(connector_wrapper)
 
         config = KafkaConnectConfig()
@@ -217,11 +212,8 @@ class TestConnectorHandler:
 
     @pytest.mark.asyncio
     async def test_should_print_correct_log_when_destroying_connector_in_dry_run(
-        self,
-        log_info_mock: MagicMock,
+        self, log_info_mock: MagicMock, connector_wrapper: AsyncMock
     ):
-        connector_wrapper = AsyncMock()
-
         handler = self.connector_handler(connector_wrapper)
 
         await handler.destroy_connector(CONNECTOR_NAME, True)
@@ -234,10 +226,8 @@ class TestConnectorHandler:
 
     @pytest.mark.asyncio
     async def test_should_print_correct_warning_log_when_destroying_connector_and_connector_exists_in_dry_run(
-        self,
-        log_warning_mock: MagicMock,
+        self, log_warning_mock: MagicMock, connector_wrapper: AsyncMock
     ):
-        connector_wrapper = AsyncMock()
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
 
         handler = self.connector_handler(connector_wrapper)
@@ -250,9 +240,8 @@ class TestConnectorHandler:
 
     @pytest.mark.asyncio
     async def test_should_call_delete_connector_when_destroying_existing_connector_not_dry_run(
-        self,
+        self, connector_wrapper: AsyncMock
     ):
-        connector_wrapper = AsyncMock()
         handler = self.connector_handler(connector_wrapper)
 
         await handler.destroy_connector(CONNECTOR_NAME, False)
@@ -263,10 +252,8 @@ class TestConnectorHandler:
 
     @pytest.mark.asyncio
     async def test_should_print_correct_warning_log_when_destroying_connector_and_connector_exists_not_dry_run(
-        self,
-        log_warning_mock: MagicMock,
+        self, log_warning_mock: MagicMock, connector_wrapper: AsyncMock
     ):
-        connector_wrapper = AsyncMock()
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         handler = self.connector_handler(connector_wrapper)
 

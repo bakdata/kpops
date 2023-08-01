@@ -32,17 +32,6 @@ test = ["contextlib2", "coverage[toml] (>=4.5)", "hypothesis (>=4.0)", "mock (>=
 trio = ["trio (>=0.16,<0.22)"]
 
 [[package]]
-name = "async-property"
-version = "0.2.2"
-description = "Python decorator for async properties."
-optional = false
-python-versions = "*"
-files = [
-    {file = "async_property-0.2.2-py2.py3-none-any.whl", hash = "sha256:8924d792b5843994537f8ed411165700b27b2bd966cefc4daeefc1253442a9d7"},
-    {file = "async_property-0.2.2.tar.gz", hash = "sha256:17d9bd6ca67e27915a75d92549df64b5c7174e9dc806b30a3934dc4ff0506380"},
-]
-
-[[package]]
 name = "attrs"
 version = "22.1.0"
 description = "Classes Without Boilerplate"
@@ -1613,4 +1602,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "9f0261bfb360752cf70161de6284b9b3b08a54569c4ee862b35c02e946e34f28"
+content-hash = "e58fdd8b8e2557f7612d13c6241dbce1e8af43222e93d18d869c898d7fcd760c"

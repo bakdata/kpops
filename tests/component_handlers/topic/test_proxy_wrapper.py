@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 from typing import Any
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 import pytest_asyncio
@@ -49,7 +49,7 @@ class TestProxyWrapper:
             status_code=200,
         )
         assert self.proxy_wrapper.host == HOST
-        assert await self.proxy_wrapper.cluster_id == "cluster-1"  # type: ignore
+        assert self.proxy_wrapper.cluster_id == "cluster-1"  # type: ignore
 
     @pytest.mark.asyncio
     async def test_should_raise_exception_when_host_is_not_set(self):
@@ -65,7 +65,7 @@ class TestProxyWrapper:
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.post")
     async def test_should_create_topic_with_all_topic_configuration(
-        self, mock_post: MagicMock
+        self, mock_post: AsyncMock
     ):
         topic_spec = {
             "topic_name": "topic-X",
@@ -89,7 +89,7 @@ class TestProxyWrapper:
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.post")
     async def test_should_create_topic_with_no_configuration(
-        self, mock_post: MagicMock
+        self, mock_post: AsyncMock
     ):
         topic_spec: dict[str, Any] = {"topic_name": "topic-X"}
 
