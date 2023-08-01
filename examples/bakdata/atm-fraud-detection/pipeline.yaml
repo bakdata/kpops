@@ -1,9 +1,9 @@
 - type: producer
   name: account-producer
   app:
-    replicaCount: 1
+    replica_count: 1
     image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
-    imageTag: 1.0.0
+    image_tag: 1.0.0
     schedule: 0 12 * * *
     suspend: true
     prometheus:
@@ -14,10 +14,10 @@
 - type: producer
   name: transaction-avro-producer
   app:
-    replicaCount: 1
+    replica_count: 1
     image: ${DOCKER_REGISTRY}/atm-demo-transactionavroproducer
-    imageTag: 1.0.0
-    commandLine:
+    image_tag: 1.0.0
+    command_line:
       REAL_TX: 19
       ITERATION: 20
     schedule: 0 12 * * *
@@ -30,10 +30,10 @@
 - type: streams-app
   name: transaction-joiner
   app:
-    replicaCount: 1
+    replica_count: 1
     image: ${DOCKER_REGISTRY}/atm-demo-transactionjoiner
-    imageTag: 1.0.0
-    commandLine:
+    image_tag: 1.0.0
+    command_line:
       PRODUCTIVE: false
     annotations:
       consumerGroup: atm-transactionjoiner-atm-fraud-joinedtransactions-topic
@@ -45,10 +45,10 @@
 - type: streams-app
   name: fraud-detector
   app:
-    replicaCount: 1
+    replica_count: 1
     image: ${DOCKER_REGISTRY}/atm-demo-frauddetector
-    imageTag: 1.0.0
-    commandLine:
+    image_tag: 1.0.0
+    command_line:
       PRODUCTIVE: false
     annotations:
       consumerGroup: atm-frauddetector-atm-fraud-possiblefraudtransactions-topic
@@ -69,8 +69,8 @@
   app:
     replicaCount: 1
     image: ${DOCKER_REGISTRY}/atm-demo-accountlinker
-    imageTag: 1.0.0
-    commandLine:
+    image_tag: 1.0.0
+    command_line:
       PRODUCTIVE: false
     annotations:
       consumerGroup: atm-accountlinker-atm-fraud-output-topic
