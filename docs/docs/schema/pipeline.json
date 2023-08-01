@@ -168,7 +168,7 @@
                     "enum": [
                         "kafka-app"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -295,7 +295,7 @@
                     "enum": [
                         "kafka-connector"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -389,7 +389,7 @@
                     "enum": [
                         "kafka-sink-connector"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -488,7 +488,7 @@
                     "enum": [
                         "kafka-source-connector"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -587,7 +587,7 @@
                     "enum": [
                         "kubernetes-app"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -735,7 +735,7 @@
                     "enum": [
                         "producer"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -911,7 +911,7 @@
                     "enum": [
                         "streams-app"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {

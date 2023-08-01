@@ -9,7 +9,7 @@ from pydantic.schema import SkipField
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.docstring import describe_object
+from kpops.utils.docstring import describe_attr, describe_object
 
 
 class SchemaScope(str, Enum):
@@ -118,6 +118,9 @@ def gen_pipeline_schema(
     for component in components:
         component_type = component.get_component_type()
         component.__fields__["type"].type_ = Literal[component_type]  # type: ignore
+        component.__fields__["type"].field_info.title = describe_attr(
+            "type", component.__doc__
+        )
         component.__fields__["type"].field_info.description = describe_object(
             component.__doc__
         )
