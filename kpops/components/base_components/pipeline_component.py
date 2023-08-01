@@ -38,7 +38,6 @@ class PipelineComponent(BaseDefaultsComponent):
     :type to: ToSection, optional
     """
 
-    type = "pipeline-component"
     name: str = Field(default=..., description=describe_attr("name", __doc__))
     prefix: str = Field(
         default="${pipeline_name}-",
