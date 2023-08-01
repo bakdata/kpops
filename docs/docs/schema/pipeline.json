@@ -173,7 +173,6 @@
                 },
                 "type": {
                     "default": "kafka-app",
-                    "description": "Component type",
                     "title": "Type",
                     "type": "string"
                 },
@@ -306,7 +305,6 @@
                 },
                 "type": {
                     "default": "kafka-connector",
-                    "description": "Component type",
                     "title": "Type",
                     "type": "string"
                 },
@@ -406,7 +404,6 @@
                 },
                 "type": {
                     "default": "kafka-sink-connector",
-                    "description": "Component type",
                     "title": "Type",
                     "type": "string"
                 },
@@ -511,7 +508,6 @@
                 },
                 "type": {
                     "default": "kafka-source-connector",
-                    "description": "Component type",
                     "title": "Type",
                     "type": "string"
                 },
@@ -616,7 +612,6 @@
                 },
                 "type": {
                     "default": "kubernetes-app",
-                    "description": "Component type",
                     "title": "Type",
                     "type": "string"
                 },
@@ -692,7 +687,6 @@
                     "title": "To"
                 },
                 "type": {
-                    "const": "pipeline-component",
                     "default": "pipeline-component",
                     "title": "Type",
                     "type": "string"
@@ -776,7 +770,6 @@
                 },
                 "type": {
                     "default": "producer",
-                    "description": "Component type",
                     "title": "Type",
                     "type": "string"
                 },
@@ -958,7 +951,6 @@
                 },
                 "type": {
                     "default": "streams-app",
-                    "description": "Component type",
                     "title": "Type",
                     "type": "string"
                 },
