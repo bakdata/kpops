@@ -125,7 +125,7 @@ def gen_pipeline_schema(
 
     schema = schema_json_of(
         Sequence[AnnotatedPipelineComponents],
-        title="kpops pipeline schema",
+        title="KPOps pipeline schema",
         by_alias=True,
         indent=4,
         sort_keys=True,
@@ -136,6 +136,6 @@ def gen_pipeline_schema(
 def gen_config_schema() -> None:
     """Generate a json schema from the model of pipeline config"""
     schema = schema_json_of(
-        PipelineConfig, title="kpops config schema", indent=4, sort_keys=True
+        PipelineConfig, title="KPOps config schema", indent=4, sort_keys=True
     )
     print(schema)
