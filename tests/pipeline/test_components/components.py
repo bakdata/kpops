@@ -43,10 +43,11 @@ class InflateStep(StreamsApp):
     def inflate(self) -> list[PipelineComponent]:
         inflate_steps = super().inflate()
         if self.to:
+            name = self.name.removeprefix(self.prefix)
             for topic_name, topic_config in self.to.topics.items():
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
-                        name="inflated-sink-connector",
+                        name=f"{name}-inflated-sink-connector",
                         config=self.config,
                         handlers=self.handlers,
                         namespace="example-namespace",
@@ -67,7 +68,7 @@ class InflateStep(StreamsApp):
                     )
                     inflate_steps.append(kafka_connector)
                     streams_app = StreamsApp(
-                        name="inflated-streams-app",
+                        name=f"{name}-inflated-streams-app",
                         config=self.config,
                         handlers=self.handlers,
                         to=ToSection(  # type: ignore

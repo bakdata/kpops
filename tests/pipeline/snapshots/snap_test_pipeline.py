@@ -315,7 +315,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                 'topics': 'resources-pipeline-with-inflate-should-inflate',
                 'transforms.changeTopic.replacement': 'resources-pipeline-with-inflate-should-inflate-index-v1'
             },
-            'name': 'resources-pipeline-with-inflate-inflated-sink-connector',
+            'name': 'resources-pipeline-with-inflate-should-inflate-inflated-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
             'repoConfig': {
@@ -331,16 +331,16 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                 'models': {
                 },
                 'topics': {
-                    'inflated-sink-connector': {
-                        'configs': {
-                        },
-                        'role': 'test',
-                        'type': 'extra'
-                    },
                     'kafka-sink-connector': {
                         'configs': {
                         },
                         'type': 'output'
+                    },
+                    'should-inflate-inflated-sink-connector': {
+                        'configs': {
+                        },
+                        'role': 'test',
+                        'type': 'extra'
                     }
                 }
             },
@@ -349,21 +349,21 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
         },
         {
             'app': {
-                'nameOverride': 'resources-pipeline-with-inflate-inflated-streams-app',
+                'nameOverride': 'resources-pipeline-with-inflate-should-inflate-inflated-streams-app',
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'config': {
                         'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
                     },
-                    'errorTopic': 'resources-pipeline-with-inflate-inflated-streams-app-error',
+                    'errorTopic': 'resources-pipeline-with-inflate-should-inflate-inflated-streams-app-error',
                     'inputTopics': [
                         'kafka-sink-connector'
                     ],
-                    'outputTopic': 'should-inflate-inflated-streams-app',
+                    'outputTopic': 'should-inflate-should-inflate-inflated-streams-app',
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-pipeline-with-inflate-inflated-streams-app',
+            'name': 'resources-pipeline-with-inflate-should-inflate-inflated-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
             'repoConfig': {
@@ -377,7 +377,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                 'models': {
                 },
                 'topics': {
-                    'resources-pipeline-with-inflate-inflated-streams-app-error': {
+                    'resources-pipeline-with-inflate-should-inflate-inflated-streams-app-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
@@ -385,7 +385,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     },
-                    'should-inflate-inflated-streams-app': {
+                    'should-inflate-should-inflate-inflated-streams-app': {
                         'configs': {
                         },
                         'type': 'output'
@@ -728,7 +728,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                 'commandLine': {
                     'CONVERT_XML': True
                 },
-                'nameOverride': 'resources-no-input-topic-pipeline-streams-app',
+                'nameOverride': 'resources-no-input-topic-pipeline-app1',
                 'resources': {
                     'limits': {
                         'memory': '2G'
@@ -742,7 +742,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                     'config': {
                         'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
                     },
-                    'errorTopic': 'resources-no-input-topic-pipeline-streams-app-error',
+                    'errorTopic': 'resources-no-input-topic-pipeline-app1-error',
                     'inputPattern': '.*',
                     'outputTopic': 'example-output',
                     'schemaRegistryUrl': 'http://localhost:8081'
@@ -757,7 +757,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                     }
                 }
             },
-            'name': 'resources-no-input-topic-pipeline-streams-app',
+            'name': 'resources-no-input-topic-pipeline-app1',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-input-topic-pipeline-',
             'repoConfig': {
@@ -776,7 +776,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                         },
                         'type': 'output'
                     },
-                    'resources-no-input-topic-pipeline-streams-app-error': {
+                    'resources-no-input-topic-pipeline-app1-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
@@ -791,13 +791,13 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
         },
         {
             'app': {
-                'nameOverride': 'resources-no-input-topic-pipeline-streams-app',
+                'nameOverride': 'resources-no-input-topic-pipeline-app2',
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'config': {
                         'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
                     },
-                    'errorTopic': 'resources-no-input-topic-pipeline-streams-app-error',
+                    'errorTopic': 'resources-no-input-topic-pipeline-app2-error',
                     'extraOutputTopics': {
                         'extra': 'example-output-extra',
                         'test-output': 'test-output-extra'
@@ -808,7 +808,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-no-input-topic-pipeline-streams-app',
+            'name': 'resources-no-input-topic-pipeline-app2',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-input-topic-pipeline-',
             'repoConfig': {
@@ -828,7 +828,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                         'role': 'extra',
                         'type': 'extra'
                     },
-                    'resources-no-input-topic-pipeline-streams-app-error': {
+                    'resources-no-input-topic-pipeline-app2-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
@@ -1303,7 +1303,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'topics': 'resources-read-from-component-inflate-step',
                 'transforms.changeTopic.replacement': 'resources-read-from-component-inflate-step-index-v1'
             },
-            'name': 'resources-read-from-component-inflated-sink-connector',
+            'name': 'resources-read-from-component-inflate-step-inflated-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1319,7 +1319,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'models': {
                 },
                 'topics': {
-                    'inflated-sink-connector': {
+                    'inflate-step-inflated-sink-connector': {
                         'configs': {
                         },
                         'role': 'test',
@@ -1337,21 +1337,21 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
         },
         {
             'app': {
-                'nameOverride': 'resources-read-from-component-inflated-streams-app',
+                'nameOverride': 'resources-read-from-component-inflate-step-inflated-streams-app',
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'config': {
                         'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
                     },
-                    'errorTopic': 'resources-read-from-component-inflated-streams-app-error',
+                    'errorTopic': 'resources-read-from-component-inflate-step-inflated-streams-app-error',
                     'inputTopics': [
                         'kafka-sink-connector'
                     ],
-                    'outputTopic': 'inflate-step-inflated-streams-app',
+                    'outputTopic': 'inflate-step-inflate-step-inflated-streams-app',
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-read-from-component-inflated-streams-app',
+            'name': 'resources-read-from-component-inflate-step-inflated-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1365,12 +1365,12 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'models': {
                 },
                 'topics': {
-                    'inflate-step-inflated-streams-app': {
+                    'inflate-step-inflate-step-inflated-streams-app': {
                         'configs': {
                         },
                         'type': 'output'
                     },
-                    'resources-read-from-component-inflated-streams-app-error': {
+                    'resources-read-from-component-inflate-step-inflated-streams-app-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
@@ -1408,7 +1408,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     },
                     'errorTopic': 'resources-read-from-component-inflate-step-without-prefix-error',
                     'inputTopics': [
-                        'inflate-step-inflated-streams-app'
+                        'inflate-step-inflate-step-inflated-streams-app'
                     ],
                     'outputTopic': 'resources-read-from-component-inflate-step-without-prefix',
                     'schemaRegistryUrl': 'http://localhost:8081'
@@ -1464,7 +1464,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'topics': 'resources-read-from-component-inflate-step-without-prefix',
                 'transforms.changeTopic.replacement': 'resources-read-from-component-inflate-step-without-prefix-index-v1'
             },
-            'name': 'resources-read-from-component-inflated-sink-connector',
+            'name': 'resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1480,7 +1480,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'models': {
                 },
                 'topics': {
-                    'inflated-sink-connector': {
+                    'inflate-step-without-prefix-inflated-sink-connector': {
                         'configs': {
                         },
                         'role': 'test',
@@ -1498,21 +1498,21 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
         },
         {
             'app': {
-                'nameOverride': 'resources-read-from-component-inflated-streams-app',
+                'nameOverride': 'resources-read-from-component-inflate-step-without-prefix-inflated-streams-app',
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'config': {
                         'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
                     },
-                    'errorTopic': 'resources-read-from-component-inflated-streams-app-error',
+                    'errorTopic': 'resources-read-from-component-inflate-step-without-prefix-inflated-streams-app-error',
                     'inputTopics': [
                         'kafka-sink-connector'
                     ],
-                    'outputTopic': 'inflate-step-without-prefix-inflated-streams-app',
+                    'outputTopic': 'inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app',
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-read-from-component-inflated-streams-app',
+            'name': 'resources-read-from-component-inflate-step-without-prefix-inflated-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1526,12 +1526,12 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'models': {
                 },
                 'topics': {
-                    'inflate-step-without-prefix-inflated-streams-app': {
+                    'inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app': {
                         'configs': {
                         },
                         'type': 'output'
                     },
-                    'resources-read-from-component-inflated-streams-app-error': {
+                    'resources-read-from-component-inflate-step-without-prefix-inflated-streams-app-error': {
                         'configs': {
                             'cleanup.policy': 'compact,delete'
                         },
@@ -1721,7 +1721,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     },
                     'errorTopic': 'resources-read-from-component-consumer4-error',
                     'inputTopics': [
-                        'inflate-step-inflated-streams-app'
+                        'inflate-step-inflate-step-inflated-streams-app'
                     ],
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
@@ -1772,7 +1772,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     },
                     'errorTopic': 'resources-read-from-component-consumer5-error',
                     'inputTopics': [
-                        'inflate-step-inflated-streams-app'
+                        'inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app'
                     ],
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
