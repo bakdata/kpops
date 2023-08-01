@@ -150,6 +150,8 @@ def gen_pipeline_schema(
             class_validators=None,
             model_config=BaseConfig,
         )
+        # drop duplicate component type
+        component.__fields__.pop("type")
 
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="schema_type")

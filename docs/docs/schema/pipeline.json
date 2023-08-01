@@ -171,11 +171,6 @@
                     "description": "Topic(s) into which the component will write output",
                     "title": "To"
                 },
-                "type": {
-                    "default": "kafka-app",
-                    "title": "Type",
-                    "type": "string"
-                },
                 "version": {
                     "default": "2.9.0",
                     "description": "Helm chart version",
@@ -303,11 +298,6 @@
                     "description": "Topic(s) into which the component will write output",
                     "title": "To"
                 },
-                "type": {
-                    "default": "kafka-connector",
-                    "title": "Type",
-                    "type": "string"
-                },
                 "version": {
                     "default": "1.0.4",
                     "description": "Helm chart version",
@@ -401,11 +391,6 @@
                     ],
                     "description": "Topic(s) into which the component will write output",
                     "title": "To"
-                },
-                "type": {
-                    "default": "kafka-sink-connector",
-                    "title": "Type",
-                    "type": "string"
                 },
                 "version": {
                     "default": "1.0.4",
@@ -506,11 +491,6 @@
                     "description": "Topic(s) into which the component will write output",
                     "title": "To"
                 },
-                "type": {
-                    "default": "kafka-source-connector",
-                    "title": "Type",
-                    "type": "string"
-                },
                 "version": {
                     "default": "1.0.4",
                     "description": "Helm chart version",
@@ -610,11 +590,6 @@
                     "description": "Topic(s) into which the component will write output",
                     "title": "To"
                 },
-                "type": {
-                    "default": "kubernetes-app",
-                    "title": "Type",
-                    "type": "string"
-                },
                 "version": {
                     "description": "Helm chart version",
                     "title": "Version",
@@ -685,11 +660,6 @@
                     ],
                     "description": "Topic(s) into which the component will write output",
                     "title": "To"
-                },
-                "type": {
-                    "default": "pipeline-component",
-                    "title": "Type",
-                    "type": "string"
                 }
             },
             "required": [
@@ -767,11 +737,6 @@
                     ],
                     "description": "Topic(s) into which the component will write output",
                     "title": "To"
-                },
-                "type": {
-                    "default": "producer",
-                    "title": "Type",
-                    "type": "string"
                 },
                 "version": {
                     "default": "2.9.0",
@@ -948,11 +913,6 @@
                     ],
                     "description": "Topic(s) into which the component will write output",
                     "title": "To"
-                },
-                "type": {
-                    "default": "streams-app",
-                    "title": "Type",
-                    "type": "string"
                 },
                 "version": {
                     "default": "2.9.0",
