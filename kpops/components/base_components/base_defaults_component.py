@@ -76,7 +76,7 @@ class BaseDefaultsComponent(BaseModel):
     def get_component_type(cls) -> str:
         """Return calling component's type
 
-        :returns: Component type
+        :returns: Component class name in dash-case
         :rtype: str
         """
         return to_dash(cls.__name__)
