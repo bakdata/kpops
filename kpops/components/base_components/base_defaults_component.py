@@ -11,7 +11,7 @@ from pydantic import BaseModel, Field
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.utils.dict_ops import update_nested
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
 from kpops.utils.pydantic import DescConfig
 from kpops.utils.yaml_loading import load_yaml_file
@@ -40,7 +40,7 @@ class BaseDefaultsComponent(BaseModel):
 
     type: str = Field(
         default=...,
-        description=describe_object(__doc__),
+        description=describe_attr("type", __doc__),
         const=True,
     )
     enrich: bool = Field(
