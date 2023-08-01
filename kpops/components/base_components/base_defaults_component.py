@@ -38,7 +38,7 @@ class BaseDefaultsComponent(BaseModel):
     :type validate: bool, optional
     """
 
-    type: str = Field(...)
+    type: str = Field(default=...)
     enrich: bool = Field(
         default=False,
         description=describe_attr("enrich", __doc__),
