@@ -21,9 +21,6 @@ class ProducerApp(KafkaApp):
 
     :param type: Component type, defaults to "producer"
     :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "producer"
-    :type schema_type: Literal["producer"], optional
     :param app: Application-specific settings
     :type app: ProducerValues
     :param from_: Producer doesn't support FromSection, defaults to None

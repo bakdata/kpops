@@ -7,8 +7,6 @@ from kpops.utils.docstring import describe_object
 
 
 def to_camel(field: str) -> str:
-    if field == "schema_type":
-        return field
     return humps.camelize(field)
 
 

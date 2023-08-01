@@ -40,9 +40,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
     :param type: Component type, defaults to "kafka-connector"
     :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-connector"
-    :type schema_type: Literal["kafka-connector"], optional
     :param app: Application-specific settings
     :type app: KafkaAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for
@@ -293,14 +290,9 @@ class KafkaSourceConnector(KafkaConnector):
     """Kafka source connector model
 
     :param type: Component type, defaults to "kafka-source-connector"
-    :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-source-connector"
-    :type schema_type: Literal["kafka-source-connector"], optional
     :param offset_topic: offset.storage.topic,
         more info: https://kafka.apache.org/documentation/#connect_running,
         defaults to None
-    :type schema_type: str, optional
     """
 
     type = "kafka-source-connector"
@@ -360,10 +352,6 @@ class KafkaSinkConnector(KafkaConnector):
     """Kafka sink connector model
 
     :param type: Component type, defaults to "kafka-sink-connector"
-    :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-sink-connector"
-    :type schema_type: Literal["kafka-sink-connector"], optional
     """
 
     type = "kafka-sink-connector"

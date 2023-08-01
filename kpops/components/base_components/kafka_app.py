@@ -62,9 +62,6 @@ class KafkaApp(KubernetesApp):
 
     :param type: Component type, defaults to "kafka-app"
     :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-app"
-    :type schema_type: Literal["kafka-app"], optional
     :param app: Application-specific settings
     :type app: KafkaAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for

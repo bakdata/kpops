@@ -16,7 +16,7 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 runner = CliRunner()
 
 
-# schema_type and type not defined
+# type is inherited from PipelineComponent
 class EmptyPipelineComponent(PipelineComponent):
     class Config:
         anystr_strip_whitespace = True
@@ -26,7 +26,7 @@ class SubPipelineComponent(EmptyPipelineComponent):
     type = "sub-pipeline-component"
 
 
-# schema_type and type are inherited from SubPipelineComponent
+# type is inherited from SubPipelineComponent
 class SubPipelineComponentNoSchemaTypeNoType(SubPipelineComponent):
     ...
 
@@ -57,9 +57,6 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
         if error_marker is found in result.stdout, the description extraction does
         not work correctly.,!?:error_marker   :: "!$%
     :type type: This line should not appear anywhere error_marker
-    :param schema_type: This description should not be applied to schema_type as
-        it instead reads the class description. error_marker
-    :type schema_type: This line should not appear anywhere error_marker
     :param error_marker: error_marker
     """
 

@@ -15,9 +15,6 @@ class StreamsApp(KafkaApp):
 
     :param type: Component type, defaults to "streams-app"
     :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "streams-app"
-    :type schema_type: Literal["streams-app"], optional
     :param app: Application-specific settings
     :type app: StreamsAppConfig
     """
