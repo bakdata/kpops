@@ -7,7 +7,7 @@ from typer.testing import CliRunner
 
 import kpops
 from kpops.cli.main import app
-from kpops.pipeline_generator.pipeline import ParsingException
+from kpops.pipeline_generator.pipeline import ParsingException, ValidationError
 
 runner = CliRunner()
 
@@ -457,6 +457,24 @@ class TestPipeline:
                         / "pipeline-with-illegal-kubernetes-name/pipeline.yaml"
                     ),
                     "tests.pipeline.test_components",
+                    "--defaults",
+                    str(RESOURCE_PATH),
+                ],
+                catch_exceptions=False,
+            )
+
+    def test_validate_unique_step_names(self):
+        with pytest.raises(
+            ValidationError,
+            match="step names should be unique. duplicate step names: resources-pipeline-duplicate-step-names-component",
+        ):
+            runner.invoke(
+                app,
+                [
+                    "generate",
+                    "--pipeline-base-dir",
+                    str(PIPELINE_BASE_DIR_PATH),
+                    str(RESOURCE_PATH / "pipeline-duplicate-step-names/pipeline.yaml"),
                     "--defaults",
                     str(RESOURCE_PATH),
                 ],

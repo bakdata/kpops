@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import logging
+from collections import Counter
 from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
@@ -23,6 +24,10 @@ log = logging.getLogger("PipelineGenerator")
 
 
 class ParsingException(Exception):
+    pass
+
+
+class ValidationError(Exception):
     pass
 
 
@@ -53,6 +58,14 @@ class PipelineComponents(BaseModel):
 
     def __len__(self) -> int:
         return len(self.components)
+
+    def validate_unique_names(self) -> None:
+        step_names = [component.name for component in self.components]
+        duplicates = [name for name, count in Counter(step_names).items() if count > 1]
+        if duplicates:
+            raise ValidationError(
+                f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
+            )
 
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:
@@ -99,6 +112,7 @@ class Pipeline:
         self.registry = registry
         self.env_components_index = create_env_components_index(environment_components)
         self.parse_components(component_list)
+        self.validate()
 
     @classmethod
     def load_from_yaml(
@@ -310,6 +324,9 @@ class Pipeline:
                 **update_nested_pair(substitution, ENV),
             )
         )
+
+    def validate(self) -> None:
+        self.components.validate_unique_names()
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
