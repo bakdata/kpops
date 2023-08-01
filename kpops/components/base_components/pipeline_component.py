@@ -39,11 +39,7 @@ class PipelineComponent(BaseDefaultsComponent):
     :type to: ToSection, optional
     """
 
-    type: str = Field(
-        default="pipeline-component",
-        description=describe_attr("type", __doc__),
-        const=True,
-    )
+    type = "pipeline-component"
     schema_type: Literal["pipeline-component"] = Field(
         default="pipeline-component",
         title="Component type",

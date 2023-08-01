@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Literal, NoReturn
+from typing import NoReturn
 
 from pydantic import Field
 from typing_extensions import override
@@ -27,7 +27,7 @@ from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfig
 
 log = logging.getLogger("KafkaConnector")
@@ -58,13 +58,7 @@ class KafkaConnector(PipelineComponent, ABC):
     :type resetter_values: dict, optional
     """
 
-    type: str = Field(default="kafka-connector", description="Component type")
-    schema_type: Literal["kafka-connector"] = Field(
-        default="kafka-connector",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
+    type = "kafka-connector"
     app: KafkaConnectConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),
@@ -309,16 +303,7 @@ class KafkaSourceConnector(KafkaConnector):
     :type schema_type: str, optional
     """
 
-    type: str = Field(
-        default="kafka-source-connector",
-        description=describe_attr("type", __doc__),
-    )
-    schema_type: Literal["kafka-source-connector"] = Field(
-        default="kafka-source-connector",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
+    type = "kafka-source-connector"
     offset_topic: str | None = Field(
         default=None,
         description=describe_attr("offset_topic", __doc__),
@@ -381,16 +366,7 @@ class KafkaSinkConnector(KafkaConnector):
     :type schema_type: Literal["kafka-sink-connector"], optional
     """
 
-    type: str = Field(
-        default="kafka-sink-connector",
-        description=describe_attr("type", __doc__),
-    )
-    schema_type: Literal["kafka-sink-connector"] = Field(
-        default="kafka-sink-connector",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
+    type = "kafka-sink-connector"
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:

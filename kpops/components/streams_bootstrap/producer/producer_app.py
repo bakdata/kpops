@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Literal
-
 from pydantic import BaseConfig, Extra, Field
 from typing_extensions import override
 
@@ -12,7 +10,7 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerValues
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 
 
 class ProducerApp(KafkaApp):
@@ -32,13 +30,7 @@ class ProducerApp(KafkaApp):
     :type from_: None, optional
     """
 
-    type: str = Field(default="producer", description="Component type")
-    schema_type: Literal["producer"] = Field(
-        default="producer",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
+    type = "producer"
     app: ProducerValues = Field(
         default=...,
         description=describe_attr("app", __doc__),

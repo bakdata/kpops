@@ -50,10 +50,7 @@ class KubernetesApp(PipelineComponent):
     :param version: Helm chart version, defaults to None
     """
 
-    type: str = Field(
-        default="kubernetes-app",
-        description=describe_attr("type", __doc__),
-    )
+    type = "kubernetes-app"
     schema_type: Literal["kubernetes-app"] = Field(
         default="kubernetes-app",
         title="Component type",
