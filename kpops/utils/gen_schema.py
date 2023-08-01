@@ -75,7 +75,7 @@ def _add_components(
         components = tuple()
     # Set of existing types, against which to check the new ones
     defined_component_types: set[str] = {
-        component.__fields__["type"].default for component in components
+        component.get_component_type() for component in components
     }
     custom_components = [
         component
