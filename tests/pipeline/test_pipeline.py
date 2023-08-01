@@ -16,6 +16,15 @@ PIPELINE_BASE_DIR_PATH = RESOURCE_PATH.parent
 
 
 class TestPipeline:
+    def test_python_api(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
+            "tests.pipeline.test_components",
+            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
+            defaults=RESOURCE_PATH,
+        )
+        assert len(pipeline) == 3
+
     def test_load_pipeline(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
@@ -453,12 +462,3 @@ class TestPipeline:
                 ],
                 catch_exceptions=False,
             )
-
-    def test_python_api(self):
-        pipeline = kpops.generate(
-            RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            "tests.pipeline.test_components",
-            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
-            defaults=RESOURCE_PATH,
-        )
-        assert len(pipeline) == 3
