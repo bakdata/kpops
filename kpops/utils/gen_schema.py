@@ -114,7 +114,7 @@ def gen_pipeline_schema(
     # Create a type union that will hold the union of all component types
     PipelineComponents = Union[components]  # type: ignore[valid-type]
 
-    # dynamically assign schema type discriminator
+    # re-assign component type as Literal to work as discriminator
     for component in components:
         component_type = component.get_component_type()
         component.__fields__["type"].type_ = Literal[component_type]  # type: ignore
