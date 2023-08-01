@@ -6,8 +6,12 @@ from pydantic import BaseConfig, BaseModel
 from kpops.utils.docstring import describe_object
 
 
-def to_camel(field: str) -> str:
-    return humps.camelize(field)
+def to_camel(s: str) -> str:
+    return humps.camelize(s)
+
+
+def to_dash(s: str) -> str:
+    return humps.depascalize(s).replace("_", "-")
 
 
 class CamelCaseConfig(BaseConfig):

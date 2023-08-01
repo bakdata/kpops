@@ -13,7 +13,7 @@ from kpops.component_handlers import ComponentHandlers
 from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
-from kpops.utils.pydantic import DescConfig
+from kpops.utils.pydantic import DescConfig, to_dash
 from kpops.utils.yaml_loading import load_yaml_file
 
 log = logging.getLogger("PipelineComponentEnricher")
@@ -26,8 +26,6 @@ class BaseDefaultsComponent(BaseModel):
     `defaults.yaml`. This class ensures that the defaults are read and assigned
     correctly to the component.
 
-    :param type: Component type
-    :type type: str
     :param enrich: Whether to enrich component with defaults, defaults to False
     :type enrich: bool, optional
     :param config: Pipeline configuration to be accessed by this component
@@ -38,11 +36,6 @@ class BaseDefaultsComponent(BaseModel):
     :type validate: bool, optional
     """
 
-    type: str = Field(
-        default=...,
-        title=describe_attr("type", __doc__),
-        const=True,
-    )
     enrich: bool = Field(
         default=False,
         description=describe_attr("enrich", __doc__),
@@ -86,10 +79,7 @@ class BaseDefaultsComponent(BaseModel):
         :returns: Component type
         :rtype: str
         """
-        # HACK: access type attribute through default value
-        # because exporting type as ClassVar from Pydantic models
-        # is not reliable
-        return cls.__fields__["type"].default
+        return to_dash(cls.__name__)
 
     def extend_with_defaults(self, **kwargs) -> dict:
         """Merge parent components' defaults with own

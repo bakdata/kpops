@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Annotated, Any, Literal, Sequence, Union
 
 from pydantic import Field, schema, schema_json_of
-from pydantic.fields import ModelField
+from pydantic.fields import FieldInfo, ModelField
 from pydantic.schema import SkipField
 
 from kpops.cli.pipeline_config import PipelineConfig
@@ -114,10 +114,20 @@ def gen_pipeline_schema(
 
     # re-assign component type as Literal to work as discriminator
     for component in components:
-        component_type_field = component.__fields__["type"]
-        component_type_field.type_ = Literal[component.get_component_type()]  # type: ignore
-        component_type_field.field_info.title = describe_attr("type", component.__doc__)
-        component_type_field.field_info.description = describe_object(component.__doc__)
+        component_type = component.get_component_type()
+        component.__fields__["type"] = ModelField(
+            name="type",
+            type_=Literal[component_type],  # type: ignore
+            required=False,
+            default=component_type,
+            final=True,
+            field_info=FieldInfo(
+                title=describe_attr("type", component.__doc__),
+                description=describe_object(component.__doc__),
+            ),
+            model_config=component.Config,
+            class_validators=None,
+        )
 
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="type")
