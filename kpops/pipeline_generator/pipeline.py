@@ -51,6 +51,9 @@ class PipelineComponents(BaseModel):
     def __iter__(self) -> Iterator[PipelineComponent]:
         return iter(self.components)
 
+    def __len__(self) -> int:
+        return len(self.components)
+
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:
         component.name = component.prefix + component.name
@@ -272,6 +275,9 @@ class Pipeline:
                 self.components.json(exclude_none=True, by_alias=True)
             )
         )
+
+    def __len__(self) -> int:
+        return len(self.components)
 
     def substitute_in_component(self, component_as_dict: dict) -> dict:
         """Substitute all $-placeholders in a component in dict representation
