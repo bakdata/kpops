@@ -106,6 +106,7 @@ class KubernetesApp(PipelineComponent):
 
     @override
     def _validate_custom(self, **kwargs) -> None:
+        super()._validate_custom(**kwargs)
         self.validate_kubernetes_name(self.name)
 
     @override
