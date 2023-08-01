@@ -379,7 +379,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             }
         ]
     },
-    "title": "kpops pipeline schema",
+    "title": "KPOps pipeline schema",
     "type": "array"
 }
 '''
