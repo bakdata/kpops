@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from functools import cached_property
-from typing import Any, Literal
+from typing import Any
 
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
@@ -18,7 +18,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 log = logging.getLogger("KubernetesAppComponent")
@@ -51,12 +51,6 @@ class KubernetesApp(PipelineComponent):
     """
 
     type = "kubernetes-app"
-    schema_type: Literal["kubernetes-app"] = Field(
-        default="kubernetes-app",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     app: KubernetesAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),

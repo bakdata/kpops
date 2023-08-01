@@ -139,10 +139,10 @@ def gen_pipeline_schema(
     # dynamically assign schema type discriminator
     for component in components:
         component_type = component.get_component_type()
-        field_info = component.__fields__["schema_type"].field_info
+        field_info = component.__fields__["type"].field_info
         field_info.description = describe_object(component.__doc__)
-        component.__fields__["schema_type"] = ModelField(
-            name="schema_type",
+        component.__fields__["type"] = ModelField(
+            name="type",
             type_=Literal[component_type],  # type: ignore
             required=False,
             default=component_type,
@@ -150,11 +150,9 @@ def gen_pipeline_schema(
             class_validators=None,
             model_config=BaseConfig,
         )
-        # drop duplicate component type
-        component.__fields__.pop("type")
 
     AnnotatedPipelineComponents = Annotated[
-        PipelineComponents, Field(discriminator="schema_type")
+        PipelineComponents, Field(discriminator="type")
     ]
 
     schema = schema_json_of(
@@ -163,7 +161,7 @@ def gen_pipeline_schema(
         by_alias=True,
         indent=4,
         sort_keys=True,
-    ).replace("schema_type", "type")
+    )
     print(schema)
 
 

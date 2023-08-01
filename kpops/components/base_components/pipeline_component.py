@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from functools import cached_property
-from typing import Literal
 
 from pydantic import Extra, Field
 
@@ -18,7 +17,7 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 
@@ -40,12 +39,6 @@ class PipelineComponent(BaseDefaultsComponent):
     """
 
     type = "pipeline-component"
-    schema_type: Literal["pipeline-component"] = Field(
-        default="pipeline-component",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     name: str = Field(default=..., description=describe_attr("name", __doc__))
     prefix: str = Field(
         default="${pipeline_name}-",
