@@ -4,7 +4,7 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
-import responses
+from pytest_httpx import HTTPXMock
 from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig
@@ -30,8 +30,7 @@ class TestProxyWrapper:
         return mocker.patch("kpops.component_handlers.topic.proxy_wrapper.log.debug")
 
     @pytest.fixture(autouse=True)
-    @responses.activate
-    def setup(self):
+    def setup(self, httpx_mock: HTTPXMock):
         config = PipelineConfig(
             defaults_path=DEFAULTS_PATH, environment="development", kafka_rest_host=HOST
         )
@@ -42,11 +41,11 @@ class TestProxyWrapper:
         ) as f:
             cluster_response = json.load(f)
 
-        responses.add(
-            responses.GET,
-            f"{HOST}/v3/clusters",
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{HOST}/v3/clusters",
             json=cluster_response,
-            status=200,
+            status_code=200,
         )
         assert self.proxy_wrapper.host == HOST
         assert self.proxy_wrapper.cluster_id == "cluster-1"
@@ -61,7 +60,7 @@ class TestProxyWrapper:
             == "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
         )
 
-    @patch("requests.post")
+    @patch("httpx.post")
     def test_should_create_topic_with_all_topic_configuration(
         self, mock_post: MagicMock
     ):
@@ -84,7 +83,7 @@ class TestProxyWrapper:
             json=topic_spec,
         )
 
-    @patch("requests.post")
+    @patch("httpx.post")
     def test_should_create_topic_with_no_configuration(self, mock_post: MagicMock):
         topic_spec: dict[str, Any] = {"topic_name": "topic-X"}
 
@@ -97,7 +96,7 @@ class TestProxyWrapper:
             json=topic_spec,
         )
 
-    @patch("requests.get")
+    @patch("httpx.get")
     def test_should_call_get_topic(self, mock_get: MagicMock):
         topic_name = "topic-X"
 
@@ -109,7 +108,7 @@ class TestProxyWrapper:
             headers=HEADERS,
         )
 
-    @patch("requests.post")
+    @patch("httpx.post")
     def test_should_call_batch_alter_topic_config(self, mock_put: MagicMock):
         topic_name = "topic-X"
 
@@ -133,7 +132,7 @@ class TestProxyWrapper:
             },
         )
 
-    @patch("requests.delete")
+    @patch("httpx.delete")
     def test_should_call_delete_topic(self, mock_delete: MagicMock):
         topic_name = "topic-X"
 
@@ -145,7 +144,7 @@ class TestProxyWrapper:
             headers=HEADERS,
         )
 
-    @patch("requests.get")
+    @patch("httpx.get")
     def test_should_call_get_broker_config(self, mock_get: MagicMock):
         with pytest.raises(KafkaRestProxyError):
             self.proxy_wrapper.get_broker_config()
@@ -155,8 +154,9 @@ class TestProxyWrapper:
             headers=HEADERS,
         )
 
-    @responses.activate
-    def test_should_log_topic_creation(self, log_info_mock: MagicMock):
+    def test_should_log_topic_creation(
+        self, log_info_mock: MagicMock, httpx_mock: HTTPXMock
+    ):
         topic_spec = {
             "topic_name": "topic-X",
             "partitions_count": 1,
@@ -167,31 +167,31 @@ class TestProxyWrapper:
             ],
         }
 
-        responses.add(
-            responses.POST,
-            f"{HOST}/v3/clusters/cluster-1/topics",
+        httpx_mock.add_response(
+            method="POST",
+            url=f"{HOST}/v3/clusters/cluster-1/topics",
             json=topic_spec,
             headers=HEADERS,
-            status=201,
+            status_code=201,
         )
         self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
         log_info_mock.assert_called_once_with("Topic topic-X created.")
 
-    @responses.activate
-    def test_should_log_topic_deletion(self, log_info_mock: MagicMock):
+    def test_should_log_topic_deletion(
+        self, log_info_mock: MagicMock, httpx_mock: HTTPXMock
+    ):
         topic_name = "topic-X"
 
-        responses.add(
-            responses.DELETE,
-            f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}",
+        httpx_mock.add_response(
+            method="DELETE",
+            url=f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
-            status=204,
+            status_code=204,
         )
         self.proxy_wrapper.delete_topic(topic_name=topic_name)
         log_info_mock.assert_called_once_with("Topic topic-X deleted.")
 
-    @responses.activate
-    def test_should_get_topic(self, log_debug_mock: MagicMock):
+    def test_should_get_topic(self, log_debug_mock: MagicMock, httpx_mock: HTTPXMock):
         res = {
             "kind": "KafkaTopic",
             "metadata": {
@@ -211,11 +211,11 @@ class TestProxyWrapper:
 
         topic_name = "topic-X"
 
-        responses.add(
-            responses.GET,
-            f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}",
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
-            status=200,
+            status_code=200,
             json=res,
         )
 
@@ -224,17 +224,16 @@ class TestProxyWrapper:
         log_debug_mock.assert_any_call("Topic topic-X found.")
         assert get_topic_response == topic_response
 
-    @responses.activate
     def test_should_rais_topic_not_found_exception_get_topic(
-        self, log_debug_mock: MagicMock
+        self, log_debug_mock: MagicMock, httpx_mock: HTTPXMock
     ):
         topic_name = "topic-X"
 
-        responses.add(
-            responses.GET,
-            f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}",
+        httpx_mock.add_response(
+            method="GET",
+            url=f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
-            status=404,
+            status_code=404,
             json={
                 "error_code": 40403,
                 "message": "This server does not host this topic-partition.",
@@ -244,19 +243,18 @@ class TestProxyWrapper:
             self.proxy_wrapper.get_topic(topic_name=topic_name)
         log_debug_mock.assert_any_call("Topic topic-X not found.")
 
-    @responses.activate
     def test_should_log_reset_default_topic_config_when_deleted(
-        self, log_info_mock: MagicMock
+        self, log_info_mock: MagicMock, httpx_mock: HTTPXMock
     ):
         topic_name = "topic-X"
         config_name = "cleanup.policy"
 
-        responses.add(
-            responses.POST,
-            f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
+        httpx_mock.add_response(
+            method="POST",
+            url=f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={"data": [{"name": config_name, "operation": "DELETE"}]},
-            status=204,
+            status_code=204,
         )
 
         self.proxy_wrapper.batch_alter_topic_config(

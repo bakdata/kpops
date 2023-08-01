@@ -1,4 +1,4 @@
-from kpops.component_handlers.utils.exception import RequestsException
+from kpops.component_handlers.utils.exception import HttpxException
 
 
 class ConnectorNotFoundException(Exception):
@@ -9,5 +9,5 @@ class ConnectorStateException(Exception):
     pass
 
 
-class KafkaConnectError(RequestsException):
+class KafkaConnectError(HttpxException):
     pass
