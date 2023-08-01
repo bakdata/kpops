@@ -14,8 +14,8 @@ kafka-app:
   app:
     streams:
       brokers: ${brokers}
-      schemaRegistryUrl: ${schema_registry_url}
-      optimizeLeaveGroupBehavior: false
+      schema_registry_url: ${schema_registry_url}
+      optimize_leave_group_behavior: false
     prometheus:
       jmx:
         enabled: false
