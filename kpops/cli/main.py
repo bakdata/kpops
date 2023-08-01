@@ -163,7 +163,9 @@ def get_steps_to_apply(
     return list(pipeline)
 
 
-def reverse_pipeline_steps(pipeline, steps) -> Iterator[PipelineComponent]:
+def reverse_pipeline_steps(
+    pipeline: Pipeline, steps: str | None
+) -> Iterator[PipelineComponent]:
     return reversed(get_steps_to_apply(pipeline, steps))
 
 
