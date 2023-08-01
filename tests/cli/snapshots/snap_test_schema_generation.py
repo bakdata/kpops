@@ -32,15 +32,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "title": "Prefix",
                     "type": "string"
                 },
-                "type": {
-                    "default": "pipeline-component",
-                    "description": "Base class for all components",
-                    "enum": [
-                        "pipeline-component"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
-                },
                 "to": {
                     "allOf": [
                         {
@@ -51,8 +42,10 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "title": "To"
                 },
                 "type": {
-                    "const": "pipeline-component",
                     "default": "pipeline-component",
+                    "enum": [
+                        "pipeline-component"
+                    ],
                     "title": "Type",
                     "type": "string"
                 }
@@ -157,14 +150,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "title": "Prefix",
                     "type": "string"
                 },
-                "type": {
-                    "default": "sub-pipeline-component",
-                    "enum": [
-                        "sub-pipeline-component"
-                    ],
-                    "title": "Schema Type",
-                    "type": "string"
-                },
                 "to": {
                     "allOf": [
                         {
@@ -176,6 +161,9 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                 },
                 "type": {
                     "default": "sub-pipeline-component",
+                    "enum": [
+                        "sub-pipeline-component"
+                    ],
                     "title": "Type",
                     "type": "string"
                 }
@@ -209,14 +197,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "title": "Prefix",
                     "type": "string"
                 },
-                "type": {
-                    "default": "sub-pipeline-component-correct",
-                    "enum": [
-                        "sub-pipeline-component-correct"
-                    ],
-                    "title": "Schema Type",
-                    "type": "string"
-                },
                 "to": {
                     "allOf": [
                         {
@@ -228,6 +208,9 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                 },
                 "type": {
                     "default": "sub-pipeline-component-correct",
+                    "enum": [
+                        "sub-pipeline-component-correct"
+                    ],
                     "title": "Type",
                     "type": "string"
                 }
@@ -261,15 +244,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "title": "Prefix",
                     "type": "string"
                 },
-                "type": {
-                    "default": "sub-pipeline-component-correct-docstr",
-                    "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
-                    "enum": [
-                        "sub-pipeline-component-correct-docstr"
-                    ],
-                    "title": "Schema Type",
-                    "type": "string"
-                },
                 "to": {
                     "allOf": [
                         {
@@ -280,9 +254,11 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "title": "To"
                 },
                 "type": {
-                    "const": "sub-pipeline-component-correct-docstr",
                     "default": "sub-pipeline-component-correct-docstr",
-                    "description": "Parameter description looks correct and it is not included in the class description, terminates here",
+                    "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
+                    "enum": [
+                        "sub-pipeline-component-correct-docstr"
+                    ],
                     "title": "Type",
                     "type": "string"
                 }
