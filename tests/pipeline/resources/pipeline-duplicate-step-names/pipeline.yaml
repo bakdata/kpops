@@ -1,0 +1,5 @@
+- type: pipeline-component
+  name: component
+
+- type: pipeline-component
+  name: component
