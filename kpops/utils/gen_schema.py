@@ -75,9 +75,7 @@ def _add_components(
         components = tuple()
     # Set of existing types, against which to check the new ones
     defined_component_types: set[str] = {
-        component.__fields__["type"].default
-        for component in components
-        if component.__fields__.get("type")
+        component.__fields__["type"].default for component in components
     }
     custom_components = [
         component
@@ -116,14 +114,10 @@ def gen_pipeline_schema(
 
     # re-assign component type as Literal to work as discriminator
     for component in components:
-        component_type = component.get_component_type()
-        component.__fields__["type"].type_ = Literal[component_type]  # type: ignore
-        component.__fields__["type"].field_info.title = describe_attr(
-            "type", component.__doc__
-        )
-        component.__fields__["type"].field_info.description = describe_object(
-            component.__doc__
-        )
+        component_type_field = component.__fields__["type"]
+        component_type_field.type_ = Literal[component.get_component_type()]  # type: ignore
+        component_type_field.field_info.title = describe_attr("type", component.__doc__)
+        component_type_field.field_info.description = describe_object(component.__doc__)
 
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="type")
