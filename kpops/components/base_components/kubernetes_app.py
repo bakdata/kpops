@@ -40,7 +40,6 @@ class KubernetesApp(PipelineComponent):
 
     All built-in components are Kubernetes apps, except for the Kafka connectors.
 
-    :param type: Component type, defaults to "kubernetes-app"
     :param app: Application-specific settings
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to None
@@ -48,7 +47,6 @@ class KubernetesApp(PipelineComponent):
     :param version: Helm chart version, defaults to None
     """
 
-    type = "kubernetes-app"
     app: KubernetesAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),

@@ -2,7 +2,7 @@ import logging
 from enum import Enum
 from typing import Annotated, Any, Literal, Sequence, Union
 
-from pydantic import Field, schema, schema_json_of
+from pydantic import BaseConfig, Field, schema, schema_json_of
 from pydantic.fields import FieldInfo, ModelField
 from pydantic.schema import SkipField
 
@@ -125,7 +125,7 @@ def gen_pipeline_schema(
                 title=describe_attr("type", component.__doc__),
                 description=describe_object(component.__doc__),
             ),
-            model_config=component.Config,
+            model_config=BaseConfig,
             class_validators=None,
         )
 

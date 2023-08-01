@@ -23,7 +23,7 @@ class EmptyPipelineComponent(PipelineComponent):
 
 
 class SubPipelineComponent(EmptyPipelineComponent):
-    type = "sub-pipeline-component"
+    ...
 
 
 # type is inherited from SubPipelineComponent
@@ -33,7 +33,7 @@ class SubPipelineComponentNoSchemaTypeNoType(SubPipelineComponent):
 
 # Correctly defined
 class SubPipelineComponentCorrect(SubPipelineComponent):
-    type = "sub-pipeline-component-correct"
+    ...
 
 
 # Correctly defined, docstr test
@@ -49,18 +49,8 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
 
     ,
 
-    :param type: Parameter description looks correct and it is not included in
-        the class description,
-        terminates here ,
-        defaults to anything really, this here should not be included as it follows
-        a terminating substring and does not follow reST spec.
-        if error_marker is found in result.stdout, the description extraction does
-        not work correctly.,!?:error_marker   :: "!$%
-    :type type: This line should not appear anywhere error_marker
     :param error_marker: error_marker
     """
-
-    type = "sub-pipeline-component-correct-docstr"
 
 
 MODULE = EmptyPipelineComponent.__module__
