@@ -5,7 +5,7 @@ from pydantic import BaseModel, Extra, Field, root_validator
 
 from kpops.components.base_components.models import TopicName
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfig
+from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 
 class OutputTopicTypes(str, Enum):
@@ -26,6 +26,8 @@ class TopicConfig(BaseModel):
     :type type: InputTopicTypes
     :param key_schema: Key schema class name
     :type key_schema: str | None
+    :param value_schema: Value schema class name
+    :type value_schema: str | None
     :param partitions_count: Number of partitions into which the topic is divided
     :type partitions_count: int | None
     :param replication_factor: Replication topic of the topic
@@ -36,26 +38,36 @@ class TopicConfig(BaseModel):
     :type role: str | None
     """
 
-    type: OutputTopicTypes = Field(..., description="Topic type")
+    type: OutputTopicTypes = Field(..., description=describe_attr("type", __doc__))
     key_schema: str | None = Field(
-        default=None, alias="keySchema", description="Key schema class name"
+        default=None,
+        title="Key schema",
+        description=describe_attr("key_schema", __doc__),
     )
     value_schema: str | None = Field(
-        default=None, alias="valueSchema", description="Value schema class name"
+        default=None,
+        title="Value schema",
+        description=describe_attr("value_schema", __doc__),
     )
     partitions_count: int | None = Field(
-        default=None, description="Number of partitions into which the topic is divided"
+        default=None,
+        title="Partitions count",
+        description=describe_attr("partitions_count", __doc__),
     )
     replication_factor: int | None = Field(
-        default=None, description="Replication topic of the topic"
+        default=None,
+        title="Replication factor",
+        description=describe_attr("replication_factor", __doc__),
     )
-    configs: dict[str, str | int] = Field(default={}, description="Topic configs")
+    configs: dict[str, str | int] = Field(
+        default={}, description=describe_attr("configs", __doc__)
+    )
     role: str | None = Field(
         default=None,
-        description="Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+        description=describe_attr("role", __doc__),
     )
 
-    class Config(DescConfig):
+    class Config(CamelCaseConfig, DescConfig):
         extra = Extra.forbid
         allow_population_by_field_name = True
         use_enum_values = True
