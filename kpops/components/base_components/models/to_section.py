@@ -5,7 +5,7 @@ from pydantic import BaseModel, Extra, Field, root_validator
 
 from kpops.components.base_components.models import TopicName
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfig
+from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 
 class OutputTopicTypes(str, Enum):
@@ -37,11 +37,9 @@ class TopicConfig(BaseModel):
     """
 
     type: OutputTopicTypes = Field(..., description="Topic type")
-    key_schema: str | None = Field(
-        default=None, alias="keySchema", description="Key schema class name"
-    )
+    key_schema: str | None = Field(default=None, description="Key schema class name")
     value_schema: str | None = Field(
-        default=None, alias="valueSchema", description="Value schema class name"
+        default=None, description="Value schema class name"
     )
     partitions_count: int | None = Field(
         default=None, description="Number of partitions into which the topic is divided"
@@ -55,7 +53,7 @@ class TopicConfig(BaseModel):
         description="Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
     )
 
-    class Config(DescConfig):
+    class Config(CamelCaseConfig, DescConfig):
         extra = Extra.forbid
         allow_population_by_field_name = True
         use_enum_values = True
