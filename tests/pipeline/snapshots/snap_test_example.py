@@ -54,7 +54,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.9.0'
         },
         {
@@ -106,7 +106,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.9.0'
         },
         {
