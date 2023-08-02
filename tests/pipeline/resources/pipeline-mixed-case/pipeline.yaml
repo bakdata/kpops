@@ -1,0 +1,9 @@
+- type: kubernetes-app
+  name: app1
+  app:
+    snake_case: 1
+    camelCase: 2
+    command_line:
+      UPPERCASE: "nothing"
+      lowercase: "nothing"
+      MiXeDCASE: null

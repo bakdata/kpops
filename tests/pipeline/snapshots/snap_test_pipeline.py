@@ -689,6 +689,26 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
     ]
 }
 
+snapshots['TestPipeline.test_mixed_case_conversion test-pipeline'] = {
+    'components': [
+        {
+            'app': {
+                'camelCase': 2,
+                'commandLine': {
+                    'MiXeDCASE': None,
+                    'UPPERCASE': 'nothing',
+                    'lowercase': 'nothing'
+                },
+                'snakeCase': 1
+            },
+            'name': 'resources-pipeline-mixed-case-app1',
+            'namespace': 'example-namespace',
+            'prefix': 'resources-pipeline-mixed-case-',
+            'type': 'kubernetes-app'
+        }
+    ]
+}
+
 snapshots['TestPipeline.test_model_serialization test-pipeline'] = {
     'components': [
         {

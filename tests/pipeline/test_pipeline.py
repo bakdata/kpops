@@ -470,3 +470,23 @@ class TestPipeline:
                 ],
                 catch_exceptions=False,
             )
+
+    def test_mixed_case_conversion(self, snapshot: SnapshotTest):
+        """Test conversion of pipeline containing both snake_case and camelCase attributes."""
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                PIPELINE_BASE_DIR,
+                str(RESOURCE_PATH / "pipeline-mixed-case/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0
+
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        snapshot.assert_match(enriched_pipeline, "test-pipeline")
