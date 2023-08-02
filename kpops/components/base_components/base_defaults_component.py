@@ -16,7 +16,7 @@ from kpops.utils.environment import ENV
 from kpops.utils.pydantic import DescConfig, to_dash
 from kpops.utils.yaml_loading import load_yaml_file
 
-log = logging.getLogger("PipelineComponentEnricher")
+log = logging.getLogger("PipelineComponentEnricher")  # TODO: rename
 
 
 class BaseDefaultsComponent(BaseModel):
