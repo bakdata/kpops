@@ -31,14 +31,14 @@ kubernetes-app:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration
   repoConfig:
     repositoryName: my-repo
     url: https://bakdata.github.io/
-    repoAuthFlags: 
+    repoAuthFlags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -81,11 +81,11 @@ streams-app:
           - input_topic4
       extraInputPatterns:
         pattern_role1: input_pattern1
-      extraOutputTopics: 
+      extraOutputTopics:
         output_role1: output_topic1
         output_role2: output_topic2
       errorTopic: error-topic
-      config: 
+      config:
         my.streams.config: my.value
     autoscaling:
       consumerGroup: consumer-group
@@ -120,13 +120,13 @@ streams-app:
 #
 # Child of: KafkaApp
 # More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
-producer:
+producer-app:
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app:
     streams:
       outputTopic: output_topic
-      extraOutputTopics: 
+      extraOutputTopics:
         output_role1: output_topic1
         output_role2: output_topic2
 #
@@ -151,7 +151,7 @@ kafka-connector:
   to:
     topics:
       ${pipeline_name}-output-topic:
-        type: error 
+        type: error
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
         partitions_count: 1
@@ -160,14 +160,14 @@ kafka-connector:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration for resetter
   repoConfig:
     repositoryName: my-repo
     url: https://bakdata.github.io/kafka-connect-resetter/
-    repoAuthFlags: 
+    repoAuthFlags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file

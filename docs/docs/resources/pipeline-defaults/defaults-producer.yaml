@@ -3,12 +3,12 @@
 #
 # Child of: KafkaApp
 # More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
-producer:
+producer-app:
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app:
     streams:
       outputTopic: output_topic
-      extraOutputTopics: 
+      extraOutputTopics:
         output_role1: output_topic1
         output_role2: output_topic2
