@@ -127,7 +127,7 @@ class KafkaConnector(PipelineComponent, ABC):
             )
 
             if self.handlers.schema_handler:
-                self.handlers.schema_handler.submit_schemas(
+                await self.handlers.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
 
@@ -145,7 +145,7 @@ class KafkaConnector(PipelineComponent, ABC):
     async def clean(self, dry_run: bool) -> None:
         if self.to:
             if self.handlers.schema_handler:
-                self.handlers.schema_handler.delete_schemas(
+                await self.handlers.schema_handler.delete_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
             await self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)

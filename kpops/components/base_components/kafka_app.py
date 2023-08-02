@@ -112,7 +112,7 @@ class KafkaApp(KubernetesApp):
             )
 
             if self.handlers.schema_handler:
-                self.handlers.schema_handler.submit_schemas(
+                await self.handlers.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
         await super().deploy(dry_run)
