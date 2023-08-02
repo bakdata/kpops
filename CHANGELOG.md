@@ -1,4 +1,33 @@
 # Changelog
+## [1.4.0](https://github.com/bakdata/kpops/releases/tag/1.4.0) - Release Date: [2023-08-02]
+
+### 🐛 Fixes
+
+- Validate unique step names - [#292](https://github.com/bakdata/kpops/pull/292)
+
+
+### 🏭 Refactor
+
+- Order PipelineComponent fields - [#290](https://github.com/bakdata/kpops/pull/290)
+
+- Migrate requests to httpx - [#302](https://github.com/bakdata/kpops/pull/302)
+
+- Refactor CLI using dtyper - [#306](https://github.com/bakdata/kpops/pull/306)
+
+
+### 🌀 Miscellaneous
+
+- Update Black - [#294](https://github.com/bakdata/kpops/pull/294)
+
+- Fix vulnerability in mkdocs-material - [#295](https://github.com/bakdata/kpops/pull/295)
+
+- Move breaking changes section upper in the change log config - [#287](https://github.com/bakdata/kpops/pull/287)
+
+
+
+
+
+
 ## [1.3.2](https://github.com/bakdata/kpops/releases/tag/1.3.2) - Release Date: [2023-07-13]
 
 ### 🐛 Fixes
