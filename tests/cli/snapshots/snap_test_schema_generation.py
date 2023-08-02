@@ -46,7 +46,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "enum": [
                         "empty-pipeline-component"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 }
             },
@@ -164,7 +164,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "enum": [
                         "sub-pipeline-component"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 }
             },
@@ -211,7 +211,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "enum": [
                         "sub-pipeline-component-correct"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 }
             },
@@ -259,7 +259,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "enum": [
                         "sub-pipeline-component-correct-docstr"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 }
             },
@@ -306,7 +306,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "enum": [
                         "sub-pipeline-component-no-schema-type-no-type"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 }
             },
