@@ -488,7 +488,7 @@ class TestPipeline:
             [
                 "generate",
                 "--pipeline-base-dir",
-                PIPELINE_BASE_DIR,
+                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "pipeline-mixed-case/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH),
