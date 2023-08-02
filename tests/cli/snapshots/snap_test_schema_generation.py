@@ -348,7 +348,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "integer"
                 },
                 "replicationFactor": {
-                    "description": "Replication topic of the topic",
+                    "description": "Replication factor of the topic",
                     "title": "Replication factor",
                     "type": "integer"
                 },
