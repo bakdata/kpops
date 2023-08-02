@@ -56,7 +56,6 @@ class PipelineComponent(BaseDefaultsComponent):
 
     class Config(CamelCaseConfig, DescConfig):
         extra = Extra.allow
-        keep_untouched = (cached_property,)
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)

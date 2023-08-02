@@ -2,6 +2,7 @@ import inspect
 import logging
 from collections import deque
 from collections.abc import Sequence
+from functools import cached_property
 from pathlib import Path
 from typing import TypeVar
 
@@ -10,6 +11,7 @@ from pydantic import BaseModel, Field
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
+from kpops.utils import cached_classproperty
 from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
@@ -64,6 +66,7 @@ class BaseDefaultsComponent(BaseModel):
 
     class Config(DescConfig):
         arbitrary_types_allowed = True
+        keep_untouched = (cached_property, cached_classproperty)
 
     def __init__(self, **kwargs) -> None:
         if kwargs.get("enrich", True):
@@ -72,8 +75,8 @@ class BaseDefaultsComponent(BaseModel):
         if kwargs.get("validate", True):
             self._validate_custom(**kwargs)
 
-    @classmethod  # NOTE: property as classmethod deprecated in Python 3.11
-    def get_component_type(cls) -> str:
+    @cached_classproperty
+    def type(cls) -> str:
         """Return calling component's type
 
         :returns: Component class name in dash-case
@@ -136,7 +139,7 @@ def load_defaults(
     defaults: dict = {}
     for base in deduplicate(classes):
         if issubclass(base, BaseDefaultsComponent):
-            component_type = base.get_component_type()
+            component_type = base.type
             if (
                 not environment_defaults_file_path
                 or not environment_defaults_file_path.exists()
