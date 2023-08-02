@@ -37,15 +37,21 @@ class TopicConfig(BaseModel):
     """
 
     type: OutputTopicTypes = Field(..., description="Topic type")
-    key_schema: str | None = Field(default=None, description="Key schema class name")
+    key_schema: str | None = Field(
+        default=None, title="Key schema", description="Key schema class name"
+    )
     value_schema: str | None = Field(
-        default=None, description="Value schema class name"
+        default=None, title="Value schema", description="Value schema class name"
     )
     partitions_count: int | None = Field(
-        default=None, description="Number of partitions into which the topic is divided"
+        default=None,
+        title="Partitions count",
+        description="Number of partitions into which the topic is divided",
     )
     replication_factor: int | None = Field(
-        default=None, description="Replication topic of the topic"
+        default=None,
+        title="Replication factor",
+        description="Replication topic of the topic",
     )
     configs: dict[str, str | int] = Field(default={}, description="Topic configs")
     role: str | None = Field(
