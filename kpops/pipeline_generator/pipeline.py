@@ -56,6 +56,9 @@ class PipelineComponents(BaseModel):
     def __iter__(self) -> Iterator[PipelineComponent]:
         return iter(self.components)
 
+    def __len__(self) -> int:
+        return len(self.components)
+
     def validate_unique_names(self) -> None:
         step_names = [component.name for component in self.components]
         duplicates = [name for name, count in Counter(step_names).items() if count > 1]
@@ -288,6 +291,9 @@ class Pipeline:
                 self.components.json(exclude_none=True, by_alias=True)
             )
         )
+
+    def __len__(self) -> int:
+        return len(self.components)
 
     def substitute_in_component(self, component_as_dict: dict) -> dict:
         """Substitute all $-placeholders in a component in dict representation

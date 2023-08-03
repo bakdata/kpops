@@ -18,7 +18,7 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import DescConfig
 
 
 class PipelineComponent(BaseDefaultsComponent):
@@ -54,7 +54,7 @@ class PipelineComponent(BaseDefaultsComponent):
         description=describe_attr("to", __doc__),
     )
 
-    class Config(CamelCaseConfig, DescConfig):
+    class Config(DescConfig):
         extra = Extra.allow
 
     def __init__(self, **kwargs) -> None:

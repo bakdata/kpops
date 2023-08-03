@@ -74,7 +74,9 @@ def _add_components(
     if components is None:
         components = tuple()
     # Set of existing types, against which to check the new ones
-    defined_component_types: set[str] = {component.type for component in components}
+    defined_component_types = {
+        component.get_component_type() for component in components
+    }
     custom_components = (
         component
         for component in _find_classes(components_module, PipelineComponent)

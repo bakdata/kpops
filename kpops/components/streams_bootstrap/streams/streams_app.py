@@ -1,13 +1,12 @@
 from __future__ import annotations
 
-from pydantic import Extra, Field
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import StreamsAppConfig
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfig
 
 
 class StreamsApp(KafkaApp):
@@ -21,9 +20,6 @@ class StreamsApp(KafkaApp):
         default=...,
         description=describe_attr("app", __doc__),
     )
-
-    class Config(DescConfig):
-        extra = Extra.allow
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:

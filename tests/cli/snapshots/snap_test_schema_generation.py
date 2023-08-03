@@ -360,19 +360,19 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "title": "Configs",
                     "type": "object"
                 },
-                "keySchema": {
+                "key_schema": {
                     "description": "Key schema class name",
-                    "title": "Keyschema",
+                    "title": "Key schema",
                     "type": "string"
                 },
                 "partitions_count": {
                     "description": "Number of partitions into which the topic is divided",
-                    "title": "Partitions Count",
+                    "title": "Partitions count",
                     "type": "integer"
                 },
                 "replication_factor": {
-                    "description": "Replication topic of the topic",
-                    "title": "Replication Factor",
+                    "description": "Replication factor of the topic",
+                    "title": "Replication factor",
                     "type": "integer"
                 },
                 "role": {
@@ -388,9 +388,9 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     ],
                     "description": "Topic type"
                 },
-                "valueSchema": {
+                "value_schema": {
                     "description": "Value schema class name",
-                    "title": "Valueschema",
+                    "title": "Value schema",
                     "type": "string"
                 }
             },

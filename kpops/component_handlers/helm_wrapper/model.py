@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 
 from kpops.component_handlers.helm_wrapper.exception import ParseError
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import DescConfig
 
 
 class HelmDiffConfig(BaseModel):
@@ -22,14 +22,10 @@ class RepoAuthFlags(BaseModel):
     """Authorisation-related flags for `helm repo`
 
     :param username: Username, defaults to None
-    :type username: str, optional
     :param password: Password, defaults to None
-    :type password: str, optional
     :param ca_file: Certificate file, defaults to None
-    :type ca_file: Path, optional
     :param insecure_skip_tls_verify: If true, Kubernetes API server's certificate will not be checked for validity
         , defaults to False
-    :type insecure_skip_tls_verify: bool, optional
     """
 
     username: str | None = Field(
@@ -45,7 +41,7 @@ class RepoAuthFlags(BaseModel):
         default=False, description=describe_attr("insecure_skip_tls_verify", __doc__)
     )
 
-    class Config(CamelCaseConfig, DescConfig):
+    class Config(DescConfig):
         pass
 
 
@@ -53,11 +49,8 @@ class HelmRepoConfig(BaseModel):
     """Helm repository configuration
 
     :param repository_name: Name of the Helm repository
-    :type repository_name: str
     :param url: URL to the Helm repository
-    :type url: str
     :param repo_auth_flags: Authorisation-related flags
-    :type repo_auth_flags: RepoAuthFlags
     """
 
     repository_name: str = Field(
@@ -68,19 +61,25 @@ class HelmRepoConfig(BaseModel):
         default=RepoAuthFlags(), description=describe_attr("repo_auth_flags", __doc__)
     )
 
-    class Config(CamelCaseConfig, DescConfig):
+    class Config(DescConfig):
         pass
 
 
 class HelmConfig(BaseModel):
+    """Global flags for Helm
+
+    :param context: Set the name of the kubeconfig context. (--kube-context)
+    :param debug: Run Helm in Debug mode
+    """
+
     context: str | None = Field(
         default=None,
-        description="Set the name of the kubeconfig context. (--kube-context)",
+        description=describe_attr("context", __doc__),
         example="dev-storage",
     )
     debug: bool = Field(
         default=False,
-        description="Run Helm in Debug mode.",
+        description=describe_attr("debug", __doc__),
     )
 
 
