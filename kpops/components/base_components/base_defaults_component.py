@@ -4,7 +4,7 @@ from collections import deque
 from collections.abc import Sequence
 from functools import cached_property
 from pathlib import Path
-from typing import TypeVar
+from typing import Self, TypeVar
 
 import typer
 from pydantic import BaseModel, Field
@@ -76,7 +76,7 @@ class BaseDefaultsComponent(BaseModel):
             self._validate_custom(**kwargs)
 
     @cached_classproperty
-    def type(cls) -> str:
+    def type(cls: type[Self]) -> str:  # pyright: ignore
         """Return calling component's type
 
         :returns: Component class name in dash-case
