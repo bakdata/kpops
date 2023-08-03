@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from functools import cached_property
-
 from pydantic import Extra, Field
 
 from kpops.components.base_components.base_defaults_component import (
