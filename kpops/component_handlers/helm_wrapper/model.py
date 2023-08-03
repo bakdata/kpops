@@ -69,7 +69,8 @@ class HelmConfig(BaseModel):
     """Helm configuration
 
     :param context: Set the name of the kubeconfig context. (--kube-context)
-    :param debug: Run Helm in Debug mode"""
+    :param debug: Run Helm in Debug mode
+    """
 
     context: str | None = Field(
         default=None,
