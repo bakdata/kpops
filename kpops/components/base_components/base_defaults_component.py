@@ -4,7 +4,7 @@ from collections import deque
 from collections.abc import Sequence
 from functools import cached_property
 from pathlib import Path
-from typing import Self, TypeVar
+from typing import TypeVar
 
 import typer
 from pydantic import BaseModel, Field
@@ -17,6 +17,11 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
 from kpops.utils.pydantic import DescConfig, to_dash
 from kpops.utils.yaml_loading import load_yaml_file
+
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 log = logging.getLogger("PipelineComponentEnricher")  # TODO: rename
 
