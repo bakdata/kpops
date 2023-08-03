@@ -35,7 +35,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'name': 'account-producer',
             'namespace': '${NAMESPACE}',
             'prefix': '',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -87,7 +87,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'name': 'transaction-avro-producer',
             'namespace': '${NAMESPACE}',
             'prefix': '',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -144,7 +144,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'name': 'transaction-joiner',
             'namespace': '${NAMESPACE}',
             'prefix': '',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -207,7 +207,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'name': 'fraud-detector',
             'namespace': '${NAMESPACE}',
             'prefix': '',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -288,7 +288,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'name': 'account-linker',
             'namespace': '${NAMESPACE}',
             'prefix': '',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -343,14 +343,14 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'name': 'postgresql-connector',
             'namespace': '${NAMESPACE}',
             'prefix': '',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
                 'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
-            'resetterValues': {
+            'resetter_values': {
             },
             'type': 'kafka-sink-connector',
             'version': '1.0.4'

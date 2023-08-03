@@ -77,7 +77,7 @@ class KubernetesApp(PipelineComponent):
         description=describe_attr("version", __doc__),
     )
 
-    class Config(CamelCaseConfig, DescConfig):
+    class Config(DescConfig):  # TODO: remove
         pass
 
     @cached_property

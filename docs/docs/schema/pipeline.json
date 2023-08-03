@@ -134,7 +134,7 @@
                     "title": "Prefix",
                     "type": "string"
                 },
-                "repoConfig": {
+                "repo_config": {
                     "allOf": [
                         {
                             "$ref": "#/definitions/HelmRepoConfig"
@@ -151,7 +151,7 @@
                         "url": "https://bakdata.github.io/streams-bootstrap/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
-                    "title": "Repoconfig"
+                    "title": "Repo Config"
                 },
                 "type": {
                     "default": "kafka-app",
@@ -262,7 +262,7 @@
                     "title": "Prefix",
                     "type": "string"
                 },
-                "repoConfig": {
+                "repo_config": {
                     "allOf": [
                         {
                             "$ref": "#/definitions/HelmRepoConfig"
@@ -279,11 +279,11 @@
                         "url": "https://bakdata.github.io/kafka-connect-resetter/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
-                    "title": "Repoconfig"
+                    "title": "Repo Config"
                 },
-                "resetterValues": {
+                "resetter_values": {
                     "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
-                    "title": "Resettervalues",
+                    "title": "Resetter Values",
                     "type": "object"
                 },
                 "type": {
@@ -362,7 +362,7 @@
                     "title": "Prefix",
                     "type": "string"
                 },
-                "repoConfig": {
+                "repo_config": {
                     "allOf": [
                         {
                             "$ref": "#/definitions/HelmRepoConfig"
@@ -379,11 +379,11 @@
                         "url": "https://bakdata.github.io/kafka-connect-resetter/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
-                    "title": "Repoconfig"
+                    "title": "Repo Config"
                 },
-                "resetterValues": {
+                "resetter_values": {
                     "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
-                    "title": "Resettervalues",
+                    "title": "Resetter Values",
                     "type": "object"
                 },
                 "type": {
@@ -456,9 +456,9 @@
                     "title": "Namespace",
                     "type": "string"
                 },
-                "offsetTopic": {
+                "offset_topic": {
                     "description": "offset.storage.topic, more info: https://kafka.apache.org/documentation/#connect_running",
-                    "title": "Offsettopic",
+                    "title": "Offset Topic",
                     "type": "string"
                 },
                 "prefix": {
@@ -467,7 +467,7 @@
                     "title": "Prefix",
                     "type": "string"
                 },
-                "repoConfig": {
+                "repo_config": {
                     "allOf": [
                         {
                             "$ref": "#/definitions/HelmRepoConfig"
@@ -484,11 +484,11 @@
                         "url": "https://bakdata.github.io/kafka-connect-resetter/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
-                    "title": "Repoconfig"
+                    "title": "Repo Config"
                 },
-                "resetterValues": {
+                "resetter_values": {
                     "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
-                    "title": "Resettervalues",
+                    "title": "Resetter Values",
                     "type": "object"
                 },
                 "type": {
@@ -587,14 +587,14 @@
                     "title": "Prefix",
                     "type": "string"
                 },
-                "repoConfig": {
+                "repo_config": {
                     "allOf": [
                         {
                             "$ref": "#/definitions/HelmRepoConfig"
                         }
                     ],
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
-                    "title": "Repoconfig"
+                    "title": "Repo Config"
                 },
                 "type": {
                     "default": "kubernetes-app",
@@ -737,7 +737,7 @@
                     "title": "Prefix",
                     "type": "string"
                 },
-                "repoConfig": {
+                "repo_config": {
                     "allOf": [
                         {
                             "$ref": "#/definitions/HelmRepoConfig"
@@ -754,7 +754,7 @@
                         "url": "https://bakdata.github.io/streams-bootstrap/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
-                    "title": "Repoconfig"
+                    "title": "Repo Config"
                 },
                 "type": {
                     "default": "producer",
@@ -919,7 +919,7 @@
                     "title": "Prefix",
                     "type": "string"
                 },
-                "repoConfig": {
+                "repo_config": {
                     "allOf": [
                         {
                             "$ref": "#/definitions/HelmRepoConfig"
@@ -936,7 +936,7 @@
                         "url": "https://bakdata.github.io/streams-bootstrap/"
                     },
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
-                    "title": "Repoconfig"
+                    "title": "Repo Config"
                 },
                 "type": {
                     "default": "streams-app",

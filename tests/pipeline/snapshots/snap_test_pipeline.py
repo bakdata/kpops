@@ -31,7 +31,7 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
             'name': 'resources-custom-config-app1',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -73,7 +73,7 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
             'name': 'resources-custom-config-app2',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -126,7 +126,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'name': 'resources-pipeline-with-inflate-scheduled-producer',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -193,7 +193,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'name': 'resources-pipeline-with-inflate-converter',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -268,7 +268,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'name': 'resources-pipeline-with-inflate-should-inflate',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -318,14 +318,14 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'name': 'resources-pipeline-with-inflate-should-inflate-inflated-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
                 'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
-            'resetterValues': {
+            'resetter_values': {
             },
             'to': {
                 'models': {
@@ -366,7 +366,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'name': 'resources-pipeline-with-inflate-should-inflate-inflated-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -429,7 +429,7 @@ snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'
             'name': 'resources-kafka-connect-sink-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -476,14 +476,14 @@ snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'
             'name': 'resources-kafka-connect-sink-es-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
                 'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
-            'resetterValues': {
+            'resetter_values': {
             },
             'type': 'kafka-sink-connector',
             'version': '1.0.4'
@@ -513,7 +513,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
             'name': 'resources-first-pipeline-scheduled-producer',
             'namespace': 'example-namespace',
             'prefix': 'resources-first-pipeline-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -580,7 +580,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
             'name': 'resources-first-pipeline-converter',
             'namespace': 'example-namespace',
             'prefix': 'resources-first-pipeline-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -655,7 +655,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
             'name': 'resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name',
             'namespace': 'example-namespace',
             'prefix': 'resources-first-pipeline-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -705,7 +705,7 @@ snapshots['TestPipeline.test_model_serialization test-pipeline'] = {
             'name': 'resources-pipeline-with-paths-account-producer',
             'namespace': 'test',
             'prefix': 'resources-pipeline-with-paths-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'ca_file': 'my-cert.cert',
                     'insecure_skip_tls_verify': False,
@@ -760,7 +760,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
             'name': 'resources-no-input-topic-pipeline-app1',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-input-topic-pipeline-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -811,7 +811,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
             'name': 'resources-no-input-topic-pipeline-app2',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-input-topic-pipeline-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -881,7 +881,7 @@ snapshots['TestPipeline.test_no_user_defined_components test-pipeline'] = {
             'name': 'resources-no-user-defined-components-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-user-defined-components-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -935,7 +935,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
             'name': 'resources-pipeline-with-envs-input-producer',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-envs-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1002,7 +1002,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
             'name': 'resources-pipeline-with-envs-converter',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-envs-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1077,7 +1077,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
             'name': 'resources-pipeline-with-envs-filter',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-envs-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1137,7 +1137,7 @@ snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = {
             'name': 'from-pipeline-component-account-producer',
             'namespace': '${NAMESPACE}',
             'prefix': 'from-pipeline-component-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1166,7 +1166,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-producer1',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1201,7 +1201,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'producer2',
             'namespace': 'example-namespace',
             'prefix': '',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1256,7 +1256,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-inflate-step',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1306,14 +1306,14 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-inflate-step-inflated-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
                 'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
-            'resetterValues': {
+            'resetter_values': {
             },
             'to': {
                 'models': {
@@ -1354,7 +1354,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-inflate-step-inflated-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1417,7 +1417,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'inflate-step-without-prefix',
             'namespace': 'example-namespace',
             'prefix': '',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1467,14 +1467,14 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
                 'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
-            'resetterValues': {
+            'resetter_values': {
             },
             'to': {
                 'models': {
@@ -1515,7 +1515,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-inflate-step-without-prefix-inflated-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1572,7 +1572,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-consumer1',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1632,7 +1632,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-consumer2',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1687,7 +1687,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-consumer3',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1738,7 +1738,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-consumer4',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1789,7 +1789,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-consumer5',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1843,7 +1843,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
             'name': 'resources-component-type-substitution-scheduled-producer',
             'namespace': 'example-namespace',
             'prefix': 'resources-component-type-substitution-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1910,7 +1910,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
             'name': 'resources-component-type-substitution-converter',
             'namespace': 'example-namespace',
             'prefix': 'resources-component-type-substitution-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -1992,7 +1992,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
             'name': 'resources-component-type-substitution-filter-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-component-type-substitution-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -2050,7 +2050,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
             'name': 'resources-custom-config-app1',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -2092,7 +2092,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
             'name': 'resources-custom-config-app2',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -2147,7 +2147,7 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
             'name': 'resources-custom-config-app1',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -2189,7 +2189,7 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
             'name': 'resources-custom-config-app2',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -2251,7 +2251,7 @@ snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = {
             'name': 'resources-kafka-connect-sink-streams-app-development',
             'namespace': 'development-namespace',
             'prefix': 'resources-kafka-connect-sink-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
@@ -2298,14 +2298,14 @@ snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = {
             'name': 'resources-kafka-connect-sink-es-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
-            'repoConfig': {
+            'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
                 },
                 'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
-            'resetterValues': {
+            'resetter_values': {
             },
             'type': 'kafka-sink-connector',
             'version': '1.0.4'
