@@ -77,9 +77,6 @@ class KubernetesApp(PipelineComponent):
         description=describe_attr("version", __doc__),
     )
 
-    class Config(DescConfig):  # TODO: remove
-        pass
-
     @cached_property
     def helm(self) -> Helm:
         """Helm object that contains component-specific config such as repo"""
