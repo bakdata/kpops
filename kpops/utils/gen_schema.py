@@ -46,12 +46,11 @@ def _is_valid_component(
     :return: Whether component is valid for schema generation
     :rtype: bool
     """
-    component_type = component.type
-    if component_type in defined_component_types:
+    if component.type in defined_component_types:
         log.warning(f"SKIPPED {component.__name__}, component type must be unique.")
         return False
     else:
-        defined_component_types.add(component_type)
+        defined_component_types.add(component.type)
         return True
 
 
@@ -74,9 +73,7 @@ def _add_components(
     if components is None:
         components = tuple()
     # Set of existing types, against which to check the new ones
-    defined_component_types = {
-        component.get_component_type() for component in components
-    }
+    defined_component_types = {component.type for component in components}
     custom_components = (
         component
         for component in _find_classes(components_module, PipelineComponent)
@@ -114,12 +111,11 @@ def gen_pipeline_schema(
 
     # re-assign component type as Literal to work as discriminator
     for component in components:
-        component_type = component.type
         component.__fields__["type"] = ModelField(
             name="type",
-            type_=Literal[component_type],  # type: ignore
+            type_=Literal[component.type],  # type: ignore
             required=False,
-            default=component_type,
+            default=component.type,
             final=True,
             field_info=FieldInfo(
                 title="Component type",
