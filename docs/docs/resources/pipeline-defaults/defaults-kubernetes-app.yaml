@@ -35,10 +35,10 @@ kubernetes-app:
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration
-  repoConfig:
-    repositoryName: my-repo
+  repo_config:
+    repository_name: my-repo
     url: https://bakdata.github.io/
-    repoAuthFlags:
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file

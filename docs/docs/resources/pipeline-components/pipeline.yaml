@@ -32,10 +32,10 @@
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration
-  repoConfig:
-    repositoryName: my-repo # required
+  repo_config:
+    repository_name: my-repo # required
     url: https://bakdata.github.io/ # required
-    repoAuthFlags:
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -76,8 +76,8 @@
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration, the default value is given here
-  repoConfig:
-    repositoryName: bakdata-streams-bootstrap # required
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
     url: https://bakdata.github.io/streams-bootstrap/ # required
     repo_auth_flags:
       username: user
@@ -170,8 +170,8 @@
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration, the default value is given here
-  repoConfig:
-    repositoryName: bakdata-streams-bootstrap # required
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
     url: https://bakdata.github.io/streams-bootstrap/ # required
     repo_auth_flags:
       username: user
@@ -215,8 +215,8 @@
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration, the default value is given here
-  repoConfig:
-    repositoryName: bakdata-streams-bootstrap # required
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
     url: https://bakdata.github.io/streams-bootstrap/ # required
     repo_auth_flags:
       username: user
@@ -252,10 +252,10 @@
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration
-  repoConfig:
-    repositoryName: my-repo # required
+  repo_config:
+    repository_name: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags:
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -263,11 +263,11 @@
   version: "1.0.4" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
-  resetterValues:
+  resetter_values:
     imageTag: "1.2.3"
   # offset.storage.topic
   # https://kafka.apache.org/documentation/#connect_running
-  offsetTopic: offset_topic
+  offset_topic: offset_topic
 # Kafka sink connector
 - type: kafka-sink-connector
   name: kafka-sink-connector # required,
@@ -300,10 +300,10 @@
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration for resetter
-  repoConfig:
-    repositoryName: my-repo # required
+  repo_config:
+    repository_name: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags:
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -311,5 +311,5 @@
   version: "1.0.4" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
-  resetterValues:
+  resetter_values:
     imageTag: "1.2.3"

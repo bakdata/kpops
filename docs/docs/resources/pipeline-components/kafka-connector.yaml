@@ -29,10 +29,10 @@
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration for resetter
-  repoConfig:
-    repositoryName: my-repo # required
+  repo_config:
+    repository_name: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags:
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -40,5 +40,5 @@
   version: "1.0.4" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
-  resetterValues:
+  resetter_values:
     imageTag: "1.2.3"

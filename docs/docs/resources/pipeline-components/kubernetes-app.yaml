@@ -35,10 +35,10 @@
   prefix: ${pipeline_name}-
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repoConfig:
-    repositoryName: my-repo # required
+  repo_config:
+    repository_name: my-repo # required
     url: https://bakdata.github.io/ # required
-    repoAuthFlags:
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file

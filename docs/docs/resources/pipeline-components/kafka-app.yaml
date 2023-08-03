@@ -33,8 +33,8 @@
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration, the default value is given here
-  repoConfig:
-    repositoryName: bakdata-streams-bootstrap # required
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
     url: https://bakdata.github.io/streams-bootstrap/ # required
     repo_auth_flags:
       username: user
