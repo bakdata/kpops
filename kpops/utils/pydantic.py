@@ -11,9 +11,7 @@ def to_camel(s: str) -> str:
 
 
 def to_dash(s: str) -> str:
-    if s.isupper():
-        return s.lower()
-    return humps.depascalize(s).replace("_", "-")
+    return humps.depascalize(s).lower().replace("_", "-")
 
 
 class CamelCaseConfig(BaseConfig):
