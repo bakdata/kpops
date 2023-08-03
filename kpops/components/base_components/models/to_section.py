@@ -5,7 +5,7 @@ from pydantic import BaseModel, Extra, Field, root_validator
 
 from kpops.components.base_components.models import TopicName
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import DescConfig
 
 
 class OutputTopicTypes(str, Enum):
@@ -58,7 +58,7 @@ class TopicConfig(BaseModel):
         description="Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
     )
 
-    class Config(CamelCaseConfig, DescConfig):
+    class Config(DescConfig):
         extra = Extra.forbid
         allow_population_by_field_name = True
         use_enum_values = True
