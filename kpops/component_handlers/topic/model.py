@@ -9,7 +9,7 @@ class TopicSpec(BaseModel):
     replication_factor: int | None
     configs: list[dict[str, str]] | None
 
-    class ModelConfigs(BaseConfig):
+    class Config(BaseConfig):
         extra = Extra.forbid
 
 
@@ -29,7 +29,7 @@ class TopicResponse(BaseModel):
         # https://github.com/confluentinc/kafka-rest/issues/1085
     )
 
-    class ModelConfigs(BaseConfig):
+    class Config(BaseConfig):
         extra = Extra.forbid
 
 
