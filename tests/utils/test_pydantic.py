@@ -9,6 +9,9 @@ from kpops.utils.pydantic import to_dash
         ("BaseDefaultsComponent", "base-defaults-component"),
         ("ACRONYM", "acronym"),
         ("ACRONYMComponent", "acronym-component"),
+        ("ExampleACRONYMComponent", "example-acronym-component"),
+        ("ComponentWithACRONYM", "component-with-acronym"),
+        ("ComponentWithDIGIT00", "component-with-digit00"),
     ],
 )
 def test_to_dash(input: str, expected: str):
