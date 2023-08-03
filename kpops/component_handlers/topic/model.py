@@ -9,9 +9,6 @@ class TopicSpec(BaseModel):
     replication_factor: int | None
     configs: list[dict[str, str]] | None
 
-    class Config(BaseConfig):
-        extra = Extra.forbid
-
 
 class TopicResponse(BaseModel):
     kind: str = "KafkaTopic"
@@ -28,9 +25,6 @@ class TopicResponse(BaseModel):
         # HACK: workaround for field being absent in Kafka REST response
         # https://github.com/confluentinc/kafka-rest/issues/1085
     )
-
-    class Config(BaseConfig):
-        extra = Extra.forbid
 
 
 class KafkaTopicConfigSource(str, Enum):
