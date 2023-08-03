@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseConfig, Extra, Field
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaApp
@@ -49,9 +49,6 @@ class ProducerApp(KafkaApp):
         title="From",
         description=describe_attr("from_", __doc__),
     )
-
-    class Config(BaseConfig):
-        extra = Extra.allow
 
     @override
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:

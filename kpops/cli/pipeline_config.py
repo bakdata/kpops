@@ -94,7 +94,7 @@ class PipelineConfig(BaseSettings):
     )
 
     class Config(BaseConfig):
-        config_path: Path = Path("config.yaml")
+        config_path = Path("config.yaml")
         env_file = ".env"
         env_file_encoding = "utf-8"
 
