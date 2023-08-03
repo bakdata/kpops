@@ -49,7 +49,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-account-producer-topic': {
                         'configs': {
                         },
-                        'partitionsCount': 3,
+                        'partitions_count': 3,
                         'type': 'output'
                     }
                 }
@@ -101,7 +101,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-transaction-avro-producer-topic': {
                         'configs': {
                         },
-                        'partitionsCount': 3,
+                        'partitions_count': 3,
                         'type': 'output'
                     }
                 }
@@ -158,13 +158,13 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-transaction-joiner-dead-letter-topic': {
                         'configs': {
                         },
-                        'partitionsCount': 1,
+                        'partitions_count': 1,
                         'type': 'error'
                     },
                     'bakdata-atm-fraud-detection-transaction-joiner-topic': {
                         'configs': {
                         },
-                        'partitionsCount': 3,
+                        'partitions_count': 3,
                         'type': 'output'
                     }
                 }
@@ -221,13 +221,13 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-fraud-detector-dead-letter-topic': {
                         'configs': {
                         },
-                        'partitionsCount': 1,
+                        'partitions_count': 1,
                         'type': 'error'
                     },
                     'bakdata-atm-fraud-detection-fraud-detector-topic': {
                         'configs': {
                         },
-                        'partitionsCount': 3,
+                        'partitions_count': 3,
                         'type': 'output'
                     }
                 }
@@ -302,13 +302,13 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-account-linker-dead-letter-topic': {
                         'configs': {
                         },
-                        'partitionsCount': 1,
+                        'partitions_count': 1,
                         'type': 'error'
                     },
                     'bakdata-atm-fraud-detection-account-linker-topic': {
                         'configs': {
                         },
-                        'partitionsCount': 3,
+                        'partitions_count': 3,
                         'type': 'output'
                     }
                 }
