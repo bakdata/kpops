@@ -36,10 +36,10 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'namespace': '${NAMESPACE}',
             'prefix': '',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -88,10 +88,10 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'namespace': '${NAMESPACE}',
             'prefix': '',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -145,10 +145,10 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'namespace': '${NAMESPACE}',
             'prefix': '',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -208,10 +208,10 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'namespace': '${NAMESPACE}',
             'prefix': '',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -289,10 +289,10 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'namespace': '${NAMESPACE}',
             'prefix': '',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -344,10 +344,10 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'namespace': '${NAMESPACE}',
             'prefix': '',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
             'resetterValues': {

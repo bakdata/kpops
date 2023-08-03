@@ -32,10 +32,10 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -74,10 +74,10 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -127,10 +127,10 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -194,10 +194,10 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -269,10 +269,10 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -319,10 +319,10 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
             'resetterValues': {
@@ -367,10 +367,10 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -430,10 +430,10 @@ snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -477,10 +477,10 @@ snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
             'resetterValues': {
@@ -514,10 +514,10 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-first-pipeline-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -581,10 +581,10 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-first-pipeline-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -656,10 +656,10 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-first-pipeline-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -706,13 +706,13 @@ snapshots['TestPipeline.test_model_serialization test-pipeline'] = {
             'namespace': 'test',
             'prefix': 'resources-pipeline-with-paths-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'caFile': 'my-cert.cert',
-                    'insecureSkipTlsVerify': False,
+                'repo_auth_flags': {
+                    'ca_file': 'my-cert.cert',
+                    'insecure_skip_tls_verify': False,
                     'password': '$CI_JOB_TOKEN',
                     'username': 'masked'
                 },
-                'repositoryName': 'masked',
+                'repository_name': 'masked',
                 'url': 'masked'
             },
             'type': 'producer',
@@ -761,10 +761,10 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-no-input-topic-pipeline-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -812,10 +812,10 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-no-input-topic-pipeline-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -882,10 +882,10 @@ snapshots['TestPipeline.test_no_user_defined_components test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-no-user-defined-components-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -936,10 +936,10 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-envs-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1003,10 +1003,10 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-envs-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1078,10 +1078,10 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-envs-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1138,10 +1138,10 @@ snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = {
             'namespace': '${NAMESPACE}',
             'prefix': 'from-pipeline-component-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'type': 'producer',
@@ -1167,10 +1167,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1202,10 +1202,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': '',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1257,10 +1257,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1307,10 +1307,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
             'resetterValues': {
@@ -1355,10 +1355,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1418,10 +1418,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': '',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1468,10 +1468,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
             'resetterValues': {
@@ -1516,10 +1516,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1573,10 +1573,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1633,10 +1633,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1688,10 +1688,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1739,10 +1739,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1790,10 +1790,10 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1844,10 +1844,10 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-component-type-substitution-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1911,10 +1911,10 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-component-type-substitution-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1993,10 +1993,10 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-component-type-substitution-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -2051,10 +2051,10 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -2093,10 +2093,10 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -2148,10 +2148,10 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -2190,10 +2190,10 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -2252,10 +2252,10 @@ snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = {
             'namespace': 'development-namespace',
             'prefix': 'resources-kafka-connect-sink-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -2299,10 +2299,10 @@ snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = {
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
             'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
             'resetterValues': {
