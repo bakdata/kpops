@@ -20,8 +20,8 @@
     topics:
       ${pipeline_name}-output-topic:
         type: error # required
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
         partitions_count: 1
         replication_factor: 1
         configs: # https://kafka.apache.org/documentation/#topicconfigs
