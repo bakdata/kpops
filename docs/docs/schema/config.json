@@ -2,7 +2,7 @@
     "$ref": "#/definitions/PipelineConfig",
     "definitions": {
         "HelmConfig": {
-            "description": "Helm configuration\n\n:param context: Set the name of the kubeconfig context. (--kube-context)\n:param debug: Run Helm in Debug mode",
+            "description": "Global flags for Helm\n\n:param context: Set the name of the kubeconfig context. (--kube-context)\n:param debug: Run Helm in Debug mode",
             "properties": {
                 "context": {
                     "description": "Set the name of the kubeconfig context. (--kube-context)",

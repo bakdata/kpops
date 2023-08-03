@@ -66,7 +66,7 @@ class HelmRepoConfig(BaseModel):
 
 
 class HelmConfig(BaseModel):
-    """Helm configuration
+    """Global flags for Helm
 
     :param context: Set the name of the kubeconfig context. (--kube-context)
     :param debug: Run Helm in Debug mode
