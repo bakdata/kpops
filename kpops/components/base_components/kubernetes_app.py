@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from functools import cached_property
-from typing import Any, Literal
+from typing import Any
 
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
@@ -18,7 +18,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 log = logging.getLogger("KubernetesAppComponent")
@@ -41,8 +41,6 @@ class KubernetesApp(PipelineComponent):
     All built-in components are Kubernetes apps, except for the Kafka connectors.
 
     :param type: Component type, defaults to "kubernetes-app"
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kubernetes-app"
     :param app: Application-specific settings
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to None
@@ -50,16 +48,7 @@ class KubernetesApp(PipelineComponent):
     :param version: Helm chart version, defaults to None
     """
 
-    type: str = Field(
-        default="kubernetes-app",
-        description=describe_attr("type", __doc__),
-    )
-    schema_type: Literal["kubernetes-app"] = Field(
-        default="kubernetes-app",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
+    type = "kubernetes-app"
     app: KubernetesAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),

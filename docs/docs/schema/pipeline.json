@@ -153,15 +153,6 @@
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
                     "title": "Repo Config"
                 },
-                "type": {
-                    "default": "kafka-app",
-                    "description": "Base component for Kafka-based components.\nProducer or streaming apps should inherit from this class.",
-                    "enum": [
-                        "kafka-app"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
-                },
                 "to": {
                     "allOf": [
                         {
@@ -173,8 +164,11 @@
                 },
                 "type": {
                     "default": "kafka-app",
-                    "description": "Component type",
-                    "title": "Type",
+                    "description": "Base component for Kafka-based components.\nProducer or streaming apps should inherit from this class.",
+                    "enum": [
+                        "kafka-app"
+                    ],
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -286,15 +280,6 @@
                     "title": "Resetter Values",
                     "type": "object"
                 },
-                "type": {
-                    "default": "kafka-connector",
-                    "description": "Base class for all Kafka connectors\nShould only be used to set defaults",
-                    "enum": [
-                        "kafka-connector"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
-                },
                 "to": {
                     "allOf": [
                         {
@@ -306,8 +291,11 @@
                 },
                 "type": {
                     "default": "kafka-connector",
-                    "description": "Component type",
-                    "title": "Type",
+                    "description": "Base class for all Kafka connectors\nShould only be used to set defaults",
+                    "enum": [
+                        "kafka-connector"
+                    ],
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -386,15 +374,6 @@
                     "title": "Resetter Values",
                     "type": "object"
                 },
-                "type": {
-                    "default": "kafka-sink-connector",
-                    "description": "Kafka sink connector model",
-                    "enum": [
-                        "kafka-sink-connector"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
-                },
                 "to": {
                     "allOf": [
                         {
@@ -406,8 +385,11 @@
                 },
                 "type": {
                     "default": "kafka-sink-connector",
-                    "description": "Component type",
-                    "title": "Type",
+                    "description": "Kafka sink connector model",
+                    "enum": [
+                        "kafka-sink-connector"
+                    ],
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -491,15 +473,6 @@
                     "title": "Resetter Values",
                     "type": "object"
                 },
-                "type": {
-                    "default": "kafka-source-connector",
-                    "description": "Kafka source connector model",
-                    "enum": [
-                        "kafka-source-connector"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
-                },
                 "to": {
                     "allOf": [
                         {
@@ -511,8 +484,11 @@
                 },
                 "type": {
                     "default": "kafka-source-connector",
-                    "description": "Component type",
-                    "title": "Type",
+                    "description": "Kafka source connector model",
+                    "enum": [
+                        "kafka-source-connector"
+                    ],
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -596,15 +572,6 @@
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
                     "title": "Repo Config"
                 },
-                "type": {
-                    "default": "kubernetes-app",
-                    "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
-                    "enum": [
-                        "kubernetes-app"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
-                },
                 "to": {
                     "allOf": [
                         {
@@ -616,8 +583,11 @@
                 },
                 "type": {
                     "default": "kubernetes-app",
-                    "description": "Component type",
-                    "title": "Type",
+                    "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
+                    "enum": [
+                        "kubernetes-app"
+                    ],
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -673,15 +643,6 @@
                     "title": "Prefix",
                     "type": "string"
                 },
-                "type": {
-                    "default": "pipeline-component",
-                    "description": "Base class for all components",
-                    "enum": [
-                        "pipeline-component"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
-                },
                 "to": {
                     "allOf": [
                         {
@@ -692,8 +653,11 @@
                     "title": "To"
                 },
                 "type": {
-                    "const": "pipeline-component",
                     "default": "pipeline-component",
+                    "description": "Base class for all components",
+                    "enum": [
+                        "pipeline-component"
+                    ],
                     "title": "Type",
                     "type": "string"
                 }
@@ -756,15 +720,6 @@
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
                     "title": "Repo Config"
                 },
-                "type": {
-                    "default": "producer",
-                    "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
-                    "enum": [
-                        "producer"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
-                },
                 "to": {
                     "allOf": [
                         {
@@ -776,8 +731,11 @@
                 },
                 "type": {
                     "default": "producer",
-                    "description": "Component type",
-                    "title": "Type",
+                    "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+                    "enum": [
+                        "producer"
+                    ],
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -938,15 +896,6 @@
                     "description": "Configuration of the Helm chart repo to be used for deploying the component",
                     "title": "Repo Config"
                 },
-                "type": {
-                    "default": "streams-app",
-                    "description": "StreamsApp component that configures a streams bootstrap app",
-                    "enum": [
-                        "streams-app"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
-                },
                 "to": {
                     "allOf": [
                         {
@@ -958,8 +907,11 @@
                 },
                 "type": {
                     "default": "streams-app",
-                    "description": "Component type",
-                    "title": "Type",
+                    "description": "StreamsApp component that configures a streams bootstrap app",
+                    "enum": [
+                        "streams-app"
+                    ],
+                    "title": "Component type",
                     "type": "string"
                 },
                 "version": {
@@ -1277,6 +1229,6 @@
             }
         ]
     },
-    "title": "kpops pipeline schema",
+    "title": "KPOps pipeline schema",
     "type": "array"
 }

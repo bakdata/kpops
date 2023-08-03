@@ -1,14 +1,12 @@
 from __future__ import annotations
 
-from typing import Literal
-
 from pydantic import Field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import StreamsAppConfig
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 
 
 class StreamsApp(KafkaApp):
@@ -16,23 +14,11 @@ class StreamsApp(KafkaApp):
 
     :param type: Component type, defaults to "streams-app"
     :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "streams-app"
-    :type schema_type: Literal["streams-app"], optional
     :param app: Application-specific settings
     :type app: StreamsAppConfig
     """
 
-    type: str = Field(
-        default="streams-app",
-        description=describe_attr("type", __doc__),
-    )
-    schema_type: Literal["streams-app"] = Field(
-        default="streams-app",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
+    type = "streams-app"
     app: StreamsAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),
