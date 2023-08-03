@@ -11,7 +11,7 @@ def to_camel(s: str) -> str:
 
 
 def to_dash(s: str) -> str:
-    if s.upper() == s:
+    if s.isupper():
         return s.lower()
     return humps.depascalize(s).replace("_", "-")
 
