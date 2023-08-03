@@ -23,7 +23,7 @@ try:
 except ImportError:
     from typing_extensions import Self
 
-log = logging.getLogger("PipelineComponentEnricher")  # TODO: rename
+log = logging.getLogger("BaseDefaultsComponent")
 
 
 class BaseDefaultsComponent(BaseModel):
