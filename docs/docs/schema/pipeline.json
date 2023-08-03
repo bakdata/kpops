@@ -53,7 +53,7 @@
         "HelmRepoConfig": {
             "description": "Helm repository configuration",
             "properties": {
-                "repoAuthFlags": {
+                "repo_auth_flags": {
                     "allOf": [
                         {
                             "$ref": "#/definitions/RepoAuthFlags"
@@ -66,11 +66,11 @@
                         "username": null
                     },
                     "description": "Authorisation-related flags",
-                    "title": "Repoauthflags"
+                    "title": "Repo Auth Flags"
                 },
-                "repositoryName": {
+                "repository_name": {
                     "description": "Name of the Helm repository",
-                    "title": "Repositoryname",
+                    "title": "Repository Name",
                     "type": "string"
                 },
                 "url": {
@@ -80,7 +80,7 @@
                 }
             },
             "required": [
-                "repositoryName",
+                "repository_name",
                 "url"
             ],
             "title": "HelmRepoConfig",
@@ -856,16 +856,16 @@
         "RepoAuthFlags": {
             "description": "Authorisation-related flags for `helm repo`",
             "properties": {
-                "caFile": {
+                "ca_file": {
                     "description": "Certificate file",
                     "format": "path",
-                    "title": "Cafile",
+                    "title": "Ca File",
                     "type": "string"
                 },
-                "insecureSkipTlsVerify": {
+                "insecure_skip_tls_verify": {
                     "default": false,
                     "description": "If true, Kubernetes API server's certificate will not be checked for validity",
-                    "title": "Insecureskiptlsverify",
+                    "title": "Insecure Skip Tls Verify",
                     "type": "boolean"
                 },
                 "password": {
