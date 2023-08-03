@@ -28,7 +28,6 @@ from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig
 
 log = logging.getLogger("KafkaConnector")
 
@@ -76,9 +75,6 @@ class KafkaConnector(PipelineComponent, ABC):
         default_factory=dict,
         description=describe_attr("resetter_values", __doc__),
     )
-
-    class Config(CamelCaseConfig):
-        pass
 
     @cached_property
     def helm(self) -> Helm:

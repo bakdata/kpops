@@ -19,23 +19,23 @@ kafka-connector:
   to:
     topics:
       ${pipeline_name}-output-topic:
-        type: error 
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
+        type: error
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
         partitions_count: 1
         replication_factor: 1
         configs: # https://kafka.apache.org/documentation/#topicconfigs
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration for resetter
-  repoConfig:
-    repositoryName: my-repo
+  repo_config:
+    repository_name: my-repo
     url: https://bakdata.github.io/kafka-connect-resetter/
-    repoAuthFlags: 
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -43,5 +43,5 @@ kafka-connector:
   version: "1.0.4" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
-  resetterValues:
+  resetter_values:
     imageTag: "1.2.3"
