@@ -58,7 +58,7 @@ The `defaults` codeblocks in this section contain the full set of settings that 
       --8<--
     ```
 
-### [Producer](../components/#producer)
+### [ProducerApp](../components/#producerapp)
 
 ??? example "`defaults.yaml`"
 
