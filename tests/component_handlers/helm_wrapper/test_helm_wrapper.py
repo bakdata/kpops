@@ -178,6 +178,7 @@ class TestHelmWrapper:
             flags=HelmUpgradeInstallFlags(
                 create_namespace=True,
                 force=True,
+                set_file={"key1": Path("example/path1"), "key2": Path("example/path2")},
                 timeout="120s",
                 wait=True,
                 wait_for_jobs=True,
@@ -196,6 +197,8 @@ class TestHelmWrapper:
                 "test-namespace",
                 "--values",
                 "values.yaml",
+                "--set-file",
+                "key1=example/path1,key2=example/path2",
                 "--create-namespace",
                 "--dry-run",
                 "--force",
