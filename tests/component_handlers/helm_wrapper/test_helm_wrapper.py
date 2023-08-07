@@ -1,3 +1,4 @@
+import platform
 from pathlib import Path
 from textwrap import dedent
 from unittest import mock
@@ -198,7 +199,9 @@ class TestHelmWrapper:
                 "--values",
                 "values.yaml",
                 "--set-file",
-                "key1=example/path1,key2=example/path2",
+                "key1=example\\path1,key2=example\\path2"
+                if platform.system() == "Windows"
+                else "key1=example/path1,key2=example/path2",
                 "--create-namespace",
                 "--force",
                 "--wait",
