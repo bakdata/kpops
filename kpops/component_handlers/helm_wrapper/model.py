@@ -95,6 +95,27 @@ class HelmUpgradeInstallFlags:
     wait: bool = True
     wait_for_jobs: bool = False
 
+    def to_command(self) -> list[str]:
+        command: list[str] = []
+        if self.set_file:
+            command.extend(
+                [
+                    "--set-file",
+                    ",".join([f"{key}={path}" for key, path in self.set_file.items()]),
+                ]
+            )
+        if self.create_namespace:
+            command.append("--create-namespace")
+        if self.force:
+            command.append("--force")
+        if self.wait:
+            command.append("--wait")
+        if self.wait_for_jobs:
+            command.append("--wait-for-jobs")
+        if self.version:
+            command.extend(["--version", self.version])
+        return command
+
 
 @dataclass
 class HelmTemplateFlags:
@@ -102,6 +123,18 @@ class HelmTemplateFlags:
     ca_file: str | None = None
     cert_file: str | None = None
     version: str | None = None
+
+    def to_command(self) -> list[str]:
+        command: list[str] = []
+        if self.api_version:
+            command.extend(["--api-versions", self.api_version])
+        if self.ca_file:
+            command.extend(["--ca-file", self.ca_file])
+        if self.cert_file:
+            command.extend(["--cert-file", self.cert_file])
+        if self.version:
+            command.extend(["--version", self.version])
+        return command
 
 
 HELM_SOURCE_PREFIX = "# Source: "

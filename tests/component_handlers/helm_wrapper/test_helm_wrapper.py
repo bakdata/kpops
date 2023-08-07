@@ -200,12 +200,12 @@ class TestHelmWrapper:
                 "--set-file",
                 "key1=example/path1,key2=example/path2",
                 "--create-namespace",
-                "--dry-run",
                 "--force",
                 "--wait",
                 "--wait-for-jobs",
                 "--version",
                 "2.4.2",
+                "--dry-run",
             ],
         )
 
