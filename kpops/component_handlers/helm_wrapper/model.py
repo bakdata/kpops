@@ -89,6 +89,7 @@ class HelmUpgradeInstallFlags:
     create_namespace: bool = False
     force: bool = False
     repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
+    set_file: dict[str, Path] = field(default_factory=dict)
     timeout: str = "5m0s"
     version: str | None = None
     wait: bool = True
