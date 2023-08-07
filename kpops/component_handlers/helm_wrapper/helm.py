@@ -106,15 +106,6 @@ class Helm:
                     values_file.name,
                 ]
             )
-            if flags.set_file:
-                command.extend(
-                    [
-                        "--set-file",
-                        ",".join(
-                            [f"{key}={file}" for key, file in flags.set_file.items()]
-                        ),
-                    ]
-                )
             command = Helm.__extend_tls_config(command, flags.repo_auth_flags)
 
             command = Helm.__enrich_upgrade_install_command(command, dry_run, flags)
@@ -271,6 +262,18 @@ class Helm:
         dry_run: bool,
         helm_command_config: HelmUpgradeInstallFlags,
     ) -> list[str]:
+        if helm_command_config.set_file:
+            command.extend(
+                [
+                    "--set-file",
+                    ",".join(
+                        [
+                            f"{key}={file}"
+                            for key, file in helm_command_config.set_file.items()
+                        ]
+                    ),
+                ]
+            )
         if helm_command_config.create_namespace:
             command.append("--create-namespace")
         if dry_run:
