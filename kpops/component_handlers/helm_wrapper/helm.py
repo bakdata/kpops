@@ -268,8 +268,8 @@ class Helm:
                     "--set-file",
                     ",".join(
                         [
-                            f"{key}={file}"
-                            for key, file in helm_command_config.set_file.items()
+                            f"{key}={path}"
+                            for key, path in helm_command_config.set_file.items()
                         ]
                     ),
                 ]
