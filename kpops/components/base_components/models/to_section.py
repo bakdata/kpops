@@ -83,11 +83,11 @@ class ToSection(BaseModel):
     :param models: Data models
     """
 
-    # TODO: really multiple models?
-    # any because snapshot versions must be supported
     topics: dict[TopicName, TopicConfig] = Field(
         default={}, description=describe_attr("topics", __doc__)
     )
+    # TODO: really multiple models?
+    # any because snapshot versions must be supported
     models: dict[str, Any] = Field(
         default={}, description=describe_attr("models", __doc__)
     )
