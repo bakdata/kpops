@@ -513,7 +513,7 @@ class TestConnectorApiWrapper:
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.put")
     async def test_should_create_correct_validate_connector_config_and_name_gets_added(
-        self, mock_put: MagicMock
+        self, mock_put: AsyncMock
     ):
         connector_name = "FileStreamSinkConnector"
         configs = {
