@@ -30,7 +30,9 @@ class ProxyWrapper:
             raise ValueError(
                 "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
             )
-        self._client = httpx.AsyncClient(base_url=pipeline_config.kafka_rest_host)
+        self._client = httpx.AsyncClient(
+            base_url=f"{pipeline_config.kafka_rest_host}/v3/clusters"
+        )
         self._sync_client = httpx.Client(base_url=pipeline_config.kafka_rest_host)
         self._host = pipeline_config.kafka_rest_host
 
@@ -64,7 +66,7 @@ class ProxyWrapper:
         :param topic_spec: The topic specification.
         """
         response = await self._client.post(
-            url=f"/v3/clusters/{self.cluster_id}/topics",
+            url=f"/{self.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec.dict(exclude_none=True),
         )
@@ -83,7 +85,7 @@ class ProxyWrapper:
         :param topic_name: Name of the topic
         """
         response = await self._client.delete(
-            url=f"/v3/clusters/{self.cluster_id}/topics/{topic_name}",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
+            url=f"/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
 
@@ -102,7 +104,7 @@ class ProxyWrapper:
         """
 
         response = await self._client.get(
-            url=f"/v3/clusters/{self.cluster_id}/topics/{topic_name}",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
+            url=f"/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
 
@@ -130,7 +132,7 @@ class ProxyWrapper:
         """
 
         response = await self._client.get(
-            url=f"/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
+            url=f"/{self.cluster_id}/topics/{topic_name}/configs",
             headers=HEADERS,
         )
 
@@ -159,7 +161,7 @@ class ProxyWrapper:
         :param config_name: The configuration parameter name.
         """
         response = await self._client.post(
-            url=f"/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
+            url=f"/{self.cluster_id}/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={"data": json_body},
         )
@@ -177,7 +179,7 @@ class ProxyWrapper:
         :return: The broker configuration.
         """
         response = await self._client.get(
-            url=f"/v3/clusters/{self.cluster_id}/brokers/-/configs",  # type: ignore # FIXME https://github.com/ryananguiano/async_property/issues/17
+            url=f"/{self.cluster_id}/brokers/-/configs",
             headers=HEADERS,
         )
 

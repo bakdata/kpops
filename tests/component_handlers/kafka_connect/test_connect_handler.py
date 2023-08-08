@@ -41,7 +41,7 @@ class TestConnectorHandler:
         )
 
     @pytest.fixture
-    def connector_wrapper(self):
+    def connector_wrapper(self) -> AsyncMock:
         return AsyncMock()
 
     @pytest.fixture

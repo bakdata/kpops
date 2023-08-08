@@ -47,7 +47,7 @@ def find_class_mock(mocker: MockerFixture) -> MagicMock:
 
 
 @pytest.fixture(autouse=True)
-def schema_registry_mock(mocker: MockerFixture) -> MagicMock:
+def schema_registry_mock(mocker: MockerFixture) -> AsyncMock:
     schema_registry_mock_constructor = mocker.patch(
         "kpops.component_handlers.schema_handler.schema_handler.AsyncSchemaRegistryClient",
     )
@@ -159,7 +159,7 @@ def test_should_raise_value_error_when_schema_provider_is_called_and_components_
 
 @pytest.mark.asyncio
 async def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
-    to_section: ToSection, log_info_mock: MagicMock, schema_registry_mock: MagicMock
+    to_section: ToSection, log_info_mock: MagicMock, schema_registry_mock: AsyncMock
 ):
     schema_handler = SchemaHandler(
         url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE

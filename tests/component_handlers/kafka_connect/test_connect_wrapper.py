@@ -1,7 +1,7 @@
 import json
 import sys
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 import pytest_asyncio
@@ -51,7 +51,7 @@ class TestConnectorApiWrapper:
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.post")
     async def test_should_create_post_requests_for_given_connector_configuration(
-        self, mock_post: MagicMock
+        self, mock_post: AsyncMock
     ):
         configs = {
             "batch.size": "50",
@@ -140,7 +140,7 @@ class TestConnectorApiWrapper:
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.get")
     async def test_should_create_correct_get_connector_request(
-        self, mock_get: MagicMock
+        self, mock_get: AsyncMock
     ):
         connector_name = "test-connector"
         with pytest.raises(KafkaConnectError):
@@ -258,7 +258,7 @@ class TestConnectorApiWrapper:
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.put")
     async def test_should_create_correct_update_connector_request(
-        self, mock_put: MagicMock
+        self, mock_put: AsyncMock
     ):
         connector_name = "test-connector"
         configs = {
@@ -392,7 +392,7 @@ class TestConnectorApiWrapper:
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.delete")
     async def test_should_create_correct_delete_connector_request(
-        self, mock_delete: MagicMock
+        self, mock_delete: AsyncMock
     ):
         connector_name = "test-connector"
         with pytest.raises(KafkaConnectError):
@@ -490,7 +490,7 @@ class TestConnectorApiWrapper:
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.put")
     async def test_should_create_correct_validate_connector_config_request(
-        self, mock_put: MagicMock
+        self, mock_put: AsyncMock
     ):
         configs = {
             "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",

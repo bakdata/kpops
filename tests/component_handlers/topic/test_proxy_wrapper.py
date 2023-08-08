@@ -49,7 +49,7 @@ class TestProxyWrapper:
             status_code=200,
         )
         assert self.proxy_wrapper.host == HOST
-        assert self.proxy_wrapper.cluster_id == "cluster-1"  # type: ignore
+        assert self.proxy_wrapper.cluster_id == "cluster-1"
 
     @pytest.mark.asyncio
     async def test_should_raise_exception_when_host_is_not_set(self):
@@ -81,7 +81,7 @@ class TestProxyWrapper:
             await self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
 
         mock_post.assert_called_with(
-            url=f"/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
+            url=f"/{self.proxy_wrapper.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec,
         )
@@ -97,27 +97,27 @@ class TestProxyWrapper:
             await self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
 
         mock_post.assert_called_with(
-            url=f"/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
+            url=f"/{self.proxy_wrapper.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec,
         )
 
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.get")
-    async def test_should_call_get_topic(self, mock_get: MagicMock):
+    async def test_should_call_get_topic(self, mock_get: AsyncMock):
         topic_name = "topic-X"
 
         with pytest.raises(KafkaRestProxyError):
             await self.proxy_wrapper.get_topic(topic_name=topic_name)
 
         mock_get.assert_called_with(
-            url=f"/v3/clusters/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
+            url=f"/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
 
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.post")
-    async def test_should_call_batch_alter_topic_config(self, mock_put: MagicMock):
+    async def test_should_call_batch_alter_topic_config(self, mock_put: AsyncMock):
         topic_name = "topic-X"
 
         with pytest.raises(KafkaRestProxyError):
@@ -130,7 +130,7 @@ class TestProxyWrapper:
             )
 
         mock_put.assert_called_with(
-            url=f"/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
+            url=f"/cluster-1/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={
                 "data": [
@@ -142,25 +142,25 @@ class TestProxyWrapper:
 
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.delete")
-    async def test_should_call_delete_topic(self, mock_delete: MagicMock):
+    async def test_should_call_delete_topic(self, mock_delete: AsyncMock):
         topic_name = "topic-X"
 
         with pytest.raises(KafkaRestProxyError):
             await self.proxy_wrapper.delete_topic(topic_name=topic_name)
 
         mock_delete.assert_called_with(
-            url=f"/v3/clusters/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
+            url=f"/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
 
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.get")
-    async def test_should_call_get_broker_config(self, mock_get: MagicMock):
+    async def test_should_call_get_broker_config(self, mock_get: AsyncMock):
         with pytest.raises(KafkaRestProxyError):
             await self.proxy_wrapper.get_broker_config()
 
         mock_get.assert_called_with(
-            url=f"/v3/clusters/{self.proxy_wrapper.cluster_id}/brokers/-/configs",
+            url=f"/{self.proxy_wrapper.cluster_id}/brokers/-/configs",
             headers=HEADERS,
         )
 
