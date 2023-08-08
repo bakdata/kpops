@@ -44,7 +44,7 @@ class TestProxyWrapper:
 
         httpx_mock.add_response(
             method="GET",
-            url=f"{HOST}/v3/clusters",
+            url=f"{HOST}/v3/clusters/",
             json=cluster_response,
             status_code=200,
         )

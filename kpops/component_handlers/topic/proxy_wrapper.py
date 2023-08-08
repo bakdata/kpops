@@ -33,7 +33,7 @@ class ProxyWrapper:
         self._client = httpx.AsyncClient(
             base_url=f"{pipeline_config.kafka_rest_host}/v3/clusters"
         )
-        self._sync_client = httpx.Client(base_url=pipeline_config.kafka_rest_host)
+        self._sync_client = httpx.Client(base_url=f"{pipeline_config.kafka_rest_host}/v3/clusters")
         self._host = pipeline_config.kafka_rest_host
 
     @cached_property
@@ -47,7 +47,7 @@ class ProxyWrapper:
         bootstrap.servers configuration. Therefore, only one Kafka cluster will be returned.
         :return: The Kafka cluster ID.
         """
-        response = self._sync_client.get(url="/v3/clusters")
+        response = self._sync_client.get("")
 
         if response.status_code == httpx.codes.OK:
             cluster_information = response.json()
