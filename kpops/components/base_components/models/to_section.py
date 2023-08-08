@@ -79,10 +79,8 @@ class TopicConfig(BaseModel):
 class ToSection(BaseModel):
     """Holds multiple output topics
 
-    :param models: Data models
-    :type models: dict[str, Any]
     :param topics: Output topics
-    :type topics: dict[str, TopicConfig]
+    :param models: Data models
     """
 
     # TODO: really multiple models?
