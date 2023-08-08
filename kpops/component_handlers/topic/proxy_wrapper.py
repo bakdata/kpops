@@ -33,7 +33,9 @@ class ProxyWrapper:
         self._client = httpx.AsyncClient(
             base_url=f"{pipeline_config.kafka_rest_host}/v3/clusters"
         )
-        self._sync_client = httpx.Client(base_url=f"{pipeline_config.kafka_rest_host}/v3/clusters")
+        self._sync_client = httpx.Client(
+            base_url=f"{pipeline_config.kafka_rest_host}/v3/clusters"
+        )
         self._host = pipeline_config.kafka_rest_host
 
     @cached_property
