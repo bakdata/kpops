@@ -100,6 +100,10 @@ class HelmFlags(RepoAuthFlags):
     set_file: dict[str, Path] = Field(default_factory=dict)
     create_namespace: bool = False
     version: str | None = None
+    force: bool = False
+    timeout: str = "5m0s"
+    wait: bool = True
+    wait_for_jobs: bool = False
 
     @override
     def to_command(self) -> list[str]:
@@ -115,25 +119,19 @@ class HelmFlags(RepoAuthFlags):
             command.append("--create-namespace")
         if self.version:
             command.extend(["--version", self.version])
-        return command
-
-
-class HelmUpgradeInstallFlags(HelmFlags):
-    force: bool = False
-    timeout: str = "5m0s"
-    wait: bool = True
-    wait_for_jobs: bool = False
-
-    @override
-    def to_command(self) -> list[str]:
-        command = super().to_command()
         if self.force:
             command.append("--force")
+        if self.timeout:
+            command.extend(["--timeout", self.timeout])
         if self.wait:
             command.append("--wait")
         if self.wait_for_jobs:
             command.append("--wait-for-jobs")
         return command
+
+
+class HelmUpgradeInstallFlags(HelmFlags):
+    ...
 
 
 class HelmTemplateFlags(HelmFlags):
