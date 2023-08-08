@@ -87,11 +87,11 @@ class ToSection(BaseModel):
 
     # TODO: really multiple models?
     # any because snapshot versions must be supported
+    topics: dict[TopicName, TopicConfig] = Field(
+        default={}, description=describe_attr("topics", __doc__)
+    )
     models: dict[str, Any] = Field(
         default={}, description=describe_attr("models", __doc__)
-    )
-    topics: dict[TopicName, TopicConfig] = Field(
-        ..., description=describe_attr("topics", __doc__)
     )
 
     class Config(DescConfig):

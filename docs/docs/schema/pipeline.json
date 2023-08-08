@@ -1164,14 +1164,12 @@
                     "additionalProperties": {
                         "$ref": "#/definitions/TopicConfig"
                     },
+                    "default": {},
                     "description": "Output topics",
                     "title": "Topics",
                     "type": "object"
                 }
             },
-            "required": [
-                "topics"
-            ],
             "title": "ToSection",
             "type": "object"
         },
