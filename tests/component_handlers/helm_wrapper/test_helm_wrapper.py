@@ -141,9 +141,8 @@ class TestHelmWrapper:
             namespace="test-namespace",
             values={},
             flags=HelmUpgradeInstallFlags(
-                repo_auth_flags=RepoAuthFlags(
-                    ca_file=Path("a_file.ca"), insecure_skip_tls_verify=True
-                )
+                ca_file=Path("a_file.ca"),
+                insecure_skip_tls_verify=True,
             ),
         )
 
@@ -203,11 +202,11 @@ class TestHelmWrapper:
                 if platform.system() == "Windows"
                 else "key1=example/path1,key2=example/path2",
                 "--create-namespace",
+                "--version",
+                "2.4.2",
                 "--force",
                 "--wait",
                 "--wait-for-jobs",
-                "--version",
-                "2.4.2",
                 "--dry-run",
             ],
         )
@@ -443,8 +442,8 @@ class TestHelmWrapper:
             values={"commandLine": "test"},
             flags=HelmTemplateFlags(
                 api_version="2.1.1",
-                ca_file="a_file.ca",
-                cert_file="a_file.pem",
+                ca_file=Path("a_file.ca"),
+                cert_file=Path("a_file.pem"),
             ),
         )
         run_command.assert_called_once_with(
@@ -457,12 +456,12 @@ class TestHelmWrapper:
                 "test-ns",
                 "--values",
                 "values.yaml",
-                "--api-versions",
-                "2.1.1",
                 "--ca-file",
                 "a_file.ca",
                 "--cert-file",
                 "a_file.pem",
+                "--api-versions",
+                "2.1.1",
             ],
         )
 

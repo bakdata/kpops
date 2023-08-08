@@ -46,18 +46,7 @@ class Helm:
             repository_name,
             repository_url,
         ]
-
-        if repo_auth_flags.username and repo_auth_flags.password:
-            command.extend(
-                [
-                    "--username",
-                    repo_auth_flags.username,
-                    "--password",
-                    repo_auth_flags.password,
-                ]
-            )
-
-        command = Helm.__extend_tls_config(command, repo_auth_flags)
+        command.extend(repo_auth_flags.to_command())
 
         try:
             self.__execute(command)
@@ -106,7 +95,6 @@ class Helm:
                     values_file.name,
                 ]
             )
-            command = Helm.__extend_tls_config(command, flags.repo_auth_flags)
             command.extend(flags.to_command())
             if dry_run:
                 command.append("--dry-run")
@@ -221,16 +209,6 @@ class Helm:
                 is_beginning = False
             else:
                 current_yaml_doc.append(line)
-
-    @staticmethod
-    def __extend_tls_config(
-        command: list[str], repo_auth_flags: RepoAuthFlags
-    ) -> list[str]:
-        if repo_auth_flags.ca_file:
-            command.extend(["--ca-file", str(repo_auth_flags.ca_file)])
-        if repo_auth_flags.insecure_skip_tls_verify:
-            command.append("--insecure-skip-tls-verify")
-        return command
 
     def __execute(self, command: list[str]) -> str:
         command = self.__set_global_flags(command)

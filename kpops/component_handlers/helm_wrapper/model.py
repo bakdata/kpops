@@ -1,9 +1,10 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterator
 
 import yaml
 from pydantic import BaseModel, Field
+from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.exception import ParseError
 from kpops.utils.docstring import describe_attr
@@ -22,14 +23,11 @@ class RepoAuthFlags(BaseModel):
     """Authorisation-related flags for `helm repo`
 
     :param username: Username, defaults to None
-    :type username: str, optional
     :param password: Password, defaults to None
-    :type password: str, optional
     :param ca_file: Certificate file, defaults to None
-    :type ca_file: Path, optional
+    :param cert_file: identify HTTPS client using this SSL certificate file, defaults to None
     :param insecure_skip_tls_verify: If true, Kubernetes API server's certificate will not be checked for validity
         , defaults to False
-    :type insecure_skip_tls_verify: bool, optional
     """
 
     username: str | None = Field(
@@ -41,6 +39,9 @@ class RepoAuthFlags(BaseModel):
     ca_file: Path | None = Field(
         default=None, description=describe_attr("ca_file", __doc__)
     )
+    cert_file: Path | None = Field(
+        default=None, description=describe_attr("cert_file", __doc__)
+    )
     insecure_skip_tls_verify: bool = Field(
         default=False, description=describe_attr("insecure_skip_tls_verify", __doc__)
     )
@@ -48,16 +49,27 @@ class RepoAuthFlags(BaseModel):
     class Config(CamelCaseConfig, DescConfig):
         pass
 
+    def to_command(self) -> list[str]:
+        command: list[str] = []
+        if self.username:
+            command.extend(["--username", self.username])
+        if self.password:
+            command.extend(["--password", self.password])
+        if self.ca_file:
+            command.extend(["--ca-file", str(self.ca_file)])
+        if self.cert_file:
+            command.extend(["--cert-file", str(self.cert_file)])
+        if self.insecure_skip_tls_verify:
+            command.append("--insecure-skip-tls-verify")
+        return command
+
 
 class HelmRepoConfig(BaseModel):
     """Helm repository configuration
 
     :param repository_name: Name of the Helm repository
-    :type repository_name: str
     :param url: URL to the Helm repository
-    :type url: str
     :param repo_auth_flags: Authorisation-related flags
-    :type repo_auth_flags: RepoAuthFlags
     """
 
     repository_name: str = Field(
@@ -84,12 +96,14 @@ class HelmConfig(BaseModel):
     )
 
 
-@dataclass
-class HelmFlags:
-    set_file: dict[str, Path] = field(default_factory=dict)
+class HelmFlags(RepoAuthFlags):
+    set_file: dict[str, Path] = Field(default_factory=dict)
+    create_namespace: bool = False
+    version: str | None = None
 
+    @override
     def to_command(self) -> list[str]:
-        command: list[str] = []
+        command = super().to_command()
         if self.set_file:
             command.extend(
                 [
@@ -97,51 +111,39 @@ class HelmFlags:
                     ",".join([f"{key}={path}" for key, path in self.set_file.items()]),
                 ]
             )
+        if self.create_namespace:
+            command.append("--create-namespace")
+        if self.version:
+            command.extend(["--version", self.version])
         return command
 
 
-@dataclass
 class HelmUpgradeInstallFlags(HelmFlags):
-    create_namespace: bool = False
     force: bool = False
-    repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
     timeout: str = "5m0s"
-    version: str | None = None
     wait: bool = True
     wait_for_jobs: bool = False
 
+    @override
     def to_command(self) -> list[str]:
         command = super().to_command()
-        if self.create_namespace:
-            command.append("--create-namespace")
         if self.force:
             command.append("--force")
         if self.wait:
             command.append("--wait")
         if self.wait_for_jobs:
             command.append("--wait-for-jobs")
-        if self.version:
-            command.extend(["--version", self.version])
         return command
 
 
-@dataclass
 class HelmTemplateFlags(HelmFlags):
     api_version: str | None = None
-    ca_file: str | None = None
-    cert_file: str | None = None
-    version: str | None = None
 
+    @override
     def to_command(self) -> list[str]:
         command = super().to_command()
         if self.api_version:
             command.extend(["--api-versions", self.api_version])
-        if self.ca_file:
-            command.extend(["--ca-file", self.ca_file])
-        if self.cert_file:
-            command.extend(["--cert-file", self.cert_file])
-        if self.version:
-            command.extend(["--version", self.version])
         return command
 
 
