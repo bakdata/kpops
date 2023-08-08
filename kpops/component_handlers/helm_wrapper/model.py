@@ -24,8 +24,8 @@ class RepoAuthFlags(BaseModel):
 
     :param username: Username, defaults to None
     :param password: Password, defaults to None
-    :param ca_file: Certificate file, defaults to None
-    :param cert_file: identify HTTPS client using this SSL certificate file, defaults to None
+    :param ca_file: Verify certificates of HTTPS-enabled servers using this CA bundle, defaults to None
+    :param cert_file: Identify HTTPS client using this SSL certificate file, defaults to None
     :param insecure_skip_tls_verify: If true, Kubernetes API server's certificate will not be checked for validity
         , defaults to False
     """

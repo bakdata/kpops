@@ -863,13 +863,13 @@
             "description": "Authorisation-related flags for `helm repo`",
             "properties": {
                 "caFile": {
-                    "description": "Certificate file",
+                    "description": "Verify certificates of HTTPS-enabled servers using this CA bundle",
                     "format": "path",
                     "title": "Cafile",
                     "type": "string"
                 },
                 "certFile": {
-                    "description": "identify HTTPS client using this SSL certificate file",
+                    "description": "Identify HTTPS client using this SSL certificate file",
                     "format": "path",
                     "title": "Certfile",
                     "type": "string"
