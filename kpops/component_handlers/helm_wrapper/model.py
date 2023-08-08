@@ -85,15 +85,8 @@ class HelmConfig(BaseModel):
 
 
 @dataclass
-class HelmUpgradeInstallFlags:
-    create_namespace: bool = False
-    force: bool = False
-    repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
+class HelmFlags:
     set_file: dict[str, Path] = field(default_factory=dict)
-    timeout: str = "5m0s"
-    version: str | None = None
-    wait: bool = True
-    wait_for_jobs: bool = False
 
     def to_command(self) -> list[str]:
         command: list[str] = []
@@ -104,6 +97,21 @@ class HelmUpgradeInstallFlags:
                     ",".join([f"{key}={path}" for key, path in self.set_file.items()]),
                 ]
             )
+        return command
+
+
+@dataclass
+class HelmUpgradeInstallFlags(HelmFlags):
+    create_namespace: bool = False
+    force: bool = False
+    repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
+    timeout: str = "5m0s"
+    version: str | None = None
+    wait: bool = True
+    wait_for_jobs: bool = False
+
+    def to_command(self) -> list[str]:
+        command = super().to_command()
         if self.create_namespace:
             command.append("--create-namespace")
         if self.force:
@@ -118,14 +126,14 @@ class HelmUpgradeInstallFlags:
 
 
 @dataclass
-class HelmTemplateFlags:
+class HelmTemplateFlags(HelmFlags):
     api_version: str | None = None
     ca_file: str | None = None
     cert_file: str | None = None
     version: str | None = None
 
     def to_command(self) -> list[str]:
-        command: list[str] = []
+        command = super().to_command()
         if self.api_version:
             command.extend(["--api-versions", self.api_version])
         if self.ca_file:
