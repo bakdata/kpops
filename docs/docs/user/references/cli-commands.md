@@ -121,8 +121,8 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--template / --no-template`: Run Helm template  [default: no-template]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--api-version TEXT`: Kubernetes API version used for Capabilities.APIVersions
-* `--ca-file TEXT`: Verify certificates of HTTPS-enabled servers using this CA bundle
-* `--cert-file TEXT`: Identify HTTPS client using this SSL certificate file
+* `--ca-file PATH`: Verify certificates of HTTPS-enabled servers using this CA bundle
+* `--cert-file PATH`: Identify HTTPS client using this SSL certificate file
 * `--help`: Show this message and exit.
 
 ## `kpops reset`

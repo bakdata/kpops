@@ -88,7 +88,6 @@ class Helm:
                     release_name,
                     chart,
                     "--install",
-                    f"--timeout={flags.timeout}",
                     "--namespace",
                     namespace,
                     "--values",
