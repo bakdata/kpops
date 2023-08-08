@@ -57,7 +57,8 @@ class TestKafkaApp:
         assert kafka_app.version == "2.9.0"
         assert kafka_app.namespace == "test-namespace"
 
-    def test_should_deploy_kafka_app(
+    @pytest.mark.asyncio
+    async def test_should_deploy_kafka_app(
         self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
     ):
         kafka_app = KafkaApp(
@@ -81,7 +82,7 @@ class TestKafkaApp:
         )
         mocker.patch.object(kafka_app, "get_helm_chart", return_value="test/test-chart")
 
-        kafka_app.deploy(dry_run=True)
+        await kafka_app.deploy(dry_run=True)
 
         print_helm_diff.assert_called_once()
         helm_upgrade_install.assert_called_once_with(

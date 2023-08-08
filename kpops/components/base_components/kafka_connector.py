@@ -120,35 +120,35 @@ class KafkaConnector(PipelineComponent, ABC):
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
     @override
-    def deploy(self, dry_run: bool) -> None:
+    async def deploy(self, dry_run: bool) -> None:
         if self.to:
-            self.handlers.topic_handler.create_topics(
+            await self.handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
             )
 
             if self.handlers.schema_handler:
-                self.handlers.schema_handler.submit_schemas(
+                await self.handlers.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
 
-        self.handlers.connector_handler.create_connector(
+        await self.handlers.connector_handler.create_connector(
             connector_name=self.name, kafka_connect_config=self.app, dry_run=dry_run
         )
 
     @override
-    def destroy(self, dry_run: bool) -> None:
-        self.handlers.connector_handler.destroy_connector(
+    async def destroy(self, dry_run: bool) -> None:
+        await self.handlers.connector_handler.destroy_connector(
             connector_name=self.name, dry_run=dry_run
         )
 
     @override
-    def clean(self, dry_run: bool) -> None:
+    async def clean(self, dry_run: bool) -> None:
         if self.to:
             if self.handlers.schema_handler:
-                self.handlers.schema_handler.delete_schemas(
+                await self.handlers.schema_handler.delete_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
-            self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
+            await self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
 
     def _run_connect_resetter(
         self,
@@ -348,12 +348,12 @@ class KafkaSourceConnector(KafkaConnector):
         print(stdout)
 
     @override
-    def reset(self, dry_run: bool) -> None:
+    async def reset(self, dry_run: bool) -> None:
         self.__run_kafka_connect_resetter(dry_run)
 
     @override
-    def clean(self, dry_run: bool) -> None:
-        super().clean(dry_run)
+    async def clean(self, dry_run: bool) -> None:
+        await super().clean(dry_run)
         self.__run_kafka_connect_resetter(dry_run)
 
     def __run_kafka_connect_resetter(self, dry_run: bool) -> None:
@@ -425,12 +425,12 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "errors.deadletterqueue.topic.name", topic_name)
 
     @override
-    def reset(self, dry_run: bool) -> None:
+    async def reset(self, dry_run: bool) -> None:
         self.__run_kafka_connect_resetter(dry_run, delete_consumer_group=False)
 
     @override
-    def clean(self, dry_run: bool) -> None:
-        super().clean(dry_run)
+    async def clean(self, dry_run: bool) -> None:
+        await super().clean(dry_run)
         self.__run_kafka_connect_resetter(dry_run, delete_consumer_group=True)
 
     def __run_kafka_connect_resetter(

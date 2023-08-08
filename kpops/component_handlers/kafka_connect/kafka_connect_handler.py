@@ -33,7 +33,7 @@ class KafkaConnectHandler:
         self._connect_wrapper = connect_wrapper
         self._timeout = timeout
 
-    def create_connector(
+    async def create_connector(
         self,
         connector_name: str,
         kafka_connect_config: KafkaConnectConfig,
@@ -46,46 +46,66 @@ class KafkaConnectHandler:
         :param dry_run: If the connector creation should be run in dry run mode.
         """
         if dry_run:
-            self.__dry_run_connector_creation(connector_name, kafka_connect_config)
+            await self.__dry_run_connector_creation(
+                connector_name, kafka_connect_config
+            )
         else:
             try:
-                timeout(
-                    lambda: self._connect_wrapper.get_connector(connector_name),
+
+                async def get_connector_locally():
+                    return await self._connect_wrapper.get_connector(connector_name)
+
+                await timeout(
+                    get_connector_locally(),
                     secs=self._timeout,
                 )
 
-                timeout(
-                    lambda: self._connect_wrapper.update_connector_config(
+                async def update_connector_locally():
+                    await self._connect_wrapper.update_connector_config(
                         connector_name, kafka_connect_config
-                    ),
+                    )
+
+                await timeout(
+                    update_connector_locally(),
                     secs=self._timeout,
                 )
 
             except ConnectorNotFoundException:
-                timeout(
-                    lambda: self._connect_wrapper.create_connector(
+
+                async def create_connecto_locally():
+                    await self._connect_wrapper.create_connector(
                         connector_name, kafka_connect_config
-                    ),
+                    )
+
+                await timeout(
+                    create_connecto_locally(),
                     secs=self._timeout,
                 )
 
-    def destroy_connector(self, connector_name: str, dry_run: bool) -> None:
+    async def destroy_connector(self, connector_name: str, dry_run: bool) -> None:
         """
         Deletes a connector resource from the cluster.
         :param connector_name: The connector name.
         :param dry_run: If the connector deletion should be run in dry run mode.
         """
         if dry_run:
-            self.__dry_run_connector_deletion(connector_name)
+            await self.__dry_run_connector_deletion(connector_name)
         else:
             try:
-                timeout(
-                    lambda: self._connect_wrapper.get_connector(connector_name),
+
+                async def get_connector_locally():
+                    return await self._connect_wrapper.get_connector(connector_name)
+
+                await timeout(
+                    get_connector_locally(),
                     secs=self._timeout,
                 )
 
-                timeout(
-                    lambda: self._connect_wrapper.delete_connector(connector_name),
+                async def delete_connector_locally():
+                    await self._connect_wrapper.delete_connector(connector_name)
+
+                await timeout(
+                    delete_connector_locally(),
                     secs=self._timeout,
                 )
             except ConnectorNotFoundException:
@@ -93,11 +113,11 @@ class KafkaConnectHandler:
                     f"Connector Destruction: the connector {connector_name} does not exist. Skipping."
                 )
 
-    def __dry_run_connector_creation(
+    async def __dry_run_connector_creation(
         self, connector_name: str, kafka_connect_config: KafkaConnectConfig
     ) -> None:
         try:
-            connector_config = self._connect_wrapper.get_connector(connector_name)
+            connector_config = await self._connect_wrapper.get_connector(connector_name)
 
             log.info(f"Connector Creation: connector {connector_name} already exists.")
             if diff := render_diff(
@@ -119,7 +139,7 @@ class KafkaConnectHandler:
             log.debug("POST /connectors HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
 
-        errors = self._connect_wrapper.validate_connector_config(
+        errors = await self._connect_wrapper.validate_connector_config(
             connector_name, kafka_connect_config
         )
         if len(errors) > 0:
@@ -132,9 +152,9 @@ class KafkaConnectHandler:
                 f"Connector Creation: connector config for {connector_name} is valid!"
             )
 
-    def __dry_run_connector_deletion(self, connector_name: str) -> None:
+    async def __dry_run_connector_deletion(self, connector_name: str) -> None:
         try:
-            self._connect_wrapper.get_connector(connector_name)
+            await self._connect_wrapper.get_connector(connector_name)
             log.info(
                 magentaify(
                     f"Connector Destruction: connector {connector_name} already exists. Deleting connector."

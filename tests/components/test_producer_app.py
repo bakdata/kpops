@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from unittest.mock import ANY, MagicMock
+from unittest.mock import ANY, AsyncMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -27,9 +27,9 @@ class TestProducerApp:
     @pytest.fixture
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
+            schema_handler=AsyncMock(),
+            connector_handler=AsyncMock(),
+            topic_handler=AsyncMock(),
         )
 
     @pytest.fixture
@@ -99,7 +99,8 @@ class TestProducerApp:
             "first-extra-topic": "extra-topic-1"
         }
 
-    def test_deploy_order_when_dry_run_is_false(
+    @pytest.mark.asyncio
+    async def test_deploy_order_when_dry_run_is_false(
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
@@ -112,11 +113,11 @@ class TestProducerApp:
             producer_app.helm, "upgrade_install"
         )
 
-        mock = mocker.MagicMock()
+        mock = mocker.AsyncMock()
         mock.attach_mock(mock_create_topics, "mock_create_topics")
         mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
 
-        producer_app.deploy(dry_run=False)
+        await producer_app.deploy(dry_run=False)
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=producer_app.to, dry_run=False),
             mocker.call.mock_helm_upgrade_install(
@@ -146,20 +147,22 @@ class TestProducerApp:
             ),
         ]
 
-    def test_destroy(
+    @pytest.mark.asyncio
+    async def test_destroy(
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
     ):
         mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
 
-        producer_app.destroy(dry_run=True)
+        await producer_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
             "test-namespace", self.PRODUCER_APP_NAME, True
         )
 
-    def test_should_not_reset_producer_app(
+    @pytest.mark.asyncio
+    async def test_should_not_reset_producer_app(
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
@@ -177,7 +180,7 @@ class TestProducerApp:
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
         mock.attach_mock(mock_helm_print_helm_diff, "print_helm_diff")
 
-        producer_app.clean(dry_run=True)
+        await producer_app.clean(dry_run=True)
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
@@ -206,7 +209,8 @@ class TestProducerApp:
             ),
         ]
 
-    def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
+    @pytest.mark.asyncio
+    async def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
         self, mocker: MockerFixture, producer_app: ProducerApp
     ):
         mock_helm_upgrade_install = mocker.patch.object(
@@ -218,7 +222,7 @@ class TestProducerApp:
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
-        producer_app.clean(dry_run=False)
+        await producer_app.clean(dry_run=False)
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(

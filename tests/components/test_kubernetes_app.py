@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -37,9 +37,9 @@ class TestKubernetesApp:
     @pytest.fixture
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
+            schema_handler=AsyncMock(),
+            connector_handler=AsyncMock(),
+            topic_handler=AsyncMock(),
         )
 
     @pytest.fixture
@@ -56,7 +56,8 @@ class TestKubernetesApp:
     def app_value(self) -> KubernetesTestValue:
         return KubernetesTestValue(**{"name_override": "test-value"})
 
-    def test_should_lazy_load_helm_wrapper_and_not_repo_add(
+    @pytest.mark.asyncio
+    async def test_should_lazy_load_helm_wrapper_and_not_repo_add(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -76,7 +77,7 @@ class TestKubernetesApp:
             kubernetes_app, "get_helm_chart", return_value="test/test-chart"
         )
 
-        kubernetes_app.deploy(False)
+        await kubernetes_app.deploy(False)
 
         helm_mock.add_repo.assert_not_called()
 
@@ -89,7 +90,8 @@ class TestKubernetesApp:
             HelmUpgradeInstallFlags(),
         )
 
-    def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
+    @pytest.mark.asyncio
+    async def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -115,7 +117,7 @@ class TestKubernetesApp:
             new_callable=mocker.PropertyMock,
         )
 
-        kubernetes_app.deploy(dry_run=False)
+        await kubernetes_app.deploy(dry_run=False)
 
         assert helm_mock.mock_calls == [
             mocker.call.add_repo(
@@ -133,7 +135,8 @@ class TestKubernetesApp:
             ),
         ]
 
-    def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
+    @pytest.mark.asyncio
+    async def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -148,13 +151,14 @@ class TestKubernetesApp:
         )
 
         with pytest.raises(NotImplementedError) as error:
-            kubernetes_app.deploy(True)
+            await kubernetes_app.deploy(True)
         assert (
             "Please implement the get_helm_chart() method of the kpops.components.base_components.kubernetes_app module."
             == str(error.value)
         )
 
-    def test_should_call_helm_uninstall_when_destroying_kubernetes_app(
+    @pytest.mark.asyncio
+    async def test_should_call_helm_uninstall_when_destroying_kubernetes_app(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
@@ -173,7 +177,7 @@ class TestKubernetesApp:
         stdout = 'KubernetesAppComponent - release "test-kubernetes-apps" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
-        kubernetes_app.destroy(True)
+        await kubernetes_app.destroy(True)
 
         helm_mock.uninstall.assert_called_once_with(
             "test-namespace", "test-kubernetes-apps", True
