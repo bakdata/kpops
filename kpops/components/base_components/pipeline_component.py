@@ -5,6 +5,7 @@ from typing import Literal
 
 from pydantic import Extra, Field
 
+from kpops.component_handlers.helm_wrapper.model import HelmTemplateFlags
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
 )
@@ -211,9 +212,7 @@ class PipelineComponent(BaseDefaultsComponent):
         """
         return [self]
 
-    def template(
-        self, api_version: str | None, ca_file: str | None, cert_file: str | None
-    ) -> None:
+    def template(self, flags: HelmTemplateFlags) -> None:
         """
         Runs `helm template`
 

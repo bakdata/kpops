@@ -46,18 +46,7 @@ class Helm:
             repository_name,
             repository_url,
         ]
-
-        if repo_auth_flags.username and repo_auth_flags.password:
-            command.extend(
-                [
-                    "--username",
-                    repo_auth_flags.username,
-                    "--password",
-                    repo_auth_flags.password,
-                ]
-            )
-
-        command = Helm.__extend_tls_config(command, repo_auth_flags)
+        command.extend(repo_auth_flags.to_command())
 
         try:
             self.__execute(command)
@@ -99,16 +88,15 @@ class Helm:
                     release_name,
                     chart,
                     "--install",
-                    f"--timeout={flags.timeout}",
                     "--namespace",
                     namespace,
                     "--values",
                     values_file.name,
                 ]
             )
-            command = Helm.__extend_tls_config(command, flags.repo_auth_flags)
-
-            command = Helm.__enrich_upgrade_install_command(command, dry_run, flags)
+            command.extend(flags.to_command())
+            if dry_run:
+                command.append("--dry-run")
             return self.__execute(command)
 
     def uninstall(
@@ -173,7 +161,7 @@ class Helm:
                 "--values",
                 values_file.name,
             ]
-            command = Helm.__enrich_template_command(command, flags)
+            command.extend(flags.to_command())
             return self.__execute(command)
 
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
@@ -220,61 +208,6 @@ class Helm:
                 is_beginning = False
             else:
                 current_yaml_doc.append(line)
-
-    @staticmethod
-    def __enrich_template_command(
-        command: list[str],
-        helm_command_config: HelmTemplateFlags,
-    ) -> list[str]:
-        """
-        Enrich `self.template()` with the flags to be used for `helm template`
-
-        :param list[str] command: command that contains a call to
-            `helm template` with specified release name, chart and values
-        :param helm_command_config: flags to be set
-        :type helm_command_config: HelmTemplateFlags
-        :return: the enriched with flags `helm template`
-        :rtype: list[str]
-        """
-        if helm_command_config.api_version:
-            command.extend(["--api-versions", helm_command_config.api_version])
-        if helm_command_config.ca_file:
-            command.extend(["--ca-file", helm_command_config.ca_file])
-        if helm_command_config.cert_file:
-            command.extend(["--cert-file", helm_command_config.cert_file])
-        if helm_command_config.version:
-            command.extend(["--version", helm_command_config.version])
-        return command
-
-    @staticmethod
-    def __extend_tls_config(
-        command: list[str], repo_auth_flags: RepoAuthFlags
-    ) -> list[str]:
-        if repo_auth_flags.ca_file:
-            command.extend(["--ca-file", str(repo_auth_flags.ca_file)])
-        if repo_auth_flags.insecure_skip_tls_verify:
-            command.append("--insecure-skip-tls-verify")
-        return command
-
-    @staticmethod
-    def __enrich_upgrade_install_command(
-        command: list[str],
-        dry_run: bool,
-        helm_command_config: HelmUpgradeInstallFlags,
-    ) -> list[str]:
-        if helm_command_config.create_namespace:
-            command.append("--create-namespace")
-        if dry_run:
-            command.append("--dry-run")
-        if helm_command_config.force:
-            command.append("--force")
-        if helm_command_config.wait:
-            command.append("--wait")
-        if helm_command_config.wait_for_jobs:
-            command.append("--wait-for-jobs")
-        if helm_command_config.version:
-            command.extend(["--version", helm_command_config.version])
-        return command
 
     def __execute(self, command: list[str]) -> str:
         command = self.__set_global_flags(command)
