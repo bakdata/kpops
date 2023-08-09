@@ -237,10 +237,11 @@ def generate(
         None, help="Kubernetes API version used for Capabilities.APIVersions"
     ),
     ca_file: Optional[Path] = typer.Option(
-        None, help="Verify certificates of HTTPS-enabled servers using this CA bundle"
+        None,
+        help="Path to CA bundle file to verify certificates of HTTPS-enabled servers",
     ),
     cert_file: Optional[Path] = typer.Option(
-        None, help="Identify HTTPS client using this SSL certificate file"
+        None, help="Path to SSL certificate file to identify HTTPS client"
     ),
 ) -> Pipeline:
     pipeline_config = create_pipeline_config(config, defaults, verbose)
