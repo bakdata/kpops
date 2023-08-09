@@ -79,19 +79,17 @@ class TopicConfig(BaseModel):
 class ToSection(BaseModel):
     """Holds multiple output topics
 
-    :param models: Data models
-    :type models: dict[str, Any]
     :param topics: Output topics
-    :type topics: dict[str, TopicConfig]
+    :param models: Data models
     """
 
+    topics: dict[TopicName, TopicConfig] = Field(
+        default={}, description=describe_attr("topics", __doc__)
+    )
     # TODO: really multiple models?
     # any because snapshot versions must be supported
     models: dict[str, Any] = Field(
         default={}, description=describe_attr("models", __doc__)
-    )
-    topics: dict[TopicName, TopicConfig] = Field(
-        ..., description=describe_attr("topics", __doc__)
     )
 
     class Config(DescConfig):
