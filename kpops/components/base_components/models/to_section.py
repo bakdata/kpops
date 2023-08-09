@@ -1,9 +1,8 @@
 from enum import Enum
-from typing import Any
 
 from pydantic import BaseModel, Extra, Field, root_validator
 
-from kpops.components.base_components.models import TopicName
+from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfig
 
@@ -86,9 +85,7 @@ class ToSection(BaseModel):
     topics: dict[TopicName, TopicConfig] = Field(
         default={}, description=describe_attr("topics", __doc__)
     )
-    # TODO: really multiple models?
-    # any because snapshot versions must be supported
-    models: dict[str, Any] = Field(
+    models: dict[ModelName, ModelVersion] = Field(
         default={}, description=describe_attr("models", __doc__)
     )
 

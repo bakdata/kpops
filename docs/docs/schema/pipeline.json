@@ -1168,6 +1168,9 @@
             "description": "Holds multiple output topics",
             "properties": {
                 "models": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
                     "default": {},
                     "description": "Data models",
                     "title": "Models",
