@@ -12,6 +12,7 @@ from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers.helm_wrapper.model import HelmTemplateFlags
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
 )
@@ -235,11 +236,12 @@ def generate(
     api_version: Optional[str] = typer.Option(
         None, help="Kubernetes API version used for Capabilities.APIVersions"
     ),
-    ca_file: Optional[str] = typer.Option(
-        None, help="Verify certificates of HTTPS-enabled servers using this CA bundle"
+    ca_file: Optional[Path] = typer.Option(
+        None,
+        help="Path to CA bundle file to verify certificates of HTTPS-enabled servers",
     ),
-    cert_file: Optional[str] = typer.Option(
-        None, help="Identify HTTPS client using this SSL certificate file"
+    cert_file: Optional[Path] = typer.Option(
+        None, help="Path to SSL certificate file to identify HTTPS client"
     ),
 ) -> Pipeline:
     pipeline_config = create_pipeline_config(config, defaults, verbose)
@@ -251,7 +253,11 @@ def generate(
     if template:
         steps_to_apply = get_steps_to_apply(pipeline, steps)
         for component in steps_to_apply:
-            component.template(api_version, ca_file, cert_file)
+            component.template(
+                HelmTemplateFlags(
+                    api_version=api_version, ca_file=ca_file, cert_file=cert_file
+                )
+            )
     elif cert_file or ca_file or api_version or steps:
         log.warning(
             "The following flags are considered only when `--template` is set: \n \
