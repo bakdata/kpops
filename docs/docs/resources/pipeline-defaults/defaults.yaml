@@ -120,7 +120,7 @@ streams-app:
 #
 # Child of: KafkaApp
 # More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
-producer:
+producer-app:
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app:

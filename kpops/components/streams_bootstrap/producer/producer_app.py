@@ -19,15 +19,12 @@ class ProducerApp(KafkaApp):
     This producer holds configuration to use as values for the streams bootstrap
     producer helm chart.
 
-    :param type: Component type, defaults to "producer"
-    :type type: str, optional
     :param app: Application-specific settings
     :type app: ProducerValues
     :param from_: Producer doesn't support FromSection, defaults to None
     :type from_: None, optional
     """
 
-    type = "producer"
     app: ProducerValues = Field(
         default=...,
         description=describe_attr("app", __doc__),

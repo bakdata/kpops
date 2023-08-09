@@ -37,8 +37,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
     Should only be used to set defaults
 
-    :param type: Component type, defaults to "kafka-connector"
-    :type type: str, optional
     :param app: Application-specific settings
     :type app: KafkaAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for
@@ -54,7 +52,6 @@ class KafkaConnector(PipelineComponent, ABC):
     :type resetter_values: dict, optional
     """
 
-    type = "kafka-connector"
     app: KafkaConnectConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),
@@ -285,13 +282,11 @@ class KafkaConnector(PipelineComponent, ABC):
 class KafkaSourceConnector(KafkaConnector):
     """Kafka source connector model
 
-    :param type: Component type, defaults to "kafka-source-connector"
     :param offset_topic: offset.storage.topic,
         more info: https://kafka.apache.org/documentation/#connect_running,
         defaults to None
     """
 
-    type = "kafka-source-connector"
     offset_topic: str | None = Field(
         default=None,
         description=describe_attr("offset_topic", __doc__),
@@ -345,12 +340,7 @@ class KafkaSourceConnector(KafkaConnector):
 
 
 class KafkaSinkConnector(KafkaConnector):
-    """Kafka sink connector model
-
-    :param type: Component type, defaults to "kafka-sink-connector"
-    """
-
-    type = "kafka-sink-connector"
+    """Kafka sink connector model"""
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:

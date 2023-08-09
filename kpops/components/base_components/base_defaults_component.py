@@ -2,6 +2,7 @@ import inspect
 import logging
 from collections import deque
 from collections.abc import Sequence
+from functools import cached_property
 from pathlib import Path
 from typing import TypeVar
 
@@ -10,13 +11,19 @@ from pydantic import BaseModel, Field
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
+from kpops.utils import cached_classproperty
 from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
-from kpops.utils.pydantic import DescConfig
+from kpops.utils.pydantic import DescConfig, to_dash
 from kpops.utils.yaml_loading import load_yaml_file
 
-log = logging.getLogger("PipelineComponentEnricher")
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
+
+log = logging.getLogger("BaseDefaultsComponent")
 
 
 class BaseDefaultsComponent(BaseModel):
@@ -26,8 +33,6 @@ class BaseDefaultsComponent(BaseModel):
     `defaults.yaml`. This class ensures that the defaults are read and assigned
     correctly to the component.
 
-    :param type: Component type
-    :type type: str
     :param enrich: Whether to enrich component with defaults, defaults to False
     :type enrich: bool, optional
     :param config: Pipeline configuration to be accessed by this component
@@ -38,11 +43,6 @@ class BaseDefaultsComponent(BaseModel):
     :type validate: bool, optional
     """
 
-    type: str = Field(
-        default=...,
-        title=describe_attr("type", __doc__),
-        const=True,
-    )
     enrich: bool = Field(
         default=False,
         description=describe_attr("enrich", __doc__),
@@ -71,6 +71,7 @@ class BaseDefaultsComponent(BaseModel):
 
     class Config(DescConfig):
         arbitrary_types_allowed = True
+        keep_untouched = (cached_property, cached_classproperty)
 
     def __init__(self, **kwargs) -> None:
         if kwargs.get("enrich", True):
@@ -79,17 +80,14 @@ class BaseDefaultsComponent(BaseModel):
         if kwargs.get("validate", True):
             self._validate_custom(**kwargs)
 
-    @classmethod  # NOTE: property as classmethod deprecated in Python 3.11
-    def get_component_type(cls) -> str:
+    @cached_classproperty
+    def type(cls: type[Self]) -> str:  # pyright: ignore
         """Return calling component's type
 
-        :returns: Component type
+        :returns: Component class name in dash-case
         :rtype: str
         """
-        # HACK: access type attribute through default value
-        # because exporting type as ClassVar from Pydantic models
-        # is not reliable
-        return cls.__fields__["type"].default
+        return to_dash(cls.__name__)
 
     def extend_with_defaults(self, **kwargs) -> dict:
         """Merge parent components' defaults with own
@@ -146,7 +144,7 @@ def load_defaults(
     defaults: dict = {}
     for base in deduplicate(classes):
         if issubclass(base, BaseDefaultsComponent):
-            component_type = base.get_component_type()
+            component_type = base.type
             if (
                 not environment_defaults_file_path
                 or not environment_defaults_file_path.exists()

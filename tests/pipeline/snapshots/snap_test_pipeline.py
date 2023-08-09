@@ -50,7 +50,7 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.9.0'
         },
         {
@@ -715,7 +715,7 @@ snapshots['TestPipeline.test_model_serialization test-pipeline'] = {
                 'repository_name': 'masked',
                 'url': 'masked'
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.4.2'
         }
     ]
@@ -1144,7 +1144,7 @@ snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = {
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.9.0'
         }
     ]
@@ -1184,7 +1184,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.4.2'
         },
         {
@@ -1219,7 +1219,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.4.2'
         },
         {
@@ -2069,7 +2069,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.9.0'
         },
         {
@@ -2166,7 +2166,7 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.9.0'
         },
         {

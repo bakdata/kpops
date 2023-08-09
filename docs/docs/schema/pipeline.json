@@ -658,7 +658,7 @@
                     "enum": [
                         "pipeline-component"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 }
             },
@@ -730,10 +730,10 @@
                     "title": "To"
                 },
                 "type": {
-                    "default": "producer",
+                    "default": "producer-app",
                     "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
                     "enum": [
-                        "producer"
+                        "producer-app"
                     ],
                     "title": "Component type",
                     "type": "string"
@@ -788,7 +788,7 @@
             "type": "object"
         },
         "ProducerValues": {
-            "description": "Settings specific to Producers",
+            "description": "Settings specific to producers",
             "properties": {
                 "nameOverride": {
                     "description": "Override name with this value",
@@ -1197,7 +1197,7 @@
                 "kafka-source-connector": "#/definitions/KafkaSourceConnector",
                 "kubernetes-app": "#/definitions/KubernetesApp",
                 "pipeline-component": "#/definitions/PipelineComponent",
-                "producer": "#/definitions/ProducerApp",
+                "producer-app": "#/definitions/ProducerApp",
                 "streams-app": "#/definitions/StreamsApp"
             },
             "propertyName": "type"

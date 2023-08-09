@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from functools import cached_property
-
 from pydantic import Extra, Field
 
 from kpops.components.base_components.base_defaults_component import (
@@ -38,7 +36,6 @@ class PipelineComponent(BaseDefaultsComponent):
     :type to: ToSection, optional
     """
 
-    type = "pipeline-component"
     name: str = Field(default=..., description=describe_attr("name", __doc__))
     prefix: str = Field(
         default="${pipeline_name}-",
@@ -57,7 +54,6 @@ class PipelineComponent(BaseDefaultsComponent):
 
     class Config(DescConfig):
         extra = Extra.allow
-        keep_untouched = (cached_property,)
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)

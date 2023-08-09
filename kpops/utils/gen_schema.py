@@ -2,14 +2,14 @@ import logging
 from enum import Enum
 from typing import Annotated, Any, Literal, Sequence, Union
 
-from pydantic import Field, schema, schema_json_of
-from pydantic.fields import ModelField
+from pydantic import BaseConfig, Field, schema, schema_json_of
+from pydantic.fields import FieldInfo, ModelField
 from pydantic.schema import SkipField
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_object
 
 
 class SchemaScope(str, Enum):
@@ -46,12 +46,11 @@ def _is_valid_component(
     :return: Whether component is valid for schema generation
     :rtype: bool
     """
-    component_type = component.get_component_type()
-    if component_type in defined_component_types:
+    if component.type in defined_component_types:
         log.warning(f"SKIPPED {component.__name__}, component type must be unique.")
         return False
     else:
-        defined_component_types.add(component_type)
+        defined_component_types.add(component.type)
         return True
 
 
@@ -74,9 +73,7 @@ def _add_components(
     if components is None:
         components = tuple()
     # Set of existing types, against which to check the new ones
-    defined_component_types = {
-        component.get_component_type() for component in components
-    }
+    defined_component_types = {component.type for component in components}
     custom_components = (
         component
         for component in _find_classes(components_module, PipelineComponent)
@@ -114,10 +111,19 @@ def gen_pipeline_schema(
 
     # re-assign component type as Literal to work as discriminator
     for component in components:
-        component_type_field = component.__fields__["type"]
-        component_type_field.type_ = Literal[component.get_component_type()]  # type: ignore
-        component_type_field.field_info.title = describe_attr("type", component.__doc__)
-        component_type_field.field_info.description = describe_object(component.__doc__)
+        component.__fields__["type"] = ModelField(
+            name="type",
+            type_=Literal[component.type],  # type: ignore
+            required=False,
+            default=component.type,
+            final=True,
+            field_info=FieldInfo(
+                title="Component type",
+                description=describe_object(component.__doc__),
+            ),
+            model_config=BaseConfig,
+            class_validators=None,
+        )
 
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="type")

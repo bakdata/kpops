@@ -60,8 +60,6 @@ class KafkaApp(KubernetesApp):
 
     Producer or streaming apps should inherit from this class.
 
-    :param type: Component type, defaults to "kafka-app"
-    :type type: str, optional
     :param app: Application-specific settings
     :type app: KafkaAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for
@@ -72,7 +70,6 @@ class KafkaApp(KubernetesApp):
     :type version: str, optional
     """
 
-    type = "kafka-app"
     app: KafkaAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),

@@ -12,13 +12,10 @@ from kpops.utils.docstring import describe_attr
 class StreamsApp(KafkaApp):
     """StreamsApp component that configures a streams bootstrap app
 
-    :param type: Component type, defaults to "streams-app"
-    :type type: str, optional
     :param app: Application-specific settings
     :type app: StreamsAppConfig
     """
 
-    type = "streams-app"
     app: StreamsAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),

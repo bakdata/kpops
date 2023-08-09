@@ -181,9 +181,9 @@
   version: "2.7.0" # Helm chart version
 # Holds configuration to use as values for the streams bootstrap producer Helm
 # chart.
-# More documentation on ProducersApp:
+# More documentation on ProducerApp:
 # https://github.com/bakdata/streams-bootstrap
-- type: producer
+- type: producer-app
   name: producer # required
   namespace: namespace # required
   # Allowed configs:

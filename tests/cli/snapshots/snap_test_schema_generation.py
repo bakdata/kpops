@@ -42,11 +42,11 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "title": "To"
                 },
                 "type": {
-                    "default": "pipeline-component",
+                    "default": "empty-pipeline-component",
                     "enum": [
-                        "pipeline-component"
+                        "empty-pipeline-component"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 }
             },
@@ -164,7 +164,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "enum": [
                         "sub-pipeline-component"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 }
             },
@@ -211,7 +211,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "enum": [
                         "sub-pipeline-component-correct"
                     ],
-                    "title": "Type",
+                    "title": "Component type",
                     "type": "string"
                 }
             },
@@ -224,6 +224,11 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
         "SubPipelineComponentCorrectDocstr": {
             "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
             "properties": {
+                "example_attr": {
+                    "description": "Parameter description looks correct and it is not included in the class description, terminates here",
+                    "title": "Example Attr",
+                    "type": "string"
+                },
                 "from": {
                     "allOf": [
                         {
@@ -259,14 +264,62 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "enum": [
                         "sub-pipeline-component-correct-docstr"
                     ],
-                    "title": "Parameter description looks correct and it is not included in the class description, terminates here",
+                    "title": "Component type",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "example_attr"
+            ],
+            "title": "SubPipelineComponentCorrectDocstr",
+            "type": "object"
+        },
+        "SubPipelineComponentNoSchemaTypeNoType": {
+            "description": "",
+            "properties": {
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "default": "sub-pipeline-component-no-schema-type-no-type",
+                    "enum": [
+                        "sub-pipeline-component-no-schema-type-no-type"
+                    ],
+                    "title": "Component type",
                     "type": "string"
                 }
             },
             "required": [
                 "name"
             ],
-            "title": "SubPipelineComponentCorrectDocstr",
+            "title": "SubPipelineComponentNoSchemaTypeNoType",
             "type": "object"
         },
         "ToSection": {
@@ -357,10 +410,11 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
     "items": {
         "discriminator": {
             "mapping": {
-                "pipeline-component": "#/definitions/EmptyPipelineComponent",
+                "empty-pipeline-component": "#/definitions/EmptyPipelineComponent",
                 "sub-pipeline-component": "#/definitions/SubPipelineComponent",
                 "sub-pipeline-component-correct": "#/definitions/SubPipelineComponentCorrect",
-                "sub-pipeline-component-correct-docstr": "#/definitions/SubPipelineComponentCorrectDocstr"
+                "sub-pipeline-component-correct-docstr": "#/definitions/SubPipelineComponentCorrectDocstr",
+                "sub-pipeline-component-no-schema-type-no-type": "#/definitions/SubPipelineComponentNoSchemaTypeNoType"
             },
             "propertyName": "type"
         },
@@ -376,6 +430,9 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             },
             {
                 "$ref": "#/definitions/SubPipelineComponentCorrectDocstr"
+            },
+            {
+                "$ref": "#/definitions/SubPipelineComponentNoSchemaTypeNoType"
             }
         ]
     },
