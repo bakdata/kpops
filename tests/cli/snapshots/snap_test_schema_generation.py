@@ -224,6 +224,11 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
         "SubPipelineComponentCorrectDocstr": {
             "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
             "properties": {
+                "example_attr": {
+                    "description": "Parameter description looks correct and it is not included in the class description, terminates here",
+                    "title": "Example Attr",
+                    "type": "string"
+                },
                 "from": {
                     "allOf": [
                         {
@@ -264,7 +269,8 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                 }
             },
             "required": [
-                "name"
+                "name",
+                "example_attr"
             ],
             "title": "SubPipelineComponentCorrectDocstr",
             "type": "object"

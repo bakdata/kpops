@@ -4,11 +4,13 @@ import logging
 from pathlib import Path
 
 import pytest
+from pydantic import Field
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
 from kpops.components.base_components import PipelineComponent
+from kpops.utils.docstring import describe_attr
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
@@ -49,7 +51,7 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
 
     ,
 
-    :param type: Parameter description looks correct and it is not included in
+    :param example_attr: Parameter description looks correct and it is not included in
         the class description,
         terminates here ,
         defaults to anything really, this here should not be included as it follows
@@ -59,6 +61,10 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
     :type type: This line should not appear anywhere error_marker
     :param error_marker: error_marker
     """
+
+    example_attr: str = Field(
+        default=..., description=describe_attr("example_attr", __doc__)
+    )
 
 
 MODULE = EmptyPipelineComponent.__module__
