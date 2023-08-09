@@ -10,13 +10,13 @@
       brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
-    imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app 
+    imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
   # Topic(s) from which the component will read input
   # from: # Not advised to ever be used in `kafka-app` as it isn't supported by
   # `producer`
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -25,11 +25,11 @@
         valueSchema: value-schema
         partitions_count: 1
         replication_factor: 1
-        configs: 
+        configs:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
   # Helm repository configuration, the default value is given here
