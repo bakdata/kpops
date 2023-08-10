@@ -110,17 +110,14 @@ class KubernetesApp(PipelineComponent):
 
     @property
     def helm_chart(self) -> str:
-        """Return component's helm chart
-
-        :return: Helm chart of this component
-        :rtype: str
-        """
+        """Return component's Helm chart"""
         raise NotImplementedError(
             f"Please implement the helm_chart property of the {self.__module__} module."
         )
 
     @property
     def helm_flags(self) -> HelmFlags:
+        """Return shared flags for Helm commands"""
         return HelmFlags(
             **self.repo_config.repo_auth_flags.dict(),
             version=self.version,
@@ -129,6 +126,7 @@ class KubernetesApp(PipelineComponent):
 
     @property
     def template_flags(self) -> HelmTemplateFlags:
+        """Return flags for Helm template command"""
         return HelmTemplateFlags(
             **self.helm_flags.dict(),
             api_version=self.config.helm_config.api_version,
@@ -147,6 +145,7 @@ class KubernetesApp(PipelineComponent):
 
     @property
     def deploy_flags(self) -> HelmUpgradeInstallFlags:
+        """Return flags for Helm upgrade install command"""
         return HelmUpgradeInstallFlags(**self.helm_flags.dict())
 
     @override
