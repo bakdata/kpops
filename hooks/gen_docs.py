@@ -3,7 +3,7 @@ import csv
 import shutil
 import subprocess
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import Enum
 from pathlib import Path
 from textwrap import fill
 from typing import Any
@@ -37,7 +37,7 @@ class EnvVar:
     corresponding_setting_name: str | None
 
 
-class EnvVarAttrs(StrEnum):
+class EnvVarAttrs(str, Enum):
     """The attr names are used as columns for the markdown tables."""
 
     NAME = "Name"
