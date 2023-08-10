@@ -109,13 +109,13 @@ class KubernetesApp(PipelineComponent):
 
     @override
     def _validate_custom(self, **kwargs) -> None:
+        super()._validate_custom(**kwargs)
         self.validate_kubernetes_name(self.name)
 
     @override
-    def template(
-        self, api_version: str | None, ca_file: str | None, cert_file: str | None
-    ) -> None:
-        flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
+    def template(self, flags: HelmTemplateFlags) -> None:
+        if self.version:
+            flags.version = self.version
         stdout = self.helm.template(
             self.helm_release_name,
             self.get_helm_chart(),

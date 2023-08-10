@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 from textwrap import dedent
 from unittest import mock
@@ -62,11 +63,12 @@ class TestHelmWrapper:
                 "test-release",
                 "bakdata-streams-bootstrap/streams-app",
                 "--install",
-                "--timeout=5m0s",
                 "--namespace",
                 "test-namespace",
                 "--values",
                 "values.yaml",
+                "--timeout",
+                "5m0s",
                 "--wait",
             ],
         )
@@ -140,9 +142,8 @@ class TestHelmWrapper:
             namespace="test-namespace",
             values={},
             flags=HelmUpgradeInstallFlags(
-                repo_auth_flags=RepoAuthFlags(
-                    ca_file=Path("a_file.ca"), insecure_skip_tls_verify=True
-                )
+                ca_file=Path("a_file.ca"),
+                insecure_skip_tls_verify=True,
             ),
         )
 
@@ -153,7 +154,6 @@ class TestHelmWrapper:
                 "test-release",
                 "test-repository/test-chart",
                 "--install",
-                "--timeout=5m0s",
                 "--namespace",
                 "test-namespace",
                 "--values",
@@ -161,6 +161,8 @@ class TestHelmWrapper:
                 "--ca-file",
                 "a_file.ca",
                 "--insecure-skip-tls-verify",
+                "--timeout",
+                "5m0s",
                 "--wait",
             ],
         )
@@ -178,6 +180,7 @@ class TestHelmWrapper:
             flags=HelmUpgradeInstallFlags(
                 create_namespace=True,
                 force=True,
+                set_file={"key1": Path("example/path1"), "key2": Path("example/path2")},
                 timeout="120s",
                 wait=True,
                 wait_for_jobs=True,
@@ -191,18 +194,21 @@ class TestHelmWrapper:
                 "test-release",
                 "test-repository/streams-app",
                 "--install",
-                "--timeout=120s",
                 "--namespace",
                 "test-namespace",
                 "--values",
                 "values.yaml",
+                "--set-file",
+                f"key1=example{os.path.sep}path1,key2=example{os.path.sep}path2",
                 "--create-namespace",
-                "--dry-run",
-                "--force",
-                "--wait",
-                "--wait-for-jobs",
                 "--version",
                 "2.4.2",
+                "--force",
+                "--timeout",
+                "120s",
+                "--wait",
+                "--wait-for-jobs",
+                "--dry-run",
             ],
         )
 
@@ -437,8 +443,8 @@ class TestHelmWrapper:
             values={"commandLine": "test"},
             flags=HelmTemplateFlags(
                 api_version="2.1.1",
-                ca_file="a_file.ca",
-                cert_file="a_file.pem",
+                ca_file=Path("a_file.ca"),
+                cert_file=Path("a_file.pem"),
             ),
         )
         run_command.assert_called_once_with(
@@ -451,12 +457,15 @@ class TestHelmWrapper:
                 "test-ns",
                 "--values",
                 "values.yaml",
-                "--api-versions",
-                "2.1.1",
                 "--ca-file",
                 "a_file.ca",
                 "--cert-file",
                 "a_file.pem",
+                "--timeout",
+                "5m0s",
+                "--wait",
+                "--api-versions",
+                "2.1.1",
             ],
         )
 
@@ -482,6 +491,9 @@ class TestHelmWrapper:
                 "test-ns",
                 "--values",
                 "values.yaml",
+                "--timeout",
+                "5m0s",
+                "--wait",
             ],
         )
 

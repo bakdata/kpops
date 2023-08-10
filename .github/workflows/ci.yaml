@@ -29,6 +29,9 @@ jobs:
           poetry-version: "1.4.1" # REASON: https://github.com/python-poetry/poetry/issues/8180
           python-version: ${{ matrix.python-version }}
 
+      - name: Check Poetry lock file consistency
+        run: poetry lock --check
+
       - name: Install dependencies
         run: poetry install --no-interaction
 

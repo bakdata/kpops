@@ -48,6 +48,9 @@ class TestTemplate:
                 ANY,
                 "--version",
                 "2.9.0",
+                "--timeout",
+                "5m0s",
+                "--wait",
             ],
         )
 
@@ -86,14 +89,17 @@ class TestTemplate:
                 "development-namespace",
                 "--values",
                 ANY,
-                "--api-versions",
-                "2.1.1",
                 "--ca-file",
                 "ca-file",
                 "--cert-file",
                 "cert-file",
                 "--version",
                 "2.9.0",
+                "--timeout",
+                "5m0s",
+                "--wait",
+                "--api-versions",
+                "2.1.1",
             ],
         )
 

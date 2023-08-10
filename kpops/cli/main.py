@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterator, Optional
 
+import dtyper
 import typer
 
 from kpops import __version__
@@ -11,6 +12,7 @@ from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers.helm_wrapper.model import HelmTemplateFlags
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
 )
@@ -25,7 +27,7 @@ if TYPE_CHECKING:
 
 LOG_DIVIDER = "#" * 100
 
-app = typer.Typer(pretty_exceptions_enable=False)
+app = dtyper.Typer(pretty_exceptions_enable=False)
 
 BASE_DIR_PATH_OPTION: Path = typer.Option(
     default=Path("."),
@@ -77,12 +79,15 @@ DRY_RUN: bool = typer.Option(
     help="Whether to dry run the command or execute it",
 )
 
+VERBOSE_OPTION = typer.Option(False, help="Enable verbose printing")
+
 COMPONENTS_MODULES: str | None = typer.Argument(
     default=None,
     help="Custom Python module containing your project-specific components",
 )
 
 logger = logging.getLogger()
+logging.getLogger("httpx").setLevel(logging.WARNING)
 stream_handler = logging.StreamHandler()
 stream_handler.setFormatter(CustomFormatter())
 logger.addHandler(stream_handler)
@@ -159,7 +164,9 @@ def get_steps_to_apply(
     return list(pipeline)
 
 
-def reverse_pipeline_steps(pipeline, steps) -> Iterator[PipelineComponent]:
+def reverse_pipeline_steps(
+    pipeline: Pipeline, steps: str | None
+) -> Iterator[PipelineComponent]:
     return reversed(get_steps_to_apply(pipeline, steps))
 
 
@@ -184,7 +191,7 @@ def create_pipeline_config(
     return pipeline_config
 
 
-@app.command(
+@app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
     help="""
     Generate json schema.
 
@@ -214,28 +221,29 @@ def schema(
             gen_config_schema()
 
 
-@app.command(
+@app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
     help="Enriches pipelines steps with defaults. The output is used as input for the deploy/destroy/... commands."
 )
 def generate(
-    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    verbose: bool = typer.Option(False, help="Enable verbose printing"),
+    verbose: bool = VERBOSE_OPTION,
     template: bool = typer.Option(False, help="Run Helm template"),
     steps: Optional[str] = PIPELINE_STEPS,
     api_version: Optional[str] = typer.Option(
         None, help="Kubernetes API version used for Capabilities.APIVersions"
     ),
-    ca_file: Optional[str] = typer.Option(
-        None, help="Verify certificates of HTTPS-enabled servers using this CA bundle"
+    ca_file: Optional[Path] = typer.Option(
+        None,
+        help="Path to CA bundle file to verify certificates of HTTPS-enabled servers",
     ),
-    cert_file: Optional[str] = typer.Option(
-        None, help="Identify HTTPS client using this SSL certificate file"
+    cert_file: Optional[Path] = typer.Option(
+        None, help="Path to SSL certificate file to identify HTTPS client"
     ),
-):
+) -> Pipeline:
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
@@ -245,7 +253,11 @@ def generate(
     if template:
         steps_to_apply = get_steps_to_apply(pipeline, steps)
         for component in steps_to_apply:
-            component.template(api_version, ca_file, cert_file)
+            component.template(
+                HelmTemplateFlags(
+                    api_version=api_version, ca_file=ca_file, cert_file=cert_file
+                )
+            )
     elif cert_file or ca_file or api_version or steps:
         log.warning(
             "The following flags are considered only when `--template` is set: \n \
@@ -258,15 +270,17 @@ def generate(
     return pipeline
 
 
-@app.command(help="Deploy pipeline steps")
+@app.command(
+    help="Deploy pipeline steps"
+)  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def deploy(
-    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    verbose: bool = False,
     dry_run: bool = DRY_RUN,
+    verbose: bool = VERBOSE_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
@@ -280,16 +294,18 @@ def deploy(
         component.deploy(dry_run)
 
 
-@app.command(help="Destroy pipeline steps")
+@app.command(
+    help="Destroy pipeline steps"
+)  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def destroy(
-    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
+    verbose: bool = VERBOSE_OPTION,
     dry_run: bool = DRY_RUN,
-    verbose: bool = False,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
@@ -301,16 +317,18 @@ def destroy(
         component.destroy(dry_run)
 
 
-@app.command(help="Reset pipeline steps")
+@app.command(
+    help="Reset pipeline steps"
+)  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def reset(
-    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     dry_run: bool = DRY_RUN,
-    verbose: bool = False,
+    verbose: bool = VERBOSE_OPTION,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
@@ -323,16 +341,18 @@ def reset(
         component.reset(dry_run)
 
 
-@app.command(help="Clean pipeline steps")
+@app.command(
+    help="Clean pipeline steps"
+)  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def clean(
-    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     dry_run: bool = DRY_RUN,
-    verbose: bool = False,
+    verbose: bool = VERBOSE_OPTION,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
