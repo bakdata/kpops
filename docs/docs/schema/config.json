@@ -3,6 +3,10 @@
     "definitions": {
         "HelmConfig": {
             "properties": {
+                "api_version": {
+                    "title": "Api Version",
+                    "type": "string"
+                },
                 "context": {
                     "description": "Set the name of the kubeconfig context. (--kube-context)",
                     "example": "dev-storage",
@@ -95,6 +99,7 @@
                         }
                     ],
                     "default": {
+                        "api_version": null,
                         "context": null,
                         "debug": false
                     },

@@ -94,6 +94,7 @@ class HelmConfig(BaseModel):
         default=False,
         description="Run Helm in Debug mode.",
     )
+    api_version: str | None = None
 
 
 class HelmFlags(RepoAuthFlags):

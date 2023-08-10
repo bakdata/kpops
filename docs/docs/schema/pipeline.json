@@ -634,6 +634,7 @@
             "required": [
                 "name",
                 "app",
+                "repoConfig",
                 "namespace"
             ],
             "title": "KubernetesApp",

@@ -64,8 +64,8 @@ class KubernetesApp(PipelineComponent):
         default=...,
         description=describe_attr("app", __doc__),
     )
-    repo_config: HelmRepoConfig | None = Field(
-        default=None,
+    repo_config: HelmRepoConfig = Field(
+        default=...,
         description=describe_attr("repo_config", __doc__),
     )
     namespace: str = Field(
@@ -112,18 +112,32 @@ class KubernetesApp(PipelineComponent):
         super()._validate_custom(**kwargs)
         self.validate_kubernetes_name(self.name)
 
+    @property
+    def template_flags(self) -> HelmTemplateFlags:
+        return HelmTemplateFlags(
+            version=self.version,
+            api_version=self.config.helm_config.api_version,
+            **self.repo_config.repo_auth_flags.dict(),
+        )
+
     @override
-    def template(self, flags: HelmTemplateFlags) -> None:
-        if self.version:
-            flags.version = self.version
+    def template(self) -> None:
         stdout = self.helm.template(
             self.helm_release_name,
             self.get_helm_chart(),
             self.namespace,
             self.to_helm_values(),
-            flags,
+            self.template_flags,
         )
         print(stdout)
+
+    @property
+    def deploy_flags(self) -> HelmUpgradeInstallFlags:
+        return HelmUpgradeInstallFlags(
+            version=self.version,
+            create_namespace=self.config.create_namespace,
+            **self.repo_config.repo_auth_flags.dict(),
+        )
 
     @override
     def deploy(self, dry_run: bool) -> None:
@@ -133,9 +147,7 @@ class KubernetesApp(PipelineComponent):
             dry_run,
             self.namespace,
             self.to_helm_values(),
-            HelmUpgradeInstallFlags(
-                create_namespace=self.config.create_namespace, version=self.version
-            ),
+            self.deploy_flags,
         )
         if dry_run:
             self.dry_run_handler.print_helm_diff(stdout, self.helm_release_name, log)

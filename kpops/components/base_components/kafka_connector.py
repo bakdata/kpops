@@ -119,6 +119,14 @@ class KafkaConnector(PipelineComponent, ABC):
         """Resetter chart for this component"""
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
+    @property
+    def template_flags(self) -> HelmTemplateFlags:
+        return HelmTemplateFlags(
+            version=self.version,
+            api_version=self.config.helm_config.api_version,
+            **self.repo_config.repo_auth_flags.dict(),
+        )
+
     @override
     def deploy(self, dry_run: bool) -> None:
         if self.to:
@@ -329,7 +337,7 @@ class KafkaSourceConnector(KafkaConnector):
         raise NotImplementedError("Kafka source connector doesn't support FromSection")
 
     @override
-    def template(self, flags: HelmTemplateFlags) -> None:
+    def template(self) -> None:
         values = self._get_kafka_connect_resetter_values(
             self.name,
             KafkaConnectorType.SOURCE,
@@ -340,7 +348,7 @@ class KafkaSourceConnector(KafkaConnector):
             self._get_resetter_helm_chart(),
             self.namespace,
             values,
-            flags,
+            self.template_flags,
         )
         print(stdout)
 
@@ -397,7 +405,7 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "topics", ",".join(topics))
 
     @override
-    def template(self, flags: HelmTemplateFlags) -> None:
+    def template(self) -> None:
         values = self._get_kafka_connect_resetter_values(
             self.name, KafkaConnectorType.SINK
         )
@@ -406,7 +414,7 @@ class KafkaSinkConnector(KafkaConnector):
             self._get_resetter_helm_chart(),
             self.namespace,
             values,
-            flags,
+            self.template_flags,
         )
         print(stdout)
 
