@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from textwrap import fill
-from typing import Any
+from typing import Any, TypeVar
 
 from pytablewriter import MarkdownTableWriter
 from typer.models import ArgumentInfo, OptionInfo
@@ -20,12 +20,13 @@ PATH_CLI_COMMANDS_DOC = PATH_ROOT / "docs/docs/user/references/cli-commands.md"
 PATH_DOCS_RESOURCES = PATH_ROOT / "docs/docs/resources"
 PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
 
-
 #####################
 # EXAMPLES          #
 #####################
 
+COMMENT_SYMBOL = "#"
 
+T = TypeVar("T", bound="EnvVar")
 @dataclass
 class EnvVar:
     """Environment variable's properties."""
@@ -36,6 +37,17 @@ class EnvVar:
     description: str | None
     corresponding_setting_name: str | None
 
+    @classmethod
+    def from_record(cls: T, record: dict[str, Any]) -> T:
+        return cls(
+            name=record[EnvVarAttrs.NAME],
+            default_value=record[EnvVarAttrs.DEFAULT_VALUE],
+            required=record[EnvVarAttrs.REQUIRED] == "True",
+            description=record[EnvVarAttrs.DESCRIPTION],
+            corresponding_setting_name=record.get(
+                EnvVarAttrs.CORRESPONDING_SETTING_NAME,
+            )
+        )
 
 class EnvVarAttrs(str, Enum):
     """The attr names are used as columns for the markdown tables."""
@@ -50,9 +62,9 @@ class EnvVarAttrs(str, Enum):
 def csv_append_env_var(
     file: Path,
     name: str,
-    default_value: Any,
+    default_value,
     description: str | list[str] | None,
-    *args: Any,
+    *args,
 ) -> None:
     """Append env variable record to a chosen .csv file, create it if doesn't exist.
 
@@ -87,7 +99,6 @@ def write_title_to_dotenv_file(
     file_path: Path,
     title: str,
     description: str,
-    comment_symbol: str = "#",
 ) -> None:
     """Overwrite a file with a title and description as comments.
 
@@ -107,18 +118,17 @@ def write_title_to_dotenv_file(
     :param file_path: Path to the file
     :param title: Title
     :param description: File description
-    :param comment_symbol: Symbol to use for comments, defaults to "#"
     """
     with file_path.open("w+") as f:
         text = (
-            f"{comment_symbol} {title}"
-            f"\n{comment_symbol}\n"
+            f"{COMMENT_SYMBOL} {title}"
+            f"\n{COMMENT_SYMBOL}\n"
             + fill(
                 text=description,
-                initial_indent=f"{comment_symbol} ",
-                subsequent_indent=f"{comment_symbol} ",
+                initial_indent=f"{COMMENT_SYMBOL} ",
+                subsequent_indent=f"{COMMENT_SYMBOL} ",
             )
-            + f"\n{comment_symbol}\n"
+            + f"\n{COMMENT_SYMBOL}\n"
         )
         f.write(text)
 
@@ -132,25 +142,16 @@ def append_csv_to_dotenv_file(
     :param source: csv file to read from
     :param target: dotenv file to wread into
     """
-    comment_symbol = "#"  # Comments in .env start with a `#`
     with source.open("r") as s_target:
         r = csv.reader(s_target)
         columns = next(r)
         for line in r:
             record = dict(zip(columns, line, strict=True))
-            env_var = EnvVar(
-                name=record[EnvVarAttrs.NAME],
-                default_value=record[EnvVarAttrs.DEFAULT_VALUE],
-                required=record[EnvVarAttrs.REQUIRED] == "True",
-                description=record[EnvVarAttrs.DESCRIPTION],
-                corresponding_setting_name=record.get(
-                    EnvVarAttrs.CORRESPONDING_SETTING_NAME,
-                ),
-            )
+            env_var = EnvVar.from_record(record)
             env_var.description = fill(
                 text=env_var.description or "",
-                initial_indent=f"{comment_symbol} ",
-                subsequent_indent=f"{comment_symbol} ",
+                initial_indent=f"{COMMENT_SYMBOL} ",
+                subsequent_indent=f"{COMMENT_SYMBOL} ",
             )
             if env_var.corresponding_setting_name:
                 env_var.description = (
@@ -160,9 +161,9 @@ def append_csv_to_dotenv_file(
             # the var alone there and it will be skipepd when reading
             # https://saurabh-kumar.com/python-dotenv/#file-format
             if env_var.required and not env_var.default_value:
-                default_value = f" {comment_symbol} No default value, required"
+                default_value = f" {COMMENT_SYMBOL} No default value, required"
             elif not env_var.default_value:
-                default_value = f" {comment_symbol} No default value, not required"
+                default_value = f" {COMMENT_SYMBOL} No default value, not required"
             else:
                 default_value = f"={env_var.default_value}"
             env_var.default_value = default_value
@@ -204,14 +205,17 @@ shutil.copyfile(
     PATH_DOCS_VARIABLES / "variable_substitution.yaml",
 )
 
+# Descriptions for the tables and the dotenv files are the same, except for the
+# sentence bellow
+DESCRIPTION_ADDITION_DOTENV_FILE = "The default setup is shown. "
+
 # find all config-related env variables and write them into a file
 PATH_CONFIG_ENV_VARS_DOTENV_FILE = PATH_DOCS_VARIABLES / "config_env_vars.env"
 PATH_CONFIG_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "config_env_vars.md"
 PATH_CONFIG_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_config_env_vars.csv"
 CONFIG_ENV_VARS_TITLE = "Pipeline config environment variables"
 CONFIG_ENV_VARS_DESCRIPTION = (
-    "The default setup is shown. "
-    "These variables are an alternative to the settings in `config.yaml`. "
+    "These variables are a lower priority alternative to the settings in `config.yaml`. "
     "Variables marked as required can instead be set in the pipeline config."
 )
 # Overwrite the temp csv file
@@ -228,7 +232,7 @@ with PATH_CONFIG_ENV_VARS_CSV_FILE.open("w+") as f:
 write_title_to_dotenv_file(
     PATH_CONFIG_ENV_VARS_DOTENV_FILE,
     CONFIG_ENV_VARS_TITLE,
-    CONFIG_ENV_VARS_DESCRIPTION,
+    DESCRIPTION_ADDITION_DOTENV_FILE + CONFIG_ENV_VARS_DESCRIPTION,
 )
 # NOTE: This does not see nested fields, hence if there are env vars in a class like
 # TopicConfig(), they wil not be listed. Possible fix with recursion.
@@ -268,7 +272,7 @@ PATH_CLI_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "cli_env_vars.md"
 PATH_CLI_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_cli_env_vars.csv"
 CLI_ENV_VARS_TITLE = "CLI Environment variables"
 CLI_ENV_VARS_DESCRIPTION = (
-    "The default setup is shown. These variables are a lower priority alternative to the commands' flags. "
+    "These variables are a lower priority alternative to the commands' flags. "
     "If a variable is set, the corresponding flag does not have to be specified in commands. "
     "Variables marked as required can instead be set as flags."
 )
@@ -285,7 +289,7 @@ with PATH_CLI_ENV_VARS_CSV_FILE.open("w+") as f:
 write_title_to_dotenv_file(
     PATH_CLI_ENV_VARS_DOTFILES_FILE,
     CLI_ENV_VARS_TITLE,
-    CLI_ENV_VARS_DESCRIPTION,
+    DESCRIPTION_ADDITION_DOTENV_FILE + CLI_ENV_VARS_DESCRIPTION,
 )
 for var_in_main_name in dir(main):
     var_in_main = getattr(main, var_in_main_name)
