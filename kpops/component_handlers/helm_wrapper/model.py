@@ -85,16 +85,30 @@ class HelmRepoConfig(BaseModel):
 
 
 class HelmConfig(BaseModel):
+    """Global Helm configuration
+
+    :param context: Name of kubeconfig context (`--kube-context`)
+    :param debug: Run Helm in Debug mode
+    :param api_version: Kubernetes API version used for Capabilities.APIVersions
+    """
+
     context: str | None = Field(
         default=None,
-        description="Set the name of the kubeconfig context. (--kube-context)",
+        description=describe_attr("context", __doc__),
         example="dev-storage",
     )
     debug: bool = Field(
         default=False,
-        description="Run Helm in Debug mode.",
+        description=describe_attr("debug", __doc__),
     )
-    api_version: str | None = None
+    api_version: str | None = Field(
+        default=None,
+        title="API version",
+        description=describe_attr("api_version", __doc__),
+    )
+
+    class Config(DescConfig):
+        pass
 
 
 class HelmFlags(RepoAuthFlags):
