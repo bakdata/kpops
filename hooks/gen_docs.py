@@ -191,7 +191,7 @@ def write_csv_to_md_file(
         if title:
             f.write(f"{heading} {title}\n")
         if description:
-            f.write(f"\n{description}\n")
+            f.write(f"\n{description}\n\n")
         writer = MarkdownTableWriter()
         writer.from_csv(str(source))
         writer.table_name = ""
@@ -255,10 +255,10 @@ append_csv_to_dotenv_file(
     PATH_CONFIG_ENV_VARS_DOTENV_FILE,
 )
 write_csv_to_md_file(
-    PATH_CONFIG_ENV_VARS_CSV_FILE,
-    PATH_CONFIG_ENV_VARS_MD_FILE,
-    CONFIG_ENV_VARS_TITLE,
-    CONFIG_ENV_VARS_DESCRIPTION,
+    source=PATH_CONFIG_ENV_VARS_CSV_FILE,
+    target=PATH_CONFIG_ENV_VARS_MD_FILE,
+    title=None,  # CONFIG_ENV_VARS_TITLE,
+    description=CONFIG_ENV_VARS_DESCRIPTION,
 )
 PATH_CONFIG_ENV_VARS_CSV_FILE.unlink(missing_ok=True)
 
@@ -316,10 +316,10 @@ for var_in_main_name in dir(main):
         )
 append_csv_to_dotenv_file(PATH_CLI_ENV_VARS_CSV_FILE, PATH_CLI_ENV_VARS_DOTFILES_FILE)
 write_csv_to_md_file(
-    PATH_CLI_ENV_VARS_CSV_FILE,
-    PATH_CLI_ENV_VARS_MD_FILE,
-    CLI_ENV_VARS_TITLE,
-    CLI_ENV_VARS_DESCRIPTION,
+    source=PATH_CLI_ENV_VARS_CSV_FILE,
+    target=PATH_CLI_ENV_VARS_MD_FILE,
+    title=None,  # title=CLI_ENV_VARS_TITLE,
+    description=CLI_ENV_VARS_DESCRIPTION,
 )
 # Delete the csv file, it is not useful anymore
 PATH_CLI_ENV_VARS_CSV_FILE.unlink(missing_ok=True)

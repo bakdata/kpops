@@ -1,6 +1,6 @@
-### CLI Environment variables
 
 The default setup is shown. These variables are a lower priority alternative to the commands' flags. If a variable is set, the corresponding flag does not have to be specified in commands. Variables marked as required can instead be set as flags.
+
 |         Name          |Default Value|Required|                             Description                              |
 |-----------------------|-------------|--------|----------------------------------------------------------------------|
 |KPOPS_PIPELINE_BASE_DIR|.            |False   |Base directory to the pipelines (default is current working directory)|
