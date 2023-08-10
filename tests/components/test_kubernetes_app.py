@@ -56,29 +56,40 @@ class TestKubernetesApp:
     def app_value(self) -> KubernetesTestValue:
         return KubernetesTestValue(**{"name_override": "test-value"})
 
-    def test_should_lazy_load_helm_wrapper_and_not_repo_add(
+    @pytest.fixture
+    def repo_config(self) -> HelmRepoConfig:
+        return HelmRepoConfig(repository_name="test", url="https://bakdata.com")
+
+    @pytest.fixture
+    def kubernetes_app(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
-        mocker: MockerFixture,
-        helm_mock: MagicMock,
         app_value: KubernetesTestValue,
-    ):
-        kubernetes_app = KubernetesApp(
+        repo_config: HelmRepoConfig,
+    ) -> KubernetesApp:
+        return KubernetesApp(
             name="test-kubernetes-apps",
             config=config,
             handlers=handlers,
             app=app_value,
             namespace="test-namespace",
+            repo_config=repo_config,
         )
+
+    def test_should_lazy_load_helm_wrapper_and_not_repo_add(
+        self,
+        kubernetes_app: KubernetesApp,
+        mocker: MockerFixture,
+        helm_mock: MagicMock,
+    ):
+        helm_mock.add_repo.assert_not_called()
 
         mocker.patch.object(
             kubernetes_app, "get_helm_chart", return_value="test/test-chart"
         )
 
         kubernetes_app.deploy(False)
-
-        helm_mock.add_repo.assert_not_called()
 
         helm_mock.upgrade_install.assert_called_once_with(
             "test-kubernetes-apps",
@@ -91,6 +102,7 @@ class TestKubernetesApp:
 
     def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
         self,
+        kubernetes_app: KubernetesApp,
         config: PipelineConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
@@ -135,20 +147,12 @@ class TestKubernetesApp:
 
     def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
         self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
-        app_value: KubernetesTestValue,
+        kubernetes_app: KubernetesApp,
+        helm_mock: MagicMock,
     ):
-        kubernetes_app = KubernetesApp(
-            name="test-kubernetes-apps",
-            config=config,
-            handlers=handlers,
-            app=app_value,
-            namespace="test-namespace",
-        )
-
         with pytest.raises(NotImplementedError) as error:
             kubernetes_app.deploy(True)
+        helm_mock.add_repo.assert_called()
         assert (
             "Please implement the get_helm_chart() method of the kpops.components.base_components.kubernetes_app module."
             == str(error.value)
@@ -156,20 +160,10 @@ class TestKubernetesApp:
 
     def test_should_call_helm_uninstall_when_destroying_kubernetes_app(
         self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        kubernetes_app: KubernetesApp,
         helm_mock: MagicMock,
         log_info_mock: MagicMock,
-        app_value: KubernetesTestValue,
     ):
-        kubernetes_app = KubernetesApp(
-            name="test-kubernetes-apps",
-            config=config,
-            handlers=handlers,
-            app=app_value,
-            namespace="test-namespace",
-        )
-
         stdout = 'KubernetesAppComponent - release "test-kubernetes-apps" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
@@ -186,6 +180,7 @@ class TestKubernetesApp:
         config: PipelineConfig,
         handlers: ComponentHandlers,
         app_value: KubernetesTestValue,
+        repo_config: HelmRepoConfig,
     ):
         with pytest.raises(
             ValueError, match=r"The component name .* is invalid for Kubernetes."
@@ -196,6 +191,7 @@ class TestKubernetesApp:
                 handlers=handlers,
                 app=app_value,
                 namespace="test-namespace",
+                repo_config=repo_config,
             )
 
         with pytest.raises(
@@ -207,6 +203,7 @@ class TestKubernetesApp:
                 handlers=handlers,
                 app=app_value,
                 namespace="test-namespace",
+                repo_config=repo_config,
             )
 
         assert KubernetesApp(
@@ -215,4 +212,5 @@ class TestKubernetesApp:
             handlers=handlers,
             app=app_value,
             namespace="test-namespace",
+            repo_config=repo_config,
         )
