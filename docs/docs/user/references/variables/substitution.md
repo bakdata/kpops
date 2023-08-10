@@ -1,6 +1,6 @@
 # Substitution
 
-The [pipeline](../components.md) definition and its [defaults](../defaults.md) allow usage of placeholders and environment.
+KPOps supports the usage of placeholders and environment variables in [pipeline definition](../components.md) and [defaults](../defaults.md).
 
 ## Component-specific variables
 
@@ -35,7 +35,7 @@ These are special variables that refer to the name and path of a pipeline.
 
 - `${pipeline_name}`  
     Concatenated path of the parent directory where pipeline.yaml is defined in.  
-    For instance, `/data/pipelines/v1/pipeline.yaml`, here the value for the variable would be `data-pipelines-v1`.
+    For instance, `./data/pipelines/v1/pipeline.yaml`, here the value for the variable would be `data-pipelines-v1`.
 
 - `${pipeline_name_<level>}`  
     Similar to the previous variable, each `<level>` contains a part of the path to the `pipeline.yaml` file.  
