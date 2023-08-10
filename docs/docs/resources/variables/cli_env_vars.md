@@ -1,5 +1,5 @@
 
-The default setup is shown. These variables are a lower priority alternative to the commands' flags. If a variable is set, the corresponding flag does not have to be specified in commands. Variables marked as required can instead be set as flags.
+These variables are a lower priority alternative to the commands' flags. If a variable is set, the corresponding flag does not have to be specified in commands. Variables marked as required can instead be set as flags.
 
 |         Name          |Default Value|Required|                             Description                              |
 |-----------------------|-------------|--------|----------------------------------------------------------------------|
