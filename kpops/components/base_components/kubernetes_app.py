@@ -12,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmFlags,
     HelmRepoConfig,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
@@ -118,17 +119,19 @@ class KubernetesApp(PipelineComponent):
             f"Please implement the helm_chart property of the {self.__module__} module."
         )
 
-    @override
-    def _validate_custom(self, **kwargs) -> None:
-        super()._validate_custom(**kwargs)
-        self.validate_kubernetes_name(self.name)
+    @property
+    def helm_flags(self) -> HelmFlags:
+        return HelmFlags(
+            **self.repo_config.repo_auth_flags.dict(),
+            version=self.version,
+            create_namespace=self.config.create_namespace,
+        )
 
     @property
     def template_flags(self) -> HelmTemplateFlags:
         return HelmTemplateFlags(
-            version=self.version,
+            **self.helm_flags.dict(),
             api_version=self.config.helm_config.api_version,
-            **self.repo_config.repo_auth_flags.dict(),
         )
 
     @override
@@ -144,11 +147,7 @@ class KubernetesApp(PipelineComponent):
 
     @property
     def deploy_flags(self) -> HelmUpgradeInstallFlags:
-        return HelmUpgradeInstallFlags(
-            version=self.version,
-            create_namespace=self.config.create_namespace,
-            **self.repo_config.repo_auth_flags.dict(),
-        )
+        return HelmUpgradeInstallFlags(**self.helm_flags.dict())
 
     @override
     def deploy(self, dry_run: bool) -> None:
@@ -197,6 +196,11 @@ class KubernetesApp(PipelineComponent):
             log.info(f"Helm release {self.helm_release_name} does not exist")
         new_release = Helm.load_manifest(stdout)
         self.helm_diff.log_helm_diff(log, current_release, new_release)
+
+    @override
+    def _validate_custom(self, **kwargs) -> None:
+        super()._validate_custom(**kwargs)
+        self.validate_kubernetes_name(self.name)
 
     @staticmethod
     def validate_kubernetes_name(name: str) -> None:

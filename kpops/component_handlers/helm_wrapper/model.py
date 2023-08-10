@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Iterator
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseConfig, BaseModel, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.exception import ParseError
@@ -119,6 +119,9 @@ class HelmFlags(RepoAuthFlags):
     timeout: str = "5m0s"
     wait: bool = True
     wait_for_jobs: bool = False
+
+    class Config(BaseConfig):
+        extra = Extra.allow
 
     @override
     def to_command(self) -> list[str]:
