@@ -112,7 +112,7 @@ def write_title_to_dotenv_file(
     with file_path.open("w+") as f:
         text = (
             f"{comment_symbol} {title}"
-            "\n{comment_symbol}\n"
+            f"\n{comment_symbol}\n"
             + fill(
                 text=description,
                 initial_indent=f"{comment_symbol} ",
