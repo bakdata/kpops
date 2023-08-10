@@ -86,7 +86,10 @@ class TestKubernetesApp:
         helm_mock.add_repo.assert_not_called()
 
         mocker.patch.object(
-            kubernetes_app, "get_helm_chart", return_value="test/test-chart"
+            KubernetesApp,
+            "helm_chart",
+            return_value="test/test-chart",
+            new_callable=mocker.PropertyMock,
         )
 
         kubernetes_app.deploy(False)
@@ -121,8 +124,8 @@ class TestKubernetesApp:
         )
 
         mocker.patch.object(
-            kubernetes_app,
-            "get_helm_chart",
+            KubernetesApp,
+            "helm_chart",
             return_value="test/test-chart",
             new_callable=mocker.PropertyMock,
         )
@@ -154,7 +157,7 @@ class TestKubernetesApp:
             kubernetes_app.deploy(True)
         helm_mock.add_repo.assert_called()
         assert (
-            "Please implement the get_helm_chart() method of the kpops.components.base_components.kubernetes_app module."
+            "Please implement the helm_chart property of the kpops.components.base_components.kubernetes_app module."
             == str(error.value)
         )
 

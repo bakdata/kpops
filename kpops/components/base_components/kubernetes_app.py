@@ -107,6 +107,17 @@ class KubernetesApp(PipelineComponent):
         """The name for the Helm release. Can be overridden."""
         return self.name
 
+    @property
+    def helm_chart(self) -> str:
+        """Return component's helm chart
+
+        :return: Helm chart of this component
+        :rtype: str
+        """
+        raise NotImplementedError(
+            f"Please implement the helm_chart property of the {self.__module__} module."
+        )
+
     @override
     def _validate_custom(self, **kwargs) -> None:
         super()._validate_custom(**kwargs)
@@ -124,7 +135,7 @@ class KubernetesApp(PipelineComponent):
     def template(self) -> None:
         stdout = self.helm.template(
             self.helm_release_name,
-            self.get_helm_chart(),
+            self.helm_chart,
             self.namespace,
             self.to_helm_values(),
             self.template_flags,
@@ -143,7 +154,7 @@ class KubernetesApp(PipelineComponent):
     def deploy(self, dry_run: bool) -> None:
         stdout = self.helm.upgrade_install(
             self.helm_release_name,
-            self.get_helm_chart(),
+            self.helm_chart,
             dry_run,
             self.namespace,
             self.to_helm_values(),
@@ -186,16 +197,6 @@ class KubernetesApp(PipelineComponent):
             log.info(f"Helm release {self.helm_release_name} does not exist")
         new_release = Helm.load_manifest(stdout)
         self.helm_diff.log_helm_diff(log, current_release, new_release)
-
-    def get_helm_chart(self) -> str:
-        """Return component's helm chart
-
-        :return: Helm chart of this component
-        :rtype: str
-        """
-        raise NotImplementedError(
-            f"Please implement the get_helm_chart() method of the {self.__module__} module."
-        )
 
     @staticmethod
     def validate_kubernetes_name(name: str) -> None:
