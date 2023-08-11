@@ -177,7 +177,7 @@ def append_csv_to_dotenv_file(
                     f"# {env_var.corresponding_setting_name}\n{env_var.description}"
                 )
             # Dotenv has no `null` or `None` values, just leave the name of
-            # the var alone there and it will be skipepd when reading
+            # the var alone there and it will be skipped when reading
             # https://saurabh-kumar.com/python-dotenv/#file-format
             if env_var.required and not env_var.default_value:
                 default_value = f" {COMMENT_SYMBOL} No default value, required"
