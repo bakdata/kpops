@@ -1,6 +1,6 @@
-"""Generates the whole 'generatable' KPOps documentation."""
+"""Generates pipeline definition examples from manually written building blocks."""
+
 import logging
-import subprocess
 import sys
 from pathlib import Path
 from typing import NamedTuple, cast
@@ -24,6 +24,14 @@ PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS = (
     PATH_DOCS_COMPONENTS / "dependencies/defaults_pipeline_component_dependencies.yaml"
 )
 PATH_DOCS_KPOPS_STRUCTURE = PATH_DOCS_COMPONENTS / "dependencies/kpops_structure.yaml"
+
+# Paths to all manually maintained examples
+COMPONENTS_DEFINITION_SECTIONS = list((PATH_DOCS_COMPONENTS / "sections").iterdir())
+PIPELINE_COMPONENT_HEADER_FILES = sorted((PATH_DOCS_COMPONENTS / "headers").iterdir())
+PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
+    (PATH_DOCS_RESOURCES / "pipeline-defaults/headers").iterdir(),
+)
+
 KPOPS_COMPONENTS = tuple(_find_classes("kpops.components", PipelineComponent))
 KPOPS_COMPONENTS_INHERITANCE_REF = {
     component.get_component_type(): cast(
@@ -48,41 +56,9 @@ DANGEROUS_FILES_TO_CHANGE = {
 }
 # All args provided to the script
 # Pre-commit passes changed files as args
+SCRIPT_ARGUMENTS = set(sys.argv)
 
 log = logging.getLogger("DocumentationGenerator")
-
-#####################
-# EXAMPLES          #
-#####################
-
-SCRIPT_ARGUMENTS = set(sys.argv)
-# Check if the dependencies have been modified
-if not {
-    str(file.relative_to(PATH_ROOT)) for file in DANGEROUS_FILES_TO_CHANGE
-}.isdisjoint(SCRIPT_ARGUMENTS):
-    # Set `is_change_present` to indicate that dependencies need to be regenerated
-    is_change_present = True
-    # Delete the old dependency files
-    for dangerous_file in DANGEROUS_FILES_TO_CHANGE:
-        dangerous_file.unlink(missing_ok=True)
-    # Don't display warning if `-a` flag suspected in `pre-commit run`
-    if ".gitignore" not in SCRIPT_ARGUMENTS:
-        log.warning(
-            redify(
-                "\nPossible changes in the dependency dir detected."
-                " It should not be edited in any way manually."
-                "\nTO RESET, DELETE THE DEPENDENCY DIR MANUALLY\n",
-            ),
-        )
-else:
-    is_change_present = False
-
-# Paths to all manually maintained examples
-COMPONENTS_DEFINITION_SECTIONS = list((PATH_DOCS_COMPONENTS / "sections").iterdir())
-PIPELINE_COMPONENT_HEADER_FILES = sorted((PATH_DOCS_COMPONENTS / "headers").iterdir())
-PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
-    (PATH_DOCS_RESOURCES / "pipeline-defaults/headers").iterdir(),
-)
 
 
 class KpopsComponent(NamedTuple):
@@ -245,89 +221,85 @@ def get_sections(component_name: str, *, exist_changes: bool) -> KpopsComponent:
     return KpopsComponent(component_sections, component_sections_not_inherited)
 
 
-# Always check for changes in the component structure, but even
-# if none found, True if the dependency files have been modified.
-is_change_present = (
-    check_for_changes_in_kpops_component_structure() or is_change_present
-)
+if __name__ == "__main__":
+    # Check if the dependencies have been modified
+    if not {
+        str(file.relative_to(PATH_ROOT)) for file in DANGEROUS_FILES_TO_CHANGE
+    }.isdisjoint(SCRIPT_ARGUMENTS):
+        # Set `is_change_present` to indicate that dependencies need to be regenerated
+        is_change_present = True
+        # Delete the old dependency files
+        for dangerous_file in DANGEROUS_FILES_TO_CHANGE:
+            dangerous_file.unlink(missing_ok=True)
+        # Don't display warning if `-a` flag suspected in `pre-commit run`
+        if ".gitignore" not in SCRIPT_ARGUMENTS:
+            log.warning(
+                redify(
+                    "\nPossible changes in the dependency dir detected."
+                    " It should not be edited in any way manually."
+                    "\nTO RESET, DELETE THE DEPENDENCY DIR MANUALLY\n",
+                ),
+            )
+    else:
+        is_change_present = False
 
-# If some or all of dependencies cannot be loaded, likely relevant changes are present
-try:
-    PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(PATH_DOCS_COMPONENTS_DEPENDENCIES)
-    DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(
-        PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS,
+    # Always check for changes in the component structure, but even
+    # if none found, True if the dependency files have been modified.
+    is_change_present = (
+        check_for_changes_in_kpops_component_structure() or is_change_present
     )
-except OSError:
-    is_change_present = True
 
-# For each component, use the section files to build an example
-# pipeline.yaml and defaults.yaml
-for component_file in PIPELINE_COMPONENT_HEADER_FILES:
-    component_defaults_name = f"defaults-{component_file.name}"
-    # Component-specific sections for pipeline def and defaults
-    component_sections, component_sections_not_inherited = get_sections(
-        component_file.stem,
-        exist_changes=is_change_present,
-    )
+    # If some or all of dependencies cannot be loaded, likely relevant changes are present
+    try:
+        PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(PATH_DOCS_COMPONENTS_DEPENDENCIES)
+        DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(
+            PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS,
+        )
+    except OSError:
+        is_change_present = True
 
-    defaults_sections_paths = [
-        PATH_DOCS_RESOURCES / "pipeline-defaults/headers" / component_defaults_name,
-    ] + [
-        PATH_DOCS_COMPONENTS / "sections" / section
-        for section in component_sections_not_inherited
-    ]
-    sections_paths = [component_file] + [
-        PATH_DOCS_COMPONENTS / "sections" / section for section in component_sections
-    ]
+    # For each component, use the section files to build an example
+    # pipeline.yaml and defaults.yaml
+    for component_file in PIPELINE_COMPONENT_HEADER_FILES:
+        component_defaults_name = f"defaults-{component_file.name}"
+        # Component-specific sections for pipeline def and defaults
+        component_sections, component_sections_not_inherited = get_sections(
+            component_file.stem,
+            exist_changes=is_change_present,
+        )
+
+        defaults_sections_paths = [
+            PATH_DOCS_RESOURCES / "pipeline-defaults/headers" / component_defaults_name,
+        ] + [
+            PATH_DOCS_COMPONENTS / "sections" / section
+            for section in component_sections_not_inherited
+        ]
+        sections_paths = [component_file] + [
+            PATH_DOCS_COMPONENTS / "sections" / section for section in component_sections
+        ]
+        concatenate_text_files(
+            *(defaults_sections_paths),
+            target=PATH_DOCS_RESOURCES / "pipeline-defaults/" / component_defaults_name,
+        )
+        concatenate_text_files(
+            *(sections_paths),
+            target=PATH_DOCS_RESOURCES / "pipeline-components" / component_file.name,
+        )
+    # Concatenate all component-specific pipeline definitions into 1 complete pipeline.yaml
     concatenate_text_files(
-        *(defaults_sections_paths),
-        target=PATH_DOCS_RESOURCES / "pipeline-defaults/" / component_defaults_name,
+        *(
+            component_file.parents[1] / component_file.name
+            for component_file in PIPELINE_COMPONENT_HEADER_FILES
+            if component_file.stem
+            != KafkaConnector.get_component_type()  # Shouldn't be used in the pipeline def
+        ),
+        target=PATH_DOCS_COMPONENTS / "pipeline.yaml",
     )
+    # Concatenate all component-specific defaults into 1 complete defaults.yaml
     concatenate_text_files(
-        *(sections_paths),
-        target=PATH_DOCS_RESOURCES / "pipeline-components" / component_file.name,
+        *(
+            component.parents[1] / component.name
+            for component in PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES
+        ),
+        target=PATH_DOCS_RESOURCES / "pipeline-defaults" / "defaults.yaml",
     )
-# Concatenate all component-specific pipeline definitions into 1 complete pipeline.yaml
-concatenate_text_files(
-    *(
-        component_file.parents[1] / component_file.name
-        for component_file in PIPELINE_COMPONENT_HEADER_FILES
-        if component_file.stem
-        != KafkaConnector.get_component_type()  # Shouldn't be used in the pipeline def
-    ),
-    target=PATH_DOCS_COMPONENTS / "pipeline.yaml",
-)
-# Concatenate all component-specific defaults into 1 complete defaults.yaml
-concatenate_text_files(
-    *(
-        component.parents[1] / component.name
-        for component in PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES
-    ),
-    target=PATH_DOCS_RESOURCES / "pipeline-defaults" / "defaults.yaml",
-)
-
-#####################
-# CLI-USAGE         #
-#####################
-
-# Run typer-cli on kpops to generate doc on CLI usage
-# TODO(@sujuka99): try to use typer_cli.main.docs here instead
-# https://github.com/bakdata/kpops/issues/297
-typer_args: list[str] = [
-    "typer",
-    str(PATH_KPOPS_MAIN),
-    "utils",
-    "docs",
-    "--name",
-    "kpops",
-    "--output",
-    str(PATH_CLI_COMMANDS_DOC),
-]
-subprocess.run(typer_args)
-
-# Replace wrong title in CLI Usage doc
-with PATH_CLI_COMMANDS_DOC.open("r") as f:
-    text = f.readlines()
-text[0] = "# CLI Usage\n"
-with PATH_CLI_COMMANDS_DOC.open("w") as f:
-    f.writelines(text)
