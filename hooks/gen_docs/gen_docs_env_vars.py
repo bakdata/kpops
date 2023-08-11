@@ -231,7 +231,8 @@ def write_csv_to_md_file(
         if description:
             f.write(f"\n{description}\n\n")
         writer = MarkdownTableWriter()
-        writer.from_csv(str(source))
+        with source.open("r", newline="") as source_contents:
+            writer.from_csv(source_contents.read())
         writer.table_name = ""
         writer.dump(output=f)
 
