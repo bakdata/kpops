@@ -5,7 +5,6 @@ from typing import Literal
 
 from pydantic import Extra, Field
 
-from kpops.component_handlers.helm_wrapper.model import HelmTemplateFlags
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
 )
@@ -212,7 +211,7 @@ class PipelineComponent(BaseDefaultsComponent):
         """
         return [self]
 
-    def template(self, flags: HelmTemplateFlags) -> None:
+    def template(self) -> None:
         """
         Runs `helm template`
 
@@ -220,16 +219,6 @@ class PipelineComponent(BaseDefaultsComponent):
         Any values that would normally be looked up or retrieved in-cluster will
         be faked locally. Additionally, none of the server-side testing of chart
         validity (e.g. whether an API is supported) is done.
-
-        :param api_version: Kubernetes API version used for
-            Capabilities.APIVersions, `--api_versions` in Helm
-        :type api_version: str, optional
-        :param ca_file: verify certificates of HTTPS-enabled servers using this
-            CA bundle, `--ca-file` in Helm
-        :type ca_file: str, optional
-        :param cert_file: identify HTTPS client using this SSL certificate file,
-            `--cert-file` in Helm
-        :type cert_file: str, optional
         """
 
     def deploy(self, dry_run: bool) -> None:

@@ -58,7 +58,10 @@ class TestKafkaApp:
         assert kafka_app.namespace == "test-namespace"
 
     def test_should_deploy_kafka_app(
-        self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
     ):
         kafka_app = KafkaApp(
             name="example-name",
@@ -79,7 +82,12 @@ class TestKafkaApp:
         print_helm_diff = mocker.patch.object(
             kafka_app.dry_run_handler, "print_helm_diff"
         )
-        mocker.patch.object(kafka_app, "get_helm_chart", return_value="test/test-chart")
+        mocker.patch.object(
+            KafkaApp,
+            "helm_chart",
+            return_value="test/test-chart",
+            new_callable=mocker.PropertyMock,
+        )
 
         kafka_app.deploy(dry_run=True)
 
