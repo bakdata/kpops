@@ -179,7 +179,7 @@ def append_csv_to_dotenv_file(
     :param source: csv file to read from
     :param target: dotenv file to wread into
     """
-    with source.open("r") as s_target:
+    with source.open("r", newline="") as s_target:
         r = csv.reader(s_target)
         columns = next(r)
         for line in r:
@@ -192,7 +192,7 @@ def append_csv_to_dotenv_file(
             )
             if env_var.corresponding_setting_name:
                 env_var.description = (
-                    f"# {env_var.corresponding_setting_name}\n{env_var.description}"
+                    f"{COMMENT_SYMBOL} {env_var.corresponding_setting_name}\n{env_var.description}"
                 )
             # Dotenv has no `null` or `None` values, just leave the name of
             # the var alone there and it will be skipped when reading
