@@ -348,7 +348,7 @@ def gen_vars(
         description=description_md_file,
     )
     # Delete the csv file, it is not useful anymore
-    csv_file.unlink(missing_ok=True)
+    # csv_file.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":
