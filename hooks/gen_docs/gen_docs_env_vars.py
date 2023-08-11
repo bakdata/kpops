@@ -182,7 +182,9 @@ def append_csv_to_dotenv_file(
     with source.open("r", newline="") as s_target:
         r = csv.reader(s_target)
         columns = next(r)
+        print(columns)
         for line in r:
+            print(line)
             record = dict(zip(columns, line, strict=True))
             env_var = EnvVar.from_record(record)
             env_var.description = fill(
@@ -348,7 +350,7 @@ def gen_vars(
         description=description_md_file,
     )
     # Delete the csv file, it is not useful anymore
-    # csv_file.unlink(missing_ok=True)
+    csv_file.unlink(missing_ok=True)
 
 
 if __name__ == "__main__":
