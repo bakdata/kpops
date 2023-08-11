@@ -7,10 +7,7 @@ from pytest_mock import MockerFixture
 
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.helm_wrapper.model import (
-    HelmUpgradeInstallFlags,
-    RepoAuthFlags,
-)
+from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.components import ProducerApp
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
@@ -132,12 +129,10 @@ class TestProducerApp:
                 },
                 HelmUpgradeInstallFlags(
                     force=False,
-                    repo_auth_flags=RepoAuthFlags(
-                        username=None,
-                        password=None,
-                        ca_file=None,
-                        insecure_skip_tls_verify=False,
-                    ),
+                    username=None,
+                    password=None,
+                    ca_file=None,
+                    insecure_skip_tls_verify=False,
                     timeout="5m0s",
                     version="2.4.2",
                     wait=True,

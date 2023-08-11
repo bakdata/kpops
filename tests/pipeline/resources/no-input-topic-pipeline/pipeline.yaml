@@ -1,4 +1,5 @@
 - type: streams-app
+  name: app1
   from:
     topics:
       ".*":
@@ -16,6 +17,7 @@
       example-output:
         type: output
 - type: streams-app
+  name: app2
   to:
     topics:
       example-output-extra:

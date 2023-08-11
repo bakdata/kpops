@@ -20,7 +20,7 @@
     nameOverride: override-with-this-name # kafka-app-specific
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`

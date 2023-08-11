@@ -161,7 +161,7 @@
     commandLine: {} # Example
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -173,6 +173,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
@@ -209,7 +210,7 @@
     nameOverride: override-with-this-name # kafka-app-specific
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -221,6 +222,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
@@ -272,9 +274,11 @@
       extraInputPatterns:
         pattern_role1: input_pattern1
       extraOutputTopics:
+      extraOutputTopics:
         output_role1: output_topic1
         output_role2: output_topic2
       errorTopic: error-topic
+      config:
       config:
         my.streams.config: my.value
     nameOverride: override-with-this-name # streams-app-specific
@@ -307,7 +311,7 @@
         - topic2
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -319,6 +323,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-

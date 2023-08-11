@@ -12,10 +12,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
         "EmptyPipelineComponent": {
             "description": "",
             "properties": {
-                "app": {
-                    "description": "Application-specific settings",
-                    "title": "App"
-                },
                 "from": {
                     "allOf": [
                         {
@@ -141,10 +137,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
         "SubPipelineComponent": {
             "description": "",
             "properties": {
-                "app": {
-                    "description": "Application-specific settings",
-                    "title": "App"
-                },
                 "from": {
                     "allOf": [
                         {
@@ -197,10 +189,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
         "SubPipelineComponentCorrect": {
             "description": "",
             "properties": {
-                "app": {
-                    "description": "Application-specific settings",
-                    "title": "App"
-                },
                 "from": {
                     "allOf": [
                         {
@@ -253,10 +241,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
         "SubPipelineComponentCorrectDocstr": {
             "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
             "properties": {
-                "app": {
-                    "description": "Application-specific settings",
-                    "title": "App"
-                },
                 "from": {
                     "allOf": [
                         {
@@ -313,6 +297,9 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "description": "Holds multiple output topics",
             "properties": {
                 "models": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
                     "default": {},
                     "description": "Data models",
                     "title": "Models",
@@ -322,14 +309,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "additionalProperties": {
                         "$ref": "#/definitions/TopicConfig"
                     },
+                    "default": {},
                     "description": "Output topics",
                     "title": "Topics",
                     "type": "object"
                 }
             },
-            "required": [
-                "topics"
-            ],
             "title": "ToSection",
             "type": "object"
         },
