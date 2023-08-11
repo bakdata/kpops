@@ -191,9 +191,7 @@ def append_csv_to_dotenv_file(
                 subsequent_indent=f"{COMMENT_SYMBOL} ",
             )
             if env_var.corresponding_setting_name:
-                env_var.description = (
-                    f"{COMMENT_SYMBOL} {env_var.corresponding_setting_name}\n{env_var.description}"
-                )
+                env_var.description = f"{COMMENT_SYMBOL} {env_var.corresponding_setting_name}\n{env_var.description}"
             # Dotenv has no `null` or `None` values, just leave the name of
             # the var alone there and it will be skipped when reading
             # https://saurabh-kumar.com/python-dotenv/#file-format
