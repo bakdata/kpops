@@ -4,7 +4,7 @@ Autogeneration happens mostly in the `pre-commit` hooks in `/kpops/hooks`.
 
 ## Generation scripts and their respective files
 
-### Documentation (`gen_docs.py`)
+### Documentation (`gen_docs/*`)
 
 #### Variables (`./kpops/docs/docs/resources/variables/*`)
 
