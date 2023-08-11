@@ -6,10 +6,11 @@ from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
 from textwrap import fill
-from typing import Any, TypeVar
+from typing import Any
 
 from pytablewriter import MarkdownTableWriter
 from typer.models import ArgumentInfo, OptionInfo
+from typing_extensions import Self
 
 from hooks import PATH_ROOT
 from kpops.cli import main
@@ -26,10 +27,18 @@ PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
 
 COMMENT_SYMBOL = "#"
 
-T = TypeVar("T", bound="EnvVar")
+
 @dataclass
 class EnvVar:
-    """Environment variable's properties."""
+    """Environment variable's properties.
+
+    :param name: Name of the vaiable
+    :param default_value: Default value of the variable
+    :param required: Whether it is required to set the var
+    :param description: Description of the variable
+    :param corresponding_setting_name: What, if any, setting(s)
+        the variable controls
+    """
 
     name: str
     default_value: Any
@@ -38,7 +47,16 @@ class EnvVar:
     corresponding_setting_name: str | None
 
     @classmethod
-    def from_record(cls: T, record: dict[str, Any]) -> T:
+    def from_record(cls, record: dict[str, Any]) -> Self:
+        """Construct an ``EnvVar`` instance from a specific dict.
+
+        Reads a dict that contains keys equivalent to the
+        attributes of ``cls``, but under different names.
+        The names are set in ``EnvVarAttrs``.
+
+        :param record: Dict to use in the constructor
+        :return: An ``EnvVar`` instance
+        """
         return cls(
             name=record[EnvVarAttrs.NAME],
             default_value=record[EnvVarAttrs.DEFAULT_VALUE],
@@ -46,8 +64,9 @@ class EnvVar:
             description=record[EnvVarAttrs.DESCRIPTION],
             corresponding_setting_name=record.get(
                 EnvVarAttrs.CORRESPONDING_SETTING_NAME,
-            )
+            ),
         )
+
 
 class EnvVarAttrs(str, Enum):
     """The attr names are used as columns for the markdown tables."""
