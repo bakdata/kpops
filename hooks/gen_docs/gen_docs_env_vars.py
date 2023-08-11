@@ -182,9 +182,7 @@ def append_csv_to_dotenv_file(
     with source.open("r", newline="") as s_target:
         r = csv.reader(s_target)
         columns = next(r)
-        print(columns)
         for line in r:
-            print(line)
             record = dict(zip(columns, line, strict=True))
             env_var = EnvVar.from_record(record)
             env_var.description = fill(
