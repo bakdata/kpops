@@ -1,7 +1,7 @@
-"""Generates the whole 'generatable' KPOps documentation."""
+"""Generates the documentation on KPOps environment variables."""
+
 import csv
 import shutil
-import subprocess
 from dataclasses import dataclass
 from enum import Enum
 from pathlib import Path
@@ -16,14 +16,8 @@ from hooks import PATH_ROOT
 from kpops.cli import main
 from kpops.cli.pipeline_config import PipelineConfig
 
-PATH_KPOPS_MAIN = PATH_ROOT / "kpops/cli/main.py"
-PATH_CLI_COMMANDS_DOC = PATH_ROOT / "docs/docs/user/references/cli-commands.md"
 PATH_DOCS_RESOURCES = PATH_ROOT / "docs/docs/resources"
 PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
-
-#####################
-# EXAMPLES          #
-#####################
 
 COMMENT_SYMBOL = "#"
 
@@ -346,29 +340,3 @@ write_csv_to_md_file(
 )
 # Delete the csv file, it is not useful anymore
 PATH_CLI_ENV_VARS_CSV_FILE.unlink(missing_ok=True)
-
-#####################
-# CLI-USAGE         #
-#####################
-
-# Run typer-cli on kpops to generate doc on CLI usage
-# TODO(@sujuka99): try to use typer_cli.main.docs here instead
-# https://github.com/bakdata/kpops/issues/297
-typer_args: list[str] = [
-    "typer",
-    str(PATH_KPOPS_MAIN),
-    "utils",
-    "docs",
-    "--name",
-    "kpops",
-    "--output",
-    str(PATH_CLI_COMMANDS_DOC),
-]
-subprocess.run(typer_args)
-
-# Replace wrong title in CLI Usage doc
-with PATH_CLI_COMMANDS_DOC.open("r") as f:
-    text = f.readlines()
-text[0] = "# CLI Usage\n"
-with PATH_CLI_COMMANDS_DOC.open("w") as f:
-    f.writelines(text)

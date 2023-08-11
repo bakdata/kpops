@@ -46,9 +46,16 @@ repos:
         require_serial: true
         pass_filenames: false
         exclude: ^tests/.*snapshots/
-      - id: gen-docs
-        name: gen-docs
-        entry: python hooks/gen_docs.py
+      - id: gen-docs-cli
+        name: gen-docs-cli
+        entry: python hooks/gen_docs/gen_docs_cli_usage.py
+        language: system
+        types: [python]
+        require_serial: true
+        exclude: ^tests/.*snapshots/
+      - id: gen-docs-env-vars
+        name: gen-docs-env-vars
+        entry: python hooks/gen_docs/gen_docs_env_vars.py
         language: system
         types: [python]
         require_serial: true
