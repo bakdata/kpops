@@ -252,7 +252,7 @@ if __name__ == "__main__":
     # If some or all of dependencies cannot be loaded, likely relevant changes are present
     try:
         PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(
-            PATH_DOCS_COMPONENTS_DEPENDENCIES
+            PATH_DOCS_COMPONENTS_DEPENDENCIES,
         )
         DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(
             PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS,
