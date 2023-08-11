@@ -2,20 +2,20 @@ kpops_components_fields:
   kafka-app:
   - type
   - name
-  - from_
-  - app
-  - to
   - prefix
+  - from_
+  - to
+  - app
   - repo_config
   - namespace
   - version
   kafka-connector:
   - type
   - name
-  - from_
-  - app
-  - to
   - prefix
+  - from_
+  - to
+  - app
   - repo_config
   - namespace
   - version
@@ -23,10 +23,10 @@ kpops_components_fields:
   kafka-sink-connector:
   - type
   - name
-  - from_
-  - app
-  - to
   - prefix
+  - from_
+  - to
+  - app
   - repo_config
   - namespace
   - version
@@ -34,10 +34,10 @@ kpops_components_fields:
   kafka-source-connector:
   - type
   - name
-  - from_
-  - app
-  - to
   - prefix
+  - from_
+  - to
+  - app
   - repo_config
   - namespace
   - version
@@ -46,37 +46,36 @@ kpops_components_fields:
   kubernetes-app:
   - type
   - name
-  - from_
-  - app
-  - to
   - prefix
+  - from_
+  - to
+  - app
   - repo_config
   - namespace
   - version
   pipeline-component:
   - type
   - name
-  - from_
-  - app
-  - to
   - prefix
+  - from_
+  - to
   producer:
   - type
   - name
-  - from_
-  - app
-  - to
   - prefix
+  - from_
+  - to
+  - app
   - repo_config
   - namespace
   - version
   streams-app:
   - type
   - name
-  - from_
-  - app
-  - to
   - prefix
+  - from_
+  - to
+  - app
   - repo_config
   - namespace
   - version

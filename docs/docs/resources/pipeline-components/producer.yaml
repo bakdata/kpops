@@ -4,22 +4,14 @@
 # https://github.com/bakdata/streams-bootstrap
 - type: producer
   name: producer # required
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
   # from: # While the producer does inherit from kafka-app, it does not need a
   # `from` section, hence it does not support it.
-  # Allowed configs:
-  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
-  app: # required
-    streams: # required, producer-specific
-      brokers: ${brokers} # required
-      schemaRegistryUrl: ${schema_registry_url}
-      outputTopic: output_topic
-      extraOutputTopics:
-        output_role1: output_topic1
-        output_role2: output_topic2
-    nameOverride: override-with-this-name # kafka-app-specific
   # Topic(s) into which the component will write output
   to:
-    topics:
+    topics: # required
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -31,9 +23,17 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
+  # Allowed configs:
+  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
+  app: # required
+    streams: # required, producer-specific
+      brokers: ${brokers} # required
+      schemaRegistryUrl: ${schema_registry_url}
+      outputTopic: output_topic
+      extraOutputTopics: 
+        output_role1: output_topic1
+        output_role2: output_topic2
+    nameOverride: override-with-this-name # kafka-app-specific
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:

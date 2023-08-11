@@ -10,12 +10,16 @@ kafka-app:
       brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
+    imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
   version: "2.12.0" # Helm chart version
 # Kafka connector
 #
 # Parent of: KafkaSinkConnector, KafkaSourceConnector
 # Child of: PipelineComponent
 kafka-connector:
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
   # Topic(s) from which the component will read input
   from: # Must not be null
     topics: # read from topic
@@ -25,11 +29,6 @@ kafka-connector:
     components: # read from specific component
       producer:
         type: input # required
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example. Extensive documentation on
-  # connectors: https://kafka.apache.org/documentation/#connectconfigs
-  app: # required
-    tasks.max: 1
   # Topic(s) into which the component will write output
   to:
     topics: # required
@@ -44,9 +43,11 @@ kafka-connector:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example. Extensive documentation on
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
+  app: # required
+    tasks.max: 1
   # Helm repository configuration for resetter
   repoConfig:
     repositoryName: my-repo # required
@@ -81,6 +82,9 @@ kafka-source-connector:
 # Parent of: KafkaApp
 # Child of: PipelineComponent
 kubernetes-app:
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
   # Topic(s) from which the component will read input
   from: # Must not be null
     topics: # read from topic
@@ -90,12 +94,6 @@ kubernetes-app:
     components: # read from specific component
       producer:
         type: input # required
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example.
-  app: # required
-    image: exampleImage # Example
-    debug: false # Example
-    commandLine: {} # Example
   # Topic(s) into which the component will write output
   to:
     topics: # required
@@ -110,9 +108,12 @@ kubernetes-app:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example.
+  app: # required
+    image: exampleImage # Example
+    debug: false # Example
+    commandLine: {} # Example
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:

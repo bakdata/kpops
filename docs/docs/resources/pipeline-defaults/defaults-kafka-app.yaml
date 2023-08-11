@@ -10,4 +10,5 @@ kafka-app:
       brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
+    imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
   version: "2.12.0" # Helm chart version

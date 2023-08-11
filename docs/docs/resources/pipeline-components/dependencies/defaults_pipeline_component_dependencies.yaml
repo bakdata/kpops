@@ -2,10 +2,10 @@ kafka-app.yaml:
 - app-kafka-app.yaml
 - version-kafka-app.yaml
 kafka-connector.yaml:
-- from_.yaml
-- app-kafka-connector.yaml
-- to.yaml
 - prefix.yaml
+- from_.yaml
+- to.yaml
+- app-kafka-connector.yaml
 - repo_config-kafka-connector.yaml
 - namespace.yaml
 - version-kafka-connector.yaml
@@ -15,10 +15,10 @@ kafka-source-connector.yaml:
 - from_-kafka-source-connector.yaml
 - offset_topic-kafka-source-connector.yaml
 kubernetes-app.yaml:
-- from_.yaml
-- app-kubernetes-app.yaml
-- to.yaml
 - prefix.yaml
+- from_.yaml
+- to.yaml
+- app-kubernetes-app.yaml
 - repo_config-kubernetes-app.yaml
 - namespace.yaml
 - version.yaml

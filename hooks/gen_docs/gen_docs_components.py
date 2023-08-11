@@ -251,7 +251,9 @@ if __name__ == "__main__":
 
     # If some or all of dependencies cannot be loaded, likely relevant changes are present
     try:
-        PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(PATH_DOCS_COMPONENTS_DEPENDENCIES)
+        PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(
+            PATH_DOCS_COMPONENTS_DEPENDENCIES
+        )
         DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES = load_yaml_file(
             PATH_DOCS_COMPONENTS_DEPENDENCIES_DEFAULTS,
         )
@@ -275,7 +277,8 @@ if __name__ == "__main__":
             for section in component_sections_not_inherited
         ]
         sections_paths = [component_file] + [
-            PATH_DOCS_COMPONENTS / "sections" / section for section in component_sections
+            PATH_DOCS_COMPONENTS / "sections" / section
+            for section in component_sections
         ]
         concatenate_text_files(
             *(defaults_sections_paths),
