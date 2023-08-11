@@ -19,6 +19,29 @@ from kpops.cli.pipeline_config import PipelineConfig
 PATH_DOCS_RESOURCES = PATH_ROOT / "docs/docs/resources"
 PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
 
+PATH_CONFIG_ENV_VARS_DOTENV_FILE = PATH_DOCS_VARIABLES / "config_env_vars.env"
+PATH_CONFIG_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "config_env_vars.md"
+PATH_CONFIG_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_config_env_vars.csv"
+TITLE_CONFIG_ENV_VARS = "Pipeline config environment variables"
+DESCRIPTION_CONFIG_ENV_VARS = (
+    "These variables are a lower priority alternative to the settings in `config.yaml`. "
+    "Variables marked as required can instead be set in the pipeline config."
+)
+
+PATH_CLI_ENV_VARS_DOTFILES_FILE = PATH_DOCS_VARIABLES / "cli_env_vars.env"
+PATH_CLI_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "cli_env_vars.md"
+PATH_CLI_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_cli_env_vars.csv"
+TITLE_CLI_ENV_VARS = "CLI Environment variables"
+DESCRIPTION_CLI_ENV_VARS = (
+    "These variables are a lower priority alternative to the commands' flags. "
+    "If a variable is set, the corresponding flag does not have to be specified in commands. "
+    "Variables marked as required can instead be set as flags."
+)
+
+# Descriptions for the tables and the dotenv files are the same, except for the
+# sentence bellow
+DESCRIPTION_ADDITION_DOTENV_FILE = "The default setup is shown. "
+
 COMMENT_SYMBOL = "#"
 
 
@@ -218,19 +241,8 @@ shutil.copyfile(
     PATH_DOCS_VARIABLES / "variable_substitution.yaml",
 )
 
-# Descriptions for the tables and the dotenv files are the same, except for the
-# sentence bellow
-DESCRIPTION_ADDITION_DOTENV_FILE = "The default setup is shown. "
+# Find all config-related env variables and write them into a file
 
-# find all config-related env variables and write them into a file
-PATH_CONFIG_ENV_VARS_DOTENV_FILE = PATH_DOCS_VARIABLES / "config_env_vars.env"
-PATH_CONFIG_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "config_env_vars.md"
-PATH_CONFIG_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_config_env_vars.csv"
-CONFIG_ENV_VARS_TITLE = "Pipeline config environment variables"
-CONFIG_ENV_VARS_DESCRIPTION = (
-    "These variables are a lower priority alternative to the settings in `config.yaml`. "
-    "Variables marked as required can instead be set in the pipeline config."
-)
 # Overwrite the temp csv file
 with PATH_CONFIG_ENV_VARS_CSV_FILE.open("w+") as f:
     csv.writer(f).writerow(
@@ -244,8 +256,8 @@ with PATH_CONFIG_ENV_VARS_CSV_FILE.open("w+") as f:
     )
 write_title_to_dotenv_file(
     PATH_CONFIG_ENV_VARS_DOTENV_FILE,
-    CONFIG_ENV_VARS_TITLE,
-    DESCRIPTION_ADDITION_DOTENV_FILE + CONFIG_ENV_VARS_DESCRIPTION,
+    TITLE_CONFIG_ENV_VARS,
+    DESCRIPTION_ADDITION_DOTENV_FILE + DESCRIPTION_CONFIG_ENV_VARS,
 )
 # NOTE: This does not see nested fields, hence if there are env vars in a class like
 # TopicConfig(), they wil not be listed. Possible fix with recursion.
@@ -274,21 +286,14 @@ append_csv_to_dotenv_file(
 write_csv_to_md_file(
     source=PATH_CONFIG_ENV_VARS_CSV_FILE,
     target=PATH_CONFIG_ENV_VARS_MD_FILE,
-    title=None,  # CONFIG_ENV_VARS_TITLE,
-    description=CONFIG_ENV_VARS_DESCRIPTION,
+    title=None,
+    description=DESCRIPTION_CONFIG_ENV_VARS,
 )
+# Delete the csv file, it is not useful anymore
 PATH_CONFIG_ENV_VARS_CSV_FILE.unlink(missing_ok=True)
 
-# find all cli-related env variables, write them into a file
-PATH_CLI_ENV_VARS_DOTFILES_FILE = PATH_DOCS_VARIABLES / "cli_env_vars.env"
-PATH_CLI_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "cli_env_vars.md"
-PATH_CLI_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_cli_env_vars.csv"
-CLI_ENV_VARS_TITLE = "CLI Environment variables"
-CLI_ENV_VARS_DESCRIPTION = (
-    "These variables are a lower priority alternative to the commands' flags. "
-    "If a variable is set, the corresponding flag does not have to be specified in commands. "
-    "Variables marked as required can instead be set as flags."
-)
+# Find all cli-related env variables, write them into a file
+
 # Overwrite the temp csv file
 with PATH_CLI_ENV_VARS_CSV_FILE.open("w+") as f:
     csv.writer(f).writerow(
@@ -301,8 +306,8 @@ with PATH_CLI_ENV_VARS_CSV_FILE.open("w+") as f:
     )
 write_title_to_dotenv_file(
     PATH_CLI_ENV_VARS_DOTFILES_FILE,
-    CLI_ENV_VARS_TITLE,
-    DESCRIPTION_ADDITION_DOTENV_FILE + CLI_ENV_VARS_DESCRIPTION,
+    TITLE_CLI_ENV_VARS,
+    DESCRIPTION_ADDITION_DOTENV_FILE + DESCRIPTION_CLI_ENV_VARS,
 )
 for var_in_main_name in dir(main):
     var_in_main = getattr(main, var_in_main_name)
@@ -335,8 +340,8 @@ append_csv_to_dotenv_file(PATH_CLI_ENV_VARS_CSV_FILE, PATH_CLI_ENV_VARS_DOTFILES
 write_csv_to_md_file(
     source=PATH_CLI_ENV_VARS_CSV_FILE,
     target=PATH_CLI_ENV_VARS_MD_FILE,
-    title=None,  # title=CLI_ENV_VARS_TITLE,
-    description=CLI_ENV_VARS_DESCRIPTION,
+    title=None,
+    description=DESCRIPTION_CLI_ENV_VARS,
 )
 # Delete the csv file, it is not useful anymore
 PATH_CLI_ENV_VARS_CSV_FILE.unlink(missing_ok=True)
