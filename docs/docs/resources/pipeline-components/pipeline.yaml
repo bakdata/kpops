@@ -16,7 +16,7 @@
         type: input # required
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -28,6 +28,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  namespace: namespace # required
   # `app` can contain application-specific settings, hence  the user is free to
   # add the key-value pairs they need.
   app: # required
@@ -46,7 +47,6 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  namespace: namespace # required
   version: "2.12.0" # Helm chart version
 # Kafka sink connector
 - type: kafka-sink-connector
@@ -65,7 +65,7 @@
         type: input # required
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -77,6 +77,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  namespace: namespace # required
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example. Extensive documentation on
   # connectors: https://kafka.apache.org/documentation/#connectconfigs
@@ -86,12 +87,11 @@
   repoConfig:
     repositoryName: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags: 
+    repoAuthFlags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  namespace: namespace # required
   version: "1.0.6" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
@@ -107,7 +107,7 @@
   # from:
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -119,6 +119,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  namespace: namespace # required
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example. Extensive documentation on
   # connectors: https://kafka.apache.org/documentation/#connectconfigs
@@ -128,12 +129,11 @@
   repoConfig:
     repositoryName: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags: 
+    repoAuthFlags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  namespace: namespace # required
   version: "1.0.6" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
@@ -159,7 +159,7 @@
         type: input # required
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -171,6 +171,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  namespace: namespace # required
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example.
   app: # required
@@ -187,7 +188,6 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  namespace: namespace # required
   version: "1.0.0" # Helm chart version
 # Holds configuration to use as values for the streams bootstrap producer Helm
 # chart.
@@ -202,7 +202,7 @@
   # `from` section, hence it does not support it.
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -214,6 +214,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  namespace: namespace # required
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
@@ -235,7 +236,6 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  namespace: namespace # required
   version: "2.12.0" # Helm chart version
 # StreamsApp component that configures a streams bootstrap app.
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
@@ -255,7 +255,7 @@
         type: input # required
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -267,6 +267,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  namespace: namespace # required
   # No arbitrary keys are allowed under `app`here
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
@@ -333,5 +334,4 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  namespace: namespace # required
   version: "2.12.0" # Helm chart version

@@ -15,7 +15,7 @@
         type: input # required
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -27,6 +27,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  namespace: namespace # required
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example.
   app: # required
@@ -43,5 +44,4 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  namespace: namespace # required
   version: "1.0.0" # Helm chart version

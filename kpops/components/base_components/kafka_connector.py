@@ -62,6 +62,10 @@ class KafkaConnector(PipelineComponent, ABC):
     type: str = Field(
         default="kafka-connector", description=describe_attr("type", __doc__)
     )
+    namespace: str = Field(
+        default=...,
+        description=describe_attr("namespace", __doc__),
+    )
     schema_type: Literal["kafka-connector"] = Field(
         default="kafka-connector",
         title="Component type",
@@ -78,10 +82,6 @@ class KafkaConnector(PipelineComponent, ABC):
             url="https://bakdata.github.io/kafka-connect-resetter/",
         ),
         description=describe_attr("repo_config", __doc__),
-    )
-    namespace: str = Field(
-        default=...,
-        description=describe_attr("namespace", __doc__),
     )
     version: str | None = Field(
         default="1.0.4", description=describe_attr("version", __doc__)

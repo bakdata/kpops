@@ -11,7 +11,7 @@
   # `from` section, hence it does not support it.
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
@@ -23,6 +23,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  namespace: namespace # required
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
@@ -44,5 +45,4 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  namespace: namespace # required
   version: "2.12.0" # Helm chart version
