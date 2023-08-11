@@ -126,7 +126,7 @@ def csv_append_env_var(
         default_value = ""
     elif default_value is None:
         default_value = ""
-    with file.open("a+") as csv_file:
+    with file.open("a+", newline="") as csv_file:
         csv.writer(csv_file).writerow(
             [name, default_value, required, formatted_description, *list(args)],
         )
@@ -331,7 +331,7 @@ def gen_vars(
         them to the temp csv file.
     """
     # Overwrite/create the temp csv file
-    with csv_file.open("w+") as f:
+    with csv_file.open("w+", newline="") as f:
         csv.writer(f).writerow(columns)
     write_title_to_dotenv_file(
         dotenv_file,
