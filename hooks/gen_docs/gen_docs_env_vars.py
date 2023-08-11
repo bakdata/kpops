@@ -2,8 +2,8 @@
 
 import csv
 import shutil
+from collections.abc import Callable
 from dataclasses import dataclass
-from enum import Enum
 from pathlib import Path
 from textwrap import fill
 from typing import Any
@@ -13,6 +13,7 @@ from typer.models import ArgumentInfo, OptionInfo
 from typing_extensions import Self
 
 from hooks import PATH_ROOT
+from hooks.gen_docs import SuperEnum
 from kpops.cli import main
 from kpops.cli.pipeline_config import PipelineConfig
 
@@ -85,7 +86,7 @@ class EnvVar:
         )
 
 
-class EnvVarAttrs(str, Enum):
+class EnvVarAttrs(str, SuperEnum):
     """The attr names are used as columns for the markdown tables."""
 
     NAME = "Name"
@@ -235,113 +236,151 @@ def write_csv_to_md_file(
         writer.dump(output=f)
 
 
-# copy examples from tests resources
-shutil.copyfile(
-    PATH_ROOT / "tests/pipeline/resources/component-type-substitution/pipeline.yaml",
-    PATH_DOCS_VARIABLES / "variable_substitution.yaml",
-)
+def __fill_csv_pipeline_config(target: Path) -> None:
+    """Append all ``PipelineConfig``-related env vars to a ``.csv`` file.
 
-# Find all config-related env variables and write them into a file
+    Finds all ``PipelineConfig``-related env vars and appends them to
+    a ``.csv`` file.
 
-# Overwrite the temp csv file
-with PATH_CONFIG_ENV_VARS_CSV_FILE.open("w+") as f:
-    csv.writer(f).writerow(
-        [
-            EnvVarAttrs.NAME,
-            EnvVarAttrs.DEFAULT_VALUE,
-            EnvVarAttrs.REQUIRED,
-            EnvVarAttrs.DESCRIPTION,
-            EnvVarAttrs.CORRESPONDING_SETTING_NAME,
-        ],
-    )
-write_title_to_dotenv_file(
-    PATH_CONFIG_ENV_VARS_DOTENV_FILE,
-    TITLE_CONFIG_ENV_VARS,
-    DESCRIPTION_ADDITION_DOTENV_FILE + DESCRIPTION_CONFIG_ENV_VARS,
-)
-# NOTE: This does not see nested fields, hence if there are env vars in a class like
-# TopicConfig(), they wil not be listed. Possible fix with recursion.
-config_fields = PipelineConfig.__fields__
-for config_field_name, config_field in config_fields.items():
-    config_field_info = PipelineConfig.Config.get_field_info(config_field.name)
-    config_field_description: str = (
-        config_field.field_info.description
-        or "No description available, please refer to the pipeline config documentation."
-    )
-    config_field_default = None or config_field.field_info.default
-    if config_env_var := config_field_info.get(
-        "env",
-    ) or config_field.field_info.extra.get("env"):
-        csv_append_env_var(
-            PATH_CONFIG_ENV_VARS_CSV_FILE,
-            config_env_var,
-            config_field_default,
-            config_field_description,
-            config_field_name,
+    :param target: The path to the `.csv` file. Note that it must already
+        contain the column names
+    """
+    # NOTE: This does not see nested fields, hence if there are env vars in a class like
+    # TopicConfig(), they wil not be listed. Possible fix with recursion.
+    config_fields = PipelineConfig.__fields__
+    for config_field_name, config_field in config_fields.items():
+        config_field_info = PipelineConfig.Config.get_field_info(config_field.name)
+        config_field_description: str = (
+            config_field.field_info.description
+            or "No description available, please refer to the pipeline config documentation."
         )
-append_csv_to_dotenv_file(
-    PATH_CONFIG_ENV_VARS_CSV_FILE,
-    PATH_CONFIG_ENV_VARS_DOTENV_FILE,
-)
-write_csv_to_md_file(
-    source=PATH_CONFIG_ENV_VARS_CSV_FILE,
-    target=PATH_CONFIG_ENV_VARS_MD_FILE,
-    title=None,
-    description=DESCRIPTION_CONFIG_ENV_VARS,
-)
-# Delete the csv file, it is not useful anymore
-PATH_CONFIG_ENV_VARS_CSV_FILE.unlink(missing_ok=True)
+        config_field_default = None or config_field.field_info.default
+        if config_env_var := config_field_info.get(
+            "env",
+        ) or config_field.field_info.extra.get("env"):
+            csv_append_env_var(
+                target,
+                config_env_var,
+                config_field_default,
+                config_field_description,
+                config_field_name,
+            )
 
-# Find all cli-related env variables, write them into a file
 
-# Overwrite the temp csv file
-with PATH_CLI_ENV_VARS_CSV_FILE.open("w+") as f:
-    csv.writer(f).writerow(
-        [
-            EnvVarAttrs.NAME,
-            EnvVarAttrs.DEFAULT_VALUE,
-            EnvVarAttrs.REQUIRED,
-            EnvVarAttrs.DESCRIPTION,
-        ],
+def __fill_csv_cli(target: Path) -> None:
+    """Append all CLI-commands-related env vars to a ``.csv`` file.
+
+    Finds all CLI-commands-related env vars and appends them to a ``.csv``
+
+    :param target: The path to the `.csv` file. Note that it must already
+        contain the column names
+    """
+    for var_in_main_name in dir(main):
+        var_in_main = getattr(main, var_in_main_name)
+        if (
+            not var_in_main_name.startswith("__")
+            and isinstance(var_in_main, (OptionInfo, ArgumentInfo))
+            and var_in_main.envvar
+        ):
+            cli_env_var_description: list[str] = [
+                var_in_main.help
+                or "No description available, please refer to the CLI Usage documentation",
+            ]
+            if isinstance(var_in_main.envvar, list):
+                var_in_main_envvar = var_in_main.envvar[0]
+                if len(var_in_main.envvar) > 1:
+                    cli_env_var_description = [
+                        *cli_env_var_description,
+                        f"The following variables are equivalent to {var_in_main_envvar}:",
+                        ", ".join(
+                            [f"`{var_name}`" for var_name in var_in_main.envvar[1:]],
+                        ),
+                    ]
+            else:
+                var_in_main_envvar = var_in_main.envvar
+            csv_append_env_var(
+                target,
+                var_in_main_envvar,
+                var_in_main.default,
+                cli_env_var_description,
+            )
+
+
+def gen_vars(
+    dotenv_file: Path,
+    md_file: Path,
+    csv_file: Path,
+    title_dotenv_file: str,
+    description_dotenv_file: str,
+    columns: list,
+    description_md_file: str,
+    variable_extraction_function: Callable[[Path], None],
+) -> None:
+    """Write env var documentation in both a markdown table and a dotenv file.
+
+    :param dotenv_file: Path of the dotenv file
+    :param md_file: Path of the md file
+    :param csv_file: Path for a temp CSV file, will be deleted after
+        a successful execution.
+        **WARNING** If a file with this path exists, it will be permanently deleted
+    :param title_dotenv_file: The title for the dotenv file
+    :param description_dotenv_file: The description to be written in the dotenv file
+    :param columns: The column names in the table
+    :param description_md_file: The description to be written in the markdown file
+    :param variable_extraction_function: Function that ooks for variables and appends
+        them to the temp csv file.
+    """
+    # Overwrite/create the temp csv file
+    with csv_file.open("w+") as f:
+        csv.writer(f).writerow(columns)
+    write_title_to_dotenv_file(
+        dotenv_file,
+        title_dotenv_file,
+        description_dotenv_file,
     )
-write_title_to_dotenv_file(
-    PATH_CLI_ENV_VARS_DOTFILES_FILE,
-    TITLE_CLI_ENV_VARS,
-    DESCRIPTION_ADDITION_DOTENV_FILE + DESCRIPTION_CLI_ENV_VARS,
-)
-for var_in_main_name in dir(main):
-    var_in_main = getattr(main, var_in_main_name)
-    if (
-        not var_in_main_name.startswith("__")
-        and isinstance(var_in_main, (OptionInfo, ArgumentInfo))
-        and var_in_main.envvar
-    ):
-        cli_env_var_description: list[str] = [
-            var_in_main.help
-            or "No description available, please refer to the CLI Usage documentation",
-        ]
-        if isinstance(var_in_main.envvar, list):
-            var_in_main_envvar = var_in_main.envvar[0]
-            if len(var_in_main.envvar) > 1:
-                cli_env_var_description = [
-                    *cli_env_var_description,
-                    f"The following variables are equivalent to {var_in_main_envvar}:",
-                    ", ".join([f"`{var_name}`" for var_name in var_in_main.envvar[1:]]),
-                ]
-        else:
-            var_in_main_envvar = var_in_main.envvar
-        csv_append_env_var(
-            PATH_CLI_ENV_VARS_CSV_FILE,
-            var_in_main_envvar,
-            var_in_main.default,
-            cli_env_var_description,
-        )
-append_csv_to_dotenv_file(PATH_CLI_ENV_VARS_CSV_FILE, PATH_CLI_ENV_VARS_DOTFILES_FILE)
-write_csv_to_md_file(
-    source=PATH_CLI_ENV_VARS_CSV_FILE,
-    target=PATH_CLI_ENV_VARS_MD_FILE,
-    title=None,
-    description=DESCRIPTION_CLI_ENV_VARS,
-)
-# Delete the csv file, it is not useful anymore
-PATH_CLI_ENV_VARS_CSV_FILE.unlink(missing_ok=True)
+    variable_extraction_function(csv_file)
+    append_csv_to_dotenv_file(
+        csv_file,
+        dotenv_file,
+    )
+    write_csv_to_md_file(
+        source=csv_file,
+        target=md_file,
+        title=None,
+        description=description_md_file,
+    )
+    # Delete the csv file, it is not useful anymore
+    csv_file.unlink(missing_ok=True)
+
+
+if __name__ == "__main__":
+    # copy examples from tests resources
+    shutil.copyfile(
+        PATH_ROOT
+        / "tests/pipeline/resources/component-type-substitution/pipeline.yaml",
+        PATH_DOCS_VARIABLES / "variable_substitution.yaml",
+    )
+    # Find all config-related env variables and write them into a file
+    gen_vars(
+        dotenv_file=PATH_CONFIG_ENV_VARS_DOTENV_FILE,
+        md_file=PATH_CONFIG_ENV_VARS_MD_FILE,
+        csv_file=PATH_CONFIG_ENV_VARS_CSV_FILE,
+        title_dotenv_file=TITLE_CONFIG_ENV_VARS,
+        description_dotenv_file=DESCRIPTION_ADDITION_DOTENV_FILE
+        + DESCRIPTION_CONFIG_ENV_VARS,
+        columns=list(EnvVarAttrs.values()),
+        description_md_file=DESCRIPTION_CONFIG_ENV_VARS,
+        variable_extraction_function=__fill_csv_pipeline_config,
+    )
+    # Find all cli-related env variables, write them into a file
+    gen_vars(
+        dotenv_file=PATH_CLI_ENV_VARS_DOTFILES_FILE,
+        md_file=PATH_CLI_ENV_VARS_MD_FILE,
+        csv_file=PATH_CLI_ENV_VARS_CSV_FILE,
+        title_dotenv_file=TITLE_CLI_ENV_VARS,
+        description_dotenv_file=DESCRIPTION_ADDITION_DOTENV_FILE
+        + DESCRIPTION_CLI_ENV_VARS,
+        columns=list(EnvVarAttrs.values())[:-1],
+        description_md_file=DESCRIPTION_CLI_ENV_VARS,
+        variable_extraction_function=__fill_csv_cli,
+    )
