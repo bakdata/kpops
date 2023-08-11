@@ -47,8 +47,11 @@ jobs:
       - name: Generate schema (kpops schema)
         run: poetry run pre-commit run gen-schema --all-files --show-diff-on-failure
 
-      - name: Generate docs
-        run: poetry run pre-commit run gen-docs --all-files --show-diff-on-failure
+      - name: Generate CLI Usage docs (typer-cli)
+        run: poetry run pre-commit run gen-docs-cli --all-files --show-diff-on-failure
+
+      - name: Generate pipeline definitions
+        run: poetry run pre-commit run gen-docs-components --all-files --show-diff-on-failure
 
       # TODO: enable when PEP 604 incompatibilty is in typer is resolved https://github.com/tiangolo/typer/issues/348
       # See https://github.com/tiangolo/typer/pull/522
