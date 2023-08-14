@@ -11,21 +11,23 @@ from kpops.pipeline_generator.pipeline import Pipeline
 PREFIX = "example-prefix-"
 
 
+@dataclass
+class TestComponent:
+    name: str
+    prefix: str = PREFIX
+
+
+test_component_1 = TestComponent(PREFIX + "example1")
+test_component_2 = TestComponent(PREFIX + "example2")
+test_component_3 = TestComponent(PREFIX + "example3")
+
+
 @pytest.fixture(autouse=True)
 def log_info(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("kpops.cli.main.log.info")
 
 
 def tests_filter_steps_to_apply(log_info: MagicMock):
-    @dataclass
-    class TestComponent:
-        name: str
-        prefix: str = PREFIX
-
-    test_component_1 = TestComponent(PREFIX + "example1")
-    test_component_2 = TestComponent(PREFIX + "example2")
-    test_component_3 = TestComponent(PREFIX + "example3")
-
     class TestPipeline:
         components = [
             test_component_1,
@@ -58,15 +60,6 @@ def tests_filter_steps_to_apply(log_info: MagicMock):
 
 
 def tests_filter_steps_to_exclude(log_info: MagicMock):
-    @dataclass
-    class TestComponent:
-        name: str
-        prefix: str = PREFIX
-
-    test_component_1 = TestComponent(PREFIX + "example1")
-    test_component_2 = TestComponent(PREFIX + "example2")
-    test_component_3 = TestComponent(PREFIX + "example3")
-
     class TestPipeline:
         components = [
             test_component_1,
