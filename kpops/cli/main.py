@@ -88,7 +88,7 @@ class FilterType(str, Enum):
 FILTER_TYPE: FilterType = typer.Option(
     default=FilterType.INCLUDE.value,
     case_sensitive=False,
-    help="If the --steps option should include/exclude the steps",
+    help="Whether the --steps option should include/exclude the steps",
 )
 
 VERBOSE_OPTION = typer.Option(False, help="Enable verbose printing")
@@ -243,10 +243,10 @@ def generate(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    verbose: bool = VERBOSE_OPTION,
     template: bool = typer.Option(False, help="Run Helm template"),
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
+    verbose: bool = VERBOSE_OPTION,
 ) -> Pipeline:
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
@@ -276,10 +276,10 @@ def deploy(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    dry_run: bool = DRY_RUN,
-    verbose: bool = VERBOSE_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
+    dry_run: bool = DRY_RUN,
+    verbose: bool = VERBOSE_OPTION,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
