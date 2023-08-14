@@ -61,6 +61,7 @@
                     ],
                     "default": {
                         "ca_file": null,
+                        "cert_file": null,
                         "insecure_skip_tls_verify": false,
                         "password": null,
                         "username": null
@@ -143,6 +144,7 @@
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
+                            "cert_file": null,
                             "insecure_skip_tls_verify": false,
                             "password": null,
                             "username": null
@@ -271,6 +273,7 @@
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
+                            "cert_file": null,
                             "insecure_skip_tls_verify": false,
                             "password": null,
                             "username": null
@@ -371,6 +374,7 @@
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
+                            "cert_file": null,
                             "insecure_skip_tls_verify": false,
                             "password": null,
                             "username": null
@@ -476,6 +480,7 @@
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
+                            "cert_file": null,
                             "insecure_skip_tls_verify": false,
                             "password": null,
                             "username": null
@@ -629,6 +634,7 @@
             "required": [
                 "name",
                 "app",
+                "repoConfig",
                 "namespace"
             ],
             "title": "KubernetesApp",
@@ -746,6 +752,7 @@
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
+                            "cert_file": null,
                             "insecure_skip_tls_verify": false,
                             "password": null,
                             "username": null
@@ -857,9 +864,15 @@
             "description": "Authorisation-related flags for `helm repo`",
             "properties": {
                 "caFile": {
-                    "description": "Certificate file",
+                    "description": "Path to CA bundle file to verify certificates of HTTPS-enabled servers",
                     "format": "path",
                     "title": "Cafile",
+                    "type": "string"
+                },
+                "certFile": {
+                    "description": "Path to SSL certificate file to identify HTTPS client",
+                    "format": "path",
+                    "title": "Certfile",
                     "type": "string"
                 },
                 "insecureSkipTlsVerify": {
@@ -928,6 +941,7 @@
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
+                            "cert_file": null,
                             "insecure_skip_tls_verify": false,
                             "password": null,
                             "username": null
@@ -1155,6 +1169,9 @@
             "description": "Holds multiple output topics",
             "properties": {
                 "models": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
                     "default": {},
                     "description": "Data models",
                     "title": "Models",
@@ -1164,14 +1181,12 @@
                     "additionalProperties": {
                         "$ref": "#/definitions/TopicConfig"
                     },
+                    "default": {},
                     "description": "Output topics",
                     "title": "Topics",
                     "type": "object"
                 }
             },
-            "required": [
-                "topics"
-            ],
             "title": "ToSection",
             "type": "object"
         },

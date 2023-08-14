@@ -247,15 +247,6 @@ def generate(
     template: bool = typer.Option(False, help="Run Helm template"),
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
-    api_version: Optional[str] = typer.Option(
-        None, help="Kubernetes API version used for Capabilities.APIVersions"
-    ),
-    ca_file: Optional[str] = typer.Option(
-        None, help="Verify certificates of HTTPS-enabled servers using this CA bundle"
-    ),
-    cert_file: Optional[str] = typer.Option(
-        None, help="Identify HTTPS client using this SSL certificate file"
-    ),
 ) -> Pipeline:
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
@@ -266,13 +257,10 @@ def generate(
     if template:
         steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
         for component in steps_to_apply:
-            component.template(api_version, ca_file, cert_file)
-    elif cert_file or ca_file or api_version or steps:
+            component.template()
+    elif steps:
         log.warning(
             "The following flags are considered only when `--template` is set: \n \
-                '--cert-file'\n \
-                '--ca-file'\n \
-                '--api-version'\n \
                 '--steps'"
         )
 

@@ -12,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmFlags,
     HelmRepoConfig,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
@@ -118,6 +119,23 @@ class KafkaConnector(PipelineComponent, ABC):
     def kafka_connect_resetter_chart(self) -> str:
         """Resetter chart for this component"""
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
+
+    @property
+    def helm_flags(self) -> HelmFlags:
+        """Return shared flags for Helm commands"""
+        return HelmFlags(
+            **self.repo_config.repo_auth_flags.dict(),
+            version=self.version,
+            create_namespace=self.config.create_namespace,
+        )
+
+    @property
+    def template_flags(self) -> HelmTemplateFlags:
+        """Return flags for Helm template command"""
+        return HelmTemplateFlags(
+            **self.helm_flags.dict(),
+            api_version=self.config.helm_config.api_version,
+        )
 
     @override
     def deploy(self, dry_run: bool) -> None:
@@ -329,10 +347,7 @@ class KafkaSourceConnector(KafkaConnector):
         raise NotImplementedError("Kafka source connector doesn't support FromSection")
 
     @override
-    def template(
-        self, api_version: str | None, ca_file: str | None, cert_file: str | None
-    ) -> None:
-        flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
+    def template(self) -> None:
         values = self._get_kafka_connect_resetter_values(
             self.name,
             KafkaConnectorType.SOURCE,
@@ -343,7 +358,7 @@ class KafkaSourceConnector(KafkaConnector):
             self._get_resetter_helm_chart(),
             self.namespace,
             values,
-            flags,
+            self.template_flags,
         )
         print(stdout)
 
@@ -400,10 +415,7 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "topics", ",".join(topics))
 
     @override
-    def template(
-        self, api_version: str | None, ca_file: str | None, cert_file: str | None
-    ) -> None:
-        flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
+    def template(self) -> None:
         values = self._get_kafka_connect_resetter_values(
             self.name, KafkaConnectorType.SINK
         )
@@ -412,7 +424,7 @@ class KafkaSinkConnector(KafkaConnector):
             self._get_resetter_helm_chart(),
             self.namespace,
             values,
-            flags,
+            self.template_flags,
         )
         print(stdout)
 

@@ -1,4 +1,40 @@
 # Changelog
+## [1.6.0](https://github.com/bakdata/kpops/releases/tag/1.6.0) - Release Date: [2023-08-10]
+
+### 🏭 Refactor
+
+- Refactor handling of Helm flags - [#319](https://github.com/bakdata/kpops/pull/319)
+
+
+
+
+
+
+## [1.5.0](https://github.com/bakdata/kpops/releases/tag/1.5.0) - Release Date: [2023-08-10]
+
+### 🚀 Features
+
+- Refactor Helm wrapper and add `--set-file` flag - [#311](https://github.com/bakdata/kpops/pull/311)
+
+
+### 🏭 Refactor
+
+- Refactor Helm wrapper and add `--set-file` flag - [#311](https://github.com/bakdata/kpops/pull/311)
+
+- Set default for ToSection topics - [#313](https://github.com/bakdata/kpops/pull/313)
+
+- Annotate types for ToSection models mapping - [#315](https://github.com/bakdata/kpops/pull/315)
+
+
+### 🌀 Miscellaneous
+
+- Check Poetry lock file consistency - [#316](https://github.com/bakdata/kpops/pull/316)
+
+
+
+
+
+
 ## [1.4.0](https://github.com/bakdata/kpops/releases/tag/1.4.0) - Release Date: [2023-08-02]
 
 ### 🐛 Fixes

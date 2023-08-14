@@ -297,6 +297,9 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "description": "Holds multiple output topics",
             "properties": {
                 "models": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
                     "default": {},
                     "description": "Data models",
                     "title": "Models",
@@ -306,14 +309,12 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "additionalProperties": {
                         "$ref": "#/definitions/TopicConfig"
                     },
+                    "default": {},
                     "description": "Output topics",
                     "title": "Topics",
                     "type": "object"
                 }
             },
-            "required": [
-                "topics"
-            ],
             "title": "ToSection",
             "type": "object"
         },
