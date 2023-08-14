@@ -23,11 +23,7 @@ test_component_3 = TestComponent(PREFIX + "example3")
 
 
 @pytest.fixture(autouse=True)
-def log_info(mocker: MockerFixture) -> MagicMock:
-    return mocker.patch("kpops.cli.main.log.info")
-
-
-def tests_filter_steps_to_apply(log_info: MagicMock):
+def pipeline() -> Pipeline:
     class TestPipeline:
         components = [
             test_component_1,
@@ -38,7 +34,15 @@ def tests_filter_steps_to_apply(log_info: MagicMock):
         def __iter__(self):
             return iter(self.components)
 
-    pipeline = cast(Pipeline, TestPipeline())
+    return cast(Pipeline, TestPipeline())
+
+
+@pytest.fixture(autouse=True)
+def log_info(mocker: MockerFixture) -> MagicMock:
+    return mocker.patch("kpops.cli.main.log.info")
+
+
+def tests_filter_steps_to_apply(log_info: MagicMock, pipeline: Pipeline):
     filtered_steps = get_steps_to_apply(
         pipeline, "example2,example3", FilterType.INCLUDE
     )
@@ -59,18 +63,7 @@ def tests_filter_steps_to_apply(log_info: MagicMock):
     assert len(filtered_steps) == 3
 
 
-def tests_filter_steps_to_exclude(log_info: MagicMock):
-    class TestPipeline:
-        components = [
-            test_component_1,
-            test_component_2,
-            test_component_3,
-        ]
-
-        def __iter__(self):
-            return iter(self.components)
-
-    pipeline = cast(Pipeline, TestPipeline())
+def tests_filter_steps_to_exclude(log_info: MagicMock, pipeline: Pipeline):
     filtered_steps = get_steps_to_apply(
         pipeline, "example2,example3", FilterType.EXCLUDE
     )
