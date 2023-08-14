@@ -47,7 +47,7 @@ def tests_filter_steps_to_apply(log_info: MagicMock):
 
     assert log_info.call_count == 1
     log_info.assert_any_call(
-        "The following steps are executed:\n['example2', 'example3']"
+        "The following steps are included:\n['example2', 'example3']"
     )
 
     filtered_steps = get_steps_to_apply(pipeline, None, FilterType.INCLUDE)
@@ -86,7 +86,7 @@ def tests_filter_steps_to_exclude(log_info: MagicMock):
     assert test_component_1 in filtered_steps
 
     assert log_info.call_count == 1
-    log_info.assert_any_call("The following steps are executed:\n['example1']")
+    log_info.assert_any_call("The following steps are included:\n['example1']")
 
     filtered_steps = get_steps_to_apply(pipeline, None, FilterType.EXCLUDE)
     assert len(filtered_steps) == 3

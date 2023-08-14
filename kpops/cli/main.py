@@ -165,7 +165,7 @@ def filter_steps_to_apply(
             else not is_in_steps(component)
         )
     ]
-    log.info(f"The following steps are executed:\n{get_step_names(filtered_steps)}")
+    log.info(f"The following steps are included:\n{get_step_names(filtered_steps)}")
     return filtered_steps
 
 
