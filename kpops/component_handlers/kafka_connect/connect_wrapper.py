@@ -121,14 +121,6 @@ class ConnectWrapper:
             self.update_connector_config(connector_name, connector_config)
         raise KafkaConnectError(response)
 
-    @classmethod
-    def _validate_connector_name(  # TODO: move validation to KafkaConnectConfig
-        cls, connector_name: str, config: KafkaConnectConfig
-    ) -> None:
-        if config.name and config.name != connector_name:
-            raise ValueError("Connector name should be the same as component name")
-        config.name = connector_name
-
     def validate_connector_config(
         self, connector_name: str, connector_config: KafkaConnectConfig
     ) -> list[str]:
@@ -139,7 +131,7 @@ class ConnectWrapper:
         :return:
         """
 
-        self._validate_connector_name(connector_name, connector_config)
+        connector_config = connector_config.with_name(connector_name)
         response = httpx.put(
             url=f"{self._host}/connector-plugins/{connector_config.class_name}/config/validate",
             headers=HEADERS,

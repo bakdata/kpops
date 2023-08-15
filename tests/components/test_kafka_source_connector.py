@@ -66,14 +66,23 @@ class TestKafkaSourceConnector:
         ).return_value
 
     @pytest.fixture
+    def connector_config(self) -> KafkaConnectConfig:
+        return KafkaConnectConfig(
+            **{"connector.class": "com.bakdata.connect.TestConnector"}
+        )
+
+    @pytest.fixture
     def connector(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        connector_config: KafkaConnectConfig,
     ) -> KafkaSourceConnector:
         return KafkaSourceConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(),
+            app=connector_config,
             namespace="test-namespace",
             to=ToSection(
                 topics={
@@ -86,14 +95,17 @@ class TestKafkaSourceConnector:
         )
 
     def test_from_section_raises_exception(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        connector_config: KafkaConnectConfig,
     ):
         with pytest.raises(NotImplementedError):
             KafkaSourceConnector(
                 name=CONNECTOR_NAME,
                 config=config,
                 handlers=handlers,
-                app=KafkaConnectConfig(),
+                app=connector_config,
                 namespace="test-namespace",
                 from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                     topics={
@@ -124,9 +136,7 @@ class TestKafkaSourceConnector:
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=connector.to, dry_run=True),
             mocker.call.mock_create_connector(
-                connector_name=CONNECTOR_NAME,
-                kafka_connect_config=connector.app,
-                dry_run=True,
+                CONNECTOR_NAME, connector.app, dry_run=True
             ),
         ]
 
@@ -144,10 +154,7 @@ class TestKafkaSourceConnector:
 
         connector.destroy(dry_run=True)
 
-        mock_destroy_connector.assert_called_once_with(
-            connector_name=CONNECTOR_NAME,
-            dry_run=True,
-        )
+        mock_destroy_connector.assert_called_once_with(CONNECTOR_NAME, dry_run=True)
 
     def test_reset_when_dry_run_is_true(
         self,
@@ -303,12 +310,13 @@ class TestKafkaSourceConnector:
         helm_mock: MagicMock,
         dry_run_handler: MagicMock,
         mocker: MockerFixture,
+        connector_config: KafkaConnectConfig,
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(),
+            app=connector_config,
             namespace="test-namespace",
             offset_topic="kafka-connect-offsets",
         )
@@ -377,12 +385,13 @@ class TestKafkaSourceConnector:
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         dry_run_handler: MagicMock,
+        connector_config: KafkaConnectConfig,
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(),
+            app=connector_config,
             namespace="test-namespace",
             offset_topic="kafka-connect-offsets",
         )

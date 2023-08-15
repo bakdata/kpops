@@ -154,14 +154,12 @@ class KafkaConnector(PipelineComponent, ABC):
                 )
 
         self.handlers.connector_handler.create_connector(
-            connector_name=self.name, kafka_connect_config=self.app, dry_run=dry_run
+            self.name, self.app, dry_run=dry_run
         )
 
     @override
     def destroy(self, dry_run: bool) -> None:
-        self.handlers.connector_handler.destroy_connector(
-            connector_name=self.name, dry_run=dry_run
-        )
+        self.handlers.connector_handler.destroy_connector(self.name, dry_run=dry_run)
 
     @override
     def clean(self, dry_run: bool) -> None:

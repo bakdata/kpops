@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Literal
+from typing import Any, Literal, Self
 
 from pydantic import BaseConfig, BaseModel, Extra, Field
 from typing_extensions import override
@@ -31,6 +31,12 @@ class KafkaConnectConfig(BaseModel):
     @property
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
+
+    def with_name(self, connector_name: str) -> Self:
+        if self.name and self.name != connector_name:
+            raise ValueError("Connector name should be the same as component name")
+        self.name = connector_name
+        return self
 
     @override
     def dict(self, **_) -> dict[str, Any]:
