@@ -2,7 +2,9 @@
 
 from collections.abc import Generator
 from enum import Enum
-from typing import Any
+from typing import Any, TypeVar
+
+_T = TypeVar("_T")
 
 
 class SuperEnum(Enum):
@@ -13,12 +15,12 @@ class SuperEnum(Enum):
     """
 
     @classmethod
-    def items(cls) -> Generator[tuple[str, Any], None, None]:
+    def items(cls) -> Generator[tuple[_T, Any], None, None]:
         """Return all item names and values in tuples."""
         return ((e.name, e.value) for e in cls)
 
     @classmethod
-    def keys(cls) -> Generator[str, None, None]:
+    def keys(cls) -> Generator[_T, None, None]:
         """Return all item names."""
         return (e.name for e in cls)
 
