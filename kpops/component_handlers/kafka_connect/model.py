@@ -1,11 +1,16 @@
 from enum import Enum
-from typing import Any, Literal, Self
+from typing import Any, Literal
 
 from pydantic import BaseConfig, BaseModel, Extra, Field
 from typing_extensions import override
 
 from kpops.utils.docstring import describe_object
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 
 class KafkaConnectorType(str, Enum):
