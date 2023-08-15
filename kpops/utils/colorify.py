@@ -11,3 +11,7 @@ def greenify(string: str) -> str:
 
 def magentaify(string: str) -> str:
     return typer.style(string, fg=typer.colors.MAGENTA)
+
+
+def redify(string: str) -> str:
+    return typer.style(string, fg=typer.colors.RED)

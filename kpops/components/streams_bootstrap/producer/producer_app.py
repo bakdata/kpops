@@ -21,6 +21,8 @@ class ProducerApp(KafkaApp):
     This producer holds configuration to use as values for the streams bootstrap
     producer helm chart.
 
+    Note that the producer does not support error topics.
+
     :param type: Component type, defaults to "producer"
     :type type: str, optional
     :param schema_type: Used for schema generation, same as :param:`type`,

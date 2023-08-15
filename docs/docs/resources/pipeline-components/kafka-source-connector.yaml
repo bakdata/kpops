@@ -1,13 +1,11 @@
 # Kafka source connector
-- type: kafka-source-connector
+- type: kafka-source-connector # required
   name: kafka-source-connector # required
-  namespace: namespace # required, clean up jobs for the connector will run here
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example. Extensive documentation on
-  # source connectors: https://kafka.apache.org/documentation/#sourceconnectconfigs
-  app: # required
-    tasks.max: 1
-    errors.tolerance: none
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
+  # The source connector has no `from` section
+  # from:
   # Topic(s) into which the component will write output
   to:
     topics:
@@ -22,10 +20,13 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
-  # Helm repository configuration
+  namespace: namespace # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example. Extensive documentation on
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
+  app: # required
+    tasks.max: 1
+  # Helm repository configuration for resetter
   repoConfig:
     repositoryName: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
@@ -34,7 +35,7 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  version: "1.0.4" # Helm chart version
+  version: "1.0.6" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
   resetterValues:
