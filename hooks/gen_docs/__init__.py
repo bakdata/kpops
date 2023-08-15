@@ -2,12 +2,12 @@
 
 from collections.abc import Generator
 from enum import Enum
-from typing import Any, TypeVar
+from typing import Any, Generic, TypeVar
 
 _T = TypeVar("_T")
 
 
-class SuperEnum(Enum):
+class SuperEnum(Enum, Generic[_T]):
     """Adds constructors that return all items in a ``Generator``.
 
     Introduces constructors that return a ``Generator`` object
