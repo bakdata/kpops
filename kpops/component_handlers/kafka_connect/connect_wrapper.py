@@ -130,8 +130,7 @@ class ConnectWrapper:
         :param connector_config: Configuration parameters for the connector.
         :return:
         """
-
-        connector_config = connector_config.with_name(connector_name)
+        connector_config.with_name(connector_name)
         response = httpx.put(
             url=f"{self._host}/connector-plugins/{connector_config.class_name}/config/validate",
             headers=HEADERS,

@@ -96,7 +96,7 @@ class KafkaConnectHandler:
     def __dry_run_connector_creation(
         self, connector_name: str, connector_config: KafkaConnectorConfig
     ) -> None:
-        connector_config = connector_config.with_name(connector_name)
+        connector_config.with_name(connector_name)
         try:
             connector = self._connect_wrapper.get_connector(connector_name)
 
