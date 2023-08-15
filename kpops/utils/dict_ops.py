@@ -50,16 +50,12 @@ def update_nested(*argv: dict) -> dict:
     return update_nested(update_nested_pair(argv[0], argv[1]), *argv[2:])
 
 
-def inflate_mapping(
+def flatten_mapping(
     nested_mapping: Mapping[str, Any], prefix: str | None = None, separator: str = "_"
 ) -> dict[str, Any]:
-    """Add all nested key-value pairs to the top level of the mapping
+    """Flattens a Mapping
 
-    Does not remove any fields, only duplicates existing ones and moves them up
-    with a corresponding prefix.
-    Hence, output is not exactly flat.
-
-    :param nested_mapping: Nested mapping that is to be `inflated`
+    :param nested_mapping: Nested mapping that is to be flattened
     :type nested_mapping: Mapping[str, any]
     :param prefix: Prefix that will be applied to all top-level keys in the output., defaults to None
     :type prefix: str, optional
@@ -77,7 +73,7 @@ def inflate_mapping(
         if prefix:
             key = prefix + separator + key
         if isinstance(value, Mapping):
-            nested_mapping = inflate_mapping(value, key)
+            nested_mapping = flatten_mapping(value, key)
             top = update_nested_pair(top, nested_mapping)
         else:
             top[key] = value
@@ -103,4 +99,4 @@ def generate_substitution(
     :returns: Substitution dict of all variables related to the model.
     :rtype: dict
     """
-    return update_nested(existing_substitution or {}, inflate_mapping(input, prefix))
+    return update_nested(existing_substitution or {}, flatten_mapping(input, prefix))

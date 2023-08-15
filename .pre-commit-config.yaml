@@ -53,6 +53,13 @@ repos:
         types: [python]
         require_serial: true
         exclude: ^tests/.*snapshots/
+      - id: gen-docs-env-vars
+        name: gen-docs-env-vars
+        entry: python hooks/gen_docs/gen_docs_env_vars.py
+        language: system
+        types: [python]
+        require_serial: true
+        exclude: ^tests/.*snapshots/
       - id: gen-docs-components
         name: gen-docs-components
         entry: python hooks/gen_docs/gen_docs_components.py
