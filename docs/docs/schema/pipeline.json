@@ -223,7 +223,15 @@
                 "type": "string"
             },
             "description": "Settings specific to Kafka Connectors",
-            "properties": {},
+            "properties": {
+                "connector.class": {
+                    "title": "Connector.Class",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "connector.class"
+            ],
             "title": "KafkaConnectConfig",
             "type": "object"
         },

@@ -143,7 +143,7 @@ class ConnectWrapper:
         """
 
         config_json = self.get_connector_config(connector_name, kafka_connect_config)
-        connector_class = ConnectWrapper.get_connector_class_name(config_json)
+        connector_class = KafkaConnectConfig(**config_json).class_name
 
         response = httpx.put(
             url=f"{self._host}/connector-plugins/{connector_class}/config/validate",
@@ -188,8 +188,3 @@ class ConnectWrapper:
             sleep(1)
             self.delete_connector(connector_name)
         raise KafkaConnectError(response)
-
-    @staticmethod
-    def get_connector_class_name(config_json: dict[str, str]) -> str:
-        task_class = config_json["connector.class"]
-        return task_class.split(".")[-1]

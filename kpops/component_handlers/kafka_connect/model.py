@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseConfig, BaseModel, Extra
+from pydantic import BaseConfig, BaseModel, Extra, Field
 from typing_extensions import override
 
 from kpops.utils.docstring import describe_object
@@ -16,6 +16,8 @@ class KafkaConnectorType(str, Enum):
 class KafkaConnectConfig(BaseModel):
     """Settings specific to Kafka Connectors"""
 
+    connector_class: str = Field(default=..., alias="connector.class")
+
     class Config(DescConfig):
         extra = Extra.allow
 
@@ -24,6 +26,10 @@ class KafkaConnectConfig(BaseModel):
         def schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
             schema["description"] = describe_object(model.__doc__)
             schema["additionalProperties"] = {"type": "string"}
+
+    @property
+    def class_name(self) -> str:
+        return self.connector_class.split(".")[-1]
 
 
 class ConnectorTask(BaseModel):
