@@ -13,7 +13,7 @@ from kpops.component_handlers.kafka_connect.exception import (
     KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.model import (
-    KafkaConnectConfig,
+    KafkaConnectorConfig,
     KafkaConnectResponse,
 )
 from kpops.component_handlers.kafka_connect.timeout import timeout
@@ -35,8 +35,8 @@ class TestConnectorApiWrapper:
         self.connect_wrapper = ConnectWrapper(host=config.kafka_connect_host)
 
     @pytest.fixture
-    def connector_config(self) -> KafkaConnectConfig:
-        return KafkaConnectConfig(
+    def connector_config(self) -> KafkaConnectorConfig:
+        return KafkaConnectorConfig(
             **{"connector.class": "com.bakdata.connect.TestConnector"}
         )
 
@@ -69,7 +69,7 @@ class TestConnectorApiWrapper:
 
         with pytest.raises(KafkaConnectError):
             self.connect_wrapper.create_connector(
-                "test-connector", KafkaConnectConfig(**configs)
+                "test-connector", KafkaConnectorConfig(**configs)
             )
 
         mock_post.assert_called_with(
@@ -77,12 +77,12 @@ class TestConnectorApiWrapper:
             headers=HEADERS,
             json={
                 "name": "test-connector",
-                "config": KafkaConnectConfig(**configs).dict(),
+                "config": KafkaConnectorConfig(**configs).dict(),
             },
         )
 
     def test_should_return_correct_response_when_connector_created(
-        self, httpx_mock: HTTPXMock, connector_config: KafkaConnectConfig
+        self, httpx_mock: HTTPXMock, connector_config: KafkaConnectorConfig
     ):
         actual_response = {
             "name": "hdfs-sink-connector",
@@ -119,7 +119,7 @@ class TestConnectorApiWrapper:
         self,
         log_warning: MagicMock,
         httpx_mock: HTTPXMock,
-        connector_config: KafkaConnectConfig,
+        connector_config: KafkaConnectorConfig,
     ):
         httpx_mock.add_response(
             method="POST",
@@ -215,7 +215,7 @@ class TestConnectorApiWrapper:
         }
         with pytest.raises(ValueError) as value_error:
             self.connect_wrapper.validate_connector_config(
-                "FileStreamSinkConnector", KafkaConnectConfig(**configs)
+                "FileStreamSinkConnector", KafkaConnectorConfig(**configs)
             )
 
         assert (
@@ -261,13 +261,13 @@ class TestConnectorApiWrapper:
         with pytest.raises(KafkaConnectError):
             self.connect_wrapper.update_connector_config(
                 connector_name,
-                KafkaConnectConfig(**configs),
+                KafkaConnectorConfig(**configs),
             )
 
         mock_put.assert_called_with(
             url=f"{HOST}/connectors/{connector_name}/config",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectConfig(**configs).dict(),
+            json=KafkaConnectorConfig(**configs).dict(),
         )
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
@@ -275,7 +275,7 @@ class TestConnectorApiWrapper:
         self,
         log_info: MagicMock,
         httpx_mock: HTTPXMock,
-        connector_config: KafkaConnectConfig,
+        connector_config: KafkaConnectorConfig,
     ):
         connector_name = "test-connector"
 
@@ -317,7 +317,7 @@ class TestConnectorApiWrapper:
         self,
         log_info: MagicMock,
         httpx_mock: HTTPXMock,
-        connector_config: KafkaConnectConfig,
+        connector_config: KafkaConnectorConfig,
     ):
         connector_name = "test-connector"
 
@@ -357,7 +357,7 @@ class TestConnectorApiWrapper:
         self,
         log_warning: MagicMock,
         httpx_mock: HTTPXMock,
-        connector_config: KafkaConnectConfig,
+        connector_config: KafkaConnectorConfig,
     ):
         connector_name = "test-connector"
 
@@ -475,7 +475,7 @@ class TestConnectorApiWrapper:
     def test_should_create_correct_validate_connector_config_request(
         self, mock_put: MagicMock
     ):
-        connector_config = KafkaConnectConfig(
+        connector_config = KafkaConnectorConfig(
             **{
                 "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
                 "tasks.max": "1",
@@ -506,13 +506,13 @@ class TestConnectorApiWrapper:
         }
         with pytest.raises(KafkaConnectError):
             self.connect_wrapper.validate_connector_config(
-                connector_name, KafkaConnectConfig(**configs)
+                connector_name, KafkaConnectorConfig(**configs)
             )
 
         mock_put.assert_called_with(
             url=f"{HOST}/connector-plugins/{connector_name}/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectConfig(**{"name": connector_name, **configs}).dict(),
+            json=KafkaConnectorConfig(**{"name": connector_name, **configs}).dict(),
         )
 
     def test_should_parse_validate_connector_config(self, httpx_mock: HTTPXMock):
@@ -534,7 +534,7 @@ class TestConnectorApiWrapper:
             "topics": "test-topic",
         }
         errors = self.connect_wrapper.validate_connector_config(
-            "FileStreamSinkConnector", KafkaConnectConfig(**configs)
+            "FileStreamSinkConnector", KafkaConnectorConfig(**configs)
         )
 
         assert errors == [

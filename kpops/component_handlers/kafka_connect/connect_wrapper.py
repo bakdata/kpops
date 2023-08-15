@@ -9,8 +9,8 @@ from kpops.component_handlers.kafka_connect.exception import (
     KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.model import (
-    KafkaConnectConfig,
     KafkaConnectConfigErrorResponse,
+    KafkaConnectorConfig,
     KafkaConnectResponse,
 )
 
@@ -38,7 +38,7 @@ class ConnectWrapper:
         return self._host
 
     def create_connector(
-        self, connector_name: str, connector_config: KafkaConnectConfig
+        self, connector_name: str, connector_config: KafkaConnectorConfig
     ) -> KafkaConnectResponse:
         """
         Creates a new connector
@@ -90,7 +90,7 @@ class ConnectWrapper:
         raise KafkaConnectError(response)
 
     def update_connector_config(
-        self, connector_name: str, connector_config: KafkaConnectConfig
+        self, connector_name: str, connector_config: KafkaConnectorConfig
     ) -> KafkaConnectResponse:
         """
         Create a new connector using the given configuration, or update the configuration for an existing connector.
@@ -122,7 +122,7 @@ class ConnectWrapper:
         raise KafkaConnectError(response)
 
     def validate_connector_config(
-        self, connector_name: str, connector_config: KafkaConnectConfig
+        self, connector_name: str, connector_config: KafkaConnectorConfig
     ) -> list[str]:
         """
         Validate connector config using the given configuration

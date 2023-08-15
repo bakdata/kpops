@@ -12,7 +12,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
 )
 from kpops.component_handlers.kafka_connect.model import (
-    KafkaConnectConfig,
+    KafkaConnectorConfig,
     KafkaConnectResponse,
 )
 from kpops.utils.colorify import magentaify
@@ -54,14 +54,14 @@ class TestConnectorHandler:
         )
 
     @pytest.fixture
-    def connector_config(self) -> KafkaConnectConfig:
-        return KafkaConnectConfig(
+    def connector_config(self) -> KafkaConnectorConfig:
+        return KafkaConnectorConfig(
             **{"connector.class": "com.bakdata.connect.TestConnector"}
         )
 
     def test_should_create_connector_in_dry_run(
         self,
-        connector_config: KafkaConnectConfig,
+        connector_config: KafkaConnectorConfig,
         renderer_diff_mock: MagicMock,
         log_info_mock: MagicMock,
     ):
@@ -98,7 +98,7 @@ class TestConnectorHandler:
             "tasks.max": "1",
             "topics": "test-topic",
         }
-        config = KafkaConnectConfig(**configs)
+        config = KafkaConnectorConfig(**configs)
         handler.create_connector(CONNECTOR_NAME, config, True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(
@@ -140,7 +140,7 @@ class TestConnectorHandler:
             "tasks.max": "2",
             "topics": "test-topic",
         }
-        connector_config = KafkaConnectConfig(**configs)
+        connector_config = KafkaConnectorConfig(**configs)
         handler.create_connector(CONNECTOR_NAME, connector_config, True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(
@@ -160,7 +160,7 @@ class TestConnectorHandler:
         ]
 
     def test_should_log_invalid_config_when_create_connector_in_dry_run(
-        self, connector_config: KafkaConnectConfig, renderer_diff_mock: MagicMock
+        self, connector_config: KafkaConnectorConfig, renderer_diff_mock: MagicMock
     ):
         connector_wrapper = MagicMock()
 
@@ -185,7 +185,7 @@ class TestConnectorHandler:
         )
 
     def test_should_call_update_connector_config_when_connector_exists_not_dry_run(
-        self, connector_config: KafkaConnectConfig
+        self, connector_config: KafkaConnectorConfig
     ):
         connector_wrapper = MagicMock()
         handler = self.connector_handler(connector_wrapper)
@@ -198,7 +198,7 @@ class TestConnectorHandler:
         ]
 
     def test_should_call_create_connector_when_connector_does_not_exists_not_dry_run(
-        self, connector_config: KafkaConnectConfig
+        self, connector_config: KafkaConnectorConfig
     ):
         connector_wrapper = MagicMock()
 

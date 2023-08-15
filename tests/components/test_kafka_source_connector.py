@@ -11,7 +11,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
+from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components.base_components.kafka_connector import KafkaSourceConnector
 from kpops.components.base_components.models.from_section import (
     FromSection,
@@ -66,8 +66,8 @@ class TestKafkaSourceConnector:
         ).return_value
 
     @pytest.fixture
-    def connector_config(self) -> KafkaConnectConfig:
-        return KafkaConnectConfig(
+    def connector_config(self) -> KafkaConnectorConfig:
+        return KafkaConnectorConfig(
             **{"connector.class": "com.bakdata.connect.TestConnector"}
         )
 
@@ -76,7 +76,7 @@ class TestKafkaSourceConnector:
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
-        connector_config: KafkaConnectConfig,
+        connector_config: KafkaConnectorConfig,
     ) -> KafkaSourceConnector:
         return KafkaSourceConnector(
             name=CONNECTOR_NAME,
@@ -98,7 +98,7 @@ class TestKafkaSourceConnector:
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
-        connector_config: KafkaConnectConfig,
+        connector_config: KafkaConnectorConfig,
     ):
         with pytest.raises(NotImplementedError):
             KafkaSourceConnector(
@@ -310,7 +310,7 @@ class TestKafkaSourceConnector:
         helm_mock: MagicMock,
         dry_run_handler: MagicMock,
         mocker: MockerFixture,
-        connector_config: KafkaConnectConfig,
+        connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
@@ -385,7 +385,7 @@ class TestKafkaSourceConnector:
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         dry_run_handler: MagicMock,
-        connector_config: KafkaConnectConfig,
+        connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,

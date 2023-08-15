@@ -19,7 +19,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.component_handlers.helm_wrapper.utils import trim_release_name
 from kpops.component_handlers.kafka_connect.model import (
-    KafkaConnectConfig,
+    KafkaConnectorConfig,
     KafkaConnectorType,
     KafkaConnectResetterConfig,
     KafkaConnectResetterValues,
@@ -72,7 +72,7 @@ class KafkaConnector(PipelineComponent, ABC):
         description=describe_object(__doc__),
         exclude=True,
     )
-    app: KafkaConnectConfig = Field(
+    app: KafkaConnectorConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )

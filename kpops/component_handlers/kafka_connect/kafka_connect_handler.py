@@ -8,7 +8,7 @@ from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     ConnectorStateException,
 )
-from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
+from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
@@ -36,7 +36,7 @@ class KafkaConnectHandler:
     def create_connector(
         self,
         connector_name: str,
-        connector_config: KafkaConnectConfig,
+        connector_config: KafkaConnectorConfig,
         dry_run: bool,
     ) -> None:
         """
@@ -94,7 +94,7 @@ class KafkaConnectHandler:
                 )
 
     def __dry_run_connector_creation(
-        self, connector_name: str, connector_config: KafkaConnectConfig
+        self, connector_name: str, connector_config: KafkaConnectorConfig
     ) -> None:
         connector_config = connector_config.with_name(connector_name)
         try:
