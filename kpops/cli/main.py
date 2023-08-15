@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Iterator, Optional
 
@@ -78,6 +79,18 @@ DRY_RUN: bool = typer.Option(
     help="Whether to dry run the command or execute it",
 )
 
+
+class FilterType(str, Enum):
+    INCLUDE = "include"
+    EXCLUDE = "exclude"
+
+
+FILTER_TYPE: FilterType = typer.Option(
+    default=FilterType.INCLUDE.value,
+    case_sensitive=False,
+    help="Whether the --steps option should include/exclude the steps",
+)
+
 VERBOSE_OPTION = typer.Option(False, help="Enable verbose printing")
 
 COMPONENTS_MODULES: str | None = typer.Argument(
@@ -135,38 +148,39 @@ def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
 
 
 def filter_steps_to_apply(
-    pipeline: Pipeline, steps: set[str]
+    pipeline: Pipeline, steps: set[str], filter_type: FilterType
 ) -> list[PipelineComponent]:
-    skipped_steps: list[str] = []
+    def is_in_steps(component: PipelineComponent) -> bool:
+        return component.name.removeprefix(component.prefix) in steps
 
-    def filter_component(component: PipelineComponent) -> bool:
-        step_name = component.name.removeprefix(component.prefix)
-        if step_name in steps:
-            return True
-        skipped_steps.append(step_name)
-        return False
-
-    steps_to_apply = list(filter(filter_component, pipeline))
-    log.info("KPOPS_PIPELINE_STEPS is defined.")
-    log.info(
-        f"Executing only on the following steps: {get_step_names(steps_to_apply)}"
-        f", \n ignoring {skipped_steps}"
+    log.debug(
+        f"KPOPS_PIPELINE_STEPS is defined with values: {steps} and filter type of {filter_type.value}"
     )
-    return steps_to_apply
+    filtered_steps = [
+        component
+        for component in pipeline
+        if (
+            is_in_steps(component)
+            if filter_type is FilterType.INCLUDE
+            else not is_in_steps(component)
+        )
+    ]
+    log.info(f"The following steps are included:\n{get_step_names(filtered_steps)}")
+    return filtered_steps
 
 
 def get_steps_to_apply(
-    pipeline: Pipeline, steps: str | None
+    pipeline: Pipeline, steps: str | None, filter_type: FilterType
 ) -> list[PipelineComponent]:
     if steps:
-        return filter_steps_to_apply(pipeline, steps=parse_steps(steps))
+        return filter_steps_to_apply(pipeline, parse_steps(steps), filter_type)
     return list(pipeline)
 
 
 def reverse_pipeline_steps(
-    pipeline: Pipeline, steps: str | None
+    pipeline: Pipeline, steps: str | None, filter_type: FilterType
 ) -> Iterator[PipelineComponent]:
-    return reversed(get_steps_to_apply(pipeline, steps))
+    return reversed(get_steps_to_apply(pipeline, steps, filter_type))
 
 
 def log_action(action: str, pipeline_component: PipelineComponent):
@@ -229,9 +243,10 @@ def generate(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    verbose: bool = VERBOSE_OPTION,
     template: bool = typer.Option(False, help="Run Helm template"),
     steps: Optional[str] = PIPELINE_STEPS,
+    filter_type: FilterType = FILTER_TYPE,
+    verbose: bool = VERBOSE_OPTION,
 ) -> Pipeline:
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
@@ -240,7 +255,7 @@ def generate(
     pipeline.print_yaml()
 
     if template:
-        steps_to_apply = get_steps_to_apply(pipeline, steps)
+        steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
         for component in steps_to_apply:
             component.template()
     elif steps:
@@ -261,16 +276,17 @@ def deploy(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
+    steps: Optional[str] = PIPELINE_STEPS,
+    filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-    steps: Optional[str] = PIPELINE_STEPS,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
 
-    steps_to_apply = get_steps_to_apply(pipeline, steps)
+    steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
     for component in steps_to_apply:
         log_action("Deploy", component)
         component.deploy(dry_run)
@@ -286,14 +302,15 @@ def destroy(
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
-    verbose: bool = VERBOSE_OPTION,
+    filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
+    verbose: bool = VERBOSE_OPTION,
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps)
+    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
     for component in pipeline_steps:
         log_action("Destroy", component)
         component.destroy(dry_run)
@@ -309,6 +326,7 @@ def reset(
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
+    filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
@@ -316,7 +334,7 @@ def reset(
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps)
+    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
     for component in pipeline_steps:
         log_action("Reset", component)
         component.destroy(dry_run)
@@ -333,6 +351,7 @@ def clean(
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
+    filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
@@ -340,7 +359,7 @@ def clean(
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps)
+    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
     for component in pipeline_steps:
         log_action("Clean", component)
         component.destroy(dry_run)
