@@ -39,7 +39,7 @@ kafka-connector:
       component-as-input-pattern:
         type: pattern # Implied to be an input pattern if `role` is undefined
       component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `role` undefined
+        type: pattern # Implied to be an extra pattern if `role` is defined
         role: some-role
   # Topic(s) into which the component will write output
   to:
@@ -51,8 +51,8 @@ kafka-connector:
       ${pipeline_name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
         partitions_count: 1
         replication_factor: 1
         configs: # https://kafka.apache.org/documentation/#topicconfigs
@@ -120,7 +120,7 @@ kubernetes-app:
       component-as-input-pattern:
         type: pattern # Implied to be an input pattern if `role` is undefined
       component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `role` undefined
+        type: pattern # Implied to be an extra pattern if `role` is defined
         role: some-role
   # Topic(s) into which the component will write output
   to:
@@ -132,8 +132,8 @@ kubernetes-app:
       ${pipeline_name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
         partitions_count: 1
         replication_factor: 1
         configs: # https://kafka.apache.org/documentation/#topicconfigs

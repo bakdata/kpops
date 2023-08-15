@@ -17,5 +17,5 @@
       component-as-input-pattern:
         type: pattern # Implied to be an input pattern if `role` is undefined
       component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `role` undefined
+        type: pattern # Implied to be an extra pattern if `role` is defined
         role: some-role
