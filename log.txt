@@ -1,0 +1,160 @@
+An error happened on tests/cli/test_schema_generation.py.
+Traceback (most recent call last):
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/bump_pydantic/main.py", line 185, in run_codemods
+    output_tree = transformer.transform_module(input_tree)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/codemod/_codemod.py", line 108, in transform_module
+    return self.transform_module_impl(tree_with_metadata)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/codemod/_visitor.py", line 32, in transform_module_impl
+    return tree.visit(self)
+           ^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/module.py", line 90, in visit
+    result = super(Module, self).visit(visitor)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/base.py", line 218, in visit
+    should_visit_children = visitor.on_visit(self)
+                            ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/matchers/_visitors.py", line 511, in on_visit
+    return CSTTransformer.on_visit(self, node)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_visitors.py", line 44, in on_visit
+    retval = visit_func(node)
+             ^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/codemod/visitors/_remove_imports.py", line 300, in visit_Module
+    node.visit(visitor)
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/module.py", line 90, in visit
+    result = super(Module, self).visit(visitor)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/base.py", line 218, in visit
+    should_visit_children = visitor.on_visit(self)
+                            ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/matchers/_visitors.py", line 718, in on_visit
+    return CSTVisitor.on_visit(self, node)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_visitors.py", line 123, in on_visit
+    retval = visit_func(node)
+             ^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/codemod/visitors/_gather_unused_imports.py", line 71, in visit_Module
+    node.visit(annotation_visitor)
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/module.py", line 90, in visit
+    result = super(Module, self).visit(visitor)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/base.py", line 227, in visit
+    _CSTNodeSelfT, self._visit_and_replace_children(visitor)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/module.py", line 74, in _visit_and_replace_children
+    body=visit_body_sequence(self, "body", self.body, visitor),
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 227, in visit_body_sequence
+    return tuple(visit_body_iterable(parent, fieldname, children, visitor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 193, in visit_body_iterable
+    new_child = child.visit(visitor)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/base.py", line 227, in visit
+    _CSTNodeSelfT, self._visit_and_replace_children(visitor)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/statement.py", line 1931, in _visit_and_replace_children
+    body=visit_required(self, "body", self.body, visitor),
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 81, in visit_required
+    result = node.visit(visitor)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/base.py", line 227, in visit
+    _CSTNodeSelfT, self._visit_and_replace_children(visitor)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/statement.py", line 697, in _visit_and_replace_children
+    body=visit_body_sequence(self, "body", self.body, visitor),
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 227, in visit_body_sequence
+    return tuple(visit_body_iterable(parent, fieldname, children, visitor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 193, in visit_body_iterable
+    new_child = child.visit(visitor)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/base.py", line 227, in visit
+    _CSTNodeSelfT, self._visit_and_replace_children(visitor)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/statement.py", line 442, in _visit_and_replace_children
+    body=visit_sequence(self, "body", self.body, visitor),
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 177, in visit_sequence
+    return tuple(visit_iterable(parent, fieldname, children, visitor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 159, in visit_iterable
+    new_child = child.visit(visitor)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/base.py", line 227, in visit
+    _CSTNodeSelfT, self._visit_and_replace_children(visitor)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/statement.py", line 1542, in _visit_and_replace_children
+    annotation=visit_required(self, "annotation", self.annotation, visitor),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 81, in visit_required
+    result = node.visit(visitor)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/base.py", line 227, in visit
+    _CSTNodeSelfT, self._visit_and_replace_children(visitor)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/expression.py", line 1673, in _visit_and_replace_children
+    annotation=visit_required(self, "annotation", self.annotation, visitor),
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 81, in visit_required
+    result = node.visit(visitor)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/base.py", line 227, in visit
+    _CSTNodeSelfT, self._visit_and_replace_children(visitor)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/expression.py", line 1604, in _visit_and_replace_children
+    slice=visit_sequence(self, "slice", self.slice, visitor),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 177, in visit_sequence
+    return tuple(visit_iterable(parent, fieldname, children, visitor))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 159, in visit_iterable
+    new_child = child.visit(visitor)
+                ^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/base.py", line 227, in visit
+    _CSTNodeSelfT, self._visit_and_replace_children(visitor)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/expression.py", line 1549, in _visit_and_replace_children
+    slice=visit_required(self, "slice", self.slice, visitor),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 81, in visit_required
+    result = node.visit(visitor)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/base.py", line 227, in visit
+    _CSTNodeSelfT, self._visit_and_replace_children(visitor)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/expression.py", line 1463, in _visit_and_replace_children
+    value=visit_required(self, "value", self.value, visitor),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/internal.py", line 81, in visit_required
+    result = node.visit(visitor)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_nodes/base.py", line 218, in visit
+    should_visit_children = visitor.on_visit(self)
+                            ^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/matchers/_visitors.py", line 718, in on_visit
+    return CSTVisitor.on_visit(self, node)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_visitors.py", line 123, in on_visit
+    retval = visit_func(node)
+             ^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/codemod/visitors/_gather_string_annotation_names.py", line 65, in visit_SimpleString
+    self.handle_any_string(node)
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/codemod/visitors/_gather_string_annotation_names.py", line 74, in handle_any_string
+    mod = cst.parse_module(value)
+          ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_parser/entrypoints.py", line 109, in parse_module
+    result = _parse(
+             ^^^^^^^
+  File "/home/sujuka99/Projects/bakdata/kpops/pydantic-v2/kpops/.venv/lib/python3.11/site-packages/libcst/_parser/entrypoints.py", line 55, in _parse
+    return parse(source_str)
+           ^^^^^^^^^^^^^^^^^
+libcst._exceptions.ParserSyntaxError: Syntax Error @ 1:1.
+parser error: error at 1:42: expected one of +, -, ..., AWAIT, False, NUMBER, None, True, ~
+
+sub-pipeline-component-bad-schema-type-def-not-matching
+^
