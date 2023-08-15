@@ -7,7 +7,7 @@ from typing import Any, Generic, TypeVar
 _T = TypeVar("_T")
 
 
-class SuperEnum(Enum, Generic[_T]):
+class SuperEnum(Generic[_T], Enum):
     """Adds constructors that return all items in a ``Generator``.
 
     Introduces constructors that return a ``Generator`` object
