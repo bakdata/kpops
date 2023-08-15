@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import NewType
+from typing import Any, NewType
 
 from pydantic import BaseModel, Extra, Field, root_validator
 
