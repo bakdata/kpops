@@ -13,6 +13,7 @@ This action runs KPOps with the given config.
 | defaults          |    ❌     |       .       | string | defaults folder path                                                                                                                          |
 | config            |    ❌     |  config.yaml  | string | config.yaml file path                                                                                                                         |
 | components        |    ❌     |       -       | string | components package path                                                                                                                       |
+| filter-type       |    ❌     |   "include"   | string | Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS                                                                          |
 | python-version    |    ❌     |   "3.11.x"    | string | Python version to install (Defaults to the latest stable version of Python 3.11)                                                              |
 | kpops-version     |    ❌     |    latest     | string | KPOps version to install                                                                                                                      |
 | helm-version      |    ❌     |    latest     | string | Helm version to install                                                                                                                       |

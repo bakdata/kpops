@@ -2,10 +2,15 @@
     "$ref": "#/definitions/PipelineConfig",
     "definitions": {
         "HelmConfig": {
-            "description": "Global flags for Helm\n\n:param context: Set the name of the kubeconfig context. (--kube-context)\n:param debug: Run Helm in Debug mode",
+            "description": "Global Helm configuration",
             "properties": {
+                "api_version": {
+                    "description": "Kubernetes API version used for Capabilities.APIVersions",
+                    "title": "API version",
+                    "type": "string"
+                },
                 "context": {
-                    "description": "Set the name of the kubeconfig context. (--kube-context)",
+                    "description": "Name of kubeconfig context (`--kube-context`)",
                     "example": "dev-storage",
                     "title": "Context",
                     "type": "string"
@@ -96,6 +101,7 @@
                         }
                     ],
                     "default": {
+                        "api_version": null,
                         "context": null,
                         "debug": false
                     },

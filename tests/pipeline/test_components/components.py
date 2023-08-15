@@ -1,5 +1,3 @@
-from typing import Any
-
 from schema_registry.client.schema import AvroSchema
 from typing_extensions import override
 
@@ -9,7 +7,7 @@ from kpops.component_handlers.schema_handler.schema_provider import (
 )
 from kpops.components import KafkaSinkConnector
 from kpops.components.base_components import PipelineComponent
-from kpops.components.base_components.models import TopicName
+from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -81,7 +79,9 @@ class ShouldInflate(StreamsApp):
 
 
 class TestSchemaProvider(SchemaProvider):
-    def provide_schema(self, schema_class: str, models: dict[str, Any]) -> Schema:
+    def provide_schema(
+        self, schema_class: str, models: dict[ModelName, ModelVersion]
+    ) -> Schema:
         schema = {
             "type": "record",
             "namespace": "KPOps",

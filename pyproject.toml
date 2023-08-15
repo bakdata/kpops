@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kpops"
-version = "1.4.0"
+version = "1.7.0"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
 authors = ["bakdata <opensource@bakdata.com>"]
 license = "MIT"
@@ -52,6 +52,7 @@ typer-cli = "^0.0.13"
 pyright = "^1.1.314"
 pytest-rerunfailures = "^11.1.2"
 pytest-httpx = "^0.22.0"
+pytablewriter = { extras = ["from"], version = "^1.0.0" }
 
 [tool.poetry.group.docs]
 optional = true

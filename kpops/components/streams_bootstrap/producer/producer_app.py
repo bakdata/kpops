@@ -19,6 +19,8 @@ class ProducerApp(KafkaApp):
     This producer holds configuration to use as values for the streams bootstrap
     producer helm chart.
 
+    Note that the producer does not support error topics.
+
     :param app: Application-specific settings
     :type app: ProducerValues
     :param from_: Producer doesn't support FromSection, defaults to None
@@ -52,8 +54,9 @@ class ProducerApp(KafkaApp):
     def add_extra_output_topic(self, topic_name: str, role: str) -> None:
         self.app.streams.extra_output_topics[role] = topic_name
 
+    @property
     @override
-    def get_helm_chart(self) -> str:
+    def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
     @property

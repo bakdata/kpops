@@ -61,6 +61,7 @@
                     ],
                     "default": {
                         "ca_file": null,
+                        "cert_file": null,
                         "insecure_skip_tls_verify": false,
                         "password": null,
                         "username": null
@@ -143,6 +144,7 @@
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
+                            "cert_file": null,
                             "insecure_skip_tls_verify": false,
                             "password": null,
                             "username": null
@@ -180,8 +182,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "KafkaApp",
             "type": "object"
@@ -265,6 +267,7 @@
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
+                            "cert_file": null,
                             "insecure_skip_tls_verify": false,
                             "password": null,
                             "username": null
@@ -307,8 +310,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "KafkaConnector",
             "type": "object"
@@ -359,6 +362,7 @@
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
+                            "cert_file": null,
                             "insecure_skip_tls_verify": false,
                             "password": null,
                             "username": null
@@ -401,8 +405,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "KafkaSinkConnector",
             "type": "object"
@@ -458,6 +462,7 @@
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
+                            "cert_file": null,
                             "insecure_skip_tls_verify": false,
                             "password": null,
                             "username": null
@@ -500,8 +505,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "KafkaSourceConnector",
             "type": "object"
@@ -598,8 +603,9 @@
             },
             "required": [
                 "name",
+                "namespace",
                 "app",
-                "namespace"
+                "repo_config"
             ],
             "title": "KubernetesApp",
             "type": "object"
@@ -669,7 +675,7 @@
             "type": "object"
         },
         "ProducerApp": {
-            "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+            "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -710,6 +716,7 @@
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
+                            "cert_file": null,
                             "insecure_skip_tls_verify": false,
                             "password": null,
                             "username": null
@@ -731,7 +738,7 @@
                 },
                 "type": {
                     "default": "producer-app",
-                    "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+                    "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
                     "enum": [
                         "producer-app"
                     ],
@@ -747,8 +754,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "ProducerApp",
             "type": "object"
@@ -815,9 +822,15 @@
             "description": "Authorisation-related flags for `helm repo`",
             "properties": {
                 "ca_file": {
-                    "description": "Certificate file",
+                    "description": "Path to CA bundle file to verify certificates of HTTPS-enabled servers",
                     "format": "path",
                     "title": "Ca File",
+                    "type": "string"
+                },
+                "cert_file": {
+                    "description": "Path to SSL certificate file to identify HTTPS client",
+                    "format": "path",
+                    "title": "Cert File",
                     "type": "string"
                 },
                 "insecure_skip_tls_verify": {
@@ -886,6 +899,7 @@
                     "default": {
                         "repo_auth_flags": {
                             "ca_file": null,
+                            "cert_file": null,
                             "insecure_skip_tls_verify": false,
                             "password": null,
                             "username": null
@@ -923,8 +937,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "StreamsApp",
             "type": "object"
@@ -1107,6 +1121,9 @@
             "description": "Holds multiple output topics",
             "properties": {
                 "models": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
                     "default": {},
                     "description": "Data models",
                     "title": "Models",
@@ -1116,14 +1133,12 @@
                     "additionalProperties": {
                         "$ref": "#/definitions/TopicConfig"
                     },
+                    "default": {},
                     "description": "Output topics",
                     "title": "Topics",
                     "type": "object"
                 }
             },
-            "required": [
-                "topics"
-            ],
             "title": "ToSection",
             "type": "object"
         },
