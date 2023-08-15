@@ -26,6 +26,7 @@ class KafkaConnectorConfig(BaseModel):
 
     class Config(DescConfig):
         extra = Extra.allow
+        # TODO: alias_generator
 
         @override
         @staticmethod
