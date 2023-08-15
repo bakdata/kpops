@@ -1,6 +1,5 @@
 kpops_components_fields:
   kafka-app:
-  - type
   - name
   - prefix
   - from_
@@ -10,7 +9,6 @@ kpops_components_fields:
   - repo_config
   - version
   kafka-connector:
-  - type
   - name
   - prefix
   - from_
@@ -21,7 +19,6 @@ kpops_components_fields:
   - version
   - resetter_values
   kafka-sink-connector:
-  - type
   - name
   - prefix
   - from_
@@ -32,7 +29,6 @@ kpops_components_fields:
   - version
   - resetter_values
   kafka-source-connector:
-  - type
   - name
   - prefix
   - from_
@@ -44,7 +40,6 @@ kpops_components_fields:
   - resetter_values
   - offset_topic
   kubernetes-app:
-  - type
   - name
   - prefix
   - from_
@@ -54,13 +49,11 @@ kpops_components_fields:
   - repo_config
   - version
   pipeline-component:
-  - type
   - name
   - prefix
   - from_
   - to
-  producer:
-  - type
+  producer-app:
   - name
   - prefix
   - from_
@@ -70,7 +63,6 @@ kpops_components_fields:
   - repo_config
   - version
   streams-app:
-  - type
   - name
   - prefix
   - from_
@@ -85,6 +77,6 @@ kpops_components_inheritance_ref:
   kafka-sink-connector: kafka-connector
   kafka-source-connector: kafka-connector
   kubernetes-app: pipeline-component
-  pipeline-component: null
-  producer: kafka-app
+  pipeline-component: base-defaults-component
+  producer-app: kafka-app
   streams-app: kafka-app

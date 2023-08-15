@@ -12,7 +12,7 @@
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
-      producer:
+      producer-app:
         type: input # required
   # Topic(s) into which the component will write output
   to:
@@ -61,7 +61,7 @@
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
-      producer:
+      producer-app:
         type: input # required
   # Topic(s) into which the component will write output
   to:
@@ -155,7 +155,7 @@
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
-      producer:
+      producer-app:
         type: input # required
   # Topic(s) into which the component will write output
   to:
@@ -189,16 +189,16 @@
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "1.0.0" # Helm chart version
-# Holds configuration to use as values for the streams bootstrap producer Helm
+# Holds configuration to use as values for the streams bootstrap producer-app Helm
 # chart.
-# More documentation on ProducersApp:
+# More documentation on ProducerApp:
 # https://github.com/bakdata/streams-bootstrap
-- type: producer
-  name: producer # required
+- type: producer-app
+  name: producer-app # required
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # from: # While the producer does inherit from kafka-app, it does not need a
+  # from: # While the producer-app does inherit from kafka-app, it does not need a
   # `from` section, hence it does not support it.
   # Topic(s) into which the component will write output
   to:
@@ -218,7 +218,7 @@
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
-    streams: # required, producer-specific
+    streams: # required, producer-app-specific
       brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
       outputTopic: output_topic
@@ -251,7 +251,7 @@
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
-      producer:
+      producer-app:
         type: input # required
   # Topic(s) into which the component will write output
   to:

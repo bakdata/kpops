@@ -1,13 +1,13 @@
-# Holds configuration to use as values for the streams bootstrap producer Helm
+# Holds configuration to use as values for the streams bootstrap producer-app Helm
 # chart.
 # More documentation on ProducerApp:
 # https://github.com/bakdata/streams-bootstrap
 - type: producer-app
-  name: producer # required
+  name: producer-app # required
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # from: # While the producer does inherit from kafka-app, it does not need a
+  # from: # While the producer-app does inherit from kafka-app, it does not need a
   # `from` section, hence it does not support it.
   # Topic(s) into which the component will write output
   to:
@@ -27,7 +27,7 @@
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
-    streams: # required, producer-specific
+    streams: # required, producer-app-specific
       brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
       outputTopic: output_topic

@@ -12,7 +12,7 @@
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
-      producer:
+      producer-app:
         type: input # required
   # Topic(s) into which the component will write output
   to:
