@@ -53,6 +53,9 @@ jobs:
       - name: Generate CLI Usage docs (typer-cli)
         run: poetry run pre-commit run gen-docs-cli --all-files --show-diff-on-failure
 
+      - name: Generate Environment variable docs
+        run: poetry run pre-commit run gen-docs-env-vars --all-files --show-diff-on-failure
+
       - name: Generate pipeline definitions
         run: poetry run pre-commit run gen-docs-components --all-files --show-diff-on-failure
 

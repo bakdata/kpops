@@ -1,4 +1,17 @@
 # Changelog
+## [1.7.1](https://github.com/bakdata/kpops/releases/tag/1.7.1) - Release Date: [2023-08-15]
+
+### 📝 Documentation
+
+- Modularize and autogenerate examples for the documentation - [#267](https://github.com/bakdata/kpops/pull/267)
+
+- Update the variable documentation - [#266](https://github.com/bakdata/kpops/pull/266)
+
+
+
+
+
+
 ## [1.7.0](https://github.com/bakdata/kpops/releases/tag/1.7.0) - Release Date: [2023-08-15]
 
 ### 🚀 Features
