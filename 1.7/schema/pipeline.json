@@ -188,8 +188,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "KafkaApp",
             "type": "object"
@@ -322,8 +322,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "KafkaConnector",
             "type": "object"
@@ -423,8 +423,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "KafkaSinkConnector",
             "type": "object"
@@ -529,8 +529,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "KafkaSourceConnector",
             "type": "object"
@@ -633,9 +633,9 @@
             },
             "required": [
                 "name",
+                "namespace",
                 "app",
-                "repoConfig",
-                "namespace"
+                "repoConfig"
             ],
             "title": "KubernetesApp",
             "type": "object"
@@ -711,7 +711,7 @@
             "type": "object"
         },
         "ProducerApp": {
-            "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+            "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -765,7 +765,7 @@
                 },
                 "type": {
                     "default": "producer",
-                    "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart.",
+                    "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
                     "enum": [
                         "producer"
                     ],
@@ -796,8 +796,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "ProducerApp",
             "type": "object"
@@ -985,8 +985,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "StreamsApp",
             "type": "object"

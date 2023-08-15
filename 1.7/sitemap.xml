@@ -6,6 +6,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://bakdata.github.io/kpops/1.7/dev/development/autogeneration/</loc>
+         <lastmod>2023-08-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://bakdata.github.io/kpops/1.7/resources/architecture/components-hierarchy/</loc>
          <lastmod>2023-08-15</lastmod>
          <changefreq>daily</changefreq>
@@ -27,6 +32,16 @@
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/1.7/resources/pipeline-defaults/defaults/</loc>
+         <lastmod>2023-08-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://bakdata.github.io/kpops/1.7/resources/variables/cli_env_vars/</loc>
+         <lastmod>2023-08-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://bakdata.github.io/kpops/1.7/resources/variables/config_env_vars/</loc>
          <lastmod>2023-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -81,7 +96,12 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://bakdata.github.io/kpops/1.7/user/references/variables/</loc>
+         <loc>https://bakdata.github.io/kpops/1.7/user/references/variables/environment_variables/</loc>
+         <lastmod>2023-08-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://bakdata.github.io/kpops/1.7/user/references/variables/substitution/</loc>
          <lastmod>2023-08-15</lastmod>
          <changefreq>daily</changefreq>
     </url>

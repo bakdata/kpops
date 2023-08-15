@@ -2,6 +2,32 @@
 # Producer or streaming apps should inherit from this class.
 - type: kafka-app # required
   name: kafka-app # required
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
+  # Topic(s) from which the component will read input
+  from: # Must not be null
+    topics: # read from topic
+      ${pipeline_name}-input-topic:
+        type: input # required
+        # role: topic-role # only used if type is `extra` or `extra-pattern`
+    components: # read from specific component
+      producer:
+        type: input # required
+  # Topic(s) into which the component will write output
+  to:
+    topics:
+      ${pipeline_name}-output-topic:
+        type: output # required
+        # role: topic-role # only used if type is `extra`
+        keySchema: key-schema # must implement SchemaProvider to use
+        valueSchema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
   namespace: namespace # required
   # `app` can contain application-specific settings, hence  the user is free to
   # add the key-value pairs they need.
@@ -11,28 +37,8 @@
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
     imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
-  # Topic(s) from which the component will read input
-  # from: # Not advised to ever be used in `kafka-app` as it isn't supported by
-  # `producer`
-  # Topic(s) into which the component will write output
-  to:
-    topics:
-      ${pipeline_name}-output-topic:
-        type: output # required
-        # role: topic-role # only used if type is `extra`
-        # Currently KPOps only supports Avro schemas.
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
-        partitions_count: 1
-        replication_factor: 1
-        configs:
-          cleanup.policy: compact
-    models: # SchemaProvider is initiated with the values given here
-      model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
-  # Helm repository configuration, the default value is given here
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:
     repositoryName: bakdata-streams-bootstrap # required
     url: https://bakdata.github.io/streams-bootstrap/ # required
@@ -41,4 +47,4 @@
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  version: "2.7.0" # Helm chart version
+  version: "2.12.0" # Helm chart version
