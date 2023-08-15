@@ -6,7 +6,7 @@ from functools import cached_property
 from pathlib import Path
 from typing import TypeVar
 
-import dtyper
+import typer
 from pydantic import BaseModel, Field
 
 from kpops.cli.pipeline_config import PipelineConfig
