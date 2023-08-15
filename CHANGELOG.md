@@ -1,4 +1,15 @@
 # Changelog
+## [1.7.0](https://github.com/bakdata/kpops/releases/tag/1.7.0) - Release Date: [2023-08-15]
+
+### 🚀 Features
+
+- Add flag to exclude pipeline steps - [#300](https://github.com/bakdata/kpops/pull/300)
+
+
+
+
+
+
 ## [1.6.0](https://github.com/bakdata/kpops/releases/tag/1.6.0) - Release Date: [2023-08-10]
 
 ### 🏭 Refactor
