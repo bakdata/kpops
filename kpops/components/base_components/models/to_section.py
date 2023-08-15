@@ -29,7 +29,9 @@ class TopicConfig(BaseModel):
     :param role: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`
     """
 
-    type: OutputTopicTypes = Field(..., description=describe_attr("type", __doc__))
+    type: OutputTopicTypes | None = Field(
+        default=None, title="Topic type", description=describe_attr("type", __doc__)
+    )
     key_schema: str | None = Field(
         default=None,
         title="Key schema",

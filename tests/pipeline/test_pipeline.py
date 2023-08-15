@@ -171,7 +171,7 @@ class TestPipeline:
                     str(PIPELINE_BASE_DIR_PATH),
                     str(
                         RESOURCE_PATH
-                        / "component-type-substitution/infinite_pipeline.yaml"
+                        / "component-type-substitution/infinite_pipeline.yaml",
                     ),
                     "tests.pipeline.test_components",
                     "--defaults",
@@ -309,7 +309,7 @@ class TestPipeline:
                 str(PIPELINE_BASE_DIR_PATH),
                 str(
                     RESOURCE_PATH
-                    / "pipeline-component-should-have-prefix/pipeline.yaml"
+                    / "pipeline-component-should-have-prefix/pipeline.yaml",
                 ),
                 "--defaults",
                 str(RESOURCE_PATH / "pipeline-component-should-have-prefix"),
@@ -323,7 +323,8 @@ class TestPipeline:
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_with_custom_config_with_relative_defaults_path(
-        self, snapshot: SnapshotTest
+        self,
+        snapshot: SnapshotTest,
     ):
         result = runner.invoke(
             app,
@@ -354,16 +355,19 @@ class TestPipeline:
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_with_custom_config_with_absolute_defaults_path(
-        self, snapshot: SnapshotTest
+        self,
+        snapshot: SnapshotTest,
     ):
-        with open(RESOURCE_PATH / "custom-config/config.yaml", "r") as rel_config_yaml:
+        with Path(RESOURCE_PATH / "custom-config/config.yaml").open(
+            "r"
+        ) as rel_config_yaml:
             config_dict: dict = yaml.safe_load(rel_config_yaml)
         config_dict["defaults_path"] = str(
-            (RESOURCE_PATH / "no-topics-defaults").absolute()
+            (RESOURCE_PATH / "no-topics-defaults").absolute(),
         )
         temp_config_path = RESOURCE_PATH / "custom-config/temp_config.yaml"
         try:
-            with open(temp_config_path, "w") as abs_config_yaml:
+            with temp_config_path.open("w") as abs_config_yaml:
                 yaml.dump(config_dict, abs_config_yaml)
             result = runner.invoke(
                 app,
@@ -450,7 +454,7 @@ class TestPipeline:
             [
                 "generate",
                 "--pipeline-base-dir",
-                PIPELINE_BASE_DIR,
+                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "pipeline-with-short-topics/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "pipeline-with-short-topics"),
@@ -500,7 +504,7 @@ class TestPipeline:
                     str(PIPELINE_BASE_DIR_PATH),
                     str(
                         RESOURCE_PATH
-                        / "pipeline-with-illegal-kubernetes-name/pipeline.yaml"
+                        / "pipeline-with-illegal-kubernetes-name/pipeline.yaml",
                     ),
                     "tests.pipeline.test_components",
                     "--defaults",

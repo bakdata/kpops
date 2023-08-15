@@ -1182,7 +1182,8 @@
                             "$ref": "#/definitions/OutputTopicTypes"
                         }
                     ],
-                    "description": "Topic type"
+                    "description": "Topic type",
+                    "title": "Topic type"
                 },
                 "value_schema": {
                     "description": "Value schema class name",
@@ -1190,9 +1191,6 @@
                     "type": "string"
                 }
             },
-            "required": [
-                "type"
-            ],
             "title": "TopicConfig",
             "type": "object"
         }
