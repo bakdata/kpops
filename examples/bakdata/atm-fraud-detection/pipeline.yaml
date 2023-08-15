@@ -1,4 +1,4 @@
-- type: producer
+- type: producer-app
   name: account-producer
   app:
     replicaCount: 1
@@ -11,7 +11,7 @@
         enabled: false
     debug: true
 
-- type: producer
+- type: producer-app
   name: transaction-avro-producer
   app:
     replicaCount: 1

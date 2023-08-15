@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import Literal
 
 import pytest
 from pydantic import Field
@@ -11,7 +10,7 @@ from typer.testing import CliRunner
 
 from kpops.cli.main import app
 from kpops.components.base_components import PipelineComponent
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
@@ -19,73 +18,24 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 runner = CliRunner()
 
 
-# schema_type and type not defined
+# type is inherited from PipelineComponent
 class EmptyPipelineComponent(PipelineComponent):
-    ...
-
-
-# schema_type does not exist
-class PipelineComponentNoSchemaType(EmptyPipelineComponent):
-    type: str = "pipeline-component-no-schema-type"
+    class Config:
+        anystr_strip_whitespace = True
 
 
 class SubPipelineComponent(EmptyPipelineComponent):
-    type: str = "sub-pipeline-component"
-    schema_type: Literal["sub-pipeline-component"] = Field(
-        default="sub-pipeline-component", exclude=True
-    )
+    ...
 
 
-# schema_type is inherited from SubPipelineComponent
-class SubPipelineComponentNoSchemaType(SubPipelineComponent):
-    type: str = "sub-pipeline-component-no-schema-type"
-
-
-# schema_type and type are inherited from SubPipelineComponent
+# type is inherited from SubPipelineComponent
 class SubPipelineComponentNoSchemaTypeNoType(SubPipelineComponent):
     ...
 
 
-# schema_type not Literal
-class SubPipelineComponentBadSchemaTypeDef(SubPipelineComponent):
-    type: str = "sub-pipeline-component-bad-schema-type-def"
-    schema_type: str = "sub-pipeline-component-bad-schema-type-def"
-
-
-# schema_type Literal arg not same as default value
-class SubPipelineComponentBadSchemaTypeNoMatchDefault(SubPipelineComponent):
-    type: str = "sub-pipeline-component-bad-schema-type-no-match-default"
-    schema_type: Literal[
-        "sub-pipeline-component-bad-schema-type-no-match-default-NO-MATCH"
-    ] = Field(
-        default="sub-pipeline-component-bad-schema-type-no-match-default", exclude=True
-    )
-
-
-# schema_type not matching type
-class SubPipelineComponentBadSchemaTypeDefNotMatching(SubPipelineComponent):
-    type: str = "sub-pipeline-component-not-matching"
-    schema_type: Literal[
-        "sub-pipeline-component-bad-schema-type-def-not-matching"
-    ] = Field(
-        default="sub-pipeline-component-bad-schema-type-def-not-matching", exclude=True
-    )
-
-
-# schema_type no default
-class SubPipelineComponentBadSchemaTypeMissingDefault(SubPipelineComponent):
-    type: str = "sub-pipeline-component-bad-schema-type-default-not-set"
-    schema_type: Literal[
-        "sub-pipeline-component-bad-schema-type-default-not-set"
-    ] = Field(exclude=True)
-
-
 # Correctly defined
 class SubPipelineComponentCorrect(SubPipelineComponent):
-    type: str = "sub-pipeline-component-correct"
-    schema_type: Literal["sub-pipeline-component-correct"] = Field(
-        default="sub-pipeline-component-correct", exclude=True
-    )
+    ...
 
 
 # Correctly defined, docstr test
@@ -101,7 +51,7 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
 
     ,
 
-    :param type: Parameter description looks correct and it is not included in
+    :param example_attr: Parameter description looks correct and it is not included in
         the class description,
         terminates here ,
         defaults to anything really, this here should not be included as it follows
@@ -109,21 +59,11 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
         if error_marker is found in result.stdout, the description extraction does
         not work correctly.,!?:error_marker   :: "!$%
     :type type: This line should not appear anywhere error_marker
-    :param schema_type: This description should not be applied to schema_type as
-        it instead reads the class description. error_marker
-    :type schema_type: This line should not appear anywhere error_marker
     :param error_marker: error_marker
     """
 
-    type: str = Field(
-        default="sub-pipeline-component-correct-docstr",
-        description=describe_attr("type", __doc__),
-        const=True,
-    )
-    schema_type: Literal["sub-pipeline-component-correct-docstr"] = Field(
-        default="sub-pipeline-component-correct-docstr",
-        description=describe_object(__doc__),
-        exclude=True,
+    example_attr: str = Field(
+        default=..., description=describe_attr("example_attr", __doc__)
     )
 
 

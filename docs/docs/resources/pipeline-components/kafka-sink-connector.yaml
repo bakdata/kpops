@@ -1,15 +1,12 @@
 # Kafka sink connector
 - type: kafka-sink-connector
-  name: kafka-sink-connector # required,
-  namespace: namespace # required, clean up jobs for the connector will run here
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example. Extensive documentation on
-  # sink connectors: https://kafka.apache.org/documentation/#sinkconnectconfigs
-  app: # required
-    tasks.max: 1
+  name: kafka-sink-connector # required
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
   # Topic(s) from which the component will read input
-  from:
-    topics: # required
+  from: # Must not be null
+    topics: # read from topic
       ${pipeline_name}-input-topic:
         type: input # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
       ${pipeline_name}-extra-topic:
@@ -47,20 +44,23 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
+  namespace: namespace # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example. Extensive documentation on
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
+  app: # required
+    tasks.max: 1
   # Helm repository configuration for resetter
-  repoConfig:
-    repositoryName: my-repo # required
+  repo_config:
+    repository_name: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags:
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  version: "1.0.4" # Helm chart version
+  version: "1.0.6" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
-  resetterValues:
+  resetter_values:
     imageTag: "1.2.3"

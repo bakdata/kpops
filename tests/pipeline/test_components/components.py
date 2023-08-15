@@ -1,5 +1,3 @@
-from typing import Any
-
 from schema_registry.client.schema import AvroSchema
 from typing_extensions import override
 
@@ -9,7 +7,7 @@ from kpops.component_handlers.schema_handler.schema_provider import (
 )
 from kpops.components import KafkaSinkConnector
 from kpops.components.base_components import PipelineComponent
-from kpops.components.base_components.models import TopicName
+from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -18,12 +16,12 @@ from kpops.components.base_components.models.to_section import (
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
-class ImportProducer(ProducerApp):
-    type: str = "scheduled-producer"
+class ScheduledProducer(ProducerApp):
+    ...
 
 
 class Converter(StreamsApp):
-    type: str = "converter"
+    ...
 
 
 class SubStreamsApp(StreamsApp):
@@ -33,20 +31,17 @@ class SubStreamsApp(StreamsApp):
 class Filter(SubStreamsApp):
     """Subsubclass of StreamsApp to test inheritance."""
 
-    type: str = "filter"
 
-
-class InflateStep(StreamsApp):
-    type: str = "should-inflate"
-
+class ShouldInflate(StreamsApp):
     @override
     def inflate(self) -> list[PipelineComponent]:
         inflate_steps = super().inflate()
         if self.to:
+            name = self.name.removeprefix(self.prefix)
             for topic_name, topic_config in self.to.topics.items():
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
-                        name="inflated-sink-connector",
+                        name=f"{name}-inflated-sink-connector",
                         config=self.config,
                         handlers=self.handlers,
                         namespace="example-namespace",
@@ -67,7 +62,7 @@ class InflateStep(StreamsApp):
                     )
                     inflate_steps.append(kafka_connector)
                     streams_app = StreamsApp(
-                        name="inflated-streams-app",
+                        name=f"{name}-inflated-streams-app",
                         config=self.config,
                         handlers=self.handlers,
                         to=ToSection(  # type: ignore
@@ -84,7 +79,9 @@ class InflateStep(StreamsApp):
 
 
 class TestSchemaProvider(SchemaProvider):
-    def provide_schema(self, schema_class: str, models: dict[str, Any]) -> Schema:
+    def provide_schema(
+        self, schema_class: str, models: dict[ModelName, ModelVersion]
+    ) -> Schema:
         schema = {
             "type": "record",
             "namespace": "KPOps",

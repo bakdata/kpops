@@ -1,4 +1,4 @@
-- type: producer
+- type: producer-app
   name: account-producer
   namespace: test
   app:

@@ -1,12 +1,14 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterator
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseConfig, BaseModel, Extra, Field
+from typing_extensions import override
 
+from kpops.component_handlers.helm_wrapper.exception import ParseError
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import DescConfig
 
 
 class HelmDiffConfig(BaseModel):
@@ -21,14 +23,11 @@ class RepoAuthFlags(BaseModel):
     """Authorisation-related flags for `helm repo`
 
     :param username: Username, defaults to None
-    :type username: str, optional
     :param password: Password, defaults to None
-    :type password: str, optional
-    :param ca_file: Certificate file, defaults to None
-    :type ca_file: Path, optional
+    :param ca_file: Path to CA bundle file to verify certificates of HTTPS-enabled servers, defaults to None
+    :param cert_file: Path to SSL certificate file to identify HTTPS client, defaults to None
     :param insecure_skip_tls_verify: If true, Kubernetes API server's certificate will not be checked for validity
         , defaults to False
-    :type insecure_skip_tls_verify: bool, optional
     """
 
     username: str | None = Field(
@@ -40,23 +39,37 @@ class RepoAuthFlags(BaseModel):
     ca_file: Path | None = Field(
         default=None, description=describe_attr("ca_file", __doc__)
     )
+    cert_file: Path | None = Field(
+        default=None, description=describe_attr("cert_file", __doc__)
+    )
     insecure_skip_tls_verify: bool = Field(
         default=False, description=describe_attr("insecure_skip_tls_verify", __doc__)
     )
 
-    class Config(CamelCaseConfig, DescConfig):
+    class Config(DescConfig):
         pass
+
+    def to_command(self) -> list[str]:
+        command: list[str] = []
+        if self.username:
+            command.extend(["--username", self.username])
+        if self.password:
+            command.extend(["--password", self.password])
+        if self.ca_file:
+            command.extend(["--ca-file", str(self.ca_file)])
+        if self.cert_file:
+            command.extend(["--cert-file", str(self.cert_file)])
+        if self.insecure_skip_tls_verify:
+            command.append("--insecure-skip-tls-verify")
+        return command
 
 
 class HelmRepoConfig(BaseModel):
     """Helm repository configuration
 
     :param repository_name: Name of the Helm repository
-    :type repository_name: str
     :param url: URL to the Helm repository
-    :type url: str
     :param repo_auth_flags: Authorisation-related flags
-    :type repo_auth_flags: RepoAuthFlags
     """
 
     repository_name: str = Field(
@@ -67,42 +80,90 @@ class HelmRepoConfig(BaseModel):
         default=RepoAuthFlags(), description=describe_attr("repo_auth_flags", __doc__)
     )
 
-    class Config(CamelCaseConfig, DescConfig):
+    class Config(DescConfig):
         pass
 
 
 class HelmConfig(BaseModel):
+    """Global Helm configuration
+
+    :param context: Name of kubeconfig context (`--kube-context`)
+    :param debug: Run Helm in Debug mode
+    :param api_version: Kubernetes API version used for Capabilities.APIVersions
+    """
+
     context: str | None = Field(
         default=None,
-        description="Set the name of the kubeconfig context. (--kube-context)",
+        description=describe_attr("context", __doc__),
         example="dev-storage",
     )
     debug: bool = Field(
         default=False,
-        description="Run Helm in Debug mode.",
+        description=describe_attr("debug", __doc__),
+    )
+    api_version: str | None = Field(
+        default=None,
+        title="API version",
+        description=describe_attr("api_version", __doc__),
     )
 
+    class Config(DescConfig):
+        pass
 
-@dataclass
-class HelmUpgradeInstallFlags:
+
+class HelmFlags(RepoAuthFlags):
+    set_file: dict[str, Path] = Field(default_factory=dict)
     create_namespace: bool = False
-    force: bool = False
-    repo_auth_flags: RepoAuthFlags = field(default_factory=RepoAuthFlags)
-    timeout: str = "5m0s"
     version: str | None = None
+    force: bool = False
+    timeout: str = "5m0s"
     wait: bool = True
     wait_for_jobs: bool = False
 
+    class Config(BaseConfig):
+        extra = Extra.allow
+
+    @override
+    def to_command(self) -> list[str]:
+        command = super().to_command()
+        if self.set_file:
+            command.extend(
+                [
+                    "--set-file",
+                    ",".join([f"{key}={path}" for key, path in self.set_file.items()]),
+                ]
+            )
+        if self.create_namespace:
+            command.append("--create-namespace")
+        if self.version:
+            command.extend(["--version", self.version])
+        if self.force:
+            command.append("--force")
+        if self.timeout:
+            command.extend(["--timeout", self.timeout])
+        if self.wait:
+            command.append("--wait")
+        if self.wait_for_jobs:
+            command.append("--wait-for-jobs")
+        return command
+
+
+class HelmUpgradeInstallFlags(HelmFlags):
+    ...
+
+
+class HelmTemplateFlags(HelmFlags):
+    api_version: str | None = None
+
+    @override
+    def to_command(self) -> list[str]:
+        command = super().to_command()
+        if self.api_version:
+            command.extend(["--api-versions", self.api_version])
+        return command
+
 
 HELM_SOURCE_PREFIX = "# Source: "
-
-
-@dataclass
-class HelmTemplateFlags:
-    api_version: str | None = None
-    ca_file: str | None = None
-    cert_file: str | None = None
-    version: str | None = None
 
 
 @dataclass
@@ -119,7 +180,7 @@ class HelmTemplate:
         # Source: chart/templates/serviceaccount.yaml
         """
         if not source.startswith(HELM_SOURCE_PREFIX):
-            raise ValueError("Not a valid Helm template source")
+            raise ParseError("Not a valid Helm template source")
         return source.removeprefix(HELM_SOURCE_PREFIX).strip()
 
     @classmethod
@@ -131,25 +192,49 @@ class HelmTemplate:
 # Indicates the beginning of `NOTES:` section in the output of `helm install` or
 # `helm upgrade`
 HELM_NOTES = "\n\nNOTES:\n"
+HELM_MANIFEST = "MANIFEST:\n"
 
 
-@dataclass
-class YamlReader:
+@dataclass(frozen=True)
+class HelmChart:
     content: str
 
     def __iter__(self) -> Iterator[str]:
-        # discard all output before template documents
-        start = self.content.index("---")
-        if HELM_NOTES in self.content:
-            end = self.content.index(HELM_NOTES)
-        else:
-            end = -1
-        self.content = self.content[start:end]
-        yield from self.content.splitlines()
+        yield from self.manifest.splitlines()
         yield "---"  # add final divider to make parsing easier
 
+    @property
+    def manifest(self) -> str:
+        """
+        Reads the manifest section of Helm stdout. `helm upgrade --install` output message contains three sections
+        in the following order:
 
-@dataclass
+        - HOOKS
+        - MANIFEST
+        - NOTES (optional)
+
+        The content of the manifest is used to create the diff. If a NOTES.txt exists in the Helm chart, the NOTES
+        section will be included in the output.
+
+        It is important to note that the `helm get manifest` command only returns the manifests without the MANIFEST
+        header in the stdout. Instead, the output starts with `---`.
+
+        :return: The content of the manifest section
+        """
+        manifest_start = (
+            self.content.index(HELM_MANIFEST) + len(HELM_MANIFEST)
+            if HELM_MANIFEST in self.content
+            else self.content.index("---")
+        )
+
+        manifest_end = (
+            self.content.index(HELM_NOTES) if HELM_NOTES in self.content else -1
+        )
+
+        return self.content[manifest_start:manifest_end]
+
+
+@dataclass(frozen=True)
 class Version:
     major: int
     minor: int = 0

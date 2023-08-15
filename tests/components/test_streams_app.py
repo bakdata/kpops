@@ -9,7 +9,6 @@ from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
     HelmUpgradeInstallFlags,
-    RepoAuthFlags,
 )
 from kpops.components import StreamsApp
 from kpops.components.base_components.models import TopicName
@@ -334,12 +333,10 @@ class TestStreamsApp:
                 HelmUpgradeInstallFlags(
                     create_namespace=False,
                     force=False,
-                    repo_auth_flags=RepoAuthFlags(
-                        username=None,
-                        password=None,
-                        ca_file=None,
-                        insecure_skip_tls_verify=False,
-                    ),
+                    username=None,
+                    password=None,
+                    ca_file=None,
+                    insecure_skip_tls_verify=False,
                     timeout="5m0s",
                     version="2.9.0",
                     wait=True,

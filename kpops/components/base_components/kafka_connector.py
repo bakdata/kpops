@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Literal, NoReturn
+from typing import NoReturn
 
 from pydantic import Field
 from typing_extensions import override
@@ -12,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmFlags,
     HelmRepoConfig,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
@@ -27,8 +28,7 @@ from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr, describe_object
-from kpops.utils.pydantic import CamelCaseConfig
+from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("KafkaConnector")
 
@@ -38,11 +38,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
     Should only be used to set defaults
 
-    :param type: Component type, defaults to "kafka-connector"
-    :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-connector"
-    :type schema_type: Literal["kafka-connector"], optional
     :param app: Application-specific settings
     :type app: KafkaAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for
@@ -58,12 +53,9 @@ class KafkaConnector(PipelineComponent, ABC):
     :type resetter_values: dict, optional
     """
 
-    type: str = Field(default="kafka-connector", description="Component type")
-    schema_type: Literal["kafka-connector"] = Field(
-        default="kafka-connector",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
+    namespace: str = Field(
+        default=...,
+        description=describe_attr("namespace", __doc__),
     )
     app: KafkaConnectConfig = Field(
         default=...,
@@ -76,18 +68,13 @@ class KafkaConnector(PipelineComponent, ABC):
         ),
         description=describe_attr("repo_config", __doc__),
     )
-    namespace: str = Field(
-        default=...,
-        description=describe_attr("namespace", __doc__),
+    version: str | None = Field(
+        default="1.0.4", description=describe_attr("version", __doc__)
     )
-    version: str | None = Field(default="1.0.4", description="Helm chart version")
     resetter_values: dict = Field(
         default_factory=dict,
         description=describe_attr("resetter_values", __doc__),
     )
-
-    class Config(CamelCaseConfig):
-        pass
 
     @cached_property
     def helm(self) -> Helm:
@@ -118,6 +105,23 @@ class KafkaConnector(PipelineComponent, ABC):
     def kafka_connect_resetter_chart(self) -> str:
         """Resetter chart for this component"""
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
+
+    @property
+    def helm_flags(self) -> HelmFlags:
+        """Return shared flags for Helm commands"""
+        return HelmFlags(
+            **self.repo_config.repo_auth_flags.dict(),
+            version=self.version,
+            create_namespace=self.config.create_namespace,
+        )
+
+    @property
+    def template_flags(self) -> HelmTemplateFlags:
+        """Return flags for Helm template command"""
+        return HelmTemplateFlags(
+            **self.helm_flags.dict(),
+            api_version=self.config.helm_config.api_version,
+        )
 
     @override
     def deploy(self, dry_run: bool) -> None:
@@ -271,7 +275,7 @@ class KafkaConnector(PipelineComponent, ABC):
             **KafkaConnectResetterValues(
                 config=KafkaConnectResetterConfig(
                     connector=connector_name,
-                    brokers=self.config.broker,
+                    brokers=self.config.brokers,
                     **kwargs,
                 ),
                 connector_type=connector_type.value,
@@ -298,27 +302,11 @@ class KafkaConnector(PipelineComponent, ABC):
 class KafkaSourceConnector(KafkaConnector):
     """Kafka source connector model
 
-    :param type: Component type, defaults to "kafka-source-connector"
-    :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-source-connector"
-    :type schema_type: Literal["kafka-source-connector"], optional
     :param offset_topic: offset.storage.topic,
         more info: https://kafka.apache.org/documentation/#connect_running,
         defaults to None
-    :type schema_type: str, optional
     """
 
-    type: str = Field(
-        default="kafka-source-connector",
-        description=describe_attr("type", __doc__),
-    )
-    schema_type: Literal["kafka-source-connector"] = Field(
-        default="kafka-source-connector",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     offset_topic: str | None = Field(
         default=None,
         description=describe_attr("offset_topic", __doc__),
@@ -329,10 +317,7 @@ class KafkaSourceConnector(KafkaConnector):
         raise NotImplementedError("Kafka source connector doesn't support FromSection")
 
     @override
-    def template(
-        self, api_version: str | None, ca_file: str | None, cert_file: str | None
-    ) -> None:
-        flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
+    def template(self) -> None:
         values = self._get_kafka_connect_resetter_values(
             self.name,
             KafkaConnectorType.SOURCE,
@@ -343,7 +328,7 @@ class KafkaSourceConnector(KafkaConnector):
             self._get_resetter_helm_chart(),
             self.namespace,
             values,
-            flags,
+            self.template_flags,
         )
         print(stdout)
 
@@ -372,25 +357,7 @@ class KafkaSourceConnector(KafkaConnector):
 
 
 class KafkaSinkConnector(KafkaConnector):
-    """Kafka sink connector model
-
-    :param type: Component type, defaults to "kafka-sink-connector"
-    :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-sink-connector"
-    :type schema_type: Literal["kafka-sink-connector"], optional
-    """
-
-    type: str = Field(
-        default="kafka-sink-connector",
-        description=describe_attr("type", __doc__),
-    )
-    schema_type: Literal["kafka-sink-connector"] = Field(
-        default="kafka-sink-connector",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
+    """Kafka sink connector model"""
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
@@ -400,10 +367,7 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "topics", ",".join(topics))
 
     @override
-    def template(
-        self, api_version: str | None, ca_file: str | None, cert_file: str | None
-    ) -> None:
-        flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
+    def template(self) -> None:
         values = self._get_kafka_connect_resetter_values(
             self.name, KafkaConnectorType.SINK
         )
@@ -412,7 +376,7 @@ class KafkaSinkConnector(KafkaConnector):
             self._get_resetter_helm_chart(),
             self.namespace,
             values,
-            flags,
+            self.template_flags,
         )
         print(stdout)
 

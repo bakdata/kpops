@@ -7,16 +7,16 @@ from kpops.components.base_components.models.to_section import OutputTopicTypes
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
-class ImportProducer(ProducerApp):
-    type: str = "scheduled-producer"
+class ScheduledProducer(ProducerApp):
+    ...
 
 
 class Converter(StreamsApp):
-    type: str = "converter"
+    ...
 
 
-class InflateStep(StreamsApp):
-    type: str = "should-inflate"
+class ShouldInflate(StreamsApp):
+    ...
 
     @override
     def inflate(self) -> list[PipelineComponent]:

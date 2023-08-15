@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from typing import Literal
 
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
@@ -15,7 +14,7 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
 )
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 log = logging.getLogger("KafkaApp")
@@ -61,11 +60,6 @@ class KafkaApp(KubernetesApp):
 
     Producer or streaming apps should inherit from this class.
 
-    :param type: Component type, defaults to "kafka-app"
-    :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-app"
-    :type schema_type: Literal["kafka-app"], optional
     :param app: Application-specific settings
     :type app: KafkaAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for
@@ -76,13 +70,6 @@ class KafkaApp(KubernetesApp):
     :type version: str, optional
     """
 
-    type: str = Field(default="kafka-app", description="Component type")
-    schema_type: Literal["kafka-app"] = Field(
-        default="kafka-app",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     app: KafkaAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),

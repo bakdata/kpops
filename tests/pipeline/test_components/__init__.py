@@ -1,7 +1,7 @@
-from tests.pipeline.test_components.components import (  # noqa F401
+from tests.pipeline.test_components.components import (
     Converter,
     Filter,
-    ImportProducer,
-    InflateStep,
+    ScheduledProducer,
+    ShouldInflate,
     TestSchemaProvider,
 )

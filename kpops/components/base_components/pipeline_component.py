@@ -1,8 +1,5 @@
 from __future__ import annotations
 
-from functools import cached_property
-from typing import Literal
-
 from pydantic import Extra, Field
 
 from kpops.components.base_components.base_defaults_component import (
@@ -18,8 +15,8 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
-from kpops.utils.docstring import describe_attr, describe_object
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import DescConfig
 
 
 class PipelineComponent(BaseDefaultsComponent):
@@ -27,54 +24,36 @@ class PipelineComponent(BaseDefaultsComponent):
 
     :param name: Component name
     :type name: str
-    :param from_: Topic(s) and/or components from which the component will read
-        input, defaults to None
-    :type from_: FromSection, optional
-    :param app: Application-specific settings, defaults to None
-    :type app: object, optional
-    :param to: Topic(s) into which the component will write output,
-        defaults to None
-    :type to: ToSection, optional
     :param prefix: Pipeline prefix that will prefix every component name.
         If you wish to not have any prefix you can specify an empty string.,
         defaults to "${pipeline_name}-"
     :type prefix: str, optional
+    :param from_: Topic(s) and/or components from which the component will read
+        input, defaults to None
+    :type from_: FromSection, optional
+    :param to: Topic(s) into which the component will write output,
+        defaults to None
+    :type to: ToSection, optional
     """
 
-    type: str = Field(
-        default="pipeline-component",
-        description=describe_attr("type", __doc__),
-        const=True,
-    )
-    schema_type: Literal["pipeline-component"] = Field(
-        default="pipeline-component",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     name: str = Field(default=..., description=describe_attr("name", __doc__))
+    prefix: str = Field(
+        default="${pipeline_name}-",
+        description=describe_attr("prefix", __doc__),
+    )
     from_: FromSection | None = Field(
         default=None,
         alias="from",
         title="From",
         description=describe_attr("from_", __doc__),
     )
-    app: object | None = Field(
-        default=None,
-        description=describe_attr("app", __doc__),
-    )
     to: ToSection | None = Field(
         default=None,
         description=describe_attr("to", __doc__),
     )
-    prefix: str = Field(
-        default="${pipeline_name}-",
-        description=describe_attr("prefix", __doc__),
-    )
 
-    class Config(CamelCaseConfig, DescConfig):
+    class Config(DescConfig):
         extra = Extra.allow
-        keep_untouched = (cached_property,)
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -217,9 +196,7 @@ class PipelineComponent(BaseDefaultsComponent):
         """
         return [self]
 
-    def template(
-        self, api_version: str | None, ca_file: str | None, cert_file: str | None
-    ) -> None:
+    def template(self) -> None:
         """
         Runs `helm template`
 
@@ -227,16 +204,6 @@ class PipelineComponent(BaseDefaultsComponent):
         Any values that would normally be looked up or retrieved in-cluster will
         be faked locally. Additionally, none of the server-side testing of chart
         validity (e.g. whether an API is supported) is done.
-
-        :param api_version: Kubernetes API version used for
-            Capabilities.APIVersions, `--api_versions` in Helm
-        :type api_version: str, optional
-        :param ca_file: verify certificates of HTTPS-enabled servers using this
-            CA bundle, `--ca-file` in Helm
-        :type ca_file: str, optional
-        :param cert_file: identify HTTPS client using this SSL certificate file,
-            `--cert-file` in Helm
-        :type cert_file: str, optional
         """
 
     def deploy(self, dry_run: bool) -> None:

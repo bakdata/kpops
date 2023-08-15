@@ -1,46 +1,25 @@
 from __future__ import annotations
 
-from typing import Literal
-
-from pydantic import Extra, Field
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import StreamsAppConfig
-from kpops.utils.docstring import describe_attr, describe_object
-from kpops.utils.pydantic import DescConfig
+from kpops.utils.docstring import describe_attr
 
 
 class StreamsApp(KafkaApp):
     """StreamsApp component that configures a streams bootstrap app
 
-    :param type: Component type, defaults to "streams-app"
-    :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "streams-app"
-    :type schema_type: Literal["streams-app"], optional
     :param app: Application-specific settings
     :type app: StreamsAppConfig
     """
 
-    type: str = Field(
-        default="streams-app",
-        description=describe_attr("type", __doc__),
-    )
-    schema_type: Literal["streams-app"] = Field(
-        default="streams-app",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     app: StreamsAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )
-
-    class Config(DescConfig):
-        extra = Extra.allow
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
@@ -70,8 +49,9 @@ class StreamsApp(KafkaApp):
     def add_extra_output_topic(self, topic_name: str, role: str) -> None:
         self.app.streams.extra_output_topics[role] = topic_name
 
+    @property
     @override
-    def get_helm_chart(self) -> str:
+    def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.STREAMS_APP.value}"
 
     @property

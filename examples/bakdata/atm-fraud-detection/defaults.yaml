@@ -10,11 +10,11 @@ kafka-connector:
 kafka-app:
   app:
     streams:
-      brokers: ${broker}
+      brokers: ${brokers}
       schemaRegistryUrl: ${schema_registry_url}
       optimizeLeaveGroupBehavior: false
 
-producer:
+producer-app:
   to:
     topics:
       ${output_topic_name}:
