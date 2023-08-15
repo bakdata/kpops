@@ -1,13 +1,13 @@
-- type: producer
+- type: producer-app
   name: component-input
 
-- type: producer
+- type: producer-app
   name: component-extra
 
-- type: producer
+- type: producer-app
   name: component-input-pattern
 
-- type: producer
+- type: producer-app
   name: component-extra-pattern
 
 - type: streams-app

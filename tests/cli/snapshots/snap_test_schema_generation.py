@@ -377,7 +377,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "integer"
                 },
                 "role": {
-                    "description": "Custom identifier belonging to one or multiple topics, define only if `type` is undefined",
+                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
                     "title": "Role",
                     "type": "string"
                 },
@@ -387,7 +387,8 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                             "$ref": "#/definitions/OutputTopicTypes"
                         }
                     ],
-                    "description": "Topic type"
+                    "description": "Topic type",
+                    "title": "Topic type"
                 },
                 "value_schema": {
                     "description": "Value schema class name",

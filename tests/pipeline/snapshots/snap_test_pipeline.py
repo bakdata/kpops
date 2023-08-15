@@ -339,8 +339,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                     'should-inflate-inflated-sink-connector': {
                         'configs': {
                         },
-                        'role': 'test',
-                        'type': 'extra'
+                        'role': 'test'
                     }
                 }
             },
