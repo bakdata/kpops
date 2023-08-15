@@ -1172,7 +1172,7 @@
                     "type": "integer"
                 },
                 "role": {
-                    "description": "Custom identifier belonging to one or multiple topics, define only if `type` is undefined",
+                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
                     "title": "Role",
                     "type": "string"
                 },
@@ -1190,6 +1190,9 @@
                     "type": "string"
                 }
             },
+            "required": [
+                "type"
+            ],
             "title": "TopicConfig",
             "type": "object"
         }

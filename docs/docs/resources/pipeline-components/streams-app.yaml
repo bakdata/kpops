@@ -5,23 +5,39 @@
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # Topic(s) from which the component will read input
   from: # Must not be null
     topics: # read from topic
       ${pipeline_name}-input-topic:
-        type: input # required
-        # role: topic-role # only used if type is `extra` or `extra-pattern`
+        type: input # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+      ${pipeline_name}-extra-topic:
+        role: topic-role # Implies `type` to be extra
+      ${pipeline_name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      ${pipeline_name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `role` undefined
+        role: some-role
     components: # read from specific component
-      producer-app:
-        type: input # required
+      account-producer:
+        type: output # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+      other-producer:
+        role: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `role` undefined
+        role: some-role
   # Topic(s) into which the component will write output
   to:
     topics:
       ${pipeline_name}-output-topic:
-        type: output # required
-        # role: topic-role # only used if type is `extra`
-        key_schema: key-schema # must implement SchemaProvider to use
-        value_schema: value-schema
+        type: output # Implied when role is NOT specified
+      ${pipeline_name}-extra-topic:
+        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline_name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        keySchema: key-schema # must implement SchemaProvider to use
+        valueSchema: value-schema
         partitions_count: 1
         replication_factor: 1
         configs: # https://kafka.apache.org/documentation/#topicconfigs
@@ -85,52 +101,10 @@
       topics: # List of auto-generated Kafka Streams topics used by the streams app.
         - topic1
         - topic2
-  # Topic(s) from which the component will read input
-  from:
-    topics: # required
-      ${pipeline_name}-input-topic:
-        type: input # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
-      ${pipeline_name}-extra-topic:
-        role: topic-role # Implies `type` to be extra
-      ${pipeline_name}-input-pattern-topic:
-        type: pattern # Implied to be an input pattern if `role` is undefined
-      ${pipeline_name}-extra-pattern-topic:
-        type: pattern # Implied to be an extra pattern if `role` undefined
-        role: some-role
-    components: # read from specific component
-      account-producer:
-        type: output # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
-      other-producer:
-        role: some-role # Implies `type` to be extra
-      component-as-input-pattern:
-        type: pattern # Implied to be an input pattern if `role` is undefined
-      component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `role` undefined
-        role: some-role
-  # Topic(s) into which the component will write output
-  to:
-    topics: # required
-      ${pipeline_name}-output-topic:
-        type: output # Implied when role is NOT specified
-      ${pipeline_name}-extra-topic:
-        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
-      ${pipeline_name}-error-topic:
-        type: error
-        # Currently KPOps supports Avro and JSON schemas.
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
-        partitions_count: 1
-        replication_factor: 1
-        configs: # https://kafka.apache.org/documentation/#topicconfigs
-          cleanup.policy: compact
-    models: # SchemaProvider is initiated with the values given here
-      model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
-  # Helm repository configuration, the default value is given here
-  repoConfig:
-    repositoryName: bakdata-streams-bootstrap # required
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
     url: https://bakdata.github.io/streams-bootstrap/ # required
     repo_auth_flags:
       username: user

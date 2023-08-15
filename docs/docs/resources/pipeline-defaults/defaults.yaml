@@ -20,15 +20,30 @@ kafka-connector:
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # Topic(s) from which the component will read input
   from: # Must not be null
     topics: # read from topic
       ${pipeline_name}-input-topic:
-        type: input
-        # role: topic-role `extra-pattern`
+        type: input # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+      ${pipeline_name}-extra-topic:
+        role: topic-role # Implies `type` to be extra
+      ${pipeline_name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      ${pipeline_name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `role` undefined
+        role: some-role
+    components: # read from specific component
+      account-producer:
+        type: output # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+      other-producer:
+        role: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `role` undefined
+        role: some-role
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # Implied when role is NOT specified
       ${pipeline_name}-extra-topic:
@@ -86,23 +101,39 @@ kubernetes-app:
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # Topic(s) from which the component will read input
   from: # Must not be null
     topics: # read from topic
       ${pipeline_name}-input-topic:
-        type: input # required
-        # role: topic-role # only used if type is `extra` or `extra-pattern`
+        type: input # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+      ${pipeline_name}-extra-topic:
+        role: topic-role # Implies `type` to be extra
+      ${pipeline_name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      ${pipeline_name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `role` undefined
+        role: some-role
     components: # read from specific component
-      producer-app:
-        type: input # required
+      account-producer:
+        type: output # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+      other-producer:
+        role: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `role` undefined
+        role: some-role
   # Topic(s) into which the component will write output
   to:
     topics:
       ${pipeline_name}-output-topic:
-        type: output # required
-        # role: topic-role # only used if type is `extra`
-        key_schema: key-schema # must implement SchemaProvider to use
-        value_schema: value-schema
+        type: output # Implied when role is NOT specified
+      ${pipeline_name}-extra-topic:
+        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline_name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        keySchema: key-schema # must implement SchemaProvider to use
+        valueSchema: value-schema
         partitions_count: 1
         replication_factor: 1
         configs: # https://kafka.apache.org/documentation/#topicconfigs
@@ -207,101 +238,3 @@ streams-app:
       topics: # List of auto-generated Kafka Streams topics used by the streams app.
         - topic1
         - topic2
-#
-# Holds configuration to use as values for the streams bootstrap producer Helm
-# chart.
-#
-# Child of: KafkaApp
-# More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
-producer:
-  # Allowed configs:
-  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
-  app:
-    streams:
-      outputTopic: output_topic
-      extraOutputTopics: 
-        output_role1: output_topic1
-        output_role2: output_topic2
-#
-# Kafka connector
-#
-# Parent of: KafkaSinkConnector, KafkaSourceConnector
-# Child of: PipelineComponent
-kafka-connector:
-  name: kafka-connector
-  namespace: namespace # Clean up jobs for the connector will run here
-  # `app` contains application-specific settings. Extensive documentation on
-  # connectors: https://kafka.apache.org/documentation/#connectconfigs
-  app:
-    tasks.max: 1 # example
-  # Topic(s) from which the component will read input
-  from:
-    topics: # required
-      ${pipeline_name}-input-topic:
-        type: input # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
-      ${pipeline_name}-extra-topic:
-        role: topic-role # Implies `type` to be extra
-      ${pipeline_name}-input-pattern-topic:
-        type: pattern # Implied to be an input pattern if `role` is undefined
-      ${pipeline_name}-extra-pattern-topic:
-        type: pattern # Implied to be an extra pattern if `role` undefined
-        role: some-role
-    components: # read from specific component
-      account-producer:
-        type: output # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
-      other-producer:
-        role: some-role # Implies `type` to be extra
-      component-as-input-pattern:
-        type: pattern # Implied to be an input pattern if `role` is undefined
-      component-as-extra-pattern:
-        type: pattern # Implied to be an extra pattern if `role` undefined
-        role: some-role
-  # Topic(s) into which the component will write output
-  to:
-    topics: # required
-      ${pipeline_name}-output-topic:
-        type: output # Implied when role is NOT specified
-      ${pipeline_name}-extra-topic:
-        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
-      ${pipeline_name}-error-topic:
-        type: error
-        # Currently KPOps supports Avro and JSON schemas.
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
-        partitions_count: 1
-        replication_factor: 1
-        configs: # https://kafka.apache.org/documentation/#topicconfigs
-          cleanup.policy: compact
-    models: # SchemaProvider is initiated with the values given here
-      model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
-  # Helm repository configuration for resetter
-  repoConfig:
-    repositoryName: my-repo
-    url: https://bakdata.github.io/kafka-connect-resetter/
-    repoAuthFlags: 
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "1.0.4" # Helm chart version
-  # Overriding Kafka Connect Resetter Helm values. E.g. to override the
-  # Image Tag etc.
-  resetterValues:
-    imageTag: "1.2.3"
-#
-# Kafka source connector
-#
-# Child of: KafkaConnector
-kafka-source-connector:
-  # offset.storage.topic
-  # https://kafka.apache.org/documentation/#connect_running
-  offsetTopic: offset_topic
-#
-# Kafka sink connector
-#
-# Child of: KafkaConnector
-kafka-sink-connector:
-  # No settings differ from `kafka-connector`

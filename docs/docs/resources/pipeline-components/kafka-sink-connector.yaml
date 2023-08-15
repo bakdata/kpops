@@ -4,7 +4,6 @@
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # Topic(s) from which the component will read input
   from: # Must not be null
     topics: # read from topic
       ${pipeline_name}-input-topic:
@@ -28,7 +27,7 @@
         role: some-role
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
         type: output # Implied when role is NOT specified
       ${pipeline_name}-extra-topic:
