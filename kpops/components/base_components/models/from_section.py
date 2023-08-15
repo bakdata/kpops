@@ -36,7 +36,7 @@ class FromTopic(BaseModel):
         use_enum_values = True
 
     @root_validator
-    def extra_topic_role(cls, values: dict) -> dict:
+    def extra_topic_role(cls, values: dict[str, Any]) -> dict[str, Any]:
         """Ensure that cls.role is used correctly, assign type if needed"""
         if values["type"] == InputTopicTypes.INPUT and values["role"]:
             raise ValueError("Define role only if `type` is `pattern` or `None`")
