@@ -1,4 +1,4 @@
-__version__ = "1.7.0"
+__version__ = "1.7.1"
 
 # export public API functions
 from kpops.cli.main import clean, deploy, destroy, generate, reset
