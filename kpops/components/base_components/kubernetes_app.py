@@ -55,6 +55,10 @@ class KubernetesApp(PipelineComponent):
         default="kubernetes-app",
         description=describe_attr("type", __doc__),
     )
+    namespace: str = Field(
+        default=...,
+        description=describe_attr("namespace", __doc__),
+    )
     schema_type: Literal["kubernetes-app"] = Field(
         default="kubernetes-app",
         title="Component type",
@@ -68,10 +72,6 @@ class KubernetesApp(PipelineComponent):
     repo_config: HelmRepoConfig = Field(
         default=...,
         description=describe_attr("repo_config", __doc__),
-    )
-    namespace: str = Field(
-        default=...,
-        description=describe_attr("namespace", __doc__),
     )
     version: str | None = Field(
         default=None,

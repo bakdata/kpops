@@ -4,11 +4,16 @@
 # Child of: KafkaApp
 # More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
 producer:
+  # from: # While the producer does inherit from kafka-app, it does not need a
+  # `from` section, hence it does not support it.
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
-  app:
-    streams:
+  app: # required
+    streams: # required, producer-specific
+      brokers: ${brokers} # required
+      schemaRegistryUrl: ${schema_registry_url}
       outputTopic: output_topic
       extraOutputTopics: 
         output_role1: output_topic1
         output_role2: output_topic2
+    nameOverride: override-with-this-name # kafka-app-specific

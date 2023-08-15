@@ -1,21 +1,18 @@
 # Base Kubernetes App
 - type: kubernetes-app
   name: kubernetes-app # required
-  namespace: namespace # required
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example.
-  app: # required
-    image: exampleImage # Example
-    debug: false # Example
-    commandLine: {} # Example
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
   # Topic(s) from which the component will read input
-  from:
-    topics:
+  from: # Must not be null
+    topics: # read from topic
       ${pipeline_name}-input-topic:
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
-      - producer
+      producer:
+        type: input # required
   # Topic(s) into which the component will write output
   to:
     topics:
@@ -30,15 +27,19 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
+  namespace: namespace # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example.
+  app: # required
+    image: exampleImage # Example
+    debug: false # Example
+    commandLine: {} # Example
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:
-    repositoryName: my-repo # required
-    url: https://bakdata.github.io/ # required
-    repoAuthFlags:
+    repositoryName: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
