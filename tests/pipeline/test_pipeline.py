@@ -359,7 +359,7 @@ class TestPipeline:
         snapshot: SnapshotTest,
     ):
         with Path(RESOURCE_PATH / "custom-config/config.yaml").open(
-            "r"
+            "r",
         ) as rel_config_yaml:
             config_dict: dict = yaml.safe_load(rel_config_yaml)
         config_dict["defaults_path"] = str(
