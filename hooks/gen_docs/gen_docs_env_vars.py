@@ -10,7 +10,11 @@ from typing import Any
 
 from pytablewriter import MarkdownTableWriter
 from typer.models import ArgumentInfo, OptionInfo
-from typing_extensions import Self
+
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 from hooks import PATH_ROOT
 from hooks.gen_docs import SuperEnum
