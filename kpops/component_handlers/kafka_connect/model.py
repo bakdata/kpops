@@ -16,6 +16,8 @@ class KafkaConnectorType(str, Enum):
 class KafkaConnectConfig(BaseModel):
     """Settings specific to Kafka Connectors"""
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(DescConfig):
         extra = Extra.allow
 
@@ -35,8 +37,10 @@ class KafkaConnectResponse(BaseModel):
     name: str
     config: dict[str, str]
     tasks: list[ConnectorTask]
-    type: str | None
+    type: str | None = None
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(BaseConfig):
         extra = Extra.forbid
 
@@ -62,6 +66,8 @@ class KafkaConnectResetterConfig(BaseModel):
     delete_consumer_group: bool | None = None
     offset_topic: str | None = None
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(CamelCaseConfig):
         pass
 
@@ -71,6 +77,8 @@ class KafkaConnectResetterValues(BaseModel):
     config: KafkaConnectResetterConfig
     name_override: str
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(CamelCaseConfig):
         pass
 

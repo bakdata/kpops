@@ -5,9 +5,9 @@ from pydantic import BaseConfig, BaseModel, Extra
 
 class TopicSpec(BaseModel):
     topic_name: str
-    partitions_count: int | None
-    replication_factor: int | None
-    configs: list[dict[str, str]] | None
+    partitions_count: int | None = None
+    replication_factor: int | None = None
+    configs: list[dict[str, str]] | None = None
 
     class ModelConfigs(BaseConfig):
         extra = Extra.forbid
@@ -49,6 +49,8 @@ class KafkaTopicConfigSynonyms(BaseModel):
     value: str
     source: KafkaTopicConfigSource
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(BaseConfig):
         extra = Extra.allow
 
@@ -59,6 +61,8 @@ class KafkaTopicConfig(BaseModel):
     value: str
     name: str
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(BaseConfig):
         extra = Extra.allow
 
@@ -66,6 +70,8 @@ class KafkaTopicConfig(BaseModel):
 class TopicConfigResponse(BaseModel):
     data: list[KafkaTopicConfig]
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(BaseConfig):
         extra = Extra.allow
 
@@ -78,9 +84,11 @@ class KafkaBrokerConfigSource(str, Enum):
 
 class KafkaBrokerConfigSynonyms(BaseModel):
     name: str
-    value: str | None
+    value: str | None = None
     source: KafkaBrokerConfigSource
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(BaseConfig):
         extra = Extra.allow
 
@@ -88,9 +96,11 @@ class KafkaBrokerConfigSynonyms(BaseModel):
 class KafkaBrokerConfig(BaseModel):
     source: KafkaBrokerConfigSource
     synonyms: list[KafkaBrokerConfigSynonyms]
-    value: str | None
+    value: str | None = None
     name: str
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(BaseConfig):
         extra = Extra.allow
 
@@ -98,5 +108,7 @@ class KafkaBrokerConfig(BaseModel):
 class BrokerConfigResponse(BaseModel):
     data: list[KafkaBrokerConfig]
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(BaseConfig):
         extra = Extra.allow

@@ -54,6 +54,8 @@ class TopicConfig(BaseModel):
         description="Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
     )
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(DescConfig):
         extra = Extra.forbid
         allow_population_by_field_name = True
@@ -89,5 +91,7 @@ class ToSection(BaseModel):
         default={}, description=describe_attr("models", __doc__)
     )
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(DescConfig):
         extra = Extra.allow

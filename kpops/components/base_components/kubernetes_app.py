@@ -32,6 +32,8 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 class KubernetesAppConfig(BaseModel):
     """Settings specific to Kubernetes Apps"""
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(CamelCaseConfig, DescConfig):
         extra = Extra.allow
 
@@ -78,6 +80,8 @@ class KubernetesApp(PipelineComponent):
         description=describe_attr("version", __doc__),
     )
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(CamelCaseConfig, DescConfig):
         pass
 

@@ -46,6 +46,8 @@ class RepoAuthFlags(BaseModel):
         default=False, description=describe_attr("insecure_skip_tls_verify", __doc__)
     )
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(CamelCaseConfig, DescConfig):
         pass
 
@@ -80,6 +82,8 @@ class HelmRepoConfig(BaseModel):
         default=RepoAuthFlags(), description=describe_attr("repo_auth_flags", __doc__)
     )
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(CamelCaseConfig, DescConfig):
         pass
 
@@ -107,6 +111,8 @@ class HelmConfig(BaseModel):
         description=describe_attr("api_version", __doc__),
     )
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(DescConfig):
         pass
 
@@ -120,6 +126,8 @@ class HelmFlags(RepoAuthFlags):
     wait: bool = True
     wait_for_jobs: bool = False
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(BaseConfig):
         extra = Extra.allow
 

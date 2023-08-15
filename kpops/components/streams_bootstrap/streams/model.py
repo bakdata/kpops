@@ -210,6 +210,8 @@ class StreamsAppAutoScaling(BaseModel):
         description=describe_attr("topics", __doc__),
     )
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(CamelCaseConfig, DescConfig):
         extra = Extra.allow
 
@@ -234,5 +236,7 @@ class StreamsAppConfig(KafkaAppConfig):
         description=describe_attr("autoscaling", __doc__),
     )
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(BaseConfig):
         extra = Extra.allow

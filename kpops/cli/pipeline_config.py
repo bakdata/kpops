@@ -1,10 +1,11 @@
 from pathlib import Path
 
-from pydantic import BaseConfig, BaseSettings, Field
+from pydantic import BaseConfig, Field
 from pydantic.env_settings import SettingsSourceCallable
 
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.yaml_loading import load_yaml_file
+from pydantic_settings import BaseSettings
 
 ENV_PREFIX = "KPOPS_"
 
@@ -33,14 +34,14 @@ class PipelineConfig(BaseSettings):
     )
     environment: str = Field(
         default=...,
-        env=f"{ENV_PREFIX}ENVIRONMENT",
+        validation_alias=f"{ENV_PREFIX}ENVIRONMENT",
         example="development",
         description="The environment you want to generate and deploy the pipeline to. "
         "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
     )
     brokers: str = Field(
         default=...,
-        env=f"{ENV_PREFIX}KAFKA_BROKERS",
+        validation_alias=f"{ENV_PREFIX}KAFKA_BROKERS",
         description="The comma separated Kafka brokers address.",
         example="broker1:9092,broker2:9092,broker3:9092",
     )
@@ -55,24 +56,24 @@ class PipelineConfig(BaseSettings):
     schema_registry_url: str | None = Field(
         default=None,
         example="http://localhost:8081",
-        env=f"{ENV_PREFIX}SCHEMA_REGISTRY_URL",
+        validation_alias=f"{ENV_PREFIX}SCHEMA_REGISTRY_URL",
         description="Address of the Schema Registry.",
     )
     kafka_rest_host: str | None = Field(
         default=None,
-        env=f"{ENV_PREFIX}REST_PROXY_HOST",
+        validation_alias=f"{ENV_PREFIX}REST_PROXY_HOST",
         example="http://localhost:8082",
         description="Address of the Kafka REST Proxy.",
     )
     kafka_connect_host: str | None = Field(
         default=None,
-        env=f"{ENV_PREFIX}CONNECT_HOST",
+        validation_alias=f"{ENV_PREFIX}CONNECT_HOST",
         example="http://localhost:8083",
         description="Address of Kafka Connect.",
     )
     timeout: int = Field(
         default=300,
-        env=f"{ENV_PREFIX}TIMEOUT",
+        validation_alias=f"{ENV_PREFIX}TIMEOUT",
         description="The timeout in seconds that specifies when actions like deletion or deploy timeout.",
     )
     create_namespace: bool = Field(
@@ -89,10 +90,12 @@ class PipelineConfig(BaseSettings):
     )
     retain_clean_jobs: bool = Field(
         default=False,
-        env=f"{ENV_PREFIX}RETAIN_CLEAN_JOBS",
+        validation_alias=f"{ENV_PREFIX}RETAIN_CLEAN_JOBS",
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(BaseConfig):
         config_path: Path = Path("config.yaml")
         env_file = ".env"

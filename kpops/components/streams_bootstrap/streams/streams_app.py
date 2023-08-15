@@ -39,6 +39,8 @@ class StreamsApp(KafkaApp):
         description=describe_attr("app", __doc__),
     )
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(DescConfig):
         extra = Extra.allow
 

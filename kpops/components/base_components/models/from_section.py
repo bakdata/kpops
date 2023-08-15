@@ -33,6 +33,8 @@ class FromTopic(BaseModel):
     type: InputTopicTypes = Field(..., description=describe_attr("type", __doc__))
     role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(DescConfig):
         extra = Extra.forbid
         use_enum_values = True
@@ -76,5 +78,7 @@ class FromSection(BaseModel):
         description=describe_attr("components", __doc__),
     )
 
+    # TODO[pydantic]: The `Config` class inherits from another class, please create the `model_config` manually.
+    # Check https://docs.pydantic.dev/dev-v2/migration/#changes-to-config for more information.
     class Config(DescConfig):
         extra = Extra.forbid
