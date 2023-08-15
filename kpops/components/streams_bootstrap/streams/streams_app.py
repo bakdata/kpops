@@ -81,11 +81,11 @@ class StreamsApp(KafkaApp):
         return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
     @override
-    def reset(self, dry_run: bool) -> None:
+    async def reset(self, dry_run: bool) -> None:
         self.__run_streams_clean_up_job(dry_run, delete_output=False)
 
     @override
-    def clean(self, dry_run: bool) -> None:
+    async def clean(self, dry_run: bool) -> None:
         self.__run_streams_clean_up_job(dry_run, delete_output=True)
 
     def __run_streams_clean_up_job(self, dry_run: bool, delete_output: bool) -> None:

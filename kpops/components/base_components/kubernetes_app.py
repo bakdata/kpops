@@ -149,7 +149,7 @@ class KubernetesApp(PipelineComponent):
         return HelmUpgradeInstallFlags(**self.helm_flags.dict())
 
     @override
-    def deploy(self, dry_run: bool) -> None:
+    async def deploy(self, dry_run: bool) -> None:
         stdout = self.helm.upgrade_install(
             self.helm_release_name,
             self.helm_chart,
@@ -162,7 +162,7 @@ class KubernetesApp(PipelineComponent):
             self.dry_run_handler.print_helm_diff(stdout, self.helm_release_name, log)
 
     @override
-    def destroy(self, dry_run: bool) -> None:
+    async def destroy(self, dry_run: bool) -> None:
         stdout = self.helm.uninstall(
             self.namespace,
             self.helm_release_name,

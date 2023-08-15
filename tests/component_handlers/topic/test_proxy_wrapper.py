@@ -1,9 +1,10 @@
 import json
 from pathlib import Path
 from typing import Any
-from unittest.mock import MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
+import pytest_asyncio
 from pytest_httpx import HTTPXMock
 from pytest_mock import MockerFixture
 
@@ -29,8 +30,8 @@ class TestProxyWrapper:
     def log_debug_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.component_handlers.topic.proxy_wrapper.log.debug")
 
-    @pytest.fixture(autouse=True)
-    def setup(self, httpx_mock: HTTPXMock):
+    @pytest_asyncio.fixture(autouse=True)
+    async def setup(self, httpx_mock: HTTPXMock):
         config = PipelineConfig(
             defaults_path=DEFAULTS_PATH, environment="development", kafka_rest_host=HOST
         )
@@ -43,14 +44,15 @@ class TestProxyWrapper:
 
         httpx_mock.add_response(
             method="GET",
-            url=f"{HOST}/v3/clusters",
+            url=f"{HOST}/v3/clusters/",
             json=cluster_response,
             status_code=200,
         )
         assert self.proxy_wrapper.host == HOST
         assert self.proxy_wrapper.cluster_id == "cluster-1"
 
-    def test_should_raise_exception_when_host_is_not_set(self):
+    @pytest.mark.asyncio
+    async def test_should_raise_exception_when_host_is_not_set(self):
         config = PipelineConfig(defaults_path=DEFAULTS_PATH, environment="development")
         config.kafka_rest_host = None
         with pytest.raises(ValueError) as exception:
@@ -60,9 +62,10 @@ class TestProxyWrapper:
             == "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
         )
 
-    @patch("httpx.post")
-    def test_should_create_topic_with_all_topic_configuration(
-        self, mock_post: MagicMock
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.post")
+    async def test_should_create_topic_with_all_topic_configuration(
+        self, mock_post: AsyncMock
     ):
         topic_spec = {
             "topic_name": "topic-X",
@@ -75,45 +78,50 @@ class TestProxyWrapper:
         }
 
         with pytest.raises(KafkaRestProxyError):
-            self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
+            await self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
 
         mock_post.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
+            url=f"/{self.proxy_wrapper.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec,
         )
 
-    @patch("httpx.post")
-    def test_should_create_topic_with_no_configuration(self, mock_post: MagicMock):
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.post")
+    async def test_should_create_topic_with_no_configuration(
+        self, mock_post: AsyncMock
+    ):
         topic_spec: dict[str, Any] = {"topic_name": "topic-X"}
 
         with pytest.raises(KafkaRestProxyError):
-            self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
+            await self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
 
         mock_post.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
+            url=f"/{self.proxy_wrapper.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec,
         )
 
-    @patch("httpx.get")
-    def test_should_call_get_topic(self, mock_get: MagicMock):
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.get")
+    async def test_should_call_get_topic(self, mock_get: AsyncMock):
         topic_name = "topic-X"
 
         with pytest.raises(KafkaRestProxyError):
-            self.proxy_wrapper.get_topic(topic_name=topic_name)
+            await self.proxy_wrapper.get_topic(topic_name=topic_name)
 
         mock_get.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
+            url=f"/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
 
-    @patch("httpx.post")
-    def test_should_call_batch_alter_topic_config(self, mock_put: MagicMock):
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.post")
+    async def test_should_call_batch_alter_topic_config(self, mock_put: AsyncMock):
         topic_name = "topic-X"
 
         with pytest.raises(KafkaRestProxyError):
-            self.proxy_wrapper.batch_alter_topic_config(
+            await self.proxy_wrapper.batch_alter_topic_config(
                 topic_name=topic_name,
                 json_body=[
                     {"name": "cleanup.policy", "operation": "DELETE"},
@@ -122,7 +130,7 @@ class TestProxyWrapper:
             )
 
         mock_put.assert_called_with(
-            url=f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
+            url=f"/cluster-1/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={
                 "data": [
@@ -132,29 +140,32 @@ class TestProxyWrapper:
             },
         )
 
-    @patch("httpx.delete")
-    def test_should_call_delete_topic(self, mock_delete: MagicMock):
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.delete")
+    async def test_should_call_delete_topic(self, mock_delete: AsyncMock):
         topic_name = "topic-X"
 
         with pytest.raises(KafkaRestProxyError):
-            self.proxy_wrapper.delete_topic(topic_name=topic_name)
+            await self.proxy_wrapper.delete_topic(topic_name=topic_name)
 
         mock_delete.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
+            url=f"/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
 
-    @patch("httpx.get")
-    def test_should_call_get_broker_config(self, mock_get: MagicMock):
+    @pytest.mark.asyncio
+    @patch("httpx.AsyncClient.get")
+    async def test_should_call_get_broker_config(self, mock_get: AsyncMock):
         with pytest.raises(KafkaRestProxyError):
-            self.proxy_wrapper.get_broker_config()
+            await self.proxy_wrapper.get_broker_config()
 
         mock_get.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/brokers/-/configs",
+            url=f"/{self.proxy_wrapper.cluster_id}/brokers/-/configs",
             headers=HEADERS,
         )
 
-    def test_should_log_topic_creation(
+    @pytest.mark.asyncio
+    async def test_should_log_topic_creation(
         self, log_info_mock: MagicMock, httpx_mock: HTTPXMock
     ):
         topic_spec = {
@@ -174,10 +185,11 @@ class TestProxyWrapper:
             headers=HEADERS,
             status_code=201,
         )
-        self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
+        await self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
         log_info_mock.assert_called_once_with("Topic topic-X created.")
 
-    def test_should_log_topic_deletion(
+    @pytest.mark.asyncio
+    async def test_should_log_topic_deletion(
         self, log_info_mock: MagicMock, httpx_mock: HTTPXMock
     ):
         topic_name = "topic-X"
@@ -188,10 +200,13 @@ class TestProxyWrapper:
             headers=HEADERS,
             status_code=204,
         )
-        self.proxy_wrapper.delete_topic(topic_name=topic_name)
+        await self.proxy_wrapper.delete_topic(topic_name=topic_name)
         log_info_mock.assert_called_once_with("Topic topic-X deleted.")
 
-    def test_should_get_topic(self, log_debug_mock: MagicMock, httpx_mock: HTTPXMock):
+    @pytest.mark.asyncio
+    async def test_should_get_topic(
+        self, log_debug_mock: MagicMock, httpx_mock: HTTPXMock
+    ):
         res = {
             "kind": "KafkaTopic",
             "metadata": {
@@ -219,12 +234,13 @@ class TestProxyWrapper:
             json=res,
         )
 
-        get_topic_response = self.proxy_wrapper.get_topic(topic_name=topic_name)
+        get_topic_response = await self.proxy_wrapper.get_topic(topic_name=topic_name)
 
         log_debug_mock.assert_any_call("Topic topic-X found.")
         assert get_topic_response == topic_response
 
-    def test_should_rais_topic_not_found_exception_get_topic(
+    @pytest.mark.asyncio
+    async def test_should_rais_topic_not_found_exception_get_topic(
         self, log_debug_mock: MagicMock, httpx_mock: HTTPXMock
     ):
         topic_name = "topic-X"
@@ -240,10 +256,11 @@ class TestProxyWrapper:
             },
         )
         with pytest.raises(TopicNotFoundException):
-            self.proxy_wrapper.get_topic(topic_name=topic_name)
+            await self.proxy_wrapper.get_topic(topic_name=topic_name)
         log_debug_mock.assert_any_call("Topic topic-X not found.")
 
-    def test_should_log_reset_default_topic_config_when_deleted(
+    @pytest.mark.asyncio
+    async def test_should_log_reset_default_topic_config_when_deleted(
         self, log_info_mock: MagicMock, httpx_mock: HTTPXMock
     ):
         topic_name = "topic-X"
@@ -257,7 +274,7 @@ class TestProxyWrapper:
             status_code=204,
         )
 
-        self.proxy_wrapper.batch_alter_topic_config(
+        await self.proxy_wrapper.batch_alter_topic_config(
             topic_name=topic_name,
             json_body=[{"name": config_name, "operation": "DELETE"}],
         )
