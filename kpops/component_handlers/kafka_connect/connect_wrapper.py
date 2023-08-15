@@ -1,7 +1,6 @@
 import logging
 import time
 from time import sleep
-from typing import Any
 
 import httpx
 
@@ -39,16 +38,16 @@ class ConnectWrapper:
         return self._host
 
     def create_connector(
-        self, connector_name: str, kafka_connect_config: KafkaConnectConfig
+        self, connector_name: str, connector_config: KafkaConnectConfig
     ) -> KafkaConnectResponse:
         """
         Creates a new connector
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#post--connectors
         :param connector_name: The name of the connector
-        :param kafka_connect_config: The config of the connector
+        :param connector_config: The config of the connector
         :return: The current connector info if successful
         """
-        config_json = kafka_connect_config.dict(exclude_none=True)
+        config_json = connector_config.dict(exclude_none=True)
         connect_data = {"name": connector_name, "config": config_json}
         response = httpx.post(
             url=f"{self._host}/connectors", headers=HEADERS, json=connect_data
@@ -62,7 +61,7 @@ class ConnectWrapper:
                 "Rebalancing in progress while creating a connector... Retrying..."
             )
             time.sleep(1)
-            self.create_connector(connector_name, kafka_connect_config)
+            self.create_connector(connector_name, connector_config)
         raise KafkaConnectError(response)
 
     def get_connector(self, connector_name: str) -> KafkaConnectResponse:
@@ -91,15 +90,15 @@ class ConnectWrapper:
         raise KafkaConnectError(response)
 
     def update_connector_config(
-        self, connector_name: str, kafka_connect_config: KafkaConnectConfig
+        self, connector_name: str, connector_config: KafkaConnectConfig
     ) -> KafkaConnectResponse:
         """
         Create a new connector using the given configuration, or update the configuration for an existing connector.
         :param connector_name: Name of the created connector
-        :param kafka_connect_config: Configuration parameters for the connector.
+        :param connector_config: Configuration parameters for the connector.
         :return: Information about the connector after the change has been made.
         """
-        config_json = kafka_connect_config.dict(exclude_none=True)
+        config_json = connector_config.dict(exclude_none=True)
         response = httpx.put(
             url=f"{self._host}/connectors/{connector_name}/config",
             headers=HEADERS,
@@ -119,36 +118,32 @@ class ConnectWrapper:
                 "Rebalancing in progress while updating a connector... Retrying..."
             )
             sleep(1)
-            self.update_connector_config(connector_name, kafka_connect_config)
+            self.update_connector_config(connector_name, connector_config)
         raise KafkaConnectError(response)
 
     @classmethod
-    def get_connector_config(
+    def _validate_connector_name(  # TODO: move validation to KafkaConnectConfig
         cls, connector_name: str, config: KafkaConnectConfig
-    ) -> dict[str, Any]:
-        connector_config = config.dict(exclude_none=True)
-        if (name := connector_config.get("name")) and name != connector_name:
+    ) -> None:
+        if config.name and config.name != connector_name:
             raise ValueError("Connector name should be the same as component name")
-        connector_config["name"] = connector_name
-        return connector_config
+        config.name = connector_name
 
     def validate_connector_config(
-        self, connector_name: str, kafka_connect_config: KafkaConnectConfig
+        self, connector_name: str, connector_config: KafkaConnectConfig
     ) -> list[str]:
         """
         Validate connector config using the given configuration
         :param connector_name: Name of the created connector
-        :param kafka_connect_config: Configuration parameters for the connector.
+        :param connector_config: Configuration parameters for the connector.
         :return:
         """
 
-        config_json = self.get_connector_config(connector_name, kafka_connect_config)
-        connector_class = KafkaConnectConfig(**config_json).class_name
-
+        self._validate_connector_name(connector_name, connector_config)
         response = httpx.put(
-            url=f"{self._host}/connector-plugins/{connector_class}/config/validate",
+            url=f"{self._host}/connector-plugins/{connector_config.class_name}/config/validate",
             headers=HEADERS,
-            json=config_json,
+            json=connector_config.dict(),
         )
 
         if response.status_code == httpx.codes.OK:

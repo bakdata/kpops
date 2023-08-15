@@ -227,6 +227,10 @@
                 "connector.class": {
                     "title": "Connector.Class",
                     "type": "string"
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string"
                 }
             },
             "required": [

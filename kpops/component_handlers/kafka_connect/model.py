@@ -17,6 +17,7 @@ class KafkaConnectConfig(BaseModel):
     """Settings specific to Kafka Connectors"""
 
     connector_class: str = Field(default=..., alias="connector.class")
+    name: str | None = None  # TODO: required
 
     class Config(DescConfig):
         extra = Extra.allow
@@ -30,6 +31,10 @@ class KafkaConnectConfig(BaseModel):
     @property
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
+
+    @override
+    def dict(self, **_) -> dict[str, Any]:
+        return super().dict(by_alias=True, exclude_none=True)
 
 
 class ConnectorTask(BaseModel):
@@ -81,5 +86,5 @@ class KafkaConnectResetterValues(BaseModel):
         pass
 
     @override
-    def dict(self, **_) -> dict:
+    def dict(self, **_) -> dict[str, Any]:
         return super().dict(by_alias=True, exclude_none=True)
