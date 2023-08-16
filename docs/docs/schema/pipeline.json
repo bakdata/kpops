@@ -335,7 +335,8 @@
                 }
             },
             "required": [
-                "connector.class"
+                "connector.class",
+                "name"
             ],
             "title": "KafkaConnectorConfig",
             "type": "object"

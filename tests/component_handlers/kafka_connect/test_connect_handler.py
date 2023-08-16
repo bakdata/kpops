@@ -56,7 +56,10 @@ class TestConnectorHandler:
     @pytest.fixture
     def connector_config(self) -> KafkaConnectorConfig:
         return KafkaConnectorConfig(
-            **{"connector.class": "com.bakdata.connect.TestConnector"}
+            **{
+                "connector.class": "com.bakdata.connect.TestConnector",
+                "name": CONNECTOR_NAME,
+            }
         )
 
     def test_should_create_connector_in_dry_run(
@@ -69,10 +72,10 @@ class TestConnectorHandler:
         handler = self.connector_handler(connector_wrapper)
         renderer_diff_mock.return_value = None
 
-        handler.create_connector(CONNECTOR_NAME, connector_config, True)
+        handler.create_connector(connector_config, True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(
-            CONNECTOR_NAME, connector_config
+            connector_config
         )
 
         assert log_info_mock.mock_calls == [
@@ -95,15 +98,14 @@ class TestConnectorHandler:
 
         configs = {
             "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+            "name": CONNECTOR_NAME,
             "tasks.max": "1",
             "topics": "test-topic",
         }
         config = KafkaConnectorConfig(**configs)
-        handler.create_connector(CONNECTOR_NAME, config, True)
+        handler.create_connector(config, True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
-        connector_wrapper.validate_connector_config.assert_called_once_with(
-            CONNECTOR_NAME, config
-        )
+        connector_wrapper.validate_connector_config.assert_called_once_with(config)
 
         assert log_info_mock.mock_calls == [
             mock.call(
@@ -125,9 +127,9 @@ class TestConnectorHandler:
             "name": "name",
             "config": {
                 "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+                "name": CONNECTOR_NAME,
                 "tasks.max": "1",
                 "topics": "test-topic",
-                "name": CONNECTOR_NAME,
             },
             "tasks": [],
         }
@@ -137,14 +139,15 @@ class TestConnectorHandler:
 
         configs = {
             "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+            "name": CONNECTOR_NAME,
             "tasks.max": "2",
             "topics": "test-topic",
         }
         connector_config = KafkaConnectorConfig(**configs)
-        handler.create_connector(CONNECTOR_NAME, connector_config, True)
+        handler.create_connector(connector_config, True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(
-            CONNECTOR_NAME, connector_config
+            connector_config
         )
 
         assert log_info_mock.mock_calls == [
@@ -178,10 +181,10 @@ class TestConnectorHandler:
             ConnectorStateException,
             match=f"Connector Creation: validating the connector config for connector {CONNECTOR_NAME} resulted in the following errors: {formatted_errors}",
         ):
-            handler.create_connector(CONNECTOR_NAME, connector_config, True)
+            handler.create_connector(connector_config, True)
 
         connector_wrapper.validate_connector_config.assert_called_once_with(
-            CONNECTOR_NAME, connector_config
+            connector_config
         )
 
     def test_should_call_update_connector_config_when_connector_exists_not_dry_run(
@@ -190,11 +193,11 @@ class TestConnectorHandler:
         connector_wrapper = MagicMock()
         handler = self.connector_handler(connector_wrapper)
 
-        handler.create_connector(CONNECTOR_NAME, connector_config, False)
+        handler.create_connector(connector_config, False)
 
         assert connector_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
-            mock.call.update_connector_config(CONNECTOR_NAME, connector_config),
+            mock.call.update_connector_config(connector_config),
         ]
 
     def test_should_call_create_connector_when_connector_does_not_exists_not_dry_run(
@@ -205,11 +208,9 @@ class TestConnectorHandler:
         handler = self.connector_handler(connector_wrapper)
 
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
-        handler.create_connector(CONNECTOR_NAME, connector_config, False)
+        handler.create_connector(connector_config, False)
 
-        connector_wrapper.create_connector.assert_called_once_with(
-            CONNECTOR_NAME, connector_config
-        )
+        connector_wrapper.create_connector.assert_called_once_with(connector_config)
 
     def test_should_print_correct_log_when_destroying_connector_in_dry_run(
         self,

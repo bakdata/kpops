@@ -37,7 +37,10 @@ class TestConnectorApiWrapper:
     @pytest.fixture
     def connector_config(self) -> KafkaConnectorConfig:
         return KafkaConnectorConfig(
-            **{"connector.class": "com.bakdata.connect.TestConnector"}
+            **{
+                "connector.class": "com.bakdata.connect.TestConnector",
+                "name": "test-connector",
+            }
         )
 
     def test_should_through_exception_when_host_is_not_set(self):
@@ -58,19 +61,18 @@ class TestConnectorApiWrapper:
         self, mock_post: MagicMock
     ):
         configs = {
+            "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+            "name": "test-connector",
             "batch.size": "50",
             "value.converter": "com.bakdata.kafka.LargeMessageConverter",
             "connection.username": "fake-user",
             "value.converter.large.message.converter": "io.confluent.connect.avro.AvroConverter",
             "max.buffered.records": "500",
             "connection.password": "fake-password",
-            "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
         }
 
         with pytest.raises(KafkaConnectError):
-            self.connect_wrapper.create_connector(
-                "test-connector", KafkaConnectorConfig(**configs)
-            )
+            self.connect_wrapper.create_connector(KafkaConnectorConfig(**configs))
 
         mock_post.assert_called_with(
             url=f"{HOST}/connectors",
@@ -88,6 +90,7 @@ class TestConnectorApiWrapper:
             "name": "hdfs-sink-connector",
             "config": {
                 "connector.class": "io.confluent.connect.hdfs.HdfsSinkConnector",
+                "name": "test-connector",
                 "tasks.max": "10",
                 "topics": "test-topic",
                 "hdfs.url": "hdfs://fakehost:9000",
@@ -109,9 +112,7 @@ class TestConnectorApiWrapper:
             json=actual_response,
             status_code=201,
         )
-        expected_response = self.connect_wrapper.create_connector(
-            "test-connector", connector_config
-        )
+        expected_response = self.connect_wrapper.create_connector(connector_config)
         assert KafkaConnectResponse(**actual_response) == expected_response
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
@@ -129,9 +130,7 @@ class TestConnectorApiWrapper:
         )
 
         timeout(
-            lambda: self.connect_wrapper.create_connector(
-                "test-name", connector_config
-            ),
+            lambda: self.connect_wrapper.create_connector(connector_config),
             secs=1,
         )
 
@@ -206,23 +205,6 @@ class TestConnectorApiWrapper:
             f"The named connector {connector_name} does not exists."
         )
 
-    def test_should_raise_connector_name_do_not_match(self):
-        configs = {
-            "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
-            "tasks.max": "1",
-            "topics": "test-topic",
-            "name": "OtherWrongName",
-        }
-        with pytest.raises(ValueError) as value_error:
-            self.connect_wrapper.validate_connector_config(
-                "FileStreamSinkConnector", KafkaConnectorConfig(**configs)
-            )
-
-        assert (
-            str(value_error.value)
-            == "Connector name should be the same as component name"
-        )
-
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_rebalance_in_progress_when_getting_connector(
         self, log_warning: MagicMock, httpx_mock: HTTPXMock
@@ -250,18 +232,18 @@ class TestConnectorApiWrapper:
     def test_should_create_correct_update_connector_request(self, mock_put: MagicMock):
         connector_name = "test-connector"
         configs = {
+            "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
+            "name": connector_name,
             "batch.size": "50",
             "value.converter": "com.bakdata.kafka.LargeMessageConverter",
             "connection.username": "fake-user",
             "value.converter.large.message.converter": "io.confluent.connect.avro.AvroConverter",
             "max.buffered.records": "500",
             "connection.password": "fake-password",
-            "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
         }
         with pytest.raises(KafkaConnectError):
             self.connect_wrapper.update_connector_config(
-                connector_name,
-                KafkaConnectorConfig(**configs),
+                KafkaConnectorConfig(**configs)
             )
 
         mock_put.assert_called_with(
@@ -305,7 +287,7 @@ class TestConnectorApiWrapper:
             status_code=200,
         )
         expected_response = self.connect_wrapper.update_connector_config(
-            connector_name, connector_config
+            connector_config
         )
         assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(
@@ -347,7 +329,7 @@ class TestConnectorApiWrapper:
             status_code=201,
         )
         expected_response = self.connect_wrapper.update_connector_config(
-            connector_name, connector_config
+            connector_config
         )
         assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {connector_name} created.")
@@ -370,9 +352,7 @@ class TestConnectorApiWrapper:
         )
 
         timeout(
-            lambda: self.connect_wrapper.update_connector_config(
-                connector_name, connector_config
-            ),
+            lambda: self.connect_wrapper.update_connector_config(connector_config),
             secs=1,
         )
 
@@ -478,15 +458,13 @@ class TestConnectorApiWrapper:
         connector_config = KafkaConnectorConfig(
             **{
                 "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+                "name": "FileStreamSinkConnector",
                 "tasks.max": "1",
                 "topics": "test-topic",
-                "name": "FileStreamSinkConnector",
             }
         )
         with pytest.raises(KafkaConnectError):
-            self.connect_wrapper.validate_connector_config(
-                "FileStreamSinkConnector", connector_config
-            )
+            self.connect_wrapper.validate_connector_config(connector_config)
 
         mock_put.assert_called_with(
             url=f"{HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
@@ -501,12 +479,13 @@ class TestConnectorApiWrapper:
         connector_name = "FileStreamSinkConnector"
         configs = {
             "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+            "name": connector_name,
             "tasks.max": "1",
             "topics": "test-topic",
         }
         with pytest.raises(KafkaConnectError):
             self.connect_wrapper.validate_connector_config(
-                connector_name, KafkaConnectorConfig(**configs)
+                KafkaConnectorConfig(**configs)
             )
 
         mock_put.assert_called_with(
@@ -530,11 +509,12 @@ class TestConnectorApiWrapper:
 
         configs = {
             "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
+            "name": "FileStreamSinkConnector",
             "tasks.max": "1",
             "topics": "test-topic",
         }
         errors = self.connect_wrapper.validate_connector_config(
-            "FileStreamSinkConnector", KafkaConnectorConfig(**configs)
+            KafkaConnectorConfig(**configs)
         )
 
         assert errors == [

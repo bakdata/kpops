@@ -6,11 +6,6 @@ from typing_extensions import override
 
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig, to_dot
 
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
-
 
 class KafkaConnectorType(str, Enum):
     SINK = "sink"
@@ -21,7 +16,7 @@ class KafkaConnectorConfig(BaseModel):
     """Settings specific to Kafka Connectors"""
 
     connector_class: str
-    name: str | None = None  # TODO: required
+    name: str
 
     class Config(DescConfig):
         extra = Extra.allow
@@ -42,12 +37,6 @@ class KafkaConnectorConfig(BaseModel):
     @property
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
-
-    def with_name(self, connector_name: str) -> Self:
-        if self.name and self.name != connector_name:
-            raise ValueError("Connector name should be the same as component name")
-        self.name = connector_name
-        return self
 
     @override
     def dict(self, **_) -> dict[str, Any]:

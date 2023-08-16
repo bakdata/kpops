@@ -38,22 +38,21 @@ class ConnectWrapper:
         return self._host
 
     def create_connector(
-        self, connector_name: str, connector_config: KafkaConnectorConfig
+        self, connector_config: KafkaConnectorConfig
     ) -> KafkaConnectResponse:
         """
         Creates a new connector
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#post--connectors
-        :param connector_name: The name of the connector
         :param connector_config: The config of the connector
         :return: The current connector info if successful
         """
         config_json = connector_config.dict(exclude_none=True)
-        connect_data = {"name": connector_name, "config": config_json}
+        connect_data = {"name": connector_config.name, "config": config_json}
         response = httpx.post(
             url=f"{self._host}/connectors", headers=HEADERS, json=connect_data
         )
         if response.status_code == httpx.codes.CREATED:
-            log.info(f"Connector {connector_name} created.")
+            log.info(f"Connector {connector_config.name} created.")
             log.debug(response.json())
             return KafkaConnectResponse(**response.json())
         elif response.status_code == httpx.codes.CONFLICT:
@@ -61,7 +60,7 @@ class ConnectWrapper:
                 "Rebalancing in progress while creating a connector... Retrying..."
             )
             time.sleep(1)
-            self.create_connector(connector_name, connector_config)
+            self.create_connector(connector_config)
         raise KafkaConnectError(response)
 
     def get_connector(self, connector_name: str) -> KafkaConnectResponse:
@@ -90,7 +89,7 @@ class ConnectWrapper:
         raise KafkaConnectError(response)
 
     def update_connector_config(
-        self, connector_name: str, connector_config: KafkaConnectorConfig
+        self, connector_config: KafkaConnectorConfig
     ) -> KafkaConnectResponse:
         """
         Create a new connector using the given configuration, or update the configuration for an existing connector.
@@ -100,17 +99,17 @@ class ConnectWrapper:
         """
         config_json = connector_config.dict(exclude_none=True)
         response = httpx.put(
-            url=f"{self._host}/connectors/{connector_name}/config",
+            url=f"{self._host}/connectors/{connector_config.name}/config",
             headers=HEADERS,
             json=config_json,
         )
         data: dict = response.json()
         if response.status_code == httpx.codes.OK:
-            log.info(f"Config for connector {connector_name} updated.")
+            log.info(f"Config for connector {connector_config.name} updated.")
             log.debug(data)
             return KafkaConnectResponse(**data)
         if response.status_code == httpx.codes.CREATED:
-            log.info(f"Connector {connector_name} created.")
+            log.info(f"Connector {connector_config.name} created.")
             log.debug(data)
             return KafkaConnectResponse(**data)
         elif response.status_code == httpx.codes.CONFLICT:
@@ -118,19 +117,17 @@ class ConnectWrapper:
                 "Rebalancing in progress while updating a connector... Retrying..."
             )
             sleep(1)
-            self.update_connector_config(connector_name, connector_config)
+            self.update_connector_config(connector_config)
         raise KafkaConnectError(response)
 
     def validate_connector_config(
-        self, connector_name: str, connector_config: KafkaConnectorConfig
+        self, connector_config: KafkaConnectorConfig
     ) -> list[str]:
         """
         Validate connector config using the given configuration
-        :param connector_name: Name of the created connector
         :param connector_config: Configuration parameters for the connector.
         :return:
         """
-        connector_config.with_name(connector_name)
         response = httpx.put(
             url=f"{self._host}/connector-plugins/{connector_config.class_name}/config/validate",
             headers=HEADERS,

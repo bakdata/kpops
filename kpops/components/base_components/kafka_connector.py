@@ -3,9 +3,9 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Literal, NoReturn
+from typing import Any, Literal, NoReturn
 
-from pydantic import Field
+from pydantic import Field, validator
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -94,6 +94,18 @@ class KafkaConnector(PipelineComponent, ABC):
     class Config(CamelCaseConfig):
         pass
 
+    @validator("app", pre=True)
+    def connector_config_should_have_component_name(
+        cls, v: KafkaConnectorConfig | dict[str, str], values: dict[str, Any]
+    ) -> dict[str, str]:
+        if isinstance(v, KafkaConnectorConfig):
+            v = v.dict()
+        connector_name: str | None = v.get("name")
+        if connector_name and connector_name != values["name"]:
+            raise ValueError("Connector name should be the same as component name")
+        v["name"] = values["name"]
+        return v
+
     @cached_property
     def helm(self) -> Helm:
         """Helm object that contains component-specific config such as repo"""
@@ -153,9 +165,7 @@ class KafkaConnector(PipelineComponent, ABC):
                     to_section=self.to, dry_run=dry_run
                 )
 
-        self.handlers.connector_handler.create_connector(
-            self.name, self.app, dry_run=dry_run
-        )
+        self.handlers.connector_handler.create_connector(self.app, dry_run=dry_run)
 
     @override
     def destroy(self, dry_run: bool) -> None:

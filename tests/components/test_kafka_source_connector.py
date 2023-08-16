@@ -29,6 +29,7 @@ from kpops.utils.environment import ENV
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
+CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 
 
 class TestKafkaSourceConnector:
@@ -68,7 +69,10 @@ class TestKafkaSourceConnector:
     @pytest.fixture
     def connector_config(self) -> KafkaConnectorConfig:
         return KafkaConnectorConfig(
-            **{"connector.class": "com.bakdata.connect.TestConnector"}
+            **{
+                "connector.class": CONNECTOR_CLASS,
+                "name": CONNECTOR_NAME,
+            }
         )
 
     @pytest.fixture
