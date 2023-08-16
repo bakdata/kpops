@@ -1,5 +1,5 @@
-# GitHub Actions Integration
-We provided a GitHuH composite action called
+# GitHub Actions integration
+We provided a GitHub composite action called
 [kpops-runner](https://github.com/bakdata/kpops/tree/main/actions/kpops-runner/action.yaml)
 that installs all the necessary dependencies and runs KPOps commands with the given parameters.
 
