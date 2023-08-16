@@ -90,22 +90,21 @@ class KafkaConnectHandler:
     def __dry_run_connector_creation(
         self, connector_config: KafkaConnectorConfig
     ) -> None:
+        connector_name = connector_config.name
         try:
-            connector = self._connect_wrapper.get_connector(connector_config.name)
+            connector = self._connect_wrapper.get_connector(connector_name)
 
-            log.info(
-                f"Connector Creation: connector {connector_config.name} already exists."
-            )
+            log.info(f"Connector Creation: connector {connector_name} already exists.")
             if diff := render_diff(connector.config, connector_config.dict()):
                 log.info(f"Updating config:\n{diff}")
 
             log.debug(connector_config.dict())
-            log.debug(f"PUT /connectors/{connector_config.name}/config HTTP/1.1")
+            log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
         except ConnectorNotFoundException:
             diff = render_diff({}, connector_config.dict())
             log.info(
-                f"Connector Creation: connector {connector_config.name} does not exist. Creating connector with config:\n{diff}"
+                f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n{diff}"
             )
             log.debug("POST /connectors HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
@@ -114,11 +113,11 @@ class KafkaConnectHandler:
         if len(errors) > 0:
             formatted_errors = "\n".join(errors)
             raise ConnectorStateException(
-                f"Connector Creation: validating the connector config for connector {connector_config.name} resulted in the following errors: {formatted_errors}"
+                f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors: {formatted_errors}"
             )
         else:
             log.info(
-                f"Connector Creation: connector config for {connector_config.name} is valid!"
+                f"Connector Creation: connector config for {connector_name} is valid!"
             )
 
     def __dry_run_connector_deletion(self, connector_name: str) -> None:
