@@ -1,6 +1,6 @@
 from typing_extensions import override
 
-from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
+from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components import KafkaSinkConnector
 from kpops.components.base_components import PipelineComponent
 from kpops.components.base_components.models.to_section import OutputTopicTypes
@@ -29,7 +29,7 @@ class ShouldInflate(StreamsApp):
                         config=self.config,
                         handlers=self.handlers,
                         namespace="example-namespace",
-                        app=KafkaConnectConfig(
+                        app=KafkaConnectorConfig(
                             **{
                                 "topics": topic_name,
                                 "transforms.changeTopic.replacement": f"{topic_name}-index-v1",

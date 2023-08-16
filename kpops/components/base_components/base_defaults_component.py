@@ -34,13 +34,9 @@ class BaseDefaultsComponent(BaseModel):
     correctly to the component.
 
     :param enrich: Whether to enrich component with defaults, defaults to False
-    :type enrich: bool, optional
     :param config: Pipeline configuration to be accessed by this component
-    :type config: PipelineConfig
     :param handlers: Component handlers to be accessed by this component
-    :type handlers: ComponentHandlers
     :param validate: Whether to run custom validation on the component, defaults to True
-    :type validate: bool, optional
     """
 
     enrich: bool = Field(
@@ -85,7 +81,6 @@ class BaseDefaultsComponent(BaseModel):
         """Return calling component's type
 
         :returns: Component class name in dash-case
-        :rtype: str
         """
         return to_dash(cls.__name__)
 
@@ -94,7 +89,6 @@ class BaseDefaultsComponent(BaseModel):
 
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inheritted defaults
-        :rtype: dict[str, Any]
         """
         config: PipelineConfig = kwargs["config"]
         log.debug(
@@ -130,14 +124,10 @@ def load_defaults(
     """Resolve component-specific defaults including environment defaults
 
     :param component_class: Component class
-    :type component_class: type[BaseDefaultsComponent]
     :param defaults_file_path: Path to `defaults.yaml`
-    :type defaults_file_path: Path
     :param environment_defaults_file_path: Path to `defaults_{environment}.yaml`,
         defaults to None
-    :type environment_defaults_file_path: Path, optional
     :returns: Component defaults
-    :rtype: dict
     """
     classes = deque(inspect.getmro(component_class))
     classes.appendleft(component_class)
@@ -166,11 +156,8 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
     """Read component-specific settings from a defaults yaml file and return @default if not found
 
     :param path: Path to defaults yaml file
-    :type path: Path
     :param key: Component type
-    :type key: str
     :returns: All defaults set for the given component in the provided yaml
-    :rtype: dict
 
     :Example:
 
@@ -198,9 +185,7 @@ def get_defaults_file_paths(config: PipelineConfig) -> tuple[Path, Path]:
     calculated from it. It is up to the caller to handle any false paths.
 
     :param config: Pipeline configuration
-    :type config: PipelineConfig
     :returns: The defaults files paths
-    :rtype: tuple[Path, Path]
     """
     defaults_dir = Path(config.defaults_path).resolve()
     main_default_file_path = defaults_dir / Path(
@@ -221,8 +206,6 @@ def deduplicate(seq: Sequence[T]) -> list[T]:
     """Deduplicate items of a sequence while preserving its order.
 
     :param seq: Sequence to be 'cleaned'
-    :type seq: Sequence[T]
     :returns: Cleaned sequence in the form of a list
-    :rtype: list[T]
     """
     return list(dict.fromkeys(seq))

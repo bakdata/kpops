@@ -11,9 +11,7 @@ class ProducerStreamsConfig(KafkaStreamsConfig):
     """Kafka Streams settings specific to Producer
 
     :param extra_output_topics: Extra output topics
-    :type extra_output_topics: dict[str, str], optional
     :param output_topic: Output topic, defaults to None
-    :type output_topic: str, optional
     """
 
     extra_output_topics: dict[str, str] = Field(
@@ -28,7 +26,6 @@ class ProducerValues(KafkaAppConfig):
     """Settings specific to producers
 
     :param streams: Kafka Streams settings
-    :type streams: ProducerStreamsConfig
     """
 
     streams: ProducerStreamsConfig = Field(

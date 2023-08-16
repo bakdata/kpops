@@ -13,7 +13,6 @@ class StreamsApp(KafkaApp):
     """StreamsApp component that configures a streams bootstrap app
 
     :param app: Application-specific settings
-    :type app: StreamsAppConfig
     """
 
     app: StreamsAppConfig = Field(
@@ -71,9 +70,7 @@ class StreamsApp(KafkaApp):
         """Run clean job for this Streams app
 
         :param dry_run: Whether to do a dry run of the command
-        :type dry_run: bool
         :param delete_output: Whether to delete the output of the app that is being cleaned
-        :type delete_output: bool
         """
         values = self.to_helm_values()
         values["streams"]["deleteOutput"] = delete_output

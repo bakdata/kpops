@@ -1,18 +1,16 @@
-from pathlib import Path
 from unittest.mock import MagicMock, call
 
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
+from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
-    HelmDiffConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
 from kpops.component_handlers.kafka_connect.model import (
-    KafkaConnectConfig,
+    KafkaConnectorConfig,
     KafkaConnectorType,
 )
 from kpops.components import KafkaSinkConnector
@@ -28,59 +26,30 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.colorify import magentaify
+from tests.components.test_kafka_connector import (
+    CONNECTOR_CLEAN_NAME,
+    CONNECTOR_NAME,
+    TestKafkaConnector,
+)
 
-DEFAULTS_PATH = Path(__file__).parent / "resources"
-CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
-CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
 
-
-class TestKafkaSinkConnector:
+class TestKafkaSinkConnector(TestKafkaConnector):
     @pytest.fixture
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kafka_connector.log.info")
 
     @pytest.fixture
-    def config(self) -> PipelineConfig:
-        return PipelineConfig(
-            defaults_path=DEFAULTS_PATH,
-            environment="development",
-            topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component_type}-error-topic",
-                default_output_topic_name="${component_type}-output-topic",
-            ),
-            brokers="broker:9092",
-            helm_diff_config=HelmDiffConfig(),
-        )
-
-    @pytest.fixture
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
-        )
-
-    @pytest.fixture(autouse=True)
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.Helm"
-        ).return_value
-
-    @pytest.fixture
-    def dry_run_handler(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.DryRunHandler"
-        ).return_value
-
-    @pytest.fixture
     def connector(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        connector_config: KafkaConnectorConfig,
     ) -> KafkaSinkConnector:
         return KafkaSinkConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(),
+            app=connector_config,
             namespace="test-namespace",
             to=ToSection(
                 topics={
@@ -92,14 +61,19 @@ class TestKafkaSinkConnector:
         )
 
     def test_connector_config_parsing(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        connector_config: KafkaConnectorConfig,
     ):
         topic_name = "connector-topic"
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(**{"topics": topic_name}),
+            app=KafkaConnectorConfig(
+                **{**connector_config.dict(), "topics": topic_name}
+            ),
             namespace="test-namespace",
         )
         assert getattr(connector.app, "topics") == topic_name
@@ -109,13 +83,18 @@ class TestKafkaSinkConnector:
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(**{"topics.regex": topic_pattern}),
+            app=KafkaConnectorConfig(
+                **{**connector_config.dict(), "topics.regex": topic_pattern}
+            ),
             namespace="test-namespace",
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern
 
     def test_from_section_parsing_input_topic(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        connector_config: KafkaConnectorConfig,
     ):
         topic1 = TopicName("connector-topic1")
         topic2 = TopicName("connector-topic2")
@@ -123,7 +102,7 @@ class TestKafkaSinkConnector:
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(),
+            app=connector_config,
             namespace="test-namespace",
             from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                 topics={
@@ -139,14 +118,17 @@ class TestKafkaSinkConnector:
         assert getattr(connector.app, "topics") == f"{topic1},{topic2},{topic3}"
 
     def test_from_section_parsing_input_pattern(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        connector_config: KafkaConnectorConfig,
     ):
         topic_pattern = TopicName(".*")
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(),
+            app=connector_config,
             namespace="test-namespace",
             from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                 topics={topic_pattern: FromTopic(type=InputTopicTypes.PATTERN)}
@@ -172,11 +154,7 @@ class TestKafkaSinkConnector:
         connector.deploy(dry_run=True)
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=connector.to, dry_run=True),
-            mocker.call.mock_create_connector(
-                connector_name=CONNECTOR_NAME,
-                kafka_connect_config=connector.app,
-                dry_run=True,
-            ),
+            mocker.call.mock_create_connector(connector.app, dry_run=True),
         ]
 
     def test_destroy(
@@ -190,10 +168,7 @@ class TestKafkaSinkConnector:
 
         connector.destroy(dry_run=True)
 
-        mock_destroy_connector.assert_called_once_with(
-            connector_name=CONNECTOR_NAME,
-            dry_run=True,
-        )
+        mock_destroy_connector.assert_called_once_with(CONNECTOR_NAME, dry_run=True)
 
     def test_reset_when_dry_run_is_true(
         self,
@@ -284,12 +259,13 @@ class TestKafkaSinkConnector:
         log_info_mock: MagicMock,
         dry_run_handler: MagicMock,
         mocker: MockerFixture,
+        connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(),
+            app=connector_config,
             namespace="test-namespace",
             to=ToSection(
                 topics={
@@ -374,12 +350,13 @@ class TestKafkaSinkConnector:
         config: PipelineConfig,
         handlers: ComponentHandlers,
         dry_run_handler: MagicMock,
+        connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(),
+            app=connector_config,
             namespace="test-namespace",
         )
 
@@ -394,12 +371,13 @@ class TestKafkaSinkConnector:
         helm_mock: MagicMock,
         dry_run_handler: MagicMock,
         mocker: MockerFixture,
+        connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(),
+            app=connector_config,
             namespace="test-namespace",
         )
 

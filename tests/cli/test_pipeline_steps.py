@@ -13,6 +13,7 @@ PREFIX = "example-prefix-"
 
 @dataclass
 class TestComponent:
+    __test__ = False
     name: str
     prefix: str = PREFIX
 

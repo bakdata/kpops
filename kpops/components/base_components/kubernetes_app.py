@@ -160,7 +160,6 @@ class KubernetesApp(PipelineComponent):
         """Generate a dictionary of values readable by Helm from `self.app`
 
         :returns: Thte values to be used by Helm
-        :rtype: dict
         """
         return self.app.dict(by_alias=True, exclude_none=True, exclude_defaults=True)
 
@@ -168,7 +167,6 @@ class KubernetesApp(PipelineComponent):
         """Print the diff of the last and current release of this component
 
         :param stdout: The output of a Helm command that installs or upgrades the release
-        :type stdout: str
         """
         current_release = list(
             self.helm.get_manifest(self.helm_release_name, self.namespace)

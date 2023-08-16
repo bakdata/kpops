@@ -58,7 +58,6 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
         a terminating substring and does not follow reST spec.
         if error_marker is found in result.stdout, the description extraction does
         not work correctly.,!?:error_marker   :: "!$%
-    :type type: This line should not appear anywhere error_marker
     :param error_marker: error_marker
     """
 

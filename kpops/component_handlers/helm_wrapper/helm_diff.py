@@ -20,11 +20,8 @@ class HelmDiff:
         """Compare 2 releases and generate a Change object for each difference
 
         :param current_release: Iterable containing HelmTemplate objects for the current release
-        :type current_release: Iterable[HelmTemplate]
         :param new_release: Iterable containing HelmTemplate objects for the new release
-        :type new_release: Iterable[HelmTemplate]
         :return: A Generator of Change objects for each difference between the two releases
-        :rtype: Iterator[Change[dict]]
         """
         new_release_index = {
             helm_template.filepath: helm_template for helm_template in new_release

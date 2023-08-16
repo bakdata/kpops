@@ -50,9 +50,7 @@ class FromSection(BaseModel):
     """Holds multiple input topics
 
     :param topics: Input topics
-    :type topics: dict[str, FromTopic]
     :param components: Components to read from
-    :type components: dict[ComponentName, FromTopic]
     """
 
     topics: dict[TopicName, FromTopic] = Field(

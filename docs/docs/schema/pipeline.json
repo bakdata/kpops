@@ -207,22 +207,13 @@
             "title": "KafkaAppConfig",
             "type": "object"
         },
-        "KafkaConnectConfig": {
-            "additionalProperties": {
-                "type": "string"
-            },
-            "description": "Settings specific to Kafka Connectors",
-            "properties": {},
-            "title": "KafkaConnectConfig",
-            "type": "object"
-        },
         "KafkaConnector": {
             "description": "Base class for all Kafka connectors\nShould only be used to set defaults",
             "properties": {
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/KafkaConnectConfig"
+                            "$ref": "#/definitions/KafkaConnectorConfig"
                         }
                     ],
                     "description": "Application-specific settings",
@@ -311,13 +302,30 @@
             "title": "KafkaConnector",
             "type": "object"
         },
+        "KafkaConnectorConfig": {
+            "additionalProperties": {
+                "type": "string"
+            },
+            "description": "Settings specific to Kafka Connectors",
+            "properties": {
+                "connector.class": {
+                    "title": "Connector.Class",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "connector.class"
+            ],
+            "title": "KafkaConnectorConfig",
+            "type": "object"
+        },
         "KafkaSinkConnector": {
             "description": "Kafka sink connector model",
             "properties": {
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/KafkaConnectConfig"
+                            "$ref": "#/definitions/KafkaConnectorConfig"
                         }
                     ],
                     "description": "Application-specific settings",
@@ -412,7 +420,7 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/KafkaConnectConfig"
+                            "$ref": "#/definitions/KafkaConnectorConfig"
                         }
                     ],
                     "description": "Application-specific settings",
@@ -1008,10 +1016,16 @@
             "type": "object"
         },
         "StreamsAppConfig": {
-            "description": "StreamsBoostrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart. :params streams: Streams Bootstrap streams section",
+            "description": "StreamsBoostrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
             "properties": {
                 "autoscaling": {
-                    "$ref": "#/definitions/StreamsAppAutoScaling"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/StreamsAppAutoScaling"
+                        }
+                    ],
+                    "description": "Kubernetes Event-driven Autoscaling config",
+                    "title": "Autoscaling"
                 },
                 "nameOverride": {
                     "description": "Override name with this value",
@@ -1019,7 +1033,13 @@
                     "type": "string"
                 },
                 "streams": {
-                    "$ref": "#/definitions/StreamsConfig"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/StreamsConfig"
+                        }
+                    ],
+                    "description": "Streams Bootstrap streams section",
+                    "title": "Streams"
                 }
             },
             "required": [

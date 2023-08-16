@@ -11,11 +11,8 @@ def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
     ``other_dict={dict_to_be_updated}``
 
     :param original_dict: Dictionary to be updated
-    :type original_dict: dict
     :param other_dict: Mapping that contains new key-value pairs
-    :type other_dict: Mapping
     :return: Updated dictionary
-    :rtype: dict
     """
     for key, value in other_dict.items():
         if isinstance(value, Mapping):
@@ -37,9 +34,7 @@ def update_nested(*argv: dict) -> dict:
     It "updates" the lower prio dict on the right.
 
     :param argv: n dictionaries
-    :type argv: dict
     :returns: Merged configuration dict
-    :rtype: dict
     """
     if len(argv) == 0:
         return {}
@@ -56,13 +51,9 @@ def flatten_mapping(
     """Flattens a Mapping
 
     :param nested_mapping: Nested mapping that is to be flattened
-    :type nested_mapping: Mapping[str, any]
     :param prefix: Prefix that will be applied to all top-level keys in the output., defaults to None
-    :type prefix: str, optional
     :param separator: Separator between the prefix and the keys, defaults to "_"
-    :type separator: str, optional
     :returns: "Flattened" mapping in the form of dict
-    :rtype: dict[str, Any]
     """
     if not isinstance(nested_mapping, Mapping):
         raise TypeError("Argument nested_mapping is not a Mapping")
@@ -91,12 +82,8 @@ def generate_substitution(
     a dict containing each variable name and value to substitute with.
 
     :param input: Dict from which to generate the substitution
-    :type input: dict
     :param prefix: Prefix the preceeds all substitution variables, defaults to None
-    :type prefix: str, optional
     :param substitution: existing substitution to include
-    :type substitution: dict
     :returns: Substitution dict of all variables related to the model.
-    :rtype: dict
     """
     return update_nested(existing_substitution or {}, flatten_mapping(input, prefix))

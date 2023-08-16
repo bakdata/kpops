@@ -1,17 +1,15 @@
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
+from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
-    HelmDiffConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
+from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components.base_components.kafka_connector import KafkaSourceConnector
 from kpops.components.base_components.models.from_section import (
     FromSection,
@@ -25,55 +23,26 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.environment import ENV
+from tests.components.test_kafka_connector import (
+    CONNECTOR_CLEAN_NAME,
+    CONNECTOR_NAME,
+    TestKafkaConnector,
+)
 
-DEFAULTS_PATH = Path(__file__).parent / "resources"
-CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
-CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
 
-
-class TestKafkaSourceConnector:
-    @pytest.fixture
-    def config(slef) -> PipelineConfig:
-        return PipelineConfig(
-            defaults_path=DEFAULTS_PATH,
-            environment="development",
-            topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component_type}-error-topic",
-                default_output_topic_name="${component_type}-output-topic",
-            ),
-            brokers="broker:9092",
-            helm_diff_config=HelmDiffConfig(),
-        )
-
-    @pytest.fixture
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
-        )
-
-    @pytest.fixture(autouse=True)
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.Helm"
-        ).return_value
-
-    @pytest.fixture
-    def dry_run_handler(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.DryRunHandler"
-        ).return_value
-
+class TestKafkaSourceConnector(TestKafkaConnector):
     @pytest.fixture
     def connector(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        connector_config: KafkaConnectorConfig,
     ) -> KafkaSourceConnector:
         return KafkaSourceConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(),
+            app=connector_config,
             namespace="test-namespace",
             to=ToSection(
                 topics={
@@ -86,14 +55,17 @@ class TestKafkaSourceConnector:
         )
 
     def test_from_section_raises_exception(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        connector_config: KafkaConnectorConfig,
     ):
         with pytest.raises(NotImplementedError):
             KafkaSourceConnector(
                 name=CONNECTOR_NAME,
                 config=config,
                 handlers=handlers,
-                app=KafkaConnectConfig(),
+                app=connector_config,
                 namespace="test-namespace",
                 from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                     topics={
@@ -123,11 +95,7 @@ class TestKafkaSourceConnector:
         connector.deploy(dry_run=True)
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=connector.to, dry_run=True),
-            mocker.call.mock_create_connector(
-                connector_name=CONNECTOR_NAME,
-                kafka_connect_config=connector.app,
-                dry_run=True,
-            ),
+            mocker.call.mock_create_connector(connector.app, dry_run=True),
         ]
 
     def test_destroy(
@@ -144,10 +112,7 @@ class TestKafkaSourceConnector:
 
         connector.destroy(dry_run=True)
 
-        mock_destroy_connector.assert_called_once_with(
-            connector_name=CONNECTOR_NAME,
-            dry_run=True,
-        )
+        mock_destroy_connector.assert_called_once_with(CONNECTOR_NAME, dry_run=True)
 
     def test_reset_when_dry_run_is_true(
         self,
@@ -303,12 +268,13 @@ class TestKafkaSourceConnector:
         helm_mock: MagicMock,
         dry_run_handler: MagicMock,
         mocker: MockerFixture,
+        connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(),
+            app=connector_config,
             namespace="test-namespace",
             offset_topic="kafka-connect-offsets",
         )
@@ -375,14 +341,14 @@ class TestKafkaSourceConnector:
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
-        helm_mock: MagicMock,
         dry_run_handler: MagicMock,
+        connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectConfig(),
+            app=connector_config,
             namespace="test-namespace",
             offset_topic="kafka-connect-offsets",
         )
