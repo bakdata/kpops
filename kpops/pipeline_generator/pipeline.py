@@ -42,7 +42,7 @@ class PipelineComponents(BaseModel):
 
     def find(self, component_name: str) -> PipelineComponent:
         for component in self.components:
-            if component_name == component.name.removeprefix(component.prefix):
+            if component_name == component.name:
                 return component
         raise ValueError(f"Component {component_name} not found")
 
@@ -60,7 +60,7 @@ class PipelineComponents(BaseModel):
         return len(self.components)
 
     def validate_unique_names(self) -> None:
-        step_names = [component.name for component in self.components]
+        step_names = [component.full_name for component in self.components]
         duplicates = [name for name, count in Counter(step_names).items() if count > 1]
         if duplicates:
             raise ValidationError(
@@ -68,13 +68,12 @@ class PipelineComponents(BaseModel):
             )
 
     @staticmethod
-    def _populate_component_name(component: PipelineComponent) -> None:
-        component.name = component.prefix + component.name
+    def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove
         with suppress(
             AttributeError  # Some components like Kafka Connect do not have a name_override attribute
         ):
             if (app := getattr(component, "app")) and app.name_override is None:
-                app.name_override = component.name
+                app.name_override = component.full_name
 
 
 def create_env_components_index(
