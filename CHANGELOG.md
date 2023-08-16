@@ -1,4 +1,22 @@
 # Changelog
+## [1.7.2](https://github.com/bakdata/kpops/releases/tag/1.7.2) - Release Date: [2023-08-16]
+
+### 🏭 Refactor
+
+- Refactor Kafka Connect handler - [#322](https://github.com/bakdata/kpops/pull/322)
+
+
+### 📝 Documentation
+
+- Add KPOps Runner GitHub Action to the documentation - [#325](https://github.com/bakdata/kpops/pull/325)
+
+- Remove `:type` and `:rtype` from docstrings - [#324](https://github.com/bakdata/kpops/pull/324)
+
+
+
+
+
+
 ## [1.7.1](https://github.com/bakdata/kpops/releases/tag/1.7.1) - Release Date: [2023-08-15]
 
 ### 📝 Documentation
