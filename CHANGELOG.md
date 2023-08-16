@@ -1,4 +1,152 @@
 # Changelog
+## [1.7.1](https://github.com/bakdata/kpops/releases/tag/1.7.1) - Release Date: [2023-08-15]
+
+### 📝 Documentation
+
+- Modularize and autogenerate examples for the documentation - [#267](https://github.com/bakdata/kpops/pull/267)
+
+- Update the variable documentation - [#266](https://github.com/bakdata/kpops/pull/266)
+
+
+
+
+
+
+## [1.7.0](https://github.com/bakdata/kpops/releases/tag/1.7.0) - Release Date: [2023-08-15]
+
+### 🚀 Features
+
+- Add flag to exclude pipeline steps - [#300](https://github.com/bakdata/kpops/pull/300)
+
+
+
+
+
+
+## [1.6.0](https://github.com/bakdata/kpops/releases/tag/1.6.0) - Release Date: [2023-08-10]
+
+### 🏭 Refactor
+
+- Refactor handling of Helm flags - [#319](https://github.com/bakdata/kpops/pull/319)
+
+
+
+
+
+
+## [1.5.0](https://github.com/bakdata/kpops/releases/tag/1.5.0) - Release Date: [2023-08-10]
+
+### 🚀 Features
+
+- Refactor Helm wrapper and add `--set-file` flag - [#311](https://github.com/bakdata/kpops/pull/311)
+
+
+### 🏭 Refactor
+
+- Refactor Helm wrapper and add `--set-file` flag - [#311](https://github.com/bakdata/kpops/pull/311)
+
+- Set default for ToSection topics - [#313](https://github.com/bakdata/kpops/pull/313)
+
+- Annotate types for ToSection models mapping - [#315](https://github.com/bakdata/kpops/pull/315)
+
+
+### 🌀 Miscellaneous
+
+- Check Poetry lock file consistency - [#316](https://github.com/bakdata/kpops/pull/316)
+
+
+
+
+
+
+## [1.4.0](https://github.com/bakdata/kpops/releases/tag/1.4.0) - Release Date: [2023-08-02]
+
+### 🐛 Fixes
+
+- Validate unique step names - [#292](https://github.com/bakdata/kpops/pull/292)
+
+
+### 🏭 Refactor
+
+- Order PipelineComponent fields - [#290](https://github.com/bakdata/kpops/pull/290)
+
+- Migrate requests to httpx - [#302](https://github.com/bakdata/kpops/pull/302)
+
+- Refactor CLI using dtyper - [#306](https://github.com/bakdata/kpops/pull/306)
+
+
+### 🌀 Miscellaneous
+
+- Update Black - [#294](https://github.com/bakdata/kpops/pull/294)
+
+- Fix vulnerability in mkdocs-material - [#295](https://github.com/bakdata/kpops/pull/295)
+
+- Move breaking changes section upper in the change log config - [#287](https://github.com/bakdata/kpops/pull/287)
+
+
+
+
+
+
+## [1.3.2](https://github.com/bakdata/kpops/releases/tag/1.3.2) - Release Date: [2023-07-13]
+
+### 🐛 Fixes
+
+- Exclude Helm tests from dry-run diff - [#293](https://github.com/bakdata/kpops/pull/293)
+
+
+
+
+
+
+## [1.3.1](https://github.com/bakdata/kpops/releases/tag/1.3.1) - Release Date: [2023-07-11]
+
+### 🏭 Refactor
+
+- Remove workaround for pipeline steps - [#276](https://github.com/bakdata/kpops/pull/276)
+
+
+### 🌀 Miscellaneous
+
+- Update codeowners - [#281](https://github.com/bakdata/kpops/pull/281)
+
+- Reactivate Windows CI - [#255](https://github.com/bakdata/kpops/pull/255)
+
+- Downgrade Poetry version on the Windows CI pipeline - [#286](https://github.com/bakdata/kpops/pull/286)
+
+- Set ANSI theme for output of `kpops generate` - [#289](https://github.com/bakdata/kpops/pull/289)
+
+
+
+
+
+
+## [1.3.0](https://github.com/bakdata/kpops/releases/tag/1.3.0) - Release Date: [2023-07-07]
+
+### 🏭 Refactor
+
+- Plural broker field in pipeline config - [#278](https://github.com/bakdata/kpops/pull/278)
+
+
+### 📝 Documentation
+
+- Update KPOps runner readme for dev versions - [#279](https://github.com/bakdata/kpops/pull/279)
+
+
+### 🏗️ Breaking changes
+
+- Plural broker field in pipeline config - [#278](https://github.com/bakdata/kpops/pull/278)
+
+
+### 🌀 Miscellaneous
+
+- Add breaking changes section to change log config - [#280](https://github.com/bakdata/kpops/pull/280)
+
+
+
+
+
+
 ## [1.2.4](https://github.com/bakdata/kpops/releases/tag/1.2.4) - Release Date: [2023-06-27]
 
 ### 🌀 Miscellaneous

@@ -1,27 +1,39 @@
-# Base Kubernetes App
+# Base component for Kafka-based components.
 #
-# Parent of: KafkaApp
+# Parent of: ProducerApp, StreamsApp
+# Child of: KubernetesApp
+kafka-app:
+  # `app` can contain application-specific settings, hence  the user is free to
+  # add the key-value pairs they need.
+  app: # required
+    streams: # required
+      brokers: ${brokers} # required
+      schemaRegistryUrl: ${schema_registry_url}
+    nameOverride: override-with-this-name # kafka-app-specific
+    imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
+  version: "2.12.0" # Helm chart version
+# Kafka connector
+#
+# Parent of: KafkaSinkConnector, KafkaSourceConnector
 # Child of: PipelineComponent
-kubernetes-app:
-  name: kubernetes-app
-  namespace: namespace
-  # `app` contains application-specific settings.
-  # The fields below are just an example.
-  app:
-    image: exampleImage # Example
-    debug: false # Example
-    commandLine: {} # Example
+kafka-connector:
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
   # Topic(s) from which the component will read input
-  from:
-    topics:
+  from: # Must not be null
+    topics: # read from topic
       ${pipeline_name}-input-topic:
-        type: input
+        type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
+    components: # read from specific component
+      producer:
+        type: input # required
   # Topic(s) into which the component will write output
   to:
     topics:
       ${pipeline_name}-output-topic:
-        type: output
+        type: output # required
         # role: topic-role # only used if type is `extra`
         keySchema: key-schema # must implement SchemaProvider to use
         valueSchema: value-schema
@@ -31,42 +43,121 @@ kubernetes-app:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
+  namespace: namespace # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example. Extensive documentation on
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
+  app: # required
+    tasks.max: 1
+  # Helm repository configuration for resetter
+  repoConfig:
+    repositoryName: my-repo # required
+    url: https://bakdata.github.io/kafka-connect-resetter/ # required
+    repoAuthFlags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "1.0.6" # Helm chart version
+  # Overriding Kafka Connect Resetter Helm values. E.g. to override the
+  # Image Tag etc.
+  resetterValues:
+    imageTag: "1.2.3"
+# Kafka sink connector
+#
+# Child of: KafkaConnector
+kafka-sink-connector:
+  # No settings differ from `kafka-connector`
+# Kafka source connector
+#
+# Child of: KafkaConnector
+kafka-source-connector:
+  # The source connector has no `from` section
+  # from:
+  # offset.storage.topic
+  # https://kafka.apache.org/documentation/#connect_running
+  offsetTopic: offset_topic
+# Base Kubernetes App
+#
+# Parent of: KafkaApp
+# Child of: PipelineComponent
+kubernetes-app:
+  # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # Helm repository configuration
+  # Topic(s) from which the component will read input
+  from: # Must not be null
+    topics: # read from topic
+      ${pipeline_name}-input-topic:
+        type: input # required
+        # role: topic-role # only used if type is `extra` or `extra-pattern`
+    components: # read from specific component
+      producer:
+        type: input # required
+  # Topic(s) into which the component will write output
+  to:
+    topics:
+      ${pipeline_name}-output-topic:
+        type: output # required
+        # role: topic-role # only used if type is `extra`
+        keySchema: key-schema # must implement SchemaProvider to use
+        valueSchema: value-schema
+        partitions_count: 1
+        replication_factor: 1
+        configs: # https://kafka.apache.org/documentation/#topicconfigs
+          cleanup.policy: compact
+    models: # SchemaProvider is initiated with the values given here
+      model: model
+  namespace: namespace # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example.
+  app: # required
+    image: exampleImage # Example
+    debug: false # Example
+    commandLine: {} # Example
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
   repoConfig:
-    repositoryName: my-repo
-    url: https://bakdata.github.io/
-    repoAuthFlags: 
+    repositoryName: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "1.0.0" # Helm chart version
+# Holds configuration to use as values for the streams bootstrap producer Helm
+# chart.
 #
-# Base component for Kafka-based components.
-#
-# Parent of: ProducerApp, StreamsApp
-# Child of: KubernetesApp
-kafka-app:
-  app:
-    streams:
-      brokers: ${broker}
+# Child of: KafkaApp
+# More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
+producer:
+  # from: # While the producer does inherit from kafka-app, it does not need a
+  # `from` section, hence it does not support it.
+  # Allowed configs:
+  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
+  app: # required
+    streams: # required, producer-specific
+      brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
-    nameOverride: override-with-this-name
-#
+      outputTopic: output_topic
+      extraOutputTopics: 
+        output_role1: output_topic1
+        output_role2: output_topic2
+    nameOverride: override-with-this-name # kafka-app-specific
 # StreamsApp component that configures a streams bootstrap app.
 #
 # Child of: KafkaApp
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
 streams-app:
-  # No arbitrary keys are allowed under `app`.
+  # No arbitrary keys are allowed under `app`here
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
-  app:
+  app: # required
     # Streams Bootstrap streams section
-    streams:
+    streams: # required, streams-app-specific
+      brokers: ${brokers} # required
+      schemaRegistryUrl: ${schema_registry_url}
       inputTopics:
         - topic1
         - topic2
@@ -81,21 +172,22 @@ streams-app:
           - input_topic4
       extraInputPatterns:
         pattern_role1: input_pattern1
-      extraOutputTopics: 
+      extraOutputTopics:
         output_role1: output_topic1
         output_role2: output_topic2
       errorTopic: error-topic
-      config: 
+      config:
         my.streams.config: my.value
-    autoscaling:
-      consumerGroup: consumer-group
+    nameOverride: override-with-this-name # streams-app-specific
+    autoscaling: # streams-app-specific
+      consumerGroup: consumer-group # required
       lagThreshold: 0 # Average target value to trigger scaling actions.
       enabled: false # Whether to enable auto-scaling using KEDA.
       # This is the interval to check each trigger on.
       # https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval
       pollingInterval: 30
       # The period to wait after the last trigger reported active before scaling
-      # the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod
+      #  the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod
       cooldownPeriod: 300
       # The offset reset policy for the consumer if the the consumer group is
       # not yet subscribed to a partition.
@@ -114,80 +206,3 @@ streams-app:
       topics: # List of auto-generated Kafka Streams topics used by the streams app.
         - topic1
         - topic2
-#
-# Holds configuration to use as values for the streams bootstrap producer Helm
-# chart.
-#
-# Child of: KafkaApp
-# More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
-producer:
-  # Allowed configs:
-  # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
-  app:
-    streams:
-      outputTopic: output_topic
-      extraOutputTopics: 
-        output_role1: output_topic1
-        output_role2: output_topic2
-#
-# Kafka connector
-#
-# Parent of: KafkaSinkConnector, KafkaSourceConnector
-# Child of: PipelineComponent
-kafka-connector:
-  name: kafka-connector
-  namespace: namespace # Clean up jobs for the connector will run here
-  # `app` contains application-specific settings. Extensive documentation on
-  # connectors: https://kafka.apache.org/documentation/#connectconfigs
-  app:
-    tasks.max: 1 # example
-  # Topic(s) from which the component will read input
-  from:
-    topics:
-      ${pipeline_name}-input-topic:
-        type: input
-        # role: topic-role # only used if type is `extra`
-  # Topic(s) into which the component will write output
-  to:
-    topics:
-      ${pipeline_name}-output-topic:
-        type: error 
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
-        partitions_count: 1
-        replication_factor: 1
-        configs: # https://kafka.apache.org/documentation/#topicconfigs
-          cleanup.policy: compact
-    models: # SchemaProvider is initiated with the values given here
-      model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
-  # Helm repository configuration for resetter
-  repoConfig:
-    repositoryName: my-repo
-    url: https://bakdata.github.io/kafka-connect-resetter/
-    repoAuthFlags: 
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "1.0.4" # Helm chart version
-  # Overriding Kafka Connect Resetter Helm values. E.g. to override the
-  # Image Tag etc.
-  resetterValues:
-    imageTag: "1.2.3"
-#
-# Kafka source connector
-#
-# Child of: KafkaConnector
-kafka-source-connector:
-  # offset.storage.topic
-  # https://kafka.apache.org/documentation/#connect_running
-  offsetTopic: offset_topic
-#
-# Kafka sink connector
-#
-# Child of: KafkaConnector
-kafka-sink-connector:
-  # No settings differ from `kafka-connector`

@@ -21,7 +21,8 @@ runner = CliRunner()
 
 # schema_type and type not defined
 class EmptyPipelineComponent(PipelineComponent):
-    ...
+    class Config:
+        anystr_strip_whitespace = True
 
 
 # schema_type does not exist

@@ -3,7 +3,9 @@ defaults_path: ../no-topics-defaults
 topic_name_config:
   default_error_topic_name: "${component_name}-dead-letter-topic"
   default_output_topic_name: "${component_name}-test-topic"
-broker: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
 kafka_connect_host: "http://localhost:8083"
 kafka_rest_host: "http://localhost:8082"
 schema_registry_url: "http://localhost:8081"
+helm_config:
+  api_version: "2.1.1"

@@ -12,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import (
+    HelmFlags,
     HelmRepoConfig,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
@@ -54,6 +55,10 @@ class KubernetesApp(PipelineComponent):
         default="kubernetes-app",
         description=describe_attr("type", __doc__),
     )
+    namespace: str = Field(
+        default=...,
+        description=describe_attr("namespace", __doc__),
+    )
     schema_type: Literal["kubernetes-app"] = Field(
         default="kubernetes-app",
         title="Component type",
@@ -64,13 +69,9 @@ class KubernetesApp(PipelineComponent):
         default=...,
         description=describe_attr("app", __doc__),
     )
-    repo_config: HelmRepoConfig | None = Field(
-        default=None,
-        description=describe_attr("repo_config", __doc__),
-    )
-    namespace: str = Field(
+    repo_config: HelmRepoConfig = Field(
         default=...,
-        description=describe_attr("namespace", __doc__),
+        description=describe_attr("repo_config", __doc__),
     )
     version: str | None = Field(
         default=None,
@@ -107,35 +108,55 @@ class KubernetesApp(PipelineComponent):
         """The name for the Helm release. Can be overridden."""
         return self.name
 
-    @override
-    def _validate_custom(self, **kwargs) -> None:
-        self.validate_kubernetes_name(self.name)
+    @property
+    def helm_chart(self) -> str:
+        """Return component's Helm chart"""
+        raise NotImplementedError(
+            f"Please implement the helm_chart property of the {self.__module__} module."
+        )
+
+    @property
+    def helm_flags(self) -> HelmFlags:
+        """Return shared flags for Helm commands"""
+        return HelmFlags(
+            **self.repo_config.repo_auth_flags.dict(),
+            version=self.version,
+            create_namespace=self.config.create_namespace,
+        )
+
+    @property
+    def template_flags(self) -> HelmTemplateFlags:
+        """Return flags for Helm template command"""
+        return HelmTemplateFlags(
+            **self.helm_flags.dict(),
+            api_version=self.config.helm_config.api_version,
+        )
 
     @override
-    def template(
-        self, api_version: str | None, ca_file: str | None, cert_file: str | None
-    ) -> None:
-        flags = HelmTemplateFlags(api_version, ca_file, cert_file, self.version)
+    def template(self) -> None:
         stdout = self.helm.template(
             self.helm_release_name,
-            self.get_helm_chart(),
+            self.helm_chart,
             self.namespace,
             self.to_helm_values(),
-            flags,
+            self.template_flags,
         )
         print(stdout)
+
+    @property
+    def deploy_flags(self) -> HelmUpgradeInstallFlags:
+        """Return flags for Helm upgrade install command"""
+        return HelmUpgradeInstallFlags(**self.helm_flags.dict())
 
     @override
     def deploy(self, dry_run: bool) -> None:
         stdout = self.helm.upgrade_install(
             self.helm_release_name,
-            self.get_helm_chart(),
+            self.helm_chart,
             dry_run,
             self.namespace,
             self.to_helm_values(),
-            HelmUpgradeInstallFlags(
-                create_namespace=self.config.create_namespace, version=self.version
-            ),
+            self.deploy_flags,
         )
         if dry_run:
             self.dry_run_handler.print_helm_diff(stdout, self.helm_release_name, log)
@@ -175,15 +196,10 @@ class KubernetesApp(PipelineComponent):
         new_release = Helm.load_manifest(stdout)
         self.helm_diff.log_helm_diff(log, current_release, new_release)
 
-    def get_helm_chart(self) -> str:
-        """Return component's helm chart
-
-        :return: Helm chart of this component
-        :rtype: str
-        """
-        raise NotImplementedError(
-            f"Please implement the get_helm_chart() method of the {self.__module__} module."
-        )
+    @override
+    def _validate_custom(self, **kwargs) -> None:
+        super()._validate_custom(**kwargs)
+        self.validate_kubernetes_name(self.name)
 
     @staticmethod
     def validate_kubernetes_name(name: str) -> None:

@@ -41,7 +41,6 @@ class BaseDefaultsComponent(BaseModel):
     type: str = Field(
         default=..., description=describe_attr("type", __doc__), const=True
     )
-
     enrich: bool = Field(
         default=False,
         description=describe_attr("enrich", __doc__),

@@ -70,8 +70,9 @@ class StreamsApp(KafkaApp):
     def add_extra_output_topic(self, topic_name: str, role: str) -> None:
         self.app.streams.extra_output_topics[role] = topic_name
 
+    @property
     @override
-    def get_helm_chart(self) -> str:
+    def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.STREAMS_APP.value}"
 
     @property

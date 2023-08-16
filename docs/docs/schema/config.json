@@ -2,16 +2,22 @@
     "$ref": "#/definitions/PipelineConfig",
     "definitions": {
         "HelmConfig": {
+            "description": "Global Helm configuration",
             "properties": {
+                "api_version": {
+                    "description": "Kubernetes API version used for Capabilities.APIVersions",
+                    "title": "API version",
+                    "type": "string"
+                },
                 "context": {
-                    "description": "Set the name of the kubeconfig context. (--kube-context)",
+                    "description": "Name of kubeconfig context (`--kube-context`)",
                     "example": "dev-storage",
                     "title": "Context",
                     "type": "string"
                 },
                 "debug": {
                     "default": false,
-                    "description": "Run Helm in Debug mode.",
+                    "description": "Run Helm in Debug mode",
                     "title": "Debug",
                     "type": "boolean"
                 }
@@ -39,13 +45,14 @@
             "additionalProperties": false,
             "description": "Pipeline configuration unrelated to the components.",
             "properties": {
-                "broker": {
-                    "description": "The Kafka broker address.",
-                    "env": "KPOPS_KAFKA_BROKER",
+                "brokers": {
+                    "description": "The comma separated Kafka brokers address.",
+                    "env": "KPOPS_KAFKA_BROKERS",
                     "env_names": [
-                        "kpops_kafka_broker"
+                        "kpops_kafka_brokers"
                     ],
-                    "title": "Broker",
+                    "example": "broker1:9092,broker2:9092,broker3:9092",
+                    "title": "Brokers",
                     "type": "string"
                 },
                 "create_namespace": {
@@ -94,6 +101,7 @@
                         }
                     ],
                     "default": {
+                        "api_version": null,
                         "context": null,
                         "debug": false
                     },
@@ -187,7 +195,7 @@
             },
             "required": [
                 "environment",
-                "broker"
+                "brokers"
             ],
             "title": "PipelineConfig",
             "type": "object"

@@ -1,7 +1,7 @@
 import logging
 from functools import cached_property
 
-import requests
+import httpx
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.topic.exception import (
@@ -44,8 +44,8 @@ class ProxyWrapper:
         bootstrap.servers configuration. Therefore, only one Kafka cluster will be returned.
         :return: The Kafka cluster ID.
         """
-        response = requests.get(url=f"{self._host}/v3/clusters")
-        if response.status_code == requests.status_codes.codes.ok:
+        response = httpx.get(url=f"{self._host}/v3/clusters")
+        if response.status_code == httpx.codes.OK:
             cluster_information = response.json()
             return cluster_information["data"][0]["cluster_id"]
 
@@ -61,12 +61,12 @@ class ProxyWrapper:
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#post--clusters-cluster_id-topics
         :param topic_spec: The topic specification.
         """
-        response = requests.post(
+        response = httpx.post(
             url=f"{self._host}/v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec.dict(exclude_none=True),
         )
-        if response.status_code == requests.status_codes.codes.created:
+        if response.status_code == httpx.codes.CREATED:
             log.info(f"Topic {topic_spec.topic_name} created.")
             log.debug(response.json())
             return
@@ -79,11 +79,11 @@ class ProxyWrapper:
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#delete--clusters-cluster_id-topics-topic_name
         :param topic_name: Name of the topic
         """
-        response = requests.delete(
+        response = httpx.delete(
             url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
-        if response.status_code == requests.status_codes.codes.no_content:
+        if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Topic {topic_name} deleted.")
             return
 
@@ -96,17 +96,17 @@ class ProxyWrapper:
         :param topic_name: The topic name.
         :return: Response of the get topic API
         """
-        response = requests.get(
+        response = httpx.get(
             url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
-        if response.status_code == requests.status_codes.codes.ok:
+        if response.status_code == httpx.codes.OK:
             log.debug(f"Topic {topic_name} found.")
             log.debug(response.json())
             return TopicResponse(**response.json())
 
         elif (
-            response.status_code == requests.status_codes.codes.not_found
+            response.status_code == httpx.codes.NOT_FOUND
             and response.json()["error_code"] == 40403
         ):
             log.debug(f"Topic {topic_name} not found.")
@@ -122,18 +122,18 @@ class ProxyWrapper:
         :param topic_name: The topic name.
         :return: The topic configuration.
         """
-        response = requests.get(
+        response = httpx.get(
             url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",
             headers=HEADERS,
         )
 
-        if response.status_code == requests.status_codes.codes.ok:
+        if response.status_code == httpx.codes.OK:
             log.debug(f"Configs for {topic_name} found.")
             log.debug(response.json())
             return TopicConfigResponse(**response.json())
 
         elif (
-            response.status_code == requests.status_codes.codes.not_found
+            response.status_code == httpx.codes.NOT_FOUND
             and response.json()["error_code"] == 40403
         ):
             log.debug(f"Configs for {topic_name} not found.")
@@ -149,12 +149,12 @@ class ProxyWrapper:
         :param topic_name: The topic name.
         :param config_name: The configuration parameter name.
         """
-        response = requests.post(
+        response = httpx.post(
             url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={"data": json_body},
         )
-        if response.status_code == requests.status_codes.codes.no_content:
+        if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Config of topic {topic_name} was altered.")
             return
 
@@ -166,12 +166,12 @@ class ProxyWrapper:
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#get--clusters-cluster_id-brokers---configs
         :return: The broker configuration.
         """
-        response = requests.get(
+        response = httpx.get(
             url=f"{self.host}/v3/clusters/{self.cluster_id}/brokers/-/configs",
             headers=HEADERS,
         )
 
-        if response.status_code == requests.status_codes.codes.ok:
+        if response.status_code == httpx.codes.OK:
             log.debug("Broker configs found.")
             log.debug(response.json())
             return BrokerConfigResponse(**response.json())
