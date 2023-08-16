@@ -34,9 +34,7 @@ class KafkaConnectHandler:
         self._timeout = timeout
 
     def create_connector(
-        self,
-        connector_config: KafkaConnectorConfig,
-        dry_run: bool,
+        self, connector_config: KafkaConnectorConfig, *, dry_run: bool
     ) -> None:
         """
         Creates a connector. If the connector exists the config of that connector gets updated.
@@ -65,7 +63,7 @@ class KafkaConnectHandler:
                     secs=self._timeout,
                 )
 
-    def destroy_connector(self, connector_name: str, dry_run: bool) -> None:
+    def destroy_connector(self, connector_name: str, *, dry_run: bool) -> None:
         """
         Deletes a connector resource from the cluster.
         :param connector_name: The connector name.

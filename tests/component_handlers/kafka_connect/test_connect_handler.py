@@ -70,7 +70,7 @@ class TestConnectorHandler:
         handler = self.connector_handler(connector_wrapper)
         renderer_diff_mock.return_value = None
 
-        handler.create_connector(connector_config, True)
+        handler.create_connector(connector_config, dry_run=True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(
             connector_config
@@ -101,7 +101,7 @@ class TestConnectorHandler:
             "topics": "test-topic",
         }
         config = KafkaConnectorConfig(**configs)
-        handler.create_connector(config, True)
+        handler.create_connector(config, dry_run=True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(config)
 
@@ -142,7 +142,7 @@ class TestConnectorHandler:
             "topics": "test-topic",
         }
         connector_config = KafkaConnectorConfig(**configs)
-        handler.create_connector(connector_config, True)
+        handler.create_connector(connector_config, dry_run=True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(
             connector_config
@@ -179,7 +179,7 @@ class TestConnectorHandler:
             ConnectorStateException,
             match=f"Connector Creation: validating the connector config for connector {CONNECTOR_NAME} resulted in the following errors: {formatted_errors}",
         ):
-            handler.create_connector(connector_config, True)
+            handler.create_connector(connector_config, dry_run=True)
 
         connector_wrapper.validate_connector_config.assert_called_once_with(
             connector_config
@@ -191,7 +191,7 @@ class TestConnectorHandler:
         connector_wrapper = MagicMock()
         handler = self.connector_handler(connector_wrapper)
 
-        handler.create_connector(connector_config, False)
+        handler.create_connector(connector_config, dry_run=False)
 
         assert connector_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
@@ -206,7 +206,7 @@ class TestConnectorHandler:
         handler = self.connector_handler(connector_wrapper)
 
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
-        handler.create_connector(connector_config, False)
+        handler.create_connector(connector_config, dry_run=False)
 
         connector_wrapper.create_connector.assert_called_once_with(connector_config)
 
@@ -218,7 +218,7 @@ class TestConnectorHandler:
 
         handler = self.connector_handler(connector_wrapper)
 
-        handler.destroy_connector(CONNECTOR_NAME, True)
+        handler.destroy_connector(CONNECTOR_NAME, dry_run=True)
 
         log_info_mock.assert_called_once_with(
             magentaify(
@@ -235,7 +235,7 @@ class TestConnectorHandler:
 
         handler = self.connector_handler(connector_wrapper)
 
-        handler.destroy_connector(CONNECTOR_NAME, True)
+        handler.destroy_connector(CONNECTOR_NAME, dry_run=True)
 
         log_warning_mock.assert_called_once_with(
             f"Connector Destruction: connector {CONNECTOR_NAME} does not exist and cannot be deleted. Skipping."
@@ -247,7 +247,7 @@ class TestConnectorHandler:
         connector_wrapper = MagicMock()
         handler = self.connector_handler(connector_wrapper)
 
-        handler.destroy_connector(CONNECTOR_NAME, False)
+        handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
         assert connector_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
             mock.call.delete_connector(CONNECTOR_NAME),
@@ -261,7 +261,7 @@ class TestConnectorHandler:
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         handler = self.connector_handler(connector_wrapper)
 
-        handler.destroy_connector(CONNECTOR_NAME, False)
+        handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
 
         log_warning_mock.assert_called_once_with(
             f"Connector Destruction: the connector {CONNECTOR_NAME} does not exist. Skipping."
