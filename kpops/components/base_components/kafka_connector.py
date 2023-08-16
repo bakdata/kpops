@@ -96,16 +96,18 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @validator("app", pre=True)
     def connector_config_should_have_component_name(
-        cls, v: KafkaConnectorConfig | dict[str, str], values: dict[str, Any]
+        cls,
+        app: KafkaConnectorConfig | dict[str, str],
+        values: dict[str, Any],
     ) -> dict[str, str]:
-        if isinstance(v, KafkaConnectorConfig):
-            v = v.dict()
+        if isinstance(app, KafkaConnectorConfig):
+            app = app.dict()
         component_name = values["prefix"] + values["name"]
-        connector_name: str | None = v.get("name")
+        connector_name: str | None = app.get("name")
         if connector_name is not None and connector_name != component_name:
             raise ValueError("Connector name should be the same as component name")
-        v["name"] = component_name
-        return v
+        app["name"] = component_name
+        return app
 
     @cached_property
     def helm(self) -> Helm:
