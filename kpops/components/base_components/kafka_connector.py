@@ -101,7 +101,7 @@ class KafkaConnector(PipelineComponent, ABC):
         if isinstance(v, KafkaConnectorConfig):
             v = v.dict()
         connector_name: str | None = v.get("name")
-        if connector_name and connector_name != values["name"]:
+        if connector_name is not None and connector_name != values["name"]:
             raise ValueError("Connector name should be the same as component name")
         v["name"] = values["name"]
         return v

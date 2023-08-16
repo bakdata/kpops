@@ -93,3 +93,14 @@ class TestKafkaConnector:
                 app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore
                 namespace="test-namespace",
             )
+
+        with pytest.raises(
+            ValueError, match="Connector name should be the same as component name"
+        ):
+            KafkaConnector(
+                name=CONNECTOR_NAME,
+                config=config,
+                handlers=handlers,
+                app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore
+                namespace="test-namespace",
+            )
