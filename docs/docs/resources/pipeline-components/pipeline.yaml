@@ -8,7 +8,7 @@
   from: # Must not be null
     topics: # read from topic
       ${pipeline_name}-input-topic:
-        type: input # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+        type: input # Implied when role is NOT specified
       ${pipeline_name}-extra-topic:
         role: topic-role # Implies `type` to be extra
       ${pipeline_name}-input-pattern-topic:
@@ -18,7 +18,7 @@
         role: some-role
     components: # read from specific component
       account-producer:
-        type: output # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+        type: output # Implied when role is NOT specified
       other-producer:
         role: some-role # Implies `type` to be extra
       component-as-input-pattern:
@@ -73,7 +73,7 @@
   from: # Must not be null
     topics: # read from topic
       ${pipeline_name}-input-topic:
-        type: input # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+        type: input # Implied when role is NOT specified
       ${pipeline_name}-extra-topic:
         role: topic-role # Implies `type` to be extra
       ${pipeline_name}-input-pattern-topic:
@@ -83,7 +83,7 @@
         role: some-role
     components: # read from specific component
       account-producer:
-        type: output # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+        type: output # Implied when role is NOT specified
       other-producer:
         role: some-role # Implies `type` to be extra
       component-as-input-pattern:
@@ -187,7 +187,7 @@
   from: # Must not be null
     topics: # read from topic
       ${pipeline_name}-input-topic:
-        type: input # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+        type: input # Implied when role is NOT specified
       ${pipeline_name}-extra-topic:
         role: topic-role # Implies `type` to be extra
       ${pipeline_name}-input-pattern-topic:
@@ -197,7 +197,7 @@
         role: some-role
     components: # read from specific component
       account-producer:
-        type: output # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+        type: output # Implied when role is NOT specified
       other-producer:
         role: some-role # Implies `type` to be extra
       component-as-input-pattern:
@@ -303,7 +303,7 @@
   from: # Must not be null
     topics: # read from topic
       ${pipeline_name}-input-topic:
-        type: input # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+        type: input # Implied when role is NOT specified
       ${pipeline_name}-extra-topic:
         role: topic-role # Implies `type` to be extra
       ${pipeline_name}-input-pattern-topic:
@@ -313,7 +313,7 @@
         role: some-role
     components: # read from specific component
       account-producer:
-        type: output # Implied when role is NOT specified, alternatives of `type: null` or `role: null` also work
+        type: output # Implied when role is NOT specified
       other-producer:
         role: some-role # Implies `type` to be extra
       component-as-input-pattern:
