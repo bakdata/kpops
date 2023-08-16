@@ -9,11 +9,8 @@ def describe_attr(name: str, docstr: str | None) -> str:
     **Works only with reStructuredText docstrings.**
 
     :param name: Attribute name
-    :type name: str
     :param docstr: Docstring from which to read. Note that the class' docstring is stored in attr ``__doc__``
-    :type docstr: str, optional
     :returns: Description of the class attribute read from the class docstring
-    :rtype: str
     """
     if docstr is None:
         return ""
@@ -29,9 +26,7 @@ def describe_object(docstr: str | None) -> str:
     **Works only with reStructuredText docstrings.**
 
     :param docstr: The docstring
-    :type docstr: str, optional
     :returns: Description taken from the docstring
-    :rtype: str
     """
     if docstr is None:
         return ""
@@ -59,9 +54,7 @@ def _trim_description_end(desc: str) -> str:
     **Works only with reStructuredText docstrings.**
 
     :param desc: Description to be isolated, only the end will be trimmed
-    :type desc: str
     :returns: Isolated description
-    :rtype: str
     """
     desc_enders = [
         ":param ",

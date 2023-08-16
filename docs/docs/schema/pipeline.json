@@ -1062,7 +1062,7 @@
             "type": "object"
         },
         "StreamsAppConfig": {
-            "description": "StreamsBoostrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart. :params streams: Streams Bootstrap streams section",
+            "description": "StreamsBoostrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart. :params streams: Streams Bootstrap streams section :params autoscaling:Kubernetes Event-driven Autoscaling config",
             "properties": {
                 "autoscaling": {
                     "$ref": "#/definitions/StreamsAppAutoScaling"
