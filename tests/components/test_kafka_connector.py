@@ -72,7 +72,7 @@ class TestKafkaConnector:
             app=connector_config,
             namespace="test-namespace",
         )
-        assert connector.app.connector_class == CONNECTOR_CLASS
+        assert connector.app.name == CONNECTOR_NAME
 
         connector = KafkaConnector(
             name=CONNECTOR_NAME,
@@ -81,7 +81,7 @@ class TestKafkaConnector:
             app={"connector.class": CONNECTOR_CLASS},  # type: ignore
             namespace="test-namespace",
         )
-        assert connector.app.connector_class == CONNECTOR_CLASS
+        assert connector.app.name == CONNECTOR_NAME
 
         with pytest.raises(
             ValueError, match="Connector name should be the same as component name"
