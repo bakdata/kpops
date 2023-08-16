@@ -331,6 +331,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'insert.mode': 'insert',
                 'insert.mode.databaselevel': True,
                 'key.converter': 'org.apache.kafka.connect.storage.StringConverter',
+                'name': 'postgresql-connector',
                 'pk.mode': 'record_value',
                 'table.name.format': 'fraud_transactions',
                 'tasks.max': 1,
