@@ -33,18 +33,6 @@ CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 
 
 class TestKafkaSourceConnector(TestKafkaConnector):
-    @pytest.fixture(autouse=True)
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.Helm"
-        ).return_value
-
-    @pytest.fixture
-    def dry_run_handler(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.DryRunHandler"
-        ).return_value
-
     @pytest.fixture
     def connector(
         self,
@@ -355,7 +343,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
-        helm_mock: MagicMock,
         dry_run_handler: MagicMock,
         connector_config: KafkaConnectorConfig,
     ):

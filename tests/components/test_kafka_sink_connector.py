@@ -40,18 +40,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kafka_connector.log.info")
 
-    @pytest.fixture(autouse=True)
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.Helm"
-        ).return_value
-
-    @pytest.fixture
-    def dry_run_handler(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.DryRunHandler"
-        ).return_value
-
     @pytest.fixture
     def connector(
         self,
