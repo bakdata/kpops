@@ -46,7 +46,7 @@ class ConnectWrapper:
         :param connector_config: The config of the connector
         :return: The current connector info if successful
         """
-        config_json = connector_config.dict(exclude_none=True)
+        config_json = connector_config.dict()
         connect_data = {"name": connector_config.name, "config": config_json}
         response = httpx.post(
             url=f"{self._host}/connectors", headers=HEADERS, json=connect_data
@@ -93,23 +93,23 @@ class ConnectWrapper:
     ) -> KafkaConnectResponse:
         """
         Create a new connector using the given configuration, or update the configuration for an existing connector.
-        :param connector_name: Name of the created connector
         :param connector_config: Configuration parameters for the connector.
         :return: Information about the connector after the change has been made.
         """
-        config_json = connector_config.dict(exclude_none=True)
+        connector_name = connector_config.name
+        config_json = connector_config.dict()
         response = httpx.put(
-            url=f"{self._host}/connectors/{connector_config.name}/config",
+            url=f"{self._host}/connectors/{connector_name}/config",
             headers=HEADERS,
             json=config_json,
         )
         data: dict = response.json()
         if response.status_code == httpx.codes.OK:
-            log.info(f"Config for connector {connector_config.name} updated.")
+            log.info(f"Config for connector {connector_name} updated.")
             log.debug(data)
             return KafkaConnectResponse(**data)
         if response.status_code == httpx.codes.CREATED:
-            log.info(f"Connector {connector_config.name} created.")
+            log.info(f"Connector {connector_name} created.")
             log.debug(data)
             return KafkaConnectResponse(**data)
         elif response.status_code == httpx.codes.CONFLICT:
