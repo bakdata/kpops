@@ -3,9 +3,9 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Literal, NoReturn
+from typing import Any, Literal, NoReturn
 
-from pydantic import Field
+from pydantic import Field, validator
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -19,7 +19,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.component_handlers.helm_wrapper.utils import trim_release_name
 from kpops.component_handlers.kafka_connect.model import (
-    KafkaConnectConfig,
+    KafkaConnectorConfig,
     KafkaConnectorType,
     KafkaConnectResetterConfig,
     KafkaConnectResetterValues,
@@ -65,7 +65,7 @@ class KafkaConnector(PipelineComponent, ABC):
         description=describe_object(__doc__),
         exclude=True,
     )
-    app: KafkaConnectConfig = Field(
+    app: KafkaConnectorConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )
@@ -86,6 +86,21 @@ class KafkaConnector(PipelineComponent, ABC):
 
     class Config(CamelCaseConfig):
         pass
+
+    @validator("app", pre=True)
+    def connector_config_should_have_component_name(
+        cls,
+        app: KafkaConnectorConfig | dict[str, str],
+        values: dict[str, Any],
+    ) -> dict[str, str]:
+        if isinstance(app, KafkaConnectorConfig):
+            app = app.dict()
+        component_name = values["prefix"] + values["name"]
+        connector_name: str | None = app.get("name")
+        if connector_name is not None and connector_name != component_name:
+            raise ValueError("Connector name should be the same as component name")
+        app["name"] = component_name
+        return app
 
     @cached_property
     def helm(self) -> Helm:
@@ -145,15 +160,11 @@ class KafkaConnector(PipelineComponent, ABC):
                     to_section=self.to, dry_run=dry_run
                 )
 
-        self.handlers.connector_handler.create_connector(
-            connector_name=self.name, kafka_connect_config=self.app, dry_run=dry_run
-        )
+        self.handlers.connector_handler.create_connector(self.app, dry_run=dry_run)
 
     @override
     def destroy(self, dry_run: bool) -> None:
-        self.handlers.connector_handler.destroy_connector(
-            connector_name=self.name, dry_run=dry_run
-        )
+        self.handlers.connector_handler.destroy_connector(self.name, dry_run=dry_run)
 
     @override
     def clean(self, dry_run: bool) -> None:

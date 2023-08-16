@@ -7,9 +7,15 @@ from kpops.utils.docstring import describe_object
 
 
 def to_camel(field: str) -> str:
+    """Convert snake_case to camelCase."""
     if field == "schema_type":
         return field
     return humps.camelize(field)
+
+
+def to_dot(s: str) -> str:
+    """Convert snake_case to dot.notation."""
+    return s.replace("_", ".")
 
 
 class CamelCaseConfig(BaseConfig):
@@ -18,6 +24,6 @@ class CamelCaseConfig(BaseConfig):
 
 
 class DescConfig(BaseConfig):
-    @staticmethod
-    def schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
+    @classmethod
+    def schema_extra(cls, schema: dict[str, Any], model: type[BaseModel]) -> None:
         schema["description"] = describe_object(model.__doc__)

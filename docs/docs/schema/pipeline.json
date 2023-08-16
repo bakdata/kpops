@@ -218,22 +218,13 @@
             "title": "KafkaAppConfig",
             "type": "object"
         },
-        "KafkaConnectConfig": {
-            "additionalProperties": {
-                "type": "string"
-            },
-            "description": "Settings specific to Kafka Connectors",
-            "properties": {},
-            "title": "KafkaConnectConfig",
-            "type": "object"
-        },
         "KafkaConnector": {
             "description": "Base class for all Kafka connectors\nShould only be used to set defaults",
             "properties": {
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/KafkaConnectConfig"
+                            "$ref": "#/definitions/KafkaConnectorConfig"
                         }
                     ],
                     "description": "Application-specific settings",
@@ -328,13 +319,30 @@
             "title": "KafkaConnector",
             "type": "object"
         },
+        "KafkaConnectorConfig": {
+            "additionalProperties": {
+                "type": "string"
+            },
+            "description": "Settings specific to Kafka Connectors",
+            "properties": {
+                "connector.class": {
+                    "title": "Connector.Class",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "connector.class"
+            ],
+            "title": "KafkaConnectorConfig",
+            "type": "object"
+        },
         "KafkaSinkConnector": {
             "description": "Kafka sink connector model",
             "properties": {
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/KafkaConnectConfig"
+                            "$ref": "#/definitions/KafkaConnectorConfig"
                         }
                     ],
                     "description": "Application-specific settings",
@@ -435,7 +443,7 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/KafkaConnectConfig"
+                            "$ref": "#/definitions/KafkaConnectorConfig"
                         }
                     ],
                     "description": "Application-specific settings",
