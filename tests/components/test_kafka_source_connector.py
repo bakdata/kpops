@@ -1,4 +1,3 @@
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -24,12 +23,11 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.environment import ENV
-from tests.components.test_kafka_connector import TestKafkaConnector
-
-DEFAULTS_PATH = Path(__file__).parent / "resources"
-CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
-CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
-CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
+from tests.components.test_kafka_connector import (
+    CONNECTOR_CLEAN_NAME,
+    CONNECTOR_NAME,
+    TestKafkaConnector,
+)
 
 
 class TestKafkaSourceConnector(TestKafkaConnector):

@@ -1,4 +1,3 @@
-from pathlib import Path
 from unittest.mock import MagicMock, call
 
 import pytest
@@ -27,12 +26,11 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.colorify import magentaify
-from tests.components.test_kafka_connector import TestKafkaConnector
-
-DEFAULTS_PATH = Path(__file__).parent / "resources"
-CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
-CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
-CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
+from tests.components.test_kafka_connector import (
+    CONNECTOR_CLEAN_NAME,
+    CONNECTOR_NAME,
+    TestKafkaConnector,
+)
 
 
 class TestKafkaSinkConnector(TestKafkaConnector):
@@ -61,41 +59,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 }
             ),
         )
-
-    def test_connector_config_name_override(  # TODO: move to KafkaConnector test
-        self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
-        connector_config: KafkaConnectorConfig,
-    ):
-        connector = KafkaSinkConnector(
-            name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app=connector_config,
-            namespace="test-namespace",
-        )
-        assert connector.app.connector_class == CONNECTOR_CLASS
-
-        connector = KafkaSinkConnector(
-            name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app={"connector.class": CONNECTOR_CLASS},  # type: ignore
-            namespace="test-namespace",
-        )
-        assert connector.app.connector_class == CONNECTOR_CLASS
-
-        with pytest.raises(
-            ValueError, match="Connector name should be the same as component name"
-        ):
-            KafkaSinkConnector(
-                name=CONNECTOR_NAME,
-                config=config,
-                handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore
-                namespace="test-namespace",
-            )
 
     def test_connector_config_parsing(
         self,

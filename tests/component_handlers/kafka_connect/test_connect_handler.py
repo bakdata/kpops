@@ -16,9 +16,7 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectResponse,
 )
 from kpops.utils.colorify import magentaify
-
-CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
-CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
+from tests.components.test_kafka_connector import CONNECTOR_NAME
 
 
 class TestConnectorHandler:
