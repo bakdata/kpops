@@ -76,7 +76,7 @@ nav:
     - What is KPOps: user/what-is-kpops.md
     - Getting Started:
       - Setup: user/getting-started/setup.md
-      - Getting started: user/getting-started/quick-start.md
+      - Quick start: user/getting-started/quick-start.md
       - Teardown: user/getting-started/teardown.md
     - Examples:
       - ATM Fraud detection pipeline: user/examples/atm-fraud-pipeline.md
@@ -86,6 +86,7 @@ nav:
       - Config: user/references/config.md
       - Defaults: user/references/defaults.md
       - Editor integration: user/references/editor-integration.md
+      - CI integration: user/references/github-actions.md
       - Variables: 
         - Environment variables: user/references/variables/environment_variables.md
         - Substitution: user/references/variables/substitution.md
