@@ -87,7 +87,7 @@ nav:
       - Defaults: user/references/defaults.md
       - Editor integration: user/references/editor-integration.md
       - CI integration:
-        - GitHub Actions: user/references/github-actions.md
+        - GitHub Actions: user/references/ci-integration/github-actions.md
       - Variables: 
         - Environment variables: user/references/variables/environment_variables.md
         - Substitution: user/references/variables/substitution.md
