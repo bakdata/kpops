@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseConfig, BaseModel, Extra, validator
+from pydantic import BaseConfig, BaseModel, Extra, Field, validator
 from typing_extensions import override
 
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig, to_dot
@@ -16,7 +16,7 @@ class KafkaConnectorConfig(BaseModel):
     """Settings specific to Kafka Connectors"""
 
     connector_class: str
-    name: str
+    name: str = Field(default=..., hidden_from_schema=True)
 
     class Config(DescConfig):
         extra = Extra.allow

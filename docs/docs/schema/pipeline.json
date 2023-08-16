@@ -328,15 +328,10 @@
                 "connector.class": {
                     "title": "Connector.Class",
                     "type": "string"
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
                 }
             },
             "required": [
-                "connector.class",
-                "name"
+                "connector.class"
             ],
             "title": "KafkaConnectorConfig",
             "type": "object"
