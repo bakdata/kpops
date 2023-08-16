@@ -15,7 +15,7 @@ kubernetes-app:
       ${pipeline_name}-input-pattern-topic:
         type: pattern # Implied to be an input pattern if `role` is undefined
       ${pipeline_name}-extra-pattern-topic:
-        type: pattern # Implied to be an extra pattern if `role` undefined
+        type: pattern # Implied to be an extra pattern if `role` is defined
         role: some-role
     components: # read from specific component
       account-producer:
