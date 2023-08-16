@@ -8,7 +8,7 @@ from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     ConnectorStateException,
 )
-from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
+from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
@@ -34,42 +34,36 @@ class KafkaConnectHandler:
         self._timeout = timeout
 
     def create_connector(
-        self,
-        connector_name: str,
-        kafka_connect_config: KafkaConnectConfig,
-        dry_run: bool,
+        self, connector_config: KafkaConnectorConfig, *, dry_run: bool
     ) -> None:
         """
         Creates a connector. If the connector exists the config of that connector gets updated.
-        :param connector_name: The connector name.
-        :param kafka_connect_config: The connector config.
+        :param connector_config: The connector config.
         :param dry_run: If the connector creation should be run in dry run mode.
         """
         if dry_run:
-            self.__dry_run_connector_creation(connector_name, kafka_connect_config)
+            self.__dry_run_connector_creation(connector_config)
         else:
             try:
                 timeout(
-                    lambda: self._connect_wrapper.get_connector(connector_name),
+                    lambda: self._connect_wrapper.get_connector(connector_config.name),
                     secs=self._timeout,
                 )
 
                 timeout(
                     lambda: self._connect_wrapper.update_connector_config(
-                        connector_name, kafka_connect_config
+                        connector_config
                     ),
                     secs=self._timeout,
                 )
 
             except ConnectorNotFoundException:
                 timeout(
-                    lambda: self._connect_wrapper.create_connector(
-                        connector_name, kafka_connect_config
-                    ),
+                    lambda: self._connect_wrapper.create_connector(connector_config),
                     secs=self._timeout,
                 )
 
-    def destroy_connector(self, connector_name: str, dry_run: bool) -> None:
+    def destroy_connector(self, connector_name: str, *, dry_run: bool) -> None:
         """
         Deletes a connector resource from the cluster.
         :param connector_name: The connector name.
@@ -94,34 +88,28 @@ class KafkaConnectHandler:
                 )
 
     def __dry_run_connector_creation(
-        self, connector_name: str, kafka_connect_config: KafkaConnectConfig
+        self, connector_config: KafkaConnectorConfig
     ) -> None:
+        connector_name = connector_config.name
         try:
-            connector_config = self._connect_wrapper.get_connector(connector_name)
+            connector = self._connect_wrapper.get_connector(connector_name)
 
             log.info(f"Connector Creation: connector {connector_name} already exists.")
-            if diff := render_diff(
-                connector_config.config,
-                ConnectWrapper.get_connector_config(
-                    connector_name, kafka_connect_config
-                ),
-            ):
+            if diff := render_diff(connector.config, connector_config.dict()):
                 log.info(f"Updating config:\n{diff}")
 
-            log.debug(kafka_connect_config.dict(exclude_none=True))
+            log.debug(connector_config.dict())
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
         except ConnectorNotFoundException:
-            diff = render_diff({}, kafka_connect_config.dict())
+            diff = render_diff({}, connector_config.dict())
             log.info(
                 f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n{diff}"
             )
             log.debug("POST /connectors HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
 
-        errors = self._connect_wrapper.validate_connector_config(
-            connector_name, kafka_connect_config
-        )
+        errors = self._connect_wrapper.validate_connector_config(connector_config)
         if len(errors) > 0:
             formatted_errors = "\n".join(errors)
             raise ConnectorStateException(

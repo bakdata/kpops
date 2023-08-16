@@ -1,11 +1,10 @@
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseConfig, BaseModel, Extra
+from pydantic import BaseConfig, BaseModel, Extra, Field, validator
 from typing_extensions import override
 
-from kpops.utils.docstring import describe_object
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import CamelCaseConfig, DescConfig, to_dot
 
 
 class KafkaConnectorType(str, Enum):
@@ -13,17 +12,35 @@ class KafkaConnectorType(str, Enum):
     SOURCE = "source"
 
 
-class KafkaConnectConfig(BaseModel):
+class KafkaConnectorConfig(BaseModel):
     """Settings specific to Kafka Connectors"""
+
+    connector_class: str
+    name: str = Field(default=..., hidden_from_schema=True)
 
     class Config(DescConfig):
         extra = Extra.allow
+        alias_generator = to_dot
 
         @override
-        @staticmethod
-        def schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
-            schema["description"] = describe_object(model.__doc__)
+        @classmethod
+        def schema_extra(cls, schema: dict[str, Any], model: type[BaseModel]) -> None:
+            super().schema_extra(schema, model)
             schema["additionalProperties"] = {"type": "string"}
+
+    @validator("connector_class")
+    def connector_class_must_contain_dot(cls, connector_class: str) -> str:
+        if "." not in connector_class:
+            raise ValueError(f"Invalid connector class {connector_class}")
+        return connector_class
+
+    @property
+    def class_name(self) -> str:
+        return self.connector_class.split(".")[-1]
+
+    @override
+    def dict(self, **_) -> dict[str, Any]:
+        return super().dict(by_alias=True, exclude_none=True)
 
 
 class ConnectorTask(BaseModel):
@@ -75,5 +92,5 @@ class KafkaConnectResetterValues(BaseModel):
         pass
 
     @override
-    def dict(self, **_) -> dict:
+    def dict(self, **_) -> dict[str, Any]:
         return super().dict(by_alias=True, exclude_none=True)
