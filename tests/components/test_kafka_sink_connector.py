@@ -4,10 +4,9 @@ from unittest.mock import MagicMock, call
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
+from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
-    HelmDiffConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
@@ -28,6 +27,7 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.colorify import magentaify
+from tests.components.test_kafka_connector import TestKafkaConnector
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
@@ -35,31 +35,10 @@ CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 
 
-class TestKafkaSinkConnector:
+class TestKafkaSinkConnector(TestKafkaConnector):
     @pytest.fixture
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kafka_connector.log.info")
-
-    @pytest.fixture
-    def config(self) -> PipelineConfig:
-        return PipelineConfig(
-            defaults_path=DEFAULTS_PATH,
-            environment="development",
-            topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component_type}-error-topic",
-                default_output_topic_name="${component_type}-output-topic",
-            ),
-            brokers="broker:9092",
-            helm_diff_config=HelmDiffConfig(),
-        )
-
-    @pytest.fixture
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
-        )
 
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
@@ -72,15 +51,6 @@ class TestKafkaSinkConnector:
         return mocker.patch(
             "kpops.components.base_components.kafka_connector.DryRunHandler"
         ).return_value
-
-    @pytest.fixture
-    def connector_config(self) -> KafkaConnectorConfig:
-        return KafkaConnectorConfig(
-            **{
-                "connector.class": CONNECTOR_CLASS,
-                "name": CONNECTOR_NAME,
-            }
-        )
 
     @pytest.fixture
     def connector(
