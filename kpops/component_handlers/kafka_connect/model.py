@@ -31,7 +31,7 @@ class KafkaConnectorConfig(BaseModel):
     @validator("connector_class")
     def connector_class_must_contain_dot(cls, connector_class: str) -> str:
         if "." not in connector_class:
-            raise ValueError("invalid connector class")
+            raise ValueError(f"Invalid connector class {connector_class}")
         return connector_class
 
     @property
