@@ -58,9 +58,7 @@ def _trim_description_end(desc: str) -> str:
     """
     desc_enders = [
         ":param ",
-        ":type ",
         ":returns:",
-        ":rtype:",
         "defaults to ",
     ]
     end_index = len(desc)
