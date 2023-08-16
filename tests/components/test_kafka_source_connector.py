@@ -139,9 +139,7 @@ class TestKafkaSourceConnector:
         connector.deploy(dry_run=True)
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=connector.to, dry_run=True),
-            mocker.call.mock_create_connector(
-                CONNECTOR_NAME, connector.app, dry_run=True
-            ),
+            mocker.call.mock_create_connector(connector.app, dry_run=True),
         ]
 
     def test_destroy(
