@@ -100,10 +100,11 @@ class KafkaConnector(PipelineComponent, ABC):
     ) -> dict[str, str]:
         if isinstance(v, KafkaConnectorConfig):
             v = v.dict()
+        component_name = values["prefix"] + values["name"]
         connector_name: str | None = v.get("name")
-        if connector_name is not None and connector_name != values["name"]:
+        if connector_name is not None and connector_name != component_name:
             raise ValueError("Connector name should be the same as component name")
-        v["name"] = values["name"]
+        v["name"] = component_name
         return v
 
     @cached_property
