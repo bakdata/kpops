@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Literal, NoReturn
+from typing import NoReturn
 
 from pydantic import Field
 from typing_extensions import override
@@ -28,8 +28,7 @@ from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr, describe_object
-from kpops.utils.pydantic import CamelCaseConfig
+from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("KafkaConnector")
 
@@ -39,11 +38,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
     Should only be used to set defaults
 
-    :param type: Component type, defaults to "kafka-connector"
-    :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-connector"
-    :type schema_type: Literal["kafka-connector"], optional
     :param app: Application-specific settings
     :type app: KafkaAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for
@@ -59,18 +53,9 @@ class KafkaConnector(PipelineComponent, ABC):
     :type resetter_values: dict, optional
     """
 
-    type: str = Field(
-        default="kafka-connector", description=describe_attr("type", __doc__)
-    )
     namespace: str = Field(
         default=...,
         description=describe_attr("namespace", __doc__),
-    )
-    schema_type: Literal["kafka-connector"] = Field(
-        default="kafka-connector",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
     )
     app: KafkaConnectConfig = Field(
         default=...,
@@ -90,9 +75,6 @@ class KafkaConnector(PipelineComponent, ABC):
         default_factory=dict,
         description=describe_attr("resetter_values", __doc__),
     )
-
-    class Config(CamelCaseConfig):
-        pass
 
     @cached_property
     def helm(self) -> Helm:
@@ -320,27 +302,11 @@ class KafkaConnector(PipelineComponent, ABC):
 class KafkaSourceConnector(KafkaConnector):
     """Kafka source connector model
 
-    :param type: Component type, defaults to "kafka-source-connector"
-    :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-source-connector"
-    :type schema_type: Literal["kafka-source-connector"], optional
     :param offset_topic: offset.storage.topic,
         more info: https://kafka.apache.org/documentation/#connect_running,
         defaults to None
-    :type schema_type: str, optional
     """
 
-    type: str = Field(
-        default="kafka-source-connector",
-        description=describe_attr("type", __doc__),
-    )
-    schema_type: Literal["kafka-source-connector"] = Field(
-        default="kafka-source-connector",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     offset_topic: str | None = Field(
         default=None,
         description=describe_attr("offset_topic", __doc__),
@@ -391,25 +357,7 @@ class KafkaSourceConnector(KafkaConnector):
 
 
 class KafkaSinkConnector(KafkaConnector):
-    """Kafka sink connector model
-
-    :param type: Component type, defaults to "kafka-sink-connector"
-    :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-sink-connector"
-    :type schema_type: Literal["kafka-sink-connector"], optional
-    """
-
-    type: str = Field(
-        default="kafka-sink-connector",
-        description=describe_attr("type", __doc__),
-    )
-    schema_type: Literal["kafka-sink-connector"] = Field(
-        default="kafka-sink-connector",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
+    """Kafka sink connector model"""
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:

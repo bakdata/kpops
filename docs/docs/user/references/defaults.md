@@ -10,7 +10,7 @@ KPOps has a very efficient way of dealing with repeating settings which manifest
 
 An important mechanic of KPOps is that `defaults` set for a component apply to all components that inherit from it.
 
-It is possible, although not recommended, to add settings that are specific to a component's subclass. An example would be configuring `offsetTopic` under `kafka-connector` instead of `kafka-source-connector`.
+It is possible, although not recommended, to add settings that are specific to a component's subclass. An example would be configuring `offset_topic` under `kafka-connector` instead of `kafka-source-connector`.
 
 ### Configuration
 
@@ -20,7 +20,7 @@ It is important to note that `defaults_{environment}.yaml` overrides only the se
 
 !!! tip
     `defaults` is the default value of `defaults_filename_prefix`.
-    Together with `defaults_path` and  `environment` it can be changed in [`config.yaml`](../config/#__codelineno-0-16)
+    Together with `defaults_path` and `environment` it can be changed in [`config.yaml`](../config/#__codelineno-0-16)
 
 ## Components
 
@@ -58,7 +58,7 @@ The `defaults` codeblocks in this section contain the full set of settings that 
       --8<--
     ```
 
-### [Producer](../components/#producer)
+### [ProducerApp](../components/#producerapp)
 
 ??? example "`defaults.yaml`"
 

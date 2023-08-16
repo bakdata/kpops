@@ -34,14 +34,14 @@ PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
 
 KPOPS_COMPONENTS = tuple(_find_classes("kpops.components", PipelineComponent))
 KPOPS_COMPONENTS_INHERITANCE_REF = {
-    component.get_component_type(): cast(
+    component.type: cast(
         type[PipelineComponent],
         component.__base__,
-    ).get_component_type()
+    ).type
     for component in KPOPS_COMPONENTS
 }
 KPOPS_COMPONENTS_SECTIONS = {
-    component.get_component_type(): [
+    component.type: [
         field_name
         for field_name, model in component.__fields__.items()
         if not model.field_info.exclude
@@ -96,7 +96,7 @@ def filter_sections(
                 temp_component_name := KPOPS_COMPONENTS_INHERITANCE_REF[
                     temp_component_name
                 ]
-            ) != PipelineComponent.get_component_type():
+            ) != PipelineComponent.type:
                 if section := filter_section(
                     temp_component_name,
                     sections,
@@ -122,10 +122,7 @@ def filter_section(
     section = target_section + "-" + component_name + ".yaml"
     if section in sections:
         return section
-    if (
-        KPOPS_COMPONENTS_INHERITANCE_REF[component_name]
-        == PipelineComponent.get_component_type()
-    ):
+    if KPOPS_COMPONENTS_INHERITANCE_REF[component_name] == PipelineComponent.type:
         section = target_section + ".yaml"
         if section in sections:
             return section
@@ -294,7 +291,7 @@ if __name__ == "__main__":
             component_file.parents[1] / component_file.name
             for component_file in PIPELINE_COMPONENT_HEADER_FILES
             if component_file.stem
-            != KafkaConnector.get_component_type()  # Shouldn't be used in the pipeline def
+            != KafkaConnector.type  # shouldn't be used in the pipeline def
         ),
         target=PATH_DOCS_COMPONENTS / "pipeline.yaml",
     )

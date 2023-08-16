@@ -12,7 +12,7 @@
         type: input # required
         # role: topic-role # only used if type is `extra` or `extra-pattern`
     components: # read from specific component
-      producer:
+      producer-app:
         type: input # required
   # Topic(s) into which the component will write output
   to:
@@ -20,8 +20,8 @@
       ${pipeline_name}-output-topic:
         type: output # required
         # role: topic-role # only used if type is `extra`
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
         partitions_count: 1
         replication_factor: 1
         configs: # https://kafka.apache.org/documentation/#topicconfigs
@@ -39,8 +39,8 @@
     imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repoConfig:
-    repositoryName: bakdata-streams-bootstrap # required
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
     url: https://bakdata.github.io/streams-bootstrap/ # required
     repo_auth_flags:
       username: user

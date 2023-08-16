@@ -1,4 +1,4 @@
-- type: producer
+- type: producer-app
   name: account-producer
   app:
     replicaCount: 1

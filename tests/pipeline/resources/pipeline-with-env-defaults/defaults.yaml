@@ -7,9 +7,9 @@ kafka-app:
       brokers: "${brokers}"
       schemaRegistryUrl: "${schema_registry_url}"
 
-producer: {} # inherits from kafka
+producer-app: {} # inherits from kafka-app
 
-streams-app: # inherits from kafka
+streams-app: # inherits from kafka-app
   app:
     streams:
       config:
@@ -18,7 +18,7 @@ streams-app: # inherits from kafka
     topics:
       ${error_topic_name}:
         type: error
-        valueSchema: com.bakdata.kafka.DeadLetter
+        value_schema: com.bakdata.kafka.DeadLetter
         partitions_count: 1
         configs:
           cleanup.policy: compact,delete

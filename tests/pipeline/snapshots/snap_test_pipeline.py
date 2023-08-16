@@ -31,11 +31,11 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
             'name': 'resources-custom-config-app1',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -50,7 +50,7 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.9.0'
         },
         {
@@ -73,11 +73,11 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
             'name': 'resources-custom-config-app2',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -126,11 +126,11 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'name': 'resources-pipeline-with-inflate-scheduled-producer',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -144,7 +144,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                         },
                         'partitions_count': 12,
                         'type': 'output',
-                        'valueSchema': 'com.bakdata.fake.Produced'
+                        'value_schema': 'com.bakdata.fake.Produced'
                     }
                 }
             },
@@ -193,11 +193,11 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'name': 'resources-pipeline-with-inflate-converter',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -218,7 +218,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                         },
                         'partitions_count': 10,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -268,11 +268,11 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'name': 'resources-pipeline-with-inflate-should-inflate',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -292,7 +292,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -318,14 +318,14 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'name': 'resources-pipeline-with-inflate-should-inflate-inflated-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
-            'resetterValues': {
+            'resetter_values': {
             },
             'to': {
                 'models': {
@@ -366,11 +366,11 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
             'name': 'resources-pipeline-with-inflate-should-inflate-inflated-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -383,7 +383,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     },
                     'should-inflate-should-inflate-inflated-streams-app': {
                         'configs': {
@@ -429,11 +429,11 @@ snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'
             'name': 'resources-kafka-connect-sink-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -451,7 +451,7 @@ snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -476,14 +476,14 @@ snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'
             'name': 'resources-kafka-connect-sink-es-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
-            'resetterValues': {
+            'resetter_values': {
             },
             'type': 'kafka-sink-connector',
             'version': '1.0.4'
@@ -513,11 +513,11 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
             'name': 'resources-first-pipeline-scheduled-producer',
             'namespace': 'example-namespace',
             'prefix': 'resources-first-pipeline-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -531,7 +531,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
                         },
                         'partitions_count': 12,
                         'type': 'output',
-                        'valueSchema': 'com.bakdata.fake.Produced'
+                        'value_schema': 'com.bakdata.fake.Produced'
                     }
                 }
             },
@@ -580,11 +580,11 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
             'name': 'resources-first-pipeline-converter',
             'namespace': 'example-namespace',
             'prefix': 'resources-first-pipeline-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -605,7 +605,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
                         },
                         'partitions_count': 10,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -655,11 +655,11 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
             'name': 'resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name',
             'namespace': 'example-namespace',
             'prefix': 'resources-first-pipeline-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -679,7 +679,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -705,17 +705,17 @@ snapshots['TestPipeline.test_model_serialization test-pipeline'] = {
             'name': 'resources-pipeline-with-paths-account-producer',
             'namespace': 'test',
             'prefix': 'resources-pipeline-with-paths-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'caFile': 'my-cert.cert',
-                    'insecureSkipTlsVerify': False,
+            'repo_config': {
+                'repo_auth_flags': {
+                    'ca_file': 'my-cert.cert',
+                    'insecure_skip_tls_verify': False,
                     'password': '$CI_JOB_TOKEN',
                     'username': 'masked'
                 },
-                'repositoryName': 'masked',
+                'repository_name': 'masked',
                 'url': 'masked'
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.4.2'
         }
     ]
@@ -760,11 +760,11 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
             'name': 'resources-no-input-topic-pipeline-app1',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-input-topic-pipeline-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -782,7 +782,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -811,11 +811,11 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
             'name': 'resources-no-input-topic-pipeline-app2',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-input-topic-pipeline-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -834,7 +834,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     },
                     'test-output-extra': {
                         'configs': {
@@ -881,11 +881,11 @@ snapshots['TestPipeline.test_no_user_defined_components test-pipeline'] = {
             'name': 'resources-no-user-defined-components-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-user-defined-components-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -903,7 +903,7 @@ snapshots['TestPipeline.test_no_user_defined_components test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -935,11 +935,11 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
             'name': 'resources-pipeline-with-envs-input-producer',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-envs-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -953,7 +953,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
                         },
                         'partitions_count': 12,
                         'type': 'output',
-                        'valueSchema': 'com.bakdata.fake.Produced'
+                        'value_schema': 'com.bakdata.fake.Produced'
                     }
                 }
             },
@@ -1002,11 +1002,11 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
             'name': 'resources-pipeline-with-envs-converter',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-envs-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1027,7 +1027,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
                         },
                         'partitions_count': 10,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -1077,11 +1077,11 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
             'name': 'resources-pipeline-with-envs-filter',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-envs-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1101,7 +1101,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -1137,14 +1137,14 @@ snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = {
             'name': 'from-pipeline-component-account-producer',
             'namespace': '${NAMESPACE}',
             'prefix': 'from-pipeline-component-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.9.0'
         }
     ]
@@ -1166,11 +1166,11 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-producer1',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1184,7 +1184,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.4.2'
         },
         {
@@ -1201,11 +1201,11 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'producer2',
             'namespace': 'example-namespace',
             'prefix': '',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1219,7 +1219,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.4.2'
         },
         {
@@ -1256,11 +1256,11 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-inflate-step',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1280,7 +1280,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -1306,14 +1306,14 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-inflate-step-inflated-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
-            'resetterValues': {
+            'resetter_values': {
             },
             'to': {
                 'models': {
@@ -1354,11 +1354,11 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-inflate-step-inflated-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1376,7 +1376,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -1417,11 +1417,11 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'inflate-step-without-prefix',
             'namespace': 'example-namespace',
             'prefix': '',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1441,7 +1441,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -1467,14 +1467,14 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
-            'resetterValues': {
+            'resetter_values': {
             },
             'to': {
                 'models': {
@@ -1515,11 +1515,11 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-inflate-step-without-prefix-inflated-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1537,7 +1537,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -1572,11 +1572,11 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-consumer1',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1594,7 +1594,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -1632,11 +1632,11 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-consumer2',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1649,7 +1649,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -1687,11 +1687,11 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-consumer3',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1704,7 +1704,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -1738,11 +1738,11 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-consumer4',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1755,7 +1755,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -1789,11 +1789,11 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
             'name': 'resources-read-from-component-consumer5',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1806,7 +1806,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -1843,11 +1843,11 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
             'name': 'resources-component-type-substitution-scheduled-producer',
             'namespace': 'example-namespace',
             'prefix': 'resources-component-type-substitution-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1861,7 +1861,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
                         },
                         'partitions_count': 12,
                         'type': 'output',
-                        'valueSchema': 'com.bakdata.fake.Produced'
+                        'value_schema': 'com.bakdata.fake.Produced'
                     }
                 }
             },
@@ -1910,11 +1910,11 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
             'name': 'resources-component-type-substitution-converter',
             'namespace': 'example-namespace',
             'prefix': 'resources-component-type-substitution-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -1935,7 +1935,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
                         },
                         'partitions_count': 10,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -1992,11 +1992,11 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
             'name': 'resources-component-type-substitution-filter-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-component-type-substitution-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -2016,7 +2016,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -2050,11 +2050,11 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
             'name': 'resources-custom-config-app1',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -2069,7 +2069,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.9.0'
         },
         {
@@ -2092,11 +2092,11 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
             'name': 'resources-custom-config-app2',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -2147,11 +2147,11 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
             'name': 'resources-custom-config-app1',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -2166,7 +2166,7 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.9.0'
         },
         {
@@ -2189,11 +2189,11 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
             'name': 'resources-custom-config-app2',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -2251,11 +2251,11 @@ snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = {
             'name': 'resources-kafka-connect-sink-streams-app-development',
             'namespace': 'development-namespace',
             'prefix': 'resources-kafka-connect-sink-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -2273,7 +2273,7 @@ snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = {
                         },
                         'partitions_count': 1,
                         'type': 'error',
-                        'valueSchema': 'com.bakdata.kafka.DeadLetter'
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
                     }
                 }
             },
@@ -2298,14 +2298,14 @@ snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = {
             'name': 'resources-kafka-connect-sink-es-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
-            'resetterValues': {
+            'resetter_values': {
             },
             'type': 'kafka-sink-connector',
             'version': '1.0.4'

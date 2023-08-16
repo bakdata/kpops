@@ -56,7 +56,7 @@ Sub class of [_KubernetesApp_](#kubernetesapp).
 ### Usage
 
 - Defines a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap#usage){target=_blank} component
-- Should not be used in `pipeline.yaml` as the component can be defined as either a [StreamsApp](#streamsapp) or a [Producer](#producer)
+- Should not be used in `pipeline.yaml` as the component can be defined as either a [StreamsApp](#streamsapp) or a [ProducerApp](#producerapp)
 - Often used in `defaults.yaml`
 
 ### Configuration
@@ -133,7 +133,7 @@ Refer to [KafkaApp](#kafkaapp).
 - Delete all associated schemas in the Schema Registry
 - Delete the consumer group
 
-## Producer
+## ProducerApp
 
 Sub class of [_KafkaApp_](#kafkaapp).
 

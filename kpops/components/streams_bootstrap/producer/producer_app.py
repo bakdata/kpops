@@ -1,8 +1,6 @@
 from __future__ import annotations
 
-from typing import Literal
-
-from pydantic import BaseConfig, Extra, Field
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaApp
@@ -12,7 +10,7 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerValues
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 
 
 class ProducerApp(KafkaApp):
@@ -23,24 +21,12 @@ class ProducerApp(KafkaApp):
 
     Note that the producer does not support error topics.
 
-    :param type: Component type, defaults to "producer"
-    :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "producer"
-    :type schema_type: Literal["producer"], optional
     :param app: Application-specific settings
     :type app: ProducerValues
     :param from_: Producer doesn't support FromSection, defaults to None
     :type from_: None, optional
     """
 
-    type: str = Field(default="producer", description="Component type")
-    schema_type: Literal["producer"] = Field(
-        default="producer",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     app: ProducerValues = Field(
         default=...,
         description=describe_attr("app", __doc__),
@@ -51,9 +37,6 @@ class ProducerApp(KafkaApp):
         title="From",
         description=describe_attr("from_", __doc__),
     )
-
-    class Config(BaseConfig):
-        extra = Extra.allow
 
     @override
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:

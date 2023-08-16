@@ -8,7 +8,7 @@ from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.exception import ParseError
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import DescConfig
 
 
 class HelmDiffConfig(BaseModel):
@@ -46,7 +46,7 @@ class RepoAuthFlags(BaseModel):
         default=False, description=describe_attr("insecure_skip_tls_verify", __doc__)
     )
 
-    class Config(CamelCaseConfig, DescConfig):
+    class Config(DescConfig):
         pass
 
     def to_command(self) -> list[str]:
@@ -80,7 +80,7 @@ class HelmRepoConfig(BaseModel):
         default=RepoAuthFlags(), description=describe_attr("repo_auth_flags", __doc__)
     )
 
-    class Config(CamelCaseConfig, DescConfig):
+    class Config(DescConfig):
         pass
 
 
