@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Any
 
 from pydantic import BaseModel, Extra, Field, root_validator
 
@@ -10,12 +11,11 @@ from kpops.utils.pydantic import DescConfig
 class OutputTopicTypes(str, Enum):
     """Types of output topic
 
-    Error (error topic), output (output topic), and extra topics. Every extra topic must have a role.
+    OUTPUT (output topic), ERROR (error topic)
     """
 
-    ERROR = "error"
     OUTPUT = "output"
-    EXTRA = "extra"
+    ERROR = "error"
 
 
 class TopicConfig(BaseModel):
@@ -30,7 +30,9 @@ class TopicConfig(BaseModel):
     :param role: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`
     """
 
-    type: OutputTopicTypes = Field(..., description=describe_attr("type", __doc__))
+    type: OutputTopicTypes | None = Field(
+        default=None, title="Topic type", description=describe_attr("type", __doc__)
+    )
     key_schema: str | None = Field(
         default=None,
         title="Key schema",
@@ -51,11 +53,10 @@ class TopicConfig(BaseModel):
         title="Replication factor",
         description=describe_attr("replication_factor", __doc__),
     )
-    configs: dict[str, str | int] = Field(default={}, description="Topic configs")
-    role: str | None = Field(
-        default=None,
-        description="Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+    configs: dict[str, str | int] = Field(
+        default={}, description=describe_attr("configs", __doc__)
     )
+    role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
     class Config(DescConfig):
         extra = Extra.forbid
@@ -63,18 +64,10 @@ class TopicConfig(BaseModel):
         use_enum_values = True
 
     @root_validator
-    def extra_topic_role(cls, values):
-        """Ensure that cls.role is used correctly"""
-        is_extra_topic: bool = values["type"] == OutputTopicTypes.EXTRA
-        if is_extra_topic and not values.get("role"):
-            raise ValueError(
-                "If you define an extra output topic, you have to define a role."
-            )
-        if not is_extra_topic and values.get("role"):
-            raise ValueError(
-                "If you do not define a output topic, the role is unnecessary. (This topic is either an output topic "
-                "without a role or an error topic)"
-            )
+    def extra_topic_role(cls, values: dict[str, Any]) -> dict[str, Any]:
+        """Ensure that cls.role is used correctly, assign type if needed"""
+        if values["type"] and values["role"]:
+            raise ValueError("Define `role` only if `type` is undefined")
         return values
 
 

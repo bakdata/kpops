@@ -55,7 +55,7 @@ class ShouldInflate(StreamsApp):
                                     type=OutputTopicTypes.OUTPUT
                                 ),
                                 TopicName("${component_name}"): TopicConfig(
-                                    type=OutputTopicTypes.EXTRA, role="test"
+                                    type=None, role="test"
                                 ),
                             }
                         ),

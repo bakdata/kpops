@@ -64,7 +64,6 @@
       fraud-detector:
         type: input
       account-producer:
-        type: extra
         role: accounts
   app:
     replicaCount: 1

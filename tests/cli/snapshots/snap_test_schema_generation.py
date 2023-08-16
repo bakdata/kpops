@@ -87,7 +87,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "description": "Input topic",
             "properties": {
                 "role": {
-                    "description": "Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`",
+                    "description": "Custom identifier belonging to a topic; define only if `type` is `pattern` or `None`",
                     "title": "Role",
                     "type": "string"
                 },
@@ -100,29 +100,23 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "description": "Topic type"
                 }
             },
-            "required": [
-                "type"
-            ],
             "title": "FromTopic",
             "type": "object"
         },
         "InputTopicTypes": {
-            "description": "Input topic types\\n\\ninput (input topic), input_pattern (input pattern topic), extra (extra topic), extra_pattern (extra pattern topic).\\nEvery extra topic must have a role.",
+            "description": "Input topic types\\n\\nINPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)",
             "enum": [
                 "input",
-                "extra",
-                "input-pattern",
-                "extra-pattern"
+                "pattern"
             ],
             "title": "InputTopicTypes",
             "type": "string"
         },
         "OutputTopicTypes": {
-            "description": "Types of output topic\\n\\nError (error topic), output (output topic), and extra topics. Every extra topic must have a role.",
+            "description": "Types of output topic\\n\\nOUTPUT (output topic), ERROR (error topic)",
             "enum": [
-                "error",
                 "output",
-                "extra"
+                "error"
             ],
             "title": "OutputTopicTypes",
             "type": "string"
@@ -393,7 +387,8 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                             "$ref": "#/definitions/OutputTopicTypes"
                         }
                     ],
-                    "description": "Topic type"
+                    "description": "Topic type",
+                    "title": "Topic type"
                 },
                 "value_schema": {
                     "description": "Value schema class name",
@@ -401,9 +396,6 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 }
             },
-            "required": [
-                "type"
-            ],
             "title": "TopicConfig",
             "type": "object"
         }

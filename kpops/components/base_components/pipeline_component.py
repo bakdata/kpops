@@ -67,7 +67,7 @@ class PipelineComponent(BaseDefaultsComponent):
         :type topics: list[str]
         """
 
-    def add_extra_input_topic(self, role: str, topics: list[str]) -> None:
+    def add_extra_input_topics(self, role: str, topics: list[str]) -> None:
         """Add given extra topics that share a role to the list of extra input topics.
 
         :param topics: Extra input topics
@@ -133,14 +133,14 @@ class PipelineComponent(BaseDefaultsComponent):
         :type topic: FromTopic
         """
         match topic.type:
-            case InputTopicTypes.INPUT:
-                self.add_input_topics([name])
-            case InputTopicTypes.EXTRA if topic.role:
-                self.add_extra_input_topic(topic.role, [name])
-            case InputTopicTypes.INPUT_PATTERN:
-                self.set_input_pattern(name)
-            case InputTopicTypes.EXTRA_PATTERN if topic.role:
+            case None if topic.role:
+                self.add_extra_input_topics(topic.role, [name])
+            case InputTopicTypes.PATTERN if topic.role:
                 self.add_extra_input_pattern(topic.role, name)
+            case InputTopicTypes.PATTERN:
+                self.set_input_pattern(name)
+            case _:
+                self.add_input_topics([name])
 
     def set_output_topics(self) -> None:
         """Put values of config.to into the producer config section of streams bootstrap
@@ -160,12 +160,12 @@ class PipelineComponent(BaseDefaultsComponent):
         :type topic: TopicConfig
         """
         match topic.type:
-            case OutputTopicTypes.OUTPUT:
-                self.set_output_topic(name)
+            case None if topic.role:
+                self.add_extra_output_topic(name, topic.role)
             case OutputTopicTypes.ERROR:
                 self.set_error_topic(name)
-            case OutputTopicTypes.EXTRA if topic.role:
-                self.add_extra_output_topic(name, topic.role)
+            case _:
+                self.set_output_topic(name)
 
     def weave_from_topics(
         self,
@@ -181,7 +181,7 @@ class PipelineComponent(BaseDefaultsComponent):
         input_topics = [
             topic_name
             for topic_name, topic_config in to.topics.items()
-            if topic_config.type == OutputTopicTypes.OUTPUT
+            if topic_config.type != OutputTopicTypes.ERROR and not topic_config.role
         ]
         for input_topic in input_topics:
             self.apply_from_inputs(input_topic, from_topic)

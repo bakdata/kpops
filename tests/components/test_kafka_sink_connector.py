@@ -149,7 +149,7 @@ class TestKafkaSinkConnector:
             app=KafkaConnectConfig(),
             namespace="test-namespace",
             from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
-                topics={topic_pattern: FromTopic(type=InputTopicTypes.INPUT_PATTERN)}
+                topics={topic_pattern: FromTopic(type=InputTopicTypes.PATTERN)}
             ),
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern

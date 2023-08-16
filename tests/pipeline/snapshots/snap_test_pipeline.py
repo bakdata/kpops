@@ -339,8 +339,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                     'should-inflate-inflated-sink-connector': {
                         'configs': {
                         },
-                        'role': 'test',
-                        'type': 'extra'
+                        'role': 'test'
                     }
                 }
             },
@@ -753,7 +752,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                 },
                 'topics': {
                     '.*': {
-                        'type': 'input-pattern'
+                        'type': 'pattern'
                     }
                 }
             },
@@ -825,8 +824,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                     'example-output-extra': {
                         'configs': {
                         },
-                        'role': 'extra',
-                        'type': 'extra'
+                        'role': 'extra'
                     },
                     'resources-no-input-topic-pipeline-app2-error': {
                         'configs': {
@@ -839,8 +837,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                     'test-output-extra': {
                         'configs': {
                         },
-                        'role': 'test-output',
-                        'type': 'extra'
+                        'role': 'test-output'
                     }
                 }
             },
@@ -1322,8 +1319,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     'inflate-step-inflated-sink-connector': {
                         'configs': {
                         },
-                        'role': 'test',
-                        'type': 'extra'
+                        'role': 'test'
                     },
                     'kafka-sink-connector': {
                         'configs': {
@@ -1483,8 +1479,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     'inflate-step-without-prefix-inflated-sink-connector': {
                         'configs': {
                         },
-                        'role': 'test',
-                        'type': 'extra'
+                        'role': 'test'
                     },
                     'kafka-sink-connector': {
                         'configs': {

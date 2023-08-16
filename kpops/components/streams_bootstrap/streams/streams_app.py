@@ -26,7 +26,7 @@ class StreamsApp(KafkaApp):
         self.app.streams.add_input_topics(topics)
 
     @override
-    def add_extra_input_topic(self, role: str, topics: list[str]) -> None:
+    def add_extra_input_topics(self, role: str, topics: list[str]) -> None:
         self.app.streams.add_extra_input_topics(role, topics)
 
     @override
