@@ -28,11 +28,8 @@ def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str
     """Substitute $-placeholders in input using template string.
 
     :param input: The raw input containing $-placeholders
-    :type input: str
     :param substitution: The key-value mapping containing substitutions
-    :type substitution: Mapping[str, Any] | None
     :return: Substituted input string
-    :rtype: str
     """
     if not substitution:
         return input
@@ -61,11 +58,9 @@ def substitute_nested(input: str, **kwargs) -> str:
     0, 0, 0, 0
 
     :param input: The raw input containing $-placeholders
-    :type input: str
     :param **kwargs: Substitutions
     :raises Exception: An infinite loop condition detected. Check substitution variables.
     :return: Substituted input string
-    :rtype: str
     """
     if not kwargs:
         return input

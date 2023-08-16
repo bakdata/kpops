@@ -22,17 +22,11 @@ class TopicConfig(BaseModel):
     """Configure an output topic
 
     :param type: Topic type
-    :type type: InputTopicTypes
     :param key_schema: Key schema class name
-    :type key_schema: str | None
     :param partitions_count: Number of partitions into which the topic is divided
-    :type partitions_count: int | None
     :param replication_factor: Replication topic of the topic
-    :type replication_factor: int | None
     :param configs: Topic configs
-    :type configs: dict[str, str | int]
     :param role: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`
-    :type role: str | None
     """
 
     type: OutputTopicTypes = Field(..., description="Topic type")

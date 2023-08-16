@@ -39,11 +39,8 @@ def _is_valid_component(
     Check whether a PipelineComponent subclass has a valid definition for the schema generation.
 
     :param defined_component_types: types defined so far
-    :type defined_component_types: list[str]
     :param component: component type to be validated
-    :type component: type[PipelineComponent]
     :return: Whether component is valid for schema generation
-    :rtype: bool
     """
     component_name = component.__name__
     component_type = component.get_component_type()
@@ -86,11 +83,8 @@ def _add_components(
 
     :param components_module: Python module. Only the classes that inherit from
         PipelineComponent will be considered.
-    :type components_module: str
     :param components: Tuple of components to which to add, defaults to ()
-    :type components: tuple, optional
     :return: Extended tuple
-    :rtype: tuple
     """
     if components is None:
         components = tuple()
@@ -116,11 +110,8 @@ def gen_pipeline_schema(
 
     :param components_module: Python module. Only the classes that inherit from
         PipelineComponent will be considered., defaults to None
-    :type components_module: str or None, optional
     :param include_stock_components: Whether to include the stock components,
         defaults to True
-    :type include_stock_components: bool, optional
-    :rtype: None
     """
     if not (include_stock_components or components_module):
         log.warning("No components are provided, no schema is generated.")
