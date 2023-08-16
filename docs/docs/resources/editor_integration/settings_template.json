@@ -1,6 +1,0 @@
-{
-    "yaml.schemas": {
-        "https://bakdata.github.io/kpops/${kpops_version}/schema/config.json": "config.yaml",
-        "https://bakdata.github.io/kpops/${kpops_version}/schema/pipeline.json": "pipeline.yaml"
-    }
-}
