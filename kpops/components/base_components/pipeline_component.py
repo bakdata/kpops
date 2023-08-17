@@ -71,6 +71,10 @@ class PipelineComponent(BaseDefaultsComponent):
         self.set_input_topics()
         self.set_output_topics()
 
+    @property
+    def full_name(self) -> str:
+        return self.prefix + self.name
+
     def add_input_topics(self, topics: list[str]) -> None:
         """Add given topics to the list of input topics.
 

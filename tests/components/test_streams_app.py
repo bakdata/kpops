@@ -23,7 +23,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 class TestStreamsApp:
     STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
-    STREAMS_APP_CLEAN_NAME = "test-streams-app-with-long-name-0123456789abcd-clean"
+    STREAMS_APP_CLEAN_NAME = "test-streams-app-with-long-na-clean"
 
     @pytest.fixture
     def handlers(self) -> ComponentHandlers:
@@ -309,7 +309,7 @@ class TestStreamsApp:
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=dry_run),
             mocker.call.mock_helm_upgrade_install(
-                self.STREAMS_APP_NAME,
+                "${pipeline_name}-" + self.STREAMS_APP_NAME,
                 "bakdata-streams-bootstrap/streams-app",
                 dry_run,
                 "test-namespace",
@@ -345,7 +345,7 @@ class TestStreamsApp:
         streams_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
-            "test-namespace", self.STREAMS_APP_NAME, True
+            "test-namespace", "${pipeline_name}-" + self.STREAMS_APP_NAME, True
         )
 
     def test_reset_when_dry_run_is_false(
@@ -365,10 +365,12 @@ class TestStreamsApp:
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
+                "test-namespace",
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                dry_run,
             ),
             mocker.call.helm_upgrade_install(
-                self.STREAMS_APP_CLEAN_NAME,
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
                 "bakdata-streams-bootstrap/streams-app-cleanup-job",
                 dry_run,
                 "test-namespace",
@@ -382,7 +384,9 @@ class TestStreamsApp:
                 HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
+                "test-namespace",
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                dry_run,
             ),
         ]
 
@@ -405,10 +409,12 @@ class TestStreamsApp:
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
+                "test-namespace",
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                dry_run,
             ),
             mocker.call.helm_upgrade_install(
-                self.STREAMS_APP_CLEAN_NAME,
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
                 "bakdata-streams-bootstrap/streams-app-cleanup-job",
                 dry_run,
                 "test-namespace",
@@ -422,6 +428,8 @@ class TestStreamsApp:
                 HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
+                "test-namespace",
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                dry_run,
             ),
         ]

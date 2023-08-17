@@ -28,7 +28,7 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-custom-config-app1',
+            'name': 'app1',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
             'repoConfig': {
@@ -70,7 +70,7 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-custom-config-app2',
+            'name': 'app2',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
             'repoConfig': {
@@ -123,7 +123,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-pipeline-with-inflate-scheduled-producer',
+            'name': 'scheduled-producer',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
             'repoConfig': {
@@ -190,7 +190,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-pipeline-with-inflate-converter',
+            'name': 'converter',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
             'repoConfig': {
@@ -265,7 +265,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-pipeline-with-inflate-should-inflate',
+            'name': 'should-inflate',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
             'repoConfig': {
@@ -315,7 +315,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                 'topics': 'resources-pipeline-with-inflate-should-inflate',
                 'transforms.changeTopic.replacement': 'resources-pipeline-with-inflate-should-inflate-index-v1'
             },
-            'name': 'resources-pipeline-with-inflate-should-inflate-inflated-sink-connector',
+            'name': 'should-inflate-inflated-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
             'repoConfig': {
@@ -359,11 +359,11 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                     'inputTopics': [
                         'kafka-sink-connector'
                     ],
-                    'outputTopic': 'should-inflate-should-inflate-inflated-streams-app',
+                    'outputTopic': 'resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app',
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-pipeline-with-inflate-should-inflate-inflated-streams-app',
+            'name': 'should-inflate-inflated-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-inflate-',
             'repoConfig': {
@@ -385,7 +385,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                         'type': 'error',
                         'valueSchema': 'com.bakdata.kafka.DeadLetter'
                     },
-                    'should-inflate-should-inflate-inflated-streams-app': {
+                    'resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app': {
                         'configs': {
                         },
                         'type': 'output'
@@ -426,7 +426,7 @@ snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'
                     }
                 }
             },
-            'name': 'resources-kafka-connect-sink-streams-app',
+            'name': 'streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
             'repoConfig': {
@@ -473,7 +473,7 @@ snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'
                 'tasks.max': '1',
                 'topics': 'example-output'
             },
-            'name': 'resources-kafka-connect-sink-es-sink-connector',
+            'name': 'es-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
             'repoConfig': {
@@ -510,7 +510,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-first-pipeline-scheduled-producer',
+            'name': 'scheduled-producer',
             'namespace': 'example-namespace',
             'prefix': 'resources-first-pipeline-',
             'repoConfig': {
@@ -577,7 +577,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-first-pipeline-converter',
+            'name': 'converter',
             'namespace': 'example-namespace',
             'prefix': 'resources-first-pipeline-',
             'repoConfig': {
@@ -652,7 +652,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name',
+            'name': 'a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name',
             'namespace': 'example-namespace',
             'prefix': 'resources-first-pipeline-',
             'repoConfig': {
@@ -702,7 +702,7 @@ snapshots['TestPipeline.test_model_serialization test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-pipeline-with-paths-account-producer',
+            'name': 'account-producer',
             'namespace': 'test',
             'prefix': 'resources-pipeline-with-paths-',
             'repoConfig': {
@@ -757,7 +757,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                     }
                 }
             },
-            'name': 'resources-no-input-topic-pipeline-app1',
+            'name': 'app1',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-input-topic-pipeline-',
             'repoConfig': {
@@ -808,7 +808,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-no-input-topic-pipeline-app2',
+            'name': 'app2',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-input-topic-pipeline-',
             'repoConfig': {
@@ -878,7 +878,7 @@ snapshots['TestPipeline.test_no_user_defined_components test-pipeline'] = {
                     }
                 }
             },
-            'name': 'resources-no-user-defined-components-streams-app',
+            'name': 'streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-user-defined-components-',
             'repoConfig': {
@@ -932,7 +932,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-pipeline-with-envs-input-producer',
+            'name': 'input-producer',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-envs-',
             'repoConfig': {
@@ -999,7 +999,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-pipeline-with-envs-converter',
+            'name': 'converter',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-envs-',
             'repoConfig': {
@@ -1074,7 +1074,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-pipeline-with-envs-filter',
+            'name': 'filter',
             'namespace': 'example-namespace',
             'prefix': 'resources-pipeline-with-envs-',
             'repoConfig': {
@@ -1134,7 +1134,7 @@ snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = {
                 },
                 'suspend': True
             },
-            'name': 'from-pipeline-component-account-producer',
+            'name': 'account-producer',
             'namespace': '${NAMESPACE}',
             'prefix': 'from-pipeline-component-',
             'repoConfig': {
@@ -1163,7 +1163,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-read-from-component-producer1',
+            'name': 'producer1',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1253,7 +1253,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-read-from-component-inflate-step',
+            'name': 'inflate-step',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1303,7 +1303,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'topics': 'resources-read-from-component-inflate-step',
                 'transforms.changeTopic.replacement': 'resources-read-from-component-inflate-step-index-v1'
             },
-            'name': 'resources-read-from-component-inflate-step-inflated-sink-connector',
+            'name': 'inflate-step-inflated-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1347,11 +1347,11 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     'inputTopics': [
                         'kafka-sink-connector'
                     ],
-                    'outputTopic': 'inflate-step-inflate-step-inflated-streams-app',
+                    'outputTopic': 'resources-read-from-component-inflate-step-inflate-step-inflated-streams-app',
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-read-from-component-inflate-step-inflated-streams-app',
+            'name': 'inflate-step-inflated-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1365,7 +1365,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'models': {
                 },
                 'topics': {
-                    'inflate-step-inflate-step-inflated-streams-app': {
+                    'resources-read-from-component-inflate-step-inflate-step-inflated-streams-app': {
                         'configs': {
                         },
                         'type': 'output'
@@ -1408,7 +1408,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     },
                     'errorTopic': 'resources-read-from-component-inflate-step-without-prefix-error',
                     'inputTopics': [
-                        'inflate-step-inflate-step-inflated-streams-app'
+                        'resources-read-from-component-inflate-step-inflate-step-inflated-streams-app'
                     ],
                     'outputTopic': 'resources-read-from-component-inflate-step-without-prefix',
                     'schemaRegistryUrl': 'http://localhost:8081'
@@ -1464,7 +1464,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'topics': 'resources-read-from-component-inflate-step-without-prefix',
                 'transforms.changeTopic.replacement': 'resources-read-from-component-inflate-step-without-prefix-index-v1'
             },
-            'name': 'resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector',
+            'name': 'inflate-step-without-prefix-inflated-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1512,7 +1512,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-read-from-component-inflate-step-without-prefix-inflated-streams-app',
+            'name': 'inflate-step-without-prefix-inflated-streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1569,7 +1569,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'topics': {
                 }
             },
-            'name': 'resources-read-from-component-consumer1',
+            'name': 'consumer1',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1629,7 +1629,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'topics': {
                 }
             },
-            'name': 'resources-read-from-component-consumer2',
+            'name': 'consumer2',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1684,7 +1684,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     }
                 }
             },
-            'name': 'resources-read-from-component-consumer3',
+            'name': 'consumer3',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1721,7 +1721,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     },
                     'errorTopic': 'resources-read-from-component-consumer4-error',
                     'inputTopics': [
-                        'inflate-step-inflate-step-inflated-streams-app'
+                        'resources-read-from-component-inflate-step-inflate-step-inflated-streams-app'
                     ],
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
@@ -1735,7 +1735,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'topics': {
                 }
             },
-            'name': 'resources-read-from-component-consumer4',
+            'name': 'consumer4',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1786,7 +1786,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                 'topics': {
                 }
             },
-            'name': 'resources-read-from-component-consumer5',
+            'name': 'consumer5',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
             'repoConfig': {
@@ -1840,7 +1840,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-component-type-substitution-scheduled-producer',
+            'name': 'scheduled-producer',
             'namespace': 'example-namespace',
             'prefix': 'resources-component-type-substitution-',
             'repoConfig': {
@@ -1907,7 +1907,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-component-type-substitution-converter',
+            'name': 'converter',
             'namespace': 'example-namespace',
             'prefix': 'resources-component-type-substitution-',
             'repoConfig': {
@@ -1989,7 +1989,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-component-type-substitution-filter-app',
+            'name': 'filter-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-component-type-substitution-',
             'repoConfig': {
@@ -2047,7 +2047,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-custom-config-app1',
+            'name': 'app1',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
             'repoConfig': {
@@ -2089,7 +2089,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-custom-config-app2',
+            'name': 'app2',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
             'repoConfig': {
@@ -2144,7 +2144,7 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-custom-config-app1',
+            'name': 'app1',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
             'repoConfig': {
@@ -2186,7 +2186,7 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
-            'name': 'resources-custom-config-app2',
+            'name': 'app2',
             'namespace': 'development-namespace',
             'prefix': 'resources-custom-config-',
             'repoConfig': {
@@ -2248,7 +2248,7 @@ snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = {
                     }
                 }
             },
-            'name': 'resources-kafka-connect-sink-streams-app-development',
+            'name': 'streams-app-development',
             'namespace': 'development-namespace',
             'prefix': 'resources-kafka-connect-sink-',
             'repoConfig': {
@@ -2295,7 +2295,7 @@ snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = {
                 'tasks.max': '1',
                 'topics': 'example-output'
             },
-            'name': 'resources-kafka-connect-sink-es-sink-connector',
+            'name': 'es-sink-connector',
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
             'repoConfig': {

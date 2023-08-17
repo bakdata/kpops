@@ -95,7 +95,7 @@ class TestKubernetesApp:
         kubernetes_app.deploy(False)
 
         helm_mock.upgrade_install.assert_called_once_with(
-            "test-kubernetes-app",
+            "${pipeline_name}-test-kubernetes-app",
             "test/test-chart",
             False,
             "test-namespace",
@@ -139,7 +139,7 @@ class TestKubernetesApp:
                 RepoAuthFlags(),
             ),
             mocker.call.upgrade_install(
-                "test-kubernetes-app",
+                "${pipeline_name}-test-kubernetes-app",
                 "test/test-chart",
                 False,
                 "test-namespace",
@@ -173,7 +173,7 @@ class TestKubernetesApp:
         kubernetes_app.destroy(True)
 
         helm_mock.uninstall.assert_called_once_with(
-            "test-namespace", "test-kubernetes-app", True
+            "test-namespace", "${pipeline_name}-test-kubernetes-app", True
         )
 
         log_info_mock.assert_called_once_with(magentaify(stdout))

@@ -144,14 +144,14 @@ def parse_steps(steps: str) -> set[str]:
 
 
 def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
-    return [step.name.removeprefix(step.prefix) for step in steps_to_apply]
+    return [step.name for step in steps_to_apply]
 
 
 def filter_steps_to_apply(
     pipeline: Pipeline, steps: set[str], filter_type: FilterType
 ) -> list[PipelineComponent]:
     def is_in_steps(component: PipelineComponent) -> bool:
-        return component.name.removeprefix(component.prefix) in steps
+        return component.name in steps
 
     log.debug(
         f"KPOPS_PIPELINE_STEPS is defined with values: {steps} and filter type of {filter_type.value}"
