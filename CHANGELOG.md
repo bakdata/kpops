@@ -1,4 +1,38 @@
 # Changelog
+## [2.0.0](https://github.com/bakdata/kpops/releases/tag/2.0.0) - Release Date: [2023-08-17]
+
+### 🏗️ Breaking changes
+
+- Remove camel case conversion of internal models - [#308](https://github.com/bakdata/kpops/pull/308)
+
+- Derive component type automatically from class name - [#309](https://github.com/bakdata/kpops/pull/309)
+
+- Refactor input/output types - [#232](https://github.com/bakdata/kpops/pull/232)
+
+- v2 - [#321](https://github.com/bakdata/kpops/pull/321)
+
+
+### 🚀 Features
+
+- Automatically support schema generation for custom components - [#307](https://github.com/bakdata/kpops/pull/307)
+
+- Derive component type automatically from class name - [#309](https://github.com/bakdata/kpops/pull/309)
+
+
+### 🏭 Refactor
+
+- Refactor input/output types - [#232](https://github.com/bakdata/kpops/pull/232)
+
+
+### 📝 Documentation
+
+- Fix editor integration example in docs - [#273](https://github.com/bakdata/kpops/pull/273)
+
+
+
+
+
+
 ## [1.7.2](https://github.com/bakdata/kpops/releases/tag/1.7.2) - Release Date: [2023-08-16]
 
 ### 🏭 Refactor
