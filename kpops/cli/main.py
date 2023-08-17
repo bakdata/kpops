@@ -162,7 +162,7 @@ def filter_steps_to_apply(
         if (
             is_in_steps(component)
             if filter_type is FilterType.INCLUDE
-            else not is_in_steps(component)  # TODO: refactor
+            else not is_in_steps(component)
         )
     ]
     log.info(f"The following steps are included:\n{get_step_names(filtered_steps)}")
