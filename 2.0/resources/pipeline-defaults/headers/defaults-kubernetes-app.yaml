@@ -1,0 +1,5 @@
+# Base Kubernetes App
+#
+# Parent of: KafkaApp
+# Child of: PipelineComponent
+kubernetes-app:
