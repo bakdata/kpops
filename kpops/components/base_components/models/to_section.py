@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Any
 
 from pydantic import BaseModel, Extra, Field, root_validator
 
@@ -10,12 +11,11 @@ from kpops.utils.pydantic import DescConfig
 class OutputTopicTypes(str, Enum):
     """Types of output topic
 
-    Error (error topic), output (output topic), and extra topics. Every extra topic must have a role.
+    OUTPUT (output topic), ERROR (error topic)
     """
 
-    ERROR = "error"
     OUTPUT = "output"
-    EXTRA = "extra"
+    ERROR = "error"
 
 
 class TopicConfig(BaseModel):
@@ -23,30 +23,40 @@ class TopicConfig(BaseModel):
 
     :param type: Topic type
     :param key_schema: Key schema class name
+    :param value_schema: Value schema class name
     :param partitions_count: Number of partitions into which the topic is divided
-    :param replication_factor: Replication topic of the topic
+    :param replication_factor: Replication factor of the topic
     :param configs: Topic configs
     :param role: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`
     """
 
-    type: OutputTopicTypes = Field(..., description="Topic type")
+    type: OutputTopicTypes | None = Field(
+        default=None, title="Topic type", description=describe_attr("type", __doc__)
+    )
     key_schema: str | None = Field(
-        default=None, alias="keySchema", description="Key schema class name"
+        default=None,
+        title="Key schema",
+        description=describe_attr("key_schema", __doc__),
     )
     value_schema: str | None = Field(
-        default=None, alias="valueSchema", description="Value schema class name"
+        default=None,
+        title="Value schema",
+        description=describe_attr("value_schema", __doc__),
     )
     partitions_count: int | None = Field(
-        default=None, description="Number of partitions into which the topic is divided"
+        default=None,
+        title="Partitions count",
+        description=describe_attr("partitions_count", __doc__),
     )
     replication_factor: int | None = Field(
-        default=None, description="Replication topic of the topic"
-    )
-    configs: dict[str, str | int] = Field(default={}, description="Topic configs")
-    role: str | None = Field(
         default=None,
-        description="Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+        title="Replication factor",
+        description=describe_attr("replication_factor", __doc__),
     )
+    configs: dict[str, str | int] = Field(
+        default={}, description=describe_attr("configs", __doc__)
+    )
+    role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
     class Config(DescConfig):
         extra = Extra.forbid
@@ -54,18 +64,10 @@ class TopicConfig(BaseModel):
         use_enum_values = True
 
     @root_validator
-    def extra_topic_role(cls, values):
-        """Ensure that cls.role is used correctly"""
-        is_extra_topic: bool = values["type"] == OutputTopicTypes.EXTRA
-        if is_extra_topic and not values.get("role"):
-            raise ValueError(
-                "If you define an extra output topic, you have to define a role."
-            )
-        if not is_extra_topic and values.get("role"):
-            raise ValueError(
-                "If you do not define a output topic, the role is unnecessary. (This topic is either an output topic "
-                "without a role or an error topic)"
-            )
+    def extra_topic_role(cls, values: dict[str, Any]) -> dict[str, Any]:
+        """Ensure that cls.role is used correctly, assign type if needed"""
+        if values["type"] and values["role"]:
+            raise ValueError("Define `role` only if `type` is undefined")
         return values
 
 

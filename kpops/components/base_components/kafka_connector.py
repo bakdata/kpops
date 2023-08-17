@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Any, Literal, NoReturn
+from typing import Any, NoReturn
 
 from pydantic import Field, validator
 from typing_extensions import override
@@ -28,8 +28,7 @@ from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr, describe_object
-from kpops.utils.pydantic import CamelCaseConfig
+from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("KafkaConnector")
 
@@ -39,9 +38,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
     Should only be used to set defaults
 
-    :param type: Component type, defaults to "kafka-connector"
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-connector"
     :param app: Application-specific settings
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component,
@@ -52,18 +48,9 @@ class KafkaConnector(PipelineComponent, ABC):
         defaults to dict
     """
 
-    type: str = Field(
-        default="kafka-connector", description=describe_attr("type", __doc__)
-    )
     namespace: str = Field(
         default=...,
         description=describe_attr("namespace", __doc__),
-    )
-    schema_type: Literal["kafka-connector"] = Field(
-        default="kafka-connector",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
     )
     app: KafkaConnectorConfig = Field(
         default=...,
@@ -83,9 +70,6 @@ class KafkaConnector(PipelineComponent, ABC):
         default_factory=dict,
         description=describe_attr("resetter_values", __doc__),
     )
-
-    class Config(CamelCaseConfig):
-        pass
 
     @validator("app", pre=True)
     def connector_config_should_have_component_name(
@@ -307,24 +291,11 @@ class KafkaConnector(PipelineComponent, ABC):
 class KafkaSourceConnector(KafkaConnector):
     """Kafka source connector model
 
-    :param type: Component type, defaults to "kafka-source-connector"
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-source-connector"
     :param offset_topic: offset.storage.topic,
         more info: https://kafka.apache.org/documentation/#connect_running,
         defaults to None
     """
 
-    type: str = Field(
-        default="kafka-source-connector",
-        description=describe_attr("type", __doc__),
-    )
-    schema_type: Literal["kafka-source-connector"] = Field(
-        default="kafka-source-connector",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     offset_topic: str | None = Field(
         default=None,
         description=describe_attr("offset_topic", __doc__),
@@ -374,23 +345,7 @@ class KafkaSourceConnector(KafkaConnector):
 
 
 class KafkaSinkConnector(KafkaConnector):
-    """Kafka sink connector model
-
-    :param type: Component type, defaults to "kafka-sink-connector"
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-sink-connector"
-    """
-
-    type: str = Field(
-        default="kafka-sink-connector",
-        description=describe_attr("type", __doc__),
-    )
-    schema_type: Literal["kafka-sink-connector"] = Field(
-        default="kafka-sink-connector",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
+    """Kafka sink connector model"""
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:

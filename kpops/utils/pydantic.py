@@ -6,11 +6,14 @@ from pydantic import BaseConfig, BaseModel
 from kpops.utils.docstring import describe_object
 
 
-def to_camel(field: str) -> str:
+def to_camel(s: str) -> str:
     """Convert snake_case to camelCase."""
-    if field == "schema_type":
-        return field
-    return humps.camelize(field)
+    return humps.camelize(s)
+
+
+def to_dash(s: str) -> str:
+    """Convert PascalCase to dash-case."""
+    return humps.depascalize(s).lower().replace("_", "-")
 
 
 def to_dot(s: str) -> str:

@@ -83,12 +83,12 @@ class TestStreamsApp:
                         "example-input": {"type": "input"},
                         "b": {"type": "input"},
                         "a": {"type": "input"},
-                        "topic-extra2": {"type": "extra", "role": "role2"},
-                        "topic-extra3": {"type": "extra", "role": "role2"},
-                        "topic-extra": {"type": "extra", "role": "role1"},
-                        ".*": {"type": "input-pattern"},
+                        "topic-extra2": {"role": "role2"},
+                        "topic-extra3": {"role": "role2"},
+                        "topic-extra": {"role": "role1"},
+                        ".*": {"type": "pattern"},
                         "example.*": {
-                            "type": "extra-pattern",
+                            "type": "pattern",
                             "role": "another-pattern",
                         },
                     }
@@ -107,7 +107,7 @@ class TestStreamsApp:
 
         helm_values = streams_app.to_helm_values()
         streams_config = helm_values["streams"]
-        assert "inputTopics" in streams_config
+        assert streams_config["inputTopics"]
         assert "extraInputTopics" in streams_config
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" in streams_config
@@ -126,7 +126,7 @@ class TestStreamsApp:
                 },
                 "from": {
                     "topics": {
-                        ".*": {"type": "input-pattern"},
+                        ".*": {"type": "pattern"},
                     }
                 },
             },
@@ -144,6 +144,7 @@ class TestStreamsApp:
         assert "extraInputPatterns" not in streams_config
 
     def test_should_validate(self, config: PipelineConfig, handlers: ComponentHandlers):
+        # An exception should be raised when both role and type are defined and type is input
         with pytest.raises(ValueError):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
@@ -156,14 +157,16 @@ class TestStreamsApp:
                     },
                     "from": {
                         "topics": {
-                            "topic-extra": {
-                                "type": "extra",
+                            "topic-input": {
+                                "type": "input",
+                                "role": "role",
                             }
                         }
                     },
                 },
             )
 
+        # An exception should be raised when both role and type are defined and type is error
         with pytest.raises(ValueError):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
@@ -174,7 +177,14 @@ class TestStreamsApp:
                     "app": {
                         "streams": {"brokers": "fake-broker:9092"},
                     },
-                    "from": {"topics": {"example.*": {"type": "extra-pattern"}}},
+                    "to": {
+                        "topics": {
+                            "topic-input": {
+                                "type": "error",
+                                "role": "role",
+                            }
+                        }
+                    },
                 },
             )
 
@@ -199,12 +209,10 @@ class TestStreamsApp:
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="first-extra-topic",
                             partitions_count=10,
                         ),
                         "extra-topic-2": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="second-extra-topic",
                             partitions_count=10,
                         ),
@@ -279,12 +287,10 @@ class TestStreamsApp:
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="first-extra-topic",
                             partitions_count=10,
                         ),
                         "extra-topic-2": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="second-extra-topic",
                             partitions_count=10,
                         ),
