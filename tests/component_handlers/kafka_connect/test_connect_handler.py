@@ -18,6 +18,8 @@ from kpops.component_handlers.kafka_connect.model import (
 from kpops.utils.colorify import magentaify
 from tests.components.test_kafka_connector import CONNECTOR_NAME
 
+TOPIC_NAME = "test-topic"
+
 
 class TestConnectorHandler:
     @pytest.fixture
@@ -98,7 +100,7 @@ class TestConnectorHandler:
             "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
             "name": CONNECTOR_NAME,
             "tasks.max": "1",
-            "topics": "test-topic",
+            "topics": TOPIC_NAME,
         }
         config = KafkaConnectorConfig(**configs)
         handler.create_connector(config, dry_run=True)
@@ -107,7 +109,7 @@ class TestConnectorHandler:
 
         assert log_info_mock.mock_calls == [
             mock.call(
-                f"Connector Creation: connector {CONNECTOR_NAME} does not exist. Creating connector with config:\n\x1b[32m+ connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n\x1b[0m\x1b[32m+ name: {CONNECTOR_NAME}\n\x1b[0m\x1b[32m+ tasks.max: '1'\n\x1b[0m\x1b[32m+ topics: test-topic\n\x1b[0m"
+                f"Connector Creation: connector {CONNECTOR_NAME} does not exist. Creating connector with config:\n\x1b[32m+ connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n\x1b[0m\x1b[32m+ name: {CONNECTOR_NAME}\n\x1b[0m\x1b[32m+ tasks.max: '1'\n\x1b[0m\x1b[32m+ topics: {TOPIC_NAME}\n\x1b[0m"
             ),
             mock.call(
                 f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"
@@ -127,7 +129,7 @@ class TestConnectorHandler:
                 "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
                 "name": CONNECTOR_NAME,
                 "tasks.max": "1",
-                "topics": "test-topic",
+                "topics": TOPIC_NAME,
             },
             "tasks": [],
         }
@@ -139,7 +141,7 @@ class TestConnectorHandler:
             "connector.class": "org.apache.kafka.connect.file.FileStreamSinkConnector",
             "name": CONNECTOR_NAME,
             "tasks.max": "2",
-            "topics": "test-topic",
+            "topics": TOPIC_NAME,
         }
         connector_config = KafkaConnectorConfig(**configs)
         handler.create_connector(connector_config, dry_run=True)
@@ -153,7 +155,7 @@ class TestConnectorHandler:
                 f"Connector Creation: connector {CONNECTOR_NAME} already exists."
             ),
             mock.call(
-                f"Updating config:\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: test-topic\n"
+                f"Updating config:\n  connector.class: org.apache.kafka.connect.file.FileStreamSinkConnector\n  name: {CONNECTOR_NAME}\n\x1b[31m- tasks.max: '1'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m\x1b[32m+ tasks.max: '2'\n\x1b[0m\x1b[33m?             ^\n\x1b[0m  topics: {TOPIC_NAME}\n"
             ),
             mock.call(
                 f"Connector Creation: connector config for {CONNECTOR_NAME} is valid!"

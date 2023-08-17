@@ -26,17 +26,13 @@ class PipelineComponent(BaseDefaultsComponent):
     """Base class for all components
 
     :param name: Component name
-    :type name: str
     :param prefix: Pipeline prefix that will prefix every component name.
         If you wish to not have any prefix you can specify an empty string.,
         defaults to "${pipeline_name}-"
-    :type prefix: str, optional
     :param from_: Topic(s) and/or components from which the component will read
         input, defaults to None
-    :type from_: FromSection, optional
     :param to: Topic(s) into which the component will write output,
         defaults to None
-    :type to: ToSection, optional
     """
 
     type: str = Field(
@@ -83,55 +79,45 @@ class PipelineComponent(BaseDefaultsComponent):
         """Add given topics to the list of input topics.
 
         :param topics: Input topics
-        :type topics: list[str]
         """
 
     def add_extra_input_topic(self, role: str, topics: list[str]) -> None:
         """Add given extra topics that share a role to the list of extra input topics.
 
         :param topics: Extra input topics
-        :type topics: list[str]
         :param role: Topic role
-        :type role: str
         """
 
     def set_input_pattern(self, name: str) -> None:
         """Set input pattern
 
         :param name: Input pattern name
-        :type name: str
         """
 
     def add_extra_input_pattern(self, role: str, topic: str) -> None:
         """Add an input pattern of type extra
 
         :param role: Custom identifier belonging to one or multiple topics
-        :type role: str
         :param topic: Topic name
-        :type topic: str
         """
 
     def set_output_topic(self, topic_name: str) -> None:
         """Set output topic
 
         :param topic_name: Output topic name
-        :type topic_name: str
         """
 
     def set_error_topic(self, topic_name: str) -> None:
         """Set error topic
 
         :param topic_name: Error topic name
-        :type topic_name: str
         """
 
     def add_extra_output_topic(self, topic_name: str, role: str) -> None:
         """Add an output topic of type extra
 
         :param topic_name: Output topic name
-        :type topic_name: str
         :param role: Role that is unique to the extra output topic
-        :type role: str
         """
 
     def set_input_topics(self) -> None:
@@ -147,9 +133,7 @@ class PipelineComponent(BaseDefaultsComponent):
         """Add a `from` section input to the component config
 
         :param name: Name of the field
-        :type name: str
         :param topic: Value of the field
-        :type topic: FromTopic
         """
         match topic.type:
             case InputTopicTypes.INPUT:
@@ -174,9 +158,7 @@ class PipelineComponent(BaseDefaultsComponent):
         """Add a `to` section input to the component config
 
         :param name: Name of the field
-        :type name: str
         :param topic: Value of the field
-        :type topic: TopicConfig
         """
         match topic.type:
             case OutputTopicTypes.OUTPUT:
@@ -229,26 +211,22 @@ class PipelineComponent(BaseDefaultsComponent):
         """Deploy the component (self) to the k8s cluster
 
         :param dry_run: Whether to do a dry run of the command
-        :type dry_run: bool
         """
 
     def destroy(self, dry_run: bool) -> None:
         """Uninstall the component (self) from the k8s cluster
 
         :param dry_run: Whether to do a dry run of the command
-        :type dry_run: bool
         """
 
     def reset(self, dry_run: bool) -> None:
         """Reset component (self) state
 
         :param dry_run: Whether to do a dry run of the command
-        :type dry_run: bool
         """
 
     def clean(self, dry_run: bool) -> None:
         """Remove component (self) and any trace of it
 
         :param dry_run: Whether to do a dry run of the command
-        :type dry_run: bool
         """

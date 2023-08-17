@@ -16,21 +16,13 @@ class StreamsConfig(KafkaStreamsConfig):
     """Streams Bootstrap streams section
 
     :param input_topics: Input topics, defaults to []
-    :type input_topics: list[str], optional
     :param input_pattern: Input pattern, defaults to None
-    :type input_pattern: str, optional
     :param extra_input_topics: Extra input topics, defaults to {}
-    :type extra_input_topics: dict[str, list[str]], optional
     :param extra_input_patterns: Extra input patterns, defaults to {}
-    :type extra_input_patterns: dict[str, str], optional
     :param extra_output_topics: Extra output topics, defaults to {}
-    :type extra_output_topics: dict[str, str], optional
     :param output_topic: Output topic, defaults to None
-    :type output_topic: str, optional
     :param error_topic: Error topic, defaults to None
-    :type error_topic: str, optional
     :param config: Configuration, defaults to {}
-    :type config: dict[str, str], optional
     """
 
     input_topics: list[str] = Field(
@@ -64,7 +56,6 @@ class StreamsConfig(KafkaStreamsConfig):
         Ensures no duplicate topics in the list.
 
         :param topics: Input topics
-        :type topics: list[str]
         """
         self.input_topics = deduplicate(self.input_topics + topics)
 
@@ -74,9 +65,7 @@ class StreamsConfig(KafkaStreamsConfig):
         Ensures no duplicate topics in the list.
 
         :param topics: Extra input topics
-        :type topics: list[str]
         :param role: Topic role
-        :type role: str
         """
         self.extra_input_topics[role] = deduplicate(
             self.extra_input_topics.get(role, []) + topics
@@ -98,15 +87,10 @@ class StreamsConfig(KafkaStreamsConfig):
         Optionally, specify which fields to include or exclude.
 
         :param include: Fields to include
-        :type include: None | AbstractSet[int | str] | Mapping[int | str, Any]
         :param include: Fields to exclude
-        :type include: None | AbstractSet[int | str] | Mapping[int | str, Any]
         :param by_alias: Use the fields' aliases in the dictionary
-        :type by_alias: bool
         :param skip_defaults: Whether to skip defaults
-        :type skip_defaults: bool | None
         :param exclude_unset: Whether to exclude unset fields
-        :type exclude_unset: bool
         """
         return super().dict(
             include=include,
@@ -124,43 +108,33 @@ class StreamsAppAutoScaling(BaseModel):
     """Kubernetes Event-driven Autoscaling config
 
     :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
-    :type enabled: bool, optional
     :param consumer_group: Name of the consumer group used for checking the
         offset on the topic and processing the related lag.
-    :type consumer_group: str
     :param lag_threshold: Average target value to trigger scaling actions.
-    :type lag_threshold: int
     :param polling_interval: This is the interval to check each trigger on.
         https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval,
         defaults to 30
-    :type polling_interval: int, optional
     :param cooldown_period: The period to wait after the last trigger reported
         active before scaling the resource back to 0.
         https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod,
         defaults to 300
-    :type cooldown_period: int, optional
     :param offset_reset_policy: The offset reset policy for the consumer if the
         consumer group is not yet subscribed to a partition.,
         defaults to "earliest"
-    :type offset_reset_policy: str, optional
     :param min_replicas: Minimum number of replicas KEDA will scale the resource down to.
         "https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount",
         defaults to 0
-    :type min_replicas: int, optional
     :param max_replicas: This setting is passed to the HPA definition that KEDA
         will create for a given resource and holds the maximum number of replicas
         of the target resouce.
         https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount,
         defaults to 1
-    :type max_replicas: int, optional
     :param idle_replicas: If this property is set, KEDA will scale the resource
         down to this number of replicas.
         https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount,
         defaults to None
-    :type idle_replicas: int, optional
     :param topics: List of auto-generated Kafka Streams topics used by the streams app.,
         defaults to []
-    :type topics: list[str]
     """
 
     enabled: bool = Field(
@@ -219,10 +193,8 @@ class StreamsAppConfig(KafkaAppConfig):
 
     The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.
 
-    :params streams: Streams Bootstrap streams section
-    :type streams: StreamsConfig
-    :params autoscaling:Kubernetes Event-driven Autoscaling config, defaults to None
-    :type autoscaling:StreamsAppAutoScaling, optional
+    :param streams: Streams Bootstrap streams section
+    :param autoscaling: Kubernetes Event-driven Autoscaling config, defaults to None
     """
 
     streams: StreamsConfig = Field(

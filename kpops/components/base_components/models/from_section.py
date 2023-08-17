@@ -25,9 +25,7 @@ class FromTopic(BaseModel):
     """Input topic
 
     :param type: Topic type
-    :type type: InputTopicTypes
     :param role: Custom identifier belonging to a topic, provide only if `type` is `extra` or `extra-pattern`
-    :type role: str | None
     """
 
     type: InputTopicTypes = Field(..., description=describe_attr("type", __doc__))
@@ -62,9 +60,7 @@ class FromSection(BaseModel):
     """Holds multiple input topics
 
     :param topics: Input topics
-    :type topics: dict[str, FromTopic]
     :param components: Components to read from
-    :type components: dict[ComponentName, FromTopic]
     """
 
     topics: dict[TopicName, FromTopic] = Field(

@@ -109,10 +109,8 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
         a terminating substring and does not follow reST spec.
         if error_marker is found in result.stdout, the description extraction does
         not work correctly.,!?:error_marker   :: "!$%
-    :type type: This line should not appear anywhere error_marker
     :param schema_type: This description should not be applied to schema_type as
         it instead reads the class description. error_marker
-    :type schema_type: This line should not appear anywhere error_marker
     :param error_marker: error_marker
     """
 
