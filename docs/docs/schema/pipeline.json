@@ -650,13 +650,7 @@
         },
         "KubernetesAppConfig": {
             "description": "Settings specific to Kubernetes Apps",
-            "properties": {
-                "nameOverride": {
-                    "description": "Override name with this value",
-                    "title": "Nameoverride",
-                    "type": "string"
-                }
-            },
+            "properties": {},
             "title": "KubernetesAppConfig",
             "type": "object"
         },

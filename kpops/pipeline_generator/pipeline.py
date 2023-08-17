@@ -4,6 +4,7 @@ import json
 import logging
 from collections import Counter
 from collections.abc import Iterator
+from contextlib import suppress
 from pathlib import Path
 
 import yaml
@@ -46,6 +47,7 @@ class PipelineComponents(BaseModel):
         raise ValueError(f"Component {component_name} not found")
 
     def add(self, component: PipelineComponent) -> None:
+        self._populate_component_name(component)
         self.components.append(component)
 
     def __bool__(self) -> bool:
@@ -64,6 +66,14 @@ class PipelineComponents(BaseModel):
             raise ValidationError(
                 f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
             )
+
+    @staticmethod
+    def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove
+        with suppress(
+            AttributeError  # Some components like Kafka Connect do not have a name_override attribute
+        ):
+            if (app := getattr(component, "app")) and app.name_override is None:
+                app.name_override = component.full_name
 
 
 def create_env_components_index(

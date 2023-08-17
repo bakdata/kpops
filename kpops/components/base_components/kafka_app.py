@@ -41,10 +41,14 @@ class KafkaAppConfig(KubernetesAppConfig):
     """Settings specific to Kafka Apps
 
     :param streams: Kafka streams config
+    :param name_override: Override name with this value, defaults to None
     """
 
     streams: KafkaStreamsConfig = Field(
         default=..., description=describe_attr("streams", __doc__)
+    )
+    name_override: str | None = Field(
+        default=None, description=describe_attr("name_override", __doc__)
     )
 
 
