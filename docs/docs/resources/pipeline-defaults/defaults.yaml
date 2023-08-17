@@ -20,23 +20,39 @@ kafka-connector:
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # Topic(s) from which the component will read input
   from: # Must not be null
     topics: # read from topic
       ${pipeline_name}-input-topic:
-        type: input # required
-        # role: topic-role # only used if type is `extra` or `extra-pattern`
+        type: input # Implied when role is NOT specified
+      ${pipeline_name}-extra-topic:
+        role: topic-role # Implies `type` to be extra
+      ${pipeline_name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      ${pipeline_name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `role` is defined
+        role: some-role
     components: # read from specific component
-      producer:
-        type: input # required
+      account-producer:
+        type: output # Implied when role is NOT specified
+      other-producer:
+        role: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `role` is defined
+        role: some-role
   # Topic(s) into which the component will write output
   to:
     topics:
       ${pipeline_name}-output-topic:
-        type: output # required
-        # role: topic-role # only used if type is `extra`
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
+        type: output # Implied when role is NOT specified
+      ${pipeline_name}-extra-topic:
+        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline_name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
         partitions_count: 1
         replication_factor: 1
         configs: # https://kafka.apache.org/documentation/#topicconfigs
@@ -50,10 +66,10 @@ kafka-connector:
   app: # required
     tasks.max: 1
   # Helm repository configuration for resetter
-  repoConfig:
-    repositoryName: my-repo # required
+  repo_config:
+    repository_name: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags:
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -61,7 +77,7 @@ kafka-connector:
   version: "1.0.6" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
-  resetterValues:
+  resetter_values:
     imageTag: "1.2.3"
 # Kafka sink connector
 #
@@ -76,7 +92,7 @@ kafka-source-connector:
   # from:
   # offset.storage.topic
   # https://kafka.apache.org/documentation/#connect_running
-  offsetTopic: offset_topic
+  offset_topic: offset_topic
 # Base Kubernetes App
 #
 # Parent of: KafkaApp
@@ -85,23 +101,39 @@ kubernetes-app:
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
   prefix: ${pipeline_name}-
-  # Topic(s) from which the component will read input
   from: # Must not be null
     topics: # read from topic
       ${pipeline_name}-input-topic:
-        type: input # required
-        # role: topic-role # only used if type is `extra` or `extra-pattern`
+        type: input # Implied when role is NOT specified
+      ${pipeline_name}-extra-topic:
+        role: topic-role # Implies `type` to be extra
+      ${pipeline_name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      ${pipeline_name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `role` is defined
+        role: some-role
     components: # read from specific component
-      producer:
-        type: input # required
+      account-producer:
+        type: output # Implied when role is NOT specified
+      other-producer:
+        role: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `role` is defined
+        role: some-role
   # Topic(s) into which the component will write output
   to:
     topics:
       ${pipeline_name}-output-topic:
-        type: output # required
-        # role: topic-role # only used if type is `extra`
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
+        type: output # Implied when role is NOT specified
+      ${pipeline_name}-extra-topic:
+        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline_name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
         partitions_count: 1
         replication_factor: 1
         configs: # https://kafka.apache.org/documentation/#topicconfigs
@@ -117,8 +149,8 @@ kubernetes-app:
     commandLine: {} # Example
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repoConfig:
-    repositoryName: bakdata-streams-bootstrap # required
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
     url: https://bakdata.github.io/streams-bootstrap/ # required
     repo_auth_flags:
       username: user
@@ -126,22 +158,22 @@ kubernetes-app:
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
   version: "1.0.0" # Helm chart version
-# Holds configuration to use as values for the streams bootstrap producer Helm
+# Holds configuration to use as values for the streams bootstrap producer-app Helm
 # chart.
 #
 # Child of: KafkaApp
 # More documentation on ProducerApp: https://github.com/bakdata/streams-bootstrap
-producer:
-  # from: # While the producer does inherit from kafka-app, it does not need a
+producer-app:
+  # from: # While the producer-app does inherit from kafka-app, it does not need a
   # `from` section, hence it does not support it.
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
-    streams: # required, producer-specific
+    streams: # required, producer-app-specific
       brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
       outputTopic: output_topic
-      extraOutputTopics: 
+      extraOutputTopics:
         output_role1: output_topic1
         output_role2: output_topic2
     nameOverride: override-with-this-name # kafka-app-specific

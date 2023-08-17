@@ -25,5 +25,6 @@ def gen_schema(scope: SchemaScope):
         Path(PATH_TO_SCHEMA / f"{scope.value}.json").write_text(f.getvalue())
 
 
-gen_schema(SchemaScope.PIPELINE)
-gen_schema(SchemaScope.CONFIG)
+if __name__ == "__main__":
+    gen_schema(SchemaScope.PIPELINE)
+    gen_schema(SchemaScope.CONFIG)

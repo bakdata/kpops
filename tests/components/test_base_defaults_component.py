@@ -14,30 +14,26 @@ from kpops.utils.environment import ENV
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
-class TestParentModel(BaseDefaultsComponent):
+class Parent(BaseDefaultsComponent):
     __test__ = False
-    type: str = "parent"
     name: str | None = None
     value: float | None = None
     hard_coded: str = "hard_coded_value"
 
 
-class TestChildModel(TestParentModel):
+class Child(Parent):
     __test__ = False
-    type: str = "child"
     nice: dict | None = None
     another_hard_coded: str = "another_hard_coded_value"
 
 
-class TestGrandChildModel(TestChildModel):
+class GrandChild(Child):
     __test__ = False
-    type: str = "grand-child"
     grand_child: str | None = None
 
 
-class TestEnvVarModel(BaseDefaultsComponent):
+class EnvVarTest(BaseDefaultsComponent):
     __test__ = False
-    type: str = "env-var-test"
     name: str | None = None
 
 
@@ -64,14 +60,14 @@ class TestBaseDefaultsComponent:
         [
             (BaseDefaultsComponent, {}),
             (
-                TestParentModel,
+                Parent,
                 {
                     "name": "fake-name",
                     "value": 1.0,
                 },
             ),
             (
-                TestChildModel,
+                Child,
                 {
                     "name": "fake-child-name",
                     "nice": {"fake-value": "must-be-overwritten"},
@@ -92,14 +88,14 @@ class TestBaseDefaultsComponent:
         [
             (BaseDefaultsComponent, {}),
             (
-                TestParentModel,
+                Parent,
                 {
                     "name": "fake-name",
                     "value": 2.0,
                 },
             ),
             (
-                TestChildModel,
+                Child,
                 {
                     "name": "fake-child-name",
                     "nice": {"fake-value": "fake"},
@@ -123,7 +119,7 @@ class TestBaseDefaultsComponent:
     def test_inherit_defaults(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
-        component = TestChildModel(config=config, handlers=handlers)
+        component = Child(config=config, handlers=handlers)
 
         assert (
             component.name == "fake-child-name"
@@ -142,7 +138,7 @@ class TestBaseDefaultsComponent:
         ), "Defaults in code should be kept for parents"
 
     def test_inherit(self, config: PipelineConfig, handlers: ComponentHandlers):
-        component = TestChildModel(
+        component = Child(
             config=config,
             handlers=handlers,
             name="name-defined-in-pipeline_generator",
@@ -167,7 +163,7 @@ class TestBaseDefaultsComponent:
     def test_multiple_generations(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
-        component = TestGrandChildModel(config=config, handlers=handlers)
+        component = GrandChild(config=config, handlers=handlers)
 
         assert (
             component.name == "fake-child-name"
@@ -190,7 +186,7 @@ class TestBaseDefaultsComponent:
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         ENV["pipeline_name"] = str(DEFAULTS_PATH)
-        component = TestEnvVarModel(config=config, handlers=handlers)
+        component = EnvVarTest(config=config, handlers=handlers)
 
         assert component.name == str(
             DEFAULTS_PATH

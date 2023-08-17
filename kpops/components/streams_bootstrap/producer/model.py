@@ -23,7 +23,7 @@ class ProducerStreamsConfig(KafkaStreamsConfig):
 
 
 class ProducerValues(KafkaAppConfig):
-    """Settings specific to Producers
+    """Settings specific to producers
 
     :param streams: Kafka Streams settings
     """

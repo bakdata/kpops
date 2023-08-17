@@ -14,11 +14,10 @@ kafka-app:
       schemaRegistryUrl: ${schema_registry_url}
       optimizeLeaveGroupBehavior: false
 
-producer:
+producer-app:
   to:
     topics:
       ${output_topic_name}:
-        type: output
         partitions_count: 3
 
 streams-app:
@@ -33,5 +32,4 @@ streams-app:
         type: error
         partitions_count: 1
       ${output_topic_name}:
-        type: output
         partitions_count: 3

@@ -9,11 +9,11 @@ from tests.cli.resources.module import CustomSchemaProvider
 
 
 class SubComponent(PipelineComponent):
-    type: str = "sub-component"
+    ...
 
 
 class SubSubComponent(SubComponent):
-    type: str = "sub-sub-component"
+    ...
 
 
 class Unrelated:

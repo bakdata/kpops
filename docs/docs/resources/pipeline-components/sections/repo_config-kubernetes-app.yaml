@@ -1,7 +1,7 @@
   # Helm repository configuration (optional)
   # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repoConfig:
-    repositoryName: bakdata-streams-bootstrap # required
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
     url: https://bakdata.github.io/streams-bootstrap/ # required
     repo_auth_flags:
       username: user

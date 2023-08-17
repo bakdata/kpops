@@ -82,7 +82,6 @@ class TestProducerApp:
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="first-extra-topic",
                             partitions_count=10,
                         ),

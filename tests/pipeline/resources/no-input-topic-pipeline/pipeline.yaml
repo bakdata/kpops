@@ -3,7 +3,7 @@
   from:
     topics:
       ".*":
-        type: input-pattern
+        type: pattern
   app:
     commandLine:
       CONVERT_XML: true
@@ -21,8 +21,6 @@
   to:
     topics:
       example-output-extra:
-        type: extra
         role: extra
       test-output-extra:
-        type: extra
         role: test-output
