@@ -5,7 +5,7 @@ import re
 from functools import cached_property
 from typing import Any, Literal
 
-from pydantic import BaseModel, Extra, Field
+from pydantic import BaseModel, Extra, Field, validator
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -30,7 +30,14 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 
 
 class KubernetesAppConfig(BaseModel):
-    """Settings specific to Kubernetes Apps"""
+    """Settings specific to Kubernetes Apps
+
+    :param name_override: Override name with this value, defaults to None
+    """
+
+    name_override: str | None = Field(
+        default=None, description=describe_attr("name_override", __doc__)
+    )
 
     class Config(CamelCaseConfig, DescConfig):
         extra = Extra.allow
@@ -80,6 +87,15 @@ class KubernetesApp(PipelineComponent):
 
     class Config(CamelCaseConfig, DescConfig):
         pass
+
+    @validator("app")
+    def set_name_override(
+        cls, app: KubernetesAppConfig, values: dict[str, Any]
+    ) -> KubernetesAppConfig:
+        if app.name_override is None:
+            # TODO: after init use self.helm_release_name
+            app.name_override = values["prefix"] + values["name"]
+        return app
 
     @cached_property
     def helm(self) -> Helm:
