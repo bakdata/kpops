@@ -1,4 +1,4 @@
-## ProducerApp
+# ProducerApp
 
 Subclass of [_KafkaApp_](kafka-app.md).
 

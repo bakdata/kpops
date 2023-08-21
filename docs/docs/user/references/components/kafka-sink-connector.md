@@ -1,4 +1,4 @@
-## KafkaSinkConnector
+# KafkaSinkConnector
 
 Subclass of [_KafkaConnector_](../defaults.md#kafkaconnector).
 

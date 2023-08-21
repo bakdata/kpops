@@ -1,4 +1,4 @@
-## KafkaApp
+# KafkaApp
 
 Subclass of [_KubernetesApp_](kubernetes-app.md).
 

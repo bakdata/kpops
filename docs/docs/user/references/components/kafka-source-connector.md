@@ -1,4 +1,4 @@
-## KafkaSourceConnector
+# KafkaSourceConnector
 
 Subclass of [_KafkaConnector_](../defaults.md#kafkaconnector).
 
