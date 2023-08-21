@@ -15,3 +15,8 @@ To learn about any of the available settings, take a look at the example below.
       ./docs/resources/pipeline_config/config.yaml
       --8<--
     ```
+
+!!! note "Environment-specific pipeline definitions"
+Similarly to [defaults](defaults.md#configuration), it is possible to have an unlimited amount 
+of additional environment-specific pipeline definitions.
+The naming convention is the same: add a suffix of the form `_{environment}` to the filename.
