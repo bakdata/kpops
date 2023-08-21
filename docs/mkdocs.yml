@@ -81,7 +81,6 @@ nav:
     - Examples:
       - ATM Fraud detection pipeline: user/examples/atm-fraud-pipeline.md
     - References:
-      - CLI usage: user/references/cli-commands.md
       - Components:
         - Overview: user/references/components/overview.md
         - KubernetesApp: user/references/components/kubernetes-app.md
@@ -92,9 +91,10 @@ nav:
         - KafkaSourceConnector: user/references/components/kafka-source-connector.md
       - Config: user/references/config.md
       - Defaults: user/references/defaults.md
+      - Variables:
+          - Environment variables: user/references/variables/environment_variables.md
+          - Substitution: user/references/variables/substitution.md
+      - CLI usage: user/references/cli-commands.md
       - Editor integration: user/references/editor-integration.md
       - CI integration:
         - GitHub Actions: user/references/ci-integration/github-actions.md
-      - Variables: 
-        - Environment variables: user/references/variables/environment_variables.md
-        - Substitution: user/references/variables/substitution.md
