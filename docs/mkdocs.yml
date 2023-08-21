@@ -80,20 +80,21 @@ nav:
       - Teardown: user/getting-started/teardown.md
     - Examples:
       - ATM Fraud detection pipeline: user/examples/atm-fraud-pipeline.md
+    - Core Concepts:
+        - Components:
+            - Overview: user/core-concepts/components/overview.md
+            - KubernetesApp: user/core-concepts/components/kubernetes-app.md
+            - KafkaApp: user/core-concepts/components/kafka-app.md
+            - StreamsApp: user/core-concepts/components/streams-app.md
+            - ProducerApp: user/core-concepts/components/producer-app.md
+            - KafkaSinkConnector: user/core-concepts/components/kafka-sink-connector.md
+            - KafkaSourceConnector: user/core-concepts/components/kafka-source-connector.md
+        - Config: user/core-concepts/config.md
+        - Defaults: user/core-concepts/defaults.md
+        - Variables:
+            - Environment variables: user/core-concepts/variables/environment_variables.md
+            - Substitution: user/core-concepts/variables/substitution.md
     - References:
-      - Components:
-        - Overview: user/references/components/overview.md
-        - KubernetesApp: user/references/components/kubernetes-app.md
-        - KafkaApp: user/references/components/kafka-app.md
-        - StreamsApp: user/references/components/streams-app.md
-        - ProducerApp: user/references/components/producer-app.md
-        - KafkaSinkConnector: user/references/components/kafka-sink-connector.md
-        - KafkaSourceConnector: user/references/components/kafka-source-connector.md
-      - Config: user/references/config.md
-      - Defaults: user/references/defaults.md
-      - Variables:
-          - Environment variables: user/references/variables/environment_variables.md
-          - Substitution: user/references/variables/substitution.md
       - CLI usage: user/references/cli-commands.md
       - Editor integration: user/references/editor-integration.md
       - CI integration:
