@@ -5,8 +5,7 @@ Subclass of [_KubernetesApp_](kubernetes-app.md).
 ### Usage
 
 - Defines a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap#usage){target=_blank} component
-- Should not be used in `pipeline.yaml` as the component can be defined as either a [StreamsApp](streams-app.md)
-  or a [ProducerApp](producer-app.md)
+- Should not be used in `pipeline.yaml` as the component can be defined as either a [StreamsApp](streams-app.md) or a [ProducerApp](producer-app.md)
 - Often used in `defaults.yaml`
 
 ### Configuration

@@ -4,9 +4,7 @@ Subclass of [_KafkaApp_](kafka-app.md).
 
 ### Usage
 
-Configures a
-[streams-bootstrap](https://github.com/bakdata/streams-bootstrap){target=_blank}
-[Kafka producer app](https://github.com/bakdata/streams-bootstrap#kafka-producer){target=_blank}
+Configures a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap){target=_blank} [Kafka producer app](https://github.com/bakdata/streams-bootstrap#kafka-producer){target=_blank}
 
 ### Configuration
 

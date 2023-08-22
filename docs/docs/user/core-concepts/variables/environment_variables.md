@@ -1,9 +1,6 @@
 # Environment variables
 
-Environment variables can be set by using the [export](https://www.unix.com/man-page/linux/1/export/){target=_blank}
-command in Linux or the
-[set](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/set_1){target=_blank}
-command in Windows.
+Environment variables can be set by using the [export](https://www.unix.com/man-page/linux/1/export/){target=_blank} command in Linux or the [set](https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/set_1){target=_blank} command in Windows.
 
 !!! tip "dotenv files"
 

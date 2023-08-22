@@ -2,9 +2,7 @@
 
 ## Word-count
 
-Word-count is a demo pipeline which consists of a producer producing words to Kafka, 
-a Kafka streams app counting the number of times each word occurs and finally a 
-Redis database into which the words are exported.
+Word-count is a demo pipeline which consists of a producer producing words to Kafka, a Kafka streams app counting the number of times each word occurs and finally a Redis database into which the words are exported.
 
 ## What this will demonstrate
 
