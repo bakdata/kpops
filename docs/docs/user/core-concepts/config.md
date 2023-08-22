@@ -12,7 +12,7 @@ To learn about any of the available settings, take a look at the example below.
 
     ```yaml
       --8<--
-      ./docs/resources/pipeline_config/config.yaml
+      ./docs/resources/pipeline-config/config.yaml
       --8<--
     ```
 
