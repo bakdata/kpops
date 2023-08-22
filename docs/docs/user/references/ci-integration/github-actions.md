@@ -11,11 +11,11 @@ that installs all the necessary dependencies and runs KPOps commands with the gi
 | command           |    ✅    |       -       | string | KPOps command to run. generate, deploy, destroy, reset, clean are possible values. Flags such as --dry-run and --execute need to be specified |
 | pipeline          |    ✅    |       -       | string | Pipeline to run by KPOps                                                                                                                      |
 | working-directory |    ❌    |       .       | string | root directory used by KPOps to run pipelines                                                                                                 |
-| pipeline-base-dir |    ❌    |       .       | string | directory where relative pipeline variables are initialized from                                                                              |
+| pipeline-base-dir |    ❌    |       -       | string | directory where relative pipeline variables are initialized from                                                                              |
 | defaults          |    ❌    |       -       | string | defaults folder path                                                                                                                          |
 | config            |    ❌    |       -       | string | config.yaml file path                                                                                                                         |
 | components        |    ❌    |       -       | string | components package path                                                                                                                       |
-| filter-type       |    ❌    |   "include"   | string | Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS                                                                          |
+| filter-type       |    ❌    |       -       | string | Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS                                                                          |
 | python-version    |    ❌    |   "3.11.x"    | string | Python version to install (Defaults to the latest stable version of Python 3.11)                                                              |
 | kpops-version     |    ❌    |    latest     | string | KPOps version to install                                                                                                                      |
 | helm-version      |    ❌    |    latest     | string | Helm version to install                                                                                                                       |
