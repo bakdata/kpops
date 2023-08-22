@@ -6,11 +6,11 @@ from collections import Counter
 from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
-import networkx as nx
-import matplotlib.pyplot as plt
 
+import matplotlib.pyplot as plt
+import networkx as nx
 import yaml
-from pydantic import BaseModel, validator, Field
+from pydantic import BaseModel, Field, validator
 from rich.console import Console
 from rich.syntax import Syntax
 
@@ -41,8 +41,6 @@ class PipelineComponents(BaseModel):
 
     class Config:
         arbitrary_types_allowed = True
-
-
 
     @property
     def last(self) -> PipelineComponent:
@@ -124,7 +122,6 @@ class Pipeline:
         self.generate_graph()
         self.validate_graph_components()
 
-
     @classmethod
     def load_from_yaml(
         cls,
@@ -203,7 +200,6 @@ class Pipeline:
                 self.components.graph_components.add_edge(component.name, output_topic)
         nx.draw(self.components.graph_components, with_labels=True)
         plt.show()
-
 
     def validate_graph_components(self):
         if not nx.is_directed_acyclic_graph(self.components.graph_components):
