@@ -1,4 +1,15 @@
 # Changelog
+## [2.0.1](https://github.com/bakdata/kpops/releases/tag/2.0.1) - Release Date: [2023-08-22]
+
+### 🐛 Fixes
+
+- Fix optional flags in GitHub action - [#334](https://github.com/bakdata/kpops/pull/334)
+
+
+
+
+
+
 ## [2.0.0](https://github.com/bakdata/kpops/releases/tag/2.0.0) - Release Date: [2023-08-17]
 
 ### 🏗️ Breaking changes
