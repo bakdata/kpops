@@ -72,15 +72,7 @@ The `defaults` codeblocks in this section contain the full set of settings that 
       --8<--
     ```
 
-### KafkaConnector
-
-`KafkaConnector` is a component that deploys
-[Kafka Connectors](https://kafka.apache.org/documentation.html#connect_configuring){target=_blank}.
-Since a connector cannot be different from sink or source it is not recommended to use `KafkaConnector`
-for deployment in [`pipeline.yaml`](../../../resources/pipeline-components/pipeline).
-
-Instead, `KafkaConnector` should be used in [`defaults.yaml`](../../../resources/pipeline-defaults/defaults)
-to set defaults for all connectors in the pipeline as they can share some common settings.
+### [KafkaConnector](./components/kafka-connector.md)
 
 ??? example "`defaults.yaml`"
 

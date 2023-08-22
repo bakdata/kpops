@@ -1,6 +1,6 @@
 # KafkaSourceConnector
 
-Subclass of [_KafkaConnector_](../defaults.md#kafkaconnector).
+Subclass of [_KafkaConnector_](./kafka-connector.md).
 
 ### Usage
 

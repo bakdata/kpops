@@ -38,7 +38,7 @@ Uninstall Helm release.
 
 #### clean
 
-Similar to [`rest`](#reset) with to additional steps:
+Similar to [`reset`](#reset) with to additional steps:
 
 - Delete the app's output topics
 - Delete all associated schemas in the Schema Registry

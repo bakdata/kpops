@@ -87,6 +87,7 @@ nav:
             - KafkaApp: user/core-concepts/components/kafka-app.md
             - StreamsApp: user/core-concepts/components/streams-app.md
             - ProducerApp: user/core-concepts/components/producer-app.md
+            - KafkaConnector: user/core-concepts/components/kafka-connector.md
             - KafkaSinkConnector: user/core-concepts/components/kafka-sink-connector.md
             - KafkaSourceConnector: user/core-concepts/components/kafka-source-connector.md
         - Config: user/core-concepts/config.md

@@ -1,6 +1,6 @@
 # KafkaSinkConnector
 
-Subclass of [_KafkaConnector_](../defaults.md#kafkaconnector).
+Subclass of [_KafkaConnector_](./kafka-connector.md).
 
 ### Usage
 
@@ -26,7 +26,7 @@ Lets other systems pull data from Apache Kafka.
 
 #### destroy
 
-The associated sink connector is removed.
+The associated sink connector is removed from the Kafka Connect cluster.
 
 #### reset
 

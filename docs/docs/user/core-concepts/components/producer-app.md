@@ -14,7 +14,7 @@ Configures a
 
     ```yaml
       --8<--
-      ./docs/resources/pipeline-components/producer.yaml
+      ./docs/resources/pipeline-components/producer-app.yaml
       --8<--
     ```
 
