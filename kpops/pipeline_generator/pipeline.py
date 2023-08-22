@@ -10,7 +10,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 import networkx as nx
 import yaml
-from pydantic import BaseModel, Field, validator
+from pydantic import BaseModel, Field
 from rich.console import Console
 from rich.syntax import Syntax
 
@@ -120,7 +120,7 @@ class Pipeline:
         self.parse_components(component_list)
         self.validate()
         self.generate_graph()
-        #self.validate_graph_components()
+        # self.validate_graph_components()
 
     @classmethod
     def load_from_yaml(
@@ -204,7 +204,7 @@ class Pipeline:
     def validate_graph_components(self):
         if not nx.is_directed_acyclic_graph(self.components.graph_components):
             print("contain loops")
-            #raise ValueError("Component graph contain loops!")
+            # raise ValueError("Component graph contain loops!")
 
     def parse_components(self, component_list: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components
