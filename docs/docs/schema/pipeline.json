@@ -207,101 +207,6 @@
             "title": "KafkaAppConfig",
             "type": "object"
         },
-        "KafkaConnector": {
-            "description": "Base class for all Kafka connectors\nShould only be used to set defaults",
-            "properties": {
-                "app": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/KafkaConnectorConfig"
-                        }
-                    ],
-                    "description": "Application-specific settings",
-                    "title": "App"
-                },
-                "from": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ],
-                    "description": "Topic(s) and/or components from which the component will read input",
-                    "title": "From"
-                },
-                "name": {
-                    "description": "Component name",
-                    "title": "Name",
-                    "type": "string"
-                },
-                "namespace": {
-                    "description": "Namespace in which the component shall be deployed",
-                    "title": "Namespace",
-                    "type": "string"
-                },
-                "prefix": {
-                    "default": "${pipeline_name}-",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "title": "Prefix",
-                    "type": "string"
-                },
-                "repo_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/HelmRepoConfig"
-                        }
-                    ],
-                    "default": {
-                        "repo_auth_flags": {
-                            "ca_file": null,
-                            "cert_file": null,
-                            "insecure_skip_tls_verify": false,
-                            "password": null,
-                            "username": null
-                        },
-                        "repository_name": "bakdata-kafka-connect-resetter",
-                        "url": "https://bakdata.github.io/kafka-connect-resetter/"
-                    },
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
-                    "title": "Repo Config"
-                },
-                "resetter_values": {
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
-                    "title": "Resetter Values",
-                    "type": "object"
-                },
-                "to": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ToSection"
-                        }
-                    ],
-                    "description": "Topic(s) into which the component will write output",
-                    "title": "To"
-                },
-                "type": {
-                    "default": "kafka-connector",
-                    "description": "Base class for all Kafka connectors\nShould only be used to set defaults",
-                    "enum": [
-                        "kafka-connector"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
-                },
-                "version": {
-                    "default": "1.0.4",
-                    "description": "Helm chart version",
-                    "title": "Version",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "namespace",
-                "app"
-            ],
-            "title": "KafkaConnector",
-            "type": "object"
-        },
         "KafkaConnectorConfig": {
             "additionalProperties": {
                 "type": "string"
@@ -1219,7 +1124,6 @@
         "discriminator": {
             "mapping": {
                 "kafka-app": "#/definitions/KafkaApp",
-                "kafka-connector": "#/definitions/KafkaConnector",
                 "kafka-sink-connector": "#/definitions/KafkaSinkConnector",
                 "kafka-source-connector": "#/definitions/KafkaSourceConnector",
                 "kubernetes-app": "#/definitions/KubernetesApp",
@@ -1232,9 +1136,6 @@
         "oneOf": [
             {
                 "$ref": "#/definitions/KafkaApp"
-            },
-            {
-                "$ref": "#/definitions/KafkaConnector"
             },
             {
                 "$ref": "#/definitions/KafkaSinkConnector"
