@@ -412,6 +412,10 @@ class KafkaSinkConnector(KafkaConnector):
     )
 
     @override
+    def get_input_topics(self) -> list[str]:
+        return getattr(self.app, "topics").split(",")
+
+    @override
     def add_input_topics(self, topics: list[str]) -> None:
         existing_topics: str | None = getattr(self.app, "topics", None)
         topics = existing_topics.split(",") + topics if existing_topics else topics

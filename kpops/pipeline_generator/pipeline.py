@@ -6,9 +6,11 @@ from collections import Counter
 from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
+import networkx as nx
+import matplotlib.pyplot as plt
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, validator, Field
 from rich.console import Console
 from rich.syntax import Syntax
 
@@ -35,6 +37,12 @@ class PipelineComponents(BaseModel):
     """Stores the pipeline components"""
 
     components: list[PipelineComponent] = []
+    graph_components: nx.DiGraph = Field(default=nx.DiGraph(), exclude=True)
+
+    class Config:
+        arbitrary_types_allowed = True
+
+
 
     @property
     def last(self) -> PipelineComponent:
@@ -113,6 +121,9 @@ class Pipeline:
         self.env_components_index = create_env_components_index(environment_components)
         self.parse_components(component_list)
         self.validate()
+        self.generate_graph()
+        self.validate_graph_components()
+
 
     @classmethod
     def load_from_yaml(
@@ -159,6 +170,44 @@ class Pipeline:
 
         pipeline = cls(main_content, env_content, registry, config, handlers)
         return pipeline
+
+    def generate_graph(self):
+        for component in self.components:
+            input_topics = component.get_input_topics()
+            extra_input_topics = component.get_extra_input_topics()
+            all_input_topics: list[str] = []
+            if input_topics is not None:
+                all_input_topics += input_topics
+            if extra_input_topics is not None:
+                all_input_topics += [
+                    topic
+                    for list_topics in extra_input_topics.values()
+                    for topic in list_topics
+                ]
+
+            all_output_topics: list[str] = []
+            output_topics = component.get_output_topic()
+            extra_output_topics = component.get_extra_output_topics()
+            if output_topics is not None:
+                all_output_topics += [output_topics]
+            if extra_output_topics is not None:
+                all_output_topics += list(extra_output_topics.values())
+
+            self.components.graph_components.add_node(component.name)
+            for input_topic in all_input_topics:
+                self.components.graph_components.add_node(input_topic)
+                self.components.graph_components.add_edge(input_topic, component.name)
+
+            for output_topic in all_output_topics:
+                self.components.graph_components.add_node(output_topic)
+                self.components.graph_components.add_edge(component.name, output_topic)
+        nx.draw(self.components.graph_components, with_labels=True)
+        plt.show()
+
+
+    def validate_graph_components(self):
+        if not nx.is_directed_acyclic_graph(self.components.graph_components):
+            raise ValueError("Component graph contain loops!")
 
     def parse_components(self, component_list: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components
