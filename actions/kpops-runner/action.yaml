@@ -13,20 +13,19 @@ inputs:
     default: "."
   pipeline-base-dir:
     description: "Directory where relative pipeline variables are initialized from"
-    default: "."
+    required: false
   defaults:
     description: "Defaults folder path"
-    default: "."
+    required: false
   config:
     description: "config.yaml file path"
-    default: "config.yaml"
+    required: false
   components:
     description: "Components package path"
     required: false
   filter-type:
     description: "Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS (default is include)"
     required: false
-    default: "include"
   python-version:
     description: "Python version to install (Defaults to the latest stable version of Python 3.11)"
     required: false
@@ -49,7 +48,7 @@ runs:
     - name: Set up Python ${{ inputs.python-version }}
       uses: actions/setup-python@v4
       with:
-        python-version: ${{ inputs.python-version }} 
+        python-version: ${{ inputs.python-version }}
         cache: 'pip'
 
     - name: Set up Helm
@@ -68,4 +67,4 @@ runs:
     - name: ${{ inputs.command }} ${{ inputs.pipeline }} pipeline
       shell: bash
       working-directory: ${{inputs.working-directory}}
-      run: kpops ${{ inputs.command }} ${{ inputs.pipeline }} ${{ inputs.components }} --defaults ${{ inputs.defaults }} --config ${{ inputs.config }} --pipeline-base-dir ${{ inputs.pipeline-base-dir }} --filter-type ${{ inputs.filter-type }}
+      run: kpops ${{ inputs.command }} ${{ inputs.pipeline }} ${{ inputs.components }} ${{ (inputs.defaults != '' && format('--defaults {0}', inputs.defaults)) || '' }} ${{ (inputs.config != '' && format('--config {0}', inputs.config)) || '' }} ${{ (inputs.pipeline-base-dir != '' && format('--pipeline-base-dir {0}', inputs.pipeline-base-dir)) || '' }} ${{ (inputs.filter-type != '' && format('--filter-type {0}', inputs.filter-type)) || '' }}
