@@ -1,4 +1,5 @@
 # GitHub Actions integration
+
 We provided a GitHub composite action called
 [kpops-runner](https://github.com/bakdata/kpops/tree/main/actions/kpops-runner/action.yaml)
 that installs all the necessary dependencies and runs KPOps commands with the given parameters.
@@ -6,19 +7,19 @@ that installs all the necessary dependencies and runs KPOps commands with the gi
 ## Input Parameters
 
 | Name              | Required | Default Value |  Type  | Description                                                                                                                                   |
-|-------------------|:--------:|:-------------:|:------:|-----------------------------------------------------------------------------------------------------------------------------------------------|
-| command           |    ✅     |       -       | string | KPOps command to run. generate, deploy, destroy, reset, clean are possible values. Flags such as --dry-run and --execute need to be specified |
-| pipeline          |    ✅     |       -       | string | Pipeline to run by KPOps                                                                                                                      |
-| working-directory |    ❌     |       .       | string | root directory used by KPOps to run pipelines                                                                                                 |
-| pipeline-base-dir |    ❌     |       .       | string | directory where relative pipeline variables are initialized from                                                                              |
-| defaults          |    ❌     |       .       | string | defaults folder path                                                                                                                          |
-| config            |    ❌     |  config.yaml  | string | config.yaml file path                                                                                                                         |
-| components        |    ❌     |       -       | string | components package path                                                                                                                       |
-| filter-type       |    ❌     |   "include"   | string | Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS                                                                          |
-| python-version    |    ❌     |   "3.11.x"    | string | Python version to install (Defaults to the latest stable version of Python 3.11)                                                              |
-| kpops-version     |    ❌     |    latest     | string | KPOps version to install                                                                                                                      |
-| helm-version      |    ❌     |    latest     | string | Helm version to install                                                                                                                       |
-| token             |    ❌     |    latest     | string | secrets.GITHUB_TOKEN, needed for setup-helm action if helm-version is set to latest                                                           |
+| ----------------- | :------: | :-----------: | :----: | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| command           |    ✅    |       -       | string | KPOps command to run. generate, deploy, destroy, reset, clean are possible values. Flags such as --dry-run and --execute need to be specified |
+| pipeline          |    ✅    |       -       | string | Pipeline to run by KPOps                                                                                                                      |
+| working-directory |    ❌    |       .       | string | root directory used by KPOps to run pipelines                                                                                                 |
+| pipeline-base-dir |    ❌    |       .       | string | directory where relative pipeline variables are initialized from                                                                              |
+| defaults          |    ❌    |       -       | string | defaults folder path                                                                                                                          |
+| config            |    ❌    |       -       | string | config.yaml file path                                                                                                                         |
+| components        |    ❌    |       -       | string | components package path                                                                                                                       |
+| filter-type       |    ❌    |   "include"   | string | Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS                                                                          |
+| python-version    |    ❌    |   "3.11.x"    | string | Python version to install (Defaults to the latest stable version of Python 3.11)                                                              |
+| kpops-version     |    ❌    |    latest     | string | KPOps version to install                                                                                                                      |
+| helm-version      |    ❌    |    latest     | string | Helm version to install                                                                                                                       |
+| token             |    ❌    |    latest     | string | secrets.GITHUB_TOKEN, needed for setup-helm action if helm-version is set to latest                                                           |
 
 ## Usage
 
