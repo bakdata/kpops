@@ -1,7 +1,7 @@
 # Configuration
 
 KPOps reads its global configuration that is unrelated to a pipeline's
-[components](./components/overview.md) from [`config.yaml`](.#__codelineno-0-1).
+[components](./components/overview.md) from [`config.yaml`](#__codelineno-0-1).
 
 Consider enabling [KPOps' editor integration](../references/editor-integration.md) feature to enjoy the benefits of
 autocompletion and validation when configuring your pipeline.
