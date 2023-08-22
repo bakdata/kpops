@@ -75,18 +75,18 @@ class PipelineComponent(BaseDefaultsComponent):
         self.set_input_topics()
         self.set_output_topics()
 
-    def get_input_topics(self) -> list[str]:
+    def get_input_topics(self) -> list[str] | None:
         """
         Get all the input topics
         """
 
-    def get_extra_output_topics(self) -> dict[str, str]:
+    def get_extra_output_topics(self) -> dict[str, str] | None:
         ...
 
-    def get_extra_input_topics(self) -> dict[str, list[str]]:
+    def get_extra_input_topics(self) -> dict[str, list[str]] | None:
         ...
 
-    def get_output_topic(self) -> str:
+    def get_output_topic(self) -> str | None:
         ...
 
     def add_input_topics(self, topics: list[str]) -> None:

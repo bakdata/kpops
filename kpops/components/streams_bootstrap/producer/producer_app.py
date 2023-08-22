@@ -64,7 +64,7 @@ class ProducerApp(KafkaApp):
                 super().apply_to_outputs(name, topic)
 
     @override
-    def get_output_topic(self) -> str:
+    def get_output_topic(self) -> str | None:
         return self.app.streams.output_topic
 
     @override

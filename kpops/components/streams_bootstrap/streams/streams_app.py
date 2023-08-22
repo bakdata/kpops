@@ -43,15 +43,15 @@ class StreamsApp(KafkaApp):
         extra = Extra.allow
 
     @override
-    def get_input_topics(self) -> list[str]:
+    def get_input_topics(self) -> list[str] | None:
         return self.app.streams.input_topics
 
     @override
-    def get_extra_input_topics(self) -> dict[str, list[str]]:
+    def get_extra_input_topics(self) -> dict[str, list[str]] | None:
         return self.app.streams.extra_input_topics
 
     @override
-    def get_output_topic(self) -> str:
+    def get_output_topic(self) -> str | None:
         return self.app.streams.output_topic
 
     @override
