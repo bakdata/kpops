@@ -93,3 +93,4 @@ jobs:
           username: ${{ secrets.GH_USERNAME }}
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}
+          dev: true
