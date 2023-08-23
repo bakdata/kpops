@@ -55,7 +55,7 @@ runs:
       shell: bash
       id: requirements
       run: |
-        TEMP_FILE="$RUNNER_TEMP/requirements.txt"
+        TEMP_FILE="kpops-runner-action-requirements.txt"
         echo "kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}" > "$TEMP_FILE"
         cat "$TEMP_FILE"
         echo  "path=$TEMP_FILE">> $GITHUB_OUTPUT
