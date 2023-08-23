@@ -9,9 +9,9 @@ Can be used to deploy any app in Kubernetes using Helm, for example, a REST serv
 ??? example "`pipeline.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-components/kubernetes-app.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-components/kubernetes-app.yaml
+    --8<--
     ```
 
 ### Operations

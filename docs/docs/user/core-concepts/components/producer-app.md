@@ -11,9 +11,9 @@ Configures a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap){t
 ??? example "`pipeline.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-components/producer-app.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-components/producer-app.yaml
+    --8<--
     ```
 
 ### Operations

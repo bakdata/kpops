@@ -11,9 +11,9 @@ Lets other systems pull data from Apache Kafka.
 ??? example "`pipeline.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-components/kafka-sink-connector.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-components/kafka-sink-connector.yaml
+    --8<--
     ```
 
 ### Operations

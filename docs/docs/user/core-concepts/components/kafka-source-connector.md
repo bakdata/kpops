@@ -11,9 +11,9 @@ Manages source connectors in your Kafka Connect cluster.
 ??? example "`pipeline.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-components/kafka-source-connector.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-components/kafka-source-connector.yaml
+    --8<--
     ```
 
 ### Operations

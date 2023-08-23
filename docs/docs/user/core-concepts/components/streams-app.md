@@ -13,9 +13,9 @@ Configures a
 ??? example "`pipeline.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-components/streams-app.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-components/streams-app.yaml
+    --8<--
     ```
 
 ### Operations
