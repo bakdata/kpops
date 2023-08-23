@@ -47,6 +47,12 @@ runs:
         version: ${{ inputs.helm-version }}
         token: ${{ inputs.token }}
 
+    - name: Cache pipx
+      uses: actions/cache@v3
+      with:
+        path: ~/.local/pipx/venvs
+        key: pipx-${{ runner.os }}-${{ inputs.kpops-version }}
+
     - name: Install KPOps
       shell: bash
       run: |
