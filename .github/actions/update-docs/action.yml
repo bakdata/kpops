@@ -50,6 +50,7 @@ runs:
 
     - name: Update documentation branch with mike
       shell: bash
+      if: ${{ inputs.dev == 'false' }}
       env:
         USERNAME: ${{ inputs.username }}
         EMAIL: ${{ inputs.email }}
