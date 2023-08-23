@@ -9,9 +9,9 @@ To learn about any of the available settings, take a look at the example below.
 ??? example "`config.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-config/config.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-config/config.yaml
+    --8<--
     ```
 
 !!! note "Environment-specific pipeline definitions"
