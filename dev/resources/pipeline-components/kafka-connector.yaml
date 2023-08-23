@@ -1,44 +1,64 @@
 - type: kafka-connector # required
   name: kafka-connector # required
-  namespace: namespace # required, clean up jobs for the connector will run here
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example. Extensive documentation on
-  # connectors: https://kafka.apache.org/documentation/#connectconfigs
-  app:
-    tasks.max: 1
-  # Topic(s) from which the component will read input
-  from:
-    topics: # required
+  # Pipeline prefix that will prefix every component name. If you wish to not
+  # have any prefix you can specify an empty string.
+  prefix: ${pipeline_name}-
+  from: # Must not be null
+    topics: # read from topic
       ${pipeline_name}-input-topic:
-        type: input # required
-        # role: topic-role # only used if type is `extra`
+        type: input # Implied when role is NOT specified
+      ${pipeline_name}-extra-topic:
+        role: topic-role # Implies `type` to be extra
+      ${pipeline_name}-input-pattern-topic:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      ${pipeline_name}-extra-pattern-topic:
+        type: pattern # Implied to be an extra pattern if `role` is defined
+        role: some-role
+    components: # read from specific component
+      account-producer:
+        type: output # Implied when role is NOT specified
+      other-producer:
+        role: some-role # Implies `type` to be extra
+      component-as-input-pattern:
+        type: pattern # Implied to be an input pattern if `role` is undefined
+      component-as-extra-pattern:
+        type: pattern # Implied to be an extra pattern if `role` is defined
+        role: some-role
   # Topic(s) into which the component will write output
   to:
-    topics: # required
+    topics:
       ${pipeline_name}-output-topic:
-        type: error # required
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
+        type: output # Implied when role is NOT specified
+      ${pipeline_name}-extra-topic:
+        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline_name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
         partitions_count: 1
         replication_factor: 1
         configs: # https://kafka.apache.org/documentation/#topicconfigs
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Pipeline prefix that will prefix every component name. If you wish to not 
-  # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
+  namespace: namespace # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example. Extensive documentation on
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
+  app: # required
+    tasks.max: 1
   # Helm repository configuration for resetter
-  repoConfig:
-    repositoryName: my-repo # required
+  repo_config:
+    repository_name: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags: 
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
       insecure_skip_tls_verify: false
-  version: "1.0.4" # Helm chart version
+  version: "1.0.6" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
-  resetterValues:
+  resetter_values:
     imageTag: "1.2.3"
