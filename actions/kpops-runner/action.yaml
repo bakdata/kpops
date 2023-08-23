@@ -55,7 +55,7 @@ runs:
       shell: bash
       id: requirements
       run: |
-        TEMP_FILE="kpops-runner-action-requirements.txt"
+        TEMP_FILE="${{ github.action_path }}/kpops-runner-action-requirements.txt"
         echo "kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}" > "$TEMP_FILE"
         cat "$TEMP_FILE"
         echo  "path=$TEMP_FILE">> $GITHUB_OUTPUT
@@ -65,8 +65,9 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
         cache: pip
-        cache-dependency-path: |
-          "${{ steps.requirements.outputs.path }}"
+        cache-dependency-path: ''
+        # FIXME: https://github.com/actions/setup-python/issues/361
+        # "${{ steps.requirements.outputs.path }}"
 
     - name: Install KPOps
       shell: bash
