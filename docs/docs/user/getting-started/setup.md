@@ -266,3 +266,4 @@ KPOps comes as a [PyPI package](https://pypi.org/project/kpops/){target=_blank}.
 ```shell
 pip install kpops
 ```
+
