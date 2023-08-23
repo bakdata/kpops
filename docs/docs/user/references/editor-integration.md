@@ -10,7 +10,7 @@ KPOps provides JSON schemas that enable autocompletion and validation for some o
 ## Usage
 
 1. Install the
-[yaml-language-server](https://github.com/redhat-developer/yaml-language-server#clients){target=_blank} in your editor of choice. (requires LSP support)
+   [yaml-language-server](https://github.com/redhat-developer/yaml-language-server#clients){target=_blank} in your editor of choice. (requires LSP support)
 2. Configure the extension with the settings below.
 
 ??? note "`settings.json`"
@@ -22,4 +22,4 @@ KPOps provides JSON schemas that enable autocompletion and validation for some o
     ```
 
 !!! tip "Advanced usage"
-    It is possible to generate schemas with the [`kpops schema`](../cli-commands/#kpops-schema) command. Useful when using custom components or when using a pre-release version of KPOps.
+It is possible to generate schemas with the [`kpops schema`](../cli-commands/#kpops-schema) command. Useful when using custom components or when using a pre-release version of KPOps.

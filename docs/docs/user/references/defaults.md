@@ -19,8 +19,8 @@ It is possible to set specific `defaults` for each `environment` by adding files
 It is important to note that `defaults_{environment}.yaml` overrides only the settings that are explicitly set to be different from the ones in the base `defaults` file.
 
 !!! tip
-    `defaults` is the default value of `defaults_filename_prefix`.
-    Together with `defaults_path` and `environment` it can be changed in [`config.yaml`](../config/#__codelineno-0-16)
+`defaults` is the default value of `defaults_filename_prefix`.
+Together with `defaults_path` and `environment` it can be changed in [`config.yaml`](../config/#__codelineno-0-16)
 
 ## Components
 
