@@ -51,7 +51,7 @@ runs:
         version: ${{ inputs.helm-version }}
         token: ${{ inputs.token }}
 
-    - run: echo "kpops"${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }} > $RUNNER_TEMP/requirements.txt
+    - run: echo "kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}" > $RUNNER_TEMP/requirements.txt
       shell: bash
 
     - name: Set up Python ${{ inputs.python-version }}
@@ -59,13 +59,13 @@ runs:
       with:
         python-version: ${{ inputs.python-version }}
         cache: pip
-        cache-dependency-path: ${{ env.RUNNER_TEMP }}/requirements.txt
+        cache-dependency-path: $RUNNER_TEMP/requirements.txt
 
     - name: Install KPOps
       shell: bash
       run: |
         echo "::group::install kpops package"
-        pip install -r ${{ env.RUNNER_TEMP }}/requirements.txt
+        pip install -r $RUNNER_TEMP/requirements.txt
         echo "::endgroup::"
 
     - name: ${{ inputs.command }} ${{ inputs.pipeline }} pipeline
