@@ -45,10 +45,6 @@ runs:
     - name: Update documentation dev branch with mike
       shell: bash
       if: ${{ inputs.dev == 'true' && inputs.tag == ''}}
-      env:
-        USERNAME: ${{ inputs.username }}
-        EMAIL: ${{ inputs.email }}
-        TOKEN: ${{ inputs.token }}
       run: |
         echo "Dev is executed"
         # poetry run mike deploy dev --push --rebase --config-file ./docs/mkdocs.yml
@@ -57,12 +53,6 @@ runs:
     - name: Update documentation branch with mike
       shell: bash
       if: ${{ inputs.dev == 'false' && inputs.tag != ''}}
-      env:
-        USERNAME: ${{ inputs.username }}
-        EMAIL: ${{ inputs.email }}
-        TOKEN: ${{ inputs.token }}
-        NEW_TAG: ${{ inputs.tag }}
       run: |
-
         echo "I ran UPPPSSSS!"
         # poetry run mike deploy "${{ inputs.tag }}" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
