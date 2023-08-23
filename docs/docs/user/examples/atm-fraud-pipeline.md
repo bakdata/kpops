@@ -14,7 +14,7 @@ The one used in this example is re-built from scratch using [bakdata](https://ba
 
 ## Prerequisites
 
-Completed all steps in the [setup](../../getting-started/setup).
+Completed all steps in the [setup](../getting-started/setup.md).
 
 ## Setup and deployment
 
@@ -140,7 +140,7 @@ helm --namespace kpops uninstall postgresql
     destroyed correctly.
 
 !!! Attention
-    If you face any issues destroying this example see [Teardown](../../getting-started/teardown) for manual deletion.
+    If you face any issues destroying this example see [Teardown](../getting-started/teardown.md) for manual deletion.
 
 ## Common errors
 
@@ -154,4 +154,4 @@ helm --namespace kpops uninstall postgresql
     1. Read the error message.
     2. Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
     3. Run `clean`.
-    4. If `clean` fails, follow the steps in [teardown](../../getting-started/teardown).
+    4. If `clean` fails, follow the steps in [teardown](../getting-started/teardown.md).
