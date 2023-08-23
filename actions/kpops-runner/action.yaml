@@ -51,8 +51,12 @@ runs:
         version: ${{ inputs.helm-version }}
         token: ${{ inputs.token }}
 
-    - run: echo "kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}" > $RUNNER_TEMP/requirements.txt
+    - name: Create temporary requirements.txt for caching
       shell: bash
+      run: |
+        TEMP_FILE="$RUNNER_TEMP/requirements.txt"
+        echo "kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}" > "$TEMP_FILE"
+        cat "$TEMP_FILE"
 
     - name: Set up Python ${{ inputs.python-version }}
       uses: actions/setup-python@v4
