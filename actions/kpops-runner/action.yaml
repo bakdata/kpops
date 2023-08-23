@@ -60,7 +60,6 @@ runs:
         cat "$TEMP_FILE"
         echo  "path=$TEMP_FILE">> $GITHUB_OUTPUT
 
-
     - name: Set up Python ${{ inputs.python-version }}
       uses: actions/setup-python@v4
       with:
