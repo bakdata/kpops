@@ -53,10 +53,13 @@ runs:
 
     - name: Create temporary requirements.txt for caching
       shell: bash
+      id: requirements
       run: |
         TEMP_FILE="$RUNNER_TEMP/requirements.txt"
         echo "kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}" > "$TEMP_FILE"
         cat "$TEMP_FILE"
+        echo  "path=$TEMP_FILE">> $GITHUB_OUTPUT
+
 
     - name: Set up Python ${{ inputs.python-version }}
       uses: actions/setup-python@v4
@@ -64,13 +67,13 @@ runs:
         python-version: ${{ inputs.python-version }}
         cache: pip
         cache-dependency-path: |
-          "$RUNNER_TEMP/requirements.txt"
+          "${{ steps.requirements.outputs.path }}"
 
     - name: Install KPOps
       shell: bash
       run: |
         echo "::group::install kpops package"
-        pip install -r "$RUNNER_TEMP/requirements.txt"
+        pip install -r "${{ steps.requirements.outputs.path }}"
         echo "::endgroup::"
 
     - name: ${{ inputs.command }} ${{ inputs.pipeline }} pipeline
