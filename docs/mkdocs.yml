@@ -33,6 +33,10 @@ plugins:
   - search
   - glightbox
 
+extra:
+  version:
+    provider: mike
+
 markdown_extensions:
   - footnotes
   - toc:

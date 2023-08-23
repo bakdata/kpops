@@ -15,6 +15,6 @@ docs-config := base-directory / "docs/mkdocs.yml"
 serve-docs port="8000":
     poetry run mkdocs serve --config-file {{ docs-config }} --dev-addr localhost:{{ port }}
 
-# Generate CLI Usage page in documentation
-generate-docs:
-    sh ./gen_docs.sh
+# Serve docs deployed in branch 'documentation'
+serve-deployed-docs port="8000":
+    mike serve --config-file {{ docs-config }} --dev-addr localhost:{{ port }}
