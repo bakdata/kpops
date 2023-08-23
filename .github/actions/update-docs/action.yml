@@ -56,11 +56,13 @@ runs:
         TOKEN: ${{ inputs.token }}
         NEW_TAG: ${{ inputs.tag }}
       run: |
-        poetry install --with docs
-        git config --local user.name ${USERNAME}
-        git config --local user.email ${EMAIL}
-        git config --local user.password ${TOKEN}
 
-        git pull # make sure docs branch is up-to-date
-        new_tag=${NEW_TAG%.*}
-        poetry run mike deploy "$new_tag" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
+        echo "I ran UPPPSSSS!"
+        # poetry install --with docs
+        # git config --local user.name ${USERNAME}
+        # git config --local user.email ${EMAIL}
+        # git config --local user.password ${TOKEN}
+
+        # git pull # make sure docs branch is up-to-date
+        # new_tag=${NEW_TAG%.*}
+        # poetry run mike deploy "$new_tag" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
