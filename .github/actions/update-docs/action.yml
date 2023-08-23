@@ -31,26 +31,32 @@ runs:
         poetry-version: "1.5.1"
         python-version: "3.10"
 
+    - name: Install docs dependencies, setup git, and update branch
+      shell: bash
+      run: |
+        poetry install --with docs
+
+        git config --local user.name  ${{ inputs.username }}
+        git config --local user.email ${{ inputs.email }}
+        git config --local user.password ${{ inputs.token }}
+
+        git pull 
+
     - name: Update documentation dev branch with mike
       shell: bash
-      if: ${{ inputs.dev }}
+      if: ${{ inputs.dev == 'true' && inputs.tag == ''}}
       env:
         USERNAME: ${{ inputs.username }}
         EMAIL: ${{ inputs.email }}
         TOKEN: ${{ inputs.token }}
       run: |
-        poetry install --with docs
-        git config --local user.name ${USERNAME}
-        git config --local user.email ${EMAIL}
-        git config --local user.password ${TOKEN}
-
-        git pull # make sure docs branch is up-to-date
-        poetry run mike deploy dev --push --rebase --config-file ./docs/mkdocs.yml
+        echo "Dev is executed"
+        # poetry run mike deploy dev --push --rebase --config-file ./docs/mkdocs.yml
 
 
     - name: Update documentation branch with mike
       shell: bash
-      if: ${{ inputs.dev == 'false' }}
+      if: ${{ inputs.dev == 'false' && inputs.tag != ''}}
       env:
         USERNAME: ${{ inputs.username }}
         EMAIL: ${{ inputs.email }}
@@ -59,11 +65,4 @@ runs:
       run: |
 
         echo "I ran UPPPSSSS!"
-        # poetry install --with docs
-        # git config --local user.name ${USERNAME}
-        # git config --local user.email ${EMAIL}
-        # git config --local user.password ${TOKEN}
-
-        # git pull # make sure docs branch is up-to-date
-        # new_tag=${NEW_TAG%.*}
-        # poetry run mike deploy "$new_tag" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
+        # poetry run mike deploy "${{ inputs.tag }}" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
