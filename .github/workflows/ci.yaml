@@ -79,3 +79,13 @@ jobs:
     uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@v1.25.0
     secrets:
       pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
+
+  publish-docs-to-dev:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Publish docs to dev
+        uses: ./.github/actions/update-docs
+        with:
+          username: ${{ secrets.GH_USERNAME }}
+          email: ${{ secrets.GH_EMAIL }}
+          token: ${{ secrets.GH_TOKEN }}
