@@ -17,6 +17,10 @@ inputs:
   tag:
     description: "Version tag"
     required: false
+  dev:
+    description: "Should push docs to dev (defaults false)"
+    default: "false"
+    required: false
 
 runs:
   using: "composite"
@@ -26,6 +30,23 @@ runs:
       with:
         poetry-version: "1.5.1"
         python-version: "3.10"
+
+    - name: Update documentation dev branch with mike
+      shell: bash
+      if: ${{ inputs.dev }}
+      env:
+        USERNAME: ${{ inputs.username }}
+        EMAIL: ${{ inputs.email }}
+        TOKEN: ${{ inputs.token }}
+      run: |
+        poetry install --with docs
+        git config --local user.name ${USERNAME}
+        git config --local user.email ${EMAIL}
+        git config --local user.password ${TOKEN}
+
+        git pull # make sure docs branch is up-to-date
+        poetry run mike deploy dev --push --rebase --config-file ./docs/mkdocs.yml
+
 
     - name: Update documentation branch with mike
       shell: bash
@@ -41,9 +62,5 @@ runs:
         git config --local user.password ${TOKEN}
 
         git pull # make sure docs branch is up-to-date
-        if [ -z "$NEW_TAG" ]; then
-          poetry run mike deploy dev --push --rebase --config-file ./docs/mkdocs.yml
-        else
-          new_tag=${NEW_TAG%.*}
-          poetry run mike deploy "$new_tag" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
-        fi
+        new_tag=${NEW_TAG%.*}
+        poetry run mike deploy "$new_tag" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
