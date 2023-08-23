@@ -86,8 +86,17 @@ jobs:
       - uses: actions/checkout@v3   
         with:
           ref: ${{ github.head_ref }}
+      
+      - name: Check if files in docs folder have changed
+        uses: dorny/paths-filter@v2
+        id: docs-changes
+        with:
+          filters: |
+            docs:
+              - 'docs/**'
 
       - name: Publish docs to dev
+        if: steps.docs-changes.outputs.docs == 'true'
         uses: ./.github/actions/update-docs
         with:
           username: ${{ secrets.GH_USERNAME }}
