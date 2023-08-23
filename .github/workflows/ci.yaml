@@ -83,9 +83,9 @@ jobs:
   publish-docs-to-dev:
     runs-on: ubuntu-22.04
     steps:
-      - uses: actions/checkout@v      
+      - uses: actions/checkout@v3   
         with:
-          ref: ${{ github.head_ref }}3
+          ref: ${{ github.head_ref }}
 
       - name: Publish docs to dev
         uses: ./.github/actions/update-docs
