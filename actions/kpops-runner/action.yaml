@@ -45,29 +45,27 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Set up Python ${{ inputs.python-version }}
-      uses: actions/setup-python@v4
-      with:
-        python-version: ${{ inputs.python-version }}
-        cache: 'pip'
-
     - name: Set up Helm
       uses: azure/setup-helm@v3
       with:
         version: ${{ inputs.helm-version }}
         token: ${{ inputs.token }}
 
-    - name: Cache pipx
-      uses: actions/cache@v3
+    - run: echo "kpops"${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }} > $RUNNER_TEMP/requirements.txt
+      shell: bash
+
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v4
       with:
-        path: ~/.local/pipx/venvs
-        key: pipx-${{ runner.os }}-${{ inputs.kpops-version }}
+        python-version: ${{ inputs.python-version }}
+        cache: pip
+        cache-dependency-path: ${{ env.RUNNER_TEMP }}/requirements.txt
 
     - name: Install KPOps
       shell: bash
       run: |
         echo "::group::install kpops package"
-        pip install kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}
+        pip install -r ${{ env.RUNNER_TEMP }}/requirements.txt
         echo "::endgroup::"
 
     - name: ${{ inputs.command }} ${{ inputs.pipeline }} pipeline
