@@ -81,3 +81,8 @@ repos:
             | kpops/components/.*\.py
           )$
         require_serial: true
+      - id: format-markdowns
+        name: format-markdowns
+        entry: dprint fmt .
+        language: system
+        types: [markdown]
