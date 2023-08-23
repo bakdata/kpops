@@ -159,7 +159,7 @@ helm --namespace kpops uninstall redis
     1. Read the error message.
     2. Try to correct the mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
     3. Run `clean`.
-    4. Run `deploy --dry-run` to avoid havig to `clean` again. If an error is dropped, start over from step 1.
+    4. Run `deploy --dry-run` to avoid having to `clean` again. If an error is dropped, start over from step 1.
     5. If the dry-run is successful, run `deploy`.
 - `clean` fails:
     1. Read the error message.
