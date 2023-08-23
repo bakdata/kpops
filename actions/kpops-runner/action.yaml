@@ -64,13 +64,13 @@ runs:
         python-version: ${{ inputs.python-version }}
         cache: pip
         cache-dependency-path: |
-          $RUNNER_TEMP/requirements.txt
+          "$RUNNER_TEMP/requirements.txt"
 
     - name: Install KPOps
       shell: bash
       run: |
         echo "::group::install kpops package"
-        pip install -r $RUNNER_TEMP/requirements.txt
+        pip install -r "$RUNNER_TEMP/requirements.txt"
         echo "::endgroup::"
 
     - name: ${{ inputs.command }} ${{ inputs.pipeline }} pipeline
