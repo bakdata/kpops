@@ -26,6 +26,10 @@ inputs:
   filter-type:
     description: "Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS (default is include)"
     required: false
+  python-version:
+    description: "Python version to install (Defaults to the latest stable version of Python 3.11)"
+    required: false
+    default: "3.11.x"
   kpops-version:
     description: "KPOps version"
     required: false
@@ -41,6 +45,12 @@ inputs:
 runs:
   using: "composite"
   steps:
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: 'pip'
+
     - name: Set up Helm
       uses: azure/setup-helm@v3
       with:
@@ -57,7 +67,7 @@ runs:
       shell: bash
       run: |
         echo "::group::install kpops package"
-        pipx install kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}
+        pip install kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}
         echo "::endgroup::"
 
     - name: ${{ inputs.command }} ${{ inputs.pipeline }} pipeline
