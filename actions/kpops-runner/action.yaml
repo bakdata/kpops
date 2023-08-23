@@ -50,7 +50,7 @@ runs:
     - name: Install KPOps
       shell: bash
       run: |
-        echo "::group::pip install kpops package"
+        echo "::group::install kpops package"
         pipx install kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}
         echo "::endgroup::"
 
