@@ -90,7 +90,6 @@ jobs:
           ref: ${{ github.head_ref }}
       
       - name: Publish docs to dev
-        if: steps.docs-changes.outputs.docs == 'true'
         uses: ./.github/actions/update-docs
         with:
           username: ${{ secrets.GH_USERNAME }}
@@ -113,7 +112,7 @@ jobs:
       #         - 'docs/**'
 
       - name: Publish docs to dev
-        if: steps.docs-changes.outputs.docs == 'true'
+        # if: steps.docs-changes.outputs.docs == 'true'
         uses: ./.github/actions/update-docs
         with:
           username: ${{ secrets.GH_USERNAME }}
