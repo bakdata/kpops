@@ -72,6 +72,7 @@ jobs:
       
       - name: Check markdown formatting
         uses: dprint/check@v2.2
+        if: runner.os == 'Linux'
 
       - name: Test docs build (mkdocs)
         run: poetry run mkdocs build -f docs/mkdocs.yml
