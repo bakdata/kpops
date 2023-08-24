@@ -1,8 +1,7 @@
 name: "Update documentation in gh-pages"
 description: |
-  Compile markdown documents to html and deploy to docs branch. If a semver tag is given, this action strips the patch.
+  Compile markdown documents to html and deploy to docs branch. If a semver version is given, this action strips the patch.
   It then pushes the <major>.<minor> as the latest alias to the documentation branch with mike.
-  In case no tag is given, it pushes to 'dev'.
 
 inputs:
   username:
@@ -14,12 +13,12 @@ inputs:
   token:
     description: "GitHub Token (must be a PAT for repository dispatch)"
     required: true
-  tag:
-    description: "Version tag"
-    required: false
-  dev:
-    description: "Should push docs to dev (defaults false)"
-    default: "false"
+  version:
+    description: "Version name to be deployed by mike"
+    required: true 
+  latest:
+    description: "Determines if the set version is a stable and latest version, otherwise it is a dev version. (Default false)"
+    default: 'false'
     required: false
 
 runs:
@@ -44,13 +43,13 @@ runs:
 
     - name: Update documentation dev branch with mike
       shell: bash
-      if: ${{ inputs.dev == 'true' && inputs.tag == ''}}
+      if: ${{ inputs.latest == 'false' }}
       run: |
-        poetry run mike deploy dev --push --rebase --config-file ./docs/mkdocs.yml
+        poetry run mike deploy ${{ inputs.version }} --push --rebase --config-file ./docs/mkdocs.yml
 
 
     - name: Update documentation branch with mike
       shell: bash
-      if: ${{ inputs.dev == 'false' && inputs.tag != ''}}
+      if: ${{ inputs.latest == 'true' }}
       run: |
-        poetry run mike deploy "${{ inputs.tag }}" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
+        poetry run mike deploy "${{ inputs.version }}" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml

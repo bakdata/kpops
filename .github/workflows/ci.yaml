@@ -79,21 +79,38 @@ jobs:
     uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@v1.25.0
     secrets:
       pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
-
-  publish-docs-to-dev:
+  
+  publish-docs-to-main:
     runs-on: ubuntu-22.04
+    if: ${{ github.head_ref == 'refs/heads/main' }}
+    needs: [test]
     steps:
       - uses: actions/checkout@v3   
         with:
           ref: ${{ github.head_ref }}
       
-      - name: Check if files in docs folder have changed
-        uses: dorny/paths-filter@v2
-        id: docs-changes
+      - name: Publish docs to dev
+        if: steps.docs-changes.outputs.docs == 'true'
+        uses: ./.github/actions/update-docs
         with:
-          filters: |
-            docs:
-              - 'docs/**'
+          username: ${{ secrets.GH_USERNAME }}
+          email: ${{ secrets.GH_EMAIL }}
+          token: ${{ secrets.GH_TOKEN }}
+          version: main 
+
+  publish-docs-to-dev:
+    runs-on: ubuntu-22.04
+    # needs: [test]
+    steps:
+      - uses: actions/checkout@v3   
+      
+      # - name: Check if files in docs folder have changed
+      #   uses: dorny/paths-filter@v2
+      #   id: docs-changes
+      #   with:
+      #     filters: |
+      #       docs:
+      #         - 'docs/**'
 
       - name: Publish docs to dev
         if: steps.docs-changes.outputs.docs == 'true'
@@ -102,4 +119,4 @@ jobs:
           username: ${{ secrets.GH_USERNAME }}
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}
-          dev: true
+          version: dev 
