@@ -18,9 +18,13 @@ It is possible to set specific `defaults` for each `environment` by adding files
 
 It is important to note that `defaults_{environment}.yaml` overrides only the settings that are explicitly set to be different from the ones in the base `defaults` file.
 
+<!-- dprint-ignore-start -->
+
 !!! tip
     `defaults` is the default value of `defaults_filename_prefix`.
     Together with `defaults_path` and `environment` it can be changed in [`config.yaml`](../config/#__codelineno-0-16)
+
+<!-- dprint-ignore-end -->
 
 ## Components
 
@@ -30,70 +34,98 @@ The `defaults` codeblocks in this section contain the full set of settings that 
 
 ### [KubernetesApp](./components/kubernetes-app.md)
 
+<!-- dprint-ignore-start -->
+
 ??? example "`defaults.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-defaults/defaults-kubernetes-app.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-defaults/defaults-kubernetes-app.yaml
+    --8<--
     ```
+
+<!-- dprint-ignore-end -->
 
 ### [KafkaApp](./components/kafka-app.md)
 
+<!-- dprint-ignore-start -->
+
 ??? example "`defaults.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-defaults/defaults-kafka-app.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-defaults/defaults-kafka-app.yaml
+    --8<--
     ```
+
+<!-- dprint-ignore-end -->
 
 ### [StreamsApp](./components/streams-app.md)
 
+<!-- dprint-ignore-start -->
+
 ??? example "`defaults.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-defaults/defaults-streams-app.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-defaults/defaults-streams-app.yaml
+    --8<--
     ```
+
+<!-- dprint-ignore-end -->
 
 ### [ProducerApp](./components/producer-app.md)
 
+<!-- dprint-ignore-start -->
+
 ??? example "`defaults.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-defaults/defaults-producer.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-defaults/defaults-producer.yaml
+    --8<--
     ```
+
+<!-- dprint-ignore-end -->
 
 ### [KafkaConnector](./components/kafka-connector.md)
 
+<!-- dprint-ignore-start -->
+
 ??? example "`defaults.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-defaults/defaults-kafka-connector.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-defaults/defaults-kafka-connector.yaml
+    --8<--
     ```
+
+<!-- dprint-ignore-end -->
 
 ### [KafkaSourceConnector](./components/kafka-source-connector.md)
 
+<!-- dprint-ignore-start -->
+
 ??? example "`defaults.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-defaults/defaults-kafka-source-connector.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-defaults/defaults-kafka-source-connector.yaml
+    --8<--
     ```
+
+<!-- dprint-ignore-end -->
 
 ### [KafkaSinkConnector](./components/kafka-sink-connector.md)
 
+<!-- dprint-ignore-start -->
+
 ??? example "`defaults.yaml`"
 
     ```yaml
-      --8<--
-      ./docs/resources/pipeline-defaults/defaults-kafka-sink-connector.yaml
-      --8<--
+    --8<--
+    ./docs/resources/pipeline-defaults/defaults-kafka-sink-connector.yaml
+    --8<--
     ```
+
+<!-- dprint-ignore-end -->

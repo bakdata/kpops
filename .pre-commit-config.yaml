@@ -83,6 +83,6 @@ repos:
         require_serial: true
       - id: format-markdowns
         name: format-markdowns
-        entry: dprint fmt .
+        entry: dprint fmt
         language: system
         types: [markdown]

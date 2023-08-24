@@ -8,6 +8,8 @@ Manages source connectors in your Kafka Connect cluster.
 
 ### Configuration
 
+<!-- dprint-ignore-start -->
+
 ??? example "`pipeline.yaml`"
 
     ```yaml
@@ -15,6 +17,8 @@ Manages source connectors in your Kafka Connect cluster.
     ./docs/resources/pipeline-components/kafka-source-connector.yaml
     --8<--
     ```
+
+<!-- dprint-ignore-end -->
 
 ### Operations
 
