@@ -1,16 +1,16 @@
 {
-  "categories": [
+    "categories": [
         {"title": "## 🏗️ Breaking changes", "labels": ["breaking-change"]},
         {"title": "## 🚀 Features", "labels": ["type/enhancement"]},
         {"title": "## 🐛 Fixes", "labels": ["type/bug"]},
-      {"title": "## 🧪 Dependencies", "labels": ["type/update"]},
-      {"title": "## 🏭 Refactor", "labels": ["type/refactor"]},
-      {"title": "## 📝 Documentation", "labels": ["area/documentation"]},
-      {"title": "## 🌀 Miscellaneous", "labels": []}
-  ],
-  "ignore_labels": ["ignore"],
-  "sort": {"order": "ASC", "on_property": "mergedAt"},
-  "template": "# [${{TO_TAG}}](https://github.com/bakdata/kpops/releases/tag/${{TO_TAG}}) - Release Date: ${{TO_TAG_DATE}}\n\n${{CHANGELOG}}\n\n",
-  "pr_template": "- ${{TITLE}} - [#${{NUMBER}}](${{URL}})\n",
-  "empty_template": "- no changes!"
+        {"title": "## 🧪 Dependencies", "labels": ["type/update"]},
+        {"title": "## 🏭 Refactor", "labels": ["type/refactor"]},
+        {"title": "## 📝 Documentation", "labels": ["area/documentation"]},
+        {"title": "## 🌀 Miscellaneous", "labels": []}
+    ],
+    "ignore_labels": ["ignore"],
+    "sort": {"order": "ASC", "on_property": "mergedAt"},
+    "template": "# [${{TO_TAG}}](https://github.com/bakdata/kpops/releases/tag/${{TO_TAG}}) - Release Date: ${{TO_TAG_DATE}}\n\n${{CHANGELOG}}\n\n",
+    "pr_template": "- ${{TITLE}} - [#${{NUMBER}}](${{URL}})\n",
+    "empty_template": "- no changes!"
 }
