@@ -8,6 +8,7 @@ from pydantic import Field
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
+import tests.cli.resources.empty_module as empty_module
 from kpops.cli.main import app
 from kpops.components.base_components import PipelineComponent
 from kpops.utils.docstring import describe_attr
@@ -92,6 +93,20 @@ class TestGenSchema:
         ]
         assert result.exit_code == 0
 
+    def test_gen_pipeline_schema_no_components(self):
+        with pytest.raises(RuntimeError, match="^No valid components found.$"):
+            result = runner.invoke(
+                app,
+                [
+                    "schema",
+                    "pipeline",
+                    "--no-include-stock-components",
+                    empty_module.__name__,
+                ],
+                catch_exceptions=False,
+            )
+            assert result.exit_code == 1
+
     def test_gen_pipeline_schema_only_stock_module(self):
         result = runner.invoke(
             app,
@@ -121,7 +136,12 @@ class TestGenSchema:
     def test_gen_pipeline_schema_only_custom_module(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
-            ["schema", "pipeline", MODULE, "--no-include-stock-components"],
+            [
+                "schema",
+                "pipeline",
+                MODULE,
+                "--no-include-stock-components",
+            ],
             catch_exceptions=False,
         )
 
