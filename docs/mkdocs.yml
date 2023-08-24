@@ -91,3 +91,4 @@ nav:
       - Variables: 
         - Environment variables: user/references/variables/environment_variables.md
         - Substitution: user/references/variables/substitution.md
+  - Changelog: changelog.md
