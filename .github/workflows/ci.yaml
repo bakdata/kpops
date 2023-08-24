@@ -99,7 +99,7 @@ jobs:
 
   publish-docs-to-dev:
     runs-on: ubuntu-22.04
-    if: ${{ github.head_ref != 'refs/heads/main' }}
+    if: ${{ github.event_name == 'pull_request' }}
     needs: [test]
     steps:
       - uses: actions/checkout@v3   
