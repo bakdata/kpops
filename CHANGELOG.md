@@ -1,4 +1,44 @@
 # Changelog
+## [2.0.3](https://github.com/bakdata/kpops/releases/tag/2.0.3) - Release Date: [2023-08-24]
+
+### 🐛 Fixes
+
+- Fix GitHub action error in non-Python projects - [#340](https://github.com/bakdata/kpops/pull/340)
+
+
+### 🌀 Miscellaneous
+
+- Lint GitHub action - [#342](https://github.com/bakdata/kpops/pull/342)
+
+
+
+
+
+
+## [2.0.2](https://github.com/bakdata/kpops/releases/tag/2.0.2) - Release Date: [2023-08-23]
+
+### 📝 Documentation
+
+- Add version dropdown to the documentation - [#336](https://github.com/bakdata/kpops/pull/336)
+
+- Break the documentation down into smaller subsection - [#329](https://github.com/bakdata/kpops/pull/329)
+
+
+
+
+
+
+## [2.0.1](https://github.com/bakdata/kpops/releases/tag/2.0.1) - Release Date: [2023-08-22]
+
+### 🐛 Fixes
+
+- Fix optional flags in GitHub action - [#334](https://github.com/bakdata/kpops/pull/334)
+
+
+
+
+
+
 ## [2.0.0](https://github.com/bakdata/kpops/releases/tag/2.0.0) - Release Date: [2023-08-17]
 
 ### 🏗️ Breaking changes
