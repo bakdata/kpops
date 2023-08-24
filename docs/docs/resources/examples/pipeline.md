@@ -6,9 +6,9 @@
 
 ??? example "pipeline.yaml"
     ```yaml
-        --8<--
-        https://raw.githubusercontent.com/bakdata/kpops/main/examples/bakdata/atm-fraud-detection/pipeline.yaml
-        --8<--
+     --8<--
+     https://raw.githubusercontent.com/bakdata/kpops/main/examples/bakdata/atm-fraud-detection/pipeline.yaml
+     --8<--
     ```
 
 <!-- dprint-ignore-end -->
@@ -19,9 +19,9 @@
 
 ??? example "pipeline.yaml"
     ```yaml
-        --8<--
-        https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml
-        --8<--
+    --8<--
+    https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml
+    --8<--
     ```
 
 <!-- dprint-ignore-end -->
