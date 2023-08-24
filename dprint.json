@@ -8,6 +8,7 @@
   "excludes": [
     ".pytest_cache/**",
     ".mypy_cache/**",
+    "**/.venv/**",
     "CHANGELOG.md",
     "**/cli-commands.md",
     "**/cli_env_vars.md",
