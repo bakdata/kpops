@@ -2,10 +2,9 @@
 
 With a couple of easy commands in the shell and a [`pipeline.yaml`](#example) of under 30 lines, KPOps can not only [`deploy`](./references/cli-commands.md#kpops-deploy) a Kafka pipeline[^1] to a Kubernetes cluster, but also [`reset`](./references/cli-commands.md#kpops-reset), [`clean`](./references/cli-commands.md#kpops-clean) or [`destroy`](./references/cli-commands.md#kpops-destroy) it!
 
-[^1]:
-     A Kafka pipeline can consist of consecutive [streaming applications](./core-concepts/components/streams-app.md), 
-     [producers](./core-concepts/components/producer-app.md),
-     and [connectors](./core-concepts/components/kafka-connector.md).
+[^1]: A Kafka pipeline can consist of consecutive [streaming applications](./core-concepts/components/streams-app.md),
+[producers](./core-concepts/components/producer-app.md),
+and [connectors](./core-concepts/components/kafka-connector.md).
 
 ## Key features
 
@@ -24,7 +23,7 @@ With a couple of easy commands in the shell and a [`pipeline.yaml`](#example) of
 </figure>
 
 ```yaml title="Word-count pipeline.yaml"
-    --8<--
-    https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml
-    --8<--
+--8<--
+https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml
+--8<--
 ```
