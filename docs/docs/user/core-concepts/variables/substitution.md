@@ -1,6 +1,6 @@
 # Substitution
 
-KPOps supports the usage of placeholders and environment variables in [pipeline definition](../components.md) and [defaults](../defaults.md).
+KPOps supports the usage of placeholders and environment variables in [pipeline definition](../components/overview.md) and [defaults](../defaults.md).
 
 ## Component-specific variables
 
@@ -25,7 +25,7 @@ These variables include all fields in the [config](../config.md) and refer to th
 
 ## Environment variables
 
-Environment variables such as `$PATH` can be used in the pipeline definition and defaults without any transformation following the form `${ENV_VAR_NAME}`. This, of course, includes variables like the ones relevant to the [KPOps cli](../cli-commands.md) that are exported by the user.
+Environment variables such as `$PATH` can be used in the pipeline definition and defaults without any transformation following the form `${ENV_VAR_NAME}`. This, of course, includes variables like the ones relevant to the [KPOps cli](../../references/cli-commands.md) that are exported by the user.
 
 [See all KPOps environment variables](environment_variables.md)
 
@@ -34,11 +34,11 @@ Environment variables such as `$PATH` can be used in the pipeline definition and
 These are special variables that refer to the name and path of a pipeline.
 
 - `${pipeline_name}`  
-    Concatenated path of the parent directory where pipeline.yaml is defined in.  
+    Concatenated path of the parent directory where pipeline.yaml is defined in.
     For instance, `./data/pipelines/v1/pipeline.yaml`, here the value for the variable would be `data-pipelines-v1`.
 
 - `${pipeline_name_<level>}`  
-    Similar to the previous variable, each `<level>` contains a part of the path to the `pipeline.yaml` file.  
+    Similar to the previous variable, each `<level>` contains a part of the path to the `pipeline.yaml` file.
     Consider the previous example, `${pipeline_name_0}` would be `data`, `${pipeline_name_1}` would be `pipelines`, and `${pipeline_name_2}` equals to `v1`.
 
 ## Advanced use cases

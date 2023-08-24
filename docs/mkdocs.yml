@@ -33,6 +33,10 @@ plugins:
   - search
   - glightbox
 
+extra:
+  version:
+    provider: mike
+
 markdown_extensions:
   - footnotes
   - toc:
@@ -80,14 +84,23 @@ nav:
       - Teardown: user/getting-started/teardown.md
     - Examples:
       - ATM Fraud detection pipeline: user/examples/atm-fraud-pipeline.md
+    - Core Concepts:
+        - Components:
+            - Overview: user/core-concepts/components/overview.md
+            - KubernetesApp: user/core-concepts/components/kubernetes-app.md
+            - KafkaApp: user/core-concepts/components/kafka-app.md
+            - StreamsApp: user/core-concepts/components/streams-app.md
+            - ProducerApp: user/core-concepts/components/producer-app.md
+            - KafkaConnector: user/core-concepts/components/kafka-connector.md
+            - KafkaSinkConnector: user/core-concepts/components/kafka-sink-connector.md
+            - KafkaSourceConnector: user/core-concepts/components/kafka-source-connector.md
+        - Config: user/core-concepts/config.md
+        - Defaults: user/core-concepts/defaults.md
+        - Variables:
+            - Environment variables: user/core-concepts/variables/environment_variables.md
+            - Substitution: user/core-concepts/variables/substitution.md
     - References:
       - CLI usage: user/references/cli-commands.md
-      - Components: user/references/components.md
-      - Config: user/references/config.md
-      - Defaults: user/references/defaults.md
       - Editor integration: user/references/editor-integration.md
       - CI integration:
         - GitHub Actions: user/references/ci-integration/github-actions.md
-      - Variables: 
-        - Environment variables: user/references/variables/environment_variables.md
-        - Substitution: user/references/variables/substitution.md
