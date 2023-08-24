@@ -1,4 +1,6 @@
 {
+  "$schema": "https://dprint.dev/schemas/v0.json",
+  "incremental": true,
   "markdown": {},
   "includes": [
     "**/*.{md}"
