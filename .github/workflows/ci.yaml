@@ -69,6 +69,9 @@ jobs:
 
       - name: Install docs dependencies
         run: poetry install --with docs
+      
+      - name: Check markdown formatting
+        uses: dprint/check@v2.2
 
       - name: Test docs build (mkdocs)
         run: poetry run mkdocs build -f docs/mkdocs.yml

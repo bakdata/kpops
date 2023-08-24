@@ -227,8 +227,10 @@ helm upgrade \
     streams-explorer streams-explorer/streams-explorer
 ```
 
+<!-- dprint-ignore-start -->
+
 ??? example "Streams Explorer Helm chart values (`streams-explorer.yaml`)"
-An example value configuration for Steams Explorer Helm chart.
+    An example value configuration for Steams Explorer Helm chart.
 
     ```yaml
     imageTag: "v2.1.2"
@@ -244,6 +246,8 @@ An example value configuration for Steams Explorer Helm chart.
            cpu: 200m
            memory: 300Mi
     ```
+
+<!-- dprint-ignore-end -->
 
 ## Check the status of your deployments
 
