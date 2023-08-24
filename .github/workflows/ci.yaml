@@ -80,7 +80,7 @@ jobs:
     secrets:
       pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
   
-  publish-docs-to-main:
+  publish-docs-from-main:
     runs-on: ubuntu-22.04
     if: ${{ github.head_ref == 'refs/heads/main' }}
     needs: [test]
@@ -89,7 +89,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
       
-      - name: Publish docs to dev
+      - name: Publish docs from 
         uses: ./.github/actions/update-docs
         with:
           username: ${{ secrets.GH_USERNAME }}
