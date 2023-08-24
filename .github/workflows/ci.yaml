@@ -99,21 +99,22 @@ jobs:
 
   publish-docs-to-dev:
     runs-on: ubuntu-22.04
-    # needs: [test]
+    needs: [test]
     steps:
       - uses: actions/checkout@v3   
-      
-      # - name: Check if files in docs folder have changed
-      #   uses: dorny/paths-filter@v2
-      #   id: docs-changes
-      #   with:
-      #     filters: |
-      #       docs:
-      #         - 'docs/**'
+        with:
+          ref: ${{ github.head_ref }}
 
+      - name: Check if files in docs folder have changed
+        uses: dorny/paths-filter@v2
+        id: docs-changes
+        with:
+          filters: |
+            docs:
+              - 'docs/**'
 
       - name: Publish docs to dev
-        # if: steps.docs-changes.outputs.docs == 'true'
+        if: steps.docs-changes.outputs.docs == 'true'
         uses: ./.github/actions/update-docs
         with:
           username: ${{ secrets.GH_USERNAME }}
