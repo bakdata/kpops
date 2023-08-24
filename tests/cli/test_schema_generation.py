@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from abc import ABC, abstractmethod
 from pathlib import Path
 
 import pytest
@@ -23,6 +24,18 @@ runner = CliRunner()
 class EmptyPipelineComponent(PipelineComponent):
     class Config:
         anystr_strip_whitespace = True
+
+
+# abstract component inheriting from ABC should be excluded
+class AbstractBaseComponent(PipelineComponent, ABC):
+    ...
+
+
+# abstract component with abstractmethods should be excluded
+class AbstractPipelineComponent(AbstractBaseComponent):
+    @abstractmethod
+    def not_implemented(self) -> None:
+        ...
 
 
 class SubPipelineComponent(EmptyPipelineComponent):
