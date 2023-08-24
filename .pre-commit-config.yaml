@@ -86,3 +86,5 @@ repos:
         entry: dprint fmt
         language: system
         types: [markdown]
+        require_serial: true
+        pass_filenames: false
