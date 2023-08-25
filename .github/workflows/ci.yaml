@@ -110,13 +110,15 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
 
+      # Checks to see if any files in the PR match one of the listed file types.
+      # This will return true if there's a file in docs folder that was added, deleted, or modified in the PR.
       - name: Check if files in docs folder have changed
         uses: dorny/paths-filter@v2
         id: docs-changes
         with:
           filters: |
             docs:
-              - 'docs/**'
+              - added|deleted|modified: 'docs/**'
 
       - name: Publish dev docs from PR 
         if: steps.docs-changes.outputs.docs == 'true'
