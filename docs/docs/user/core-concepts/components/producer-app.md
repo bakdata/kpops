@@ -8,6 +8,8 @@ Configures a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap){t
 
 ### Configuration
 
+<!-- dprint-ignore-start -->
+
 ??? example "`pipeline.yaml`"
 
     ```yaml
@@ -15,6 +17,8 @@ Configures a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap){t
     ./docs/resources/pipeline-components/producer-app.yaml
     --8<--
     ```
+
+<!-- dprint-ignore-end -->
 
 ### Operations
 

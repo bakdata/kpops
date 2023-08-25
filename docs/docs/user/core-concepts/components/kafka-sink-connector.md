@@ -8,6 +8,8 @@ Lets other systems pull data from Apache Kafka.
 
 ### Configuration
 
+<!-- dprint-ignore-start -->
+
 ??? example "`pipeline.yaml`"
 
     ```yaml
@@ -15,6 +17,8 @@ Lets other systems pull data from Apache Kafka.
     ./docs/resources/pipeline-components/kafka-sink-connector.yaml
     --8<--
     ```
+
+<!-- dprint-ignore-end -->
 
 ### Operations
 

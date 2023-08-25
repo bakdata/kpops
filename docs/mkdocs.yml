@@ -104,3 +104,7 @@ nav:
       - Editor integration: user/references/editor-integration.md
       - CI integration:
         - GitHub Actions: user/references/ci-integration/github-actions.md
+  - Developer Guide:
+      - Auto generation: developer/auto-generation.md
+      - Formatting: developer/formatting.md
+
