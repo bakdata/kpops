@@ -89,11 +89,11 @@ jobs:
     if: ${{ github.head_ref == 'refs/heads/main' }}
     needs: [test]
     steps:
-      - uses: actions/checkout@v3   
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
       
-      - name: Publish docs from 
+      - name: Publish docs from main branch
         uses: ./.github/actions/update-docs
         with:
           username: ${{ secrets.GH_USERNAME }}
@@ -101,12 +101,12 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
           version: main 
 
-  publish-docs-to-dev:
+  publish-dev-docs-from-pr:
     runs-on: ubuntu-22.04
     if: ${{ github.event_name == 'pull_request' }}
     needs: [test]
     steps:
-      - uses: actions/checkout@v3   
+      - uses: actions/checkout@v3
         with:
           ref: ${{ github.head_ref }}
 
@@ -118,7 +118,7 @@ jobs:
             docs:
               - 'docs/**'
 
-      - name: Publish docs to dev
+      - name: Publish dev docs from PR 
         if: steps.docs-changes.outputs.docs == 'true'
         uses: ./.github/actions/update-docs
         with:

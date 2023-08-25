@@ -41,14 +41,13 @@ runs:
 
         git pull 
 
-    - name: Update documentation dev branch with mike
+    - name: Deploy ${{ inputs.version }} version of the documentation with mike
       shell: bash
       if: ${{ inputs.latest == 'false' }}
       run: |
         poetry run mike deploy ${{ inputs.version }} --push --rebase --config-file ./docs/mkdocs.yml
 
-
-    - name: Update documentation branch with mike
+    - name: Deploy ${{ inputs.version }} latest version of the documentation with mike
       shell: bash
       if: ${{ inputs.latest == 'true' }}
       run: |
