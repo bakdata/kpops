@@ -4,7 +4,6 @@
   app:
     streams:
       brokers: test
-      output_topic: out
   repo_config:
     repository_name: masked
     url: masked

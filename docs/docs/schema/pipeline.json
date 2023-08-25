@@ -458,7 +458,20 @@
                             "$ref": "#/definitions/ToSection"
                         }
                     ],
-                    "description": "Topic(s) into which the component will write output",
+                    "default": {
+                        "models": {},
+                        "topics": {
+                            "${output_topic_name}": {
+                                "configs": {},
+                                "key_schema": null,
+                                "partitions_count": null,
+                                "replication_factor": null,
+                                "role": null,
+                                "type": "output",
+                                "value_schema": null
+                            }
+                        }
+                    },
                     "title": "To"
                 },
                 "type": {
@@ -641,7 +654,20 @@
                             "$ref": "#/definitions/ToSection"
                         }
                     ],
-                    "description": "Topic(s) into which the component will write output",
+                    "default": {
+                        "models": {},
+                        "topics": {
+                            "${output_topic_name}": {
+                                "configs": {},
+                                "key_schema": null,
+                                "partitions_count": null,
+                                "replication_factor": null,
+                                "role": null,
+                                "type": "output",
+                                "value_schema": null
+                            }
+                        }
+                    },
                     "title": "To"
                 },
                 "type": {

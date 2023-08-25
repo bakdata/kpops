@@ -15,6 +15,12 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
 )
+from kpops.components.base_components.models import TopicName
+from kpops.components.base_components.models.to_section import (
+    OutputTopicTypes,
+    TopicConfig,
+    ToSection,
+)
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
@@ -78,6 +84,11 @@ class KafkaApp(KubernetesApp, ABC):
     version: str | None = Field(
         default="2.9.0",
         description=describe_attr("version", __doc__),
+    )
+    to: ToSection | None = ToSection(
+        topics={
+            TopicName("${output_topic_name}"): TopicConfig(type=OutputTopicTypes.OUTPUT)
+        }
     )
 
     @property

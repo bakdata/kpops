@@ -697,7 +697,7 @@ snapshots['TestPipeline.test_model_serialization test-pipeline'] = {
                     'brokers': 'test',
                     'extraOutputTopics': {
                     },
-                    'outputTopic': 'out',
+                    'outputTopic': 'resources-pipeline-with-paths-account-producer',
                     'schemaRegistryUrl': 'http://localhost:8081'
                 }
             },
@@ -713,6 +713,17 @@ snapshots['TestPipeline.test_model_serialization test-pipeline'] = {
                 },
                 'repository_name': 'masked',
                 'url': 'masked'
+            },
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-pipeline-with-paths-account-producer': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    }
+                }
             },
             'type': 'producer-app',
             'version': '2.4.2'
@@ -1127,6 +1138,7 @@ snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'extraOutputTopics': {
                     },
+                    'outputTopic': 'resources-pipeline-component-should-have-prefix-account-producer',
                     'schemaRegistryUrl': 'http://localhost:8081'
                 },
                 'suspend': True
@@ -1140,6 +1152,17 @@ snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = {
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-pipeline-component-should-have-prefix-account-producer': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    }
+                }
             },
             'type': 'producer-app',
             'version': '2.9.0'
