@@ -81,3 +81,10 @@ repos:
             | kpops/components/.*\.py
           )$
         require_serial: true
+      - id: dprint
+        name: dprint 
+        entry: dprint fmt
+        language: system
+        types: [markdown]
+        require_serial: true
+        pass_filenames: false
