@@ -7,7 +7,6 @@ from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
 
-import matplotlib.pyplot as plt
 import networkx as nx
 import yaml
 from pydantic import BaseModel, Field
@@ -201,7 +200,6 @@ class Pipeline:
                 self.components.graph_components.add_edge(
                     component_vertex_name, output_topic
                 )
-        nx.draw(self.components.graph_components, with_labels=True)
 
     def validate_graph_components(self):
         if not nx.is_directed_acyclic_graph(self.components.graph_components):
