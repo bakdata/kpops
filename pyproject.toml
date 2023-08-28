@@ -28,7 +28,8 @@ kpops = "kpops.cli.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-pydantic = { extras = ["dotenv"], version = "^1.10.8" }
+pydantic = { extras = ["dotenv"], version = "^2.3.0" }
+pydantic-settings = "^2.0.3"
 rich = "^12.4.4"
 PyYAML = "^6.0"
 typer = { extras = ["all"], version = "^0.6.1" }

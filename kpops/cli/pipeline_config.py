@@ -1,6 +1,7 @@
 from pathlib import Path
 
-from pydantic import BaseConfig, BaseSettings, Field
+from pydantic import ConfigDict, Field, BaseConfig
+from pydantic_settings import BaseSettings, SettingsConfigDict, PydanticBaseSettingsSource
 from pydantic.env_settings import SettingsSourceCallable
 
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
@@ -27,22 +28,27 @@ class PipelineConfig(BaseSettings):
 
     defaults_path: Path = Field(
         default=Path("."),
-        example="defaults",
+        examples=["defaults", "."],
         description="The path to the folder containing the defaults.yaml file and the environment defaults files. "
         "Paths can either be absolute or relative to `config.yaml`",
     )
     environment: str = Field(
         default=...,
-        env=f"{ENV_PREFIX}ENVIRONMENT",
-        example="development",
+        validation_alias="ENVIRONMENT",
+        examples=[
+            "development",
+            "production",
+        ],
         description="The environment you want to generate and deploy the pipeline to. "
         "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
     )
     brokers: str = Field(
         default=...,
-        env=f"{ENV_PREFIX}KAFKA_BROKERS",
+        validation_alias="KAFKA_BROKERS",
+        examples=[
+            "broker1:9092,broker2:9092,broker3:9092",
+        ],
         description="The comma separated Kafka brokers address.",
-        example="broker1:9092,broker2:9092,broker3:9092",
     )
     defaults_filename_prefix: str = Field(
         default="defaults",
@@ -54,25 +60,31 @@ class PipelineConfig(BaseSettings):
     )
     schema_registry_url: str | None = Field(
         default=None,
-        example="http://localhost:8081",
-        env=f"{ENV_PREFIX}SCHEMA_REGISTRY_URL",
+        examples=[
+            "http://localhost:8081",
+        ],
+        validation_alias="SCHEMA_REGISTRY_URL",
         description="Address of the Schema Registry.",
     )
     kafka_rest_host: str | None = Field(
         default=None,
-        env=f"{ENV_PREFIX}REST_PROXY_HOST",
-        example="http://localhost:8082",
+        validation_alias="REST_PROXY_HOST",
+        examples=[
+            "http://localhost:8082",
+        ],
         description="Address of the Kafka REST Proxy.",
     )
     kafka_connect_host: str | None = Field(
         default=None,
-        env=f"{ENV_PREFIX}CONNECT_HOST",
-        example="http://localhost:8083",
+        validation_alias="CONNECT_HOST",
+        examples=[
+            "http://localhost:8083",
+        ],
         description="Address of Kafka Connect.",
     )
     timeout: int = Field(
         default=300,
-        env=f"{ENV_PREFIX}TIMEOUT",
+        validation_alias="TIMEOUT",
         description="The timeout in seconds that specifies when actions like deletion or deploy timeout.",
     )
     create_namespace: bool = Field(
@@ -89,8 +101,12 @@ class PipelineConfig(BaseSettings):
     )
     retain_clean_jobs: bool = Field(
         default=False,
-        env=f"{ENV_PREFIX}RETAIN_CLEAN_JOBS",
+        validation_alias="RETAIN_CLEAN_JOBS",
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
+    )
+
+    model_config = SettingsConfigDict(
+        env_prefix='my_prefix_'
     )
 
     class Config(BaseConfig):
