@@ -1,10 +1,12 @@
 import logging
 from enum import Enum
-from typing import Annotated, Any, Literal, Sequence, Union
+from typing import Annotated, Any, Final, Literal, Sequence, Union
 
-from pydantic import BaseConfig, Field, schema, schema_json_of
-from pydantic.fields import FieldInfo, ModelField
-from pydantic.schema import SkipField
+from pydantic import BaseConfig, Field, schema_json_of
+from pydantic.v1 import schema
+from pydantic.fields import FieldInfo
+from pydantic.v1.fields import ModelField
+from pydantic.v1.schema import SkipField
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
@@ -21,8 +23,8 @@ original_field_schema = schema.field_schema
 
 
 # adapted from https://github.com/tiangolo/fastapi/issues/1378#issuecomment-764966955
-def field_schema(field: ModelField, **kwargs: Any) -> Any:
-    if field.field_info.extra.get("hidden_from_schema"):
+def field_schema(field, **kwargs: Any) -> Any:
+    if field.field_info.json_schema_extra.get("hidden_from_schema"):
         raise SkipField(f"{field.name} field is being hidden")
     else:
         return original_field_schema(field, **kwargs)
@@ -102,18 +104,15 @@ def gen_pipeline_schema(
 
     # re-assign component type as Literal to work as discriminator
     for component in components:
-        component.__fields__["type"] = ModelField(
-            name="type",
+        component.model_fields["type"] = FieldInfo(
+            serialization_alias="type",
             type_=Literal[component.type],  # type: ignore
-            required=False,
             default=component.type,
-            final=True,
-            field_info=FieldInfo(
-                title="Component type",
-                description=describe_object(component.__doc__),
-            ),
-            model_config=BaseConfig,
-            class_validators=None,
+            # final=True,
+            title="Component type",
+            description=describe_object(component.__doc__),
+            # model_config=BaseConfig,
+            # class_validators=None,
         )
 
     AnnotatedPipelineComponents = Annotated[
