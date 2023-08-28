@@ -202,7 +202,6 @@ class Pipeline:
                     component_vertex_name, output_topic
                 )
         nx.draw(self.components.graph_components, with_labels=True)
-        plt.show()
 
     def validate_graph_components(self):
         if not nx.is_directed_acyclic_graph(self.components.graph_components):
