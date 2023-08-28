@@ -43,26 +43,34 @@ class BaseDefaultsComponent(BaseModel):
         default=False,
         description=describe_attr("enrich", __doc__),
         exclude=True,
-        hidden_from_schema=True,
+        json_schema_extra={
+            "hidden_from_schema": True,
+        },
     )
     config: PipelineConfig = Field(
         default=...,
         description=describe_attr("config", __doc__),
         exclude=True,
-        hidden_from_schema=True,
+        json_schema_extra={
+            "hidden_from_schema": True,
+        },
     )
     handlers: ComponentHandlers = Field(
         default=...,
         description=describe_attr("handlers", __doc__),
         exclude=True,
-        hidden_from_schema=True,
+        json_schema_extra={
+            "hidden_from_schema": True,
+        },
     )
     validate_: bool = Field(
         alias="validate",
         default=True,
         description=describe_attr("validate", __doc__),
         exclude=True,
-        hidden_from_schema=True,
+        json_schema_extra={
+            "hidden_from_schema": True,
+        },
     )
 
     class Config(DescConfig):
