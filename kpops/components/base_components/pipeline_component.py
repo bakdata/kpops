@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from abc import ABC
+
 from pydantic import Extra, Field
 
 from kpops.components.base_components.base_defaults_component import (
@@ -19,7 +21,7 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfig
 
 
-class PipelineComponent(BaseDefaultsComponent):
+class PipelineComponent(BaseDefaultsComponent, ABC):
     """Base class for all components
 
     :param name: Component name

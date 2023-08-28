@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from abc import ABC
 
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
@@ -51,7 +52,7 @@ class KafkaAppConfig(KubernetesAppConfig):
     )
 
 
-class KafkaApp(KubernetesApp):
+class KafkaApp(KubernetesApp, ABC):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.

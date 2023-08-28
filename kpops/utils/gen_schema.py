@@ -1,4 +1,6 @@
+import inspect
 import logging
+from abc import ABC
 from enum import Enum
 from typing import Annotated, Any, Literal, Sequence, Union
 
@@ -43,12 +45,14 @@ def _is_valid_component(
     :param component: component type to be validated
     :return: Whether component is valid for schema generation
     """
+    if inspect.isabstract(component) or ABC in component.__bases__:
+        log.warning(f"SKIPPED {component.__name__}, component is abstract.")
+        return False
     if component.type in defined_component_types:
         log.warning(f"SKIPPED {component.__name__}, component type must be unique.")
         return False
-    else:
-        defined_component_types.add(component.type)
-        return True
+    defined_component_types.add(component.type)
+    return True
 
 
 def _add_components(
@@ -93,10 +97,12 @@ def gen_pipeline_schema(
     # Add stock components if enabled
     components: tuple[type[PipelineComponent]] = tuple()
     if include_stock_components:
-        components = tuple(_find_classes("kpops.components", PipelineComponent))
+        components = _add_components("kpops.components")
     # Add custom components if provided
     if components_module:
         components = _add_components(components_module, components)
+    if not components:
+        raise RuntimeError("No valid components found.")
     # Create a type union that will hold the union of all component types
     PipelineComponents = Union[components]  # type: ignore[valid-type]
 
