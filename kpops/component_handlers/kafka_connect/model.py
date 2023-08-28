@@ -16,7 +16,12 @@ class KafkaConnectorConfig(BaseModel):
     """Settings specific to Kafka Connectors"""
 
     connector_class: str
-    name: str = Field(default=..., hidden_from_schema=True)
+    name: str = Field(
+        default=...,
+        json_schema_extra={
+            "hidden_from_schema": True,
+        },
+    )
 
     class Config(DescConfig):
         extra = Extra.allow
