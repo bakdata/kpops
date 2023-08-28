@@ -43,4 +43,4 @@ jobs:
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}
           version: ${{ needs.create-github-release-push-tag.outputs.release-version }}
-          latest: true
+          release: true
