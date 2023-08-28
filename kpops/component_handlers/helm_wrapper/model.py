@@ -15,7 +15,7 @@ class HelmDiffConfig(BaseModel):
     ignore: set[str] = Field(
         default_factory=set,
         description="Set of keys that should not be checked.",
-        example="- name\n- imageTag",
+        examples=["- name\n- imageTag"],
     )
 
 
@@ -95,7 +95,7 @@ class HelmConfig(BaseModel):
     context: str | None = Field(
         default=None,
         description=describe_attr("context", __doc__),
-        example="dev-storage",
+        examples=["dev-storage"],
     )
     debug: bool = Field(
         default=False,
