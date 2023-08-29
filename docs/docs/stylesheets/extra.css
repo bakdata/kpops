@@ -1,8 +1,5 @@
-:root {
-   --md-primary-fg-color: #a599ff;
-}
-
-:root>* {
+:root > *:not(a) {
+    --md-primary-fg-color: #a599ff;
     --md-footer-bg-color: #a599ff;
     --md-typeset-a-color: #a599ff;
 }
