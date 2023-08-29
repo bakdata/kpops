@@ -17,9 +17,9 @@ KPOps provides JSON schemas that enable autocompletion and validation for some o
 ??? note "`settings.json`"
 
     ```json
-      --8<--
-      ./docs/resources/editor_integration/settings.json
-      --8<--
+    --8<--
+    ./docs/resources/editor_integration/settings.json
+    --8<--
     ```
 
 !!! tip "Advanced usage"

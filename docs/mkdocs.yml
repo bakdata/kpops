@@ -4,15 +4,16 @@ site_url: https://bakdata.github.io/kpops/
 remote_branch: gh-pages
 copyright: Copyright &copy; 2023 bakdata
 
+extra_css:
+  - stylesheets/extra.css
+
 theme:
   name: "material"
-  custom_dir: overrides
+  custom_dir: docs/overrides
   language: "en"
-  palette:
-    primary: "custom"
   font:
-    text: "Roboto"
-    code: "Roboto Mono"
+    text: "SF Pro"
+    code: "DejaVu Sans Mono"
   features:
     - navigation.sections
     - navigation.tabs
