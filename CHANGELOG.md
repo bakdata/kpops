@@ -1,4 +1,29 @@
 # Changelog
+## [2.0.4](https://github.com/bakdata/kpops/releases/tag/2.0.4) - Release Date: [2023-08-29]
+
+### 🐛 Fixes
+
+- Fix GitHub ref variable for pushing docs to main branch - [#343](https://github.com/bakdata/kpops/pull/343)
+
+
+### 📝 Documentation
+
+- Add `dprint` as the markdown formatter - [#337](https://github.com/bakdata/kpops/pull/337)
+
+- Publish pre-release docs for PRs & main branch - [#339](https://github.com/bakdata/kpops/pull/339)
+
+- Align docs colours - [#345](https://github.com/bakdata/kpops/pull/345)
+
+
+### 🌀 Miscellaneous
+
+- Exclude abstract components from pipeline schema - [#332](https://github.com/bakdata/kpops/pull/332)
+
+
+
+
+
+
 ## [2.0.3](https://github.com/bakdata/kpops/releases/tag/2.0.3) - Release Date: [2023-08-24]
 
 ### 🐛 Fixes
