@@ -480,3 +480,18 @@ class TestPipeline:
                 ],
                 catch_exceptions=False,
             )
+
+    def test_validate_loops_on_pipeline(self):
+        with pytest.raises(ValueError, match="Component graph contain loops!"):
+            runner.invoke(
+                app,
+                [
+                    "generate",
+                    "--pipeline-base-dir",
+                    str(PIPELINE_BASE_DIR_PATH),
+                    str(RESOURCE_PATH / "pipeline-with-loop/pipeline.yaml"),
+                    "--defaults",
+                    str(RESOURCE_PATH / "pipeline-with-loop"),
+                ],
+                catch_exceptions=False,
+            )

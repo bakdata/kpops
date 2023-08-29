@@ -6,6 +6,7 @@ from collections import Counter
 from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
+import matplotlib.pyplot as pyplt
 
 import networkx as nx
 import yaml
@@ -118,8 +119,8 @@ class Pipeline:
         self.env_components_index = create_env_components_index(environment_components)
         self.parse_components(component_list)
         self.validate()
-        self.generate_graph()
-        self.validate_graph_components()
+        self.__generate_graph()
+        self.__validate_graph_components()
 
     @classmethod
     def load_from_yaml(
@@ -167,41 +168,60 @@ class Pipeline:
         pipeline = cls(main_content, env_content, registry, config, handlers)
         return pipeline
 
-    def generate_graph(self):
+    def __generate_graph(self):
         for component in self.components:
-            input_topics = component.get_input_topics()
-            extra_input_topics = component.get_extra_input_topics()
-            all_input_topics: list[str] = []
-            if input_topics is not None:
-                all_input_topics += input_topics
-            if extra_input_topics is not None and extra_input_topics:
-                all_input_topics += [
-                    topic
-                    for list_topics in extra_input_topics.values()
-                    for topic in list_topics
-                ]
+            all_input_topics = self.__get_all_input_topics(component)
+            all_output_topics = self.__get_all_output_topics(component)
 
-            all_output_topics: list[str] = []
-            output_topics = component.get_output_topic()
-            extra_output_topics = component.get_extra_output_topics()
-            if output_topics is not None:
-                all_output_topics += [output_topics]
-            if extra_output_topics is not None and extra_output_topics:
-                all_output_topics += list(extra_output_topics.values())
+            component_node_name = self.__get_vertex_component_name(component)
+            self.components.graph_components.add_node(component_node_name)
 
-            component_vertex_name = f"component-{component.name}"
-            self.components.graph_components.add_node(component_vertex_name)
-            for input_topic in all_input_topics:
-                self.components.graph_components.add_node(input_topic)
-                self.components.graph_components.add_edge(input_topic, component.name)
+            self.__add_ingoing_edges(all_input_topics, component_node_name)
+            self.__add_outgoing_edges(all_output_topics, component_node_name)
 
-            for output_topic in all_output_topics:
-                self.components.graph_components.add_node(output_topic)
-                self.components.graph_components.add_edge(
-                    component_vertex_name, output_topic
-                )
+    def __add_outgoing_edges(
+        self, all_output_topics: list[str], component_node_name: str
+    ) -> None:
+        for output_topic in all_output_topics:
+            self.components.graph_components.add_node(output_topic)
+            self.components.graph_components.add_edge(component_node_name, output_topic)
 
-    def validate_graph_components(self):
+    def __add_ingoing_edges(
+        self, all_input_topics: list[str], component_node_name: str
+    ) -> None:
+        for input_topic in all_input_topics:
+            self.components.graph_components.add_node(input_topic)
+            self.components.graph_components.add_edge(input_topic, component_node_name)
+
+    def __get_vertex_component_name(self, component: PipelineComponent) -> str:
+        component_vertex_name = f"component-{component.name}"
+        return component_vertex_name
+
+    def __get_all_output_topics(self, component: PipelineComponent) -> list[str]:
+        all_output_topics: list[str] = []
+        output_topics = component.get_output_topic()
+        extra_output_topics = component.get_extra_output_topics()
+        if output_topics is not None:
+            all_output_topics += [output_topics]
+        if extra_output_topics is not None and extra_output_topics:
+            all_output_topics += list(extra_output_topics.values())
+        return all_output_topics
+
+    def __get_all_input_topics(self, component: PipelineComponent) -> list[str]:
+        input_topics = component.get_input_topics()
+        extra_input_topics = component.get_extra_input_topics()
+        all_input_topics: list[str] = []
+        if input_topics is not None:
+            all_input_topics += input_topics
+        if extra_input_topics is not None and extra_input_topics:
+            all_input_topics += [
+                topic
+                for list_topics in extra_input_topics.values()
+                for topic in list_topics
+            ]
+        return all_input_topics
+
+    def __validate_graph_components(self) -> None:
         if not nx.is_directed_acyclic_graph(self.components.graph_components):
             raise ValueError("Component graph contain loops!")
 

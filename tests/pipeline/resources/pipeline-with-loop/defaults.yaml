@@ -1,0 +1,22 @@
+pipeline-component:
+  prefix: ""
+
+kubernetes-app:
+  namespace: example-namespace
+
+kafka-connector:
+  namespace: example-namespace
+
+kafka-app:
+  app:
+    streams:
+      brokers: 127.0.0.1:9092
+      schemaRegistryUrl: 127.0.0.1:8081
+      optimizeLeaveGroupBehavior: false
+
+streams-app:
+  app:
+    labels:
+      pipeline: ${pipeline_name}
+    streams:
+      optimizeLeaveGroupBehavior: false

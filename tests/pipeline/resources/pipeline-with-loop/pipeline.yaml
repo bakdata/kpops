@@ -1,0 +1,34 @@
+- type: producer
+  name: app1
+  app:
+    image: producer-image
+  to:
+    topics:
+      my-output-topic:
+        type: output
+
+- type: streams-app
+  name: app2
+  app:
+    image: app2-image
+  from:
+    topics:
+      my-output-topic:
+        type: input
+  to:
+    topics:
+      my-app2-topic:
+        type: output
+
+- type: streams-app
+  name: app3
+  app:
+    image: app3-image
+  from:
+    topics:
+      my-app2-topic:
+        type: input
+  to:
+    topics:
+      my-output-topic:
+        type: output
