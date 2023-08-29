@@ -1,12 +1,14 @@
-:root {
-   --md-primary-fg-color: #a599ff;
-}
-
-:root>* {
+:root > *:not(a) {
+    --md-primary-fg-color: #a599ff;
+    --md-accent-fg-color: #B0A5FF;
     --md-footer-bg-color: #a599ff;
     --md-typeset-a-color: #a599ff;
 }
 
-.md-typeset a:hover, .md-nav__link:hover {
-    color: #a599ff;
+.md-typeset .md-button, .md-button--primary {
+    background-color: #7068AD;
+}
+
+.md-typeset .md-button:hover, .md-button--primary:hover {
+    border-color: white;
 }
