@@ -1,4 +1,4 @@
-:root > *:not(a) {
+:root > * {
     --md-primary-fg-color: #a599ff;
     --md-accent-fg-color: #B0A5FF;
     --md-footer-bg-color: #a599ff;
