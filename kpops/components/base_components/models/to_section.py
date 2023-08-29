@@ -63,7 +63,7 @@ class TopicConfig(BaseModel):
         allow_population_by_field_name = True
         use_enum_values = True
 
-    @root_validator
+    @root_validator(skip_on_failure=True)
     def extra_topic_role(cls, values: dict[str, Any]) -> dict[str, Any]:
         """Ensure that cls.role is used correctly, assign type if needed"""
         if values["type"] and values["role"]:

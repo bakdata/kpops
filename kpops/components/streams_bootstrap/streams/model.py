@@ -75,8 +75,8 @@ class StreamsConfig(KafkaStreamsConfig):
     def dict(
         self,
         *,
-        include: None | AbstractSet[int | str] | Mapping[int | str, Any] = None,
-        exclude: None | AbstractSet[int | str] | Mapping[int | str, Any] = None,
+        include: set[int] | set[str] | dict[int, Any] | dict[str, Any] | None,
+        exclude: set[int] | set[str] | dict[int, Any] | dict[str, Any] | None,
         by_alias: bool = False,
         skip_defaults: bool | None = None,
         exclude_unset: bool = False,
@@ -96,7 +96,6 @@ class StreamsConfig(KafkaStreamsConfig):
             include=include,
             exclude=exclude,
             by_alias=by_alias,
-            skip_defaults=skip_defaults,
             exclude_unset=exclude_unset,
             # The following lines are required only for the streams configs since we never not want to export defaults here, just fallback to helm default values
             exclude_defaults=True,
