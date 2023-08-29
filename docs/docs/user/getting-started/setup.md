@@ -38,8 +38,8 @@ If you don't have access to an existing Kubernetes cluster, this section will gu
 
 <!-- dprint-ignore-start -->
 
-    !!! Note
-        Creating a new k3d cluster automatically configures `kubectl` to connect to the local cluster by modifying your `~/.kube/config`. In case you manually set the `KUBECONFIG` variable or don't want k3d to modify your config, k3d offers [many other options](https://k3d.io/v5.4.6/usage/kubeconfig/#handling-kubeconfigs){target=_blank}.
+!!! Note
+    Creating a new k3d cluster automatically configures `kubectl` to connect to the local cluster by modifying your `~/.kube/config`. In case you manually set the `KUBECONFIG` variable or don't want k3d to modify your config, k3d offers [many other options](https://k3d.io/v5.4.6/usage/kubeconfig/#handling-kubeconfigs){target=_blank}.
 
 <!-- dprint-ignore-end -->
 
@@ -90,120 +90,14 @@ You can check the cluster status with `kubectl get pods -n kube-system`. If all 
 
 <!-- dprint-ignore-start -->
 
-    ??? example "Kafka Helm chart values (`kafka.yaml`)"
-        An example value configuration for Confluent's Helm chart. This configuration deploys a single Kafka Broker, a Schema Registry, Zookeeper, Kafka Rest Proxy, and Kafka Connect with minimal resources.
+??? example "Kafka Helm chart values (`kafka.yaml`)"
+    An example value configuration for Confluent's Helm chart. This configuration deploys a single Kafka Broker, a Schema Registry, Zookeeper, Kafka Rest Proxy, and Kafka Connect with minimal resources.
 
-        ```yaml
-        cp-zookeeper:
-          enabled: true
-          servers: 1
-          imageTag: 7.1.3
-          heapOptions: "-Xms124M -Xmx124M"
-          overrideGroupId: k8kafka
-          fullnameOverride: "k8kafka-cp-zookeeper"
-          resources:
-            requests:
-              cpu: 50m
-              memory: 0.2G
-            limits:
-              cpu: 250m
-              memory: 0.2G
-          prometheus:
-            jmx:
-              enabled: false
-
-        cp-kafka:
-          enabled: true
-          brokers: 1
-          imageTag: 7.1.3
-          podManagementPolicy: Parallel
-          configurationOverrides:
-            "auto.create.topics.enable": false
-            "offsets.topic.replication.factor": 1
-            "transaction.state.log.replication.factor": 1
-            "transaction.state.log.min.isr": 1
-            "confluent.metrics.reporter.topic.replicas": 1
-          resources:
-            requests:
-              cpu: 50m
-              memory: 0.5G
-            limits:
-              cpu: 250m
-              memory: 0.5G
-          prometheus:
-            jmx:
-              enabled: false
-          persistence:
-            enabled: false
-
-        cp-schema-registry:
-          enabled: true
-          imageTag: 7.1.3
-          fullnameOverride: "k8kafka-cp-schema-registry"
-          overrideGroupId: k8kafka
-          kafka:
-            bootstrapServers: "PLAINTEXT://k8kafka-cp-kafka-headless:9092"
-          resources:
-            requests:
-              cpu: 50m
-              memory: 0.25G
-            limits:
-              cpu: 250m
-              memory: 0.25G
-          prometheus:
-            jmx:
-              enabled: false
-
-        cp-kafka-connect:
-          enabled: true
-          replicaCount: 1
-          image: k3d-kpops-registry.localhost:12345/kafka-connect-jdbc
-          imageTag: 7.1.3
-          fullnameOverride: "k8kafka-cp-kafka-connect"
-          overrideGroupId: k8kafka
-          kafka:
-            bootstrapServers: "PLAINTEXT://k8kafka-cp-kafka-headless:9092"
-          heapOptions: "-Xms256M -Xmx256M"
-          resources:
-            requests:
-              cpu: 500m
-              memory: 0.25G
-            limits:
-              cpu: 500m
-              memory: 0.25G
-          configurationOverrides:
-            "consumer.max.poll.records": "10"
-            "consumer.max.poll.interval.ms": "900000"
-            "config.storage.replication.factor": "1"
-            "offset.storage.replication.factor": "1"
-            "status.storage.replication.factor": "1"
-          cp-schema-registry:
-            url: http://k8kafka-cp-schema-registry:8081
-          prometheus:
-            jmx:
-              enabled: false
-
-        cp-kafka-rest:
-          enabled: true
-          imageTag: 7.1.3
-          fullnameOverride: "k8kafka-cp-rest"
-          heapOptions: "-Xms256M -Xmx256M"
-          resources:
-            requests:
-              cpu: 50m
-              memory: 0.25G
-            limits:
-              cpu: 250m
-              memory: 0.5G
-          prometheus:
-            jmx:
-              enabled: false
-
-        cp-ksql-server:
-          enabled: false
-        cp-control-center:
-          enabled: false
-        ```
+    ```yaml
+    --8<--
+    ./docs/resources/setup/kafka.yaml
+    --8<--
+    ```
 
 <!-- dprint-ignore-end -->
 

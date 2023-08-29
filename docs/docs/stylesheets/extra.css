@@ -1,0 +1,12 @@
+:root {
+   --md-primary-fg-color: #a599ff;
+}
+
+:root>* {
+    --md-footer-bg-color: #a599ff;
+    --md-typeset-a-color: #a599ff;
+}
+
+.md-typeset a:hover, .md-nav__link:hover {
+    color: #a599ff;
+}
