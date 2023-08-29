@@ -7,7 +7,6 @@ from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
 
-import matplotlib.pyplot as pyplt
 import networkx as nx
 import yaml
 from pydantic import BaseModel, Field
