@@ -43,7 +43,8 @@ class KubernetesApp(PipelineComponent):
 
     :param app: Application-specific settings
     :param repo_config: Configuration of the Helm chart repo to be used for
-        deploying the component, defaults to None
+        deploying the component, defaults to None this means that the command "helm repo add" is not called and Helm
+        expects a path to local Helm chart.
     :param namespace: Namespace in which the component shall be deployed
     :param version: Helm chart version, defaults to None
     """
@@ -56,8 +57,8 @@ class KubernetesApp(PipelineComponent):
         default=...,
         description=describe_attr("app", __doc__),
     )
-    repo_config: HelmRepoConfig = Field(
-        default=...,
+    repo_config: HelmRepoConfig | None = Field(
+        default=None,
         description=describe_attr("repo_config", __doc__),
     )
     version: str | None = Field(
@@ -102,8 +103,9 @@ class KubernetesApp(PipelineComponent):
     @property
     def helm_flags(self) -> HelmFlags:
         """Return shared flags for Helm commands"""
+        auth_flags = self.repo_config.repo_auth_flags.dict() if self.repo_config else {}
         return HelmFlags(
-            **self.repo_config.repo_auth_flags.dict(),
+            **auth_flags,
             version=self.version,
             create_namespace=self.config.create_namespace,
         )
