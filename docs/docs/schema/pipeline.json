@@ -378,8 +378,7 @@
             "required": [
                 "name",
                 "namespace",
-                "app",
-                "repo_config"
+                "app"
             ],
             "title": "KubernetesApp",
             "type": "object"

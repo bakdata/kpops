@@ -58,7 +58,7 @@ class TestKubernetesApp:
 
     @pytest.fixture
     def repo_config(self) -> HelmRepoConfig:
-        return HelmRepoConfig(repository_name="test", url="https://bakdata.com")
+        return HelmRepoConfig(repository_name="test", url="https://bakdata.com/charts")
 
     @pytest.fixture
     def kubernetes_app(
@@ -112,7 +112,9 @@ class TestKubernetesApp:
         mocker: MockerFixture,
         app_value: KubernetesTestValue,
     ):
-        repo_config = HelmRepoConfig(repository_name="test-repo", url="mock://test")
+        repo_config = HelmRepoConfig(
+            repository_name="test-repo", url="https://test.com/charts/"
+        )
         kubernetes_app = KubernetesApp(
             name="test-kubernetes-app",
             config=config,
@@ -135,7 +137,7 @@ class TestKubernetesApp:
         assert helm_mock.mock_calls == [
             mocker.call.add_repo(
                 "test-repo",
-                "mock://test",
+                "https://test.com",
                 RepoAuthFlags(),
             ),
             mocker.call.upgrade_install(
