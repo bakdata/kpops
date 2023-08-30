@@ -81,19 +81,17 @@ class Helm:
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
 
-            command = ["helm"]
-            command.extend(
-                [
-                    "upgrade",
-                    release_name,
-                    chart,
-                    "--install",
-                    "--namespace",
-                    namespace,
-                    "--values",
-                    values_file.name,
-                ]
-            )
+            command = [
+                "helm",
+                "upgrade",
+                release_name,
+                chart,
+                "--install",
+                "--namespace",
+                namespace,
+                "--values",
+                values_file.name,
+            ]
             command.extend(flags.to_command())
             if dry_run:
                 command.append("--dry-run")
