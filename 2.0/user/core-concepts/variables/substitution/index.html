@@ -14,8 +14,9 @@
 <link href="../../../../assets/stylesheets/main.402914a4.min.css" rel="stylesheet"/>
 <link href="../../../../assets/stylesheets/palette.a0c5b2b5.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
-<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="https://fonts.googleapis.com/css?family=SF+Pro:300,300i,400,400i,700,700i%7CDejaVu+Sans+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"SF Pro";--md-code-font:"DejaVu Sans Mono"}</style>
+<link href="../../../../stylesheets/extra.css" rel="stylesheet"/>
 <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 <link href="../../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
             html.glightbox-open { overflow: initial; height: 100%; }
@@ -29,7 +30,7 @@
                 body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
                 body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
                 </style><script src="../../../../assets/javascripts/glightbox.min.js"></script></head>
-<body data-md-color-accent="" data-md-color-primary="custom" data-md-color-scheme="default" dir="ltr">
+<body data-md-color-accent="" data-md-color-primary="" data-md-color-scheme="default" dir="ltr">
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
@@ -124,6 +125,11 @@
 <li class="md-tabs__item">
 <a class="md-tabs__link md-tabs__link--active" href="../../../what-is-kpops/">
         User Guide
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../../developer/auto-generation/">
+        Developer Guide
       </a>
 </li>
 </ul>
@@ -424,6 +430,31 @@
 </ul>
 </nav>
 </li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Developer Guide
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+          Developer Guide
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../developer/auto-generation/">
+        Auto generation
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../../developer/formatting/">
+        Formatting
+      </a>
+</li>
+</ul>
+</nav>
+</li>
 </ul>
 </nav>
 </div>
@@ -475,6 +506,7 @@
 <h2 id="component-specific-variables">Component-specific variables<a class="headerlink" href="#component-specific-variables" title="Permanent link">¶</a></h2>
 <p>These variables can be used in a component's definition to refer to any of its attributes, including ones that the user has defined in the defaults.</p>
 <p>All of them are prefixed with <code>component_</code> and follow the following form: <code>component_{attribute_name}</code>. If the attribute itself contains attributes, they can be referred to like this: <code>component_{attribute_name}_{subattribute_name}</code>.</p>
+<!-- dprint-ignore-start -->
 <details class="example">
 <summary>Example</summary>
 <div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
@@ -550,13 +582,16 @@
 </span><span id="__span-0-36"><a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="w">      </span><span class="nt">maxReplicas</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
 </span></code></pre></div></td></tr></table></div>
 </details>
+<!-- dprint-ignore-end -->
 <h2 id="pipeline-config-specific-variables">Pipeline-config-specific variables<a class="headerlink" href="#pipeline-config-specific-variables" title="Permanent link">¶</a></h2>
 <p>These variables include all fields in the <a href="../../config/">config</a> and refer to the pipeline configuration that is independent of the components.</p>
+<!-- dprint-ignore-start -->
 <div class="admonition info aliases">
 <p class="admonition-title">Info</p>
 <p><code>error_topic_name</code> is an alias for <code>topic_name_config_default_error_topic_name</code><br/>
 <code>output_topic_name</code> is an alias for <code>topic_name_config_default_output_topic_name</code></p>
 </div>
+<!-- dprint-ignore-end -->
 <h2 id="environment-variables">Environment variables<a class="headerlink" href="#environment-variables" title="Permanent link">¶</a></h2>
 <p>Environment variables such as <code>$PATH</code> can be used in the pipeline definition and defaults without any transformation following the form <code>${ENV_VAR_NAME}</code>. This, of course, includes variables like the ones relevant to the <a href="../../../references/cli-commands/">KPOps cli</a> that are exported by the user.</p>
 <p><a href="../environment_variables/">See all KPOps environment variables</a></p>
@@ -564,24 +599,19 @@
 <p>These are special variables that refer to the name and path of a pipeline.</p>
 <ul>
 <li>
-<p><code>${pipeline_name}</code><br/>
-    Concatenated path of the parent directory where pipeline.yaml is defined in.
-    For instance, <code>./data/pipelines/v1/pipeline.yaml</code>, here the value for the variable would be <code>data-pipelines-v1</code>.</p>
+<p><code>${pipeline_name}</code>: Concatenated path of the parent directory where pipeline.yaml is defined in.
+  For instance, <code>./data/pipelines/v1/pipeline.yaml</code>, here the value for the variable would be <code>data-pipelines-v1</code>.</p>
 </li>
 <li>
-<p><code>${pipeline_name_&lt;level&gt;}</code><br/>
-    Similar to the previous variable, each <code>&lt;level&gt;</code> contains a part of the path to the <code>pipeline.yaml</code> file.
-    Consider the previous example, <code>${pipeline_name_0}</code> would be <code>data</code>, <code>${pipeline_name_1}</code> would be <code>pipelines</code>, and <code>${pipeline_name_2}</code> equals to <code>v1</code>.</p>
+<p><code>${pipeline_name_&lt;level&gt;}</code>: Similar to the previous variable, each <code>&lt;level&gt;</code> contains a part of the path to the <code>pipeline.yaml</code> file.
+  Consider the previous example, <code>${pipeline_name_0}</code> would be <code>data</code>, <code>${pipeline_name_1}</code> would be <code>pipelines</code>, and <code>${pipeline_name_2}</code> equals to <code>v1</code>.</p>
 </li>
 </ul>
 <h2 id="advanced-use-cases">Advanced use cases<a class="headerlink" href="#advanced-use-cases" title="Permanent link">¶</a></h2>
 <ol>
-<li><strong>Refer to default component field values</strong><br/>
-As long as a value is assigned to a component attribute, it is possible to refer to it with a placeholder. To see all component fields, take a look at the <a href="../../../../schema/pipeline.json">pipeline schema</a>.</li>
-<li><strong>Chaining variables</strong><br/>
-It is possible to chain any number of variables, see the <a href="#component-specific-variables">example</a> above.</li>
-<li><strong>Cross-component substitution</strong><br/>
-<a href="https://yaml.org/" target="_blank">YAML</a> is quite an intricate language and with some of its <a href="https://yaml.org/spec/1.2.2/#692-node-anchors" target="_blank">magic</a> one could write cross-component references.</li>
+<li><strong>Refer to default component field values</strong>: As long as a value is assigned to a component attribute, it is possible to refer to it with a placeholder. To see all component fields, take a look at the <a href="../../../../schema/pipeline.json">pipeline schema</a>.</li>
+<li><strong>Chaining variables</strong>: It is possible to chain any number of variables, see the <a href="#component-specific-variables">example</a> above.</li>
+<li><strong>Cross-component substitution</strong>: <a href="https://yaml.org/" target="_blank">YAML</a> is quite an intricate language and with some of its <a href="https://yaml.org/spec/1.2.2/#692-node-anchors" target="_blank">magic</a> one could write cross-component references.</li>
 </ol>
 </article>
 </div>

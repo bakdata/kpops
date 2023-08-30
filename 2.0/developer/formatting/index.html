@@ -5,17 +5,19 @@
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width,initial-scale=1" name="viewport"/>
-<link href="https://bakdata.github.io/kpops/2.0/dev/development/autogeneration/" rel="canonical"/>
-<link href="../../../assets/images/favicon.png" rel="icon"/>
+<link href="https://bakdata.github.io/kpops/2.0/developer/formatting/" rel="canonical"/>
+<link href="../auto-generation/" rel="prev"/>
+<link href="../../assets/images/favicon.png" rel="icon"/>
 <meta content="mkdocs-1.4.2, mkdocs-material-9.1.1" name="generator"/>
-<title>Autogeneration - KPOps</title>
-<link href="../../../assets/stylesheets/main.402914a4.min.css" rel="stylesheet"/>
-<link href="../../../assets/stylesheets/palette.a0c5b2b5.min.css" rel="stylesheet"/>
+<title>Formatting - KPOps</title>
+<link href="../../assets/stylesheets/main.402914a4.min.css" rel="stylesheet"/>
+<link href="../../assets/stylesheets/palette.a0c5b2b5.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
-<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
-<script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
-<link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+<link href="https://fonts.googleapis.com/css?family=SF+Pro:300,300i,400,400i,700,700i%7CDejaVu+Sans+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"SF Pro";--md-code-font:"DejaVu Sans Mono"}</style>
+<link href="../../stylesheets/extra.css" rel="stylesheet"/>
+<script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+<link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
             html.glightbox-open { overflow: initial; height: 100%; }
             .gslide-title { margin-top: 0px; user-select: text; }
             .gslide-desc { color: #666; user-select: text; }
@@ -26,13 +28,13 @@
                 body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
                 body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
                 body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
-                </style><script src="../../../assets/javascripts/glightbox.min.js"></script></head>
-<body data-md-color-accent="" data-md-color-primary="custom" data-md-color-scheme="default" dir="ltr">
+                </style><script src="../../assets/javascripts/glightbox.min.js"></script></head>
+<body data-md-color-accent="" data-md-color-primary="" data-md-color-scheme="default" dir="ltr">
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
 <div data-md-component="skip">
-<a class="md-skip" href="#autogeneration">
+<a class="md-skip" href="#formatting">
           Skip to content
         </a>
 </div>
@@ -42,7 +44,7 @@
 </div>
 <header class="md-header" data-md-component="header">
 <nav aria-label="Header" class="md-header__inner md-grid">
-<a aria-label="KPOps" class="md-header__button md-logo" data-md-component="logo" href="../../.." title="KPOps">
+<a aria-label="KPOps" class="md-header__button md-logo" data-md-component="logo" href="../.." title="KPOps">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
 </a>
 <label class="md-header__button md-icon" for="__drawer">
@@ -58,7 +60,7 @@
 <div class="md-header__topic" data-md-component="header-topic">
 <span class="md-ellipsis">
             
-              Autogeneration
+              Formatting
             
           </span>
 </div>
@@ -115,13 +117,18 @@
 <div class="md-grid">
 <ul class="md-tabs__list">
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../../..">
+<a class="md-tabs__link" href="../..">
         Home
       </a>
 </li>
 <li class="md-tabs__item">
-<a class="md-tabs__link" href="../../../user/what-is-kpops/">
+<a class="md-tabs__link" href="../../user/what-is-kpops/">
         User Guide
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link md-tabs__link--active" href="../auto-generation/">
+        Developer Guide
       </a>
 </li>
 </ul>
@@ -134,7 +141,7 @@
 <div class="md-sidebar__inner">
 <nav aria-label="Navigation" class="md-nav md-nav--primary md-nav--lifted" data-md-level="0">
 <label class="md-nav__title" for="__drawer">
-<a aria-label="KPOps" class="md-nav__button md-logo" data-md-component="logo" href="../../.." title="KPOps">
+<a aria-label="KPOps" class="md-nav__button md-logo" data-md-component="logo" href="../.." title="KPOps">
 <svg viewbox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"></path></svg>
 </a>
     KPOps
@@ -153,7 +160,7 @@
 <li class="md-nav__item md-nav__item--nested">
 <input class="md-nav__toggle md-toggle" id="__nav_1" type="checkbox"/>
 <div class="md-nav__link md-nav__link--index">
-<a href="../../..">Home</a>
+<a href="../..">Home</a>
 </div>
 <nav aria-expanded="false" aria-labelledby="__nav_1_label" class="md-nav" data-md-level="1">
 <label class="md-nav__title" for="__nav_1">
@@ -177,7 +184,7 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/what-is-kpops/">
+<a class="md-nav__link" href="../../user/what-is-kpops/">
         What is KPOps
       </a>
 </li>
@@ -194,17 +201,17 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/getting-started/setup/">
+<a class="md-nav__link" href="../../user/getting-started/setup/">
         Setup
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/getting-started/quick-start/">
+<a class="md-nav__link" href="../../user/getting-started/quick-start/">
         Quick start
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/getting-started/teardown/">
+<a class="md-nav__link" href="../../user/getting-started/teardown/">
         Teardown
       </a>
 </li>
@@ -224,7 +231,7 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/examples/atm-fraud-pipeline/">
+<a class="md-nav__link" href="../../user/examples/atm-fraud-pipeline/">
         ATM Fraud detection pipeline
       </a>
 </li>
@@ -256,42 +263,42 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/components/overview/">
+<a class="md-nav__link" href="../../user/core-concepts/components/overview/">
         Overview
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/components/kubernetes-app/">
+<a class="md-nav__link" href="../../user/core-concepts/components/kubernetes-app/">
         KubernetesApp
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/components/kafka-app/">
+<a class="md-nav__link" href="../../user/core-concepts/components/kafka-app/">
         KafkaApp
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/components/streams-app/">
+<a class="md-nav__link" href="../../user/core-concepts/components/streams-app/">
         StreamsApp
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/components/producer-app/">
+<a class="md-nav__link" href="../../user/core-concepts/components/producer-app/">
         ProducerApp
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/components/kafka-connector/">
+<a class="md-nav__link" href="../../user/core-concepts/components/kafka-connector/">
         KafkaConnector
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/components/kafka-sink-connector/">
+<a class="md-nav__link" href="../../user/core-concepts/components/kafka-sink-connector/">
         KafkaSinkConnector
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/components/kafka-source-connector/">
+<a class="md-nav__link" href="../../user/core-concepts/components/kafka-source-connector/">
         KafkaSourceConnector
       </a>
 </li>
@@ -299,12 +306,12 @@
 </nav>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/config/">
+<a class="md-nav__link" href="../../user/core-concepts/config/">
         Config
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/defaults/">
+<a class="md-nav__link" href="../../user/core-concepts/defaults/">
         Defaults
       </a>
 </li>
@@ -321,12 +328,12 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/variables/environment_variables/">
+<a class="md-nav__link" href="../../user/core-concepts/variables/environment_variables/">
         Environment variables
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/variables/substitution/">
+<a class="md-nav__link" href="../../user/core-concepts/variables/substitution/">
         Substitution
       </a>
 </li>
@@ -349,12 +356,12 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/references/cli-commands/">
+<a class="md-nav__link" href="../../user/references/cli-commands/">
         CLI usage
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/references/editor-integration/">
+<a class="md-nav__link" href="../../user/references/editor-integration/">
         Editor integration
       </a>
 </li>
@@ -371,12 +378,55 @@
         </label>
 <ul class="md-nav__list" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/references/ci-integration/github-actions/">
+<a class="md-nav__link" href="../../user/references/ci-integration/github-actions/">
         GitHub Actions
       </a>
 </li>
 </ul>
 </nav>
+</li>
+</ul>
+</nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--active md-nav__item--nested">
+<input checked="" class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Developer Guide
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="true" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+          Developer Guide
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../auto-generation/">
+        Auto generation
+      </a>
+</li>
+<li class="md-nav__item md-nav__item--active">
+<input class="md-nav__toggle md-toggle" id="__toc" type="checkbox"/>
+<label class="md-nav__link md-nav__link--active" for="__toc">
+          Formatting
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<a class="md-nav__link md-nav__link--active" href="./">
+        Formatting
+      </a>
+<nav aria-label="Table of contents" class="md-nav md-nav--secondary">
+<label class="md-nav__title" for="__toc">
+<span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+<ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#markdown">
+    Markdown
+  </a>
 </li>
 </ul>
 </nav>
@@ -399,51 +449,9 @@
     </label>
 <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix="">
 <li class="md-nav__item">
-<a class="md-nav__link" href="#generation-scripts-and-their-respective-files">
-    Generation scripts and their respective files
+<a class="md-nav__link" href="#markdown">
+    Markdown
   </a>
-<nav aria-label="Generation scripts and their respective files" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#documentation-gen_docs">
-    Documentation (gen_docs/*)
-  </a>
-<nav aria-label="Documentation (gen_docs/*)" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#variables-kpopsdocsdocsresourcesvariables">
-    Variables (./kpops/docs/docs/resources/variables/*)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#cli-commands-kpopsdocsdocsuserreferencescli-commandsmd">
-    CLI commands (./kpops/docs/docs/user/references/cli-commands.md)
-  </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#pipeline-and-defaults-example-definitions-kpopsdocsdocsresourcespipeline-components-and-kpopsdocsdocsresourcespipeline-defaults">
-    Pipeline and defaults example definitions (./kpops/docs/docs/resources/pipeline-components/ and  ./kpops/docs/docs/resources/pipeline-defaults/)
-  </a>
-</li>
-</ul>
-</nav>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="#editor-integration-gen_schemapy">
-    Editor integration (gen_schema.py)
-  </a>
-<nav aria-label="Editor integration (gen_schema.py)" class="md-nav">
-<ul class="md-nav__list">
-<li class="md-nav__item">
-<a class="md-nav__link" href="#schemas-kpopsdocsdocsschema">
-    Schemas (./kpops/docs/docs/schema/*)
-  </a>
-</li>
-</ul>
-</nav>
-</li>
-</ul>
-</nav>
 </li>
 </ul>
 </nav>
@@ -452,45 +460,13 @@
 </div>
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
-<h1 id="autogeneration">Autogeneration<a class="headerlink" href="#autogeneration" title="Permanent link">¶</a></h1>
-<p>Autogeneration happens mostly in the <code>pre-commit</code> hooks in <code>/kpops/hooks</code>.</p>
-<h2 id="generation-scripts-and-their-respective-files">Generation scripts and their respective files<a class="headerlink" href="#generation-scripts-and-their-respective-files" title="Permanent link">¶</a></h2>
-<h3 id="documentation-gen_docs">Documentation (<code>gen_docs/*</code>)<a class="headerlink" href="#documentation-gen_docs" title="Permanent link">¶</a></h3>
-<h4 id="variables-kpopsdocsdocsresourcesvariables">Variables (<code>./kpops/docs/docs/resources/variables/*</code>)<a class="headerlink" href="#variables-kpopsdocsdocsresourcesvariables" title="Permanent link">¶</a></h4>
-<ul>
-<li><code>cli_env_vars.env</code> -- All CLI environment variables in a <code>dotenv</code> file.</li>
-<li><code>cli_env_vars.md</code> -- All CLI environment variables in a table.</li>
-<li><code>config_env_vars.env</code> -- Almost all pipeline config environment variables in a <code>dotenv</code> file. The script checks for each field in <code>PipelineConfig</code> from <code>./kpops/kpops/cli/pipeline_config.py</code> whether it has an <code>env</code> attribute defined. The script is currently unable to visit the classes of fields like <code>topic_name_config</code>, hence any environment variables defined there would remain unknown to it.</li>
-<li><code>config_env_vars.env</code> -- Almost all pipeline config environment variables in a table.</li>
-<li><code>variable_substitution.yaml</code> -- A copy of <code>./tests/pipeline/resources/component-type-substitution/pipeline.yaml</code> used as an example of substition.</li>
-</ul>
-<h4 id="cli-commands-kpopsdocsdocsuserreferencescli-commandsmd">CLI commands (<code>./kpops/docs/docs/user/references/cli-commands.md</code>)<a class="headerlink" href="#cli-commands-kpopsdocsdocsuserreferencescli-commandsmd" title="Permanent link">¶</a></h4>
-<p>Generated by <code>typer-cli</code> from the code in <code>./kpops/kpops/cli/main.py</code>. It is called with Python's <code>subprocess</code> module.</p>
-<h4 id="pipeline-and-defaults-example-definitions-kpopsdocsdocsresourcespipeline-components-and-kpopsdocsdocsresourcespipeline-defaults">Pipeline and defaults example definitions (<code>./kpops/docs/docs/resources/pipeline-components/</code> and  <code>./kpops/docs/docs/resources/pipeline-defaults/</code>)<a class="headerlink" href="#pipeline-and-defaults-example-definitions-kpopsdocsdocsresourcespipeline-components-and-kpopsdocsdocsresourcespipeline-defaults" title="Permanent link">¶</a></h4>
-<p>Generates example <code>pipeline.yaml</code> and <code>defaults.yaml</code> for each individual component, stores them and also concatenates them into 1 big pipeline definition and 1 big pipeline defaults definition.</p>
-<p>User input</p>
-<ul>
-<li><code>headers/*\.yaml</code> -- The top of each example. Includes a description comment, <code>type</code> and <code>name</code>. The headers for <code>pipeline.yaml</code> reside in the <code>pipeline-components</code> dir and the <code>defaults.yaml</code> headers reside in the <code>pipeline-defaults</code> dir. The names of the files must be equal to the respective component <code>type</code>.</li>
-<li><code>sections/*\.yaml</code> -- Each YAML file contains a single section (component attribute) definition. The intention is to keep the minimal set of definitions there from which any component definition can be built. The names of the files must be equal to the respective component <code>type</code> and the attribute name. The sections are used for both <code>defaults.yaml</code> and <code>pipeline.yaml</code> generation and reside in the <code>pipeline-components</code> dir.</li>
-</ul>
-<p>Generated</p>
-<ul>
-<li><code>pipeline-components/dependencies/*</code>
-Cached information about KPOps components<ul>
-<li><code>pipeline_component_dependencies.yaml</code> -- Specifies per component which files in the <code>sections</code> dir should be used for the <code>pipeline.yaml</code> generation.</li>
-<li><code>defaults_pipeline_component_dependencies.yaml</code> -- Specifies per component which files in the <code>sections</code> dir should be used for the <code>defaults.yaml</code> generation.</li>
-<li><code>kpops_structure.yaml</code> -- Specifies the inheritance hierarchy of the components and what sections exist in each component.</li>
-</ul>
-</li>
-<li><code>pipeline-components/*\.yaml</code> -- All single-component pipeline definitions and one big (complete) <code>pipeline.yaml</code> that contains all of them.</li>
-<li><code>pipeline-defaults/*\.yaml</code> -- All single-component defaults definitions and one big (complete) <code>defaults.yaml</code> that contains all of them.</li>
-</ul>
-<h3 id="editor-integration-gen_schemapy">Editor integration (<code>gen_schema.py</code>)<a class="headerlink" href="#editor-integration-gen_schemapy" title="Permanent link">¶</a></h3>
-<h4 id="schemas-kpopsdocsdocsschema">Schemas (<code>./kpops/docs/docs/schema/*</code>)<a class="headerlink" href="#schemas-kpopsdocsdocsschema" title="Permanent link">¶</a></h4>
-<ul>
-<li><code>config.json</code></li>
-<li><code>pipeline.json</code></li>
-</ul>
+<h1 id="formatting">Formatting<a class="headerlink" href="#formatting" title="Permanent link">¶</a></h1>
+<h2 id="markdown">Markdown<a class="headerlink" href="#markdown" title="Permanent link">¶</a></h2>
+<p>To ensure a consistent markdown style, we use <a href="https://dprint.dev">dprint</a> to check and reformat.</p>
+<div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>dprint<span class="w"> </span>fmt
+</span></code></pre></div></td></tr></table></div>
+<p>Use the <a href="https://dprint.dev/setup/">official documentation</a> to set up dprint.
+The configuration can be found <a href="https://github.com/bakdata/kpops/blob/main/dprint.json">here</a>.</p>
 </article>
 </div>
 </div>
@@ -520,7 +496,7 @@ Cached information about KPOps components<ul>
 <div class="md-dialog" data-md-component="dialog">
 <div class="md-dialog__inner md-typeset"></div>
 </div>
-<script id="__config" type="application/json">{"base": "../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.share", "search.suggest", "content.tooltips", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
-<script src="../../../assets/javascripts/bundle.b78d2936.min.js"></script>
+<script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.share", "search.suggest", "content.tooltips", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.208ed371.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+<script src="../../assets/javascripts/bundle.b78d2936.min.js"></script>
 <script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>
 </html>

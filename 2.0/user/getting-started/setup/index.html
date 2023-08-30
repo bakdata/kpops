@@ -14,8 +14,9 @@
 <link href="../../../assets/stylesheets/main.402914a4.min.css" rel="stylesheet"/>
 <link href="../../../assets/stylesheets/palette.a0c5b2b5.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
-<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="https://fonts.googleapis.com/css?family=SF+Pro:300,300i,400,400i,700,700i%7CDejaVu+Sans+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"SF Pro";--md-code-font:"DejaVu Sans Mono"}</style>
+<link href="../../../stylesheets/extra.css" rel="stylesheet"/>
 <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
             html.glightbox-open { overflow: initial; height: 100%; }
@@ -29,7 +30,7 @@
                 body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
                 body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
                 </style><script src="../../../assets/javascripts/glightbox.min.js"></script></head>
-<body data-md-color-accent="" data-md-color-primary="custom" data-md-color-scheme="default" dir="ltr">
+<body data-md-color-accent="" data-md-color-primary="" data-md-color-scheme="default" dir="ltr">
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
@@ -124,6 +125,11 @@
 <li class="md-tabs__item">
 <a class="md-tabs__link md-tabs__link--active" href="../../what-is-kpops/">
         User Guide
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../developer/auto-generation/">
+        Developer Guide
       </a>
 </li>
 </ul>
@@ -429,6 +435,31 @@
 </ul>
 </nav>
 </li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Developer Guide
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+          Developer Guide
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../developer/auto-generation/">
+        Auto generation
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../developer/formatting/">
+        Formatting
+      </a>
+</li>
+</ul>
+</nav>
+</li>
 </ul>
 </nav>
 </div>
@@ -496,34 +527,34 @@
 <h2 id="setup-kubernetes-with-k3d">Setup Kubernetes with k3d<a class="headerlink" href="#setup-kubernetes-with-k3d" title="Permanent link">¶</a></h2>
 <p>If you don't have access to an existing Kubernetes cluster, this section will guide you through creating a local cluster. We recommend the lightweight Kubernetes distribution <a href="https://k3s.io/" target="_blank">k3s</a> for this. <a href="https://k3d.io/" target="_blank">k3d</a> is a wrapper around k3s in Docker that lets you get started fast.</p>
 <ol>
-<li>
-<p>You can install k3d with its installation script:</p>
+<li>You can install k3d with its installation script:</li>
+</ol>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>wget<span class="w"> </span>-q<span class="w"> </span>-O<span class="w"> </span>-<span class="w"> </span>https://raw.githubusercontent.com/k3d-io/k3d/v5.4.6/install.sh<span class="w"> </span><span class="p">|</span><span class="w"> </span>bash
 </span></code></pre></div></td></tr></table></div>
 <p>For other ways of installing k3d, you can have a look at their <a href="https://k3d.io/v5.4.6/#installation" target="_blank">installation guide</a>.</p>
-</li>
-<li>
-<p>The <a href="#deploy-kafka">Kafka deployment</a> needs a modified Docker image. In that case the image is built and pushed to a Docker registry that holds it. If you do not have access to an existing Docker registry, you can use k3d's Docker registry:</p>
+<ol>
+<li>The <a href="#deploy-kafka">Kafka deployment</a> needs a modified Docker image. In that case the image is built and pushed to a Docker registry that holds it. If you do not have access to an existing Docker registry, you can use k3d's Docker registry:</li>
+</ol>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>k3d<span class="w"> </span>registry<span class="w"> </span>create<span class="w"> </span>kpops-registry.localhost<span class="w"> </span>--port<span class="w"> </span><span class="m">12345</span>
 </span></code></pre></div></td></tr></table></div>
-</li>
-<li>
-<p>Now you can create a new cluster called <code>kpops</code> that uses the previously created Docker registry:</p>
+<ol>
+<li>Now you can create a new cluster called <code>kpops</code> that uses the previously created Docker registry:</li>
+</ol>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>k3d<span class="w"> </span>cluster<span class="w"> </span>create<span class="w"> </span>kpops<span class="w"> </span>--k3s-arg<span class="w"> </span><span class="s2">"--no-deploy=traefik@server:*"</span><span class="w"> </span>--registry-use<span class="w"> </span>k3d-kpops-registry.localhost:12345
 </span></code></pre></div></td></tr></table></div>
+<!-- dprint-ignore-start -->
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Creating a new k3d cluster automatically configures <code>kubectl</code> to connect to the local cluster by modifying your <code>~/.kube/config</code>. In case you manually set the <code>KUBECONFIG</code> variable or don't want k3d to modify your config, k3d offers <a href="https://k3d.io/v5.4.6/usage/kubeconfig/#handling-kubeconfigs" target="_blank">many other options</a>.</p>
 </div>
-</li>
-</ol>
+<!-- dprint-ignore-end -->
 <p>You can check the cluster status with <code>kubectl get pods -n kube-system</code>. If all returned elements have a <code>STATUS</code> of <code>Running</code> or <code>Completed</code>, then the cluster is up and running.</p>
 <h2 id="deploy-kafka">Deploy Kafka<a class="headerlink" href="#deploy-kafka" title="Permanent link">¶</a></h2>
 <p><a href="https://kafka.apache.org/" target="_blank">Kafka</a> is an open-source data streaming platform. More information about Kafka can be found in the <a href="https://kafka.apache.org/documentation/" target="_blank">documentation</a>. To deploy Kafka, this guide uses Confluent's <a href="https://github.com/confluentinc/cp-helm-charts" target="_blank">Helm chart</a>.</p>
 <ol>
 <li>
 <p>To allow connectivity to other systems <a href="https://docs.confluent.io/platform/current/connect/index.html#kafka-connect" target="_blank">Kafka Connect</a> needs to be extended with drivers. You can install a <a href="https://docs.confluent.io/kafka-connectors/jdbc/current/jdbc-drivers.html" target="_blank">JDBC driver</a> for Kafka Connect by creating a new Docker image:</p>
-<ol>
+</li>
 <li>
 <p>Create a <code>Dockerfile</code> with the following content:</p>
 <div class="language-dockerfile highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
@@ -542,16 +573,16 @@
 </li>
 </ol>
 <p>Detailed instructions on building, tagging and pushing a docker image can be found in <a href="https://docs.docker.com/" target="_blank">Docker docs</a>.</p>
-</li>
-<li>
-<p>Add Confluent's Helm chart repository and update the index:</p>
+<ol>
+<li>Add Confluent's Helm chart repository and update the index:</li>
+</ol>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
 <span class="normal"><a href="#__codelineno-5-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>confluentinc<span class="w"> </span>https://confluentinc.github.io/cp-helm-charts/<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w">  </span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>update
 </span></code></pre></div></td></tr></table></div>
-</li>
-<li>
-<p>Install Kafka, Zookeeper, Confluent's Schema Registry, Kafka Rest Proxy, and Kafka Connect. A single Helm chart installs all five components. Below you can find an example for the <code>--values ./kafka.yaml</code> file configuring the deployment accordingly. Deploy the services:</p>
+<ol>
+<li>Install Kafka, Zookeeper, Confluent's Schema Registry, Kafka Rest Proxy, and Kafka Connect. A single Helm chart installs all five components. Below you can find an example for the <code>--values ./kafka.yaml</code> file configuring the deployment accordingly. Deploy the services:</li>
+</ol>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
 <span class="normal"><a href="#__codelineno-6-2">2</a></span>
 <span class="normal"><a href="#__codelineno-6-3">3</a></span>
@@ -568,6 +599,7 @@
 </span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7"></a><span class="w">    </span>--wait<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8"></a><span class="w">    </span>k8kafka<span class="w"> </span>confluentinc/cp-helm-charts
 </span></code></pre></div></td></tr></table></div>
+<!-- dprint-ignore-start -->
 <details class="example">
 <summary>Kafka Helm chart values (<code>kafka.yaml</code>)</summary>
 <p>An example value configuration for Confluent's Helm chart. This configuration deploys a single Kafka Broker, a Schema Registry, Zookeeper, Kafka Rest Proxy, and Kafka Connect with minimal resources.</p>
@@ -790,8 +822,7 @@
 </span><span id="__span-7-109"><a id="__codelineno-7-109" name="__codelineno-7-109"></a><span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </span></code></pre></div></td></tr></table></div>
 </details>
-</li>
-</ol>
+<!-- dprint-ignore-end -->
 <h2 id="deploy-streams-explorer">Deploy Streams Explorer<a class="headerlink" href="#deploy-streams-explorer" title="Permanent link">¶</a></h2>
 <p><a href="https://github.com/bakdata/streams-explorer" target="_blank">Streams Explorer</a> allows examining Apache Kafka data pipelines in a Kubernetes cluster including the inspection of schemas and monitoring of metrics. First, add the Helm repository:</p>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span>
@@ -811,6 +842,7 @@
 </span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5"></a><span class="w">    </span>--namespace<span class="w"> </span>kpops<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6"></a><span class="w">    </span>streams-explorer<span class="w"> </span>streams-explorer/streams-explorer
 </span></code></pre></div></td></tr></table></div>
+<!-- dprint-ignore-start -->
 <details class="example">
 <summary>Streams Explorer Helm chart values (<code>streams-explorer.yaml</code>)</summary>
 <p>An example value configuration for Steams Explorer Helm chart.</p>
@@ -839,6 +871,7 @@
 </span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12"></a><span class="w">       </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">300Mi</span>
 </span></code></pre></div></td></tr></table></div>
 </details>
+<!-- dprint-ignore-end -->
 <h2 id="check-the-status-of-your-deployments">Check the status of your deployments<a class="headerlink" href="#check-the-status-of-your-deployments" title="Permanent link">¶</a></h2>
 <p>Now we will check if all the pods are running in our namespace. You can list all pods in the namespace with this command:</p>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-11-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1"></a>kubectl<span class="w"> </span>--namespace<span class="w"> </span>kpops<span class="w"> </span>get<span class="w"> </span>pods

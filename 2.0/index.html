@@ -13,8 +13,9 @@
 <link href="assets/stylesheets/main.402914a4.min.css" rel="stylesheet"/>
 <link href="assets/stylesheets/palette.a0c5b2b5.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
-<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="https://fonts.googleapis.com/css?family=SF+Pro:300,300i,400,400i,700,700i%7CDejaVu+Sans+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"SF Pro";--md-code-font:"DejaVu Sans Mono"}</style>
+<link href="stylesheets/extra.css" rel="stylesheet"/>
 <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 <link href="assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
             html.glightbox-open { overflow: initial; height: 100%; }
@@ -28,7 +29,7 @@
                 body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
                 body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
                 </style><script src="assets/javascripts/glightbox.min.js"></script></head>
-<body data-md-color-accent="" data-md-color-primary="custom" data-md-color-scheme="default" dir="ltr">
+<body data-md-color-accent="" data-md-color-primary="" data-md-color-scheme="default" dir="ltr">
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
@@ -122,17 +123,8 @@
 <!-- Additional styles for landing page -->
 <style>
 
-    :root {
-        --md-primary-fg-color: #000;
-    }
-
     body {
         background: #a599ff;
-    }
-
-    /* Application header should be static for the landing page */
-    .md-header {
-        position: initial;
     }
 
     /* Remove spacing, as we cannot hide it completely */
@@ -158,8 +150,11 @@
     }
 
     /* Moves the search results to the front */
+    /* Application header should be static for the landing page */
     .md-header {
+        background: #0000;
         z-index: 10;
+        position: initial;
     }
 
     .mdx-hero__content h1 {
@@ -194,26 +189,6 @@
         }
     }
 
-    /* Youtube videos */
-    .video-wrapper {
-        position: relative;
-        display: block;
-        height: 0;
-        padding: 0;
-        overflow: hidden;
-        padding-bottom: 56.25%;
-    }
-
-    .video-wrapper > iframe {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        border: 0;
-    }
-
 </style>
 <!-- Hero for landing page -->
 <section class="mdx-container">
@@ -224,6 +199,9 @@
 <h1>KPOps Documentation</h1>
 <a class="md-button md-button--primary" href="user/what-is-kpops/" title="User Guide">
                     User Guide
+                </a>
+<a class="md-button md-button--primary" href="developer/auto-generation/" title="Developer Guide">
+                    Developer Guide
                 </a>
 </div>
 </div>
@@ -482,6 +460,31 @@
 </li>
 </ul>
 </nav>
+</li>
+</ul>
+</nav>
+</li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Developer Guide
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+          Developer Guide
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="developer/auto-generation/">
+        Auto generation
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="developer/formatting/">
+        Formatting
+      </a>
 </li>
 </ul>
 </nav>

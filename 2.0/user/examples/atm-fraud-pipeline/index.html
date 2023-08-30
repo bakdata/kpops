@@ -14,8 +14,9 @@
 <link href="../../../assets/stylesheets/main.402914a4.min.css" rel="stylesheet"/>
 <link href="../../../assets/stylesheets/palette.a0c5b2b5.min.css" rel="stylesheet"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
-<link href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
-<style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+<link href="https://fonts.googleapis.com/css?family=SF+Pro:300,300i,400,400i,700,700i%7CDejaVu+Sans+Mono:400,400i,700,700i&amp;display=fallback" rel="stylesheet"/>
+<style>:root{--md-text-font:"SF Pro";--md-code-font:"DejaVu Sans Mono"}</style>
+<link href="../../../stylesheets/extra.css" rel="stylesheet"/>
 <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
 <link href="../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
             html.glightbox-open { overflow: initial; height: 100%; }
@@ -29,7 +30,7 @@
                 body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
                 body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
                 </style><script src="../../../assets/javascripts/glightbox.min.js"></script></head>
-<body data-md-color-accent="" data-md-color-primary="custom" data-md-color-scheme="default" dir="ltr">
+<body data-md-color-accent="" data-md-color-primary="" data-md-color-scheme="default" dir="ltr">
 <input autocomplete="off" class="md-toggle" data-md-toggle="drawer" id="__drawer" type="checkbox"/>
 <input autocomplete="off" class="md-toggle" data-md-toggle="search" id="__search" type="checkbox"/>
 <label class="md-overlay" for="__drawer"></label>
@@ -124,6 +125,11 @@
 <li class="md-tabs__item">
 <a class="md-tabs__link md-tabs__link--active" href="../../what-is-kpops/">
         User Guide
+      </a>
+</li>
+<li class="md-tabs__item">
+<a class="md-tabs__link" href="../../../developer/auto-generation/">
+        Developer Guide
       </a>
 </li>
 </ul>
@@ -471,6 +477,31 @@
 </ul>
 </nav>
 </li>
+<li class="md-nav__item md-nav__item--nested">
+<input class="md-nav__toggle md-toggle" id="__nav_3" type="checkbox"/>
+<label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+          Developer Guide
+          <span class="md-nav__icon md-icon"></span>
+</label>
+<nav aria-expanded="false" aria-labelledby="__nav_3_label" class="md-nav" data-md-level="1">
+<label class="md-nav__title" for="__nav_3">
+<span class="md-nav__icon md-icon"></span>
+          Developer Guide
+        </label>
+<ul class="md-nav__list" data-md-scrollfix="">
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../developer/auto-generation/">
+        Auto generation
+      </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../developer/formatting/">
+        Formatting
+      </a>
+</li>
+</ul>
+</nav>
+</li>
 </ul>
 </nav>
 </div>
@@ -565,10 +596,10 @@
 <div class="md-content" data-md-component="content">
 <article class="md-content__inner md-typeset">
 <h1 id="atm-fraud-detection-pipeline">ATM fraud detection pipeline<a class="headerlink" href="#atm-fraud-detection-pipeline" title="Permanent link">¶</a></h1>
-<p>ATM fraud is a demo pipeline for ATM fraud detection. 
-The original by Confluent is written in KSQL 
-and outlined in this <a href="https://www.confluent.io/blog/atm-fraud-detection-apache-kafka-ksql/" target="_blank">blogpost</a>. 
-The one used in this example is re-built from scratch using <a href="https://bakdata.com/" target="_blank">bakdata</a>'s 
+<p>ATM fraud is a demo pipeline for ATM fraud detection.
+The original by Confluent is written in KSQL
+and outlined in this <a href="https://www.confluent.io/blog/atm-fraud-detection-apache-kafka-ksql/" target="_blank">blogpost</a>.
+The one used in this example is re-built from scratch using <a href="https://bakdata.com/" target="_blank">bakdata</a>'s
 <a href="https://github.com/bakdata/streams-bootstrap" target="_blank"><code>streams-bootstrap</code></a> library.</p>
 <h2 id="what-this-will-demonstrate">What this will demonstrate<a class="headerlink" href="#what-this-will-demonstrate" title="Permanent link">¶</a></h2>
 <ul>
@@ -581,18 +612,19 @@ The one used in this example is re-built from scratch using <a href="https://bak
 <h2 id="setup-and-deployment">Setup and deployment<a class="headerlink" href="#setup-and-deployment" title="Permanent link">¶</a></h2>
 <h3 id="postgresql">PostgreSQL<a class="headerlink" href="#postgresql" title="Permanent link">¶</a></h3>
 <p>Deploy PostgreSQL using the <a href="https://artifacthub.io/packages/helm/bitnami/postgresql" target="_blank">Bitnami Helm chart:</a>
-Add the helm repository:
+Add the helm repository:</p>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
 <span class="normal"><a href="#__codelineno-0-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a>helm<span class="w"> </span>repo<span class="w"> </span>add<span class="w"> </span>bitnami<span class="w"> </span>https://charts.bitnami.com/bitnami<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>helm<span class="w"> </span>repo<span class="w"> </span>update
-</span></code></pre></div></td></tr></table></div></p>
-<p>Install the PostgreSQL with helm:
+</span></code></pre></div></td></tr></table></div>
+<p>Install the PostgreSQL with helm:</p>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
 <span class="normal"><a href="#__codelineno-1-2">2</a></span>
 <span class="normal"><a href="#__codelineno-1-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a>helm<span class="w"> </span>upgrade<span class="w"> </span>--install<span class="w"> </span>-f<span class="w"> </span>./postgresql.yaml<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a>--namespace<span class="w"> </span>kpops<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a>postgresql<span class="w"> </span>bitnami/postgresql
-</span></code></pre></div></td></tr></table></div></p>
+</span></code></pre></div></td></tr></table></div>
+<!-- dprint-ignore-start -->
 <details class="example">
 <summary>PostgreSQL Example Helm chart values (<code>postgresql.yaml</code>)</summary>
 <div class="language-yaml highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1"> 1</a></span>
@@ -620,6 +652,7 @@ Add the helm repository:
 </span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12"></a><span class="w">  </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </span></code></pre></div></td></tr></table></div>
 </details>
+<!-- dprint-ignore-end -->
 <h3 id="atm-fraud-detection-example-pipeline-setup">ATM fraud detection example pipeline setup<a class="headerlink" href="#atm-fraud-detection-example-pipeline-setup" title="Permanent link">¶</a></h3>
 <h4 id="port-forwarding">Port forwarding<a class="headerlink" href="#port-forwarding" title="Permanent link">¶</a></h4>
 <p>Before we deploy the pipeline, we need to forward the ports of <code>kafka-rest-proxy</code> and <code>kafka-connect</code>. Run the following commands in two different terminals.</p>
@@ -629,15 +662,15 @@ Add the helm repository:
 </span></code></pre></div></td></tr></table></div>
 <h3 id="deploying-the-atm-fraud-detection-pipeline">Deploying the ATM fraud detection pipeline<a class="headerlink" href="#deploying-the-atm-fraud-detection-pipeline" title="Permanent link">¶</a></h3>
 <ol>
-<li>
-<p>Export environment variables in your terminal:</p>
+<li>Export environment variables in your terminal:</li>
+</ol>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
 <span class="normal"><a href="#__codelineno-5-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DOCKER_REGISTRY</span><span class="o">=</span>bakdata<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">NAMESPACE</span><span class="o">=</span>kpops
 </span></code></pre></div></td></tr></table></div>
-</li>
-<li>
-<p>Deploy the pipeline</p>
+<ol>
+<li>Deploy the pipeline</li>
+</ol>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
 <span class="normal"><a href="#__codelineno-6-2">2</a></span>
 <span class="normal"><a href="#__codelineno-6-3">3</a></span>
@@ -646,25 +679,26 @@ Add the helm repository:
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3"></a>--config<span class="w"> </span>./examples/bakdata/atm-fraud-detection/config.yaml<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4"></a>--execute
 </span></code></pre></div></td></tr></table></div>
-</li>
-</ol>
+<!-- dprint-ignore-start -->
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You can use the <code>--dry-run</code> flag instead of the <code>--execute</code> flag and check the logs if your pipeline will be
 deployed correctly.</p>
 </div>
+<!-- dprint-ignore-end -->
 <h3 id="check-if-the-deployment-is-successful">Check if the deployment is successful<a class="headerlink" href="#check-if-the-deployment-is-successful" title="Permanent link">¶</a></h3>
-<p>You can use the <a href="https://github.com/bakdata/streams-explorer" target="_blank">Streams Explorer</a> to see the deployed pipeline. 
+<p>You can use the <a href="https://github.com/bakdata/streams-explorer" target="_blank">Streams Explorer</a> to see the deployed pipeline.
 To do so, port-forward the service in a separate terminal session using the command below:</p>
-<p><div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>kpops<span class="w"> </span>service/streams-explorer<span class="w"> </span><span class="m">8080</span>:8080
+<div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>-n<span class="w"> </span>kpops<span class="w"> </span>service/streams-explorer<span class="w"> </span><span class="m">8080</span>:8080
 </span></code></pre></div></td></tr></table></div>
-After that open <a href="http://localhost:8080" target="_blank">http://localhost:8080</a> in your browser. 
+<p>After that open <a href="http://localhost:8080" target="_blank">http://localhost:8080</a> in your browser.
 You should be able to see pipeline shown in the image below:</p>
 <figure>
 <p><a class="glightbox" data-desc-position="bottom" data-height="auto" data-width="100%" href="../../../images/atm-fraud-pipeline_streams-explorer.png"><img alt="atm-fraud-pipeline" src="../../../images/atm-fraud-pipeline_streams-explorer.png"/></a>
 </p>
 <figcaption>An overview of ATM fraud pipeline shown in Streams Explorer</figcaption>
 </figure>
+<!-- dprint-ignore-start -->
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
 <p>Kafka Connect needs some time to set up the connector. 
@@ -699,6 +733,7 @@ Therefore, it might take a bit until you see the whole graph.</p>
 </span></code></pre></div></td></tr></table></div>
 </li>
 </ol>
+<!-- dprint-ignore-start -->
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You can use the <code>--dry-run</code> flag instead of the <code>--execute</code> flag and check the logs if your pipeline will be
@@ -708,23 +743,20 @@ destroyed correctly.</p>
 <p class="admonition-title">Attention</p>
 <p>If you face any issues destroying this example see <a href="../../getting-started/teardown/">Teardown</a> for manual deletion.</p>
 </div>
+<!-- dprint-ignore-end -->
 <h2 id="common-errors">Common errors<a class="headerlink" href="#common-errors" title="Permanent link">¶</a></h2>
 <ul>
-<li><code>deploy</code> fails:<ol>
+<li><code>deploy</code> fails:</li>
 <li>Read the error message.</li>
 <li>Try to correct the mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.</li>
 <li>Run <code>clean</code>.</li>
 <li>Run <code>deploy --dry-run</code> to avoid havig to <code>clean</code> again. If an error is dropped, start over from step 1.</li>
 <li>If the dry-run is succesful, run <code>deploy</code>.</li>
-</ol>
-</li>
-<li><code>clean</code> fails:<ol>
+<li><code>clean</code> fails:</li>
 <li>Read the error message.</li>
 <li>Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.</li>
 <li>Run <code>clean</code>.</li>
 <li>If <code>clean</code> fails, follow the steps in <a href="../../getting-started/teardown/">teardown</a>.</li>
-</ol>
-</li>
 </ul>
 </article>
 </div>
