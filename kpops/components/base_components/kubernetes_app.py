@@ -57,7 +57,7 @@ class KubernetesApp(PipelineComponent):
         default=...,
         description=describe_attr("app", __doc__),
     )
-    repo_config: HelmRepoConfig = Field(
+    repo_config: HelmRepoConfig | None = Field(
         default=None,
         description=describe_attr("repo_config", __doc__),
     )
