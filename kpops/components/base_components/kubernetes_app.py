@@ -5,7 +5,7 @@ import re
 from functools import cached_property
 from typing import Any
 
-from pydantic import BaseModel, ConfigDict, Extra, Field
+from pydantic import ConfigDict, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler

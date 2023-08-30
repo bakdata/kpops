@@ -1,7 +1,7 @@
 from typing import Any
 
 import humps
-from pydantic import BaseConfig, BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict
 
 from kpops.utils.docstring import describe_object
 

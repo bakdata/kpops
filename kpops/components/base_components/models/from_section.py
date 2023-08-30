@@ -1,11 +1,11 @@
 from enum import Enum
 from typing import Any, NewType
 
-from pydantic import BaseModel, Extra, Field, root_validator
+from pydantic import BaseModel, ConfigDict, Extra, Field, root_validator
 
 from kpops.components.base_components.models import TopicName
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfig
+from kpops.utils.pydantic import DescConfigModel
 
 
 class InputTopicTypes(str, Enum):
@@ -31,9 +31,10 @@ class FromTopic(BaseModel):
     )
     role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
-    class Config(DescConfig):
-        extra = Extra.forbid
-        use_enum_values = True
+    model_config = ConfigDict(
+        extra = Extra.forbid,
+        use_enum_values = True,
+    )
 
     @root_validator(skip_on_failure=True)
     def extra_topic_role(cls, values: dict[str, Any]) -> dict[str, Any]:
@@ -46,7 +47,7 @@ class FromTopic(BaseModel):
 ComponentName = NewType("ComponentName", str)
 
 
-class FromSection(BaseModel):
+class FromSection(DescConfigModel):
     """Holds multiple input topics
 
     :param topics: Input topics
@@ -62,5 +63,7 @@ class FromSection(BaseModel):
         description=describe_attr("components", __doc__),
     )
 
-    class Config(DescConfig):
-        extra = Extra.forbid
+    model_config = ConfigDict(
+        extra = Extra.forbid,
+        use_enum_values = True,
+    )

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from pydantic import BaseModel, ConfigDict, Extra, Field
+from pydantic import ConfigDict, Extra, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import (

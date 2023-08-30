@@ -1,11 +1,10 @@
 import logging
 from enum import Enum
-from typing import Annotated, Any, Final, Literal, Sequence, Union
+from typing import Annotated, Any, Literal, Sequence, Union
 
-from pydantic import BaseConfig, Field, schema_json_of
-from pydantic.v1 import schema
+from pydantic import Field, schema_json_of
 from pydantic.fields import FieldInfo
-from pydantic.v1.fields import ModelField
+from pydantic.v1 import schema
 from pydantic.v1.schema import SkipField
 
 from kpops.cli.pipeline_config import PipelineConfig
