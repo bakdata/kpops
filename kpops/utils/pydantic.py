@@ -1,7 +1,7 @@
 from typing import Any
 
 import humps
-from pydantic import BaseConfig, BaseModel
+from pydantic import BaseConfig, BaseModel, ConfigDict
 
 from kpops.utils.docstring import describe_object
 
@@ -20,13 +20,16 @@ def to_dot(s: str) -> str:
     """Convert snake_case to dot.notation."""
     return s.replace("_", ".")
 
+def schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
+    schema["description"] = describe_object(model.__doc__)
 
-class CamelCaseConfig(BaseConfig):
-    alias_generator = to_camel
-    allow_population_by_field_name = True
+class CamelCaseConfigModel(BaseModel):
+    model_config = ConfigDict(
+        alias_generator=to_camel,
+        populate_by_name=True,
+    )
 
-
-class DescConfig(BaseConfig):
-    @classmethod
-    def schema_extra(cls, schema: dict[str, Any], model: type[BaseModel]) -> None:
-        schema["description"] = describe_object(model.__doc__)
+class DescConfigModel(BaseModel):
+    model_config = ConfigDict(
+        json_schema_extra=schema_extra
+    )
