@@ -1,4 +1,15 @@
 # Changelog
+## [2.0.5](https://github.com/bakdata/kpops/releases/tag/2.0.5) - Release Date: [2023-08-30]
+
+### 🐛 Fixes
+
+- Fix versioning of docs when releasing - [#346](https://github.com/bakdata/kpops/pull/346)
+
+
+
+
+
+
 ## [2.0.4](https://github.com/bakdata/kpops/releases/tag/2.0.4) - Release Date: [2023-08-29]
 
 ### 🐛 Fixes
