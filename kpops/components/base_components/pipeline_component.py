@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pydantic import Extra, Field
+from pydantic import ConfigDict, Extra, Field
 
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
@@ -16,10 +16,10 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfig
+from kpops.utils.pydantic import DescConfigModel
 
 
-class PipelineComponent(BaseDefaultsComponent):
+class PipelineComponent(BaseDefaultsComponent, DescConfigModel):
     """Base class for all components
 
     :param name: Component name
@@ -48,8 +48,9 @@ class PipelineComponent(BaseDefaultsComponent):
         description=describe_attr("to", __doc__),
     )
 
-    class Config(DescConfig):
-        extra = Extra.allow
+    model_config=ConfigDict(
+        extra = Extra.allow,
+    )
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)

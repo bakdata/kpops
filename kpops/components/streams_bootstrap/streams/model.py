@@ -9,7 +9,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaStreamsConfig,
 )
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
 
 class StreamsConfig(KafkaStreamsConfig):
@@ -103,7 +103,7 @@ class StreamsConfig(KafkaStreamsConfig):
         )
 
 
-class StreamsAppAutoScaling(BaseModel):
+class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
     """Kubernetes Event-driven Autoscaling config
 
     :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
@@ -183,9 +183,6 @@ class StreamsAppAutoScaling(BaseModel):
         description=describe_attr("topics", __doc__),
     )
 
-    class Config(CamelCaseConfig, DescConfig):
-        extra = Extra.allow
-
 
 class StreamsAppConfig(KafkaAppConfig):
     """StreamsBoostrap app configurations.
@@ -204,6 +201,3 @@ class StreamsAppConfig(KafkaAppConfig):
         default=None,
         description=describe_attr("autoscaling", __doc__),
     )
-
-    class Config(BaseConfig):
-        extra = Extra.allow

@@ -31,6 +31,3 @@ class ProducerValues(KafkaAppConfig):
     streams: ProducerStreamsConfig = Field(
         default=..., description=describe_attr("streams", __doc__)
     )
-
-    class Config(BaseConfig):
-        extra = Extra.allow
