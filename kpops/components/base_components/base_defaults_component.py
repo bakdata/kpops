@@ -4,10 +4,10 @@ from collections import deque
 from collections.abc import Sequence
 from functools import cached_property
 from pathlib import Path
-from typing import TypeVar, ClassVar
+from typing import TypeVar
 
 import typer
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import ConfigDict, Field
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers

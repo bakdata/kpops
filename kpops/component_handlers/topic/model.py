@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseConfig, BaseModel, Extra
+from pydantic import BaseModel, ConfigDict, Extra
 
 
 class TopicSpec(BaseModel):
@@ -43,8 +43,9 @@ class KafkaTopicConfigSynonyms(BaseModel):
     value: str
     source: KafkaTopicConfigSource
 
-    class Config(BaseConfig):
-        extra = Extra.allow
+    model_config=ConfigDict(
+        extra = Extra.allow,
+    )
 
 
 class KafkaTopicConfig(BaseModel):
@@ -53,15 +54,17 @@ class KafkaTopicConfig(BaseModel):
     value: str
     name: str
 
-    class Config(BaseConfig):
-        extra = Extra.allow
+    model_config=ConfigDict(
+        extra = Extra.allow,
+    )
 
 
 class TopicConfigResponse(BaseModel):
     data: list[KafkaTopicConfig]
 
-    class Config(BaseConfig):
-        extra = Extra.allow
+    model_config=ConfigDict(
+        extra = Extra.allow,
+    )
 
 
 class KafkaBrokerConfigSource(str, Enum):
@@ -75,8 +78,9 @@ class KafkaBrokerConfigSynonyms(BaseModel):
     value: str | None
     source: KafkaBrokerConfigSource
 
-    class Config(BaseConfig):
-        extra = Extra.allow
+    model_config=ConfigDict(
+        extra = Extra.allow,
+    )
 
 
 class KafkaBrokerConfig(BaseModel):
@@ -85,12 +89,14 @@ class KafkaBrokerConfig(BaseModel):
     value: str | None
     name: str
 
-    class Config(BaseConfig):
-        extra = Extra.allow
+    model_config=ConfigDict(
+        extra = Extra.allow,
+    )
 
 
 class BrokerConfigResponse(BaseModel):
     data: list[KafkaBrokerConfig]
 
-    class Config(BaseConfig):
-        extra = Extra.allow
+    model_config=ConfigDict(
+        extra = Extra.allow,
+    )
