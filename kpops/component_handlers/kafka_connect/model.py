@@ -1,10 +1,10 @@
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseConfig, BaseModel, Extra, Field, validator
+from pydantic import BaseConfig, BaseModel, ConfigDict, Extra, Field, validator
 from typing_extensions import override
 
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig, to_dot
+from kpops.utils.pydantic import CamelCaseConfigModel, to_dot
 
 
 class KafkaConnectorType(str, Enum):
@@ -23,15 +23,11 @@ class KafkaConnectorConfig(BaseModel):
         },
     )
 
-    class Config(DescConfig):
-        extra = Extra.allow
-        alias_generator = to_dot
-
-        @override
-        @classmethod
-        def schema_extra(cls, schema: dict[str, Any], model: type[BaseModel]) -> None:
-            super().schema_extra(schema, model)
-            schema["additionalProperties"] = {"type": "string"}
+    model_config = ConfigDict(
+        extra=Extra.allow,
+        alias_generator=to_dot,
+        json_schema_extra={"additional_properties": {"type": "string"}},
+    )
 
     @validator("connector_class")
     def connector_class_must_contain_dot(cls, connector_class: str) -> str:
@@ -78,23 +74,17 @@ class KafkaConnectConfigErrorResponse(BaseModel):
     configs: list[KafkaConnectConfigDescription]
 
 
-class KafkaConnectResetterConfig(BaseModel):
+class KafkaConnectResetterConfig(CamelCaseConfigModel):
     brokers: str
     connector: str
     delete_consumer_group: bool | None = None
     offset_topic: str | None = None
 
-    class Config(CamelCaseConfig):
-        pass
 
-
-class KafkaConnectResetterValues(BaseModel):
+class KafkaConnectResetterValues(CamelCaseConfigModel):
     connector_type: Literal["source", "sink"]
     config: KafkaConnectResetterConfig
     name_override: str
-
-    class Config(CamelCaseConfig):
-        pass
 
     @override
     def dict(self, **_) -> dict[str, Any]:
