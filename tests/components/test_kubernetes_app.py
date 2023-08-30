@@ -3,6 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
+from typing_extensions import override
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
@@ -105,7 +106,6 @@ class TestKubernetesApp:
 
     def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
         self,
-        kubernetes_app: KubernetesApp,
         config: PipelineConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
@@ -137,7 +137,7 @@ class TestKubernetesApp:
         assert helm_mock.mock_calls == [
             mocker.call.add_repo(
                 "test-repo",
-                "https://test.com/charts",
+                "https://test.com/charts/",
                 RepoAuthFlags(),
             ),
             mocker.call.upgrade_install(
@@ -149,6 +149,42 @@ class TestKubernetesApp:
                 HelmUpgradeInstallFlags(version="3.4.5"),
             ),
         ]
+
+    def test_should_deploy_app_with_local_helm_chart(
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
+        helm_mock: MagicMock,
+        app_value: KubernetesTestValue,
+    ):
+        class AppWithLocalChart(KubernetesApp):
+            repo_config: None = None
+
+            @property
+            @override
+            def helm_chart(self) -> str:
+                return "path/to/helm/charts/"
+
+        app_with_local_chart = AppWithLocalChart(
+            name="test-app-with-local-chart",
+            config=config,
+            handlers=handlers,
+            app=app_value,
+            namespace="test-namespace",
+        )
+
+        app_with_local_chart.deploy(dry_run=False)
+
+        helm_mock.add_repo.assert_not_called()
+
+        helm_mock.upgrade_install.assert_called_once_with(
+            "test-app-with-local-chart",
+            "path/to/helm/charts/",
+            False,
+            "test-namespace",
+            {"nameOverride": "test-value"},
+            HelmUpgradeInstallFlags(),
+        )
 
     def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
         self,
