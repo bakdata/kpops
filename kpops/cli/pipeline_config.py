@@ -1,11 +1,10 @@
 from pathlib import Path
 
-from pydantic import ConfigDict, Field, BaseConfig
-from pydantic_settings import BaseSettings, SettingsConfigDict, PydanticBaseSettingsSource
-from pydantic.env_settings import SettingsSourceCallable
+from pydantic import AliasChoices, Field
+from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 
+from kpops.cli.settings_sources import YamlConfigSettingsSource
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
-from kpops.utils.yaml_loading import load_yaml_file
 
 ENV_PREFIX = "KPOPS_"
 
@@ -34,7 +33,6 @@ class PipelineConfig(BaseSettings):
     )
     environment: str = Field(
         default=...,
-        validation_alias="ENVIRONMENT",
         examples=[
             "development",
             "production",
@@ -44,7 +42,6 @@ class PipelineConfig(BaseSettings):
     )
     brokers: str = Field(
         default=...,
-        validation_alias="KAFKA_BROKERS",
         examples=[
             "broker1:9092,broker2:9092,broker3:9092",
         ],
@@ -63,12 +60,11 @@ class PipelineConfig(BaseSettings):
         examples=[
             "http://localhost:8081",
         ],
-        validation_alias="SCHEMA_REGISTRY_URL",
         description="Address of the Schema Registry.",
     )
     kafka_rest_host: str | None = Field(
         default=None,
-        validation_alias="REST_PROXY_HOST",
+        validation_alias=AliasChoices(f"{ENV_PREFIX}rest_proxy_host", "kafka_rest_host"),
         examples=[
             "http://localhost:8082",
         ],
@@ -76,7 +72,7 @@ class PipelineConfig(BaseSettings):
     )
     kafka_connect_host: str | None = Field(
         default=None,
-        validation_alias="CONNECT_HOST",
+        validation_alias=AliasChoices(f"{ENV_PREFIX}connect_host", "kafka_connect_host"),
         examples=[
             "http://localhost:8083",
         ],
@@ -84,7 +80,6 @@ class PipelineConfig(BaseSettings):
     )
     timeout: int = Field(
         default=300,
-        validation_alias="TIMEOUT",
         description="The timeout in seconds that specifies when actions like deletion or deploy timeout.",
     )
     create_namespace: bool = Field(
@@ -101,36 +96,23 @@ class PipelineConfig(BaseSettings):
     )
     retain_clean_jobs: bool = Field(
         default=False,
-        validation_alias="RETAIN_CLEAN_JOBS",
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
-
-    model_config = SettingsConfigDict(
-        env_prefix='my_prefix_'
-    )
-
-    class Config(BaseConfig):
-        config_path = Path("config.yaml")
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-
-        @classmethod
-        def customise_sources(
-            cls,
-            init_settings: SettingsSourceCallable,
-            env_settings: SettingsSourceCallable,
-            file_secret_settings: SettingsSourceCallable,
-        ):
-            return (
-                init_settings,
-                yaml_config_settings_source,
-                env_settings,
-                file_secret_settings,
-            )
-
-
-def yaml_config_settings_source(settings: PipelineConfig) -> dict | list:
-    path_to_config = settings.Config.config_path
-    if path_to_config.exists():
-        return load_yaml_file(path_to_config)
-    return {}
+    
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ):
+        return (
+            init_settings,
+            YamlConfigSettingsSource(settings_cls),
+            dotenv_settings,
+            env_settings,
+            file_secret_settings,
+        )
+        
