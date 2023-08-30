@@ -6,6 +6,7 @@ from collections import Counter
 from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
+import matplotlib.pyplot as plt
 
 import networkx as nx
 import yaml
