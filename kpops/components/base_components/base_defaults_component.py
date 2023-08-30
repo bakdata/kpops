@@ -4,10 +4,10 @@ from collections import deque
 from collections.abc import Sequence
 from functools import cached_property
 from pathlib import Path
-from typing import TypeVar
+from typing import TypeVar, ClassVar
 
 import typer
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
@@ -15,7 +15,7 @@ from kpops.utils import cached_classproperty
 from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
-from kpops.utils.pydantic import DescConfig, to_dash
+from kpops.utils.pydantic import DescConfigModel, to_dash
 from kpops.utils.yaml_loading import load_yaml_file
 
 try:
@@ -26,7 +26,7 @@ except ImportError:
 log = logging.getLogger("BaseDefaultsComponent")
 
 
-class BaseDefaultsComponent(BaseModel):
+class BaseDefaultsComponent(DescConfigModel):
     """Base for all components, handles defaults.
 
     Component defaults are usually provided in a yaml file called
@@ -38,6 +38,11 @@ class BaseDefaultsComponent(BaseModel):
     :param handlers: Component handlers to be accessed by this component
     :param validate: Whether to run custom validation on the component, defaults to True
     """
+
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        ignored_types=(cached_property, cached_classproperty),
+    )
 
     enrich: bool = Field(
         default=False,
@@ -72,10 +77,6 @@ class BaseDefaultsComponent(BaseModel):
             "hidden_from_schema": True,
         },
     )
-
-    class Config(DescConfig):
-        arbitrary_types_allowed = True
-        keep_untouched = (cached_property, cached_classproperty)
 
     def __init__(self, **kwargs) -> None:
         if kwargs.get("enrich", True):
