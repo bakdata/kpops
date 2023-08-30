@@ -1,2 +1,0 @@
-- type: kafka-connector # required
-  name: kafka-connector # required

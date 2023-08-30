@@ -1,5 +1,0 @@
-# Base component for Kafka-based components.
-#
-# Parent of: ProducerApp, StreamsApp
-# Child of: KubernetesApp
-kafka-app:

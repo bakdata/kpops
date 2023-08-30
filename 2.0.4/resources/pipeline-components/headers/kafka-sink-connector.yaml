@@ -1,3 +1,0 @@
-# Kafka sink connector
-- type: kafka-sink-connector
-  name: kafka-sink-connector # required

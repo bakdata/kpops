@@ -1,8 +1,0 @@
-  # `app` can contain application-specific settings, hence  the user is free to
-  # add the key-value pairs they need.
-  app: # required
-    streams: # required
-      brokers: ${brokers} # required
-      schemaRegistryUrl: ${schema_registry_url}
-    nameOverride: override-with-this-name # kafka-app-specific
-    imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app

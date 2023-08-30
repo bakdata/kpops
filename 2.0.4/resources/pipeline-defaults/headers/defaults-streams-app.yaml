@@ -1,5 +1,0 @@
-# StreamsApp component that configures a streams bootstrap app.
-#
-# Child of: KafkaApp
-# More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
-streams-app:
