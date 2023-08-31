@@ -1,4 +1,20 @@
 # Changelog
+## [2.0.7](https://github.com/bakdata/kpops/releases/tag/2.0.7) - Release Date: [2023-08-31]
+
+### 🐛 Fixes
+
+- Print only rendered templates when `--template` flag is set - [#350](https://github.com/bakdata/kpops/pull/350)
+
+
+### 📝 Documentation
+
+- Add migration guide - [#352](https://github.com/bakdata/kpops/pull/352)
+
+
+
+
+
+
 ## [2.0.6](https://github.com/bakdata/kpops/releases/tag/2.0.6) - Release Date: [2023-08-30]
 
 ### 🏭 Refactor
