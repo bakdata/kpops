@@ -178,7 +178,7 @@ class TestKubernetesApp:
         helm_mock.add_repo.assert_not_called()
 
         helm_mock.upgrade_install.assert_called_once_with(
-            "test-app-with-local-chart",
+            "${pipeline_name}-test-app-with-local-chart",
             "path/to/helm/charts/",
             False,
             "test-namespace",
