@@ -253,6 +253,9 @@ def generate(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
 
+    if not template:
+        pipeline.print_yaml()
+
     if template:
         steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
         for component in steps_to_apply:
@@ -262,8 +265,6 @@ def generate(
             "The following flags are considered only when `--template` is set: \n \
                 '--steps'"
         )
-    else:
-        pipeline.print_yaml()
 
     return pipeline
 
