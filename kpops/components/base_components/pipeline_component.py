@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pydantic import ConfigDict, Extra, Field
+from pydantic import AliasChoices, ConfigDict, Extra, Field
 
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
@@ -39,7 +39,7 @@ class PipelineComponent(BaseDefaultsComponent, DescConfigModel):
     )
     from_: FromSection | None = Field(
         default=None,
-        alias="from",
+        validation_alias=AliasChoices("from", "from_"),
         title="From",
         description=describe_attr("from_", __doc__),
     )

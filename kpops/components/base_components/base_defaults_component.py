@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import TypeVar
 
 import typer
-from pydantic import ConfigDict, Field
+from pydantic import AliasChoices, ConfigDict, Field
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
@@ -69,7 +69,7 @@ class BaseDefaultsComponent(DescConfigModel):
         },
     )
     validate_: bool = Field(
-        alias="validate",
+        validation_alias=AliasChoices("validate", "validate_"),
         default=True,
         description=describe_attr("validate", __doc__),
         exclude=True,

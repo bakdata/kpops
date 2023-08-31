@@ -4,7 +4,7 @@ from typing import Any, Literal
 from pydantic import BaseConfig, BaseModel, ConfigDict, Extra, Field, validator
 from typing_extensions import override
 
-from kpops.utils.pydantic import CamelCaseConfigModel, to_dot
+from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel, to_dot
 
 
 class KafkaConnectorType(str, Enum):
@@ -12,7 +12,7 @@ class KafkaConnectorType(str, Enum):
     SOURCE = "source"
 
 
-class KafkaConnectorConfig(BaseModel):
+class KafkaConnectorConfig(DescConfigModel):
     """Settings specific to Kafka Connectors"""
 
     connector_class: str
@@ -26,6 +26,7 @@ class KafkaConnectorConfig(BaseModel):
     model_config = ConfigDict(
         extra=Extra.allow,
         alias_generator=to_dot,
+        #TODO(sujuka99): combine with ``json_schema_extra`` of ``DescCohnfigModel`` 
         json_schema_extra={"additional_properties": {"type": "string"}},
     )
 
@@ -53,10 +54,11 @@ class KafkaConnectResponse(BaseModel):
     name: str
     config: dict[str, str]
     tasks: list[ConnectorTask]
-    type: str | None
+    type: str | None = None
 
-    class Config(BaseConfig):
-        extra = Extra.forbid
+    model_config = ConfigDict(
+        extra=Extra.forbid
+    )
 
 
 class KafkaConnectConfigError(BaseModel):

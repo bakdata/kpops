@@ -104,7 +104,7 @@ def gen_pipeline_schema(
     # re-assign component type as Literal to work as discriminator
     for component in components:
         component.model_fields["type"] = FieldInfo(
-            serialization_alias="type",
+            alias="type",
             type_=Literal[component.type],  # type: ignore
             default=component.type,
             # final=True,

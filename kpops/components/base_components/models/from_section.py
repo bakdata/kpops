@@ -65,5 +65,4 @@ class FromSection(DescConfigModel):
 
     model_config = ConfigDict(
         extra = Extra.forbid,
-        use_enum_values = True,
     )

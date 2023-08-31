@@ -273,9 +273,7 @@ class Pipeline:
 
     def __str__(self) -> str:
         return yaml.dump(
-            json.loads(  # HACK: serialize types on Pydantic model export, which are not serialized by .dict(); e.g. pathlib.Path
-                self.components.json(exclude_none=True, by_alias=True)
-            )
+            self.components.model_dump(by_alias=True, exclude_none=True, mode="json")
         )
 
     def __len__(self) -> int:
@@ -301,7 +299,7 @@ class Pipeline:
             substitution_hardcoded,
         )
         substitution = generate_substitution(
-            json.loads(config.json()), existing_substitution=component_substitution
+            json.loads(config.model_dump_json()), existing_substitution=component_substitution
         )
 
         return json.loads(

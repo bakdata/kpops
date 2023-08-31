@@ -12,6 +12,7 @@ from kpops import __version__
 from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
 from kpops.cli.registry import Registry
+from kpops.cli.settings_sources import YamlConfigSettingsSource
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
@@ -195,7 +196,7 @@ def create_pipeline_config(
     config: Path, defaults: Optional[Path], verbose: bool
 ) -> PipelineConfig:
     setup_logging_level(verbose)
-    PipelineConfig.Config.config_path = config
+    YamlConfigSettingsSource.path_to_config = config
     if defaults:
         pipeline_config = PipelineConfig(defaults_path=defaults)
     else:
