@@ -1,4 +1,15 @@
 # Changelog
+## [2.0.6](https://github.com/bakdata/kpops/releases/tag/2.0.6) - Release Date: [2023-08-30]
+
+### 🏭 Refactor
+
+- Simplify deployment with local Helm charts - [#349](https://github.com/bakdata/kpops/pull/349)
+
+
+
+
+
+
 ## [2.0.5](https://github.com/bakdata/kpops/releases/tag/2.0.5) - Release Date: [2023-08-30]
 
 ### 🐛 Fixes
