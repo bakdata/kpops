@@ -589,14 +589,14 @@
 <article class="md-content__inner md-typeset">
 <h1 id="migrate-from-v1-to-v2">Migrate from V1 to V2<a class="headerlink" href="#migrate-from-v1-to-v2" title="Permanent link">¶</a></h1>
 <h2 id="derive-component-type-automatically-from-class-name"><a href="https://github.com/bakdata/kpops/pull/309">Derive component type automatically from class name</a><a class="headerlink" href="#derive-component-type-automatically-from-class-name" title="Permanent link">¶</a></h2>
-<p>KPOps automatically inferes the <code>type</code> from the class name. Therefore, there is no need to add the <code>type</code> anymore. By convention the <code>type</code> would be the lower, and kebab cased name of the class.</p>
+<p>KPOps automatically infers the component <code>type</code> from the class name. Therefore, the <code>type</code> and <code>schema_type</code> attributes can be removed from your custom components. By convention the <code>type</code> would be the lower, and kebab cased name of the class.</p>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
 <span class="normal"><a href="#__codelineno-0-2">2</a></span>
 <span class="normal"><a href="#__codelineno-0-3">3</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="w">class MyCoolStreamApp(StreamsApp):</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="gd">-    type = "my-cool-stream-app"</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="gi">+    ...</span>
 </span></code></pre></div></td></tr></table></div>
-<p>The <a href="https://github.com/bakdata/kpops/blob/main/kpops/components/streams_bootstrap/producer/producer_app.py#L16">ProducerApp</a> class, which had the <code>type</code> <code>producer</code>, now through these changes and name convention hast the <code>type</code> <code>producer-app</code>. This must be addressed in your <code>pipeline.yaml</code> or <code>defaults.yaml</code>.</p>
+<p>Because of this new convention <code>producer</code> has been renamed to <code>producer-app</code>. This must be addressed in your <code>pipeline.yaml</code> or <code>defaults.yaml</code>.</p>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
 <span class="normal"><a href="#__codelineno-1-2">2</a></span>
 <span class="normal"><a href="#__codelineno-1-3">3</a></span>
@@ -740,7 +740,7 @@
 </span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w"> </span>   streams:
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="w"> </span>     brokers: ${brokers} 
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="w"> </span>     schemaRegistryUrl: ${schema_registry_url}
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w"> </span>    autoscaling:d
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w"> </span>    autoscaling:
 </span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="w"> </span>     consumerGroup: consumer-group
 </span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="w"> </span>     lagThreshold: 0
 </span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="w"> </span>     enabled: false 
@@ -814,13 +814,17 @@
 <span class="normal"><a href="#__codelineno-7-4">4</a></span>
 <span class="normal"><a href="#__codelineno-7-5">5</a></span>
 <span class="normal"><a href="#__codelineno-7-6">6</a></span>
-<span class="normal"><a href="#__codelineno-7-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="w"> </span> app: # required
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="w"> </span>   streams: # required
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="gd">-     brokers: ${broker}</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="gi">+     brokers: ${brokers}</span>
-</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="w"> </span>     schemaRegistryUrl: ${schema_registry_url}
-</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="w"> </span>   nameOverride: override-with-this-name # kafka-app-specific
-</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="w"> </span>   imageTag: "1.0.0"
+<span class="normal"><a href="#__codelineno-7-7">7</a></span>
+<span class="normal"><a href="#__codelineno-7-8">8</a></span>
+<span class="normal"><a href="#__codelineno-7-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="w">...</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2"></a><span class="w"> </span> app:
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3"></a><span class="w"> </span>   streams:
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4"></a><span class="gd">-     brokers: ${broker}</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5"></a><span class="gi">+     brokers: ${brokers}</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6"></a><span class="w"> </span>     schemaRegistryUrl: ${schema_registry_url}
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7"></a><span class="w"> </span>   nameOverride: override-with-this-name
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8"></a><span class="w"> </span>   imageTag: "1.0.0"
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9"></a><span class="w">...</span>
 </span></code></pre></div></td></tr></table></div>
 <h4 id="environment-variable">Environment variable<a class="headerlink" href="#environment-variable" title="Permanent link">¶</a></h4>
 <p>Previously, if you set the environment variable <code>KPOPS_KAFKA_BROKER</code>, you need to replace that now with <code>KPOPS_KAFKA_BROKERS</code>.</p>
