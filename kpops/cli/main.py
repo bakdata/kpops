@@ -252,7 +252,9 @@ def generate(
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    pipeline.print_yaml()
+
+    if not template:
+        pipeline.print_yaml()
 
     if template:
         steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
