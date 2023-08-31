@@ -596,7 +596,7 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="gd">-    type = "my-cool-stream-app"</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="gi">+    ...</span>
 </span></code></pre></div></td></tr></table></div>
-<p>Because of this new convention <code>producer</code> has been renamed to <code>producer-app</code>. This must be addressed in your <code>pipeline.yaml</code> or <code>defaults.yaml</code>.</p>
+<p>Because of this new convention <code>producer</code> has been renamed to <code>producer-app</code>. This must be addressed in your <code>pipeline.yaml</code> and <code>defaults.yaml</code>.</p>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
 <span class="normal"><a href="#__codelineno-1-2">2</a></span>
 <span class="normal"><a href="#__codelineno-1-3">3</a></span>
@@ -648,7 +648,7 @@
 <h3 id="from-section">From section<a class="headerlink" href="#from-section" title="Permanent link">¶</a></h3>
 <p>In the <code>from</code> section these have changed:</p>
 <ul>
-<li>The Default type is <code>input</code></li>
+<li>The default type is <code>input</code></li>
 <li><code>input-pattern</code> type is replaced by <code>pattern</code></li>
 <li>If <code>role</code> is set, type is inferred to be <code>extra</code></li>
 <li>If <code>role</code> is set, type is explicitly set to <code>pattern</code>, this would be inferred type <code>extra-pattern</code></li>
