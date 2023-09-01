@@ -8,7 +8,7 @@ from contextlib import suppress
 from pathlib import Path
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, SerializeAsAny
 from rich.console import Console
 from rich.syntax import Syntax
 
@@ -34,7 +34,7 @@ class ValidationError(Exception):
 class PipelineComponents(BaseModel):
     """Stores the pipeline components"""
 
-    components: list[PipelineComponent] = []
+    components: list[SerializeAsAny[PipelineComponent]] = []
 
     @property
     def last(self) -> PipelineComponent:
@@ -46,7 +46,7 @@ class PipelineComponents(BaseModel):
                 return component
         raise ValueError(f"Component {component_name} not found")
 
-    def add(self, component: PipelineComponent) -> None:
+    def add(self, component: SerializeAsAny[PipelineComponent]) -> None:
         self._populate_component_name(component)
         self.components.append(component)
 
@@ -195,7 +195,6 @@ class Pipeline:
             **component_data,
         )
         component = self.enrich_component(component)
-
         # inflate & enrich components
         for inflated_component in component.inflate():  # TODO: recursively
             enriched_component = self.enrich_component(inflated_component)
@@ -238,7 +237,7 @@ class Pipeline:
         env_component_as_dict = update_nested_pair(
             self.env_components_index.get(component.name, {}),
             # HACK: Pydantic .dict() doesn't create jsonable dict
-            json.loads(component.json(by_alias=True)),
+            component.model_dump(by_alias=True),
         )
         # HACK: make sure component type is set for inflated components, because property is not serialized by Pydantic
         env_component_as_dict["type"] = component.type
@@ -273,7 +272,7 @@ class Pipeline:
 
     def __str__(self) -> str:
         return yaml.dump(
-            self.components.model_dump(by_alias=True, exclude_none=True, mode="json")
+            self.components.model_dump(by_alias=True, exclude_none=True)
         )
 
     def __len__(self) -> int:

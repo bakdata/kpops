@@ -39,6 +39,7 @@ class PipelineComponent(BaseDefaultsComponent, DescConfigModel):
     )
     from_: FromSection | None = Field(
         default=None,
+        serialization_alias="from",
         validation_alias=AliasChoices("from", "from_"),
         title="From",
         description=describe_attr("from_", __doc__),
