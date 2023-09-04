@@ -101,6 +101,8 @@ nav:
             - Environment variables: user/core-concepts/variables/environment_variables.md
             - Substitution: user/core-concepts/variables/substitution.md
     - References:
+      - Migration guide: 
+        - Migrate from v1 to v2: user/migration-guide/v1-v2.md
       - CLI usage: user/references/cli-commands.md
       - Editor integration: user/references/editor-integration.md
       - CI integration:
