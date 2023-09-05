@@ -449,10 +449,13 @@ class TestPipeline:
         )
         assert result.exit_code == 0
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
-        assert enriched_pipeline["components"][0]["app"]["streams"]["brokers"] == "env_broker"
+        assert (
+            enriched_pipeline["components"][0]["app"]["streams"]["brokers"]
+            == "env_broker"
+        )
 
     def test_model_serialization(self, snapshot: SnapshotTest):
-        """Test model serialization of component containing pathlib.Path attribute"""
+        """Test model serialization of component containing pathlib.Path attribute."""
         result = runner.invoke(
             app,
             [

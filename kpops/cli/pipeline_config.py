@@ -93,7 +93,7 @@ class PipelineConfig(BaseSettings):
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
 
-    class Config:
+    class Config(BaseConfig):
         config_path = Path("config.yaml")
         env_file = ".env"
         env_file_encoding = "utf-8"
