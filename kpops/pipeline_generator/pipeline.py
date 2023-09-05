@@ -208,12 +208,8 @@ class Pipeline:
                         original_from_component_name
                     )
                     inflated_from_component = original_from_component.inflate()[-1]
-                    if inflated_from_component is not original_from_component:
-                        resolved_from_component_name = inflated_from_component.name
-                    else:
-                        resolved_from_component_name = original_from_component_name
                     resolved_from_component = self.components.find(
-                        resolved_from_component_name
+                        inflated_from_component.name
                     )
                     enriched_component.weave_from_topics(
                         resolved_from_component.to, from_topic
