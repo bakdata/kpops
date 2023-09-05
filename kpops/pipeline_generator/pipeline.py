@@ -5,6 +5,7 @@ import logging
 from collections import Counter
 from collections.abc import Iterator
 from contextlib import suppress
+from itertools import chain
 from pathlib import Path
 
 import networkx as nx
@@ -170,7 +171,7 @@ class Pipeline:
         pipeline = cls(main_content, env_content, registry, config, handlers)
         return pipeline
 
-    def __generate_graph(self):
+    def __generate_graph(self) -> None:
         for component in self.components:
             all_input_topics = self.__get_all_input_topics(component)
             all_output_topics = self.__get_all_output_topics(component)
@@ -195,18 +196,18 @@ class Pipeline:
             self.components.graph.add_node(input_topic)
             self.components.graph.add_edge(input_topic, component_node_name)
 
-    def __get_vertex_component_name(self, component: PipelineComponent) -> str:
-        component_vertex_name = f"component-{component.name}"
-        return component_vertex_name
+    @staticmethod
+    def __get_vertex_component_name(component: PipelineComponent) -> str:
+        return f"component-{component.name}"
 
     def __get_all_output_topics(self, component: PipelineComponent) -> list[str]:
         all_output_topics: list[str] = []
-        output_topics = component.get_output_topic()
+        output_topic = component.get_output_topic()
         extra_output_topics = component.get_extra_output_topics()
-        if output_topics is not None:
-            all_output_topics += [output_topics]
-        if extra_output_topics is not None and extra_output_topics:
-            all_output_topics += list(extra_output_topics.values())
+        if output_topic is not None:
+            all_output_topics.append(output_topic)
+        if extra_output_topics:
+            all_output_topics.extend(list(extra_output_topics.values()))
         return all_output_topics
 
     def __get_all_input_topics(self, component: PipelineComponent) -> list[str]:
@@ -214,13 +215,9 @@ class Pipeline:
         extra_input_topics = component.get_extra_input_topics()
         all_input_topics: list[str] = []
         if input_topics is not None:
-            all_input_topics += input_topics
-        if extra_input_topics is not None and extra_input_topics:
-            all_input_topics += [
-                topic
-                for list_topics in extra_input_topics.values()
-                for topic in list_topics
-            ]
+            all_input_topics.extend(input_topics)
+        if extra_input_topics:
+            all_input_topics.extend(chain(*extra_input_topics.values()))
         return all_input_topics
 
     def parse_components(self, component_list: list[dict]) -> None:
