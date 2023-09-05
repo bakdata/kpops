@@ -241,7 +241,9 @@ class TestProducerApp:
             ),
         ]
 
-    def test_get_output_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
+    def test_get_output_topics(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ):
         producer_app = ProducerApp(
             name=self.PRODUCER_APP_NAME,
             config=config,
@@ -268,4 +270,6 @@ class TestProducerApp:
         )
 
         assert producer_app.get_output_topic() == "${output_topic_name}"
-        assert producer_app.get_extra_output_topics() == {"first-extra-topic": "extra-topic-1"}
+        assert producer_app.get_extra_output_topics() == {
+            "first-extra-topic": "extra-topic-1"
+        }
