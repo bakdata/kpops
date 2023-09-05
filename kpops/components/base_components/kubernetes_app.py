@@ -91,7 +91,7 @@ class KubernetesApp(PipelineComponent):
     @property
     def helm_release_name(self) -> str:
         """The name for the Helm release. Can be overridden."""
-        return self.name
+        return self.full_name
 
     @property
     def helm_chart(self) -> str:

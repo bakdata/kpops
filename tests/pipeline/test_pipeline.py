@@ -96,10 +96,8 @@ class TestPipeline:
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
-        assert (
-            enriched_pipeline["components"][0]["name"]
-            == "my-fake-prefix-my-streams-app"
-        )
+        assert enriched_pipeline["components"][0]["prefix"] == "my-fake-prefix-"
+        assert enriched_pipeline["components"][0]["name"] == "my-streams-app"
 
     def test_pipelines_with_env_values(self, snapshot: SnapshotTest):
         result = runner.invoke(
@@ -160,9 +158,10 @@ class TestPipeline:
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline["components"][0]["name"]
-            == "resources-component-type-substitution-scheduled-producer"
+            enriched_pipeline["components"][0]["prefix"]
+            == "resources-component-type-substitution-"
         )
+        assert enriched_pipeline["components"][0]["name"] == "scheduled-producer"
 
         labels = enriched_pipeline["components"][0]["app"]["labels"]
         assert labels["app_name"] == "scheduled-producer"
