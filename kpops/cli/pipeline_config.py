@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Callable
 
 from pydantic import BaseConfig, BaseSettings, Field
 from pydantic.env_settings import SettingsSourceCallable
@@ -104,10 +105,15 @@ class PipelineConfig(BaseSettings):
             init_settings: SettingsSourceCallable,
             env_settings: SettingsSourceCallable,
             file_secret_settings: SettingsSourceCallable,
-        ):
+        ) -> tuple[
+            SettingsSourceCallable,
+            SettingsSourceCallable,
+            Callable[["PipelineConfig"], dict | list],
+            SettingsSourceCallable,
+        ]:
             return (
-                init_settings,
                 env_settings,
+                init_settings,
                 yaml_config_settings_source,
                 file_secret_settings,
             )
