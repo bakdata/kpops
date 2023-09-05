@@ -124,7 +124,6 @@ class Pipeline:
         self.__generate_graph()
         self.validate()
 
-
     @classmethod
     def load_from_yaml(
         cls,
@@ -223,8 +222,6 @@ class Pipeline:
                 for topic in list_topics
             ]
         return all_input_topics
-
-
 
     def parse_components(self, component_list: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components
