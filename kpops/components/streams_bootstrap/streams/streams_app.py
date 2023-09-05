@@ -1,50 +1,31 @@
 from __future__ import annotations
 
-from typing import Literal
-
-from pydantic import Extra, Field
+from pydantic import Field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import StreamsAppConfig
-from kpops.utils.docstring import describe_attr, describe_object
-from kpops.utils.pydantic import DescConfig
+from kpops.utils.docstring import describe_attr
 
 
 class StreamsApp(KafkaApp):
     """StreamsApp component that configures a streams bootstrap app
 
-    :param type: Component type, defaults to "streams-app"
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "streams-app"
     :param app: Application-specific settings
     """
 
-    type: str = Field(
-        default="streams-app",
-        description=describe_attr("type", __doc__),
-    )
-    schema_type: Literal["streams-app"] = Field(
-        default="streams-app",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     app: StreamsAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )
-
-    class Config(DescConfig):
-        extra = Extra.allow
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
         self.app.streams.add_input_topics(topics)
 
     @override
-    def add_extra_input_topic(self, role: str, topics: list[str]) -> None:
+    def add_extra_input_topics(self, role: str, topics: list[str]) -> None:
         self.app.streams.add_extra_input_topics(role, topics)
 
     @override

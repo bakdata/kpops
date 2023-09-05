@@ -1,11 +1,11 @@
-- type: producer
+- type: producer-app
   name: producer1
   to:
     topics:
       ${output_topic_name}:
         type: output
 
-- type: producer
+- type: producer-app
   name: producer2
   prefix: ""
   to:

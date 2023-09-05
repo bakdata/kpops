@@ -235,6 +235,8 @@ class Pipeline:
             # HACK: Pydantic .dict() doesn't create jsonable dict
             json.loads(component.json(by_alias=True)),
         )
+        # HACK: make sure component type is set for inflated components, because property is not serialized by Pydantic
+        env_component_as_dict["type"] = component.type
 
         component_data = self.substitute_in_component(env_component_as_dict)
 

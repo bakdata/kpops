@@ -1,14 +1,17 @@
+import inspect
 import logging
+from abc import ABC
 from enum import Enum
-from typing import Annotated, Any, Literal, Sequence, Union, get_args, get_origin
+from typing import Annotated, Any, Literal, Sequence, Union
 
-from pydantic import Field, schema, schema_json_of
-from pydantic.fields import ModelField
+from pydantic import BaseConfig, Field, schema, schema_json_of
+from pydantic.fields import FieldInfo, ModelField
 from pydantic.schema import SkipField
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.utils.docstring import describe_object
 
 
 class SchemaScope(str, Enum):
@@ -42,35 +45,14 @@ def _is_valid_component(
     :param component: component type to be validated
     :return: Whether component is valid for schema generation
     """
-    component_name = component.__name__
-    component_type = component.get_component_type()
-    schema_type = component.__fields__.get("schema_type")
-    if not schema_type:
-        log.warning(f"SKIPPED {component_name}, schema_type is not defined")
+    if inspect.isabstract(component) or ABC in component.__bases__:
+        log.warning(f"SKIPPED {component.__name__}, component is abstract.")
         return False
-    schema_type_default = schema_type.field_info.default
-    if (
-        get_origin(schema_type.type_) is not Literal
-        or len(get_args(schema_type.type_)) != 1
-    ):
-        log.warning(
-            f"SKIPPED {component_name}, schema_type must be a Literal with 1 argument of type str."
-        )
+    if component.type in defined_component_types:
+        log.warning(f"SKIPPED {component.__name__}, component type must be unique.")
         return False
-    elif get_args(schema_type.type_)[0] != schema_type_default:
-        log.warning(
-            f"SKIPPED {component_name}, schema_type default value must match Literal arg"
-        )
-        return False
-    elif schema_type_default != component_type:
-        log.warning(f"SKIPPED {component_name}, schema_type != type.")
-        return False
-    elif schema_type_default in defined_component_types:
-        log.warning(f"SKIPPED {component_name}, schema_type must be unique.")
-        return False
-    else:
-        defined_component_types.add(schema_type_default)
-        return True
+    defined_component_types.add(component.type)
+    return True
 
 
 def _add_components(
@@ -89,16 +71,12 @@ def _add_components(
     if components is None:
         components = tuple()
     # Set of existing types, against which to check the new ones
-    defined_component_types: set[str] = {
-        component.__fields__["schema_type"].default
-        for component in components
-        if component.__fields__.get("schema_type")
-    }
-    custom_components = [
+    defined_component_types = {component.type for component in components}
+    custom_components = (
         component
         for component in _find_classes(components_module, PipelineComponent)
         if _is_valid_component(defined_component_types, component)
-    ]
+    )
     components += tuple(custom_components)
     return components
 
@@ -117,33 +95,50 @@ def gen_pipeline_schema(
         log.warning("No components are provided, no schema is generated.")
         return
     # Add stock components if enabled
+    components: tuple[type[PipelineComponent]] = tuple()
     if include_stock_components:
-        components = tuple(_find_classes("kpops.components", PipelineComponent))
-    else:
-        components = tuple()
+        components = _add_components("kpops.components")
     # Add custom components if provided
     if components_module:
         components = _add_components(components_module, components)
+    if not components:
+        raise RuntimeError("No valid components found.")
     # Create a type union that will hold the union of all component types
     PipelineComponents = Union[components]  # type: ignore[valid-type]
 
+    # re-assign component type as Literal to work as discriminator
+    for component in components:
+        component.__fields__["type"] = ModelField(
+            name="type",
+            type_=Literal[component.type],  # type: ignore
+            required=False,
+            default=component.type,
+            final=True,
+            field_info=FieldInfo(
+                title="Component type",
+                description=describe_object(component.__doc__),
+            ),
+            model_config=BaseConfig,
+            class_validators=None,
+        )
+
     AnnotatedPipelineComponents = Annotated[
-        PipelineComponents, Field(discriminator="schema_type")
+        PipelineComponents, Field(discriminator="type")
     ]
 
     schema = schema_json_of(
         Sequence[AnnotatedPipelineComponents],
-        title="kpops pipeline schema",
+        title="KPOps pipeline schema",
         by_alias=True,
         indent=4,
         sort_keys=True,
-    ).replace("schema_type", "type")
+    )
     print(schema)
 
 
 def gen_config_schema() -> None:
     """Generate a json schema from the model of pipeline config"""
     schema = schema_json_of(
-        PipelineConfig, title="kpops config schema", indent=4, sort_keys=True
+        PipelineConfig, title="KPOps config schema", indent=4, sort_keys=True
     )
     print(schema)

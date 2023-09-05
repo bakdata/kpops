@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import re
 from functools import cached_property
-from typing import Any, Literal
+from typing import Any
 
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
@@ -19,7 +19,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 log = logging.getLogger("KubernetesAppComponent")
@@ -41,45 +41,30 @@ class KubernetesApp(PipelineComponent):
 
     All built-in components are Kubernetes apps, except for the Kafka connectors.
 
-    :param type: Component type, defaults to "kubernetes-app"
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kubernetes-app"
     :param app: Application-specific settings
     :param repo_config: Configuration of the Helm chart repo to be used for
-        deploying the component, defaults to None
+        deploying the component, defaults to None this means that the command "helm repo add" is not called and Helm
+        expects a path to local Helm chart.
     :param namespace: Namespace in which the component shall be deployed
     :param version: Helm chart version, defaults to None
     """
 
-    type: str = Field(
-        default="kubernetes-app",
-        description=describe_attr("type", __doc__),
-    )
     namespace: str = Field(
         default=...,
         description=describe_attr("namespace", __doc__),
-    )
-    schema_type: Literal["kubernetes-app"] = Field(
-        default="kubernetes-app",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
     )
     app: KubernetesAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )
-    repo_config: HelmRepoConfig = Field(
-        default=...,
+    repo_config: HelmRepoConfig | None = Field(
+        default=None,
         description=describe_attr("repo_config", __doc__),
     )
     version: str | None = Field(
         default=None,
         description=describe_attr("version", __doc__),
     )
-
-    class Config(CamelCaseConfig, DescConfig):
-        pass
 
     @cached_property
     def helm(self) -> Helm:
@@ -118,8 +103,9 @@ class KubernetesApp(PipelineComponent):
     @property
     def helm_flags(self) -> HelmFlags:
         """Return shared flags for Helm commands"""
+        auth_flags = self.repo_config.repo_auth_flags.dict() if self.repo_config else {}
         return HelmFlags(
-            **self.repo_config.repo_auth_flags.dict(),
+            **auth_flags,
             version=self.version,
             create_namespace=self.config.create_namespace,
         )

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Literal
+from abc import ABC
 
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
@@ -15,7 +15,7 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
 )
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 log = logging.getLogger("KafkaApp")
@@ -52,14 +52,11 @@ class KafkaAppConfig(KubernetesAppConfig):
     )
 
 
-class KafkaApp(KubernetesApp):
+class KafkaApp(KubernetesApp, ABC):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.
 
-    :param type: Component type, defaults to "kafka-app"
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-app"
     :param app: Application-specific settings
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component,
@@ -67,13 +64,6 @@ class KafkaApp(KubernetesApp):
     :param version: Helm chart version, defaults to "2.9.0"
     """
 
-    type: str = Field(default="kafka-app", description=describe_attr("type", __doc__))
-    schema_type: Literal["kafka-app"] = Field(
-        default="kafka-app",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     app: KafkaAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),
@@ -160,7 +150,7 @@ class KafkaApp(KubernetesApp):
         """Install clean up job
 
         :param release_name: Name of the Helm release
-        :param suffix: Suffix to add to the realease name, e.g. "-clean"
+        :param suffix: Suffix to add to the release name, e.g. "-clean"
         :param values: The Helm values for the chart
         :param dry_run: Whether to do a dry run of the command
         :return: Install clean up job with helm, return the output of the installation

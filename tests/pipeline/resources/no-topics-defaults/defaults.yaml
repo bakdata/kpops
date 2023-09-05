@@ -4,7 +4,7 @@ kafka-app:
       brokers: "${brokers}"
       schemaRegistryUrl: "${schema_registry_url}"
 
-producer:
+producer-app:
   to:
     topics:
       ${output_topic_name}:

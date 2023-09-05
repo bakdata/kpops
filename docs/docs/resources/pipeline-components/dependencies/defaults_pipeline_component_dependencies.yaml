@@ -22,8 +22,8 @@ kubernetes-app.yaml:
 - app-kubernetes-app.yaml
 - repo_config-kubernetes-app.yaml
 - version.yaml
-producer.yaml:
-- from_-producer.yaml
-- app-producer.yaml
+producer-app.yaml:
+- from_-producer-app.yaml
+- app-producer-app.yaml
 streams-app.yaml:
 - app-streams-app.yaml
