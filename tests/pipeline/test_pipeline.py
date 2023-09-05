@@ -506,7 +506,9 @@ class TestPipeline:
         assert len(pipeline.components.graph.nodes) == 3
         assert len(pipeline.components.graph.edges) == 2
         node_components = list(
-            filter(lambda node_id: "component" in node_id, pipeline.components.graph.nodes)
+            filter(
+                lambda node_id: "component" in node_id, pipeline.components.graph.nodes
+            )
         )
         assert len(pipeline.components) == len(node_components)
 
