@@ -6,7 +6,7 @@ from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 import kpops
-from kpops.cli.main import app
+from kpops.cli.main import app, create_pipeline_config, setup_pipeline
 from kpops.pipeline_generator.pipeline import ParsingException, ValidationError
 
 runner = CliRunner()
@@ -482,7 +482,7 @@ class TestPipeline:
             )
 
     def test_validate_loops_on_pipeline(self):
-        with pytest.raises(ValueError, match="Component graph contain loops!"):
+        with pytest.raises(ValueError, match="Pipeline contains cycles."):
             runner.invoke(
                 app,
                 [
@@ -495,3 +495,31 @@ class TestPipeline:
                 ],
                 catch_exceptions=False,
             )
+
+    def test_validate_simple_graph(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "pipelines-with-graphs/simple-pipeline/pipeline.yaml",
+            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
+            defaults=RESOURCE_PATH / "pipelines-with-graphs" / "simple-pipeline",
+        )
+        assert len(pipeline.components) == 2
+        assert len(pipeline.components.graph.nodes) == 3
+        assert len(pipeline.components.graph.edges) == 2
+        node_components = list(
+            filter(lambda x: "component" in x, pipeline.components.graph.nodes)
+        )
+        assert len(pipeline.components) == len(node_components)
+
+    def test_validate_topic_and_component_same_name(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH
+            / "pipelines-with-graphs/same-topic-and-component-name/pipeline.yaml",
+            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
+            defaults=RESOURCE_PATH
+            / "pipelines-with-graphs"
+            / "same-topic-and-component-name",
+        )
+        nodes = list(pipeline.components.graph.nodes)
+        edges = list(pipeline.components.graph.edges)
+        assert nodes[2] == f"component-{nodes[3]}"
+        assert (nodes[2], nodes[3]) in edges

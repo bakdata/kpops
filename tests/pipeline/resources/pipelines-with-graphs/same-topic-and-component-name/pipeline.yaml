@@ -1,0 +1,17 @@
+- type: producer
+  name: app1
+  app:
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+
+- type: streams-app
+  name: app2-processor
+  app:
+    image: some-image
+  to:
+    topics:
+      app2-processor:
+        type: output

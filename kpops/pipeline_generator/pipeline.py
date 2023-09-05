@@ -36,7 +36,7 @@ class PipelineComponents(BaseModel):
     """Stores the pipeline components"""
 
     components: list[PipelineComponent] = []
-    graph_components: nx.DiGraph = Field(default=nx.DiGraph(), exclude=True)
+    graph: nx.DiGraph = Field(default=nx.DiGraph(), exclude=True)
 
     class Config:
         arbitrary_types_allowed = True
@@ -65,8 +65,8 @@ class PipelineComponents(BaseModel):
         return len(self.components)
 
     def validate_graph_components(self) -> None:
-        if not nx.is_directed_acyclic_graph(self.graph_components):
-            raise ValueError("Component graph contain loops!")
+        if not nx.is_directed_acyclic_graph(self.graph):
+            raise ValueError("Pipeline contains cycles.")
 
     def validate_unique_names(self) -> None:
         step_names = [component.name for component in self.components]
@@ -176,7 +176,7 @@ class Pipeline:
             all_output_topics = self.__get_all_output_topics(component)
 
             component_node_name = self.__get_vertex_component_name(component)
-            self.components.graph_components.add_node(component_node_name)
+            self.components.graph.add_node(component_node_name)
 
             self.__add_ingoing_edges(all_input_topics, component_node_name)
             self.__add_outgoing_edges(all_output_topics, component_node_name)
@@ -185,15 +185,15 @@ class Pipeline:
         self, all_output_topics: list[str], component_node_name: str
     ) -> None:
         for output_topic in all_output_topics:
-            self.components.graph_components.add_node(output_topic)
-            self.components.graph_components.add_edge(component_node_name, output_topic)
+            self.components.graph.add_node(output_topic)
+            self.components.graph.add_edge(component_node_name, output_topic)
 
     def __add_ingoing_edges(
         self, all_input_topics: list[str], component_node_name: str
     ) -> None:
         for input_topic in all_input_topics:
-            self.components.graph_components.add_node(input_topic)
-            self.components.graph_components.add_edge(input_topic, component_node_name)
+            self.components.graph.add_node(input_topic)
+            self.components.graph.add_edge(input_topic, component_node_name)
 
     def __get_vertex_component_name(self, component: PipelineComponent) -> str:
         component_vertex_name = f"component-{component.name}"
