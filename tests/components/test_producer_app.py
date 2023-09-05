@@ -240,3 +240,32 @@ class TestProducerApp:
                 "test-namespace", self.PRODUCER_APP_CLEAN_NAME, False
             ),
         ]
+
+    def test_get_output_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
+        producer_app = ProducerApp(
+            name=self.PRODUCER_APP_NAME,
+            config=config,
+            handlers=handlers,
+            **{
+                "namespace": "test-namespace",
+                "app": {
+                    "namespace": "test-namespace",
+                    "streams": {"brokers": "fake-broker:9092"},
+                },
+                "to": {
+                    "topics": {
+                        "${output_topic_name}": TopicConfig(
+                            type=OutputTopicTypes.OUTPUT, partitions_count=10
+                        ),
+                        "extra-topic-1": TopicConfig(
+                            type=OutputTopicTypes.EXTRA,
+                            role="first-extra-topic",
+                            partitions_count=10,
+                        ),
+                    }
+                },
+            },
+        )
+
+        assert producer_app.get_output_topic() == "${output_topic_name}"
+        assert producer_app.get_extra_output_topics() == {"first-extra-topic": "extra-topic-1"}

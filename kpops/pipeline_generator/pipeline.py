@@ -6,7 +6,6 @@ from collections import Counter
 from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
-import matplotlib.pyplot as plt
 
 import networkx as nx
 import yaml
@@ -65,6 +64,10 @@ class PipelineComponents(BaseModel):
     def __len__(self) -> int:
         return len(self.components)
 
+    def validate_graph_components(self) -> None:
+        if not nx.is_directed_acyclic_graph(self.graph_components):
+            raise ValueError("Component graph contain loops!")
+
     def validate_unique_names(self) -> None:
         step_names = [component.name for component in self.components]
         duplicates = [name for name, count in Counter(step_names).items() if count > 1]
@@ -118,9 +121,9 @@ class Pipeline:
         self.registry = registry
         self.env_components_index = create_env_components_index(environment_components)
         self.parse_components(component_list)
-        self.validate()
         self.__generate_graph()
-        self.__validate_graph_components()
+        self.validate()
+
 
     @classmethod
     def load_from_yaml(
@@ -221,9 +224,7 @@ class Pipeline:
             ]
         return all_input_topics
 
-    def __validate_graph_components(self) -> None:
-        if not nx.is_directed_acyclic_graph(self.components.graph_components):
-            raise ValueError("Component graph contain loops!")
+
 
     def parse_components(self, component_list: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components
@@ -392,6 +393,7 @@ class Pipeline:
 
     def validate(self) -> None:
         self.components.validate_unique_names()
+        self.components.validate_graph_components()
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
