@@ -506,7 +506,7 @@ class TestPipeline:
         assert len(pipeline.components.graph.nodes) == 3
         assert len(pipeline.components.graph.edges) == 2
         node_components = list(
-            filter(lambda x: "component" in x, pipeline.components.graph.nodes)
+            filter(lambda node_id: "component" in node_id, pipeline.components.graph.nodes)
         )
         assert len(pipeline.components) == len(node_components)
 
@@ -519,7 +519,7 @@ class TestPipeline:
             / "pipelines-with-graphs"
             / "same-topic-and-component-name",
         )
-        nodes = list(pipeline.components.graph.nodes)
+        component, topic = list(pipeline.components.graph.nodes)
         edges = list(pipeline.components.graph.edges)
-        assert nodes[2] == f"component-{nodes[3]}"
-        assert (nodes[2], nodes[3]) in edges
+        assert component == f"component-{topic}"
+        assert (component, topic) in edges

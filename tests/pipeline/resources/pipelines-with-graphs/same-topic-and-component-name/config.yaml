@@ -5,3 +5,4 @@ helm_diff_config:
   enable: false
 kafka_connect_host: "kafka_connect_host:8083"
 kafka_rest_host: "kafka_rest_host:8082"
+
