@@ -6,7 +6,7 @@ from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 import kpops
-from kpops.cli.main import app, create_pipeline_config, setup_pipeline
+from kpops.cli.main import app
 from kpops.pipeline_generator.pipeline import ParsingException, ValidationError
 
 runner = CliRunner()
