@@ -6,6 +6,8 @@ Can be used to deploy any app in Kubernetes using Helm, for example, a REST serv
 
 ### Configuration
 
+<!-- dprint-ignore-start -->
+
 ??? example "`pipeline.yaml`"
 
     ```yaml
@@ -13,6 +15,8 @@ Can be used to deploy any app in Kubernetes using Helm, for example, a REST serv
     ./docs/resources/pipeline-components/kubernetes-app.yaml
     --8<--
     ```
+
+<!-- dprint-ignore-end -->
 
 ### Operations
 

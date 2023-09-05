@@ -10,6 +10,8 @@ Subclass of [_KubernetesApp_](kubernetes-app.md).
 
 ### Configuration
 
+<!-- dprint-ignore-start -->
+
 ??? example "`pipeline.yaml`"
 
     ```yaml
@@ -17,6 +19,8 @@ Subclass of [_KubernetesApp_](kubernetes-app.md).
     ./docs/resources/pipeline-components/kafka-app.yaml
     --8<--
     ```
+
+<!-- dprint-ignore-end -->
 
 ### Operations
 

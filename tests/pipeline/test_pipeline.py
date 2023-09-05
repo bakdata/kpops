@@ -1,4 +1,5 @@
 import os
+import logging
 from pathlib import Path
 
 import pytest
@@ -47,6 +48,36 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
+    def test_generate_with_steps_flag_should_write_log_warning(
+        self, caplog: pytest.LogCaptureFixture
+    ):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "first-pipeline/pipeline.yaml"),
+                "tests.pipeline.test_components",
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--steps",
+                "a",
+            ],
+            catch_exceptions=False,
+        )
+
+        assert caplog.record_tuples == [
+            (
+                "root",
+                logging.WARNING,
+                "The following flags are considered only when `--template` is set: \n \
+                '--steps'",
+            )
+        ]
+
+        assert result.exit_code == 0
+
     def test_name_equal_prefix_name_concatenation(self):
         result = runner.invoke(
             app,
@@ -66,10 +97,8 @@ class TestPipeline:
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
-        assert (
-            enriched_pipeline["components"][0]["name"]
-            == "my-fake-prefix-my-streams-app"
-        )
+        assert enriched_pipeline["components"][0]["prefix"] == "my-fake-prefix-"
+        assert enriched_pipeline["components"][0]["name"] == "my-streams-app"
 
     def test_pipelines_with_env_values(self, snapshot: SnapshotTest):
         result = runner.invoke(
@@ -130,9 +159,10 @@ class TestPipeline:
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline["components"][0]["name"]
-            == "resources-component-type-substitution-scheduled-producer"
+            enriched_pipeline["components"][0]["prefix"]
+            == "resources-component-type-substitution-"
         )
+        assert enriched_pipeline["components"][0]["name"] == "scheduled-producer"
 
         labels = enriched_pipeline["components"][0]["app"]["labels"]
         assert labels["app_name"] == "scheduled-producer"

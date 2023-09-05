@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from abc import ABC
+
 from pydantic import Extra, Field
 
 from kpops.components.base_components.base_defaults_component import (
@@ -19,7 +21,7 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfig
 
 
-class PipelineComponent(BaseDefaultsComponent):
+class PipelineComponent(BaseDefaultsComponent, ABC):
     """Base class for all components
 
     :param name: Component name
@@ -55,6 +57,10 @@ class PipelineComponent(BaseDefaultsComponent):
         super().__init__(**kwargs)
         self.set_input_topics()
         self.set_output_topics()
+
+    @property
+    def full_name(self) -> str:
+        return self.prefix + self.name
 
     def add_input_topics(self, topics: list[str]) -> None:
         """Add given topics to the list of input topics.

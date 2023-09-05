@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from abc import ABC
 
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
@@ -51,7 +52,7 @@ class KafkaAppConfig(KubernetesAppConfig):
     )
 
 
-class KafkaApp(KubernetesApp):
+class KafkaApp(KubernetesApp, ABC):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.
@@ -149,7 +150,7 @@ class KafkaApp(KubernetesApp):
         """Install clean up job
 
         :param release_name: Name of the Helm release
-        :param suffix: Suffix to add to the realease name, e.g. "-clean"
+        :param suffix: Suffix to add to the release name, e.g. "-clean"
         :param values: The Helm values for the chart
         :param dry_run: Whether to do a dry run of the command
         :return: Install clean up job with helm, return the output of the installation
