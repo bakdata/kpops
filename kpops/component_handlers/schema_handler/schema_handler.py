@@ -8,7 +8,7 @@ from schema_registry.client import SchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
 
 from kpops.cli.exception import ClassNotFoundError
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.cli.pipeline_config import PipelineConfig, SchemaRegistryConfig
 from kpops.cli.registry import find_class
 from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
@@ -21,8 +21,12 @@ log = logging.getLogger("SchemaHandler")
 
 
 class SchemaHandler:
-    def __init__(self, url: str, components_module: str | None):
-        self.schema_registry_client = SchemaRegistryClient(url)
+    def __init__(
+        self,
+        schema_registry_config: SchemaRegistryConfig,
+        components_module: str | None,
+    ):
+        self.schema_registry_client = SchemaRegistryClient(schema_registry_config.url)
         self.components_module = components_module
 
     @cached_property
@@ -46,7 +50,7 @@ class SchemaHandler:
     ) -> SchemaHandler | None:
         if config.schema_registry.enabled:
             return cls(
-                url=config.schema_registry.url,
+                schema_registry_config=config.schema_registry,
                 components_module=components_module,
             )
         return None

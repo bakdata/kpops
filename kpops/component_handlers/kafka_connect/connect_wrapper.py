@@ -25,7 +25,7 @@ class ConnectWrapper:
     Wraps Kafka Connect APIs
     """
 
-    def __init__(self, host: AnyHttpUrl):
+    def __init__(self, host: AnyHttpUrl) -> None:
         self._host: str = host
 
     @property

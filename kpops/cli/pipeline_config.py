@@ -23,6 +23,8 @@ class TopicNameConfig(BaseSettings):
 
 
 class SchemaRegistryConfig(BaseSettings):
+    """Configures schema registry."""
+
     enabled: bool = Field(
         default=False,
         description="If the Schema Registry handler should be initialized.",
