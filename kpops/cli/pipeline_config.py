@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from pydantic import BaseConfig, BaseSettings, Field
+from pydantic import AnyHttpUrl, BaseConfig, BaseSettings, Field, parse_obj_as
 from pydantic.env_settings import SettingsSourceCallable
 
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
@@ -27,8 +27,8 @@ class SchemaRegistryConfig(BaseSettings):
         default=False,
         description="If the Schema Registry handler should be initialized.",
     )
-    url: str = Field(
-        default="http://localhost:8081",
+    url: AnyHttpUrl = Field(
+        default=parse_obj_as(AnyHttpUrl, "http://localhost:8081"),
         env=f"{ENV_PREFIX}SCHEMA_REGISTRY_URL",
         description="Address of the Schema Registry.",
     )
@@ -68,13 +68,15 @@ class PipelineConfig(BaseSettings):
         default=SchemaRegistryConfig(),
         description="Configure the Schema Registry.",
     )
-    kafka_rest_host: str = Field(
-        default="http://localhost:8082",
+    kafka_rest_host: AnyHttpUrl = Field(
+        # For validating URLs use parse_obj_as
+        # https://github.com/pydantic/pydantic/issues/1106
+        default=parse_obj_as(AnyHttpUrl, "http://localhost:8082"),
         env=f"{ENV_PREFIX}REST_PROXY_HOST",
         description="Address of the Kafka REST Proxy.",
     )
-    kafka_connect_host: str = Field(
-        default="http://localhost:8083",
+    kafka_connect_host: AnyHttpUrl = Field(
+        default=parse_obj_as(AnyHttpUrl, "http://localhost:8083"),
         env=f"{ENV_PREFIX}CONNECT_HOST",
         description="Address of Kafka Connect.",
     )

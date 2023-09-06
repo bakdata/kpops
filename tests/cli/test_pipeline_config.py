@@ -1,6 +1,9 @@
 from pathlib import Path
 
-from kpops.cli.pipeline_config import PipelineConfig
+import pytest
+from pydantic import AnyHttpUrl, ValidationError, parse_obj_as
+
+from kpops.cli.pipeline_config import PipelineConfig, SchemaRegistryConfig
 
 
 def test_pipeline_config_with_default_values():
@@ -29,3 +32,29 @@ def test_pipeline_config_with_default_values():
     assert default_config.helm_config.api_version is None
     assert default_config.helm_diff_config.ignore == set()
     assert default_config.retain_clean_jobs is False
+
+
+def test_pipeline_config_with_different_invalid_urls():
+    with pytest.raises(ValidationError):
+        PipelineConfig(
+            environment="development",
+            brokers="http://broker:9092",
+            kafka_connect_host=parse_obj_as(AnyHttpUrl, "in-valid-host"),
+        )
+
+    with pytest.raises(ValidationError):
+        PipelineConfig(
+            environment="development",
+            brokers="http://broker:9092",
+            kafka_rest_host=parse_obj_as(AnyHttpUrl, "in-valid-host"),
+        )
+
+    with pytest.raises(ValidationError):
+        PipelineConfig(
+            environment="development",
+            brokers="http://broker:9092",
+            schema_registry=SchemaRegistryConfig(
+                enabled=True,
+                url=parse_obj_as(AnyHttpUrl, "in-valid-host"),
+            ),
+        )

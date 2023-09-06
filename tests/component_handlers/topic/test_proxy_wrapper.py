@@ -16,7 +16,7 @@ from kpops.component_handlers.topic.model import TopicResponse, TopicSpec
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 
 HEADERS = {"Content-Type": "application/json"}
-HOST = "http://localhost:8082"
+DEFAULT_HOST = "http://localhost:8082"
 DEFAULTS_PATH = Path(__file__).parent.parent / "resources"
 
 
@@ -31,9 +31,7 @@ class TestProxyWrapper:
 
     @pytest.fixture(autouse=True)
     def setup(self, httpx_mock: HTTPXMock):
-        config = PipelineConfig(
-            defaults_path=DEFAULTS_PATH, environment="development", kafka_rest_host=HOST
-        )
+        config = PipelineConfig(defaults_path=DEFAULTS_PATH, environment="development")
         self.proxy_wrapper = ProxyWrapper(pipeline_config=config)
 
         with open(
@@ -43,11 +41,11 @@ class TestProxyWrapper:
 
         httpx_mock.add_response(
             method="GET",
-            url=f"{HOST}/v3/clusters",
+            url=f"{DEFAULT_HOST}/v3/clusters",
             json=cluster_response,
             status_code=200,
         )
-        assert self.proxy_wrapper.host == HOST
+        assert self.proxy_wrapper.host == DEFAULT_HOST
         assert self.proxy_wrapper.cluster_id == "cluster-1"
 
     @patch("httpx.post")
@@ -68,7 +66,7 @@ class TestProxyWrapper:
             self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
 
         mock_post.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
+            url=f"{DEFAULT_HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec,
         )
@@ -81,7 +79,7 @@ class TestProxyWrapper:
             self.proxy_wrapper.create_topic(topic_spec=TopicSpec(**topic_spec))
 
         mock_post.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
+            url=f"{DEFAULT_HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec,
         )
@@ -94,7 +92,7 @@ class TestProxyWrapper:
             self.proxy_wrapper.get_topic(topic_name=topic_name)
 
         mock_get.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
+            url=f"{DEFAULT_HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
 
@@ -112,7 +110,7 @@ class TestProxyWrapper:
             )
 
         mock_put.assert_called_with(
-            url=f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
+            url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={
                 "data": [
@@ -130,7 +128,7 @@ class TestProxyWrapper:
             self.proxy_wrapper.delete_topic(topic_name=topic_name)
 
         mock_delete.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
+            url=f"{DEFAULT_HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
 
@@ -140,7 +138,7 @@ class TestProxyWrapper:
             self.proxy_wrapper.get_broker_config()
 
         mock_get.assert_called_with(
-            url=f"{HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/brokers/-/configs",
+            url=f"{DEFAULT_HOST}/v3/clusters/{self.proxy_wrapper.cluster_id}/brokers/-/configs",
             headers=HEADERS,
         )
 
@@ -159,7 +157,7 @@ class TestProxyWrapper:
 
         httpx_mock.add_response(
             method="POST",
-            url=f"{HOST}/v3/clusters/cluster-1/topics",
+            url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics",
             json=topic_spec,
             headers=HEADERS,
             status_code=201,
@@ -174,7 +172,7 @@ class TestProxyWrapper:
 
         httpx_mock.add_response(
             method="DELETE",
-            url=f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}",
+            url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
             status_code=204,
         )
@@ -203,7 +201,7 @@ class TestProxyWrapper:
 
         httpx_mock.add_response(
             method="GET",
-            url=f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}",
+            url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
             status_code=200,
             json=res,
@@ -221,7 +219,7 @@ class TestProxyWrapper:
 
         httpx_mock.add_response(
             method="GET",
-            url=f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}",
+            url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}",
             headers=HEADERS,
             status_code=404,
             json={
@@ -241,7 +239,7 @@ class TestProxyWrapper:
 
         httpx_mock.add_response(
             method="POST",
-            url=f"{HOST}/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
+            url=f"{DEFAULT_HOST}/v3/clusters/cluster-1/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={"data": [{"name": config_name, "operation": "DELETE"}]},
             status_code=204,

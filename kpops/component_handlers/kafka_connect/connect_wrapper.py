@@ -3,6 +3,7 @@ import time
 from time import sleep
 
 import httpx
+from pydantic import AnyHttpUrl
 
 from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
@@ -24,7 +25,7 @@ class ConnectWrapper:
     Wraps Kafka Connect APIs
     """
 
-    def __init__(self, host: str):
+    def __init__(self, host: AnyHttpUrl):
         self._host: str = host
 
     @property
