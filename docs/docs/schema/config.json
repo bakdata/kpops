@@ -127,22 +127,22 @@
                     "title": "Helm Diff Config"
                 },
                 "kafka_connect_host": {
+                    "default": "http://localhost:8083",
                     "description": "Address of Kafka Connect.",
                     "env": "KPOPS_CONNECT_HOST",
                     "env_names": [
                         "kpops_connect_host"
                     ],
-                    "example": "http://localhost:8083",
                     "title": "Kafka Connect Host",
                     "type": "string"
                 },
                 "kafka_rest_host": {
+                    "default": "http://localhost:8082",
                     "description": "Address of the Kafka REST Proxy.",
                     "env": "KPOPS_REST_PROXY_HOST",
                     "env_names": [
                         "kpops_rest_proxy_host"
                     ],
-                    "example": "http://localhost:8082",
                     "title": "Kafka Rest Host",
                     "type": "string"
                 },
@@ -156,15 +156,21 @@
                     "title": "Retain Clean Jobs",
                     "type": "boolean"
                 },
-                "schema_registry_url": {
-                    "description": "Address of the Schema Registry.",
-                    "env": "KPOPS_SCHEMA_REGISTRY_URL",
-                    "env_names": [
-                        "kpops_schema_registry_url"
+                "schema_registry": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/SchemaRegistryConfig"
+                        }
                     ],
-                    "example": "http://localhost:8081",
-                    "title": "Schema Registry Url",
-                    "type": "string"
+                    "default": {
+                        "enabled": false,
+                        "url": "http://localhost:8081"
+                    },
+                    "description": "Configure the Schema Registry.",
+                    "env_names": [
+                        "schema_registry"
+                    ],
+                    "title": "Schema Registry"
                 },
                 "timeout": {
                     "default": 300,
@@ -198,6 +204,33 @@
                 "brokers"
             ],
             "title": "PipelineConfig",
+            "type": "object"
+        },
+        "SchemaRegistryConfig": {
+            "additionalProperties": false,
+            "description": "Base class for settings, allowing values to be overridden by environment variables.\n\nThis is useful in production for secrets you do not wish to save in code, it plays nicely with docker(-compose),\nHeroku and any 12 factor app design.",
+            "properties": {
+                "enabled": {
+                    "default": false,
+                    "description": "If the Schema Registry handler should be initialized.",
+                    "env_names": [
+                        "enabled"
+                    ],
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "url": {
+                    "default": "http://localhost:8081",
+                    "description": "Address of the Schema Registry.",
+                    "env": "KPOPS_SCHEMA_REGISTRY_URL",
+                    "env_names": [
+                        "kpops_schema_registry_url"
+                    ],
+                    "title": "Url",
+                    "type": "string"
+                }
+            },
+            "title": "SchemaRegistryConfig",
             "type": "object"
         },
         "TopicNameConfig": {

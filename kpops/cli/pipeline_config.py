@@ -22,6 +22,18 @@ class TopicNameConfig(BaseSettings):
     )
 
 
+class SchemaRegistryConfig(BaseSettings):
+    enabled: bool = Field(
+        default=False,
+        description="If the Schema Registry handler should be initialized.",
+    )
+    url: str = Field(
+        default="http://localhost:8081",
+        env=f"{ENV_PREFIX}SCHEMA_REGISTRY_URL",
+        description="Address of the Schema Registry.",
+    )
+
+
 class PipelineConfig(BaseSettings):
     """Pipeline configuration unrelated to the components."""
 
@@ -52,22 +64,18 @@ class PipelineConfig(BaseSettings):
         default=TopicNameConfig(),
         description="Configure the topic name variables you can use in the pipeline definition.",
     )
-    schema_registry_url: str | None = Field(
-        default=None,
-        example="http://localhost:8081",
-        env=f"{ENV_PREFIX}SCHEMA_REGISTRY_URL",
-        description="Address of the Schema Registry.",
+    schema_registry: SchemaRegistryConfig = Field(
+        default=SchemaRegistryConfig(),
+        description="Configure the Schema Registry.",
     )
-    kafka_rest_host: str | None = Field(
-        default=None,
+    kafka_rest_host: str = Field(
+        default="http://localhost:8082",
         env=f"{ENV_PREFIX}REST_PROXY_HOST",
-        example="http://localhost:8082",
         description="Address of the Kafka REST Proxy.",
     )
-    kafka_connect_host: str | None = Field(
-        default=None,
+    kafka_connect_host: str = Field(
+        default="http://localhost:8083",
         env=f"{ENV_PREFIX}CONNECT_HOST",
-        example="http://localhost:8083",
         description="Address of Kafka Connect.",
     )
     timeout: int = Field(

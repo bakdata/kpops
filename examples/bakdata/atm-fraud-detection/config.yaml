@@ -6,7 +6,9 @@ topic_name_config:
 
 brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
 
-schema_registry_url: "http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081"
+schema_registry:
+  enabled: true
+  url: "http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081"
 
 kafka_rest_host: "http://localhost:8082"
 

@@ -24,13 +24,7 @@ class ConnectWrapper:
     Wraps Kafka Connect APIs
     """
 
-    def __init__(self, host: str | None):
-        if not host:
-            error_message = (
-                "The Kafka Connect host is not set. Please set the host in the config."
-            )
-            log.error(error_message)
-            raise RuntimeError(error_message)
+    def __init__(self, host: str):
         self._host: str = host
 
     @property

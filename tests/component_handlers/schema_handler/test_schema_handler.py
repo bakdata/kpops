@@ -9,7 +9,7 @@ from pytest_mock import MockerFixture
 from schema_registry.client.schema import AvroSchema
 from schema_registry.client.utils import SchemaVersion
 
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.cli.pipeline_config import PipelineConfig, SchemaRegistryConfig
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
 from kpops.components.base_components.models import TopicName
@@ -73,14 +73,7 @@ def test_load_schema_handler():
     config_enable = PipelineConfig(
         defaults_path=Path("fake"),
         environment="development",
-        schema_registry_url="http://localhost:8081",
-    )
-
-    config_disable = config_enable.copy()
-    config_disable.schema_registry_url = None
-    assert (
-        SchemaHandler.load_schema_handler(TEST_SCHEMA_PROVIDER_MODULE, config_disable)
-        is None
+        schema_registry=SchemaRegistryConfig(enabled=True),
     )
 
     assert isinstance(
@@ -88,12 +81,20 @@ def test_load_schema_handler():
         SchemaHandler,
     )
 
+    config_disable = config_enable.copy()
+    config_disable.schema_registry = SchemaRegistryConfig(enabled=False)
+
+    assert (
+        SchemaHandler.load_schema_handler(TEST_SCHEMA_PROVIDER_MODULE, config_disable)
+        is None
+    )
+
 
 def test_should_lazy_load_schema_provider(find_class_mock: MagicMock):
     config_enable = PipelineConfig(
         defaults_path=Path("fake"),
         environment="development",
-        schema_registry_url="http://localhost:8081",
+        schema_registry=SchemaRegistryConfig(enabled=True),
     )
     schema_handler = SchemaHandler.load_schema_handler(
         TEST_SCHEMA_PROVIDER_MODULE, config_enable
@@ -133,7 +134,7 @@ def test_should_raise_value_error_when_schema_provider_is_called_and_components_
     config_enable = PipelineConfig(
         defaults_path=Path("fake"),
         environment="development",
-        schema_registry_url="http://localhost:8081",
+        schema_registry=SchemaRegistryConfig(enabled=True),
     )
 
     with pytest.raises(ValueError):

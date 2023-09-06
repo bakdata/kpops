@@ -3,7 +3,7 @@ from pathlib import Path
 from pytest_mock import MockerFixture
 
 from kpops.cli.main import setup_handlers
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.cli.pipeline_config import PipelineConfig, SchemaRegistryConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
@@ -19,8 +19,7 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
     config = PipelineConfig(
         defaults_path=Path("fake"),
         environment="development",
-        kafka_rest_host="https://testhost:8082",
-        schema_registry_url=None,
+        schema_registry=SchemaRegistryConfig(),
     )
     connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
     connector_handler = KafkaConnectHandler.from_pipeline_config(pipeline_config=config)
@@ -54,8 +53,7 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     config = PipelineConfig(
         defaults_path=Path("fake"),
         environment="development",
-        kafka_rest_host="https://testhost:8082",
-        schema_registry_url="https://testhost:8081",
+        schema_registry=SchemaRegistryConfig(enabled=True),
     )
     schema_handler_mock = mocker.patch("kpops.cli.main.SchemaHandler")
     schema_handler = SchemaHandler.load_schema_handler(MODULE, config)

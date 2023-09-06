@@ -44,13 +44,12 @@ class SchemaHandler:
     def load_schema_handler(
         cls, components_module: str | None, config: PipelineConfig
     ) -> SchemaHandler | None:
-        if not config.schema_registry_url:
-            return None
-
-        return cls(
-            url=config.schema_registry_url,
-            components_module=components_module,
-        )
+        if config.schema_registry.enabled:
+            return cls(
+                url=config.schema_registry.url,
+                components_module=components_module,
+            )
+        return None
 
     def submit_schemas(self, to_section: ToSection, dry_run: bool = True) -> None:
         for topic_name, config in to_section.topics.items():

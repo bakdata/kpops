@@ -6,6 +6,8 @@ topic_name_config:
 brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
 kafka_connect_host: "http://localhost:8083"
 kafka_rest_host: "http://localhost:8082"
-schema_registry_url: "http://localhost:8081"
+schema_registry:
+  enabled: true
+  url: "http://localhost:8081"
 helm_config:
   api_version: "2.1.1"

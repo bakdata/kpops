@@ -50,16 +50,6 @@ class TestProxyWrapper:
         assert self.proxy_wrapper.host == HOST
         assert self.proxy_wrapper.cluster_id == "cluster-1"
 
-    def test_should_raise_exception_when_host_is_not_set(self):
-        config = PipelineConfig(defaults_path=DEFAULTS_PATH, environment="development")
-        config.kafka_rest_host = None
-        with pytest.raises(ValueError) as exception:
-            ProxyWrapper(pipeline_config=config)
-        assert (
-            str(exception.value)
-            == "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
-        )
-
     @patch("httpx.post")
     def test_should_create_topic_with_all_topic_configuration(
         self, mock_post: MagicMock
