@@ -1,0 +1,31 @@
+from pathlib import Path
+
+from kpops.cli.pipeline_config import PipelineConfig
+
+
+def test_pipeline_config_with_default_values():
+    default_config = PipelineConfig(
+        environment="development", brokers="http://broker:9092"
+    )
+
+    assert default_config.defaults_path == Path(".")
+    assert default_config.defaults_filename_prefix == "defaults"
+    assert (
+        default_config.topic_name_config.default_output_topic_name
+        == "${pipeline_name}-${component_name}"
+    )
+    assert (
+        default_config.topic_name_config.default_error_topic_name
+        == "${pipeline_name}-${component_name}-error"
+    )
+    assert default_config.schema_registry.enabled is False
+    assert default_config.schema_registry.url == "http://localhost:8081"
+    assert default_config.kafka_rest_host == "http://localhost:8082"
+    assert default_config.kafka_connect_host == "http://localhost:8083"
+    assert default_config.timeout == 300
+    assert default_config.create_namespace is False
+    assert default_config.helm_config.context is None
+    assert default_config.helm_config.debug is False
+    assert default_config.helm_config.api_version is None
+    assert default_config.helm_diff_config.ignore == set()
+    assert default_config.retain_clean_jobs is False
