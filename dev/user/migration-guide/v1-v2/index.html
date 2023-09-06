@@ -611,10 +611,10 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w"> </span> brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="gd">- kafka_connect_host: "http://localhost:8083"</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="gd">- kafka_rest_host: "http://localhost:8082"</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="gd">- schema_registry_url: "http://my.custom.sr.url:8081"</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="gd">- schema_registry_url: "http://my-custom-sr.url:8081"</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="gi">+ schema_registry:</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="gi">+   enabled: true</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="gi">+   url: "http://my.custom.sr.url:8081"</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="gi">+   url: "http://my-custom-sr.url:8081"</span>
 </span></code></pre></div></td></tr></table></div>
 <h2 id="derive-component-type-automatically-from-class-name"><a href="https://github.com/bakdata/kpops/pull/309">Derive component type automatically from class name</a><a class="headerlink" href="#derive-component-type-automatically-from-class-name" title="Permanent link">¶</a></h2>
 <p>KPOps automatically infers the component <code>type</code> from the class name. Therefore, the <code>type</code> and <code>schema_type</code> attributes can be removed from your custom components. By convention the <code>type</code> would be the lower, and kebab cased name of the class.</p>

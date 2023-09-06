@@ -133,6 +133,9 @@
                     "env_names": [
                         "kpops_connect_host"
                     ],
+                    "format": "uri",
+                    "maxLength": 65536,
+                    "minLength": 1,
                     "title": "Kafka Connect Host",
                     "type": "string"
                 },
@@ -143,6 +146,9 @@
                     "env_names": [
                         "kpops_rest_proxy_host"
                     ],
+                    "format": "uri",
+                    "maxLength": 65536,
+                    "minLength": 1,
                     "title": "Kafka Rest Host",
                     "type": "string"
                 },
@@ -226,6 +232,9 @@
                     "env_names": [
                         "kpops_schema_registry_url"
                     ],
+                    "format": "uri",
+                    "maxLength": 65536,
+                    "minLength": 1,
                     "title": "Url",
                     "type": "string"
                 }
