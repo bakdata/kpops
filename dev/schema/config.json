@@ -126,7 +126,7 @@
                     ],
                     "title": "Helm Diff Config"
                 },
-                "kafka_connect_host": {
+                "kafka_connect_url": {
                     "default": "http://localhost:8083",
                     "description": "Address of Kafka Connect.",
                     "env": "KPOPS_CONNECT_HOST",
@@ -136,10 +136,10 @@
                     "format": "uri",
                     "maxLength": 65536,
                     "minLength": 1,
-                    "title": "Kafka Connect Host",
+                    "title": "Kafka Connect Url",
                     "type": "string"
                 },
-                "kafka_rest_host": {
+                "kafka_rest_url": {
                     "default": "http://localhost:8082",
                     "description": "Address of the Kafka REST Proxy.",
                     "env": "KPOPS_REST_PROXY_HOST",
@@ -149,7 +149,7 @@
                     "format": "uri",
                     "maxLength": 65536,
                     "minLength": 1,
-                    "title": "Kafka Rest Host",
+                    "title": "Kafka Rest Url",
                     "type": "string"
                 },
                 "retain_clean_jobs": {
@@ -214,7 +214,7 @@
         },
         "SchemaRegistryConfig": {
             "additionalProperties": false,
-            "description": "Configures schema registry.",
+            "description": "Configuration for Schema Registry.",
             "properties": {
                 "enabled": {
                     "default": false,
