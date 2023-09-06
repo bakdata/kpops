@@ -3,6 +3,7 @@ from pathlib import Path
 
 import pytest
 import yaml
+from pytest import MonkeyPatch
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
@@ -458,8 +459,34 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
+    def test_env_vars_precedence_over_config(
+        self,
+        monkeypatch: MonkeyPatch,
+        snapshot: SnapshotTest,
+    ):
+        monkeypatch.setenv(name="KPOPS_KAFKA_BROKERS", value="env_broker")
+
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                str(RESOURCE_PATH / "custom-config/config.yaml"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline["components"][0]["app"]["streams"]["brokers"]
+            == "env_broker"
+        )
+
     def test_model_serialization(self, snapshot: SnapshotTest):
-        """Test model serialization of component containing pathlib.Path attribute"""
+        """Test model serialization of component containing pathlib.Path attribute."""
         result = runner.invoke(
             app,
             [
