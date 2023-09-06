@@ -6,5 +6,5 @@ topic_name_config:
   default_output_topic_name: ${component_type}-output-topic
 helm_diff_config: 
   enable: false
-kafka_connect_host: "http://kafka_connect_host:8083"
-kafka_rest_host: "http://kafka_rest_host:8082"
+kafka_connect_url: "http://kafka_connect_url:8083"
+kafka_rest_url: "http://kafka_rest_url:8082"

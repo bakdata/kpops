@@ -25,12 +25,12 @@ class ConnectWrapper:
     Wraps Kafka Connect APIs
     """
 
-    def __init__(self, host: AnyHttpUrl) -> None:
-        self._host: str = host
+    def __init__(self, url: AnyHttpUrl) -> None:
+        self._url: AnyHttpUrl = url
 
     @property
-    def host(self) -> str:
-        return self._host
+    def url(self) -> AnyHttpUrl:
+        return self._url
 
     def create_connector(
         self, connector_config: KafkaConnectorConfig
@@ -44,7 +44,7 @@ class ConnectWrapper:
         config_json = connector_config.dict()
         connect_data = {"name": connector_config.name, "config": config_json}
         response = httpx.post(
-            url=f"{self._host}/connectors", headers=HEADERS, json=connect_data
+            url=f"{self._url}/connectors", headers=HEADERS, json=connect_data
         )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_config.name} created.")
@@ -66,7 +66,7 @@ class ConnectWrapper:
         :return: Information about the connector
         """
         response = httpx.get(
-            url=f"{self._host}/connectors/{connector_name}", headers=HEADERS
+            url=f"{self._url}/connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.OK:
             log.info(f"Connector {connector_name} exists.")
@@ -94,7 +94,7 @@ class ConnectWrapper:
         connector_name = connector_config.name
         config_json = connector_config.dict()
         response = httpx.put(
-            url=f"{self._host}/connectors/{connector_name}/config",
+            url=f"{self._url}/connectors/{connector_name}/config",
             headers=HEADERS,
             json=config_json,
         )
@@ -124,7 +124,7 @@ class ConnectWrapper:
         :return:
         """
         response = httpx.put(
-            url=f"{self._host}/connector-plugins/{connector_config.class_name}/config/validate",
+            url=f"{self._url}/connector-plugins/{connector_config.class_name}/config/validate",
             headers=HEADERS,
             json=connector_config.dict(),
         )
@@ -151,7 +151,7 @@ class ConnectWrapper:
         API Reference:https://docs.confluent.io/platform/current/connect/references/restapi.html#delete--connectors-(string-name)-
         """
         response = httpx.delete(
-            url=f"{self._host}/connectors/{connector_name}", headers=HEADERS
+            url=f"{self._url}/connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Connector {connector_name} deleted.")

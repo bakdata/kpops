@@ -45,7 +45,7 @@ class TestProxyWrapper:
             json=cluster_response,
             status_code=200,
         )
-        assert self.proxy_wrapper.host == DEFAULT_HOST
+        assert self.proxy_wrapper.url == DEFAULT_HOST
         assert self.proxy_wrapper.cluster_id == "cluster-1"
 
     @patch("httpx.post")

@@ -2,6 +2,7 @@ import logging
 from functools import cached_property
 
 import httpx
+from pydantic import AnyHttpUrl
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.topic.exception import (
@@ -26,7 +27,7 @@ class ProxyWrapper:
     """
 
     def __init__(self, pipeline_config: PipelineConfig) -> None:
-        self._host = pipeline_config.kafka_rest_host
+        self._url: AnyHttpUrl = pipeline_config.kafka_rest_url
 
     @cached_property
     def cluster_id(self) -> str:
@@ -39,7 +40,7 @@ class ProxyWrapper:
         bootstrap.servers configuration. Therefore, only one Kafka cluster will be returned.
         :return: The Kafka cluster ID.
         """
-        response = httpx.get(url=f"{self._host}/v3/clusters")
+        response = httpx.get(url=f"{self._url}/v3/clusters")
         if response.status_code == httpx.codes.OK:
             cluster_information = response.json()
             return cluster_information["data"][0]["cluster_id"]
@@ -47,8 +48,8 @@ class ProxyWrapper:
         raise KafkaRestProxyError(response)
 
     @property
-    def host(self) -> str:
-        return self._host
+    def url(self) -> AnyHttpUrl:
+        return self._url
 
     def create_topic(self, topic_spec: TopicSpec) -> None:
         """
@@ -57,7 +58,7 @@ class ProxyWrapper:
         :param topic_spec: The topic specification.
         """
         response = httpx.post(
-            url=f"{self._host}/v3/clusters/{self.cluster_id}/topics",
+            url=f"{self._url}/v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec.dict(exclude_none=True),
         )
@@ -75,7 +76,7 @@ class ProxyWrapper:
         :param topic_name: Name of the topic
         """
         response = httpx.delete(
-            url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
+            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
         if response.status_code == httpx.codes.NO_CONTENT:
@@ -92,7 +93,7 @@ class ProxyWrapper:
         :return: Response of the get topic API
         """
         response = httpx.get(
-            url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
+            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
         if response.status_code == httpx.codes.OK:
@@ -118,7 +119,7 @@ class ProxyWrapper:
         :return: The topic configuration.
         """
         response = httpx.get(
-            url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",
+            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",
             headers=HEADERS,
         )
 
@@ -145,7 +146,7 @@ class ProxyWrapper:
         :param config_name: The configuration parameter name.
         """
         response = httpx.post(
-            url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",
+            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={"data": json_body},
         )
@@ -162,7 +163,7 @@ class ProxyWrapper:
         :return: The broker configuration.
         """
         response = httpx.get(
-            url=f"{self.host}/v3/clusters/{self.cluster_id}/brokers/-/configs",
+            url=f"{self.url}/v3/clusters/{self.cluster_id}/brokers/-/configs",
             headers=HEADERS,
         )
 

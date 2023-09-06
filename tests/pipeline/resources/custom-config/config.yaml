@@ -4,8 +4,8 @@ topic_name_config:
   default_error_topic_name: "${component_name}-dead-letter-topic"
   default_output_topic_name: "${component_name}-test-topic"
 brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
-kafka_connect_host: "http://localhost:8083"
-kafka_rest_host: "http://localhost:8082"
+kafka_connect_url: "http://localhost:8083"
+kafka_rest_url: "http://localhost:8082"
 schema_registry:
   enabled: true
   url: "http://localhost:8081"

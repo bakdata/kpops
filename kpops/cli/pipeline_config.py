@@ -23,7 +23,7 @@ class TopicNameConfig(BaseSettings):
 
 
 class SchemaRegistryConfig(BaseSettings):
-    """Configures schema registry."""
+    """Configuration for Schema Registry."""
 
     enabled: bool = Field(
         default=False,
@@ -70,14 +70,14 @@ class PipelineConfig(BaseSettings):
         default=SchemaRegistryConfig(),
         description="Configure the Schema Registry.",
     )
-    kafka_rest_host: AnyHttpUrl = Field(
+    kafka_rest_url: AnyHttpUrl = Field(
         # For validating URLs use parse_obj_as
         # https://github.com/pydantic/pydantic/issues/1106
         default=parse_obj_as(AnyHttpUrl, "http://localhost:8082"),
         env=f"{ENV_PREFIX}REST_PROXY_HOST",
         description="Address of the Kafka REST Proxy.",
     )
-    kafka_connect_host: AnyHttpUrl = Field(
+    kafka_connect_url: AnyHttpUrl = Field(
         default=parse_obj_as(AnyHttpUrl, "http://localhost:8083"),
         env=f"{ENV_PREFIX}CONNECT_HOST",
         description="Address of Kafka Connect.",

@@ -23,8 +23,8 @@ def test_pipeline_config_with_default_values():
     )
     assert default_config.schema_registry.enabled is False
     assert default_config.schema_registry.url == "http://localhost:8081"
-    assert default_config.kafka_rest_host == "http://localhost:8082"
-    assert default_config.kafka_connect_host == "http://localhost:8083"
+    assert default_config.kafka_rest_url == "http://localhost:8082"
+    assert default_config.kafka_connect_url == "http://localhost:8083"
     assert default_config.timeout == 300
     assert default_config.create_namespace is False
     assert default_config.helm_config.context is None
@@ -39,14 +39,14 @@ def test_pipeline_config_with_different_invalid_urls():
         PipelineConfig(
             environment="development",
             brokers="http://broker:9092",
-            kafka_connect_host=parse_obj_as(AnyHttpUrl, "in-valid-host"),
+            kafka_connect_url=parse_obj_as(AnyHttpUrl, "in-valid-host"),
         )
 
     with pytest.raises(ValidationError):
         PipelineConfig(
             environment="development",
             brokers="http://broker:9092",
-            kafka_rest_host=parse_obj_as(AnyHttpUrl, "in-valid-host"),
+            kafka_rest_url=parse_obj_as(AnyHttpUrl, "in-valid-host"),
         )
 
     with pytest.raises(ValidationError):

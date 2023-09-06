@@ -70,9 +70,13 @@ def to_section(topic_config: TopicConfig) -> ToSection:
 
 
 @pytest.fixture()
-def schema_registry_config() -> SchemaRegistryConfig:
-    return SchemaRegistryConfig(
-        enabled=True, url=parse_obj_as(AnyHttpUrl, "http://mock:8081")
+def pipeline_config_with_sr_enabled() -> PipelineConfig:
+    return PipelineConfig(
+        environment="development",
+        brokers="broker:9092",
+        schema_registry=SchemaRegistryConfig(
+            enabled=True, url=parse_obj_as(AnyHttpUrl, "http://mock:8081")
+        ),
     )
 
 
@@ -120,10 +124,10 @@ def test_should_lazy_load_schema_provider(find_class_mock: MagicMock):
 
 
 def test_should_raise_value_error_if_schema_provider_class_not_found(
-    schema_registry_config: SchemaRegistryConfig,
+    pipeline_config_with_sr_enabled: PipelineConfig,
 ):
     schema_handler = SchemaHandler(
-        schema_registry_config=schema_registry_config,
+        pipeline_config=pipeline_config_with_sr_enabled,
         components_module=NON_EXISTING_PROVIDER_MODULE,
     )
 
@@ -171,10 +175,10 @@ def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
     to_section: ToSection,
     log_info_mock: MagicMock,
     schema_registry_mock: MagicMock,
-    schema_registry_config: SchemaRegistryConfig,
+    pipeline_config_with_sr_enabled: PipelineConfig,
 ):
     schema_handler = SchemaHandler(
-        schema_registry_config=schema_registry_config,
+        pipeline_config=pipeline_config_with_sr_enabled,
         components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
 
@@ -193,10 +197,10 @@ def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     to_section: ToSection,
     log_info_mock: MagicMock,
     schema_registry_mock: MagicMock,
-    schema_registry_config: SchemaRegistryConfig,
+    pipeline_config_with_sr_enabled: PipelineConfig,
 ):
     schema_handler = SchemaHandler(
-        schema_registry_config=schema_registry_config,
+        pipeline_config=pipeline_config_with_sr_enabled,
         components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
 
@@ -216,11 +220,11 @@ def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatibl
     topic_config: TopicConfig,
     to_section: ToSection,
     schema_registry_mock: MagicMock,
-    schema_registry_config: SchemaRegistryConfig,
+    pipeline_config_with_sr_enabled: PipelineConfig,
 ):
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(
-        schema_registry_config=schema_registry_config,
+        pipeline_config=pipeline_config_with_sr_enabled,
         components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
@@ -258,11 +262,11 @@ def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_ve
     log_info_mock: MagicMock,
     log_debug_mock: MagicMock,
     schema_registry_mock: MagicMock,
-    schema_registry_config: SchemaRegistryConfig,
+    pipeline_config_with_sr_enabled: PipelineConfig,
 ):
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(
-        schema_registry_config=schema_registry_config,
+        pipeline_config=pipeline_config_with_sr_enabled,
         components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
@@ -294,13 +298,13 @@ def test_should_submit_non_existing_schema_when_not_dry(
     to_section: ToSection,
     log_info_mock: MagicMock,
     schema_registry_mock: MagicMock,
-    schema_registry_config: SchemaRegistryConfig,
+    pipeline_config_with_sr_enabled: PipelineConfig,
 ):
     schema_provider = TestSchemaProvider()
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
     schema = schema_provider.provide_schema(schema_class, {})
     schema_handler = SchemaHandler(
-        schema_registry_config=schema_registry_config,
+        pipeline_config=pipeline_config_with_sr_enabled,
         components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
 
@@ -323,10 +327,10 @@ def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     to_section: ToSection,
     log_info_mock: MagicMock,
     schema_registry_mock: MagicMock,
-    schema_registry_config: SchemaRegistryConfig,
+    pipeline_config_with_sr_enabled: PipelineConfig,
 ):
     schema_handler = SchemaHandler(
-        schema_registry_config=schema_registry_config,
+        pipeline_config=pipeline_config_with_sr_enabled,
         components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
 
@@ -344,10 +348,10 @@ def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
 def test_should_delete_schemas_when_not_in_dry_run(
     to_section: ToSection,
     schema_registry_mock: MagicMock,
-    schema_registry_config: SchemaRegistryConfig,
+    pipeline_config_with_sr_enabled: PipelineConfig,
 ):
     schema_handler = SchemaHandler(
-        schema_registry_config=schema_registry_config,
+        pipeline_config=pipeline_config_with_sr_enabled,
         components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
 
