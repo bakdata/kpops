@@ -1,4 +1,22 @@
 # Changelog
+## [2.0.8](https://github.com/bakdata/kpops/releases/tag/2.0.8) - Release Date: [2023-09-06]
+
+### 🐛 Fixes
+
+- Fix config.yaml overriding environment variables - [#353](https://github.com/bakdata/kpops/pull/353)
+
+
+### 🏭 Refactor
+
+- Refactor component prefix & name - [#326](https://github.com/bakdata/kpops/pull/326)
+
+- Remove unnecessary condition during inflate - [#328](https://github.com/bakdata/kpops/pull/328)
+
+
+
+
+
+
 ## [2.0.7](https://github.com/bakdata/kpops/releases/tag/2.0.7) - Release Date: [2023-08-31]
 
 ### 🐛 Fixes
