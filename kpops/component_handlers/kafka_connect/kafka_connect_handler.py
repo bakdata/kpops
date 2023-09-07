@@ -138,6 +138,6 @@ class KafkaConnectHandler:
     @classmethod
     def from_pipeline_config(cls, config: KpopsConfig) -> Self:
         return cls(
-            connect_wrapper=ConnectWrapper(url=config.kafka_connect.url),
+            connect_wrapper=ConnectWrapper(config=config),
             timeout=config.timeout,
         )

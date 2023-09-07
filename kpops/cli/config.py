@@ -50,7 +50,7 @@ class KafkaRestConfig(BaseSettings):
         # For validating URLs use parse_obj_as
         # https://github.com/pydantic/pydantic/issues/1106
         default=parse_obj_as(AnyHttpUrl, "http://localhost:8082"),
-        env=f"{ENV_PREFIX}_KAFKA_REST_URL",
+        env=f"{ENV_PREFIX}KAFKA_REST_URL",
         description="Address of the Kafka REST Proxy.",
     )
 
@@ -60,7 +60,7 @@ class KafkaConnectConfig(BaseSettings):
 
     url: AnyHttpUrl = Field(
         default=parse_obj_as(AnyHttpUrl, "http://localhost:8083"),
-        env=f"{ENV_PREFIX}_KAFKA_CONNECT_URL",
+        env=f"{ENV_PREFIX}KAFKA_CONNECT_URL",
         description="Address of Kafka Connect.",
     )
 

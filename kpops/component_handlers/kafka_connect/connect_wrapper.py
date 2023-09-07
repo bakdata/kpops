@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import logging
 import time
 from time import sleep
+from typing import TYPE_CHECKING
 
 import httpx
 from pydantic import AnyHttpUrl
@@ -15,6 +18,9 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectResponse,
 )
 
+if TYPE_CHECKING:
+    from kpops.cli.config import KpopsConfig
+
 HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 
 log = logging.getLogger("KafkaConnectAPI")
@@ -25,8 +31,8 @@ class ConnectWrapper:
     Wraps Kafka Connect APIs
     """
 
-    def __init__(self, url: AnyHttpUrl) -> None:
-        self._url: AnyHttpUrl = url
+    def __init__(self, config: KpopsConfig) -> None:
+        self._url: AnyHttpUrl = config.kafka_connect.url
 
     @property
     def url(self) -> AnyHttpUrl:
