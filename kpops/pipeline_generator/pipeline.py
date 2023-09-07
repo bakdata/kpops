@@ -12,7 +12,7 @@ from pydantic import BaseModel
 from rich.console import Console
 from rich.syntax import Syntax
 
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.cli.config import KpopsConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -100,7 +100,7 @@ class Pipeline:
         component_list: list[dict],
         environment_components: list[dict],
         registry: Registry,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
     ) -> None:
         self.components: PipelineComponents = PipelineComponents()
@@ -117,7 +117,7 @@ class Pipeline:
         base_dir: Path,
         path: Path,
         registry: Registry,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
     ) -> Pipeline:
         """Load pipeline definition from yaml
@@ -310,7 +310,7 @@ class Pipeline:
         self.components.validate_unique_names()
 
     @staticmethod
-    def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
+    def pipeline_filename_environment(path: Path, config: KpopsConfig) -> Path:
         """Add the environment name from the PipelineConfig to the pipeline.yaml path
 
         :param path: Path to pipeline.yaml file

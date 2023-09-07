@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.cli.config import KpopsConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
@@ -38,8 +38,8 @@ class EnvVarTest(BaseDefaultsComponent):
 
 
 @pytest.fixture
-def config() -> PipelineConfig:
-    return PipelineConfig(
+def config() -> KpopsConfig:
+    return KpopsConfig(
         defaults_path=DEFAULTS_PATH,
         environment="development",
     )
@@ -116,9 +116,7 @@ class TestBaseDefaultsComponent:
             == defaults
         )
 
-    def test_inherit_defaults(
-        self, config: PipelineConfig, handlers: ComponentHandlers
-    ):
+    def test_inherit_defaults(self, config: KpopsConfig, handlers: ComponentHandlers):
         component = Child(config=config, handlers=handlers)
 
         assert (
@@ -137,7 +135,7 @@ class TestBaseDefaultsComponent:
             component.hard_coded == "hard_coded_value"
         ), "Defaults in code should be kept for parents"
 
-    def test_inherit(self, config: PipelineConfig, handlers: ComponentHandlers):
+    def test_inherit(self, config: KpopsConfig, handlers: ComponentHandlers):
         component = Child(
             config=config,
             handlers=handlers,
@@ -161,7 +159,7 @@ class TestBaseDefaultsComponent:
         ), "Defaults in code should be kept for parents"
 
     def test_multiple_generations(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         component = GrandChild(config=config, handlers=handlers)
 
@@ -183,7 +181,7 @@ class TestBaseDefaultsComponent:
         assert component.grand_child == "grand-child-value"
 
     def test_env_var_substitution(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         ENV["pipeline_name"] = str(DEFAULTS_PATH)
         component = EnvVarTest(config=config, handlers=handlers)

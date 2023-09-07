@@ -7,7 +7,7 @@ import pytest
 from pytest_httpx import HTTPXMock
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.cli.config import KpopsConfig
 from kpops.component_handlers.topic.exception import (
     KafkaRestProxyError,
     TopicNotFoundException,
@@ -31,8 +31,8 @@ class TestProxyWrapper:
 
     @pytest.fixture(autouse=True)
     def setup(self, httpx_mock: HTTPXMock):
-        config = PipelineConfig(defaults_path=DEFAULTS_PATH, environment="development")
-        self.proxy_wrapper = ProxyWrapper(pipeline_config=config)
+        config = KpopsConfig(defaults_path=DEFAULTS_PATH, environment="development")
+        self.proxy_wrapper = ProxyWrapper(config=config)
 
         with open(
             DEFAULTS_PATH / "kafka_rest_proxy_responses" / "cluster-info.json"

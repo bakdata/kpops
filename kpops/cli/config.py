@@ -43,7 +43,29 @@ class SchemaRegistryConfig(BaseSettings):
     )
 
 
-class PipelineConfig(BaseSettings):
+class KafkaRestConfig(BaseSettings):
+    """Configuration for Kafka REST Proxy."""
+
+    url: AnyHttpUrl = Field(
+        # For validating URLs use parse_obj_as
+        # https://github.com/pydantic/pydantic/issues/1106
+        default=parse_obj_as(AnyHttpUrl, "http://localhost:8082"),
+        env=f"{ENV_PREFIX}_KAFKA_REST_URL",
+        description="Address of the Kafka REST Proxy.",
+    )
+
+
+class KafkaConnectConfig(BaseSettings):
+    """Configuration for Kafka Connect."""
+
+    url: AnyHttpUrl = Field(
+        default=parse_obj_as(AnyHttpUrl, "http://localhost:8083"),
+        env=f"{ENV_PREFIX}_KAFKA_CONNECT_URL",
+        description="Address of Kafka Connect.",
+    )
+
+
+class KpopsConfig(BaseSettings):
     """Pipeline configuration unrelated to the components."""
 
     defaults_path: Path = Field(
@@ -61,7 +83,7 @@ class PipelineConfig(BaseSettings):
     )
     brokers: str = Field(
         default=...,
-        env=f"{ENV_PREFIX}KAFKA_BROKERS",
+        env=f"{ENV_PREFIX}BROKERS",
         description="The comma separated Kafka brokers address.",
         example="broker1:9092,broker2:9092,broker3:9092",
     )
@@ -75,19 +97,15 @@ class PipelineConfig(BaseSettings):
     )
     schema_registry: SchemaRegistryConfig = Field(
         default=SchemaRegistryConfig(),
-        description="Configure the Schema Registry.",
+        description="Configuration for Schema Registry.",
     )
-    kafka_rest_url: AnyHttpUrl = Field(
-        # For validating URLs use parse_obj_as
-        # https://github.com/pydantic/pydantic/issues/1106
-        default=parse_obj_as(AnyHttpUrl, "http://localhost:8082"),
-        env=f"{ENV_PREFIX}REST_PROXY_URL",
-        description="Address of the Kafka REST Proxy.",
+    kafka_rest: KafkaRestConfig = Field(
+        default=KafkaRestConfig(),
+        description="Configuration for Kafka REST Proxy.",
     )
-    kafka_connect_url: AnyHttpUrl = Field(
-        default=parse_obj_as(AnyHttpUrl, "http://localhost:8083"),
-        env=f"{ENV_PREFIX}CONNECT_URL",
-        description="Address of Kafka Connect.",
+    kafka_connect: KafkaConnectConfig = Field(
+        default=KafkaConnectConfig(),
+        description="Configuration for Kafka Connect.",
     )
     timeout: int = Field(
         default=300,
@@ -125,7 +143,7 @@ class PipelineConfig(BaseSettings):
             env_settings: SettingsSourceCallable,
             file_secret_settings: SettingsSourceCallable,
         ) -> tuple[
-            SettingsSourceCallable | Callable[[PipelineConfig], dict[str, Any]], ...
+            SettingsSourceCallable | Callable[[KpopsConfig], dict[str, Any]], ...
         ]:
             return (
                 env_settings,
@@ -135,7 +153,7 @@ class PipelineConfig(BaseSettings):
             )
 
 
-def yaml_config_settings_source(settings: PipelineConfig) -> dict[str, Any]:
+def yaml_config_settings_source(settings: KpopsConfig) -> dict[str, Any]:
     path_to_config = settings.Config.config_path
     if path_to_config.exists():
         if isinstance(source := load_yaml_file(path_to_config), dict):

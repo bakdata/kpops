@@ -5,7 +5,7 @@ import pytest
 from pytest_mock import MockerFixture
 from typing_extensions import override
 
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.cli.config import KpopsConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
@@ -28,8 +28,8 @@ class KubernetesTestValue(KubernetesAppConfig):
 
 class TestKubernetesApp:
     @pytest.fixture
-    def config(self) -> PipelineConfig:
-        return PipelineConfig(
+    def config(self) -> KpopsConfig:
+        return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
             helm_diff_config=HelmDiffConfig(),
@@ -64,7 +64,7 @@ class TestKubernetesApp:
     @pytest.fixture
     def kubernetes_app(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         app_value: KubernetesTestValue,
         repo_config: HelmRepoConfig,
@@ -106,7 +106,7 @@ class TestKubernetesApp:
 
     def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         mocker: MockerFixture,
@@ -152,7 +152,7 @@ class TestKubernetesApp:
 
     def test_should_deploy_app_with_local_helm_chart(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         app_value: KubernetesTestValue,
@@ -218,7 +218,7 @@ class TestKubernetesApp:
 
     def test_should_raise_value_error_when_name_is_not_valid(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         app_value: KubernetesTestValue,
         repo_config: HelmRepoConfig,

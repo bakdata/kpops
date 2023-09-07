@@ -6,7 +6,7 @@ from unittest.mock import MagicMock, patch
 import pytest
 from pytest_httpx import HTTPXMock
 
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.cli.config import KpopsConfig
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
@@ -27,11 +27,11 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 class TestConnectorApiWrapper:
     @pytest.fixture(autouse=True)
     def setup(self):
-        config = PipelineConfig(
+        config = KpopsConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
         )
-        self.connect_wrapper = ConnectWrapper(url=config.kafka_connect_url)
+        self.connect_wrapper = ConnectWrapper(url=config.kafka_connect.url)
 
     @pytest.fixture
     def connector_config(self) -> KafkaConnectorConfig:

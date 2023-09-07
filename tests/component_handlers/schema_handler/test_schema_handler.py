@@ -9,7 +9,7 @@ from pytest_mock import MockerFixture
 from schema_registry.client.schema import AvroSchema
 from schema_registry.client.utils import SchemaVersion
 
-from kpops.cli.pipeline_config import PipelineConfig, SchemaRegistryConfig
+from kpops.cli.config import KpopsConfig, SchemaRegistryConfig
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
 from kpops.components.base_components.models import TopicName
@@ -70,8 +70,8 @@ def to_section(topic_config: TopicConfig) -> ToSection:
 
 
 @pytest.fixture()
-def pipeline_config_with_sr_enabled() -> PipelineConfig:
-    return PipelineConfig(
+def pipeline_config_with_sr_enabled() -> KpopsConfig:
+    return KpopsConfig(
         environment="development",
         brokers="broker:9092",
         schema_registry=SchemaRegistryConfig(
@@ -81,7 +81,7 @@ def pipeline_config_with_sr_enabled() -> PipelineConfig:
 
 
 def test_load_schema_handler():
-    config_enable = PipelineConfig(
+    config_enable = KpopsConfig(
         defaults_path=Path("fake"),
         environment="development",
         schema_registry=SchemaRegistryConfig(enabled=True),
@@ -102,7 +102,7 @@ def test_load_schema_handler():
 
 
 def test_should_lazy_load_schema_provider(find_class_mock: MagicMock):
-    config_enable = PipelineConfig(
+    config_enable = KpopsConfig(
         defaults_path=Path("fake"),
         environment="development",
         schema_registry=SchemaRegistryConfig(enabled=True),
@@ -124,7 +124,7 @@ def test_should_lazy_load_schema_provider(find_class_mock: MagicMock):
 
 
 def test_should_raise_value_error_if_schema_provider_class_not_found(
-    pipeline_config_with_sr_enabled: PipelineConfig,
+    pipeline_config_with_sr_enabled: KpopsConfig,
 ):
     schema_handler = SchemaHandler(
         pipeline_config=pipeline_config_with_sr_enabled,
@@ -145,7 +145,7 @@ def test_should_raise_value_error_if_schema_provider_class_not_found(
 
 
 def test_should_raise_value_error_when_schema_provider_is_called_and_components_module_is_empty():
-    config_enable = PipelineConfig(
+    config_enable = KpopsConfig(
         defaults_path=Path("fake"),
         environment="development",
         schema_registry=SchemaRegistryConfig(enabled=True),
@@ -175,7 +175,7 @@ def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
     to_section: ToSection,
     log_info_mock: MagicMock,
     schema_registry_mock: MagicMock,
-    pipeline_config_with_sr_enabled: PipelineConfig,
+    pipeline_config_with_sr_enabled: KpopsConfig,
 ):
     schema_handler = SchemaHandler(
         pipeline_config=pipeline_config_with_sr_enabled,
@@ -197,7 +197,7 @@ def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     to_section: ToSection,
     log_info_mock: MagicMock,
     schema_registry_mock: MagicMock,
-    pipeline_config_with_sr_enabled: PipelineConfig,
+    pipeline_config_with_sr_enabled: KpopsConfig,
 ):
     schema_handler = SchemaHandler(
         pipeline_config=pipeline_config_with_sr_enabled,
@@ -220,7 +220,7 @@ def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatibl
     topic_config: TopicConfig,
     to_section: ToSection,
     schema_registry_mock: MagicMock,
-    pipeline_config_with_sr_enabled: PipelineConfig,
+    pipeline_config_with_sr_enabled: KpopsConfig,
 ):
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(
@@ -262,7 +262,7 @@ def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_ve
     log_info_mock: MagicMock,
     log_debug_mock: MagicMock,
     schema_registry_mock: MagicMock,
-    pipeline_config_with_sr_enabled: PipelineConfig,
+    pipeline_config_with_sr_enabled: KpopsConfig,
 ):
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(
@@ -298,7 +298,7 @@ def test_should_submit_non_existing_schema_when_not_dry(
     to_section: ToSection,
     log_info_mock: MagicMock,
     schema_registry_mock: MagicMock,
-    pipeline_config_with_sr_enabled: PipelineConfig,
+    pipeline_config_with_sr_enabled: KpopsConfig,
 ):
     schema_provider = TestSchemaProvider()
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
@@ -327,7 +327,7 @@ def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     to_section: ToSection,
     log_info_mock: MagicMock,
     schema_registry_mock: MagicMock,
-    pipeline_config_with_sr_enabled: PipelineConfig,
+    pipeline_config_with_sr_enabled: KpopsConfig,
 ):
     schema_handler = SchemaHandler(
         pipeline_config=pipeline_config_with_sr_enabled,
@@ -348,7 +348,7 @@ def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
 def test_should_delete_schemas_when_not_in_dry_run(
     to_section: ToSection,
     schema_registry_mock: MagicMock,
-    pipeline_config_with_sr_enabled: PipelineConfig,
+    pipeline_config_with_sr_enabled: KpopsConfig,
 ):
     schema_handler = SchemaHandler(
         pipeline_config=pipeline_config_with_sr_enabled,

@@ -19,7 +19,7 @@ except ImportError:
 from hooks import PATH_ROOT
 from hooks.gen_docs import SuperEnum
 from kpops.cli import main
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.cli.config import KpopsConfig
 
 PATH_DOCS_RESOURCES = PATH_ROOT / "docs/docs/resources"
 PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
@@ -250,9 +250,9 @@ def __fill_csv_pipeline_config(target: Path) -> None:
     """
     # NOTE: This does not see nested fields, hence if there are env vars in a class like
     # TopicConfig(), they wil not be listed. Possible fix with recursion.
-    config_fields = PipelineConfig.__fields__
+    config_fields = KpopsConfig.__fields__
     for config_field in config_fields.values():
-        config_field_info = PipelineConfig.Config.get_field_info(config_field.name)
+        config_field_info = KpopsConfig.Config.get_field_info(config_field.name)
         config_field_description: str = (
             config_field.field_info.description
             or "No description available, please refer to the pipeline config documentation."

@@ -1,5 +1,5 @@
 {
-    "$ref": "#/definitions/PipelineConfig",
+    "$ref": "#/definitions/KpopsConfig",
     "definitions": {
         "HelmConfig": {
             "description": "Global Helm configuration",
@@ -41,15 +41,57 @@
             "title": "HelmDiffConfig",
             "type": "object"
         },
-        "PipelineConfig": {
+        "KafkaConnectConfig": {
+            "additionalProperties": false,
+            "description": "Configuration for Kafka Connect.",
+            "properties": {
+                "url": {
+                    "default": "http://localhost:8083",
+                    "description": "Address of Kafka Connect.",
+                    "env": "KPOPS__KAFKA_CONNECT_URL",
+                    "env_names": [
+                        "kpops__kafka_connect_url"
+                    ],
+                    "format": "uri",
+                    "maxLength": 65536,
+                    "minLength": 1,
+                    "title": "Url",
+                    "type": "string"
+                }
+            },
+            "title": "KafkaConnectConfig",
+            "type": "object"
+        },
+        "KafkaRestConfig": {
+            "additionalProperties": false,
+            "description": "Configuration for Kafka REST Proxy.",
+            "properties": {
+                "url": {
+                    "default": "http://localhost:8082",
+                    "description": "Address of the Kafka REST Proxy.",
+                    "env": "KPOPS__KAFKA_REST_URL",
+                    "env_names": [
+                        "kpops__kafka_rest_url"
+                    ],
+                    "format": "uri",
+                    "maxLength": 65536,
+                    "minLength": 1,
+                    "title": "Url",
+                    "type": "string"
+                }
+            },
+            "title": "KafkaRestConfig",
+            "type": "object"
+        },
+        "KpopsConfig": {
             "additionalProperties": false,
             "description": "Pipeline configuration unrelated to the components.",
             "properties": {
                 "brokers": {
                     "description": "The comma separated Kafka brokers address.",
-                    "env": "KPOPS_KAFKA_BROKERS",
+                    "env": "KPOPS_BROKERS",
                     "env_names": [
-                        "kpops_kafka_brokers"
+                        "kpops_brokers"
                     ],
                     "example": "broker1:9092,broker2:9092,broker3:9092",
                     "title": "Brokers",
@@ -126,31 +168,35 @@
                     ],
                     "title": "Helm Diff Config"
                 },
-                "kafka_connect_url": {
-                    "default": "http://localhost:8083",
-                    "description": "Address of Kafka Connect.",
-                    "env": "KPOPS_CONNECT_URL",
-                    "env_names": [
-                        "kpops_connect_url"
+                "kafka_connect": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KafkaConnectConfig"
+                        }
                     ],
-                    "format": "uri",
-                    "maxLength": 65536,
-                    "minLength": 1,
-                    "title": "Kafka Connect Url",
-                    "type": "string"
+                    "default": {
+                        "url": "http://localhost:8083"
+                    },
+                    "description": "Configuration for Kafka Connect.",
+                    "env_names": [
+                        "kpops_kafka_connect"
+                    ],
+                    "title": "Kafka Connect"
                 },
-                "kafka_rest_url": {
-                    "default": "http://localhost:8082",
-                    "description": "Address of the Kafka REST Proxy.",
-                    "env": "KPOPS_REST_PROXY_URL",
-                    "env_names": [
-                        "kpops_rest_proxy_url"
+                "kafka_rest": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KafkaRestConfig"
+                        }
                     ],
-                    "format": "uri",
-                    "maxLength": 65536,
-                    "minLength": 1,
-                    "title": "Kafka Rest Url",
-                    "type": "string"
+                    "default": {
+                        "url": "http://localhost:8082"
+                    },
+                    "description": "Configuration for Kafka REST Proxy.",
+                    "env_names": [
+                        "kpops_kafka_rest"
+                    ],
+                    "title": "Kafka Rest"
                 },
                 "retain_clean_jobs": {
                     "default": false,
@@ -172,7 +218,7 @@
                         "enabled": false,
                         "url": "http://localhost:8081"
                     },
-                    "description": "Configure the Schema Registry.",
+                    "description": "Configuration for Schema Registry.",
                     "env_names": [
                         "kpops_schema_registry"
                     ],
@@ -209,7 +255,7 @@
                 "environment",
                 "brokers"
             ],
-            "title": "PipelineConfig",
+            "title": "KpopsConfig",
             "type": "object"
         },
         "SchemaRegistryConfig": {

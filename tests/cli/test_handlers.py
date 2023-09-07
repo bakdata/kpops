@@ -2,8 +2,8 @@ from pathlib import Path
 
 from pytest_mock import MockerFixture
 
+from kpops.cli.config import KpopsConfig, SchemaRegistryConfig
 from kpops.cli.main import setup_handlers
-from kpops.cli.pipeline_config import PipelineConfig, SchemaRegistryConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
@@ -16,13 +16,13 @@ MODULE = CustomSchemaProvider.__module__
 
 
 def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
-    config = PipelineConfig(
+    config = KpopsConfig(
         defaults_path=Path("fake"),
         environment="development",
         schema_registry=SchemaRegistryConfig(),
     )
     connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
-    connector_handler = KafkaConnectHandler.from_pipeline_config(pipeline_config=config)
+    connector_handler = KafkaConnectHandler.from_pipeline_config(config=config)
     connector_handler_mock.from_pipeline_config.return_value = connector_handler
 
     topic_handler_mock = mocker.patch("kpops.cli.main.TopicHandler")
@@ -50,7 +50,7 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
 
 
 def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
-    config = PipelineConfig(
+    config = KpopsConfig(
         defaults_path=Path("fake"),
         environment="development",
         schema_registry=SchemaRegistryConfig(enabled=True),
@@ -60,7 +60,7 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     schema_handler_mock.load_schema_handler.return_value = schema_handler
 
     connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
-    connector_handler = KafkaConnectHandler.from_pipeline_config(pipeline_config=config)
+    connector_handler = KafkaConnectHandler.from_pipeline_config(config=config)
     connector_handler_mock.from_pipeline_config.return_value = connector_handler
 
     topic_handler_mock = mocker.patch("kpops.cli.main.TopicHandler")

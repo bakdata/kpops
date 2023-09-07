@@ -9,8 +9,8 @@ import dtyper
 import typer
 
 from kpops import __version__
+from kpops.cli.config import ENV_PREFIX, KpopsConfig
 from kpops.cli.custom_formatter import CustomFormatter
-from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
@@ -111,7 +111,7 @@ def setup_pipeline(
     pipeline_base_dir: Path,
     pipeline_path: Path,
     components_module: str | None,
-    pipeline_config: PipelineConfig,
+    pipeline_config: KpopsConfig,
 ) -> Pipeline:
     registry = Registry()
     if components_module:
@@ -125,7 +125,7 @@ def setup_pipeline(
 
 
 def setup_handlers(
-    components_module: str | None, config: PipelineConfig
+    components_module: str | None, config: KpopsConfig
 ) -> ComponentHandlers:
     schema_handler = SchemaHandler.load_schema_handler(components_module, config)
     connector_handler = KafkaConnectHandler.from_pipeline_config(config)
@@ -193,13 +193,13 @@ def log_action(action: str, pipeline_component: PipelineComponent):
 
 def create_pipeline_config(
     config: Path, defaults: Optional[Path], verbose: bool
-) -> PipelineConfig:
+) -> KpopsConfig:
     setup_logging_level(verbose)
-    PipelineConfig.Config.config_path = config
+    KpopsConfig.Config.config_path = config
     if defaults:
-        pipeline_config = PipelineConfig(defaults_path=defaults)
+        pipeline_config = KpopsConfig(defaults_path=defaults)
     else:
-        pipeline_config = PipelineConfig()
+        pipeline_config = KpopsConfig()
         pipeline_config.defaults_path = config.parent / pipeline_config.defaults_path
     return pipeline_config
 

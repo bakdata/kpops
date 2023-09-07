@@ -19,7 +19,7 @@ except ImportError:
     from typing_extensions import Self
 
 if TYPE_CHECKING:
-    from kpops.cli.pipeline_config import PipelineConfig
+    from kpops.cli.config import KpopsConfig
 
 log = logging.getLogger("KafkaConnectHandler")
 
@@ -136,8 +136,8 @@ class KafkaConnectHandler:
             )
 
     @classmethod
-    def from_pipeline_config(cls, pipeline_config: PipelineConfig) -> Self:
+    def from_pipeline_config(cls, config: KpopsConfig) -> Self:
         return cls(
-            connect_wrapper=ConnectWrapper(url=pipeline_config.kafka_connect_url),
-            timeout=pipeline_config.timeout,
+            connect_wrapper=ConnectWrapper(url=config.kafka_connect.url),
+            timeout=config.timeout,
         )

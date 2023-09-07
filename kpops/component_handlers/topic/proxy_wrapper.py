@@ -4,7 +4,7 @@ from functools import cached_property
 import httpx
 from pydantic import AnyHttpUrl
 
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.cli.config import KpopsConfig
 from kpops.component_handlers.topic.exception import (
     KafkaRestProxyError,
     TopicNotFoundException,
@@ -26,8 +26,8 @@ class ProxyWrapper:
     Wraps Kafka REST Proxy APIs
     """
 
-    def __init__(self, pipeline_config: PipelineConfig) -> None:
-        self._url: AnyHttpUrl = pipeline_config.kafka_rest_url
+    def __init__(self, config: KpopsConfig) -> None:
+        self._url: AnyHttpUrl = config.kafka_rest.url
 
     @cached_property
     def cluster_id(self) -> str:

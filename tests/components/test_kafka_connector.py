@@ -4,7 +4,7 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
+from kpops.cli.config import KpopsConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig
 from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
@@ -21,8 +21,8 @@ CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 
 class TestKafkaConnector:
     @pytest.fixture
-    def config(self) -> PipelineConfig:
-        return PipelineConfig(
+    def config(self) -> KpopsConfig:
+        return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
             topic_name_config=TopicNameConfig(
@@ -64,7 +64,7 @@ class TestKafkaConnector:
 
     def test_connector_config_name_override(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ):

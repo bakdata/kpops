@@ -462,9 +462,8 @@ class TestPipeline:
     def test_env_vars_precedence_over_config(
         self,
         monkeypatch: MonkeyPatch,
-        snapshot: SnapshotTest,
     ):
-        monkeypatch.setenv(name="KPOPS_KAFKA_BROKERS", value="env_broker")
+        monkeypatch.setenv(name="KPOPS_BROKERS", value="env_broker")
 
         result = runner.invoke(
             app,
