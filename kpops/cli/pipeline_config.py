@@ -81,12 +81,12 @@ class PipelineConfig(BaseSettings):
         # For validating URLs use parse_obj_as
         # https://github.com/pydantic/pydantic/issues/1106
         default=parse_obj_as(AnyHttpUrl, "http://localhost:8082"),
-        env=f"{ENV_PREFIX}REST_PROXY_HOST",
+        env=f"{ENV_PREFIX}REST_PROXY_URL",
         description="Address of the Kafka REST Proxy.",
     )
     kafka_connect_url: AnyHttpUrl = Field(
         default=parse_obj_as(AnyHttpUrl, "http://localhost:8083"),
-        env=f"{ENV_PREFIX}CONNECT_HOST",
+        env=f"{ENV_PREFIX}CONNECT_URL",
         description="Address of Kafka Connect.",
     )
     timeout: int = Field(
@@ -116,6 +116,7 @@ class PipelineConfig(BaseSettings):
         config_path = Path("config.yaml")
         env_file = ".env"
         env_file_encoding = "utf-8"
+        env_prefix = f"{ENV_PREFIX}"
 
         @classmethod
         def customise_sources(

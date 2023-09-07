@@ -59,7 +59,7 @@
                     "default": false,
                     "description": "Flag for `helm upgrade --install`. Create the release namespace if not present.",
                     "env_names": [
-                        "create_namespace"
+                        "kpops_create_namespace"
                     ],
                     "title": "Create Namespace",
                     "type": "boolean"
@@ -68,7 +68,7 @@
                     "default": "defaults",
                     "description": "The name of the defaults file and the prefix of the defaults environment file.",
                     "env_names": [
-                        "defaults_filename_prefix"
+                        "kpops_defaults_filename_prefix"
                     ],
                     "title": "Defaults Filename Prefix",
                     "type": "string"
@@ -77,7 +77,7 @@
                     "default": ".",
                     "description": "The path to the folder containing the defaults.yaml file and the environment defaults files. Paths can either be absolute or relative to `config.yaml`",
                     "env_names": [
-                        "defaults_path"
+                        "kpops_defaults_path"
                     ],
                     "example": "defaults",
                     "format": "path",
@@ -107,7 +107,7 @@
                     },
                     "description": "Global flags for Helm.",
                     "env_names": [
-                        "helm_config"
+                        "kpops_helm_config"
                     ],
                     "title": "Helm Config"
                 },
@@ -122,16 +122,16 @@
                     },
                     "description": "Configure Helm Diff.",
                     "env_names": [
-                        "helm_diff_config"
+                        "kpops_helm_diff_config"
                     ],
                     "title": "Helm Diff Config"
                 },
                 "kafka_connect_url": {
                     "default": "http://localhost:8083",
                     "description": "Address of Kafka Connect.",
-                    "env": "KPOPS_CONNECT_HOST",
+                    "env": "KPOPS_CONNECT_URL",
                     "env_names": [
-                        "kpops_connect_host"
+                        "kpops_connect_url"
                     ],
                     "format": "uri",
                     "maxLength": 65536,
@@ -142,9 +142,9 @@
                 "kafka_rest_url": {
                     "default": "http://localhost:8082",
                     "description": "Address of the Kafka REST Proxy.",
-                    "env": "KPOPS_REST_PROXY_HOST",
+                    "env": "KPOPS_REST_PROXY_URL",
                     "env_names": [
-                        "kpops_rest_proxy_host"
+                        "kpops_rest_proxy_url"
                     ],
                     "format": "uri",
                     "maxLength": 65536,
@@ -174,7 +174,7 @@
                     },
                     "description": "Configure the Schema Registry.",
                     "env_names": [
-                        "schema_registry"
+                        "kpops_schema_registry"
                     ],
                     "title": "Schema Registry"
                 },
@@ -200,7 +200,7 @@
                     },
                     "description": "Configure the topic name variables you can use in the pipeline definition.",
                     "env_names": [
-                        "topic_name_config"
+                        "kpops_topic_name_config"
                     ],
                     "title": "Topic Name Config"
                 }
