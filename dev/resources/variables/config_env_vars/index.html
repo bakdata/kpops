@@ -368,6 +368,11 @@
         Migrate from v1 to v2
       </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../user/migration-guide/v2-v3/">
+        Migrate from v2 to v3
+      </a>
+</li>
 </ul>
 </nav>
 </li>
@@ -468,11 +473,32 @@
 <td>environment</td>
 </tr>
 <tr>
-<td>KPOPS_BROKERS</td>
+<td>KPOPS_KAFKA_BROKERS</td>
 <td></td>
 <td>True</td>
 <td>The comma separated Kafka brokers address.</td>
 <td>brokers</td>
+</tr>
+<tr>
+<td>KPOPS_SCHEMA_REGISTRY_URL</td>
+<td></td>
+<td>False</td>
+<td>Address of the Schema Registry.</td>
+<td>schema_registry_url</td>
+</tr>
+<tr>
+<td>KPOPS_REST_PROXY_HOST</td>
+<td></td>
+<td>False</td>
+<td>Address of the Kafka REST Proxy.</td>
+<td>kafka_rest_host</td>
+</tr>
+<tr>
+<td>KPOPS_CONNECT_HOST</td>
+<td></td>
+<td>False</td>
+<td>Address of Kafka Connect.</td>
+<td>kafka_connect_host</td>
 </tr>
 <tr>
 <td>KPOPS_TIMEOUT</td>
