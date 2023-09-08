@@ -19,7 +19,7 @@ from kpops.component_handlers.kafka_connect.model import (
 )
 
 if TYPE_CHECKING:
-    from kpops.cli.config import KpopsConfig
+    from kpops.cli.config import KafkaConnectConfig
 
 HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 
@@ -31,8 +31,8 @@ class ConnectWrapper:
     Wraps Kafka Connect APIs
     """
 
-    def __init__(self, config: KpopsConfig) -> None:
-        self._url: AnyHttpUrl = config.kafka_connect.url
+    def __init__(self, kafka_connect_config: KafkaConnectConfig) -> None:
+        self._url: AnyHttpUrl = kafka_connect_config.url
 
     @property
     def url(self) -> AnyHttpUrl:

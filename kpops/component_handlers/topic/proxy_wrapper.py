@@ -1,10 +1,12 @@
+from __future__ import annotations
+
 import logging
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 import httpx
 from pydantic import AnyHttpUrl
 
-from kpops.cli.config import KpopsConfig
 from kpops.component_handlers.topic.exception import (
     KafkaRestProxyError,
     TopicNotFoundException,
@@ -16,6 +18,9 @@ from kpops.component_handlers.topic.model import (
     TopicSpec,
 )
 
+if TYPE_CHECKING:
+    from kpops.cli.config import KafkaRestConfig
+
 log = logging.getLogger("KafkaRestProxy")
 
 HEADERS = {"Content-Type": "application/json"}
@@ -26,8 +31,8 @@ class ProxyWrapper:
     Wraps Kafka REST Proxy APIs
     """
 
-    def __init__(self, config: KpopsConfig) -> None:
-        self._url: AnyHttpUrl = config.kafka_rest.url
+    def __init__(self, kafka_rest_config: KafkaRestConfig) -> None:
+        self._url: AnyHttpUrl = kafka_rest_config.url
 
     @cached_property
     def cluster_id(self) -> str:

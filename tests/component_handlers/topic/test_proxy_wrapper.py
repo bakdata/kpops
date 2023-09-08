@@ -32,7 +32,7 @@ class TestProxyWrapper:
     @pytest.fixture(autouse=True)
     def setup(self, httpx_mock: HTTPXMock):
         config = KpopsConfig(defaults_path=DEFAULTS_PATH, environment="development")
-        self.proxy_wrapper = ProxyWrapper(config=config)
+        self.proxy_wrapper = ProxyWrapper(kafka_rest_config=config.kafka_rest)
 
         with open(
             DEFAULTS_PATH / "kafka_rest_proxy_responses" / "cluster-info.json"

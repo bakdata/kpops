@@ -129,7 +129,7 @@ def setup_handlers(
 ) -> ComponentHandlers:
     schema_handler = SchemaHandler.load_schema_handler(components_module, config)
     connector_handler = KafkaConnectHandler.from_pipeline_config(config)
-    proxy_wrapper = ProxyWrapper(config)
+    proxy_wrapper = ProxyWrapper(config.kafka_rest)
     topic_handler = TopicHandler(proxy_wrapper)
 
     return ComponentHandlers(schema_handler, connector_handler, topic_handler)

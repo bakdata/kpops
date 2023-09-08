@@ -31,7 +31,7 @@ class TestConnectorApiWrapper:
             defaults_path=DEFAULTS_PATH,
             environment="development",
         )
-        self.connect_wrapper = ConnectWrapper(config=config)
+        self.connect_wrapper = ConnectWrapper(kafka_connect_config=config.kafka_connect)
 
     @pytest.fixture
     def connector_config(self) -> KafkaConnectorConfig:
