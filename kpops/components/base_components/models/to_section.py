@@ -59,9 +59,9 @@ class TopicConfig(DescConfigModel):
     role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
     model_config = ConfigDict(
-        extra = Extra.forbid,
-        use_enum_values = True,
-        populate_by_name = True,
+        extra=Extra.forbid,
+        use_enum_values=True,
+        populate_by_name=True,
     )
 
     @root_validator(skip_on_failure=True)
@@ -87,5 +87,5 @@ class ToSection(DescConfigModel):
     )
 
     model_config = ConfigDict(
-        extra = Extra.forbid,
+        extra=Extra.forbid,
     )

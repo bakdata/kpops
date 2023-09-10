@@ -20,8 +20,10 @@ def to_dot(s: str) -> str:
     """Convert snake_case to dot.notation."""
     return s.replace("_", ".")
 
+
 def schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
     schema["description"] = describe_object(model.__doc__)
+
 
 class CamelCaseConfigModel(BaseModel):
     model_config = ConfigDict(
@@ -29,7 +31,6 @@ class CamelCaseConfigModel(BaseModel):
         populate_by_name=True,
     )
 
+
 class DescConfigModel(BaseModel):
-    model_config = ConfigDict(
-        json_schema_extra=schema_extra
-    )
+    model_config = ConfigDict(json_schema_extra=schema_extra)

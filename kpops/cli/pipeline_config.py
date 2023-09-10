@@ -64,7 +64,9 @@ class PipelineConfig(BaseSettings):
     )
     kafka_rest_host: str | None = Field(
         default=None,
-        validation_alias=AliasChoices(f"{ENV_PREFIX}rest_proxy_host", "kafka_rest_host"),
+        validation_alias=AliasChoices(
+            f"{ENV_PREFIX}rest_proxy_host", "kafka_rest_host"
+        ),
         examples=[
             "http://localhost:8082",
         ],
@@ -72,7 +74,9 @@ class PipelineConfig(BaseSettings):
     )
     kafka_connect_host: str | None = Field(
         default=None,
-        validation_alias=AliasChoices(f"{ENV_PREFIX}connect_host", "kafka_connect_host"),
+        validation_alias=AliasChoices(
+            f"{ENV_PREFIX}connect_host", "kafka_connect_host"
+        ),
         examples=[
             "http://localhost:8083",
         ],
@@ -98,7 +102,7 @@ class PipelineConfig(BaseSettings):
         default=False,
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
-    
+
     @classmethod
     def settings_customise_sources(
         cls,
@@ -115,4 +119,3 @@ class PipelineConfig(BaseSettings):
             env_settings,
             file_secret_settings,
         )
-        

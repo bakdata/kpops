@@ -49,8 +49,8 @@ class PipelineComponent(BaseDefaultsComponent, DescConfigModel):
         description=describe_attr("to", __doc__),
     )
 
-    model_config=ConfigDict(
-        extra = Extra.allow,
+    model_config = ConfigDict(
+        extra=Extra.allow,
     )
 
     def __init__(self, **kwargs) -> None:

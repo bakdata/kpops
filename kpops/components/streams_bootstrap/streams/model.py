@@ -1,6 +1,6 @@
 from typing import Any
 
-from pydantic import Field
+from pydantic import ConfigDict, Field
 from typing_extensions import override
 
 from kpops.components.base_components.base_defaults_component import deduplicate
@@ -72,34 +72,16 @@ class StreamsConfig(KafkaStreamsConfig):
         )
 
     @override
-    def dict(
+    def model_dump(
         self,
-        *,
-        include: set[int] | set[str] | dict[int, Any] | dict[str, Any] | None,
-        exclude: set[int] | set[str] | dict[int, Any] | dict[str, Any] | None,
-        by_alias: bool = False,
-        skip_defaults: bool | None = None,
-        exclude_unset: bool = False,
         **kwargs,
     ) -> dict:
-        """Generate a dictionary representation of the model
-
-        Optionally, specify which fields to include or exclude.
-
-        :param include: Fields to include
-        :param include: Fields to exclude
-        :param by_alias: Use the fields' aliases in the dictionary
-        :param skip_defaults: Whether to skip defaults
-        :param exclude_unset: Whether to exclude unset fields
-        """
-        return super().dict(
-            include=include,
-            exclude=exclude,
-            by_alias=by_alias,
-            exclude_unset=exclude_unset,
+        breakpoint()
+        return super().model_dump(
             # The following lines are required only for the streams configs since we never not want to export defaults here, just fallback to helm default values
             exclude_defaults=True,
             exclude_none=True,
+            **kwargs,
         )
 
 

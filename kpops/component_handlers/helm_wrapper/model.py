@@ -101,6 +101,7 @@ class HelmConfig(DescConfigModel):
         description=describe_attr("api_version", __doc__),
     )
 
+
 class HelmFlags(RepoAuthFlags):
     set_file: dict[str, Path] = Field(default_factory=dict)
     create_namespace: bool = False
@@ -110,8 +111,8 @@ class HelmFlags(RepoAuthFlags):
     wait: bool = True
     wait_for_jobs: bool = False
 
-    model_config=ConfigDict(
-        extra = Extra.allow,
+    model_config = ConfigDict(
+        extra=Extra.allow,
     )
 
     @override

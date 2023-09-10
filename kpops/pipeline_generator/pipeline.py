@@ -16,6 +16,7 @@ from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
 from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
@@ -46,7 +47,7 @@ class PipelineComponents(BaseModel):
                 return component
         raise ValueError(f"Component {component_name} not found")
 
-    def add(self, component: SerializeAsAny[PipelineComponent]) -> None:
+    def add(self, component: PipelineComponent) -> None:
         self._populate_component_name(component)
         self.components.append(component)
 
@@ -236,8 +237,7 @@ class Pipeline:
         component.validate_ = True
         env_component_as_dict = update_nested_pair(
             self.env_components_index.get(component.name, {}),
-            # HACK: Pydantic .dict() doesn't create jsonable dict
-            component.model_dump(by_alias=True),
+            component.model_dump(mode="json", by_alias=True),
         )
         # HACK: make sure component type is set for inflated components, because property is not serialized by Pydantic
         env_component_as_dict["type"] = component.type
@@ -272,7 +272,7 @@ class Pipeline:
 
     def __str__(self) -> str:
         return yaml.dump(
-            self.components.model_dump(by_alias=True, exclude_none=True)
+            self.components.model_dump(mode="jsonb", by_alias=True, exclude_none=True)
         )
 
     def __len__(self) -> int:
@@ -298,7 +298,7 @@ class Pipeline:
             substitution_hardcoded,
         )
         substitution = generate_substitution(
-            json.loads(config.model_dump_json()), existing_substitution=component_substitution
+            config.model_dump(mode="json"), existing_substitution=component_substitution
         )
 
         return json.loads(

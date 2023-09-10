@@ -32,8 +32,8 @@ class FromTopic(BaseModel):
     role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
     model_config = ConfigDict(
-        extra = Extra.forbid,
-        use_enum_values = True,
+        extra=Extra.forbid,
+        use_enum_values=True,
     )
 
     @root_validator(skip_on_failure=True)
@@ -64,5 +64,5 @@ class FromSection(DescConfigModel):
     )
 
     model_config = ConfigDict(
-        extra = Extra.forbid,
+        extra=Extra.forbid,
     )

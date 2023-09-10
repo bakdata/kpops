@@ -32,8 +32,8 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
         default=None, description=describe_attr("schema_registry_url", __doc__)
     )
 
-    model_config=ConfigDict(
-        extra = Extra.allow,
+    model_config = ConfigDict(
+        extra=Extra.allow,
     )
 
 
