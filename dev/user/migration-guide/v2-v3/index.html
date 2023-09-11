@@ -453,6 +453,20 @@
 <a class="md-nav__link" href="#make-kafka-rest-proxy-connect-hosts-default-and-improve-schema-registry-config">
     Make Kafka rest proxy &amp; connect hosts default and improve schema registry config
   </a>
+<nav aria-label="Make Kafka rest proxy &amp; connect hosts default and improve schema registry config" class="md-nav">
+<ul class="md-nav__list">
+<li class="md-nav__item">
+<a class="md-nav__link" href="#configyaml">
+    config.yaml
+  </a>
+</li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="#pipelineyaml-and-defaultyaml">
+    pipeline.yaml and default.yaml
+  </a>
+</li>
+</ul>
+</nav>
 </li>
 </ul>
 </nav>
@@ -474,9 +488,12 @@
 <li>
 <p><code>kafka_connect_host</code> is replaced with <code>kafka_connect.url</code> (default <code>http://localhost:8083</code>).</p>
 </li>
+<li>
+<p><code>brokers</code> is renamed to <code>kafka_brokers</code>.</p>
+</li>
 </ul>
-<p>The environment variable name of these config fields changed respectively. The environment variable <code>KPOPS_KAFKA_BROKERS</code> changed to <code>KPOPS_BROKERS</code>. Please refer to the <a href="../../core-concepts/variables/environment_variables/">environment variables documentation page</a> to see the newest changes.</p>
-<p>Your <code>config.yaml</code> will change to:</p>
+<p>The environment variable name of these config fields changed respectively. Please refer to the <a href="../../core-concepts/variables/environment_variables/">environment variables documentation page</a> to see the newest changes.</p>
+<h4 id="configyaml">config.yaml<a class="headerlink" href="#configyaml" title="Permanent link">¶</a></h4>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-0-3"> 3</a></span>
@@ -488,18 +505,40 @@
 <span class="normal"><a href="#__codelineno-0-9"> 9</a></span>
 <span class="normal"><a href="#__codelineno-0-10">10</a></span>
 <span class="normal"><a href="#__codelineno-0-11">11</a></span>
-<span class="normal"><a href="#__codelineno-0-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="w"> </span> environment: development
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="w"> </span> brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+<span class="normal"><a href="#__codelineno-0-12">12</a></span>
+<span class="normal"><a href="#__codelineno-0-13">13</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="w"> </span> environment: development
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="gd">- brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="gd">- kafka_rest_host: "http://my-custom-rest.url:8082"</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="gd">- kafka_connect_host: "http://my-custom-connect.url:8083"</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="gd">- schema_registry_url: "http://my-custom-sr.url:8081"</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="gi">+ kafka_rest:</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="gi">+   url: "http://my-custom-rest.url:8082"</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="gi">+ kafka_connect:</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="gi">+   url: "http://my-custom-connect.url:8083"</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="gi">+ schema_registry:</span>
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="gi">+   enabled: true</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="gi">+   url: "http://my-custom-sr.url:8081"</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="gi">+ kafka_brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="gi">+ kafka_rest:</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="gi">+   url: "http://my-custom-rest.url:8082"</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="gi">+ kafka_connect:</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="gi">+   url: "http://my-custom-connect.url:8083"</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="gi">+ schema_registry:</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="gi">+   enabled: true</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="gi">+   url: "http://my-custom-sr.url:8081"</span>
+</span></code></pre></div></td></tr></table></div>
+<h4 id="pipelineyaml-and-defaultyaml">pipeline.yaml and default.yaml<a class="headerlink" href="#pipelineyaml-and-defaultyaml" title="Permanent link">¶</a></h4>
+<p>The variable is now called <code>kafka_brokers</code>.</p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span>
+<span class="normal"><a href="#__codelineno-1-2">2</a></span>
+<span class="normal"><a href="#__codelineno-1-3">3</a></span>
+<span class="normal"><a href="#__codelineno-1-4">4</a></span>
+<span class="normal"><a href="#__codelineno-1-5">5</a></span>
+<span class="normal"><a href="#__codelineno-1-6">6</a></span>
+<span class="normal"><a href="#__codelineno-1-7">7</a></span>
+<span class="normal"><a href="#__codelineno-1-8">8</a></span>
+<span class="normal"><a href="#__codelineno-1-9">9</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="w">...</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w"> </span> app:
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w"> </span>   streams:
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="gd">-     brokers: ${brokers}</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="gi">+     brokers: ${kafka_brokers}</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="w"> </span>     schemaRegistryUrl: ${schema_registry_url}
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="w"> </span>   nameOverride: override-with-this-name
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w"> </span>   imageTag: "1.0.0"
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="w">...</span>
 </span></code></pre></div></td></tr></table></div>
 </article>
 </div>

@@ -523,11 +523,11 @@ This would work in <code>bash</code> suppose there are no spaces inside the valu
 <td>environment</td>
 </tr>
 <tr>
-<td>KPOPS_BROKERS</td>
+<td>KPOPS_KAFKA_BROKERS</td>
 <td></td>
 <td>True</td>
 <td>The comma separated Kafka brokers address.</td>
-<td>brokers</td>
+<td>kafka_brokers</td>
 </tr>
 <tr>
 <td>KPOPS_TIMEOUT</td>
@@ -580,9 +580,9 @@ This would work in <code>bash</code> suppose there are no spaces inside the valu
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="c1"># Suffix your environment files with this value (e.g.</span>
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="c1"># defaults_development.yaml for environment=development).</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="n">KPOPS_ENVIRONMENT</span> <span class="c1"># No default value, required</span>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="c1"># brokers</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="c1"># kafka_brokers</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="c1"># The comma separated Kafka brokers address.</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="n">KPOPS_BROKERS</span> <span class="c1"># No default value, required</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14"></a><span class="n">KPOPS_KAFKA_BROKERS</span> <span class="c1"># No default value, required</span>
 </span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15"></a><span class="c1"># timeout</span>
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="c1"># The timeout in seconds that specifies when actions like deletion or</span>
 </span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="c1"># deploy timeout.</span>
