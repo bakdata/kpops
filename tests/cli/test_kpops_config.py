@@ -13,7 +13,7 @@ from kpops.cli.config import (
 
 def test_pipeline_config_with_default_values():
     default_config = KpopsConfig(
-        environment="development", brokers="http://broker:9092"
+        environment="development", kafka_brokers="http://broker:9092"
     )
 
     assert default_config.defaults_path == Path(".")
@@ -43,7 +43,7 @@ def test_pipeline_config_with_different_invalid_urls():
     with pytest.raises(ValidationError):
         KpopsConfig(
             environment="development",
-            brokers="http://broker:9092",
+            kafka_brokers="http://broker:9092",
             kafka_connect=KafkaConnectConfig(
                 url=parse_obj_as(AnyHttpUrl, "in-valid-host")
             ),
@@ -52,14 +52,14 @@ def test_pipeline_config_with_different_invalid_urls():
     with pytest.raises(ValidationError):
         KpopsConfig(
             environment="development",
-            brokers="http://broker:9092",
+            kafka_brokers="http://broker:9092",
             kafka_rest=KafkaRestConfig(url=parse_obj_as(AnyHttpUrl, "in-valid-host")),
         )
 
     with pytest.raises(ValidationError):
         KpopsConfig(
             environment="development",
-            brokers="http://broker:9092",
+            kafka_brokers="http://broker:9092",
             schema_registry=SchemaRegistryConfig(
                 enabled=True,
                 url=parse_obj_as(AnyHttpUrl, "in-valid-host"),

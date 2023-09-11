@@ -87,16 +87,6 @@
             "additionalProperties": false,
             "description": "Pipeline configuration unrelated to the components.",
             "properties": {
-                "brokers": {
-                    "description": "The comma separated Kafka brokers address.",
-                    "env": "KPOPS_BROKERS",
-                    "env_names": [
-                        "kpops_brokers"
-                    ],
-                    "example": "broker1:9092,broker2:9092,broker3:9092",
-                    "title": "Brokers",
-                    "type": "string"
-                },
                 "create_namespace": {
                     "default": false,
                     "description": "Flag for `helm upgrade --install`. Create the release namespace if not present.",
@@ -167,6 +157,16 @@
                         "kpops_helm_diff_config"
                     ],
                     "title": "Helm Diff Config"
+                },
+                "kafka_brokers": {
+                    "description": "The comma separated Kafka brokers address.",
+                    "env": "KPOPS_KAFKA_BROKERS",
+                    "env_names": [
+                        "kpops_kafka_brokers"
+                    ],
+                    "example": "broker1:9092,broker2:9092,broker3:9092",
+                    "title": "Kafka Brokers",
+                    "type": "string"
                 },
                 "kafka_connect": {
                     "allOf": [
@@ -253,7 +253,7 @@
             },
             "required": [
                 "environment",
-                "brokers"
+                "kafka_brokers"
             ],
             "title": "KpopsConfig",
             "type": "object"

@@ -73,7 +73,7 @@ def to_section(topic_config: TopicConfig) -> ToSection:
 def pipeline_config_with_sr_enabled() -> KpopsConfig:
     return KpopsConfig(
         environment="development",
-        brokers="broker:9092",
+        kafka_brokers="broker:9092",
         schema_registry=SchemaRegistryConfig(
             enabled=True, url=parse_obj_as(AnyHttpUrl, "http://mock:8081")
         ),

@@ -81,9 +81,9 @@ class KpopsConfig(BaseSettings):
         description="The environment you want to generate and deploy the pipeline to. "
         "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
     )
-    brokers: str = Field(
+    kafka_brokers: str = Field(
         default=...,
-        env=f"{ENV_PREFIX}BROKERS",
+        env=f"{ENV_PREFIX}KAFKA_BROKERS",
         description="The comma separated Kafka brokers address.",
         example="broker1:9092,broker2:9092,broker3:9092",
     )

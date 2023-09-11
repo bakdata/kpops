@@ -463,7 +463,7 @@ class TestPipeline:
         self,
         monkeypatch: MonkeyPatch,
     ):
-        monkeypatch.setenv(name="KPOPS_BROKERS", value="env_broker")
+        monkeypatch.setenv(name="KPOPS_KAFKA_BROKERS", value="env_broker")
 
         result = runner.invoke(
             app,

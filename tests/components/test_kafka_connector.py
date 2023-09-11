@@ -29,7 +29,7 @@ class TestKafkaConnector:
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
             ),
-            brokers="broker:9092",
+            kafka_brokers="broker:9092",
             helm_diff_config=HelmDiffConfig(),
         )
 

@@ -4,7 +4,7 @@ topic_name_config:
   default_error_topic_name: "${pipeline_name}-${component_name}-dead-letter-topic"
   default_output_topic_name: "${pipeline_name}-${component_name}-topic"
 
-brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+kafka_brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
 
 schema_registry:
   enabled: true
