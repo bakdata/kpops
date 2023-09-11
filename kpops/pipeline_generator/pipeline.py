@@ -77,6 +77,55 @@ class PipelineComponents(BaseModel):
                 f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
             )
 
+    def generate_graph(self) -> None:
+        for component in self.components:
+            all_input_topics = self.__get_all_input_topics(component)
+            all_output_topics = self.__get_all_output_topics(component)
+
+            component_node_name = self.__get_vertex_component_name(component)
+            self.graph.add_node(component_node_name)
+
+            self.__add_ingoing_edges(all_input_topics, component_node_name)
+            self.__add_outgoing_edges(all_output_topics, component_node_name)
+
+    def __add_outgoing_edges(
+        self, all_output_topics: list[str], component_node_name: str
+    ) -> None:
+        for output_topic in all_output_topics:
+            self.graph.add_node(output_topic)
+            self.graph.add_edge(component_node_name, output_topic)
+
+    def __add_ingoing_edges(
+        self, all_input_topics: list[str], component_node_name: str
+    ) -> None:
+        for input_topic in all_input_topics:
+            self.graph.add_node(input_topic)
+            self.graph.add_edge(input_topic, component_node_name)
+
+    @staticmethod
+    def __get_vertex_component_name(component: PipelineComponent) -> str:
+        return f"component-{component.name}"
+
+    def __get_all_output_topics(self, component: PipelineComponent) -> list[str]:
+        all_output_topics: list[str] = []
+        output_topic = component.get_output_topic()
+        extra_output_topics = component.get_extra_output_topics()
+        if output_topic is not None:
+            all_output_topics.append(output_topic)
+        if extra_output_topics:
+            all_output_topics.extend(list(extra_output_topics.values()))
+        return all_output_topics
+
+    def __get_all_input_topics(self, component: PipelineComponent) -> list[str]:
+        input_topics = component.get_input_topics()
+        extra_input_topics = component.get_extra_input_topics()
+        all_input_topics: list[str] = []
+        if input_topics is not None:
+            all_input_topics.extend(input_topics)
+        if extra_input_topics:
+            all_input_topics.extend(chain(*extra_input_topics.values()))
+        return all_input_topics
+
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:
         component.name = component.prefix + component.name
@@ -122,7 +171,7 @@ class Pipeline:
         self.registry = registry
         self.env_components_index = create_env_components_index(environment_components)
         self.parse_components(component_list)
-        self.__generate_graph()
+        self.components.generate_graph()
         self.validate()
 
     @classmethod
@@ -170,55 +219,6 @@ class Pipeline:
 
         pipeline = cls(main_content, env_content, registry, config, handlers)
         return pipeline
-
-    def __generate_graph(self) -> None:
-        for component in self.components:
-            all_input_topics = self.__get_all_input_topics(component)
-            all_output_topics = self.__get_all_output_topics(component)
-
-            component_node_name = self.__get_vertex_component_name(component)
-            self.components.graph.add_node(component_node_name)
-
-            self.__add_ingoing_edges(all_input_topics, component_node_name)
-            self.__add_outgoing_edges(all_output_topics, component_node_name)
-
-    def __add_outgoing_edges(
-        self, all_output_topics: list[str], component_node_name: str
-    ) -> None:
-        for output_topic in all_output_topics:
-            self.components.graph.add_node(output_topic)
-            self.components.graph.add_edge(component_node_name, output_topic)
-
-    def __add_ingoing_edges(
-        self, all_input_topics: list[str], component_node_name: str
-    ) -> None:
-        for input_topic in all_input_topics:
-            self.components.graph.add_node(input_topic)
-            self.components.graph.add_edge(input_topic, component_node_name)
-
-    @staticmethod
-    def __get_vertex_component_name(component: PipelineComponent) -> str:
-        return f"component-{component.name}"
-
-    def __get_all_output_topics(self, component: PipelineComponent) -> list[str]:
-        all_output_topics: list[str] = []
-        output_topic = component.get_output_topic()
-        extra_output_topics = component.get_extra_output_topics()
-        if output_topic is not None:
-            all_output_topics.append(output_topic)
-        if extra_output_topics:
-            all_output_topics.extend(list(extra_output_topics.values()))
-        return all_output_topics
-
-    def __get_all_input_topics(self, component: PipelineComponent) -> list[str]:
-        input_topics = component.get_input_topics()
-        extra_input_topics = component.get_extra_input_topics()
-        all_input_topics: list[str] = []
-        if input_topics is not None:
-            all_input_topics.extend(input_topics)
-        if extra_input_topics:
-            all_input_topics.extend(chain(*extra_input_topics.values()))
-        return all_input_topics
 
     def parse_components(self, component_list: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components
