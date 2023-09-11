@@ -141,6 +141,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://bakdata.github.io/kpops/dev/user/migration-guide/v2-v3/</loc>
+         <lastmod>2023-09-11</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://bakdata.github.io/kpops/dev/user/references/cli-commands/</loc>
          <lastmod>2023-09-11</lastmod>
          <changefreq>daily</changefreq>
