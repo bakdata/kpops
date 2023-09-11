@@ -63,7 +63,7 @@ class ProxyWrapper:
         :param topic_spec: The topic specification.
         """
         response = httpx.post(
-            url=f"{self._config.url}/v3/clusters/{self.cluster_id}/topics",
+            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec.dict(exclude_none=True),
         )

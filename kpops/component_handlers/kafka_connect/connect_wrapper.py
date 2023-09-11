@@ -50,7 +50,7 @@ class ConnectWrapper:
         config_json = connector_config.dict()
         connect_data = {"name": connector_config.name, "config": config_json}
         response = httpx.post(
-            url=f"{self._config.url}/connectors", headers=HEADERS, json=connect_data
+            url=f"{self.url}/connectors", headers=HEADERS, json=connect_data
         )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_config.name} created.")
@@ -72,7 +72,7 @@ class ConnectWrapper:
         :return: Information about the connector
         """
         response = httpx.get(
-            url=f"{self._config.url}/connectors/{connector_name}", headers=HEADERS
+            url=f"{self.url}/connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.OK:
             log.info(f"Connector {connector_name} exists.")
@@ -100,7 +100,7 @@ class ConnectWrapper:
         connector_name = connector_config.name
         config_json = connector_config.dict()
         response = httpx.put(
-            url=f"{self._config.url}/connectors/{connector_name}/config",
+            url=f"{self.url}/connectors/{connector_name}/config",
             headers=HEADERS,
             json=config_json,
         )
@@ -130,7 +130,7 @@ class ConnectWrapper:
         :return:
         """
         response = httpx.put(
-            url=f"{self._config.url}/connector-plugins/{connector_config.class_name}/config/validate",
+            url=f"{self.url}/connector-plugins/{connector_config.class_name}/config/validate",
             headers=HEADERS,
             json=connector_config.dict(),
         )
@@ -157,7 +157,7 @@ class ConnectWrapper:
         API Reference:https://docs.confluent.io/platform/current/connect/references/restapi.html#delete--connectors-(string-name)-
         """
         response = httpx.delete(
-            url=f"{self._config.url}/connectors/{connector_name}", headers=HEADERS
+            url=f"{self.url}/connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Connector {connector_name} deleted.")
