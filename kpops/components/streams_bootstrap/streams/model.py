@@ -1,6 +1,7 @@
 from typing import Any
 
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict, Field, model_serializer
+from pydantic.alias_generators import to_snake
 from typing_extensions import override
 
 from kpops.components.base_components.base_defaults_component import deduplicate
@@ -71,18 +72,29 @@ class StreamsConfig(KafkaStreamsConfig):
             self.extra_input_topics.get(role, []) + topics
         )
 
-    @override
-    def model_dump(
-        self,
-        **kwargs,
-    ) -> dict:
-        breakpoint()
-        return super().model_dump(
-            # The following lines are required only for the streams configs since we never not want to export defaults here, just fallback to helm default values
-            exclude_defaults=True,
-            exclude_none=True,
-            **kwargs,
-        )
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(self, handler) -> dict[str, Any]:
+        result = handler(self)
+        extra_fields = set()
+        if self.model_extra is not None:
+            extra_fields = set(self.model_extra.keys())
+        fields = extra_fields.union(self.model_fields_set)
+        filtered_result_extra_set = {k: v for k, v in result.items() if ((to_snake(k) in fields) or k in fields)}
+        unfiltered_result = {k: v for k, v in result.items() if result[k] or k in extra_fields}
+        return filtered_result_extra_set
+
+    # @override
+    # def model_dump(
+    #     self,
+    #     **kwargs,
+    # ) -> dict:
+    #     breakpoint()
+    #     return super().model_dump(
+    #         # The following lines are required only for the streams configs since we never not want to export defaults here, just fallback to helm default values
+    #         exclude_defaults=True,
+    #         exclude_none=True,
+    #         **kwargs,
+    #     )
 
 
 class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
