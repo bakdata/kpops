@@ -23,8 +23,8 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
         kafka_brokers="broker:9092",
     )
     connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
-    connector_handler = KafkaConnectHandler.from_pipeline_config(config=config)
-    connector_handler_mock.from_pipeline_config.return_value = connector_handler
+    connector_handler = KafkaConnectHandler.from_kpops_config(config)
+    connector_handler_mock.from_kpops_config.return_value = connector_handler
 
     topic_handler_mock = mocker.patch("kpops.cli.main.TopicHandler")
     wrapper = mocker.patch("kpops.cli.main.ProxyWrapper")
@@ -39,7 +39,7 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
 
     actual_handlers = setup_handlers(MODULE, config)
 
-    connector_handler_mock.from_pipeline_config.assert_called_once_with(config)
+    connector_handler_mock.from_kpops_config.assert_called_once_with(config)
 
     assert actual_handlers.schema_handler == expected.schema_handler
     assert actual_handlers.connector_handler == expected.connector_handler
@@ -62,8 +62,8 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     schema_handler_mock.load_schema_handler.return_value = schema_handler
 
     connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
-    connector_handler = KafkaConnectHandler.from_pipeline_config(config=config)
-    connector_handler_mock.from_pipeline_config.return_value = connector_handler
+    connector_handler = KafkaConnectHandler.from_kpops_config(config)
+    connector_handler_mock.from_kpops_config.return_value = connector_handler
 
     topic_handler_mock = mocker.patch("kpops.cli.main.TopicHandler")
     wrapper = mocker.patch("kpops.cli.main.ProxyWrapper")
@@ -80,7 +80,7 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
 
     schema_handler_mock.load_schema_handler.assert_called_once_with(MODULE, config)
 
-    connector_handler_mock.from_pipeline_config.assert_called_once_with(config)
+    connector_handler_mock.from_kpops_config.assert_called_once_with(config)
 
     assert actual_handlers.schema_handler == expected.schema_handler
     assert actual_handlers.connector_handler == expected.connector_handler

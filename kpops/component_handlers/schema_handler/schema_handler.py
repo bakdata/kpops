@@ -23,11 +23,11 @@ log = logging.getLogger("SchemaHandler")
 class SchemaHandler:
     def __init__(
         self,
-        pipeline_config: KpopsConfig,
+        kpops_config: KpopsConfig,
         components_module: str | None,
     ) -> None:
         self.schema_registry_client = SchemaRegistryClient(
-            pipeline_config.schema_registry.url
+            kpops_config.schema_registry.url
         )
         self.components_module = components_module
 
@@ -51,10 +51,7 @@ class SchemaHandler:
         cls, components_module: str | None, config: KpopsConfig
     ) -> SchemaHandler | None:
         if config.schema_registry.enabled:
-            return cls(
-                pipeline_config=config,
-                components_module=components_module,
-            )
+            return cls(config, components_module)
         return None
 
     def submit_schemas(self, to_section: ToSection, dry_run: bool = True) -> None:

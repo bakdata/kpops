@@ -31,8 +31,8 @@ class ConnectWrapper:
     Wraps Kafka Connect APIs
     """
 
-    def __init__(self, kafka_connect_config: KafkaConnectConfig) -> None:
-        self._config: KafkaConnectConfig = kafka_connect_config
+    def __init__(self, config: KafkaConnectConfig) -> None:
+        self._config: KafkaConnectConfig = config
 
     @property
     def url(self) -> AnyHttpUrl:

@@ -31,8 +31,8 @@ class ProxyWrapper:
     Wraps Kafka REST Proxy APIs
     """
 
-    def __init__(self, kafka_rest_config: KafkaRestConfig) -> None:
-        self._config: KafkaRestConfig = kafka_rest_config
+    def __init__(self, config: KafkaRestConfig) -> None:
+        self._config: KafkaRestConfig = config
 
     @cached_property
     def cluster_id(self) -> str:

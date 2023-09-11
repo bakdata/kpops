@@ -239,7 +239,7 @@ def write_csv_to_md_file(
         writer.dump(output=f)
 
 
-def __fill_csv_pipeline_config(target: Path) -> None:
+def __fill_csv_kpops_config(target: Path) -> None:
     """Append all ``PipelineConfig``-related env vars to a ``.csv`` file.
 
     Finds all ``PipelineConfig``-related env vars and appends them to
@@ -373,7 +373,7 @@ if __name__ == "__main__":
         + DESCRIPTION_CONFIG_ENV_VARS,
         columns=list(EnvVarAttrs.values()),
         description_md_file=DESCRIPTION_CONFIG_ENV_VARS,
-        variable_extraction_function=__fill_csv_pipeline_config,
+        variable_extraction_function=__fill_csv_kpops_config,
     )
     # Find all cli-related env variables, write them into a file
     gen_vars(

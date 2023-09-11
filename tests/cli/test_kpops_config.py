@@ -11,7 +11,7 @@ from kpops.cli.config import (
 )
 
 
-def test_pipeline_config_with_default_values():
+def test_kpops_config_with_default_values():
     default_config = KpopsConfig(
         environment="development", kafka_brokers="http://broker:9092"
     )
@@ -39,7 +39,7 @@ def test_pipeline_config_with_default_values():
     assert default_config.retain_clean_jobs is False
 
 
-def test_pipeline_config_with_different_invalid_urls():
+def test_kpops_config_with_different_invalid_urls():
     with pytest.raises(ValidationError):
         KpopsConfig(
             environment="development",
