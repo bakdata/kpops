@@ -32,7 +32,7 @@ class ProxyWrapper:
     """
 
     def __init__(self, kafka_rest_config: KafkaRestConfig) -> None:
-        self._url: AnyHttpUrl = kafka_rest_config.url
+        self._config: KafkaRestConfig = kafka_rest_config
 
     @cached_property
     def cluster_id(self) -> str:
@@ -45,7 +45,7 @@ class ProxyWrapper:
         bootstrap.servers configuration. Therefore, only one Kafka cluster will be returned.
         :return: The Kafka cluster ID.
         """
-        response = httpx.get(url=f"{self._url}/v3/clusters")
+        response = httpx.get(url=f"{self._config.url}/v3/clusters")
         if response.status_code == httpx.codes.OK:
             cluster_information = response.json()
             return cluster_information["data"][0]["cluster_id"]
@@ -54,7 +54,7 @@ class ProxyWrapper:
 
     @property
     def url(self) -> AnyHttpUrl:
-        return self._url
+        return self._config.url
 
     def create_topic(self, topic_spec: TopicSpec) -> None:
         """
@@ -63,7 +63,7 @@ class ProxyWrapper:
         :param topic_spec: The topic specification.
         """
         response = httpx.post(
-            url=f"{self._url}/v3/clusters/{self.cluster_id}/topics",
+            url=f"{self._config.url}/v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec.dict(exclude_none=True),
         )
