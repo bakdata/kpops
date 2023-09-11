@@ -20,7 +20,7 @@
 ??? example "defaults.yaml"
     ```yaml
     --8<--
-    https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/defaults/defaults.yaml
+    https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/defaults.yaml
     --8<--
     ```
 
