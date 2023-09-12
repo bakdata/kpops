@@ -1,7 +1,6 @@
 from __future__ import annotations
 
-from functools import cached_property
-from typing import Literal
+from abc import ABC
 
 from pydantic import Extra, Field
 
@@ -18,38 +17,23 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
-from kpops.utils.docstring import describe_attr, describe_object
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import DescConfig
 
 
-class PipelineComponent(BaseDefaultsComponent):
+class PipelineComponent(BaseDefaultsComponent, ABC):
     """Base class for all components
 
     :param name: Component name
-    :type name: str
     :param prefix: Pipeline prefix that will prefix every component name.
         If you wish to not have any prefix you can specify an empty string.,
         defaults to "${pipeline_name}-"
-    :type prefix: str, optional
     :param from_: Topic(s) and/or components from which the component will read
         input, defaults to None
-    :type from_: FromSection, optional
     :param to: Topic(s) into which the component will write output,
         defaults to None
-    :type to: ToSection, optional
     """
 
-    type: str = Field(
-        default="pipeline-component",
-        description=describe_attr("type", __doc__),
-        const=True,
-    )
-    schema_type: Literal["pipeline-component"] = Field(
-        default="pipeline-component",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     name: str = Field(default=..., description=describe_attr("name", __doc__))
     prefix: str = Field(
         default="${pipeline_name}-",
@@ -66,9 +50,8 @@ class PipelineComponent(BaseDefaultsComponent):
         description=describe_attr("to", __doc__),
     )
 
-    class Config(CamelCaseConfig, DescConfig):
+    class Config(DescConfig):
         extra = Extra.allow
-        keep_untouched = (cached_property,)
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)
@@ -87,59 +70,53 @@ class PipelineComponent(BaseDefaultsComponent):
     def get_extra_output_topics(self) -> dict[str, str] | None:
         """Get extra output topics list from config."""
 
+    @property
+    def full_name(self) -> str:
+        return self.prefix + self.name
+
     def add_input_topics(self, topics: list[str]) -> None:
         """Add given topics to the list of input topics.
 
         :param topics: Input topics
-        :type topics: list[str]
         """
 
-    def add_extra_input_topic(self, role: str, topics: list[str]) -> None:
+    def add_extra_input_topics(self, role: str, topics: list[str]) -> None:
         """Add given extra topics that share a role to the list of extra input topics.
 
         :param topics: Extra input topics
-        :type topics: list[str]
         :param role: Topic role
-        :type role: str
         """
 
     def set_input_pattern(self, name: str) -> None:
         """Set input pattern
 
         :param name: Input pattern name
-        :type name: str
         """
 
     def add_extra_input_pattern(self, role: str, topic: str) -> None:
         """Add an input pattern of type extra
 
         :param role: Custom identifier belonging to one or multiple topics
-        :type role: str
         :param topic: Topic name
-        :type topic: str
         """
 
     def set_output_topic(self, topic_name: str) -> None:
         """Set output topic
 
         :param topic_name: Output topic name
-        :type topic_name: str
         """
 
     def set_error_topic(self, topic_name: str) -> None:
         """Set error topic
 
         :param topic_name: Error topic name
-        :type topic_name: str
         """
 
     def add_extra_output_topic(self, topic_name: str, role: str) -> None:
         """Add an output topic of type extra
 
         :param topic_name: Output topic name
-        :type topic_name: str
         :param role: Role that is unique to the extra output topic
-        :type role: str
         """
 
     def set_input_topics(self) -> None:
@@ -155,19 +132,17 @@ class PipelineComponent(BaseDefaultsComponent):
         """Add a `from` section input to the component config
 
         :param name: Name of the field
-        :type name: str
         :param topic: Value of the field
-        :type topic: FromTopic
         """
         match topic.type:
-            case InputTopicTypes.INPUT:
-                self.add_input_topics([name])
-            case InputTopicTypes.EXTRA if topic.role:
-                self.add_extra_input_topic(topic.role, [name])
-            case InputTopicTypes.INPUT_PATTERN:
-                self.set_input_pattern(name)
-            case InputTopicTypes.EXTRA_PATTERN if topic.role:
+            case None if topic.role:
+                self.add_extra_input_topics(topic.role, [name])
+            case InputTopicTypes.PATTERN if topic.role:
                 self.add_extra_input_pattern(topic.role, name)
+            case InputTopicTypes.PATTERN:
+                self.set_input_pattern(name)
+            case _:
+                self.add_input_topics([name])
 
     def set_output_topics(self) -> None:
         """Put values of config.to into the producer config section of streams bootstrap
@@ -182,17 +157,15 @@ class PipelineComponent(BaseDefaultsComponent):
         """Add a `to` section input to the component config
 
         :param name: Name of the field
-        :type name: str
         :param topic: Value of the field
-        :type topic: TopicConfig
         """
         match topic.type:
-            case OutputTopicTypes.OUTPUT:
-                self.set_output_topic(name)
+            case None if topic.role:
+                self.add_extra_output_topic(name, topic.role)
             case OutputTopicTypes.ERROR:
                 self.set_error_topic(name)
-            case OutputTopicTypes.EXTRA if topic.role:
-                self.add_extra_output_topic(name, topic.role)
+            case _:
+                self.set_output_topic(name)
 
     def weave_from_topics(
         self,
@@ -208,7 +181,7 @@ class PipelineComponent(BaseDefaultsComponent):
         input_topics = [
             topic_name
             for topic_name, topic_config in to.topics.items()
-            if topic_config.type == OutputTopicTypes.OUTPUT
+            if topic_config.type != OutputTopicTypes.ERROR and not topic_config.role
         ]
         for input_topic in input_topics:
             self.apply_from_inputs(input_topic, from_topic)
@@ -237,26 +210,22 @@ class PipelineComponent(BaseDefaultsComponent):
         """Deploy the component (self) to the k8s cluster
 
         :param dry_run: Whether to do a dry run of the command
-        :type dry_run: bool
         """
 
     async def destroy(self, dry_run: bool) -> None:
         """Uninstall the component (self) from the k8s cluster
 
         :param dry_run: Whether to do a dry run of the command
-        :type dry_run: bool
         """
 
     async def reset(self, dry_run: bool) -> None:
         """Reset component (self) state
 
         :param dry_run: Whether to do a dry run of the command
-        :type dry_run: bool
         """
 
     async def clean(self, dry_run: bool) -> None:
         """Remove component (self) and any trace of it
 
         :param dry_run: Whether to do a dry run of the command
-        :type dry_run: bool
         """

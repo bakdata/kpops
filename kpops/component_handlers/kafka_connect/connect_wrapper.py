@@ -1,6 +1,5 @@
 import asyncio
 import logging
-from typing import Any
 
 import httpx
 
@@ -9,8 +8,8 @@ from kpops.component_handlers.kafka_connect.exception import (
     KafkaConnectError,
 )
 from kpops.component_handlers.kafka_connect.model import (
-    KafkaConnectConfig,
     KafkaConnectConfigErrorResponse,
+    KafkaConnectorConfig,
     KafkaConnectResponse,
 )
 
@@ -39,31 +38,32 @@ class ConnectWrapper:
         return self._host
 
     async def create_connector(
-        self, connector_name: str, kafka_connect_config: KafkaConnectConfig
+        self, connector_config: KafkaConnectorConfig
     ) -> KafkaConnectResponse:
         """
         Creates a new connector
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#post--connectors
-        :param connector_name: The name of the connector
-        :param kafka_connect_config: The config of the connector
+        :param connector_config: The config of the connector
         :return: The current connector info if successful
         """
-        config_json = kafka_connect_config.dict(exclude_none=True)
-        connect_data = {"name": connector_name, "config": config_json}
 
+        config_json = connector_config.dict()
+        connect_data = {"name": connector_config.name, "config": config_json}
         response = await self._client.post(
             url="/connectors", headers=HEADERS, json=connect_data
         )
         if response.status_code == httpx.codes.CREATED:
-            log.info(f"Connector {connector_name} created.")
+            log.info(f"Connector {connector_config.name} created.")
             log.debug(response.json())
             return KafkaConnectResponse(**response.json())
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(
                 "Rebalancing in progress while creating a connector... Retrying..."
             )
+
             await asyncio.sleep(1)
-            await self.create_connector(connector_name, kafka_connect_config)
+            await self.create_connector(connector_config)
+
         raise KafkaConnectError(response)
 
     async def get_connector(self, connector_name: str) -> KafkaConnectResponse:
@@ -92,15 +92,16 @@ class ConnectWrapper:
         raise KafkaConnectError(response)
 
     async def update_connector_config(
-        self, connector_name: str, kafka_connect_config: KafkaConnectConfig
+        self, connector_config: KafkaConnectorConfig
     ) -> KafkaConnectResponse:
         """
         Create a new connector using the given configuration, or update the configuration for an existing connector.
-        :param connector_name: Name of the created connector
-        :param kafka_connect_config: Configuration parameters for the connector.
+        :param connector_config: Configuration parameters for the connector.
         :return: Information about the connector after the change has been made.
         """
-        config_json = kafka_connect_config.dict(exclude_none=True)
+
+        connector_name = connector_config.name
+        config_json = connector_config.dict()
         response = await self._client.put(
             url=f"/connectors/{connector_name}/config",
             headers=HEADERS,
@@ -121,36 +122,22 @@ class ConnectWrapper:
                 "Rebalancing in progress while updating a connector... Retrying..."
             )
             await asyncio.sleep(1)
-            await self.update_connector_config(connector_name, kafka_connect_config)
+            await self.update_connector_config(connector_config)
         raise KafkaConnectError(response)
 
-    @classmethod
-    def get_connector_config(
-        cls, connector_name: str, config: KafkaConnectConfig
-    ) -> dict[str, Any]:
-        connector_config = config.dict(exclude_none=True)
-        if (name := connector_config.get("name")) and name != connector_name:
-            raise ValueError("Connector name should be the same as component name")
-        connector_config["name"] = connector_name
-        return connector_config
-
     async def validate_connector_config(
-        self, connector_name: str, kafka_connect_config: KafkaConnectConfig
+        self, connector_config: KafkaConnectorConfig
     ) -> list[str]:
         """
         Validate connector config using the given configuration
-        :param connector_name: Name of the created connector
-        :param kafka_connect_config: Configuration parameters for the connector.
+        :param connector_config: Configuration parameters for the connector.
         :return:
         """
 
-        config_json = self.get_connector_config(connector_name, kafka_connect_config)
-        connector_class = ConnectWrapper.get_connector_class_name(config_json)
-
         response = await self._client.put(
-            url=f"/connector-plugins/{connector_class}/config/validate",
+            url=f"{self._host}/connector-plugins/{connector_config.class_name}/config/validate",
             headers=HEADERS,
-            json=config_json,
+            json=connector_config.dict(),
         )
 
         if response.status_code == httpx.codes.OK:
@@ -190,8 +177,3 @@ class ConnectWrapper:
             await asyncio.sleep(1)
             await self.delete_connector(connector_name)
         raise KafkaConnectError(response)
-
-    @staticmethod
-    def get_connector_class_name(config_json: dict[str, str]) -> str:
-        task_class = config_json["connector.class"]
-        return task_class.split(".")[-1]

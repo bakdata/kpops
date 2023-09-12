@@ -2,11 +2,13 @@
 
 ## [ATM Fraud Pipeline](https://github.com/bakdata/kpops/tree/main/examples/bakdata/atm-fraud-detection){target=_blank}
 
+<!-- dprint-ignore-start -->
+
 ??? example "defaults.yaml"
     ```yaml
-        --8<--
-        https://raw.githubusercontent.com/bakdata/kpops/main/examples/bakdata/atm-fraud-detection/defaults.yaml
-        --8<--
+    --8<--
+    https://raw.githubusercontent.com/bakdata/kpops/main/examples/bakdata/atm-fraud-detection/defaults.yaml
+    --8<--
     ```
 
 <!-- dprint-ignore-end -->
@@ -23,4 +25,3 @@
     ```
 
 <!-- dprint-ignore-end -->
-

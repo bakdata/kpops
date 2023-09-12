@@ -6,4 +6,4 @@ kafka-source-connector:
   # from:
   # offset.storage.topic
   # https://kafka.apache.org/documentation/#connect_running
-  offsetTopic: offset_topic
+  offset_topic: offset_topic

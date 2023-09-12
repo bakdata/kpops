@@ -10,10 +10,14 @@
   to:
     topics:
       ${pipeline_name}-output-topic:
-        type: output # required
-        # role: topic-role # only used if type is `extra`
-        keySchema: key-schema # must implement SchemaProvider to use
-        valueSchema: value-schema
+        type: output # Implied when role is NOT specified
+      ${pipeline_name}-extra-topic:
+        role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
+      ${pipeline_name}-error-topic:
+        type: error
+        # Currently KPOps supports Avro and JSON schemas.
+        key_schema: key-schema # must implement SchemaProvider to use
+        value_schema: value-schema
         partitions_count: 1
         replication_factor: 1
         configs: # https://kafka.apache.org/documentation/#topicconfigs
@@ -27,10 +31,10 @@
   app: # required
     tasks.max: 1
   # Helm repository configuration for resetter
-  repoConfig:
-    repositoryName: my-repo # required
+  repo_config:
+    repository_name: my-repo # required
     url: https://bakdata.github.io/kafka-connect-resetter/ # required
-    repoAuthFlags:
+    repo_auth_flags:
       username: user
       password: pass
       ca_file: /home/user/path/to/ca-file
@@ -38,8 +42,8 @@
   version: "1.0.6" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
-  resetterValues:
+  resetter_values:
     imageTag: "1.2.3"
   # offset.storage.topic
   # https://kafka.apache.org/documentation/#connect_running
-  offsetTopic: offset_topic
+  offset_topic: offset_topic

@@ -15,7 +15,6 @@ def gen_schema(scope: SchemaScope):
     The file is located in docs/docs/schema and is named ``<scope.value>.json``
 
     :param scope: Scope of the generated schema
-    :type scope: SchemaScope
     """
     with redirect_stdout(StringIO()) as f:
         match scope:
@@ -26,5 +25,6 @@ def gen_schema(scope: SchemaScope):
         Path(PATH_TO_SCHEMA / f"{scope.value}.json").write_text(f.getvalue())
 
 
-gen_schema(SchemaScope.PIPELINE)
-gen_schema(SchemaScope.CONFIG)
+if __name__ == "__main__":
+    gen_schema(SchemaScope.PIPELINE)
+    gen_schema(SchemaScope.CONFIG)

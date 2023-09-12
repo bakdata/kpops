@@ -1,4 +1,177 @@
 # Changelog
+## [2.0.8](https://github.com/bakdata/kpops/releases/tag/2.0.8) - Release Date: [2023-09-06]
+
+### 🐛 Fixes
+
+- Fix config.yaml overriding environment variables - [#353](https://github.com/bakdata/kpops/pull/353)
+
+
+### 🏭 Refactor
+
+- Refactor component prefix & name - [#326](https://github.com/bakdata/kpops/pull/326)
+
+- Remove unnecessary condition during inflate - [#328](https://github.com/bakdata/kpops/pull/328)
+
+
+
+
+
+
+## [2.0.7](https://github.com/bakdata/kpops/releases/tag/2.0.7) - Release Date: [2023-08-31]
+
+### 🐛 Fixes
+
+- Print only rendered templates when `--template` flag is set - [#350](https://github.com/bakdata/kpops/pull/350)
+
+
+### 📝 Documentation
+
+- Add migration guide - [#352](https://github.com/bakdata/kpops/pull/352)
+
+
+
+
+
+
+## [2.0.6](https://github.com/bakdata/kpops/releases/tag/2.0.6) - Release Date: [2023-08-30]
+
+### 🏭 Refactor
+
+- Simplify deployment with local Helm charts - [#349](https://github.com/bakdata/kpops/pull/349)
+
+
+
+
+
+
+## [2.0.5](https://github.com/bakdata/kpops/releases/tag/2.0.5) - Release Date: [2023-08-30]
+
+### 🐛 Fixes
+
+- Fix versioning of docs when releasing - [#346](https://github.com/bakdata/kpops/pull/346)
+
+
+
+
+
+
+## [2.0.4](https://github.com/bakdata/kpops/releases/tag/2.0.4) - Release Date: [2023-08-29]
+
+### 🐛 Fixes
+
+- Fix GitHub ref variable for pushing docs to main branch - [#343](https://github.com/bakdata/kpops/pull/343)
+
+
+### 📝 Documentation
+
+- Add `dprint` as the markdown formatter - [#337](https://github.com/bakdata/kpops/pull/337)
+
+- Publish pre-release docs for PRs & main branch - [#339](https://github.com/bakdata/kpops/pull/339)
+
+- Align docs colours - [#345](https://github.com/bakdata/kpops/pull/345)
+
+
+### 🌀 Miscellaneous
+
+- Exclude abstract components from pipeline schema - [#332](https://github.com/bakdata/kpops/pull/332)
+
+
+
+
+
+
+## [2.0.3](https://github.com/bakdata/kpops/releases/tag/2.0.3) - Release Date: [2023-08-24]
+
+### 🐛 Fixes
+
+- Fix GitHub action error in non-Python projects - [#340](https://github.com/bakdata/kpops/pull/340)
+
+
+### 🌀 Miscellaneous
+
+- Lint GitHub action - [#342](https://github.com/bakdata/kpops/pull/342)
+
+
+
+
+
+
+## [2.0.2](https://github.com/bakdata/kpops/releases/tag/2.0.2) - Release Date: [2023-08-23]
+
+### 📝 Documentation
+
+- Add version dropdown to the documentation - [#336](https://github.com/bakdata/kpops/pull/336)
+
+- Break the documentation down into smaller subsection - [#329](https://github.com/bakdata/kpops/pull/329)
+
+
+
+
+
+
+## [2.0.1](https://github.com/bakdata/kpops/releases/tag/2.0.1) - Release Date: [2023-08-22]
+
+### 🐛 Fixes
+
+- Fix optional flags in GitHub action - [#334](https://github.com/bakdata/kpops/pull/334)
+
+
+
+
+
+
+## [2.0.0](https://github.com/bakdata/kpops/releases/tag/2.0.0) - Release Date: [2023-08-17]
+
+### 🏗️ Breaking changes
+
+- Remove camel case conversion of internal models - [#308](https://github.com/bakdata/kpops/pull/308)
+
+- Derive component type automatically from class name - [#309](https://github.com/bakdata/kpops/pull/309)
+
+- Refactor input/output types - [#232](https://github.com/bakdata/kpops/pull/232)
+
+- v2 - [#321](https://github.com/bakdata/kpops/pull/321)
+
+
+### 🚀 Features
+
+- Automatically support schema generation for custom components - [#307](https://github.com/bakdata/kpops/pull/307)
+
+- Derive component type automatically from class name - [#309](https://github.com/bakdata/kpops/pull/309)
+
+
+### 🏭 Refactor
+
+- Refactor input/output types - [#232](https://github.com/bakdata/kpops/pull/232)
+
+
+### 📝 Documentation
+
+- Fix editor integration example in docs - [#273](https://github.com/bakdata/kpops/pull/273)
+
+
+
+
+
+
+## [1.7.2](https://github.com/bakdata/kpops/releases/tag/1.7.2) - Release Date: [2023-08-16]
+
+### 🏭 Refactor
+
+- Refactor Kafka Connect handler - [#322](https://github.com/bakdata/kpops/pull/322)
+
+
+### 📝 Documentation
+
+- Add KPOps Runner GitHub Action to the documentation - [#325](https://github.com/bakdata/kpops/pull/325)
+
+- Remove `:type` and `:rtype` from docstrings - [#324](https://github.com/bakdata/kpops/pull/324)
+
+
+
+
+
+
 ## [1.7.1](https://github.com/bakdata/kpops/releases/tag/1.7.1) - Release Date: [2023-08-15]
 
 ### 📝 Documentation

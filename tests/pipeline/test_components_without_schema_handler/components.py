@@ -1,22 +1,22 @@
 from typing_extensions import override
 
-from kpops.component_handlers.kafka_connect.model import KafkaConnectConfig
+from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components import KafkaSinkConnector
 from kpops.components.base_components import PipelineComponent
 from kpops.components.base_components.models.to_section import OutputTopicTypes
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
-class ImportProducer(ProducerApp):
-    type: str = "scheduled-producer"
+class ScheduledProducer(ProducerApp):
+    ...
 
 
 class Converter(StreamsApp):
-    type: str = "converter"
+    ...
 
 
-class InflateStep(StreamsApp):
-    type: str = "should-inflate"
+class ShouldInflate(StreamsApp):
+    ...
 
     @override
     def inflate(self) -> list[PipelineComponent]:
@@ -29,7 +29,7 @@ class InflateStep(StreamsApp):
                         config=self.config,
                         handlers=self.handlers,
                         namespace="example-namespace",
-                        app=KafkaConnectConfig(
+                        app=KafkaConnectorConfig(
                             **{
                                 "topics": topic_name,
                                 "transforms.changeTopic.replacement": f"{topic_name}-index-v1",

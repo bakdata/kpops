@@ -1,10 +1,17 @@
+from __future__ import annotations
+
 from pathlib import Path
+from typing import TYPE_CHECKING, Any
 
 from pydantic import BaseConfig, BaseSettings, Field
-from pydantic.env_settings import SettingsSourceCallable
 
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.yaml_loading import load_yaml_file
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
+
+    from pydantic.env_settings import SettingsSourceCallable
 
 ENV_PREFIX = "KPOPS_"
 
@@ -26,7 +33,7 @@ class PipelineConfig(BaseSettings):
     """Pipeline configuration unrelated to the components."""
 
     defaults_path: Path = Field(
-        default=Path("."),
+        default=Path(),
         example="defaults",
         description="The path to the folder containing the defaults.yaml file and the environment defaults files. "
         "Paths can either be absolute or relative to `config.yaml`",
@@ -94,7 +101,7 @@ class PipelineConfig(BaseSettings):
     )
 
     class Config(BaseConfig):
-        config_path: Path = Path("config.yaml")
+        config_path = Path("config.yaml")
         env_file = ".env"
         env_file_encoding = "utf-8"
 
@@ -104,17 +111,22 @@ class PipelineConfig(BaseSettings):
             init_settings: SettingsSourceCallable,
             env_settings: SettingsSourceCallable,
             file_secret_settings: SettingsSourceCallable,
-        ):
+        ) -> tuple[
+            SettingsSourceCallable | Callable[[PipelineConfig], dict[str, Any]], ...
+        ]:
             return (
+                env_settings,
                 init_settings,
                 yaml_config_settings_source,
-                env_settings,
                 file_secret_settings,
             )
 
 
-def yaml_config_settings_source(settings: PipelineConfig) -> dict | list:
+def yaml_config_settings_source(settings: PipelineConfig) -> dict[str, Any]:
     path_to_config = settings.Config.config_path
     if path_to_config.exists():
-        return load_yaml_file(path_to_config)
+        if isinstance(source := load_yaml_file(path_to_config), dict):
+            return source
+        err_msg = f"{path_to_config} must be a mapping."
+        raise TypeError(err_msg)
     return {}

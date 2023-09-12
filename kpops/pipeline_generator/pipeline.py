@@ -48,7 +48,7 @@ class PipelineComponents(BaseModel):
 
     def find(self, component_name: str) -> PipelineComponent:
         for component in self.components:
-            if component_name == component.name.removeprefix(component.prefix):
+            if component_name == component.name:
                 return component
         raise ValueError(f"Component {component_name} not found")
 
@@ -70,7 +70,7 @@ class PipelineComponents(BaseModel):
             raise ValueError("Pipeline contains cycles.")
 
     def validate_unique_names(self) -> None:
-        step_names = [component.name for component in self.components]
+        step_names = [component.full_name for component in self.components]
         duplicates = [name for name, count in Counter(step_names).items() if count > 1]
         if duplicates:
             raise ValidationError(
@@ -127,13 +127,12 @@ class PipelineComponents(BaseModel):
         return all_input_topics
 
     @staticmethod
-    def _populate_component_name(component: PipelineComponent) -> None:
-        component.name = component.prefix + component.name
+    def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove
         with suppress(
             AttributeError  # Some components like Kafka Connect do not have a name_override attribute
         ):
             if (app := getattr(component, "app")) and app.name_override is None:
-                app.name_override = component.name
+                app.name_override = component.full_name
 
 
 def create_env_components_index(
@@ -142,9 +141,7 @@ def create_env_components_index(
     """Create an index for all registered components in the project
 
     :param environment_components: List of all components to be included
-    :type environment_components: list[dict]
     :return: component index
-    :rtype: dict[str, dict]
     """
     index: dict[str, dict] = {}
     for component in environment_components:
@@ -188,19 +185,13 @@ class Pipeline:
         The file is often named ``pipeline.yaml``
 
         :param base_dir: Base directory to the pipelines (default is current working directory)
-        :type base_dir: Path
         :param path: Path to pipeline definition yaml file
-        :type path: Path
         :param registry: Pipeline components registry
-        :type registry: Registry
         :param config: Pipeline config
-        :type config: PipelineConfig
         :param handlers: Component handlers
-        :type handlers: ComponentHandlers
         :raises TypeError: The pipeline definition should contain a list of components
         :raises TypeError: The env-specific pipeline definition should contain a list of components
         :returns: Initialized pipeline object
-        :rtype: Pipeline
         """
         Pipeline.set_pipeline_name_env_vars(base_dir, path)
 
@@ -224,7 +215,6 @@ class Pipeline:
         """Instantiate, enrich and inflate a list of components
 
         :param component_list: List of components
-        :type component_list: list[dict]
         :raises ValueError: Every component must have a type defined
         :raises ParsingException: Error enriching component
         :raises ParsingException: All undefined exceptions
@@ -255,9 +245,7 @@ class Pipeline:
         Applies input topics according to FromSection.
 
         :param component_class: Type of pipeline component
-        :type component_class: type[PipelineComponent]
         :param component_data: Arguments for instantiation of pipeline component
-        :type component_data: dict
         """
         component = component_class(
             config=self.config,
@@ -280,12 +268,8 @@ class Pipeline:
                         original_from_component_name
                     )
                     inflated_from_component = original_from_component.inflate()[-1]
-                    if inflated_from_component is not original_from_component:
-                        resolved_from_component_name = inflated_from_component.name
-                    else:
-                        resolved_from_component_name = original_from_component_name
                     resolved_from_component = self.components.find(
-                        resolved_from_component_name
+                        inflated_from_component.name
                     )
                     enriched_component.weave_from_topics(
                         resolved_from_component.to, from_topic
@@ -303,9 +287,7 @@ class Pipeline:
         """Enrich a pipeline component with env-specific config and substitute variables
 
         :param component: Component to be enriched
-        :type component: PipelineComponent
         :returns: Enriched component
-        :rtype: PipelineComponent
         """
         component.validate_ = True
         env_component_as_dict = update_nested_pair(
@@ -313,6 +295,8 @@ class Pipeline:
             # HACK: Pydantic .dict() doesn't create jsonable dict
             json.loads(component.json(by_alias=True)),
         )
+        # HACK: make sure component type is set for inflated components, because property is not serialized by Pydantic
+        env_component_as_dict["type"] = component.type
 
         component_data = self.substitute_in_component(env_component_as_dict)
 
@@ -328,7 +312,6 @@ class Pipeline:
         """Print the generated pipeline definition
 
         :param substitution: Substitution dictionary, defaults to None
-        :type substitution: dict | None, optional
         """
         syntax = Syntax(
             substitute(str(self), substitution),
@@ -357,9 +340,7 @@ class Pipeline:
         """Substitute all $-placeholders in a component in dict representation
 
         :param component_as_dict: Component represented as dict
-        :type component_as_dict: dict
         :return: Updated component
-        :rtype: dict
         """
         config = self.config
         # Leftover variables that were previously introduced in the component by the substitution
@@ -412,9 +393,7 @@ class Pipeline:
         pipeline_name_2 = dev
 
         :param base_dir: Base directory to the pipeline files
-        :type base_dir: Path
         :param path: Path to pipeline.yaml file
-        :type path: Path
         """
         path_without_file = path.resolve().relative_to(base_dir.resolve()).parts[:-1]
         if not path_without_file:

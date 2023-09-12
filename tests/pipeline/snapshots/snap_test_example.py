@@ -35,11 +35,11 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'name': 'account-producer',
             'namespace': '${NAMESPACE}',
             'prefix': '',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -49,12 +49,11 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-account-producer-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
-                        'type': 'output'
+                        'partitions_count': 3
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.9.0'
         },
         {
@@ -87,11 +86,11 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'name': 'transaction-avro-producer',
             'namespace': '${NAMESPACE}',
             'prefix': '',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -101,12 +100,11 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-transaction-avro-producer-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
-                        'type': 'output'
+                        'partitions_count': 3
                     }
                 }
             },
-            'type': 'producer',
+            'type': 'producer-app',
             'version': '2.9.0'
         },
         {
@@ -144,11 +142,11 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'name': 'transaction-joiner',
             'namespace': '${NAMESPACE}',
             'prefix': '',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -164,8 +162,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-transaction-joiner-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
-                        'type': 'output'
+                        'partitions_count': 3
                     }
                 }
             },
@@ -207,11 +204,11 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'name': 'fraud-detector',
             'namespace': '${NAMESPACE}',
             'prefix': '',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -227,8 +224,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-fraud-detector-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
-                        'type': 'output'
+                        'partitions_count': 3
                     }
                 }
             },
@@ -275,8 +271,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'from': {
                 'components': {
                     'account-producer': {
-                        'role': 'accounts',
-                        'type': 'extra'
+                        'role': 'accounts'
                     },
                     'fraud-detector': {
                         'type': 'input'
@@ -288,11 +283,11 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'name': 'account-linker',
             'namespace': '${NAMESPACE}',
             'prefix': '',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-streams-bootstrap',
+                'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
             'to': {
@@ -308,8 +303,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     'bakdata-atm-fraud-detection-account-linker-topic': {
                         'configs': {
                         },
-                        'partitions_count': 3,
-                        'type': 'output'
+                        'partitions_count': 3
                     }
                 }
             },
@@ -331,6 +325,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'insert.mode': 'insert',
                 'insert.mode.databaselevel': True,
                 'key.converter': 'org.apache.kafka.connect.storage.StringConverter',
+                'name': 'postgresql-connector',
                 'pk.mode': 'record_value',
                 'table.name.format': 'fraud_transactions',
                 'tasks.max': 1,
@@ -343,14 +338,14 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
             'name': 'postgresql-connector',
             'namespace': '${NAMESPACE}',
             'prefix': '',
-            'repoConfig': {
-                'repoAuthFlags': {
-                    'insecureSkipTlsVerify': False
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
                 },
-                'repositoryName': 'bakdata-kafka-connect-resetter',
+                'repository_name': 'bakdata-kafka-connect-resetter',
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
-            'resetterValues': {
+            'resetter_values': {
             },
             'type': 'kafka-sink-connector',
             'version': '1.0.4'
