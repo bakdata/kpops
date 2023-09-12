@@ -249,7 +249,9 @@ class TestProducerApp:
         ]
 
     def test_get_output_topics(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
     ):
         producer_app = ProducerApp(
             name=self.PRODUCER_APP_NAME,
@@ -267,7 +269,6 @@ class TestProducerApp:
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="first-extra-topic",
                             partitions_count=10,
                         ),
@@ -275,7 +276,6 @@ class TestProducerApp:
                 },
             },
         )
-
         assert producer_app.get_output_topic() == "${output_topic_name}"
         assert producer_app.get_extra_output_topics() == {
             "first-extra-topic": "extra-topic-1"

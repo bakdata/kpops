@@ -12,24 +12,17 @@ kafka-app:
     streams:
       brokers: 127.0.0.1:9092
       schemaRegistryUrl: 127.0.0.1:8081
-      optimizeLeaveGroupBehavior: false
+
 
 streams-app:
   app:
     labels:
       pipeline: ${pipeline_name}
-    streams:
-      optimizeLeaveGroupBehavior: false
 
-
-producer:
+producer-app:
   to:
     topics:
       ${output_topic_name}:
         type: output
-        valueSchema: com.bakdata.fake.Produced
-        partitions_count: 12
         configs:
           cleanup.policy: compact,delete
-    models:
-      "com/bakdata/kafka/fake": 1.0.0

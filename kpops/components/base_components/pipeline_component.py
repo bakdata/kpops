@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC
+from itertools import chain
+from typing import Iterator
 
 from pydantic import Extra, Field
 
@@ -127,6 +129,34 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         if self.from_:
             for name, topic in self.from_.topics.items():
                 self.apply_from_inputs(name, topic)
+
+    def __get_all_input_topics(self) -> list[str]:
+        input_topics = self.get_input_topics()
+        extra_input_topics = self.get_extra_input_topics()
+        all_input_topics: list[str] = []
+        if input_topics is not None:
+            all_input_topics.extend(input_topics)
+        if extra_input_topics:
+            all_input_topics.extend(chain(*extra_input_topics.values()))
+        return all_input_topics
+
+    @property
+    def input_topics(self) -> Iterator[str]:
+        yield from self.__get_all_input_topics()
+
+    def __get_all_output_topics(self) -> list[str]:
+        all_output_topics: list[str] = []
+        output_topic = self.get_output_topic()
+        extra_output_topics = self.get_extra_output_topics()
+        if output_topic is not None:
+            all_output_topics.append(output_topic)
+        if extra_output_topics:
+            all_output_topics.extend(list(extra_output_topics.values()))
+        return all_output_topics
+
+    @property
+    def output_topics(self):
+        yield from self.__get_all_output_topics()
 
     def apply_from_inputs(self, name: str, topic: FromTopic) -> None:
         """Add a `from` section input to the component config

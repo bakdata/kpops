@@ -79,18 +79,13 @@ class PipelineComponents(BaseModel):
 
     def generate_graph(self) -> None:
         for component in self.components:
-            all_input_topics = self.__get_all_input_topics(component)
-            all_output_topics = self.__get_all_output_topics(component)
-
             component_node_name = self.__get_vertex_component_name(component)
             self.graph.add_node(component_node_name)
 
-            self.__add_ingoing_edges(all_input_topics, component_node_name)
-            self.__add_output(all_output_topics, component_node_name)
+            self.__add_ingoing_edges(list(component.input_topics), component_node_name)
+            self.__add_output(list(component.output_topics), component_node_name)
 
-    def __add_output(
-        self, all_output_topics: list[str], source: str
-    ) -> None:
+    def __add_output(self, all_output_topics: list[str], source: str) -> None:
         for output_topic in all_output_topics:
             self.graph.add_node(output_topic)
             self.graph.add_edge(source, output_topic)
@@ -105,26 +100,6 @@ class PipelineComponents(BaseModel):
     @staticmethod
     def __get_vertex_component_name(component: PipelineComponent) -> str:
         return f"component-{component.full_name}"
-
-    def __get_all_output_topics(self, component: PipelineComponent) -> list[str]:
-        all_output_topics: list[str] = []
-        output_topic = component.get_output_topic()
-        extra_output_topics = component.get_extra_output_topics()
-        if output_topic is not None:
-            all_output_topics.append(output_topic)
-        if extra_output_topics:
-            all_output_topics.extend(list(extra_output_topics.values()))
-        return all_output_topics
-
-    def __get_all_input_topics(self, component: PipelineComponent) -> list[str]:
-        input_topics = component.get_input_topics()
-        extra_input_topics = component.get_extra_input_topics()
-        all_input_topics: list[str] = []
-        if input_topics is not None:
-            all_input_topics.extend(input_topics)
-        if extra_input_topics:
-            all_input_topics.extend(chain(*extra_input_topics.values()))
-        return all_input_topics
 
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove

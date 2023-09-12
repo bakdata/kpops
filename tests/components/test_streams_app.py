@@ -462,12 +462,12 @@ class TestStreamsApp:
                         "example-input": {"type": "input"},
                         "b": {"type": "input"},
                         "a": {"type": "input"},
-                        "topic-extra2": {"type": "extra", "role": "role2"},
-                        "topic-extra3": {"type": "extra", "role": "role2"},
-                        "topic-extra": {"type": "extra", "role": "role1"},
-                        ".*": {"type": "input-pattern"},
+                        "topic-extra2": {"role": "role2"},
+                        "topic-extra3": {"role": "role2"},
+                        "topic-extra": {"role": "role1"},
+                        ".*": {"type": "pattern"},
                         "example.*": {
-                            "type": "extra-pattern",
+                            "type": "pattern",
                             "role": "another-pattern",
                         },
                     }
@@ -475,6 +475,7 @@ class TestStreamsApp:
                 "to": {"topics": {"example-output": {"type": "output"}}},
             },
         )
+
         assert streams_app.get_input_topics() == ["example-input", "b", "a"]
         assert streams_app.get_extra_input_topics() == {
             "role1": ["topic-extra"],
