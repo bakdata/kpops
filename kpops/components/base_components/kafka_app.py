@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Literal
+from abc import ABC
 
 from pydantic import BaseModel, Extra, Field
 from typing_extensions import override
@@ -15,7 +15,7 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
 )
-from kpops.utils.docstring import describe_attr, describe_object
+from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 log = logging.getLogger("KafkaApp")
@@ -25,9 +25,7 @@ class KafkaStreamsConfig(BaseModel):
     """Kafka Streams config
 
     :param brokers: Brokers
-    :type brokers: str
     :param schema_registry_url: URL of the schema registry, defaults to None
-    :type schema_registry_url: str, optional
     """
 
     brokers: str = Field(default=..., description=describe_attr("brokers", __doc__))
@@ -43,9 +41,7 @@ class KafkaAppConfig(KubernetesAppConfig):
     """Settings specific to Kafka Apps
 
     :param streams: Kafka streams config
-    :type streams: KafkaStreamsConfig
     :param name_override: Override name with this value, defaults to None
-    :type name_override: str, optional
     """
 
     streams: KafkaStreamsConfig = Field(
@@ -56,33 +52,18 @@ class KafkaAppConfig(KubernetesAppConfig):
     )
 
 
-class KafkaApp(KubernetesApp):
+class KafkaApp(KubernetesApp, ABC):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.
 
-    :param type: Component type, defaults to "kafka-app"
-    :type type: str, optional
-    :param schema_type: Used for schema generation, same as :param:`type`,
-        defaults to "kafka-app"
-    :type schema_type: Literal["kafka-app"], optional
     :param app: Application-specific settings
-    :type app: KafkaAppConfig
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component,
         defaults to HelmRepoConfig(repository_name="bakdata-streams-bootstrap", url="https://bakdata.github.io/streams-bootstrap/")
-    :type repo_config: HelmRepoConfig, optional
     :param version: Helm chart version, defaults to "2.9.0"
-    :type version: str, optional
     """
 
-    type: str = Field(default="kafka-app", description=describe_attr("type", __doc__))
-    schema_type: Literal["kafka-app"] = Field(
-        default="kafka-app",
-        title="Component type",
-        description=describe_object(__doc__),
-        exclude=True,
-    )
     app: KafkaAppConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),
@@ -126,11 +107,8 @@ class KafkaApp(KubernetesApp):
         """Clean an app using the respective cleanup job
 
         :param values: The value YAML for the chart
-        :type values: dict
         :param dry_run: Dry run command
-        :type dry_run: bool
         :param retain_clean_jobs: Whether to retain the cleanup job, defaults to False
-        :type retain_clean_jobs: bool, optional
         :return:
         """
         suffix = "-clean"
@@ -158,9 +136,7 @@ class KafkaApp(KubernetesApp):
         """Uninstall clean up job
 
         :param release_name: Name of the Helm release
-        :type release_name: str
         :param dry_run: Whether to do a dry run of the command
-        :type dry_run: bool
         """
         self.helm.uninstall(self.namespace, release_name, dry_run)
 
@@ -174,15 +150,10 @@ class KafkaApp(KubernetesApp):
         """Install clean up job
 
         :param release_name: Name of the Helm release
-        :type release_name: str
-        :param suffix: Suffix to add to the realease name, e.g. "-clean"
-        :type suffix: str
+        :param suffix: Suffix to add to the release name, e.g. "-clean"
         :param values: The Helm values for the chart
-        :type values: dict
         :param dry_run: Whether to do a dry run of the command
-        :type dry_run: bool
         :return: Install clean up job with helm, return the output of the installation
-        :rtype: str
         """
         clean_up_release_name = trim_release_name(release_name, suffix)
         return self.helm.upgrade_install(

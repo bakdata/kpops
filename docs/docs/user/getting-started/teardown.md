@@ -8,31 +8,31 @@
 
 ## KPOps-deployed pipeline
 
-The [`kpops` CLI](../../references/cli-commands) can be used to destroy a pipeline that was previously deployed with KPOps.
+The [`kpops` CLI](../references/cli-commands.md) can be used to destroy a pipeline that was previously deployed with KPOps.
 In case that doesn't work, the pipeline can always be taken down manually with `helm` (see section [Infrastructure](#infrastructure)).
 
 1. Export environment variables.
 
-    ```shell
-    export DOCKER_REGISTRY=bakdata && \
-    export NAMESPACE=kpops
-    ```
+   ```shell
+   export DOCKER_REGISTRY=bakdata && \
+   export NAMESPACE=kpops
+   ```
 
-2. Navigate to the `examples` folder. 
+2. Navigate to the `examples` folder.
    Replace the `<name-of-the-example-directory>` with the example you want to tear down.
    For example the `atm-fraud-detection`.
 
 3. Remove the pipeline
 
-    ```shell
-    # Uncomment 1 line to either destroy, reset or clean.
+   ```shell
+   # Uncomment 1 line to either destroy, reset or clean.
 
-    # poetry run kpops destroy <name-of-the-example-directory>/pipeline.yaml \
-    # poetry run kpops reset <name-of-the-example-directory>/pipeline.yaml \
-    # poetry run kpops clean <name-of-the-example-directory>/pipeline.yaml \
-    --config <name-of-the-example-directory>/config.yaml \
-    --execute
-    ```
+   # poetry run kpops destroy <name-of-the-example-directory>/pipeline.yaml \
+   # poetry run kpops reset <name-of-the-example-directory>/pipeline.yaml \
+   # poetry run kpops clean <name-of-the-example-directory>/pipeline.yaml \
+   --config <name-of-the-example-directory>/config.yaml \
+   --execute
+   ```
 
 ## Infrastructure
 
@@ -42,10 +42,14 @@ Delete namespace:
 kubectl delete namespace kpops
 ```
 
+<!-- dprint-ignore-start -->
+
 !!! Note
     In case `kpops destroy` is not working one can uninstall the pipeline services one by one.
     This is equivalent to running `kpops destroy`. In case a clean uninstall (like the one `kpops clean` does) 
     is needed, one needs to also delete the topics and schemas created by deployment of the pipeline.
+
+<!-- dprint-ignore-end -->
 
 ## Local cluster
 

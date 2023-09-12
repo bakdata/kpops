@@ -81,19 +81,17 @@ class Helm:
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
 
-            command = ["helm"]
-            command.extend(
-                [
-                    "upgrade",
-                    release_name,
-                    chart,
-                    "--install",
-                    "--namespace",
-                    namespace,
-                    "--values",
-                    values_file.name,
-                ]
-            )
+            command = [
+                "helm",
+                "upgrade",
+                release_name,
+                chart,
+                "--install",
+                "--namespace",
+                namespace,
+                "--values",
+                values_file.name,
+            ]
             command.extend(flags.to_command())
             if dry_run:
                 command.append("--dry-run")
@@ -137,17 +135,11 @@ class Helm:
         validity (e.g. whether an API is supported) is done.
 
         :param str release_name: the release name for which the command is ran
-        :type release_name: str
         :param chart: Helm chart to be templated
-        :type chart: str
         :param namespace: The Kubernetes namespace the command should execute in
-        :type namespace: str
         :param values: `values.yaml` to be used
-        :type values: dict
         :param flags: the flags to be set for `helm template`, defaults to HelmTemplateFlags()
-        :type flags: HelmTemplateFlags, optional
         :return: the output of `helm template`
-        :rtype: str
         """
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)

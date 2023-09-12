@@ -23,7 +23,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 class TestStreamsApp:
     STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
-    STREAMS_APP_CLEAN_NAME = "test-streams-app-with-long-name-0123456789abcd-clean"
+    STREAMS_APP_CLEAN_NAME = "test-streams-app-with-long-na-clean"
 
     @pytest.fixture
     def handlers(self) -> ComponentHandlers:
@@ -83,12 +83,12 @@ class TestStreamsApp:
                         "example-input": {"type": "input"},
                         "b": {"type": "input"},
                         "a": {"type": "input"},
-                        "topic-extra2": {"type": "extra", "role": "role2"},
-                        "topic-extra3": {"type": "extra", "role": "role2"},
-                        "topic-extra": {"type": "extra", "role": "role1"},
-                        ".*": {"type": "input-pattern"},
+                        "topic-extra2": {"role": "role2"},
+                        "topic-extra3": {"role": "role2"},
+                        "topic-extra": {"role": "role1"},
+                        ".*": {"type": "pattern"},
                         "example.*": {
-                            "type": "extra-pattern",
+                            "type": "pattern",
                             "role": "another-pattern",
                         },
                     }
@@ -107,7 +107,7 @@ class TestStreamsApp:
 
         helm_values = streams_app.to_helm_values()
         streams_config = helm_values["streams"]
-        assert "inputTopics" in streams_config
+        assert streams_config["inputTopics"]
         assert "extraInputTopics" in streams_config
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" in streams_config
@@ -126,7 +126,7 @@ class TestStreamsApp:
                 },
                 "from": {
                     "topics": {
-                        ".*": {"type": "input-pattern"},
+                        ".*": {"type": "pattern"},
                     }
                 },
             },
@@ -144,6 +144,7 @@ class TestStreamsApp:
         assert "extraInputPatterns" not in streams_config
 
     def test_should_validate(self, config: PipelineConfig, handlers: ComponentHandlers):
+        # An exception should be raised when both role and type are defined and type is input
         with pytest.raises(ValueError):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
@@ -156,14 +157,16 @@ class TestStreamsApp:
                     },
                     "from": {
                         "topics": {
-                            "topic-extra": {
-                                "type": "extra",
+                            "topic-input": {
+                                "type": "input",
+                                "role": "role",
                             }
                         }
                     },
                 },
             )
 
+        # An exception should be raised when both role and type are defined and type is error
         with pytest.raises(ValueError):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
@@ -174,7 +177,14 @@ class TestStreamsApp:
                     "app": {
                         "streams": {"brokers": "fake-broker:9092"},
                     },
-                    "from": {"topics": {"example.*": {"type": "extra-pattern"}}},
+                    "to": {
+                        "topics": {
+                            "topic-input": {
+                                "type": "error",
+                                "role": "role",
+                            }
+                        }
+                    },
                 },
             )
 
@@ -199,12 +209,10 @@ class TestStreamsApp:
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="first-extra-topic",
                             partitions_count=10,
                         ),
                         "extra-topic-2": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="second-extra-topic",
                             partitions_count=10,
                         ),
@@ -280,12 +288,10 @@ class TestStreamsApp:
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="first-extra-topic",
                             partitions_count=10,
                         ),
                         "extra-topic-2": TopicConfig(
-                            type=OutputTopicTypes.EXTRA,
                             role="second-extra-topic",
                             partitions_count=10,
                         ),
@@ -310,7 +316,7 @@ class TestStreamsApp:
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=dry_run),
             mocker.call.mock_helm_upgrade_install(
-                self.STREAMS_APP_NAME,
+                "${pipeline_name}-" + self.STREAMS_APP_NAME,
                 "bakdata-streams-bootstrap/streams-app",
                 dry_run,
                 "test-namespace",
@@ -347,7 +353,7 @@ class TestStreamsApp:
         await streams_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
-            "test-namespace", self.STREAMS_APP_NAME, True
+            "test-namespace", "${pipeline_name}-" + self.STREAMS_APP_NAME, True
         )
 
     @pytest.mark.asyncio
@@ -368,10 +374,12 @@ class TestStreamsApp:
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
+                "test-namespace",
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                dry_run,
             ),
             mocker.call.helm_upgrade_install(
-                self.STREAMS_APP_CLEAN_NAME,
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
                 "bakdata-streams-bootstrap/streams-app-cleanup-job",
                 dry_run,
                 "test-namespace",
@@ -385,7 +393,9 @@ class TestStreamsApp:
                 HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
+                "test-namespace",
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                dry_run,
             ),
         ]
 
@@ -409,10 +419,12 @@ class TestStreamsApp:
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
+                "test-namespace",
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                dry_run,
             ),
             mocker.call.helm_upgrade_install(
-                self.STREAMS_APP_CLEAN_NAME,
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
                 "bakdata-streams-bootstrap/streams-app-cleanup-job",
                 dry_run,
                 "test-namespace",
@@ -426,6 +438,8 @@ class TestStreamsApp:
                 HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
+                "test-namespace",
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                dry_run,
             ),
         ]

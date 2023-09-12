@@ -16,12 +16,12 @@ from kpops.components.base_components.models.to_section import (
 from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
-class ImportProducer(ProducerApp):
-    type: str = "scheduled-producer"
+class ScheduledProducer(ProducerApp):
+    ...
 
 
 class Converter(StreamsApp):
-    type: str = "converter"
+    ...
 
 
 class SubStreamsApp(StreamsApp):
@@ -31,21 +31,16 @@ class SubStreamsApp(StreamsApp):
 class Filter(SubStreamsApp):
     """Subsubclass of StreamsApp to test inheritance."""
 
-    type: str = "filter"
 
-
-class InflateStep(StreamsApp):
-    type: str = "should-inflate"
-
+class ShouldInflate(StreamsApp):
     @override
     def inflate(self) -> list[PipelineComponent]:
         inflate_steps = super().inflate()
         if self.to:
-            name = self.name.removeprefix(self.prefix)
             for topic_name, topic_config in self.to.topics.items():
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
-                        name=f"{name}-inflated-sink-connector",
+                        name=f"{self.name}-inflated-sink-connector",
                         config=self.config,
                         handlers=self.handlers,
                         namespace="example-namespace",
@@ -59,20 +54,20 @@ class InflateStep(StreamsApp):
                                     type=OutputTopicTypes.OUTPUT
                                 ),
                                 TopicName("${component_name}"): TopicConfig(
-                                    type=OutputTopicTypes.EXTRA, role="test"
+                                    type=None, role="test"
                                 ),
                             }
                         ),
                     )
                     inflate_steps.append(kafka_connector)
                     streams_app = StreamsApp(
-                        name=f"{name}-inflated-streams-app",
+                        name=f"{self.name}-inflated-streams-app",
                         config=self.config,
                         handlers=self.handlers,
                         to=ToSection(  # type: ignore
                             topics={
                                 TopicName(
-                                    f"{self.name}-" + "${component_name}"
+                                    f"{self.full_name}-" + "${component_name}"
                                 ): TopicConfig(type=OutputTopicTypes.OUTPUT)
                             }
                         ).dict(),

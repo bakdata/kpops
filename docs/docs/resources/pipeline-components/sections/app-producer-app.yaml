@@ -1,11 +1,11 @@
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
-    streams: # required, producer-specific
+    streams: # required, producer-app-specific
       brokers: ${brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
       outputTopic: output_topic
-      extraOutputTopics: 
+      extraOutputTopics:
         output_role1: output_topic1
         output_role2: output_topic2
     nameOverride: override-with-this-name # kafka-app-specific

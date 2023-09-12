@@ -1,7 +1,9 @@
+import logging
 from pathlib import Path
 
 import pytest
 import yaml
+from pytest import MonkeyPatch
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
@@ -46,6 +48,36 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
+    def test_generate_with_steps_flag_should_write_log_warning(
+        self, caplog: pytest.LogCaptureFixture
+    ):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "first-pipeline/pipeline.yaml"),
+                "tests.pipeline.test_components",
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--steps",
+                "a",
+            ],
+            catch_exceptions=False,
+        )
+
+        assert caplog.record_tuples == [
+            (
+                "root",
+                logging.WARNING,
+                "The following flags are considered only when `--template` is set: \n \
+                '--steps'",
+            )
+        ]
+
+        assert result.exit_code == 0
+
     def test_name_equal_prefix_name_concatenation(self):
         result = runner.invoke(
             app,
@@ -65,10 +97,8 @@ class TestPipeline:
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
-        assert (
-            enriched_pipeline["components"][0]["name"]
-            == "my-fake-prefix-my-streams-app"
-        )
+        assert enriched_pipeline["components"][0]["prefix"] == "my-fake-prefix-"
+        assert enriched_pipeline["components"][0]["name"] == "my-streams-app"
 
     def test_pipelines_with_env_values(self, snapshot: SnapshotTest):
         result = runner.invoke(
@@ -129,9 +159,10 @@ class TestPipeline:
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline["components"][0]["name"]
-            == "resources-component-type-substitution-scheduled-producer"
+            enriched_pipeline["components"][0]["prefix"]
+            == "resources-component-type-substitution-"
         )
+        assert enriched_pipeline["components"][0]["name"] == "scheduled-producer"
 
         labels = enriched_pipeline["components"][0]["app"]["labels"]
         assert labels["app_name"] == "scheduled-producer"
@@ -171,7 +202,7 @@ class TestPipeline:
                     str(PIPELINE_BASE_DIR_PATH),
                     str(
                         RESOURCE_PATH
-                        / "component-type-substitution/infinite_pipeline.yaml"
+                        / "component-type-substitution/infinite_pipeline.yaml",
                     ),
                     "tests.pipeline.test_components",
                     "--defaults",
@@ -309,7 +340,7 @@ class TestPipeline:
                 str(PIPELINE_BASE_DIR_PATH),
                 str(
                     RESOURCE_PATH
-                    / "pipeline-component-should-have-prefix/pipeline.yaml"
+                    / "pipeline-component-should-have-prefix/pipeline.yaml",
                 ),
                 "--defaults",
                 str(RESOURCE_PATH / "pipeline-component-should-have-prefix"),
@@ -323,7 +354,8 @@ class TestPipeline:
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_with_custom_config_with_relative_defaults_path(
-        self, snapshot: SnapshotTest
+        self,
+        snapshot: SnapshotTest,
     ):
         result = runner.invoke(
             app,
@@ -354,16 +386,19 @@ class TestPipeline:
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_with_custom_config_with_absolute_defaults_path(
-        self, snapshot: SnapshotTest
+        self,
+        snapshot: SnapshotTest,
     ):
-        with open(RESOURCE_PATH / "custom-config/config.yaml", "r") as rel_config_yaml:
+        with Path(RESOURCE_PATH / "custom-config/config.yaml").open(
+            "r",
+        ) as rel_config_yaml:
             config_dict: dict = yaml.safe_load(rel_config_yaml)
         config_dict["defaults_path"] = str(
-            (RESOURCE_PATH / "no-topics-defaults").absolute()
+            (RESOURCE_PATH / "no-topics-defaults").absolute(),
         )
         temp_config_path = RESOURCE_PATH / "custom-config/temp_config.yaml"
         try:
-            with open(temp_config_path, "w") as abs_config_yaml:
+            with temp_config_path.open("w") as abs_config_yaml:
                 yaml.dump(config_dict, abs_config_yaml)
             result = runner.invoke(
                 app,
@@ -424,8 +459,34 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
+    def test_env_vars_precedence_over_config(
+        self,
+        monkeypatch: MonkeyPatch,
+        snapshot: SnapshotTest,
+    ):
+        monkeypatch.setenv(name="KPOPS_KAFKA_BROKERS", value="env_broker")
+
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                str(RESOURCE_PATH / "custom-config/config.yaml"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline["components"][0]["app"]["streams"]["brokers"]
+            == "env_broker"
+        )
+
     def test_model_serialization(self, snapshot: SnapshotTest):
-        """Test model serialization of component containing pathlib.Path attribute"""
+        """Test model serialization of component containing pathlib.Path attribute."""
         result = runner.invoke(
             app,
             [
@@ -444,6 +505,52 @@ class TestPipeline:
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
+    def test_short_topic_definition(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "pipeline-with-short-topics/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH / "pipeline-with-short-topics"),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0
+
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+
+        output_topics = enriched_pipeline["components"][4]["to"]["topics"]
+        input_topics = enriched_pipeline["components"][4]["from"]["topics"]
+        input_components = enriched_pipeline["components"][4]["from"]["components"]
+        assert "type" not in output_topics["output-topic"]
+        assert output_topics["error-topic"]["type"] == "error"
+        assert "type" not in output_topics["extra-topic"]
+        assert "role" not in output_topics["output-topic"]
+        assert "role" not in output_topics["error-topic"]
+        assert output_topics["extra-topic"]["role"] == "role"
+
+        assert "type" not in ["input-topic"]
+        assert "type" not in input_topics["extra-topic"]
+        assert input_topics["input-pattern"]["type"] == "pattern"
+        assert input_topics["extra-pattern"]["type"] == "pattern"
+        assert "role" not in input_topics["input-topic"]
+        assert "role" not in input_topics["input-pattern"]
+        assert input_topics["extra-topic"]["role"] == "role"
+        assert input_topics["extra-pattern"]["role"] == "role"
+
+        assert "type" not in input_components["component-input"]
+        assert "type" not in input_components["component-extra"]
+        assert input_components["component-input-pattern"]["type"] == "pattern"
+        assert input_components["component-extra-pattern"]["type"] == "pattern"
+        assert "role" not in input_components["component-input"]
+        assert "role" not in input_components["component-input-pattern"]
+        assert input_components["component-extra"]["role"] == "role"
+        assert input_components["component-extra-pattern"]["role"] == "role"
+
     def test_kubernetes_app_name_validation(self):
         with pytest.raises((ValueError, ParsingException)):
             runner.invoke(
@@ -454,7 +561,7 @@ class TestPipeline:
                     str(PIPELINE_BASE_DIR_PATH),
                     str(
                         RESOURCE_PATH
-                        / "pipeline-with-illegal-kubernetes-name/pipeline.yaml"
+                        / "pipeline-with-illegal-kubernetes-name/pipeline.yaml",
                     ),
                     "tests.pipeline.test_components",
                     "--defaults",

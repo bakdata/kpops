@@ -9,9 +9,9 @@ kafka-app:
       schema_registry_url: "${schema_registry_url}"
   version: "2.4.2"
 
-producer: {} # inherits from kafka
+producer-app: {} # inherits from kafka-app
 
-streams-app: # inherits from kafka
+streams-app: # inherits from kafka-app
   app:
     streams:
       config:
@@ -20,7 +20,7 @@ streams-app: # inherits from kafka
     topics:
       ${error_topic_name}:
         type: error
-        valueSchema: com.bakdata.kafka.DeadLetter
+        value_schema: com.bakdata.kafka.DeadLetter
         partitions_count: 1
         configs:
           cleanup.policy: compact,delete
@@ -33,7 +33,7 @@ scheduled-producer:
     topics:
       ${output_topic_name}:
         type: output
-        valueSchema: com.bakdata.fake.Produced
+        value_schema: com.bakdata.fake.Produced
         partitions_count: 12
         configs:
           cleanup.policy: compact,delete
@@ -60,7 +60,7 @@ converter:
           cleanup.policy: compact,delete
       ${error_topic_name}:
         type: error
-        valueSchema: com.bakdata.kafka.DeadLetter
+        value_schema: com.bakdata.kafka.DeadLetter
         partitions_count: 10
         configs:
           cleanup.policy: compact,delete
@@ -115,6 +115,5 @@ kafka-connector:
     key.ignore: "false"
     linger.ms: "5000"
     max.buffered.records: "20000"
-    name: "sink-connector"
     read.timeout.ms: "120000"
     tasks.max: "1"
