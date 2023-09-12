@@ -66,7 +66,6 @@ class TestConnectorHandler:
             }
         )
 
-
     @pytest.mark.asyncio
     async def test_should_create_connector_in_dry_run(
         self,
@@ -77,7 +76,6 @@ class TestConnectorHandler:
     ):
         handler = self.connector_handler(connector_wrapper)
         renderer_diff_mock.return_value = None
-
 
         await handler.create_connector(connector_config, dry_run=True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
@@ -169,11 +167,9 @@ class TestConnectorHandler:
             ),
         ]
 
-
     @pytest.mark.asyncio
     async def test_should_log_invalid_config_when_create_connector_in_dry_run(
         self, connector_config: KafkaConnectorConfig, renderer_diff_mock: MagicMock
-
     ):
         connector_wrapper = AsyncMock()
         errors = [
@@ -190,18 +186,15 @@ class TestConnectorHandler:
             ConnectorStateException,
             match=f"Connector Creation: validating the connector config for connector {CONNECTOR_NAME} resulted in the following errors: {formatted_errors}",
         ):
-
             await handler.create_connector(connector_config, dry_run=True)
 
         connector_wrapper.validate_connector_config.assert_called_once_with(
             connector_config
         )
 
-
     @pytest.mark.asyncio
     async def test_should_call_update_connector_config_when_connector_exists_not_dry_run(
         self, connector_config: KafkaConnectorConfig
-
     ):
         connector_wrapper = AsyncMock()
 
