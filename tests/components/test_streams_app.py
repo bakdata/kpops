@@ -431,7 +431,7 @@ class TestStreamsApp:
         ]
 
     @pytest.mark.asyncio
-    async def test_get_topics(
+    async def test_get_input_output_topics(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
@@ -458,6 +458,7 @@ class TestStreamsApp:
                         },
                     }
                 },
+                "to": {"topics": {"example-output": {"type": "output"}}},
             },
         )
         assert streams_app.get_input_topics() == ["example-input", "b", "a"]
@@ -465,26 +466,4 @@ class TestStreamsApp:
             "role1": ["topic-extra"],
             "role2": ["topic-extra2", "topic-extra3"],
         }
-
-    @pytest.mark.asyncio
-    async def test_get_output_topic(
-        self, config: PipelineConfig, handlers: ComponentHandlers
-    ):
-        streams_app = StreamsApp(
-            name=self.STREAMS_APP_NAME,
-            config=config,
-            handlers=handlers,
-            **{
-                "namespace": "test-namespace",
-                "app": {
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "from": {
-                    "topics": {
-                        "example-input": {"type": "input"},
-                    }
-                },
-                "to": {"topics": {"example-output": {"type": "output"}}},
-            },
-        )
         assert streams_app.get_output_topic() == "example-output"
