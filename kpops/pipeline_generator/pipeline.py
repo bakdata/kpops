@@ -5,7 +5,6 @@ import logging
 from collections import Counter
 from collections.abc import Iterator
 from contextlib import suppress
-from itertools import chain
 from pathlib import Path
 
 import networkx as nx
