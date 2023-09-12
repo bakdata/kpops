@@ -162,7 +162,7 @@ class KubernetesApp(PipelineComponent):
 
         :returns: Thte values to be used by Helm
         """
-        return self.app.dict(by_alias=True, exclude_none=True, exclude_defaults=True)
+        return self.app.model_dump(by_alias=True, exclude_none=True, exclude_defaults=True)
 
     def print_helm_diff(self, stdout: str) -> None:
         """Print the diff of the last and current release of this component
@@ -195,10 +195,19 @@ class KubernetesApp(PipelineComponent):
             raise ValueError(f"The component name {name} is invalid for Kubernetes.")
 
     @override
-    def dict(self, *, exclude=None, **kwargs) -> dict[str, Any]:
+    def model_dump(self, *, exclude=None, **kwargs) -> dict[str, Any]:
         # HACK: workaround for Pydantic to exclude cached properties during model export
         if exclude is None:
             exclude = set()
         exclude.add("helm")
         exclude.add("helm_diff")
-        return super().dict(exclude=exclude, **kwargs)
+        return super().model_dump(exclude=exclude, **kwargs)
+    
+    # @model_serializer(mode="wrap", when_used="always")
+    # def serialize_model(self, handler) -> dict[str, Any]:
+    #     # breakpoint()
+    #     result = handler(self)
+    #     filtered_result = {
+    #         k: v for k, v in result.items() if k != "helm" and k != "helm_diff"
+    #     }
+    #     return filtered_result

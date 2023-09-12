@@ -75,6 +75,8 @@ class StreamsConfig(KafkaStreamsConfig):
     @model_serializer(mode="wrap", when_used="always")
     def serialize_model(self, handler) -> dict[str, Any]:
         result = handler(self)
+        # if dict(result.items()).get("extraInputTopics"):
+        #     breakpoint()
         extra_fields = set()
         if self.model_extra is not None:
             extra_fields = set(self.model_extra.keys())
@@ -82,23 +84,7 @@ class StreamsConfig(KafkaStreamsConfig):
         filtered_result_extra_set = {
             k: v for k, v in result.items() if ((to_snake(k) in fields) or k in fields)
         }
-        unfiltered_result = {
-            k: v for k, v in result.items() if result[k] or k in extra_fields
-        }
         return filtered_result_extra_set
-
-    # @override
-    # def model_dump(
-    #     self,
-    #     **kwargs,
-    # ) -> dict:
-    #     breakpoint()
-    #     return super().model_dump(
-    #         # The following lines are required only for the streams configs since we never not want to export defaults here, just fallback to helm default values
-    #         exclude_defaults=True,
-    #         exclude_none=True,
-    #         **kwargs,
-    #     )
 
 
 class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
@@ -180,6 +166,7 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         default=[],
         description=describe_attr("topics", __doc__),
     )
+    model_config = ConfigDict(extra="allow")
 
 
 class StreamsAppConfig(KafkaAppConfig):
@@ -199,3 +186,4 @@ class StreamsAppConfig(KafkaAppConfig):
         default=None,
         description=describe_attr("autoscaling", __doc__),
     )
+    model_config = ConfigDict(extra="allow")

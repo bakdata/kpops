@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, NewType
 
-from pydantic import BaseModel, ConfigDict, Extra, Field, root_validator
+from pydantic import BaseModel, ConfigDict, Extra, Field, model_validator, root_validator
 
 from kpops.components.base_components.models import TopicName
 from kpops.utils.docstring import describe_attr
@@ -18,7 +18,7 @@ class InputTopicTypes(str, Enum):
     PATTERN = "pattern"
 
 
-class FromTopic(BaseModel):
+class FromTopic(DescConfigModel):
     """Input topic
 
     :param type: Topic type, defaults to None
@@ -32,14 +32,15 @@ class FromTopic(BaseModel):
     role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
     model_config = ConfigDict(
-        extra=Extra.forbid,
+        extra="forbid",
         use_enum_values=True,
     )
 
-    @root_validator(skip_on_failure=True)
-    def extra_topic_role(cls, values: dict[str, Any]) -> dict[str, Any]:
+    @model_validator(mode="after")
+    @classmethod
+    def extra_topic_role(cls, values: Any) -> Any:
         """Ensure that cls.role is used correctly, assign type if needed"""
-        if values["type"] == InputTopicTypes.INPUT and values["role"]:
+        if values.type == InputTopicTypes.INPUT and values.role:
             raise ValueError("Define role only if `type` is `pattern` or `None`")
         return values
 
@@ -64,5 +65,5 @@ class FromSection(DescConfigModel):
     )
 
     model_config = ConfigDict(
-        extra=Extra.forbid,
+        extra="forbid",
     )

@@ -272,7 +272,7 @@ class Pipeline:
 
     def __str__(self) -> str:
         return yaml.dump(
-            self.components.model_dump(mode="jsonb", by_alias=True, exclude_none=True)
+            self.components.model_dump(mode="json", by_alias=True, exclude_none=True)
         )
 
     def __len__(self) -> int:

@@ -44,7 +44,7 @@ class KafkaTopicConfigSynonyms(BaseModel):
     source: KafkaTopicConfigSource
 
     model_config = ConfigDict(
-        extra=Extra.allow,
+        extra="allow",
     )
 
 
@@ -55,7 +55,7 @@ class KafkaTopicConfig(BaseModel):
     name: str
 
     model_config = ConfigDict(
-        extra=Extra.allow,
+        extra="allow",
     )
 
 
@@ -63,7 +63,7 @@ class TopicConfigResponse(BaseModel):
     data: list[KafkaTopicConfig]
 
     model_config = ConfigDict(
-        extra=Extra.allow,
+        extra="allow",
     )
 
 
@@ -79,7 +79,7 @@ class KafkaBrokerConfigSynonyms(BaseModel):
     source: KafkaBrokerConfigSource
 
     model_config = ConfigDict(
-        extra=Extra.allow,
+        extra="allow",
     )
 
 
@@ -90,7 +90,7 @@ class KafkaBrokerConfig(BaseModel):
     name: str
 
     model_config = ConfigDict(
-        extra=Extra.allow,
+        extra="allow",
     )
 
 
@@ -98,5 +98,5 @@ class BrokerConfigResponse(BaseModel):
     data: list[KafkaBrokerConfig]
 
     model_config = ConfigDict(
-        extra=Extra.allow,
+        extra="allow",
     )

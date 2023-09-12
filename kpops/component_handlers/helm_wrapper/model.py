@@ -112,7 +112,7 @@ class HelmFlags(RepoAuthFlags):
     wait_for_jobs: bool = False
 
     model_config = ConfigDict(
-        extra=Extra.allow,
+        extra="allow",
     )
 
     @override

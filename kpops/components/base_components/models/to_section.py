@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any
 
-from pydantic import ConfigDict, Extra, Field, root_validator
+from pydantic import ConfigDict, Extra, Field, model_validator, root_validator
 
 from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.utils.docstring import describe_attr
@@ -59,15 +59,15 @@ class TopicConfig(DescConfigModel):
     role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
     model_config = ConfigDict(
-        extra=Extra.forbid,
+        extra="forbid",
         use_enum_values=True,
         populate_by_name=True,
     )
 
-    @root_validator(skip_on_failure=True)
-    def extra_topic_role(cls, values: dict[str, Any]) -> dict[str, Any]:
+    @model_validator(mode="after")
+    def extra_topic_role(cls, values: Any) -> Any:
         """Ensure that cls.role is used correctly, assign type if needed"""
-        if values["type"] and values["role"]:
+        if values.type and values.role:
             raise ValueError("Define `role` only if `type` is undefined")
         return values
 
@@ -87,5 +87,5 @@ class ToSection(DescConfigModel):
     )
 
     model_config = ConfigDict(
-        extra=Extra.forbid,
+        extra="forbid",
     )

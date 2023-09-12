@@ -33,7 +33,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     )
 
     model_config = ConfigDict(
-        extra=Extra.allow,
+        extra="allow",
     )
 
 

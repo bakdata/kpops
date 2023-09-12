@@ -24,7 +24,7 @@ class KafkaConnectorConfig(DescConfigModel):
     )
 
     model_config = ConfigDict(
-        extra=Extra.allow,
+        extra="allow",
         alias_generator=to_dot,
         # TODO(sujuka99): combine with ``json_schema_extra`` of ``DescCohnfigModel``
         json_schema_extra={"additional_properties": {"type": "string"}},
@@ -56,7 +56,7 @@ class KafkaConnectResponse(BaseModel):
     tasks: list[ConnectorTask]
     type: str | None = None
 
-    model_config = ConfigDict(extra=Extra.forbid)
+    model_config = ConfigDict(extra="forbid")
 
 
 class KafkaConnectConfigError(BaseModel):

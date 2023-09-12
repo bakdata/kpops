@@ -16,10 +16,9 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfigModel
 
 
-class PipelineComponent(BaseDefaultsComponent, DescConfigModel):
+class PipelineComponent(BaseDefaultsComponent):
     """Base class for all components
 
     :param name: Component name
@@ -50,7 +49,7 @@ class PipelineComponent(BaseDefaultsComponent, DescConfigModel):
     )
 
     model_config = ConfigDict(
-        extra=Extra.allow,
+        extra="allow",
     )
 
     def __init__(self, **kwargs) -> None:
