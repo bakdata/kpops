@@ -1,6 +1,5 @@
 from unittest.mock import AsyncMock, MagicMock, call
 
-
 import pytest
 from pytest_mock import MockerFixture
 
