@@ -65,7 +65,7 @@ class PipelineComponents(BaseModel):
     def __len__(self) -> int:
         return len(self.components)
 
-    def validate_graph_components(self) -> None:
+    def validate_graph(self) -> None:
         if not nx.is_directed_acyclic_graph(self.graph):
             raise ValueError("Pipeline contains cycles.")
 
@@ -86,14 +86,14 @@ class PipelineComponents(BaseModel):
             self.graph.add_node(component_node_name)
 
             self.__add_ingoing_edges(all_input_topics, component_node_name)
-            self.__add_outgoing_edges(all_output_topics, component_node_name)
+            self.__add_output(all_output_topics, component_node_name)
 
-    def __add_outgoing_edges(
-        self, all_output_topics: list[str], component_node_name: str
+    def __add_output(
+        self, all_output_topics: list[str], source: str
     ) -> None:
         for output_topic in all_output_topics:
             self.graph.add_node(output_topic)
-            self.graph.add_edge(component_node_name, output_topic)
+            self.graph.add_edge(source, output_topic)
 
     def __add_ingoing_edges(
         self, all_input_topics: list[str], component_node_name: str
@@ -104,7 +104,7 @@ class PipelineComponents(BaseModel):
 
     @staticmethod
     def __get_vertex_component_name(component: PipelineComponent) -> str:
-        return f"component-{component.name}"
+        return f"component-{component.full_name}"
 
     def __get_all_output_topics(self, component: PipelineComponent) -> list[str]:
         all_output_topics: list[str] = []
@@ -387,7 +387,7 @@ class Pipeline:
 
     def validate(self) -> None:
         self.components.validate_unique_names()
-        self.components.validate_graph_components()
+        self.components.validate_graph()
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:

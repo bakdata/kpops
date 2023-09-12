@@ -78,14 +78,14 @@ class PipelineComponent(BaseDefaultsComponent):
     def get_input_topics(self) -> list[str] | None:
         """Get all the input topics from config."""
 
-    def get_extra_output_topics(self) -> dict[str, str] | None:
-        """Get extra output topics list from config."""
-
     def get_extra_input_topics(self) -> dict[str, list[str]] | None:
         """Get extra input topics list from config."""
 
     def get_output_topic(self) -> str | None:
         """Get output topic from config."""
+
+    def get_extra_output_topics(self) -> dict[str, str] | None:
+        """Get extra output topics list from config."""
 
     def add_input_topics(self, topics: list[str]) -> None:
         """Add given topics to the list of input topics.
