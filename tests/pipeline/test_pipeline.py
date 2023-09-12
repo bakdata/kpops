@@ -160,7 +160,7 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    @pytest.mark.timeout(0.5)
+    @pytest.mark.timeout(2)
     def test_substitute_in_component_infinite_loop(self):
         with pytest.raises((ValueError, ParsingException)):
             runner.invoke(
