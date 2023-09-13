@@ -62,15 +62,18 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
 
     def get_input_topics(self) -> list[str] | None:
         """Get all the input topics from config."""
+        return []
 
     def get_extra_input_topics(self) -> dict[str, list[str]] | None:
         """Get extra input topics list from config."""
+        return {}
 
     def get_output_topic(self) -> str | None:
         """Get output topic from config."""
 
     def get_extra_output_topics(self) -> dict[str, str] | None:
         """Get extra output topics list from config."""
+        return {}
 
     @property
     def full_name(self) -> str:
@@ -130,19 +133,18 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
             for name, topic in self.from_.topics.items():
                 self.apply_from_inputs(name, topic)
 
-    def __get_all_input_topics(self) -> list[str]:
-        input_topics = self.get_input_topics()
-        extra_input_topics = self.get_extra_input_topics()
-        all_input_topics: list[str] = []
-        if input_topics is not None:
-            all_input_topics.extend(input_topics)
-        if extra_input_topics:
-            all_input_topics.extend(chain(*extra_input_topics.values()))
-        return all_input_topics
+    @property
+    def inputs(self) -> Iterator[str]:
+        yield from self.get_input_topics()
+        for role_topics in chain(*self.get_extra_input_topics().values()):
+            yield from role_topics
 
     @property
-    def input_topics(self) -> Iterator[str]:
-        yield from self.__get_all_input_topics()
+    def outputs(self) -> Iterator[str]:
+        if self.get_output_topic() is not None:
+            yield self.get_output_topic()
+        for role_topics in self.get_extra_output_topics().values():
+            yield from role_topics
 
     def __get_all_output_topics(self) -> list[str]:
         all_output_topics: list[str] = []
@@ -153,10 +155,6 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         if extra_output_topics:
             all_output_topics.extend(list(extra_output_topics.values()))
         return all_output_topics
-
-    @property
-    def output_topics(self):
-        yield from self.__get_all_output_topics()
 
     def apply_from_inputs(self, name: str, topic: FromTopic) -> None:
         """Add a `from` section input to the component config

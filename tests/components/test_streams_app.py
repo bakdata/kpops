@@ -472,7 +472,14 @@ class TestStreamsApp:
                         },
                     }
                 },
-                "to": {"topics": {"example-output": {"type": "output"}}},
+                "to": {"topics": {
+                    "example-output": {
+                        "type": "output"
+                    },
+                    "extra-topic":{
+                        "role": "fake-role"
+                    }
+                }},
             },
         )
 
@@ -482,3 +489,6 @@ class TestStreamsApp:
             "role2": ["topic-extra2", "topic-extra3"],
         }
         assert streams_app.get_output_topic() == "example-output"
+        assert streams_app.get_extra_output_topics() == {
+            "fake-role": "extra-topic"
+        }

@@ -280,4 +280,4 @@ class TestProducerApp:
         assert producer_app.get_extra_output_topics() == {
             "first-extra-topic": "extra-topic-1"
         }
-        assert producer_app.get_input_topics() is None
+        assert producer_app.get_input_topics() == []
