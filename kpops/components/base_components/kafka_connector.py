@@ -148,7 +148,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @override
     def destroy(self, dry_run: bool) -> None:
-        self.handlers.connector_handler.destroy_connector(self.name, dry_run=dry_run)
+        self.handlers.connector_handler.destroy_connector(self.app, dry_run=dry_run)
 
     @override
     def clean(self, dry_run: bool) -> None:

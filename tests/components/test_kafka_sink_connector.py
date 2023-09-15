@@ -161,6 +161,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         self,
         connector: KafkaSinkConnector,
         mocker: MockerFixture,
+        connector_config: KafkaConnectorConfig,
     ):
         mock_destroy_connector = mocker.patch.object(
             connector.handlers.connector_handler, "destroy_connector"
@@ -168,7 +169,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
         connector.destroy(dry_run=True)
 
-        mock_destroy_connector.assert_called_once_with(CONNECTOR_NAME, dry_run=True)
+        mock_destroy_connector.assert_called_once_with(connector_config, dry_run=True)
 
     def test_reset_when_dry_run_is_true(
         self,

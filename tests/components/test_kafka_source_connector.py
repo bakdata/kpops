@@ -102,6 +102,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         self,
         connector: KafkaSourceConnector,
         mocker: MockerFixture,
+        connector_config: KafkaConnectorConfig,
     ):
         ENV["KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"] = "kafka-connect-offsets"
         assert connector.handlers.connector_handler
@@ -112,7 +113,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
         connector.destroy(dry_run=True)
 
-        mock_destroy_connector.assert_called_once_with(CONNECTOR_NAME, dry_run=True)
+        mock_destroy_connector.assert_called_once_with(connector_config, dry_run=True)
 
     def test_reset_when_dry_run_is_true(
         self,

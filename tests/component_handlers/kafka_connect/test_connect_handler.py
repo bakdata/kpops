@@ -214,13 +214,14 @@ class TestConnectorHandler:
 
     def test_should_print_correct_log_when_destroying_connector_in_dry_run(
         self,
+        connector_config: KafkaConnectorConfig,
         log_info_mock: MagicMock,
     ):
         connector_wrapper = MagicMock()
 
         handler = self.connector_handler(connector_wrapper)
 
-        handler.destroy_connector(CONNECTOR_NAME, dry_run=True)
+        handler.destroy_connector(connector_config, dry_run=True)
 
         log_info_mock.assert_called_once_with(
             magentaify(
@@ -230,6 +231,7 @@ class TestConnectorHandler:
 
     def test_should_print_correct_warning_log_when_destroying_connector_and_connector_exists_in_dry_run(
         self,
+        connector_config: KafkaConnectorConfig,
         log_warning_mock: MagicMock,
     ):
         connector_wrapper = MagicMock()
@@ -237,7 +239,7 @@ class TestConnectorHandler:
 
         handler = self.connector_handler(connector_wrapper)
 
-        handler.destroy_connector(CONNECTOR_NAME, dry_run=True)
+        handler.destroy_connector(connector_config, dry_run=True)
 
         log_warning_mock.assert_called_once_with(
             f"Connector Destruction: connector {CONNECTOR_NAME} does not exist and cannot be deleted. Skipping."
@@ -245,25 +247,28 @@ class TestConnectorHandler:
 
     def test_should_call_delete_connector_when_destroying_existing_connector_not_dry_run(
         self,
+        connector_config: KafkaConnectorConfig,
     ):
         connector_wrapper = MagicMock()
         handler = self.connector_handler(connector_wrapper)
 
-        handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
+        handler.destroy_connector(connector_config, dry_run=False)
+
         assert connector_wrapper.mock_calls == [
-            mock.call.get_connector(CONNECTOR_NAME),
-            mock.call.delete_connector(CONNECTOR_NAME),
+            mock.call.get_connector(connector_config.name),
+            mock.call.delete_connector(connector_config.name),
         ]
 
     def test_should_print_correct_warning_log_when_destroying_connector_and_connector_exists_not_dry_run(
         self,
+        connector_config: KafkaConnectorConfig,
         log_warning_mock: MagicMock,
     ):
         connector_wrapper = MagicMock()
         connector_wrapper.get_connector.side_effect = ConnectorNotFoundException()
         handler = self.connector_handler(connector_wrapper)
 
-        handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
+        handler.destroy_connector(connector_config, dry_run=False)
 
         log_warning_mock.assert_called_once_with(
             f"Connector Destruction: the connector {CONNECTOR_NAME} does not exist. Skipping."
