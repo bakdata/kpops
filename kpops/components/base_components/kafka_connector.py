@@ -99,14 +99,10 @@ class KafkaConnector(PipelineComponent, ABC):
         return helm
 
     @property
-    def connector_name(self) -> str:
-        return self.app.name
-
-    @property
     def connector_resetter_release_name(self) -> str:
         """Get connector resetter's release name"""
         suffix = "-clean"
-        clean_up_release_name = self.connector_name + suffix
+        clean_up_release_name = self.full_name + suffix
         trimmed_name = trim_release_name(clean_up_release_name, suffix)
         return trimmed_name
 
@@ -161,7 +157,7 @@ class KafkaConnector(PipelineComponent, ABC):
     @override
     def destroy(self, dry_run: bool) -> None:
         self.handlers.connector_handler.destroy_connector(
-            self.connector_name, dry_run=dry_run
+            self.full_name, dry_run=dry_run
         )
 
     @override
@@ -195,14 +191,14 @@ class KafkaConnector(PipelineComponent, ABC):
 
         log.info(
             magentaify(
-                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {self.connector_name}"
+                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {self.full_name}"
             )
         )
         self.__uninstall_connect_resetter(trimmed_name, dry_run)
 
         log.info(
             magentaify(
-                f"Connector Cleanup: deploy Connect {connector_type.value} resetter for {self.connector_name}"
+                f"Connector Cleanup: deploy Connect {connector_type.value} resetter for {self.full_name}"
             )
         )
 
@@ -262,12 +258,12 @@ class KafkaConnector(PipelineComponent, ABC):
         return {
             **KafkaConnectResetterValues(
                 config=KafkaConnectResetterConfig(
-                    connector=self.connector_name,
+                    connector=self.full_name,
                     brokers=self.config.brokers,
                     **kwargs,
                 ),
                 connector_type=connector_type.value,
-                name_override=self.connector_name,
+                name_override=self.full_name,
             ).dict(),
             **self.resetter_values,
         }
