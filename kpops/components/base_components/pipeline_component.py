@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC
-from typing import Iterator
+from collections.abc import Iterator
+from typing import Any, Generator
 
 from pydantic import Extra, Field
 
@@ -59,18 +60,18 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         self.set_input_topics()
         self.set_output_topics()
 
-    def get_input_topics(self) -> list[str] | None:
+    def get_input_topics(self) -> list[str]:
         """Get all the input topics from config."""
         return []
 
-    def get_extra_input_topics(self) -> dict[str, list[str]] | None:
+    def get_extra_input_topics(self) -> dict[str, list[str]]:
         """Get extra input topics list from config."""
         return {}
 
     def get_output_topic(self) -> str | None:
         """Get output topic from config."""
 
-    def get_extra_output_topics(self) -> dict[str, str] | None:
+    def get_extra_output_topics(self) -> dict[str, str]:
         """Get extra output topics list from config."""
         return {}
 
@@ -140,19 +141,9 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
 
     @property
     def outputs(self) -> Iterator[str]:
-        if self.get_output_topic() is not None:
-            yield self.get_output_topic()
+        if output_topic := self.get_output_topic():
+            yield output_topic
         yield from self.get_extra_output_topics().values()
-
-    def __get_all_output_topics(self) -> list[str]:
-        all_output_topics: list[str] = []
-        output_topic = self.get_output_topic()
-        extra_output_topics = self.get_extra_output_topics()
-        if output_topic is not None:
-            all_output_topics.append(output_topic)
-        if extra_output_topics:
-            all_output_topics.extend(list(extra_output_topics.values()))
-        return all_output_topics
 
     def apply_from_inputs(self, name: str, topic: FromTopic) -> None:
         """Add a `from` section input to the component config
