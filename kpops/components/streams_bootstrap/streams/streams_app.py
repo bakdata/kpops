@@ -33,7 +33,7 @@ class StreamsApp(KafkaApp):
         return self.app.streams.output_topic
 
     @override
-    def get_extra_output_topics(self) -> dict[str, str] | None:
+    def get_extra_output_topics(self) -> dict[str, str]:
         return self.app.streams.extra_output_topics
 
     @override

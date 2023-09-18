@@ -78,14 +78,13 @@ class PipelineComponents(BaseModel):
 
     def generate_graph(self) -> None:
         for component in self.components:
-            component_node_name = self.__get_vertex_component_name(component)
-            self.graph.add_node(component_node_name)
+            self.graph.add_node(component.id)
 
             for input_topic in component.inputs:
-                self.__add_input(input_topic, component_node_name)
+                self.__add_input(input_topic, component.id)
 
             for output_topic in component.outputs:
-                self.__add_output(output_topic, component_node_name)
+                self.__add_output(output_topic, component.id)
 
     def __add_output(self, output_topic: str, source: str) -> None:
         self.graph.add_node(output_topic)
@@ -94,10 +93,6 @@ class PipelineComponents(BaseModel):
     def __add_input(self, input_topic: str, component_node_name: str) -> None:
         self.graph.add_node(input_topic)
         self.graph.add_edge(input_topic, component_node_name)
-
-    @staticmethod
-    def __get_vertex_component_name(component: PipelineComponent) -> str:
-        return f"component-{component.full_name}"
 
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove

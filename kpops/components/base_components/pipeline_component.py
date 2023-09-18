@@ -75,6 +75,10 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         return {}
 
     @property
+    def id(self) -> str:
+        return f"component-{self.full_name}"
+
+    @property
     def full_name(self) -> str:
         return self.prefix + self.name
 
