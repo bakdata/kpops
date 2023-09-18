@@ -589,7 +589,7 @@ class TestPipeline:
             )
 
     def test_validate_loops_on_pipeline(self):
-        with pytest.raises(ValueError, match="Pipeline contains cycles."):
+        with pytest.raises(ValueError, match="Pipeline is not a valid DAG."):
             runner.invoke(
                 app,
                 [

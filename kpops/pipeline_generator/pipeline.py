@@ -66,7 +66,7 @@ class PipelineComponents(BaseModel):
 
     def validate_graph(self) -> None:
         if not nx.is_directed_acyclic_graph(self.graph):
-            raise ValueError("Pipeline contains cycles.")
+            raise ValueError("Pipeline is not a valid DAG.")
 
     def validate_unique_names(self) -> None:
         step_names = [component.full_name for component in self.components]
@@ -81,20 +81,19 @@ class PipelineComponents(BaseModel):
             component_node_name = self.__get_vertex_component_name(component)
             self.graph.add_node(component_node_name)
 
-            self.__add_inputs(list(component.inputs), component_node_name)
-            self.__add_outputs(list(component.outputs), component_node_name)
+            for input_topic in component.inputs:
+                self.__add_input(input_topic, component_node_name)
 
-    def __add_outputs(self, all_output_topics: list[str], source: str) -> None:
-        for output_topic in all_output_topics:
-            self.graph.add_node(output_topic)
-            self.graph.add_edge(source, output_topic)
+            for output_topic in component.outputs:
+                self.__add_output(output_topic, component_node_name)
 
-    def __add_inputs(
-        self, all_input_topics: list[str], component_node_name: str
-    ) -> None:
-        for input_topic in all_input_topics:
-            self.graph.add_node(input_topic)
-            self.graph.add_edge(input_topic, component_node_name)
+    def __add_output(self, output_topic: str, source: str) -> None:
+        self.graph.add_node(output_topic)
+        self.graph.add_edge(source, output_topic)
+
+    def __add_input(self, input_topic: str, component_node_name: str) -> None:
+        self.graph.add_node(input_topic)
+        self.graph.add_edge(input_topic, component_node_name)
 
     @staticmethod
     def __get_vertex_component_name(component: PipelineComponent) -> str:
