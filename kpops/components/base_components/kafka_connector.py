@@ -101,7 +101,7 @@ class KafkaConnector(PipelineComponent, ABC):
         return helm
 
     @property
-    def _connector_resetter_release_name(self) -> str:
+    def _resetter_release_name(self) -> str:
         """Get connector resetter's release name"""
         suffix = "-clean"
         clean_up_release_name = self.full_name + suffix
@@ -188,9 +188,7 @@ class KafkaConnector(PipelineComponent, ABC):
                 f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {self.full_name}"
             )
         )
-        self.__uninstall_connect_resetter(
-            self._connector_resetter_release_name, dry_run
-        )
+        self.__uninstall_connect_resetter(self._resetter_release_name, dry_run)
 
         log.info(
             magentaify(
@@ -202,14 +200,12 @@ class KafkaConnector(PipelineComponent, ABC):
 
         if dry_run:
             self.dry_run_handler.print_helm_diff(
-                stdout, self._connector_resetter_release_name, log
+                stdout, self._resetter_release_name, log
             )
 
         if not retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
-            self.__uninstall_connect_resetter(
-                self._connector_resetter_release_name, dry_run
-            )
+            self.__uninstall_connect_resetter(self._resetter_release_name, dry_run)
 
     def __install_connect_resetter(
         self,
@@ -225,7 +221,7 @@ class KafkaConnector(PipelineComponent, ABC):
         :return: The output of `helm upgrade --install`
         """
         return self.helm.upgrade_install(
-            release_name=self._connector_resetter_release_name,
+            release_name=self._resetter_release_name,
             namespace=self.namespace,
             chart=self._resetter_helm_chart,
             dry_run=dry_run,
@@ -300,7 +296,7 @@ class KafkaSourceConnector(KafkaConnector):
             offset_topic=self.offset_topic,
         )
         stdout = self.helm.template(
-            self._connector_resetter_release_name,
+            self._resetter_release_name,
             self._resetter_helm_chart,
             self.namespace,
             values,
@@ -345,7 +341,7 @@ class KafkaSinkConnector(KafkaConnector):
     def template(self) -> None:
         values = self._get_kafka_connect_resetter_values()
         stdout = self.helm.template(
-            self._connector_resetter_release_name,
+            self._resetter_release_name,
             self._resetter_helm_chart,
             self.namespace,
             values,

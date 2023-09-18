@@ -12,9 +12,7 @@ from kpops.components.base_components.kafka_connector import KafkaConnector
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
-CONNECTOR_FULL_NAME = (
-    "${pipeline_name}-test-connector-with-long-name-0123456789abcdefghijklmnop"
-)
+CONNECTOR_FULL_NAME = "${pipeline_name}-" + CONNECTOR_NAME
 CONNECTOR_CLEAN_FULL_NAME = "${pipeline_name}-test-connector-with-long-name-clean"
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 
