@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Iterator
-from typing import Any, Generator
 
 from pydantic import Extra, Field
 
