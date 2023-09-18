@@ -258,7 +258,6 @@ class TestConnectorHandler:
 
     def test_should_print_correct_warning_log_when_destroying_connector_and_connector_exists_not_dry_run(
         self,
-        connector_config: KafkaConnectorConfig,
         log_warning_mock: MagicMock,
     ):
         connector_wrapper = MagicMock()

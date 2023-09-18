@@ -24,7 +24,7 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.utils.environment import ENV
 from tests.components.test_kafka_connector import (
-    CONNECTOR_CLEAN_NAME,
+    CONNECTOR_CLEAN_NAME_PREFIXED,
     CONNECTOR_NAME,
     CONNECTOR_NAME_PREFIXED,
     TestKafkaConnector,
@@ -157,11 +157,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_NAME_PREFIXED,
                 dry_run=False,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_NAME_PREFIXED,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=False,
@@ -182,7 +182,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_NAME_PREFIXED,
                 dry_run=False,
             ),
         ]
@@ -232,11 +232,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_NAME_PREFIXED,
                 dry_run=False,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_NAME_PREFIXED,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=False,
@@ -257,7 +257,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_NAME_PREFIXED,
                 dry_run=False,
             ),
         ]
@@ -307,11 +307,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_NAME_PREFIXED,
                 dry_run=False,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_NAME_PREFIXED,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=False,
@@ -332,7 +332,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_NAME_PREFIXED,
                 dry_run=False,
             ),
         ]

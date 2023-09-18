@@ -104,11 +104,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @property
     def connector_resseter_release_name(self) -> str:
-        """Get connector resetter's release name
-
-        :param connector_name: Name of the connector to be reset
-        :return: The name of the resetter to be used
-        """
+        """Get connector resetter's release name"""
         suffix = "-clean"
         clean_up_release_name = self.connector_name + suffix
         trimmed_name = trim_release_name(clean_up_release_name, suffix)
