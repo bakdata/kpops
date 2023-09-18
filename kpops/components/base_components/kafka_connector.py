@@ -102,7 +102,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @property
     def _resetter_release_name(self) -> str:
-        """Get connector resetter's release name"""
         suffix = "-clean"
         clean_up_release_name = self.full_name + suffix
         trimmed_name = trim_release_name(clean_up_release_name, suffix)
@@ -110,10 +109,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @property
     def _resetter_helm_chart(self) -> str:
-        """Get resetter Helm chart
-
-        :return: returns the component resetter's helm chart
-        """
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
     @cached_property
