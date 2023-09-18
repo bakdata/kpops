@@ -298,12 +298,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         assert log_info_mock.mock_calls == [
             call.log_info(
                 magentaify(
-                    f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {connector_config.name}"
+                    f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {CONNECTOR_NAME_PREFIXED}"
                 )
             ),
             call.log_info(
                 magentaify(
-                    f"Connector Cleanup: deploy Connect {KafkaConnectorType.SINK.value} resetter for {connector_config.name}"
+                    f"Connector Cleanup: deploy Connect {KafkaConnectorType.SINK.value} resetter for {CONNECTOR_NAME_PREFIXED}"
                 )
             ),
             call.log_info(magentaify("Connector Cleanup: uninstall Kafka Resetter.")),
