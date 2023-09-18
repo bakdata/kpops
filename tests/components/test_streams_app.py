@@ -443,3 +443,48 @@ class TestStreamsApp:
                 dry_run,
             ),
         ]
+
+    @pytest.mark.asyncio
+    async def test_get_input_output_topics(
+        self, config: PipelineConfig, handlers: ComponentHandlers
+    ):
+        streams_app = StreamsApp(
+            name=self.STREAMS_APP_NAME,
+            config=config,
+            handlers=handlers,
+            **{
+                "namespace": "test-namespace",
+                "app": {
+                    "streams": {"brokers": "fake-broker:9092"},
+                },
+                "from": {
+                    "topics": {
+                        "example-input": {"type": "input"},
+                        "b": {"type": "input"},
+                        "a": {"type": "input"},
+                        "topic-extra2": {"role": "role2"},
+                        "topic-extra3": {"role": "role2"},
+                        "topic-extra": {"role": "role1"},
+                        ".*": {"type": "pattern"},
+                        "example.*": {
+                            "type": "pattern",
+                            "role": "another-pattern",
+                        },
+                    }
+                },
+                "to": {
+                    "topics": {
+                        "example-output": {"type": "output"},
+                        "extra-topic": {"role": "fake-role"},
+                    }
+                },
+            },
+        )
+
+        assert streams_app.get_input_topics() == ["example-input", "b", "a"]
+        assert streams_app.get_extra_input_topics() == {
+            "role1": ["topic-extra"],
+            "role2": ["topic-extra2", "topic-extra3"],
+        }
+        assert streams_app.get_output_topic() == "example-output"
+        assert streams_app.get_extra_output_topics() == {"fake-role": "extra-topic"}

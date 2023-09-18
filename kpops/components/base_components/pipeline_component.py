@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
+from collections.abc import Iterator
 
 from pydantic import Extra, Field
 
@@ -57,6 +58,25 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         super().__init__(**kwargs)
         self.set_input_topics()
         self.set_output_topics()
+
+    def get_input_topics(self) -> list[str]:
+        """Get all the input topics from config."""
+        return []
+
+    def get_extra_input_topics(self) -> dict[str, list[str]]:
+        """Get extra input topics list from config."""
+        return {}
+
+    def get_output_topic(self) -> str | None:
+        """Get output topic from config."""
+
+    def get_extra_output_topics(self) -> dict[str, str]:
+        """Get extra output topics list from config."""
+        return {}
+
+    @property
+    def id(self) -> str:
+        return f"component-{self.full_name}"
 
     @property
     def full_name(self) -> str:
@@ -115,6 +135,18 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         if self.from_:
             for name, topic in self.from_.topics.items():
                 self.apply_from_inputs(name, topic)
+
+    @property
+    def inputs(self) -> Iterator[str]:
+        yield from self.get_input_topics()
+        for role_topics in self.get_extra_input_topics().values():
+            yield from role_topics
+
+    @property
+    def outputs(self) -> Iterator[str]:
+        if output_topic := self.get_output_topic():
+            yield output_topic
+        yield from self.get_extra_output_topics().values()
 
     def apply_from_inputs(self, name: str, topic: FromTopic) -> None:
         """Add a `from` section input to the component config

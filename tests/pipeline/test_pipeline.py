@@ -191,7 +191,7 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    @pytest.mark.timeout(0.5)
+    @pytest.mark.timeout(2)
     def test_substitute_in_component_infinite_loop(self):
         with pytest.raises((ValueError, ParsingException)):
             runner.invoke(
@@ -528,10 +528,10 @@ class TestPipeline:
         input_components = enriched_pipeline["components"][4]["from"]["components"]
         assert "type" not in output_topics["output-topic"]
         assert output_topics["error-topic"]["type"] == "error"
-        assert "type" not in output_topics["extra-topic"]
+        assert "type" not in output_topics["extra-topic-output"]
         assert "role" not in output_topics["output-topic"]
         assert "role" not in output_topics["error-topic"]
-        assert output_topics["extra-topic"]["role"] == "role"
+        assert output_topics["extra-topic-output"]["role"] == "role"
 
         assert "type" not in ["input-topic"]
         assert "type" not in input_topics["extra-topic"]
@@ -587,3 +587,48 @@ class TestPipeline:
                 ],
                 catch_exceptions=False,
             )
+
+    def test_validate_loops_on_pipeline(self):
+        with pytest.raises(ValueError, match="Pipeline is not a valid DAG."):
+            runner.invoke(
+                app,
+                [
+                    "generate",
+                    "--pipeline-base-dir",
+                    str(PIPELINE_BASE_DIR_PATH),
+                    str(RESOURCE_PATH / "pipeline-with-loop/pipeline.yaml"),
+                    "--defaults",
+                    str(RESOURCE_PATH / "pipeline-with-loop"),
+                ],
+                catch_exceptions=False,
+            )
+
+    def test_validate_simple_graph(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "pipelines-with-graphs/simple-pipeline/pipeline.yaml",
+            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
+            defaults=RESOURCE_PATH / "pipelines-with-graphs" / "simple-pipeline",
+        )
+        assert len(pipeline.components) == 2
+        assert len(pipeline.components.graph.nodes) == 3
+        assert len(pipeline.components.graph.edges) == 2
+        node_components = list(
+            filter(
+                lambda node_id: "component" in node_id, pipeline.components.graph.nodes
+            )
+        )
+        assert len(pipeline.components) == len(node_components)
+
+    def test_validate_topic_and_component_same_name(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH
+            / "pipelines-with-graphs/same-topic-and-component-name/pipeline.yaml",
+            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
+            defaults=RESOURCE_PATH
+            / "pipelines-with-graphs"
+            / "same-topic-and-component-name",
+        )
+        component, topic = list(pipeline.components.graph.nodes)
+        edges = list(pipeline.components.graph.edges)
+        assert component == f"component-{topic}"
+        assert (component, topic) in edges

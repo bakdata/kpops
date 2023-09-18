@@ -7,8 +7,9 @@ from collections.abc import Iterator
 from contextlib import suppress
 from pathlib import Path
 
+import networkx as nx
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from rich.console import Console
 from rich.syntax import Syntax
 
@@ -35,6 +36,10 @@ class PipelineComponents(BaseModel):
     """Stores the pipeline components"""
 
     components: list[PipelineComponent] = []
+    graph: nx.DiGraph = Field(default=nx.DiGraph(), exclude=True)
+
+    class Config:
+        arbitrary_types_allowed = True
 
     @property
     def last(self) -> PipelineComponent:
@@ -59,6 +64,10 @@ class PipelineComponents(BaseModel):
     def __len__(self) -> int:
         return len(self.components)
 
+    def validate_graph(self) -> None:
+        if not nx.is_directed_acyclic_graph(self.graph):
+            raise ValueError("Pipeline is not a valid DAG.")
+
     def validate_unique_names(self) -> None:
         step_names = [component.full_name for component in self.components]
         duplicates = [name for name, count in Counter(step_names).items() if count > 1]
@@ -66,6 +75,24 @@ class PipelineComponents(BaseModel):
             raise ValidationError(
                 f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
             )
+
+    def generate_graph(self) -> None:
+        for component in self.components:
+            self.graph.add_node(component.id)
+
+            for input_topic in component.inputs:
+                self.__add_input(input_topic, component.id)
+
+            for output_topic in component.outputs:
+                self.__add_output(output_topic, component.id)
+
+    def __add_output(self, output_topic: str, source: str) -> None:
+        self.graph.add_node(output_topic)
+        self.graph.add_edge(source, output_topic)
+
+    def __add_input(self, input_topic: str, component_node_name: str) -> None:
+        self.graph.add_node(input_topic)
+        self.graph.add_edge(input_topic, component_node_name)
 
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove
@@ -109,6 +136,7 @@ class Pipeline:
         self.registry = registry
         self.env_components_index = create_env_components_index(environment_components)
         self.parse_components(component_list)
+        self.components.generate_graph()
         self.validate()
 
     @classmethod
@@ -308,6 +336,7 @@ class Pipeline:
 
     def validate(self) -> None:
         self.components.validate_unique_names()
+        self.components.validate_graph()
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
