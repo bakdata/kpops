@@ -99,14 +99,15 @@ class KafkaConnector(PipelineComponent, ABC):
         return helm
 
     @property
-    def connector_resetter_release_name(self) -> str:
+    def _connector_resetter_release_name(self) -> str:
         """Get connector resetter's release name"""
         suffix = "-clean"
         clean_up_release_name = self.full_name + suffix
         trimmed_name = trim_release_name(clean_up_release_name, suffix)
         return trimmed_name
 
-    def _get_resetter_helm_chart(self) -> str:
+    @property
+    def _resetter_helm_chart(self) -> str:
         """Get reseter Helm chart
 
         :return: returns the component resetter's helm chart
@@ -119,7 +120,7 @@ class KafkaConnector(PipelineComponent, ABC):
         return DryRunHandler(self.helm, helm_diff, self.namespace)
 
     @property
-    def kafka_connect_resetter_chart(self) -> str:
+    def _kafka_connect_resetter_chart(self) -> str:
         """Resetter chart for this component"""
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
@@ -187,14 +188,14 @@ class KafkaConnector(PipelineComponent, ABC):
         :param retain_clean_jobs: If the cleanup job should be kept
         :param kwargs: Other values for the KafkaConnectResetter
         """
-        trimmed_name = self.connector_resetter_release_name
-
         log.info(
             magentaify(
                 f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {self.full_name}"
             )
         )
-        self.__uninstall_connect_resetter(trimmed_name, dry_run)
+        self.__uninstall_connect_resetter(
+            self._connector_resetter_release_name, dry_run
+        )
 
         log.info(
             magentaify(
@@ -202,20 +203,21 @@ class KafkaConnector(PipelineComponent, ABC):
             )
         )
 
-        stdout = self.__install_connect_resetter(
-            trimmed_name, connector_type, dry_run, **kwargs
-        )
+        stdout = self.__install_connect_resetter(connector_type, dry_run, **kwargs)
 
         if dry_run:
-            self.dry_run_handler.print_helm_diff(stdout, trimmed_name, log)
+            self.dry_run_handler.print_helm_diff(
+                stdout, self._connector_resetter_release_name, log
+            )
 
         if not retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
-            self.__uninstall_connect_resetter(trimmed_name, dry_run)
+            self.__uninstall_connect_resetter(
+                self._connector_resetter_release_name, dry_run
+            )
 
     def __install_connect_resetter(
         self,
-        release_name: str,
         connector_type: KafkaConnectorType,
         dry_run: bool,
         **kwargs,
@@ -229,9 +231,9 @@ class KafkaConnector(PipelineComponent, ABC):
         :return: The output of `helm upgrade --install`
         """
         return self.helm.upgrade_install(
-            release_name=release_name,
+            release_name=self._connector_resetter_release_name,
             namespace=self.namespace,
-            chart=self.kafka_connect_resetter_chart,
+            chart=self._kafka_connect_resetter_chart,
             dry_run=dry_run,
             flags=HelmUpgradeInstallFlags(
                 create_namespace=self.config.create_namespace,
@@ -305,8 +307,8 @@ class KafkaSourceConnector(KafkaConnector):
             offset_topic=self.offset_topic,
         )
         stdout = self.helm.template(
-            self.connector_resetter_release_name,
-            self._get_resetter_helm_chart(),
+            self._connector_resetter_release_name,
+            self._resetter_helm_chart,
             self.namespace,
             values,
             self.template_flags,
@@ -349,8 +351,8 @@ class KafkaSinkConnector(KafkaConnector):
     def template(self) -> None:
         values = self._get_kafka_connect_resetter_values(KafkaConnectorType.SINK)
         stdout = self.helm.template(
-            self.connector_resetter_release_name,
-            self._get_resetter_helm_chart(),
+            self._connector_resetter_release_name,
+            self._resetter_helm_chart,
             self.namespace,
             values,
             self.template_flags,
