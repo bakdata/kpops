@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC
-from itertools import chain
 from typing import Iterator
 
 from pydantic import Extra, Field
@@ -144,7 +143,6 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         if self.get_output_topic() is not None:
             yield self.get_output_topic()
         yield from self.get_extra_output_topics().values()
-
 
     def __get_all_output_topics(self) -> list[str]:
         all_output_topics: list[str] = []
