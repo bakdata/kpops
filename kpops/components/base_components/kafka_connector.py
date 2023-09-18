@@ -110,7 +110,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @property
     def _resetter_helm_chart(self) -> str:
-        """Get reseter Helm chart
+        """Get resetter Helm chart
 
         :return: returns the component resetter's helm chart
         """
@@ -120,11 +120,6 @@ class KafkaConnector(PipelineComponent, ABC):
     def dry_run_handler(self) -> DryRunHandler:
         helm_diff = HelmDiff(self.config.helm_diff_config)
         return DryRunHandler(self.helm, helm_diff, self.namespace)
-
-    @property
-    def _kafka_connect_resetter_chart(self) -> str:
-        """Resetter chart for this component"""
-        return f"{self.repo_config.repository_name}/kafka-connect-resetter"
 
     @property
     def helm_flags(self) -> HelmFlags:
@@ -232,7 +227,7 @@ class KafkaConnector(PipelineComponent, ABC):
         return self.helm.upgrade_install(
             release_name=self._connector_resetter_release_name,
             namespace=self.namespace,
-            chart=self._kafka_connect_resetter_chart,
+            chart=self._resetter_helm_chart,
             dry_run=dry_run,
             flags=HelmUpgradeInstallFlags(
                 create_namespace=self.config.create_namespace,
