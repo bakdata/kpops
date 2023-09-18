@@ -369,7 +369,6 @@ class KafkaSinkConnector(KafkaConnector):
         :param dry_run: Whether to do a dry run of the command
         """
         self._run_connect_resetter(
-            connector_type=KafkaConnectorType.SINK,
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
             delete_consumer_group=delete_consumer_group,
