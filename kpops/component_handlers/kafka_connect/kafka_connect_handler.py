@@ -66,7 +66,7 @@ class KafkaConnectHandler:
     def destroy_connector(self, connector_name: str, *, dry_run: bool) -> None:
         """
         Deletes a connector resource from the cluster.
-        :param connector_name: The connector config.
+        :param connector_name: The connector name.
         :param dry_run: If the connector deletion should be run in dry run mode.
         """
         if dry_run:
