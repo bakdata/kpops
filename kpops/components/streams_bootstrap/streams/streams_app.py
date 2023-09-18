@@ -21,11 +21,11 @@ class StreamsApp(KafkaApp):
     )
 
     @override
-    def get_input_topics(self) -> list[str] | None:
+    def get_input_topics(self) -> list[str]:
         return self.app.streams.input_topics
 
     @override
-    def get_extra_input_topics(self) -> dict[str, list[str]] | None:
+    def get_extra_input_topics(self) -> dict[str, list[str]]:
         return self.app.streams.extra_input_topics
 
     @override
