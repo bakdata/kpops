@@ -9,6 +9,13 @@ kafka-app:
       schema_registry_url: "${schema_registry_url}"
   version: "2.4.2"
 
+producer-app:
+  to:
+    topics:
+      ${output_topic_name}:
+        partitions_count: 3
+
+
 streams-app: # inherits from kafka-app
   app:
     streams:
@@ -19,7 +26,7 @@ streams-app: # inherits from kafka-app
         type:
       error-topic:
         type: error
-      extra-topic:
+      extra-topic-output:
         role: role
   from:
     topics:

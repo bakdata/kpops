@@ -136,15 +136,15 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     @property
     def inputs(self) -> Iterator[str]:
         yield from self.get_input_topics()
-        for role_topics in chain(*self.get_extra_input_topics().values()):
+        for role_topics in self.get_extra_input_topics().values():
             yield from role_topics
 
     @property
     def outputs(self) -> Iterator[str]:
         if self.get_output_topic() is not None:
             yield self.get_output_topic()
-        for role_topics in self.get_extra_output_topics().values():
-            yield from role_topics
+        yield from self.get_extra_output_topics().values()
+
 
     def __get_all_output_topics(self) -> list[str]:
         all_output_topics: list[str] = []

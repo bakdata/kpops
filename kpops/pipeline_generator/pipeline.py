@@ -81,15 +81,15 @@ class PipelineComponents(BaseModel):
             component_node_name = self.__get_vertex_component_name(component)
             self.graph.add_node(component_node_name)
 
-            self.__add_ingoing_edges(list(component.inputs), component_node_name)
-            self.__add_output(list(component.outputs), component_node_name)
+            self.__add_inputs(list(component.inputs), component_node_name)
+            self.__add_outputs(list(component.outputs), component_node_name)
 
-    def __add_output(self, all_output_topics: list[str], source: str) -> None:
+    def __add_outputs(self, all_output_topics: list[str], source: str) -> None:
         for output_topic in all_output_topics:
             self.graph.add_node(output_topic)
             self.graph.add_edge(source, output_topic)
 
-    def __add_ingoing_edges(
+    def __add_inputs(
         self, all_input_topics: list[str], component_node_name: str
     ) -> None:
         for input_topic in all_input_topics:

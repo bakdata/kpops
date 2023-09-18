@@ -528,10 +528,10 @@ class TestPipeline:
         input_components = enriched_pipeline["components"][4]["from"]["components"]
         assert "type" not in output_topics["output-topic"]
         assert output_topics["error-topic"]["type"] == "error"
-        assert "type" not in output_topics["extra-topic"]
+        assert "type" not in output_topics["extra-topic-output"]
         assert "role" not in output_topics["output-topic"]
         assert "role" not in output_topics["error-topic"]
-        assert output_topics["extra-topic"]["role"] == "role"
+        assert output_topics["extra-topic-output"]["role"] == "role"
 
         assert "type" not in ["input-topic"]
         assert "type" not in input_topics["extra-topic"]
