@@ -29,6 +29,7 @@ from kpops.utils.colorify import magentaify
 from tests.components.test_kafka_connector import (
     CONNECTOR_CLEAN_NAME,
     CONNECTOR_NAME,
+    CONNECTOR_NAME_PREFIXED,
     TestKafkaConnector,
 )
 
@@ -169,7 +170,9 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
         connector.destroy(dry_run=True)
 
-        mock_destroy_connector.assert_called_once_with(connector_config, dry_run=True)
+        mock_destroy_connector.assert_called_once_with(
+            CONNECTOR_NAME_PREFIXED, dry_run=True
+        )
 
     def test_reset_when_dry_run_is_true(
         self,
@@ -226,10 +229,10 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     "connectorType": "sink",
                     "config": {
                         "brokers": "broker:9092",
-                        "connector": CONNECTOR_NAME,
+                        "connector": CONNECTOR_NAME_PREFIXED,
                         "deleteConsumerGroup": False,
                     },
-                    "nameOverride": CONNECTOR_NAME,
+                    "nameOverride": CONNECTOR_NAME_PREFIXED,
                 },
             ),
             mocker.call.helm.uninstall(
@@ -295,12 +298,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         assert log_info_mock.mock_calls == [
             call.log_info(
                 magentaify(
-                    f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {CONNECTOR_NAME}"
+                    f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {connector_config.name}"
                 )
             ),
             call.log_info(
                 magentaify(
-                    f"Connector Cleanup: deploy Connect {KafkaConnectorType.SINK.value} resetter for {CONNECTOR_NAME}"
+                    f"Connector Cleanup: deploy Connect {KafkaConnectorType.SINK.value} resetter for {connector_config.name}"
                 )
             ),
             call.log_info(magentaify("Connector Cleanup: uninstall Kafka Resetter.")),
@@ -332,10 +335,10 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     "connectorType": "sink",
                     "config": {
                         "brokers": "broker:9092",
-                        "connector": CONNECTOR_NAME,
+                        "connector": connector_config.name,
                         "deleteConsumerGroup": True,
                     },
-                    "nameOverride": CONNECTOR_NAME,
+                    "nameOverride": connector_config.name,
                 },
             ),
             mocker.call.helm.uninstall(
@@ -426,10 +429,10 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     "connectorType": "sink",
                     "config": {
                         "brokers": "broker:9092",
-                        "connector": CONNECTOR_NAME,
+                        "connector": CONNECTOR_NAME_PREFIXED,
                         "deleteConsumerGroup": True,
                     },
-                    "nameOverride": CONNECTOR_NAME,
+                    "nameOverride": CONNECTOR_NAME_PREFIXED,
                 },
             ),
             mocker.call.helm.uninstall(

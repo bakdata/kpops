@@ -26,6 +26,7 @@ from kpops.utils.environment import ENV
 from tests.components.test_kafka_connector import (
     CONNECTOR_CLEAN_NAME,
     CONNECTOR_NAME,
+    CONNECTOR_NAME_PREFIXED,
     TestKafkaConnector,
 )
 
@@ -102,7 +103,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         self,
         connector: KafkaSourceConnector,
         mocker: MockerFixture,
-        connector_config: KafkaConnectorConfig,
     ):
         ENV["KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"] = "kafka-connect-offsets"
         assert connector.handlers.connector_handler
@@ -113,7 +113,9 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
         connector.destroy(dry_run=True)
 
-        mock_destroy_connector.assert_called_once_with(connector_config, dry_run=True)
+        mock_destroy_connector.assert_called_once_with(
+            CONNECTOR_NAME_PREFIXED, dry_run=True
+        )
 
     def test_reset_when_dry_run_is_true(
         self,
@@ -172,15 +174,15 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                     "connectorType": "source",
                     "config": {
                         "brokers": "broker:9092",
-                        "connector": CONNECTOR_NAME,
+                        "connector": CONNECTOR_NAME_PREFIXED,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "nameOverride": CONNECTOR_NAME,
+                    "nameOverride": CONNECTOR_NAME_PREFIXED,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name="test-connector-with-long-name-0123456789abcdef-clean",
+                release_name=CONNECTOR_CLEAN_NAME,
                 dry_run=False,
             ),
         ]
@@ -247,10 +249,10 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                     "connectorType": "source",
                     "config": {
                         "brokers": "broker:9092",
-                        "connector": CONNECTOR_NAME,
+                        "connector": CONNECTOR_NAME_PREFIXED,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "nameOverride": CONNECTOR_NAME,
+                    "nameOverride": CONNECTOR_NAME_PREFIXED,
                 },
             ),
             mocker.call.helm.uninstall(
@@ -322,10 +324,10 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                     "connectorType": "source",
                     "config": {
                         "brokers": "broker:9092",
-                        "connector": CONNECTOR_NAME,
+                        "connector": CONNECTOR_NAME_PREFIXED,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "nameOverride": CONNECTOR_NAME,
+                    "nameOverride": CONNECTOR_NAME_PREFIXED,
                 },
             ),
             mocker.call.helm.uninstall(

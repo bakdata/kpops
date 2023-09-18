@@ -98,6 +98,22 @@ class KafkaConnector(PipelineComponent, ABC):
         )
         return helm
 
+    @property
+    def connector_name(self) -> str:
+        return self.app.name
+
+    @property
+    def connector_resseter_release_name(self) -> str:
+        """Get connector resetter's release name
+
+        :param connector_name: Name of the connector to be reset
+        :return: The name of the resetter to be used
+        """
+        suffix = "-clean"
+        clean_up_release_name = self.connector_name + suffix
+        trimmed_name = trim_release_name(clean_up_release_name, suffix)
+        return trimmed_name
+
     def _get_resetter_helm_chart(self) -> str:
         """Get reseter Helm chart
 
@@ -148,7 +164,9 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @override
     def destroy(self, dry_run: bool) -> None:
-        self.handlers.connector_handler.destroy_connector(self.app, dry_run=dry_run)
+        self.handlers.connector_handler.destroy_connector(
+            self.connector_name, dry_run=dry_run
+        )
 
     @override
     def clean(self, dry_run: bool) -> None:
@@ -161,7 +179,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
     def _run_connect_resetter(
         self,
-        connector_name: str,
         connector_type: KafkaConnectorType,
         dry_run: bool,
         retain_clean_jobs: bool,
@@ -173,29 +190,28 @@ class KafkaConnector(PipelineComponent, ABC):
         to make sure that there is no running clean job in the cluster. Then it releases a cleanup job.
         If the retain_clean_jobs flag is set to false the cleanup job will be deleted.
 
-        :param connector_name: Name of the connector
         :param connector_type: Type of the connector (SINK or SOURCE)
         :param dry_run: If the cleanup should be run in dry run mode or not
         :param retain_clean_jobs: If the cleanup job should be kept
         :param kwargs: Other values for the KafkaConnectResetter
         """
-        trimmed_name = self._get_kafka_resetter_release_name(connector_name)
+        trimmed_name = self.connector_resseter_release_name
 
         log.info(
             magentaify(
-                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {connector_name}"
+                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {self.connector_name}"
             )
         )
         self.__uninstall_connect_resetter(trimmed_name, dry_run)
 
         log.info(
             magentaify(
-                f"Connector Cleanup: deploy Connect {connector_type.value} resetter for {connector_name}"
+                f"Connector Cleanup: deploy Connect {connector_type.value} resetter for {self.connector_name}"
             )
         )
 
         stdout = self.__install_connect_resetter(
-            trimmed_name, connector_name, connector_type, dry_run, **kwargs
+            trimmed_name, connector_type, dry_run, **kwargs
         )
 
         if dry_run:
@@ -205,21 +221,9 @@ class KafkaConnector(PipelineComponent, ABC):
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
             self.__uninstall_connect_resetter(trimmed_name, dry_run)
 
-    def _get_kafka_resetter_release_name(self, connector_name: str) -> str:
-        """Get connector resetter's release name
-
-        :param connector_name: Name of the connector to be reset
-        :return: The name of the resetter to be used
-        """
-        suffix = "-clean"
-        clean_up_release_name = connector_name + suffix
-        trimmed_name = trim_release_name(clean_up_release_name, suffix)
-        return trimmed_name
-
     def __install_connect_resetter(
         self,
         release_name: str,
-        connector_name: str,
         connector_type: KafkaConnectorType,
         dry_run: bool,
         **kwargs,
@@ -244,7 +248,6 @@ class KafkaConnector(PipelineComponent, ABC):
                 wait=True,
             ),
             values=self._get_kafka_connect_resetter_values(
-                connector_name,
                 connector_type,
                 **kwargs,
             ),
@@ -252,25 +255,23 @@ class KafkaConnector(PipelineComponent, ABC):
 
     def _get_kafka_connect_resetter_values(
         self,
-        connector_name: str,
         connector_type: KafkaConnectorType,
         **kwargs,
     ) -> dict:
         """Get connector resetter helm chart values
 
-        :param connector_name: Name of the connector
         :param connector_type: Type of the connector
         :return: The Helm chart values of the connector resetter
         """
         return {
             **KafkaConnectResetterValues(
                 config=KafkaConnectResetterConfig(
-                    connector=connector_name,
+                    connector=self.connector_name,
                     brokers=self.config.brokers,
                     **kwargs,
                 ),
                 connector_type=connector_type.value,
-                name_override=connector_name,
+                name_override=self.connector_name,
             ).dict(),
             **self.resetter_values,
         }
@@ -308,12 +309,11 @@ class KafkaSourceConnector(KafkaConnector):
     @override
     def template(self) -> None:
         values = self._get_kafka_connect_resetter_values(
-            self.name,
             KafkaConnectorType.SOURCE,
             offset_topic=self.offset_topic,
         )
         stdout = self.helm.template(
-            self._get_kafka_resetter_release_name(self.name),
+            self.connector_resseter_release_name,
             self._get_resetter_helm_chart(),
             self.namespace,
             values,
@@ -336,7 +336,6 @@ class KafkaSourceConnector(KafkaConnector):
         :param dry_run: Whether to do a dry run of the command
         """
         self._run_connect_resetter(
-            connector_name=self.name,
             connector_type=KafkaConnectorType.SOURCE,
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
@@ -356,11 +355,9 @@ class KafkaSinkConnector(KafkaConnector):
 
     @override
     def template(self) -> None:
-        values = self._get_kafka_connect_resetter_values(
-            self.name, KafkaConnectorType.SINK
-        )
+        values = self._get_kafka_connect_resetter_values(KafkaConnectorType.SINK)
         stdout = self.helm.template(
-            self._get_kafka_resetter_release_name(self.name),
+            self.connector_resseter_release_name,
             self._get_resetter_helm_chart(),
             self.namespace,
             values,
@@ -393,7 +390,6 @@ class KafkaSinkConnector(KafkaConnector):
         :param dry_run: Whether to do a dry run of the command
         """
         self._run_connect_resetter(
-            connector_name=self.name,
             connector_type=KafkaConnectorType.SINK,
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,

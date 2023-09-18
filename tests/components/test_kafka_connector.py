@@ -15,7 +15,10 @@ CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_NAME_PREFIXED = (
     "${pipeline_name}-test-connector-with-long-name-0123456789abcdefghijklmnop"
 )
-CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
+CONNECTOR_CLEAN_NAME_PREFIXED = (
+    "${pipeline_name}-test-connector-with-long-name-0123456789abcdefghijklmnop-clean"
+)
+CONNECTOR_CLEAN_NAME = "${pipeline_name}-test-connector-with-long-name-clean"
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 
 
