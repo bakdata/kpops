@@ -1,4 +1,20 @@
 # Changelog
+## [2.0.9](https://github.com/bakdata/kpops/releases/tag/2.0.9) - Release Date: [2023-09-19]
+
+### 🐛 Fixes
+
+- Fix Kafka connect config name for deletion - [#361](https://github.com/bakdata/kpops/pull/361)
+
+
+### 📝 Documentation
+
+- Fix link to kpops-examples - [#357](https://github.com/bakdata/kpops/pull/357)
+
+
+
+
+
+
 ## [2.0.8](https://github.com/bakdata/kpops/releases/tag/2.0.8) - Release Date: [2023-09-06]
 
 ### 🐛 Fixes
