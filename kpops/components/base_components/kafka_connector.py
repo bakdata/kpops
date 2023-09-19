@@ -46,6 +46,7 @@ class KafkaConnector(PipelineComponent, ABC):
     :param version: Helm chart version, defaults to "1.0.4"
     :param resetter_values: Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.,
         defaults to dict
+    :param _connector_type: Defines the type of the connector (Source or Sink)
     """
 
     namespace: str = Field(
@@ -209,9 +210,6 @@ class KafkaConnector(PipelineComponent, ABC):
     ) -> str:
         """Install connector resetter
 
-        :param release_name: Release name for the resetter
-        :param connector_name: Name of the connector-to-be-reset
-        :param connector_type: Type of the connector
         :param dry_run: Whether to dry run the command
         :return: The output of `helm upgrade --install`
         """
@@ -237,7 +235,6 @@ class KafkaConnector(PipelineComponent, ABC):
     ) -> dict:
         """Get connector resetter helm chart values
 
-        :param connector_type: Type of the connector
         :return: The Helm chart values of the connector resetter
         """
         return {
@@ -367,6 +364,7 @@ class KafkaSinkConnector(KafkaConnector):
         """Runs the connector resetter
 
         :param dry_run: Whether to do a dry run of the command
+        :param delete_consumer_group: Whether the consumer group should be deleted or not
         """
         self._run_connect_resetter(
             dry_run=dry_run,
