@@ -12,10 +12,8 @@ from kpops.components.base_components.kafka_connector import KafkaConnector
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
-CONNECTOR_NAME_PREFIXED = (
-    "${pipeline_name}-test-connector-with-long-name-0123456789abcdefghijklmnop"
-)
-CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
+CONNECTOR_FULL_NAME = "${pipeline_name}-" + CONNECTOR_NAME
+CONNECTOR_CLEAN_FULL_NAME = "${pipeline_name}-test-connector-with-long-name-clean"
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 
 
@@ -58,7 +56,7 @@ class TestKafkaConnector:
         return KafkaConnectorConfig(
             **{
                 "connector.class": CONNECTOR_CLASS,
-                "name": CONNECTOR_NAME_PREFIXED,
+                "name": CONNECTOR_FULL_NAME,
             }
         )
 
@@ -75,7 +73,7 @@ class TestKafkaConnector:
             app=connector_config,
             namespace="test-namespace",
         )
-        assert connector.app.name == CONNECTOR_NAME_PREFIXED
+        assert connector.app.name == CONNECTOR_FULL_NAME
 
         connector = KafkaConnector(
             name=CONNECTOR_NAME,
@@ -84,7 +82,7 @@ class TestKafkaConnector:
             app={"connector.class": CONNECTOR_CLASS},  # type: ignore
             namespace="test-namespace",
         )
-        assert connector.app.name == CONNECTOR_NAME_PREFIXED
+        assert connector.app.name == CONNECTOR_FULL_NAME
 
         with pytest.raises(
             ValueError, match="Connector name should be the same as component name"

@@ -250,6 +250,7 @@ class TestConnectorHandler:
         handler = self.connector_handler(connector_wrapper)
 
         handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
+
         assert connector_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
             mock.call.delete_connector(CONNECTOR_NAME),
