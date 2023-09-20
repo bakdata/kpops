@@ -29,7 +29,7 @@ runs:
       with:
         poetry-version: "1.5.1"
         python-version: "3.10"
-    
+
     - name: Install docs dependencies
       shell: bash
       run: |
@@ -54,4 +54,6 @@ runs:
       shell: bash
       if: ${{ inputs.release == 'true' }}
       run: |
-        poetry run mike deploy "${{ inputs.version }}" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
+        sem_version=${{ inputs.version }}
+        major_minor_version=${sem_version%.*}
+        poetry run mike deploy "$major_minor_version" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml

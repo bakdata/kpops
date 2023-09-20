@@ -93,7 +93,7 @@ class TestKafkaApp:
 
         print_helm_diff.assert_called_once()
         helm_upgrade_install.assert_called_once_with(
-            "example-name",
+            "${pipeline_name}-example-name",
             "test/test-chart",
             True,
             "test-namespace",

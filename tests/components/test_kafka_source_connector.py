@@ -24,7 +24,8 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.utils.environment import ENV
 from tests.components.test_kafka_connector import (
-    CONNECTOR_CLEAN_NAME,
+    CONNECTOR_CLEAN_FULL_NAME,
+    CONNECTOR_FULL_NAME,
     CONNECTOR_NAME,
     TestKafkaConnector,
 )
@@ -112,7 +113,9 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
         connector.destroy(dry_run=True)
 
-        mock_destroy_connector.assert_called_once_with(CONNECTOR_NAME, dry_run=True)
+        mock_destroy_connector.assert_called_once_with(
+            CONNECTOR_FULL_NAME, dry_run=True
+        )
 
     def test_reset_when_dry_run_is_true(
         self,
@@ -154,11 +157,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 dry_run=False,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=False,
@@ -171,15 +174,15 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                     "connectorType": "source",
                     "config": {
                         "brokers": "broker:9092",
-                        "connector": CONNECTOR_NAME,
+                        "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "nameOverride": CONNECTOR_NAME,
+                    "nameOverride": CONNECTOR_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name="test-connector-with-long-name-0123456789abcdef-clean",
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 dry_run=False,
             ),
         ]
@@ -229,11 +232,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 dry_run=False,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=False,
@@ -246,15 +249,15 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                     "connectorType": "source",
                     "config": {
                         "brokers": "broker:9092",
-                        "connector": CONNECTOR_NAME,
+                        "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "nameOverride": CONNECTOR_NAME,
+                    "nameOverride": CONNECTOR_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 dry_run=False,
             ),
         ]
@@ -304,11 +307,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 dry_run=False,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=False,
@@ -321,15 +324,15 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                     "connectorType": "source",
                     "config": {
                         "brokers": "broker:9092",
-                        "connector": CONNECTOR_NAME,
+                        "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "nameOverride": CONNECTOR_NAME,
+                    "nameOverride": CONNECTOR_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 dry_run=False,
             ),
         ]

@@ -1,0 +1,24 @@
+:root > * {
+    /* The primary color of KPOps docs */
+    --md-primary-fg-color: #a599ff;
+
+    /* The second color of KPOps docs */
+    --md-accent-fg-color: #B0A5FF;
+
+    /* Create custom color variable to use for the buttons */
+    --kpops-button-color: #7068AD;
+
+    /* The footer color needs to be set sparately */
+    --md-footer-bg-color: var(--md-primary-fg-color);
+
+    /* Color the links with the primary color */
+    --md-typeset-a-color: var(--md-primary-fg-color);
+}
+
+.md-typeset .md-button, .md-button--primary {
+    background-color: var(--kpops-button-color);
+}
+
+.md-typeset .md-button:hover, .md-button--primary:hover {
+    border-color: white;
+}

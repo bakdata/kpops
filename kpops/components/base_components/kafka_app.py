@@ -150,7 +150,7 @@ class KafkaApp(KubernetesApp, ABC):
         """Install clean up job
 
         :param release_name: Name of the Helm release
-        :param suffix: Suffix to add to the realease name, e.g. "-clean"
+        :param suffix: Suffix to add to the release name, e.g. "-clean"
         :param values: The Helm values for the chart
         :param dry_run: Whether to do a dry run of the command
         :return: Install clean up job with helm, return the output of the installation

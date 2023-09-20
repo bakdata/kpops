@@ -19,7 +19,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 class TestProducerApp:
     PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
-    PRODUCER_APP_CLEAN_NAME = "test-producer-app-with-long-name-0123456789abc-clean"
+    PRODUCER_APP_CLEAN_NAME = "test-producer-app-with-long-n-clean"
 
     @pytest.fixture
     def handlers(self) -> ComponentHandlers:
@@ -116,7 +116,7 @@ class TestProducerApp:
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=producer_app.to, dry_run=False),
             mocker.call.mock_helm_upgrade_install(
-                self.PRODUCER_APP_NAME,
+                "${pipeline_name}-" + self.PRODUCER_APP_NAME,
                 "bakdata-streams-bootstrap/producer-app",
                 False,
                 "test-namespace",
@@ -150,7 +150,7 @@ class TestProducerApp:
         producer_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
-            "test-namespace", self.PRODUCER_APP_NAME, True
+            "test-namespace", "${pipeline_name}-" + self.PRODUCER_APP_NAME, True
         )
 
     def test_should_not_reset_producer_app(
@@ -175,10 +175,12 @@ class TestProducerApp:
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
-                "test-namespace", self.PRODUCER_APP_CLEAN_NAME, True
+                "test-namespace",
+                "${pipeline_name}-" + self.PRODUCER_APP_CLEAN_NAME,
+                True,
             ),
             mocker.call.helm_upgrade_install(
-                self.PRODUCER_APP_CLEAN_NAME,
+                "${pipeline_name}-" + self.PRODUCER_APP_CLEAN_NAME,
                 "bakdata-streams-bootstrap/producer-app-cleanup-job",
                 True,
                 "test-namespace",
@@ -192,11 +194,13 @@ class TestProducerApp:
             ),
             mocker.call.print_helm_diff(
                 ANY,
-                "test-producer-app-with-long-name-0123456789abc-clean",
+                "${pipeline_name}-" + self.PRODUCER_APP_CLEAN_NAME,
                 logging.getLogger("KafkaApp"),
             ),
             mocker.call.helm_uninstall(
-                "test-namespace", self.PRODUCER_APP_CLEAN_NAME, True
+                "test-namespace",
+                "${pipeline_name}-" + self.PRODUCER_APP_CLEAN_NAME,
+                True,
             ),
         ]
 
@@ -216,10 +220,12 @@ class TestProducerApp:
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
-                "test-namespace", self.PRODUCER_APP_CLEAN_NAME, False
+                "test-namespace",
+                "${pipeline_name}-" + self.PRODUCER_APP_CLEAN_NAME,
+                False,
             ),
             mocker.call.helm_upgrade_install(
-                self.PRODUCER_APP_CLEAN_NAME,
+                "${pipeline_name}-" + self.PRODUCER_APP_CLEAN_NAME,
                 "bakdata-streams-bootstrap/producer-app-cleanup-job",
                 False,
                 "test-namespace",
@@ -232,6 +238,8 @@ class TestProducerApp:
                 HelmUpgradeInstallFlags(version="2.4.2", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
-                "test-namespace", self.PRODUCER_APP_CLEAN_NAME, False
+                "test-namespace",
+                "${pipeline_name}-" + self.PRODUCER_APP_CLEAN_NAME,
+                False,
             ),
         ]

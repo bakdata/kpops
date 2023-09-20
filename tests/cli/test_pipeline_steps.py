@@ -18,9 +18,9 @@ class TestComponent:
     prefix: str = PREFIX
 
 
-test_component_1 = TestComponent(PREFIX + "example1")
-test_component_2 = TestComponent(PREFIX + "example2")
-test_component_3 = TestComponent(PREFIX + "example3")
+test_component_1 = TestComponent("example1")
+test_component_2 = TestComponent("example2")
+test_component_3 = TestComponent("example3")
 
 
 @pytest.fixture(autouse=True)
