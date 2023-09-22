@@ -19,7 +19,7 @@ except ImportError:
     from typing_extensions import Self
 
 from hooks import PATH_ROOT
-from hooks.gen_docs import SuperEnum
+from hooks.gen_docs import StrEnum
 from kpops.cli import main
 from kpops.cli.pipeline_config import PipelineConfig
 
@@ -92,7 +92,7 @@ class EnvVar:
         )
 
 
-class EnvVarAttrs(str, SuperEnum):
+class EnvVarAttrs(StrEnum):
     """The attr names are used as columns for the markdown tables."""
 
     NAME = "Name"

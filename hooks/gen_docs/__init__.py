@@ -2,12 +2,10 @@
 
 from collections.abc import Generator
 from enum import Enum
-from typing import Any, Generic, TypeVar
-
-_T = TypeVar("_T")
+from typing import Any
 
 
-class SuperEnum(Generic[_T], Enum):
+class StrEnum(str, Enum):
     """Adds constructors that return all items in a ``Generator``.
 
     Introduces constructors that return a ``Generator`` object
@@ -15,7 +13,7 @@ class SuperEnum(Generic[_T], Enum):
     """
 
     @classmethod
-    def items(cls) -> Generator[tuple[Any, _T], None, None]:
+    def items(cls) -> Generator[tuple[Any, str], None, None]:
         """Return all item names and values in tuples."""
         return ((e.name, e.value) for e in cls)
 
