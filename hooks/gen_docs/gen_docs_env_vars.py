@@ -2,12 +2,14 @@
 
 import csv
 import shutil
-from collections.abc import Callable
+from collections.abc import Callable, Generator
 from dataclasses import dataclass
 from pathlib import Path
 from textwrap import fill
 from typing import Any
 
+from pydantic import BaseSettings
+from pydantic.fields import ModelField
 from pytablewriter import MarkdownTableWriter
 from typer.models import ArgumentInfo, OptionInfo
 
@@ -65,8 +67,8 @@ class EnvVar:
     name: str
     default_value: Any
     required: bool
-    description: str | None
-    corresponding_setting_name: str | None
+    description: str | None = None
+    corresponding_setting_name: str | None = None
 
     @classmethod
     def from_record(cls, record: dict[str, Any]) -> Self:
@@ -239,7 +241,7 @@ def write_csv_to_md_file(
         writer.dump(output=f)
 
 
-def __fill_csv_pipeline_config(target: Path) -> None:
+def fill_csv_pipeline_config(target: Path) -> None:
     """Append all ``PipelineConfig``-related env vars to a ``.csv`` file.
 
     Finds all ``PipelineConfig``-related env vars and appends them to
@@ -248,26 +250,36 @@ def __fill_csv_pipeline_config(target: Path) -> None:
     :param target: The path to the `.csv` file. Note that it must already
         contain the column names
     """
-    # NOTE: This does not see nested fields, hence if there are env vars in a class like
-    # TopicConfig(), they wil not be listed. Possible fix with recursion.
-    config_fields = PipelineConfig.__fields__
-    for config_field in config_fields.values():
-        config_field_info = PipelineConfig.Config.get_field_info(config_field.name)
-        config_field_description: str = (
-            config_field.field_info.description
+    for field in collect_fields(PipelineConfig):
+        field_info = PipelineConfig.Config.get_field_info(field.name)
+        field_description: str = (
+            field.field_info.description
             or "No description available, please refer to the pipeline config documentation."
         )
-        config_field_default = None or config_field.field_info.default
-        if config_env_var := config_field_info.get(
+        field_default = None or field.field_info.default
+        if config_env_var := field_info.get(
             "env",
-        ) or config_field.field_info.extra.get("env"):
+        ) or field.field_info.extra.get("env"):
             csv_append_env_var(
                 target,
                 config_env_var,
-                config_field_default,
-                config_field_description,
-                config_field.name,
+                field_default,
+                field_description,
+                field.name,
             )
+
+
+def collect_fields(settings: type[BaseSettings]) -> Generator[ModelField, None, None]:
+    """Collect and yield all fields in a settings class
+
+    :param model: settings class
+    :yield: all settings including nested ones in settings classes
+    """
+    for field in settings.__fields__.values():
+        if issubclass(field_type := field.type_, BaseSettings):
+            for nested_field_info in collect_fields(field_type):
+                yield nested_field_info
+        yield field
 
 
 def __fill_csv_cli(target: Path) -> None:
@@ -373,7 +385,7 @@ if __name__ == "__main__":
         + DESCRIPTION_CONFIG_ENV_VARS,
         columns=list(EnvVarAttrs.values()),
         description_md_file=DESCRIPTION_CONFIG_ENV_VARS,
-        variable_extraction_function=__fill_csv_pipeline_config,
+        variable_extraction_function=fill_csv_pipeline_config,
     )
     # Find all cli-related env variables, write them into a file
     gen_vars(
