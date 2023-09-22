@@ -105,7 +105,7 @@ class EnvVarAttrs(str, SuperEnum):
 def csv_append_env_var(
     file: Path,
     name: str,
-    default_value,
+    default_value: Any,
     description: str | list[str] | None,
     *args,
 ) -> None:
@@ -270,15 +270,14 @@ def fill_csv_pipeline_config(target: Path) -> None:
 
 
 def collect_fields(settings: type[BaseSettings]) -> Generator[ModelField, None, None]:
-    """Collect and yield all fields in a settings class
+    """Collect and yield all fields in a settings class.
 
     :param model: settings class
     :yield: all settings including nested ones in settings classes
     """
     for field in settings.__fields__.values():
         if issubclass(field_type := field.type_, BaseSettings):
-            for nested_field_info in collect_fields(field_type):
-                yield nested_field_info
+            yield from collect_fields(field_type)
         yield field
 
 
@@ -294,7 +293,7 @@ def __fill_csv_cli(target: Path) -> None:
         var_in_main = getattr(main, var_in_main_name)
         if (
             not var_in_main_name.startswith("__")
-            and isinstance(var_in_main, (OptionInfo, ArgumentInfo))
+            and isinstance(var_in_main, OptionInfo | ArgumentInfo)
             and var_in_main.envvar
         ):
             cli_env_var_description: list[str] = [
