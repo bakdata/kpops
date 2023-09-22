@@ -15,12 +15,12 @@ class SuperEnum(Generic[_T], Enum):
     """
 
     @classmethod
-    def items(cls) -> Generator[tuple[_T, Any], None, None]:
+    def items(cls) -> Generator[tuple[Any, _T], None, None]:
         """Return all item names and values in tuples."""
         return ((e.name, e.value) for e in cls)
 
     @classmethod
-    def keys(cls) -> Generator[_T, None, None]:
+    def keys(cls) -> Generator[str, None, None]:
         """Return all item names."""
         return (e.name for e in cls)
 
