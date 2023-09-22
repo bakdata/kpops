@@ -67,8 +67,8 @@ class EnvVar:
     name: str
     default_value: Any
     required: bool
-    description: str | None = None
-    corresponding_setting_name: str | None = None
+    description: str | None
+    corresponding_setting_name: str | None
 
     @classmethod
     def from_record(cls, record: dict[str, Any]) -> Self:
