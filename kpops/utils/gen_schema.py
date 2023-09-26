@@ -69,7 +69,7 @@ def _add_components(
     :return: Extended tuple
     """
     if components is None:
-        components = tuple()
+        components = tuple()  # noqa: C408
     # Set of existing types, against which to check the new ones
     defined_component_types = {component.type for component in components}
     custom_components = (
@@ -95,7 +95,7 @@ def gen_pipeline_schema(
         log.warning("No components are provided, no schema is generated.")
         return
     # Add stock components if enabled
-    components: tuple[type[PipelineComponent]] = tuple()
+    components: tuple[type[PipelineComponent]] = tuple()  # noqa: C408
     if include_stock_components:
         components = _add_components("kpops.components")
     # Add custom components if provided
