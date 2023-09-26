@@ -21,7 +21,7 @@ if __name__ == "__main__":
         "--output",
         str(PATH_CLI_COMMANDS_DOC),
     ]
-    subprocess.run(typer_args)
+    subprocess.run(typer_args, check=True, capture_output=True)
 
     # Replace wrong title in CLI Usage doc
     with PATH_CLI_COMMANDS_DOC.open("r") as f:
