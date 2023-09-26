@@ -19,7 +19,7 @@ except ImportError:
     from typing_extensions import Self
 
 from hooks import PATH_ROOT
-from hooks.gen_docs import StrEnum
+from hooks.gen_docs import IterableStrEnum
 from kpops.cli import main
 from kpops.cli.pipeline_config import PipelineConfig
 
@@ -92,7 +92,7 @@ class EnvVar:
         )
 
 
-class EnvVarAttrs(StrEnum):
+class EnvVarAttrs(IterableStrEnum):
     """The attr names are used as columns for the markdown tables."""
 
     NAME = "Name"
@@ -260,7 +260,7 @@ def fill_csv_pipeline_config(target: Path) -> None:
             field.field_info.description
             or "No description available, please refer to the pipeline config documentation."
         )
-        field_default = None or field.field_info.default
+        field_default = field.field_info.default
         if config_env_var := field_info.get(
             "env",
         ) or field.field_info.extra.get("env"):
