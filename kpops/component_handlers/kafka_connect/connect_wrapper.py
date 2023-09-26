@@ -38,8 +38,7 @@ class ConnectWrapper:
     def create_connector(
         self, connector_config: KafkaConnectorConfig
     ) -> KafkaConnectResponse:
-        """
-        Creates a new connector
+        """Creates a new connector
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#post--connectors
         :param connector_config: The config of the connector
         :return: The current connector info if successful.
@@ -62,8 +61,7 @@ class ConnectWrapper:
         raise KafkaConnectError(response)
 
     def get_connector(self, connector_name: str) -> KafkaConnectResponse:
-        """
-        Get information about the connector.
+        """Get information about the connector.
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
         :param connector_name: Nameof the crated connector
         :return: Information about the connector.
@@ -89,8 +87,7 @@ class ConnectWrapper:
     def update_connector_config(
         self, connector_config: KafkaConnectorConfig
     ) -> KafkaConnectResponse:
-        """
-        Create a new connector using the given configuration, or update the configuration for an existing connector.
+        """Create a new connector using the given configuration, or update the configuration for an existing connector.
         :param connector_config: Configuration parameters for the connector.
         :return: Information about the connector after the change has been made.
         """
@@ -121,8 +118,7 @@ class ConnectWrapper:
     def validate_connector_config(
         self, connector_config: KafkaConnectorConfig
     ) -> list[str]:
-        """
-        Validate connector config using the given configuration
+        """Validate connector config using the given configuration
         :param connector_config: Configuration parameters for the connector.
         :return:
         """
@@ -149,8 +145,7 @@ class ConnectWrapper:
         raise KafkaConnectError(response)
 
     def delete_connector(self, connector_name: str) -> None:
-        """
-        Deletes a connector, halting all tasks and deleting its configuration.
+        """Deletes a connector, halting all tasks and deleting its configuration.
         API Reference:https://docs.confluent.io/platform/current/connect/references/restapi.html#delete--connectors-(string-name)-.
         """
         response = httpx.delete(

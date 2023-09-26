@@ -205,8 +205,7 @@ class HelmChart:
 
     @property
     def manifest(self) -> str:
-        """
-        Reads the manifest section of Helm stdout. `helm upgrade --install` output message contains three sections
+        """Reads the manifest section of Helm stdout. `helm upgrade --install` output message contains three sections
         in the following order:
 
         - HOOKS

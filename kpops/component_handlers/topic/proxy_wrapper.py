@@ -33,8 +33,7 @@ class ProxyWrapper:
 
     @cached_property
     def cluster_id(self) -> str:
-        """
-        Gets the Kafka cluster ID by sending a requests to Kafka REST proxy.
+        """Gets the Kafka cluster ID by sending a requests to Kafka REST proxy.
         More information about the cluster ID can be found here:
         https://docs.confluent.io/platform/current/kafka-rest/api.html#cluster-v3.
 
@@ -54,8 +53,7 @@ class ProxyWrapper:
         return self._host
 
     def create_topic(self, topic_spec: TopicSpec) -> None:
-        """
-        Creates a topic.
+        """Creates a topic.
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#post--clusters-cluster_id-topics
         :param topic_spec: The topic specification.
         """
@@ -72,8 +70,7 @@ class ProxyWrapper:
         raise KafkaRestProxyError(response)
 
     def delete_topic(self, topic_name: str) -> None:
-        """
-        Deletes a topic
+        """Deletes a topic
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#delete--clusters-cluster_id-topics-topic_name
         :param topic_name: Name of the topic.
         """
@@ -88,8 +85,7 @@ class ProxyWrapper:
         raise KafkaRestProxyError(response)
 
     def get_topic(self, topic_name: str) -> TopicResponse:
-        """
-        Returns the topic with the given topic_name.
+        """Returns the topic with the given topic_name.
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#get--clusters-cluster_id-topics-topic_name
         :param topic_name: The topic name.
         :return: Response of the get topic API.
@@ -114,8 +110,7 @@ class ProxyWrapper:
         raise KafkaRestProxyError(response)
 
     def get_topic_config(self, topic_name: str) -> TopicConfigResponse:
-        """
-        Return the config with the given topic_name.
+        """Return the config with the given topic_name.
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#acl-v3
         :param topic_name: The topic name.
         :return: The topic configuration.
@@ -141,8 +136,7 @@ class ProxyWrapper:
         raise KafkaRestProxyError(response)
 
     def batch_alter_topic_config(self, topic_name: str, json_body: list[dict]) -> None:
-        """
-        Reset config of given config_name param to the default value on the kafka server.
+        """Reset config of given config_name param to the default value on the kafka server.
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#post--clusters-cluster_id-topics-topic_name-configs-alter
         :param topic_name: The topic name.
         :param config_name: The configuration parameter name.
@@ -159,8 +153,7 @@ class ProxyWrapper:
         raise KafkaRestProxyError(response)
 
     def get_broker_config(self) -> BrokerConfigResponse:
-        """
-        Return the list of configuration parameters for all the brokers in the given Kafka cluster.
+        """Return the list of configuration parameters for all the brokers in the given Kafka cluster.
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#get--clusters-cluster_id-brokers---configs
         :return: The broker configuration.
         """

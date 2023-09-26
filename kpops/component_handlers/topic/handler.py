@@ -199,8 +199,7 @@ class TopicHandler:
 
     @classmethod
     def __prepare_body(cls, topic_name: str, topic_config: TopicConfig) -> TopicSpec:
-        """
-        Prepares the POST request body needed for the topic creation
+        """Prepares the POST request body needed for the topic creation
         :param topic_name: The name of the topic
         :param topic_config: The topic config
         :return:

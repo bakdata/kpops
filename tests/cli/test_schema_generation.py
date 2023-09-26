@@ -54,8 +54,7 @@ class SubPipelineComponentCorrect(SubPipelineComponent):
 
 # Correctly defined, docstr test
 class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
-    """
-    Newline before title is removed.
+    """Newline before title is removed.
 
     Summarry is correctly imported.
         All

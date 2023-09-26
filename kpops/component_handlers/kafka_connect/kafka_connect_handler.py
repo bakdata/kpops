@@ -36,8 +36,7 @@ class KafkaConnectHandler:
     def create_connector(
         self, connector_config: KafkaConnectorConfig, *, dry_run: bool
     ) -> None:
-        """
-        Creates a connector. If the connector exists the config of that connector gets updated.
+        """Creates a connector. If the connector exists the config of that connector gets updated.
         :param connector_config: The connector config.
         :param dry_run: If the connector creation should be run in dry run mode.
         """
@@ -64,8 +63,7 @@ class KafkaConnectHandler:
                 )
 
     def destroy_connector(self, connector_name: str, *, dry_run: bool) -> None:
-        """
-        Deletes a connector resource from the cluster.
+        """Deletes a connector resource from the cluster.
         :param connector_name: The connector name.
         :param dry_run: If the connector deletion should be run in dry run mode.
         """

@@ -38,8 +38,7 @@ log = logging.getLogger("")
 def _is_valid_component(
     defined_component_types: set[str], component: type[PipelineComponent]
 ) -> bool:
-    """
-    Check whether a PipelineComponent subclass has a valid definition for the schema generation.
+    """Check whether a PipelineComponent subclass has a valid definition for the schema generation.
 
     :param defined_component_types: types defined so far
     :param component: component type to be validated
