@@ -235,7 +235,7 @@ class Helm:
         for line in stderr.splitlines():
             lower = line.lower()
             if "release: not found" in lower:
-                raise ReleaseNotFoundException()
+                raise ReleaseNotFoundException
             elif "error" in lower:
                 raise RuntimeError(stderr)
             elif "warning" in lower:

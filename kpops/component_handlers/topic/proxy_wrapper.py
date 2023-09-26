@@ -122,7 +122,7 @@ class ProxyWrapper:
         ):
             log.debug(f"Topic {topic_name} not found.")
             log.debug(response.json())
-            raise TopicNotFoundException()
+            raise TopicNotFoundException
 
         raise KafkaRestProxyError(response)
 
@@ -153,7 +153,7 @@ class ProxyWrapper:
         ):
             log.debug(f"Configs for {topic_name} not found.")
             log.debug(response.json())
-            raise TopicNotFoundException()
+            raise TopicNotFoundException
 
         raise KafkaRestProxyError(response)
 

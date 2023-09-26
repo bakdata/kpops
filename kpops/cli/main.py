@@ -372,7 +372,7 @@ def clean(
 def version_callback(show_version: bool) -> None:
     if show_version:
         typer.echo(f"KPOps {__version__}")
-        raise typer.Exit()
+        raise typer.Exit
 
 
 @app.callback()

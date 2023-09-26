@@ -182,7 +182,7 @@ class Pipeline:
                         msg,
                     ) from ex
                 else:
-                    raise ParsingException() from ex
+                    raise ParsingException from ex
 
     def apply_component(
         self, component_class: type[PipelineComponent], component_data: dict,

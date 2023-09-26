@@ -83,7 +83,7 @@ class KafkaApp(KubernetesApp, ABC):
     @property
     def clean_up_helm_chart(self) -> str:
         """Helm chart used to destroy and clean this component."""
-        raise NotImplementedError()
+        raise NotImplementedError
 
     @override
     def deploy(self, dry_run: bool) -> None:

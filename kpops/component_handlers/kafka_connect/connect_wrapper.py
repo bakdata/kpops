@@ -79,7 +79,7 @@ class ConnectWrapper:
             return KafkaConnectResponse(**response.json())
         elif response.status_code == httpx.codes.NOT_FOUND:
             log.info(f"The named connector {connector_name} does not exists.")
-            raise ConnectorNotFoundException()
+            raise ConnectorNotFoundException
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(
                 "Rebalancing in progress while getting a connector... Retrying...",
@@ -170,7 +170,7 @@ class ConnectWrapper:
             return
         elif response.status_code == httpx.codes.NOT_FOUND:
             log.info(f"The named connector {connector_name} does not exists.")
-            raise ConnectorNotFoundException()
+            raise ConnectorNotFoundException
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(
                 "Rebalancing in progress while deleting a connector... Retrying...",
