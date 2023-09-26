@@ -145,10 +145,11 @@ select = [
   "FURB",
   "LOG",
 ]
-format = "grouped"
+output-format = "grouped"
 show-fixes = true
 task-tags = ["TODO", "HACK", "FIXME", "XXX"]
 target-version = "py310"
+exclude = ["tests/*snapshots/*"]
 
 [tool.ruff.pydocstyle]
 # Uses pep257-compatible docstrings
