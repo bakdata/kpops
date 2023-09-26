@@ -38,7 +38,8 @@ class TopicHandler:
                         topic_name=topic_name,
                     )
                     differences = self.__get_topic_config_diff(
-                        topic_config_in_cluster, topic_config.configs,
+                        topic_config_in_cluster,
+                        topic_config.configs,
                     )
 
                     if differences:
@@ -79,7 +80,8 @@ class TopicHandler:
 
     @staticmethod
     def __get_topic_config_diff(
-        cluster_config: TopicConfigResponse, current_config: dict,
+        cluster_config: TopicConfigResponse,
+        current_config: dict,
     ) -> list[Diff]:
         comparable_in_cluster_config_dict, _ = parse_rest_proxy_topic_config(
             cluster_config,
@@ -100,7 +102,8 @@ class TopicHandler:
                     topic_name=topic_name,
                 )
                 in_cluster_config, new_config = parse_and_compare_topic_configs(
-                    topic_config_in_cluster, topic_config.configs,
+                    topic_config_in_cluster,
+                    topic_config.configs,
                 )
                 if diff := render_diff(in_cluster_config, new_config):
                     log.info(f"Config changes for topic {topic_name}:")
@@ -120,7 +123,9 @@ class TopicHandler:
 
             self.__check_partition_count(topic_in_cluster, topic_spec, effective_config)
             self.__check_replication_factor(
-                topic_in_cluster, topic_spec, effective_config,
+                topic_in_cluster,
+                topic_spec,
+                effective_config,
             )
         except TopicNotFoundException:
             log.info(

@@ -96,16 +96,19 @@ def test_should_lazy_load_schema_provider(find_class_mock: MagicMock):
         schema_registry_url="http://localhost:8081",
     )
     schema_handler = SchemaHandler.load_schema_handler(
-        TEST_SCHEMA_PROVIDER_MODULE, config_enable,
+        TEST_SCHEMA_PROVIDER_MODULE,
+        config_enable,
     )
 
     assert schema_handler is not None
 
     schema_handler.schema_provider.provide_schema(
-        "com.bakdata.kpops.test.SchemaHandlerTest", {},
+        "com.bakdata.kpops.test.SchemaHandlerTest",
+        {},
     )
     schema_handler.schema_provider.provide_schema(
-        "com.bakdata.kpops.test.SomeOtherSchemaClass", {},
+        "com.bakdata.kpops.test.SomeOtherSchemaClass",
+        {},
     )
 
     find_class_mock.assert_called_once_with(TEST_SCHEMA_PROVIDER_MODULE, SchemaProvider)
@@ -113,18 +116,21 @@ def test_should_lazy_load_schema_provider(find_class_mock: MagicMock):
 
 def test_should_raise_value_error_if_schema_provider_class_not_found():
     schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=NON_EXISTING_PROVIDER_MODULE,
+        url="http://mock:8081",
+        components_module=NON_EXISTING_PROVIDER_MODULE,
     )
 
     with pytest.raises(
         ValueError,
         match="No schema provider found in components module pydantic.main. "
-            "Please implement the abstract method in "
-            f"{SchemaProvider.__module__}.{SchemaProvider.__name__}."
+        "Please implement the abstract method in "
+        f"{SchemaProvider.__module__}.{SchemaProvider.__name__}.",
     ):
         schema_handler.schema_provider.provide_schema(
-            "com.bakdata.kpops.test.SchemaHandlerTest", {},
+            "com.bakdata.kpops.test.SchemaHandlerTest",
+            {},
         )
+
 
 @pytest.mark.parametrize(
     ("components_module"),
@@ -137,9 +143,11 @@ def test_should_raise_value_error_if_schema_provider_class_not_found():
             "",
             id="components_module = ''",
         ),
-    ]
+    ],
 )
-def test_should_raise_value_error_when_schema_provider_is_called_and_components_module_is_empty(components_module):
+def test_should_raise_value_error_when_schema_provider_is_called_and_components_module_is_empty(
+    components_module,
+):
     config_enable = PipelineConfig(
         defaults_path=Path("fake"),
         environment="development",
@@ -147,17 +155,24 @@ def test_should_raise_value_error_when_schema_provider_is_called_and_components_
     )
     schema_handler = SchemaHandler.load_schema_handler(components_module, config_enable)
     assert schema_handler is not None
-    with pytest.raises(ValueError, match="The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your SchemaProvider implementation exists."):
+    with pytest.raises(
+        ValueError,
+        match="The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your SchemaProvider implementation exists.",
+    ):
         schema_handler.schema_provider.provide_schema(
-            "com.bakdata.kpops.test.SchemaHandlerTest", {},
+            "com.bakdata.kpops.test.SchemaHandlerTest",
+            {},
         )
 
 
 def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
-    to_section: ToSection, log_info_mock: MagicMock, schema_registry_mock: MagicMock,
+    to_section: ToSection,
+    log_info_mock: MagicMock,
+    schema_registry_mock: MagicMock,
 ):
     schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081",
+        components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
 
     schema_registry_mock.get_versions.return_value = []
@@ -177,7 +192,8 @@ def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     schema_registry_mock: MagicMock,
 ):
     schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081",
+        components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
 
     schema_registry_mock.get_versions.return_value = [1, 2, 3]
@@ -199,7 +215,8 @@ def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatibl
 ):
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081",
+        components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
 
@@ -238,7 +255,8 @@ def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_ve
 ):
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081",
+        components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
     schema = schema_provider.provide_schema(schema_class, {})
@@ -274,7 +292,8 @@ def test_should_submit_non_existing_schema_when_not_dry(
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
     schema = schema_provider.provide_schema(schema_class, {})
     schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081",
+        components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
 
     schema_registry_mock.get_versions.return_value = []
@@ -288,7 +307,8 @@ def test_should_submit_non_existing_schema_when_not_dry(
 
     schema_registry_mock.get_versions.assert_not_called()
     schema_registry_mock.register.assert_called_once_with(
-        subject=subject, schema=schema,
+        subject=subject,
+        schema=schema,
     )
 
 
@@ -298,7 +318,8 @@ def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     schema_registry_mock: MagicMock,
 ):
     schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081",
+        components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
 
     schema_registry_mock.get_versions.return_value = []
@@ -313,10 +334,12 @@ def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
 
 
 def test_should_delete_schemas_when_not_in_dry_run(
-    to_section: ToSection, schema_registry_mock: MagicMock,
+    to_section: ToSection,
+    schema_registry_mock: MagicMock,
 ):
     schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081",
+        components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
 
     schema_registry_mock.get_versions.return_value = []

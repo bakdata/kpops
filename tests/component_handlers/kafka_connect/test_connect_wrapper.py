@@ -58,7 +58,8 @@ class TestConnectorApiWrapper:
 
     @patch("httpx.post")
     def test_should_create_post_requests_for_given_connector_configuration(
-        self, mock_post: MagicMock,
+        self,
+        mock_post: MagicMock,
     ):
         configs = {
             "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
@@ -84,7 +85,9 @@ class TestConnectorApiWrapper:
         )
 
     def test_should_return_correct_response_when_connector_created(
-        self, httpx_mock: HTTPXMock, connector_config: KafkaConnectorConfig,
+        self,
+        httpx_mock: HTTPXMock,
+        connector_config: KafkaConnectorConfig,
     ):
         actual_response = {
             "name": "hdfs-sink-connector",
@@ -152,7 +155,9 @@ class TestConnectorApiWrapper:
     @pytest.mark.flaky(reruns=5, condition=sys.platform.startswith("win32"))
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_getting_connector(
-        self, log_info: MagicMock, httpx_mock: HTTPXMock,
+        self,
+        log_info: MagicMock,
+        httpx_mock: HTTPXMock,
     ):
         connector_name = "test-connector"
 
@@ -187,7 +192,9 @@ class TestConnectorApiWrapper:
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_raise_connector_not_found_when_getting_connector(
-        self, log_info: MagicMock, httpx_mock: HTTPXMock,
+        self,
+        log_info: MagicMock,
+        httpx_mock: HTTPXMock,
     ):
         connector_name = "test-connector"
 
@@ -207,7 +214,9 @@ class TestConnectorApiWrapper:
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_rebalance_in_progress_when_getting_connector(
-        self, log_warning: MagicMock, httpx_mock: HTTPXMock,
+        self,
+        log_warning: MagicMock,
+        httpx_mock: HTTPXMock,
     ):
         connector_name = "test-connector"
 
@@ -362,7 +371,8 @@ class TestConnectorApiWrapper:
 
     @patch("httpx.delete")
     def test_should_create_correct_delete_connector_request(
-        self, mock_delete: MagicMock,
+        self,
+        mock_delete: MagicMock,
     ):
         connector_name = "test-connector"
         with pytest.raises(KafkaConnectError):
@@ -375,7 +385,9 @@ class TestConnectorApiWrapper:
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_deleting_connector(
-        self, log_info: MagicMock, httpx_mock: HTTPXMock,
+        self,
+        log_info: MagicMock,
+        httpx_mock: HTTPXMock,
     ):
         connector_name = "test-connector"
 
@@ -410,7 +422,9 @@ class TestConnectorApiWrapper:
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_raise_connector_not_found_when_deleting_connector(
-        self, log_info: MagicMock, httpx_mock: HTTPXMock,
+        self,
+        log_info: MagicMock,
+        httpx_mock: HTTPXMock,
     ):
         connector_name = "test-connector"
 
@@ -430,7 +444,9 @@ class TestConnectorApiWrapper:
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_rebalance_in_progress_when_deleting_connector(
-        self, log_warning: MagicMock, httpx_mock: HTTPXMock,
+        self,
+        log_warning: MagicMock,
+        httpx_mock: HTTPXMock,
     ):
         connector_name = "test-connector"
 
@@ -453,7 +469,8 @@ class TestConnectorApiWrapper:
 
     @patch("httpx.put")
     def test_should_create_correct_validate_connector_config_request(
-        self, mock_put: MagicMock,
+        self,
+        mock_put: MagicMock,
     ):
         connector_config = KafkaConnectorConfig(
             **{
@@ -474,7 +491,8 @@ class TestConnectorApiWrapper:
 
     @patch("httpx.put")
     def test_should_create_correct_validate_connector_config_and_name_gets_added(
-        self, mock_put: MagicMock,
+        self,
+        mock_put: MagicMock,
     ):
         connector_name = "FileStreamSinkConnector"
         configs = {

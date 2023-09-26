@@ -163,7 +163,9 @@ class TestConnectorHandler:
         ]
 
     def test_should_log_invalid_config_when_create_connector_in_dry_run(
-        self, connector_config: KafkaConnectorConfig, renderer_diff_mock: MagicMock,
+        self,
+        connector_config: KafkaConnectorConfig,
+        renderer_diff_mock: MagicMock,
     ):
         connector_wrapper = MagicMock()
 
@@ -188,7 +190,8 @@ class TestConnectorHandler:
         )
 
     def test_should_call_update_connector_config_when_connector_exists_not_dry_run(
-        self, connector_config: KafkaConnectorConfig,
+        self,
+        connector_config: KafkaConnectorConfig,
     ):
         connector_wrapper = MagicMock()
         handler = self.connector_handler(connector_wrapper)
@@ -201,7 +204,8 @@ class TestConnectorHandler:
         ]
 
     def test_should_call_create_connector_when_connector_does_not_exists_not_dry_run(
-        self, connector_config: KafkaConnectorConfig,
+        self,
+        connector_config: KafkaConnectorConfig,
     ):
         connector_wrapper = MagicMock()
 

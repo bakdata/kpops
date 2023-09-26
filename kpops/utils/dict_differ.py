@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass
 from difflib import Differ
 from enum import Enum
 from typing import Generic, TypeVar
-from collections.abc import Iterable, Iterator, Sequence
 
 import typer
 import yaml
@@ -52,10 +52,12 @@ class Diff(Generic[T]):
 
     @staticmethod
     def from_dicts(
-        d1: dict, d2: dict, ignore: set[str] | None = None,
+        d1: dict,
+        d2: dict,
+        ignore: set[str] | None = None,
     ) -> Iterator[Diff]:
         for diff_type, keys, changes in diff(d1, d2, ignore=ignore):
-            if not isinstance(changes_tmp:=changes, list):
+            if not isinstance(changes_tmp := changes, list):
                 changes_tmp = [("", changes)]
             for key, change in changes_tmp:
                 yield Diff(

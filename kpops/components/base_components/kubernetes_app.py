@@ -96,7 +96,9 @@ class KubernetesApp(PipelineComponent):
     @property
     def helm_chart(self) -> str:
         """Return component's Helm chart."""
-        msg = f"Please implement the helm_chart property of the {self.__module__} module."
+        msg = (
+            f"Please implement the helm_chart property of the {self.__module__} module."
+        )
         raise NotImplementedError(
             msg,
         )

@@ -1,5 +1,5 @@
-from typing import Any
 from collections.abc import Mapping, Set
+from typing import Any
 
 from pydantic import BaseConfig, BaseModel, Extra, Field
 from typing_extensions import override
@@ -27,28 +27,36 @@ class StreamsConfig(KafkaStreamsConfig):
     """
 
     input_topics: list[str] = Field(
-        default=[], description=describe_attr("input_topics", __doc__),
+        default=[],
+        description=describe_attr("input_topics", __doc__),
     )
     input_pattern: str | None = Field(
-        default=None, description=describe_attr("input_pattern", __doc__),
+        default=None,
+        description=describe_attr("input_pattern", __doc__),
     )
     extra_input_topics: dict[str, list[str]] = Field(
-        default={}, description=describe_attr("extra_input_topics", __doc__),
+        default={},
+        description=describe_attr("extra_input_topics", __doc__),
     )
     extra_input_patterns: dict[str, str] = Field(
-        default={}, description=describe_attr("extra_input_patterns", __doc__),
+        default={},
+        description=describe_attr("extra_input_patterns", __doc__),
     )
     extra_output_topics: dict[str, str] = Field(
-        default={}, description=describe_attr("extra_output_topics", __doc__),
+        default={},
+        description=describe_attr("extra_output_topics", __doc__),
     )
     output_topic: str | None = Field(
-        default=None, description=describe_attr("output_topic", __doc__),
+        default=None,
+        description=describe_attr("output_topic", __doc__),
     )
     error_topic: str | None = Field(
-        default=None, description=describe_attr("error_topic", __doc__),
+        default=None,
+        description=describe_attr("error_topic", __doc__),
     )
     config: dict[str, str] = Field(
-        default={}, description=describe_attr("config", __doc__),
+        default={},
+        description=describe_attr("config", __doc__),
     )
 
     def add_input_topics(self, topics: list[str]) -> None:
@@ -76,8 +84,8 @@ class StreamsConfig(KafkaStreamsConfig):
     def dict(
         self,
         *,
-        include: None | Set [int | str] | Mapping[int | str, Any] = None,
-        exclude: None | Set [int | str] | Mapping[int | str, Any] = None,
+        include: None | Set[int | str] | Mapping[int | str, Any] = None,
+        exclude: None | Set[int | str] | Mapping[int | str, Any] = None,
         by_alias: bool = False,
         skip_defaults: bool | None = None,
         exclude_unset: bool = False,

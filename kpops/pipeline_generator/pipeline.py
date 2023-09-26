@@ -184,7 +184,9 @@ class Pipeline:
                     raise ParsingException from ex
 
     def apply_component(
-        self, component_class: type[PipelineComponent], component_data: dict,
+        self,
+        component_class: type[PipelineComponent],
+        component_data: dict,
     ) -> None:
         """Instantiate, enrich and inflate pipeline component.
 
@@ -218,7 +220,8 @@ class Pipeline:
                         inflated_from_component.name,
                     )
                     enriched_component.weave_from_topics(
-                        resolved_from_component.to, from_topic,
+                        resolved_from_component.to,
+                        from_topic,
                     )
             elif self.components:
                 # read from previous component
@@ -302,7 +305,8 @@ class Pipeline:
             substitution_hardcoded,
         )
         substitution = generate_substitution(
-            json.loads(config.json()), existing_substitution=component_substitution,
+            json.loads(config.json()),
+            existing_substitution=component_substitution,
         )
 
         return json.loads(

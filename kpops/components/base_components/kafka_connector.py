@@ -65,7 +65,8 @@ class KafkaConnector(PipelineComponent, ABC):
         description=describe_attr("repo_config", __doc__),
     )
     version: str | None = Field(
-        default="1.0.4", description=describe_attr("version", __doc__),
+        default="1.0.4",
+        description=describe_attr("version", __doc__),
     )
     resetter_values: dict = Field(
         default_factory=dict,
@@ -138,12 +139,14 @@ class KafkaConnector(PipelineComponent, ABC):
     def deploy(self, dry_run: bool) -> None:
         if self.to:
             self.handlers.topic_handler.create_topics(
-                to_section=self.to, dry_run=dry_run,
+                to_section=self.to,
+                dry_run=dry_run,
             )
 
             if self.handlers.schema_handler:
                 self.handlers.schema_handler.submit_schemas(
-                    to_section=self.to, dry_run=dry_run,
+                    to_section=self.to,
+                    dry_run=dry_run,
                 )
 
         self.handlers.connector_handler.create_connector(self.app, dry_run=dry_run)
@@ -151,7 +154,8 @@ class KafkaConnector(PipelineComponent, ABC):
     @override
     def destroy(self, dry_run: bool) -> None:
         self.handlers.connector_handler.destroy_connector(
-            self.full_name, dry_run=dry_run,
+            self.full_name,
+            dry_run=dry_run,
         )
 
     @override
@@ -159,7 +163,8 @@ class KafkaConnector(PipelineComponent, ABC):
         if self.to:
             if self.handlers.schema_handler:
                 self.handlers.schema_handler.delete_schemas(
-                    to_section=self.to, dry_run=dry_run,
+                    to_section=self.to,
+                    dry_run=dry_run,
                 )
             self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
 
@@ -196,7 +201,9 @@ class KafkaConnector(PipelineComponent, ABC):
 
         if dry_run:
             self.dry_run_handler.print_helm_diff(
-                stdout, self._resetter_release_name, log,
+                stdout,
+                self._resetter_release_name,
+                log,
             )
 
         if not retain_clean_jobs:
@@ -360,7 +367,9 @@ class KafkaSinkConnector(KafkaConnector):
         self.__run_kafka_connect_resetter(dry_run, delete_consumer_group=True)
 
     def __run_kafka_connect_resetter(
-        self, dry_run: bool, delete_consumer_group: bool,
+        self,
+        dry_run: bool,
+        delete_consumer_group: bool,
     ) -> None:
         """Run the connector resetter.
 

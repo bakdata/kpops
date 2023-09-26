@@ -43,7 +43,9 @@ class SchemaHandler:
 
     @classmethod
     def load_schema_handler(
-        cls, components_module: str | None, config: PipelineConfig,
+        cls,
+        components_module: str | None,
+        config: PipelineConfig,
     ) -> SchemaHandler | None:
         if not config.schema_registry_url:
             return None
@@ -59,14 +61,19 @@ class SchemaHandler:
             key_schema_class = config.key_schema
             if value_schema_class is not None:
                 schema = self.schema_provider.provide_schema(
-                    value_schema_class, to_section.models,
+                    value_schema_class,
+                    to_section.models,
                 )
                 self.__submit_value_schema(
-                    schema, value_schema_class, dry_run, topic_name,
+                    schema,
+                    value_schema_class,
+                    dry_run,
+                    topic_name,
                 )
             if key_schema_class is not None:
                 schema = self.schema_provider.provide_schema(
-                    key_schema_class, to_section.models,
+                    key_schema_class,
+                    to_section.models,
                 )
                 self.__submit_key_schema(schema, key_schema_class, dry_run, topic_name)
 
@@ -133,12 +140,16 @@ class SchemaHandler:
         return len(self.schema_registry_client.get_versions(subject)) > 0
 
     def __check_compatibility(
-        self, schema: Schema, schema_class: str, subject: str,
+        self,
+        schema: Schema,
+        schema_class: str,
+        subject: str,
     ) -> None:
         registered_version = self.schema_registry_client.check_version(subject, schema)
         if registered_version is None:
             if not self.schema_registry_client.test_compatibility(
-                subject=subject, schema=schema,
+                subject=subject,
+                schema=schema,
             ):
                 schema_str = (
                     schema.flat_schema

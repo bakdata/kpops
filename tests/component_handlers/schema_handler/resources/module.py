@@ -9,6 +9,8 @@ from kpops.components.base_components.models import ModelName, ModelVersion
 
 class CustomSchemaProvider(SchemaProvider):
     def provide_schema(
-        self, schema_class: str, models: dict[ModelName, ModelVersion],
+        self,
+        schema_class: str,
+        models: dict[ModelName, ModelVersion],
     ) -> Schema:
         return AvroSchema({})

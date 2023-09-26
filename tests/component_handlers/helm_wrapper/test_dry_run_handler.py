@@ -42,7 +42,8 @@ class TestDryRunHandler:
         dry_run_handler.print_helm_diff("A test stdout", "a-release-name", log)
 
         helm_mock.get_manifest.assert_called_once_with(
-            "a-release-name", "test-namespace",
+            "a-release-name",
+            "test-namespace",
         )
         assert "Helm release a-release-name does not exist" in caplog.text
         mock_load_manifest.assert_called_once_with("A test stdout")
@@ -67,7 +68,8 @@ class TestDryRunHandler:
         dry_run_handler.print_helm_diff("A test stdout", "a-release-name", log)
 
         helm_mock.get_manifest.assert_called_once_with(
-            "a-release-name", "test-namespace",
+            "a-release-name",
+            "test-namespace",
         )
         assert "Helm release a-release-name already exists" in caplog.text
         mock_load_manifest.assert_called_once_with("A test stdout")

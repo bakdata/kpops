@@ -9,7 +9,8 @@ from cachetools.keys import hashkey
 
 
 def generate_hashkey(
-    file_path: Path, substitution: Mapping[str, Any] | None = None,
+    file_path: Path,
+    substitution: Mapping[str, Any] | None = None,
 ) -> tuple:
     if substitution is None:
         substitution = {}
@@ -18,7 +19,9 @@ def generate_hashkey(
 
 @cached(cache={}, key=generate_hashkey)
 def load_yaml_file(
-    file_path: Path, *, substitution: Mapping[str, Any] | None = None,
+    file_path: Path,
+    *,
+    substitution: Mapping[str, Any] | None = None,
 ) -> dict | list[dict]:
     with file_path.open() as yaml_file:
         return yaml.load(substitute(yaml_file.read(), substitution), Loader=yaml.Loader)

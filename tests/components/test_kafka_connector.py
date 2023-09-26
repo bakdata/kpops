@@ -85,7 +85,8 @@ class TestKafkaConnector:
         assert connector.app.name == CONNECTOR_FULL_NAME
 
         with pytest.raises(
-            ValueError, match="Connector name should be the same as component name",
+            ValueError,
+            match="Connector name should be the same as component name",
         ):
             KafkaConnector(
                 name=CONNECTOR_NAME,
@@ -96,7 +97,8 @@ class TestKafkaConnector:
             )
 
         with pytest.raises(
-            ValueError, match="Connector name should be the same as component name",
+            ValueError,
+            match="Connector name should be the same as component name",
         ):
             KafkaConnector(
                 name=CONNECTOR_NAME,

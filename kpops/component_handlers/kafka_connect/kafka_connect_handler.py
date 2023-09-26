@@ -34,7 +34,10 @@ class KafkaConnectHandler:
         self._timeout = timeout
 
     def create_connector(
-        self, connector_config: KafkaConnectorConfig, *, dry_run: bool,
+        self,
+        connector_config: KafkaConnectorConfig,
+        *,
+        dry_run: bool,
     ) -> None:
         """Create a connector.
 
@@ -90,7 +93,8 @@ class KafkaConnectHandler:
                 )
 
     def __dry_run_connector_creation(
-        self, connector_config: KafkaConnectorConfig,
+        self,
+        connector_config: KafkaConnectorConfig,
     ) -> None:
         connector_name = connector_config.name
         try:

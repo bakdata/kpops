@@ -44,7 +44,9 @@ class TestHelmWrapper:
         return mock_get_version
 
     def test_should_call_run_command_method_when_helm_install_with_defaults(
-        self, run_command: MagicMock, mock_get_version: MagicMock,
+        self,
+        run_command: MagicMock,
+        mock_get_version: MagicMock,
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
 
@@ -74,7 +76,9 @@ class TestHelmWrapper:
         )
 
     def test_should_include_configured_tls_parameters_on_add_when_version_is_old(
-        self, run_command: MagicMock, mocker: MockerFixture,
+        self,
+        run_command: MagicMock,
+        mocker: MockerFixture,
     ):
         mock_get_version = mocker.patch.object(Helm, "get_version")
         mock_get_version.return_value = Version(major=3, minor=6, patch=0)
@@ -104,7 +108,9 @@ class TestHelmWrapper:
         ]
 
     def test_should_include_configured_tls_parameters_on_add_when_version_is_new(
-        self, run_command: MagicMock, mock_get_version: MagicMock,
+        self,
+        run_command: MagicMock,
+        mock_get_version: MagicMock,
     ):
         helm = Helm(HelmConfig())
 
@@ -132,7 +138,9 @@ class TestHelmWrapper:
         ]
 
     def test_should_include_configured_tls_parameters_on_update(
-        self, run_command: MagicMock, mock_get_version: MagicMock,
+        self,
+        run_command: MagicMock,
+        mock_get_version: MagicMock,
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
         helm_wrapper.upgrade_install(
@@ -168,7 +176,9 @@ class TestHelmWrapper:
         )
 
     def test_should_call_run_command_method_when_helm_install_with_non_defaults(
-        self, run_command: MagicMock, mock_get_version: MagicMock,
+        self,
+        run_command: MagicMock,
+        mock_get_version: MagicMock,
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
         helm_wrapper.upgrade_install(
@@ -213,7 +223,9 @@ class TestHelmWrapper:
         )
 
     def test_should_call_run_command_method_when_uninstalling_streams_app(
-        self, run_command: MagicMock, mock_get_version: MagicMock,
+        self,
+        run_command: MagicMock,
+        mock_get_version: MagicMock,
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
         helm_wrapper.uninstall(
@@ -244,7 +256,9 @@ class TestHelmWrapper:
         )
 
     def test_should_call_run_command_method_when_installing_streams_app__with_dry_run(
-        self, run_command: MagicMock, mock_get_version: MagicMock,
+        self,
+        run_command: MagicMock,
+        mock_get_version: MagicMock,
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
 
@@ -398,7 +412,9 @@ class TestHelmWrapper:
         assert helm_templates[1].template == {"foo": "bar"}
 
     def test_helm_get_manifest(
-        self, run_command: MagicMock, mock_get_version: MagicMock,
+        self,
+        run_command: MagicMock,
+        mock_get_version: MagicMock,
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
         run_command.return_value = dedent(
@@ -431,7 +447,9 @@ class TestHelmWrapper:
         assert helm_wrapper.get_manifest("test-release", "test-namespace") == ()
 
     def test_should_call_run_command_method_when_helm_template_with_optional_args(
-        self, run_command: MagicMock, mock_get_version: MagicMock,
+        self,
+        run_command: MagicMock,
+        mock_get_version: MagicMock,
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
 
@@ -469,7 +487,9 @@ class TestHelmWrapper:
         )
 
     def test_should_call_run_command_method_when_helm_template_without_optional_args(
-        self, run_command: MagicMock, mock_get_version: MagicMock,
+        self,
+        run_command: MagicMock,
+        mock_get_version: MagicMock,
     ):
         helm_wrapper = Helm(helm_config=HelmConfig())
 
@@ -525,7 +545,8 @@ class TestHelmWrapper:
         assert helm._version == expected_version
 
     def test_should_raise_exception_if_helm_version_is_old(
-        self, run_command: MagicMock,
+        self,
+        run_command: MagicMock,
     ):
         run_command.return_value = "v2.9.0+gc9f554d"
         with pytest.raises(
@@ -535,10 +556,12 @@ class TestHelmWrapper:
             Helm(helm_config=HelmConfig())
 
     def test_should_raise_exception_if_helm_version_cannot_be_parsed(
-        self, run_command: MagicMock,
+        self,
+        run_command: MagicMock,
     ):
         run_command.return_value = "123"
         with pytest.raises(
-            RuntimeError, match="Could not parse the Helm version.\n\nHelm output:\n123",
+            RuntimeError,
+            match="Could not parse the Helm version.\n\nHelm output:\n123",
         ):
             Helm(helm_config=HelmConfig())

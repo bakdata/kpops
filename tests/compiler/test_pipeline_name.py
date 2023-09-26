@@ -50,7 +50,10 @@ def test_should_set_pipeline_name_with_absolute_base_dir():
 
 
 def test_should_not_set_pipeline_name_with_the_same_base_dir():
-    with pytest.raises(ValueError, match="The pipeline-base-dir should not equal the pipeline-path"):
+    with pytest.raises(
+        ValueError,
+        match="The pipeline-base-dir should not equal the pipeline-path",
+    ):
         Pipeline.set_pipeline_name_env_vars(PIPELINE_PATH, PIPELINE_PATH)
 
 

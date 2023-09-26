@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import importlib
 import inspect
-import os
-from pathlib import Path
 import sys
 from collections.abc import Iterator
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import TypeVar
 
 from kpops import __name__

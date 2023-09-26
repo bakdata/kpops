@@ -1,10 +1,10 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterator
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
-from collections.abc import Iterator
 
 import dtyper
 import typer
@@ -121,12 +121,17 @@ def setup_pipeline(
 
     handlers = setup_handlers(components_module, pipeline_config)
     return Pipeline.load_from_yaml(
-        pipeline_base_dir, pipeline_path, registry, pipeline_config, handlers,
+        pipeline_base_dir,
+        pipeline_path,
+        registry,
+        pipeline_config,
+        handlers,
     )
 
 
 def setup_handlers(
-    components_module: str | None, config: PipelineConfig,
+    components_module: str | None,
+    config: PipelineConfig,
 ) -> ComponentHandlers:
     schema_handler = SchemaHandler.load_schema_handler(components_module, config)
     connector_handler = KafkaConnectHandler.from_pipeline_config(config)
@@ -149,7 +154,9 @@ def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
 
 
 def filter_steps_to_apply(
-    pipeline: Pipeline, steps: set[str], filter_type: FilterType,
+    pipeline: Pipeline,
+    steps: set[str],
+    filter_type: FilterType,
 ) -> list[PipelineComponent]:
     def is_in_steps(component: PipelineComponent) -> bool:
         return component.name in steps
@@ -171,7 +178,9 @@ def filter_steps_to_apply(
 
 
 def get_steps_to_apply(
-    pipeline: Pipeline, steps: str | None, filter_type: FilterType,
+    pipeline: Pipeline,
+    steps: str | None,
+    filter_type: FilterType,
 ) -> list[PipelineComponent]:
     if steps:
         return filter_steps_to_apply(pipeline, parse_steps(steps), filter_type)
@@ -179,7 +188,9 @@ def get_steps_to_apply(
 
 
 def reverse_pipeline_steps(
-    pipeline: Pipeline, steps: str | None, filter_type: FilterType,
+    pipeline: Pipeline,
+    steps: str | None,
+    filter_type: FilterType,
 ) -> Iterator[PipelineComponent]:
     return reversed(get_steps_to_apply(pipeline, steps, filter_type))
 
@@ -193,7 +204,9 @@ def log_action(action: str, pipeline_component: PipelineComponent):
 
 
 def create_pipeline_config(
-    config: Path, defaults: Optional[Path], verbose: bool,
+    config: Path,
+    defaults: Optional[Path],
+    verbose: bool,
 ) -> PipelineConfig:
     setup_logging_level(verbose)
     PipelineConfig.Config.config_path = config
@@ -225,7 +238,8 @@ def schema(
     ),
     components_module: Optional[str] = COMPONENTS_MODULES,
     include_stock_components: bool = typer.Option(
-        default=True, help="Include the built-in KPOps components.",
+        default=True,
+        help="Include the built-in KPOps components.",
     ),
 ) -> None:
     match scope:
@@ -251,7 +265,10 @@ def generate(
 ) -> Pipeline:
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config,
+        pipeline_base_dir,
+        pipeline_path,
+        components_module,
+        pipeline_config,
     )
 
     if not template:
@@ -286,7 +303,10 @@ def deploy(
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config,
+        pipeline_base_dir,
+        pipeline_path,
+        components_module,
+        pipeline_config,
     )
 
     steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
@@ -311,7 +331,10 @@ def destroy(
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config,
+        pipeline_base_dir,
+        pipeline_path,
+        components_module,
+        pipeline_config,
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
     for component in pipeline_steps:
@@ -335,7 +358,10 @@ def reset(
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config,
+        pipeline_base_dir,
+        pipeline_path,
+        components_module,
+        pipeline_config,
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
     for component in pipeline_steps:
@@ -360,7 +386,10 @@ def clean(
 ):
     pipeline_config = create_pipeline_config(config, defaults, verbose)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config,
+        pipeline_base_dir,
+        pipeline_path,
+        components_module,
+        pipeline_config,
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
     for component in pipeline_steps:

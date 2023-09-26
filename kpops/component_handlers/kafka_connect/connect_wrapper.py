@@ -36,7 +36,8 @@ class ConnectWrapper:
         return self._host
 
     def create_connector(
-        self, connector_config: KafkaConnectorConfig,
+        self,
+        connector_config: KafkaConnectorConfig,
     ) -> KafkaConnectResponse:
         """Create a new connector.
 
@@ -47,7 +48,9 @@ class ConnectWrapper:
         config_json = connector_config.dict()
         connect_data = {"name": connector_config.name, "config": config_json}
         response = httpx.post(
-            url=f"{self._host}/connectors", headers=HEADERS, json=connect_data,
+            url=f"{self._host}/connectors",
+            headers=HEADERS,
+            json=connect_data,
         )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_config.name} created.")
@@ -71,7 +74,8 @@ class ConnectWrapper:
         :return: Information about the connector.
         """
         response = httpx.get(
-            url=f"{self._host}/connectors/{connector_name}", headers=HEADERS,
+            url=f"{self._host}/connectors/{connector_name}",
+            headers=HEADERS,
         )
         if response.status_code == httpx.codes.OK:
             log.info(f"Connector {connector_name} exists.")
@@ -89,10 +93,11 @@ class ConnectWrapper:
         raise KafkaConnectError(response)
 
     def update_connector_config(
-        self, connector_config: KafkaConnectorConfig,
+        self,
+        connector_config: KafkaConnectorConfig,
     ) -> KafkaConnectResponse:
         """Create or update a connector.
-        
+
         Create a new connector using the given configuration,or update the
         configuration for an existing connector.
 
@@ -124,7 +129,8 @@ class ConnectWrapper:
         raise KafkaConnectError(response)
 
     def validate_connector_config(
-        self, connector_config: KafkaConnectorConfig,
+        self,
+        connector_config: KafkaConnectorConfig,
     ) -> list[str]:
         """Validate connector config using the given configuration.
 
@@ -163,7 +169,8 @@ class ConnectWrapper:
         :raises ConnectorNotFoundException: Connector not found
         """
         response = httpx.delete(
-            url=f"{self._host}/connectors/{connector_name}", headers=HEADERS,
+            url=f"{self._host}/connectors/{connector_name}",
+            headers=HEADERS,
         )
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Connector {connector_name} deleted.")

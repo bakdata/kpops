@@ -4,8 +4,7 @@ import logging
 import re
 import subprocess
 import tempfile
-from collections.abc import Iterator
-from collections.abc import Iterable
+from collections.abc import Iterable, Iterator
 
 import yaml
 

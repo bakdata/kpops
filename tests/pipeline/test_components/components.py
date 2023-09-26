@@ -55,7 +55,8 @@ class ShouldInflate(StreamsApp):
                                     type=OutputTopicTypes.OUTPUT,
                                 ),
                                 TopicName("${component_name}"): TopicConfig(
-                                    type=None, role="test",
+                                    type=None,
+                                    role="test",
                                 ),
                             },
                         ),
@@ -80,7 +81,9 @@ class ShouldInflate(StreamsApp):
 
 class TestSchemaProvider(SchemaProvider):
     def provide_schema(
-        self, schema_class: str, models: dict[ModelName, ModelVersion],
+        self,
+        schema_class: str,
+        models: dict[ModelName, ModelVersion],
     ) -> Schema:
         schema = {
             "type": "record",

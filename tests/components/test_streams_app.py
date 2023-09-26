@@ -47,7 +47,9 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def streams_app(
-        self, config: PipelineConfig, handlers: ComponentHandlers,
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
     ) -> StreamsApp:
         return StreamsApp(
             name=self.STREAMS_APP_NAME,
@@ -61,7 +63,8 @@ class TestStreamsApp:
                 "to": {
                     "topics": {
                         "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10,
+                            type=OutputTopicTypes.OUTPUT,
+                            partitions_count=10,
                         ),
                     },
                 },
@@ -113,7 +116,9 @@ class TestStreamsApp:
         assert "extraInputPatterns" in streams_config
 
     def test_no_empty_input_topic(
-        self, config: PipelineConfig, handlers: ComponentHandlers,
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
     ):
         streams_app = StreamsApp(
             name=self.STREAMS_APP_NAME,
@@ -145,7 +150,10 @@ class TestStreamsApp:
 
     def test_should_validate(self, config: PipelineConfig, handlers: ComponentHandlers):
         # An exception should be raised when both role and type are defined and type is input
-        with pytest.raises(ValueError, match="Define role only if `type` is `pattern` or `None`"):
+        with pytest.raises(
+            ValueError,
+            match="Define role only if `type` is `pattern` or `None`",
+        ):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
                 config=config,
@@ -167,7 +175,10 @@ class TestStreamsApp:
             )
 
         # An exception should be raised when both role and type are defined and type is error
-        with pytest.raises(ValueError, match="Define `role` only if `type` is undefined"):
+        with pytest.raises(
+            ValueError,
+            match="Define `role` only if `type` is undefined",
+        ):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
                 config=config,
@@ -189,7 +200,9 @@ class TestStreamsApp:
             )
 
     def test_set_streams_output_from_to(
-        self, config: PipelineConfig, handlers: ComponentHandlers,
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
     ):
         streams_app = StreamsApp(
             name=self.STREAMS_APP_NAME,
@@ -203,10 +216,12 @@ class TestStreamsApp:
                 "to": {
                     "topics": {
                         "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10,
+                            type=OutputTopicTypes.OUTPUT,
+                            partitions_count=10,
                         ),
                         "${error_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.ERROR, partitions_count=10,
+                            type=OutputTopicTypes.ERROR,
+                            partitions_count=10,
                         ),
                         "extra-topic-1": TopicConfig(
                             role="first-extra-topic",
@@ -228,7 +243,9 @@ class TestStreamsApp:
         assert streams_app.app.streams.error_topic == "${error_topic_name}"
 
     def test_weave_inputs_from_prev_component(
-        self, config: PipelineConfig, handlers: ComponentHandlers,
+        self,
+        config: PipelineConfig,
+        handlers: ComponentHandlers,
     ):
         streams_app = StreamsApp(
             name=self.STREAMS_APP_NAME,
@@ -246,16 +263,20 @@ class TestStreamsApp:
             ToSection(
                 topics={
                     TopicName("prev-output-topic"): TopicConfig(
-                        type=OutputTopicTypes.OUTPUT, partitions_count=10,
+                        type=OutputTopicTypes.OUTPUT,
+                        partitions_count=10,
                     ),
                     TopicName("b"): TopicConfig(
-                        type=OutputTopicTypes.OUTPUT, partitions_count=10,
+                        type=OutputTopicTypes.OUTPUT,
+                        partitions_count=10,
                     ),
                     TopicName("a"): TopicConfig(
-                        type=OutputTopicTypes.OUTPUT, partitions_count=10,
+                        type=OutputTopicTypes.OUTPUT,
+                        partitions_count=10,
                     ),
                     TopicName("prev-error-topic"): TopicConfig(
-                        type=OutputTopicTypes.ERROR, partitions_count=10,
+                        type=OutputTopicTypes.ERROR,
+                        partitions_count=10,
                     ),
                 },
             ),
@@ -281,10 +302,12 @@ class TestStreamsApp:
                 "to": {
                     "topics": {
                         "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10,
+                            type=OutputTopicTypes.OUTPUT,
+                            partitions_count=10,
                         ),
                         "${error_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.ERROR, partitions_count=10,
+                            type=OutputTopicTypes.ERROR,
+                            partitions_count=10,
                         ),
                         "extra-topic-1": TopicConfig(
                             role="first-extra-topic",
@@ -299,10 +322,12 @@ class TestStreamsApp:
             },
         )
         mock_create_topics = mocker.patch.object(
-            streams_app.handlers.topic_handler, "create_topics",
+            streams_app.handlers.topic_handler,
+            "create_topics",
         )
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app.helm, "upgrade_install",
+            streams_app.helm,
+            "upgrade_install",
         )
 
         mock = mocker.MagicMock()
@@ -351,14 +376,19 @@ class TestStreamsApp:
         streams_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
-            "test-namespace", "${pipeline_name}-" + self.STREAMS_APP_NAME, True,
+            "test-namespace",
+            "${pipeline_name}-" + self.STREAMS_APP_NAME,
+            True,
         )
 
     def test_reset_when_dry_run_is_false(
-        self, streams_app: StreamsApp, mocker: MockerFixture,
+        self,
+        streams_app: StreamsApp,
+        mocker: MockerFixture,
     ):
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app.helm, "upgrade_install",
+            streams_app.helm,
+            "upgrade_install",
         )
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
@@ -402,7 +432,8 @@ class TestStreamsApp:
         mocker: MockerFixture,
     ):
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app.helm, "upgrade_install",
+            streams_app.helm,
+            "upgrade_install",
         )
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 

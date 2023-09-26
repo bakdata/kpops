@@ -9,10 +9,10 @@ from pydantic import Field
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
-from tests.cli.resources import empty_module
 from kpops.cli.main import app
 from kpops.components.base_components import PipelineComponent
 from kpops.utils.docstring import describe_attr
+from tests.cli.resources import empty_module
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
@@ -75,7 +75,8 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
     """
 
     example_attr: str = Field(
-        default=..., description=describe_attr("example_attr", __doc__),
+        default=...,
+        description=describe_attr("example_attr", __doc__),
     )
 
 
@@ -83,7 +84,10 @@ MODULE = EmptyPipelineComponent.__module__
 
 
 @pytest.mark.filterwarnings(
-    "ignore:handlers", "ignore:config", "ignore:enrich", "ignore:validate",
+    "ignore:handlers",
+    "ignore:config",
+    "ignore:enrich",
+    "ignore:validate",
 )
 class TestGenSchema:
     def test_gen_pipeline_schema_no_modules(self, caplog: pytest.LogCaptureFixture):
