@@ -7,7 +7,7 @@ from enum import Enum
 class IterableStrEnum(str, Enum):
     """Polyfill that also introduces dict-like behavior
 
-    Introduces constructors that return a ``Generator`` object
+    Introduces constructors that return a ``Iterator`` object
     either containing all items, only their names or their values.
     """
 

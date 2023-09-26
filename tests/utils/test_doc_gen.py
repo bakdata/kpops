@@ -69,7 +69,7 @@ class TestEnvDocGen:
         default_value: Any,
         description: str | list[str],
         extra_args: tuple,
-        expected_outcome,
+        expected_outcome: str,
     ):
         target = tmp_path / "target.csv"
         csv_append_env_var(target, var_name, default_value, description, *extra_args)
