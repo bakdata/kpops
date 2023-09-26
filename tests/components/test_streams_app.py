@@ -145,7 +145,7 @@ class TestStreamsApp:
 
     def test_should_validate(self, config: PipelineConfig, handlers: ComponentHandlers):
         # An exception should be raised when both role and type are defined and type is input
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Define role only if `type` is `pattern` or `None`"):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
                 config=config,
@@ -167,7 +167,7 @@ class TestStreamsApp:
             )
 
         # An exception should be raised when both role and type are defined and type is error
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError, match="Define `role` only if `type` is undefined"):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
                 config=config,

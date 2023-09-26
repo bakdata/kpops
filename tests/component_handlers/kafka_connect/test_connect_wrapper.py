@@ -26,7 +26,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 class TestConnectorApiWrapper:
     @pytest.fixture(autouse=True)
-    def setup(self):
+    def _setup(self):
         config = PipelineConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",

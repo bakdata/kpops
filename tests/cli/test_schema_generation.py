@@ -107,7 +107,7 @@ class TestGenSchema:
 
     def test_gen_pipeline_schema_no_components(self):
         with pytest.raises(RuntimeError, match="^No valid components found.$"):
-            result = runner.invoke(
+            runner.invoke(
                 app,
                 [
                     "schema",
@@ -117,7 +117,6 @@ class TestGenSchema:
                 ],
                 catch_exceptions=False,
             )
-            assert result.exit_code == 1
 
     def test_gen_pipeline_schema_only_stock_module(self):
         result = runner.invoke(

@@ -337,8 +337,7 @@ class TestHelmWrapper:
             """,
         )
         with pytest.raises(ParseError, match="Not a valid Helm template source"):
-            helm_template = list(Helm.load_manifest(stdout))
-            assert len(helm_template) == 0
+            list(Helm.load_manifest(stdout))
 
     def test_load_manifest(self):
         stdout = dedent(
