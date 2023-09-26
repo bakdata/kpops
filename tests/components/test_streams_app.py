@@ -25,7 +25,7 @@ class TestStreamsApp:
     STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
     STREAMS_APP_CLEAN_NAME = "test-streams-app-with-long-na-clean"
 
-    @pytest.fixture
+    @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
             schema_handler=MagicMock(),
@@ -33,7 +33,7 @@ class TestStreamsApp:
             topic_handler=MagicMock(),
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def config(self) -> PipelineConfig:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
@@ -45,7 +45,7 @@ class TestStreamsApp:
             helm_diff_config=HelmDiffConfig(),
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def streams_app(
         self, config: PipelineConfig, handlers: ComponentHandlers,
     ) -> StreamsApp:

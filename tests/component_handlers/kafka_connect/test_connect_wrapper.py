@@ -34,7 +34,7 @@ class TestConnectorApiWrapper:
         )
         self.connect_wrapper = ConnectWrapper(host=config.kafka_connect_host)
 
-    @pytest.fixture
+    @pytest.fixture()
     def connector_config(self) -> KafkaConnectorConfig:
         return KafkaConnectorConfig(
             **{

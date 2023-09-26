@@ -12,13 +12,13 @@ log = Logger("TestLogger")
 
 
 class TestDryRunHandler:
-    @pytest.fixture
+    @pytest.fixture()
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
             "kpops.component_handlers.helm_wrapper.dry_run_handler.Helm",
         ).return_value
 
-    @pytest.fixture
+    @pytest.fixture()
     def helm_diff_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
             "kpops.component_handlers.helm_wrapper.dry_run_handler.HelmDiff",

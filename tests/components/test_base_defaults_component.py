@@ -37,7 +37,7 @@ class EnvVarTest(BaseDefaultsComponent):
     name: str | None = None
 
 
-@pytest.fixture
+@pytest.fixture()
 def config() -> PipelineConfig:
     return PipelineConfig(
         defaults_path=DEFAULTS_PATH,
@@ -45,7 +45,7 @@ def config() -> PipelineConfig:
     )
 
 
-@pytest.fixture
+@pytest.fixture()
 def handlers() -> ComponentHandlers:
     return ComponentHandlers(
         schema_handler=MagicMock(),

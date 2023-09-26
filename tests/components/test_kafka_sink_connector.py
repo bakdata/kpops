@@ -35,11 +35,11 @@ from tests.components.test_kafka_connector import (
 
 
 class TestKafkaSinkConnector(TestKafkaConnector):
-    @pytest.fixture
+    @pytest.fixture()
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kafka_connector.log.info")
 
-    @pytest.fixture
+    @pytest.fixture()
     def connector(
         self,
         config: PipelineConfig,
