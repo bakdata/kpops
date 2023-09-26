@@ -86,10 +86,9 @@ class TestEnvDocGen:
                 "# title\n"
                 "#\n"
                 "# "
-                + "description of length 72description of length 72description of"
-                + "\n"
-                "# length 72" + "\n"
-                "#\n"
+                "description of length 72description of length 72description of"
+                "\n"
+                "# length 72\n#\n"
             )
 
     @pytest.mark.parametrize(
