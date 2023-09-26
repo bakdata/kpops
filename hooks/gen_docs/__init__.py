@@ -6,11 +6,7 @@ from typing import Any
 
 
 class StrEnum(str, Enum):
-    """Adds constructors that return all items in a ``Generator``.
-
-    Introduces constructors that return a ``Generator`` object
-    either containing all items, only their names or their values.
-    """
+    """Temporary replacement for StrEnum while we suppport python3.10"""
 
     @classmethod
     def items(cls) -> Generator[tuple[Any, str], None, None]:
