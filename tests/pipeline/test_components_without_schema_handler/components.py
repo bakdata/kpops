@@ -33,7 +33,7 @@ class ShouldInflate(StreamsApp):
                             **{
                                 "topics": topic_name,
                                 "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
-                            }
+                            },
                         ),
                     )
                     inflate_steps.append(kafka_connector)

@@ -24,7 +24,7 @@ def test_diff():
                 HelmTemplate("a.yaml", {"a": 2}),
                 HelmTemplate("c.yaml", {"c": 1}),
             ],
-        )
+        ),
     ) == [
         Change(
             old_value={"a": 1},
@@ -42,7 +42,7 @@ def test_diff():
 
     # test no current release
     assert list(
-        helm_diff.calculate_changes((), [HelmTemplate("a.yaml", {"a": 1})])
+        helm_diff.calculate_changes((), [HelmTemplate("a.yaml", {"a": 1})]),
     ) == [
         Change(
             old_value={},

@@ -27,28 +27,28 @@ class StreamsConfig(KafkaStreamsConfig):
     """
 
     input_topics: list[str] = Field(
-        default=[], description=describe_attr("input_topics", __doc__)
+        default=[], description=describe_attr("input_topics", __doc__),
     )
     input_pattern: str | None = Field(
-        default=None, description=describe_attr("input_pattern", __doc__)
+        default=None, description=describe_attr("input_pattern", __doc__),
     )
     extra_input_topics: dict[str, list[str]] = Field(
-        default={}, description=describe_attr("extra_input_topics", __doc__)
+        default={}, description=describe_attr("extra_input_topics", __doc__),
     )
     extra_input_patterns: dict[str, str] = Field(
-        default={}, description=describe_attr("extra_input_patterns", __doc__)
+        default={}, description=describe_attr("extra_input_patterns", __doc__),
     )
     extra_output_topics: dict[str, str] = Field(
-        default={}, description=describe_attr("extra_output_topics", __doc__)
+        default={}, description=describe_attr("extra_output_topics", __doc__),
     )
     output_topic: str | None = Field(
-        default=None, description=describe_attr("output_topic", __doc__)
+        default=None, description=describe_attr("output_topic", __doc__),
     )
     error_topic: str | None = Field(
-        default=None, description=describe_attr("error_topic", __doc__)
+        default=None, description=describe_attr("error_topic", __doc__),
     )
     config: dict[str, str] = Field(
-        default={}, description=describe_attr("config", __doc__)
+        default={}, description=describe_attr("config", __doc__),
     )
 
     def add_input_topics(self, topics: list[str]) -> None:
@@ -69,7 +69,7 @@ class StreamsConfig(KafkaStreamsConfig):
         :param role: Topic role
         """
         self.extra_input_topics[role] = deduplicate(
-            self.extra_input_topics.get(role, []) + topics
+            self.extra_input_topics.get(role, []) + topics,
         )
 
     @override

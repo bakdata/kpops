@@ -25,7 +25,7 @@ from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 log = logging.getLogger("KubernetesAppComponent")
 
 KUBERNETES_NAME_CHECK_PATTERN = re.compile(
-    r"^(?![0-9]+$)(?!.*-$)(?!-)[a-z0-9-.]{1,253}(?<!_)$"
+    r"^(?![0-9]+$)(?!.*-$)(?!-)[a-z0-9-.]{1,253}(?<!_)$",
 )
 
 
@@ -97,7 +97,7 @@ class KubernetesApp(PipelineComponent):
     def helm_chart(self) -> str:
         """Return component's Helm chart."""
         raise NotImplementedError(
-            f"Please implement the helm_chart property of the {self.__module__} module."
+            f"Please implement the helm_chart property of the {self.__module__} module.",
         )
 
     @property
@@ -171,7 +171,7 @@ class KubernetesApp(PipelineComponent):
         :param stdout: The output of a Helm command that installs or upgrades the release
         """
         current_release = list(
-            self.helm.get_manifest(self.helm_release_name, self.namespace)
+            self.helm.get_manifest(self.helm_release_name, self.namespace),
         )
         if current_release:
             log.info(f"Helm release {self.helm_release_name} already exists")

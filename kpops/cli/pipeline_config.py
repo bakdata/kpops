@@ -112,7 +112,7 @@ class PipelineConfig(BaseSettings):
             env_settings: SettingsSourceCallable,
             file_secret_settings: SettingsSourceCallable,
         ) -> tuple[
-            SettingsSourceCallable | Callable[[PipelineConfig], dict[str, Any]], ...
+            SettingsSourceCallable | Callable[[PipelineConfig], dict[str, Any]], ...,
         ]:
             return (
                 env_settings,

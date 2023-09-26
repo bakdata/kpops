@@ -42,7 +42,7 @@ class TestProducerApp:
 
     @pytest.fixture
     def producer_app(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self, config: PipelineConfig, handlers: ComponentHandlers,
     ) -> ProducerApp:
         return ProducerApp(
             name=self.PRODUCER_APP_NAME,
@@ -58,9 +58,9 @@ class TestProducerApp:
                 "to": {
                     "topics": {
                         "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
+                            type=OutputTopicTypes.OUTPUT, partitions_count=10,
                         ),
-                    }
+                    },
                 },
             },
         )
@@ -79,20 +79,20 @@ class TestProducerApp:
                 "to": {
                     "topics": {
                         "${output_topic_name}": TopicConfig(
-                            type=OutputTopicTypes.OUTPUT, partitions_count=10
+                            type=OutputTopicTypes.OUTPUT, partitions_count=10,
                         ),
                         "extra-topic-1": TopicConfig(
                             role="first-extra-topic",
                             partitions_count=10,
                         ),
-                    }
+                    },
                 },
             },
         )
 
         assert producer_app.app.streams.output_topic == "${output_topic_name}"
         assert producer_app.app.streams.extra_output_topics == {
-            "first-extra-topic": "extra-topic-1"
+            "first-extra-topic": "extra-topic-1",
         }
 
     def test_deploy_order_when_dry_run_is_false(
@@ -101,11 +101,11 @@ class TestProducerApp:
         mocker: MockerFixture,
     ):
         mock_create_topics = mocker.patch.object(
-            producer_app.handlers.topic_handler, "create_topics"
+            producer_app.handlers.topic_handler, "create_topics",
         )
 
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app.helm, "upgrade_install"
+            producer_app.helm, "upgrade_install",
         )
 
         mock = mocker.MagicMock()
@@ -150,7 +150,7 @@ class TestProducerApp:
         producer_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
-            "test-namespace", "${pipeline_name}-" + self.PRODUCER_APP_NAME, True
+            "test-namespace", "${pipeline_name}-" + self.PRODUCER_APP_NAME, True,
         )
 
     def test_should_not_reset_producer_app(
@@ -159,11 +159,11 @@ class TestProducerApp:
         mocker: MockerFixture,
     ):
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app.helm, "upgrade_install"
+            producer_app.helm, "upgrade_install",
         )
         mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
         mock_helm_print_helm_diff = mocker.patch.object(
-            producer_app.dry_run_handler, "print_helm_diff"
+            producer_app.dry_run_handler, "print_helm_diff",
         )
 
         mock = mocker.MagicMock()
@@ -205,10 +205,10 @@ class TestProducerApp:
         ]
 
     def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
-        self, mocker: MockerFixture, producer_app: ProducerApp
+        self, mocker: MockerFixture, producer_app: ProducerApp,
     ):
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app.helm, "upgrade_install"
+            producer_app.helm, "upgrade_install",
         )
         mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
 

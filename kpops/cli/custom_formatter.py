@@ -16,7 +16,7 @@ class CustomFormatter(logging.Formatter):
             logging.WARNING: typer.style(message_format, fg=typer.colors.YELLOW),
             logging.ERROR: typer.style(message_format, fg=typer.colors.RED),
             logging.CRITICAL: typer.style(
-                message_format, fg=typer.colors.RED, bold=True
+                message_format, fg=typer.colors.RED, bold=True,
             ),
         }
 

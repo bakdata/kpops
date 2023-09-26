@@ -48,9 +48,9 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             to=ToSection(
                 topics={
                     TopicName("${output_topic_name}"): TopicConfig(
-                        type=OutputTopicTypes.OUTPUT, partitions_count=10
+                        type=OutputTopicTypes.OUTPUT, partitions_count=10,
                     ),
-                }
+                },
             ),
             offset_topic="kafka-connect-offsets",
         )
@@ -71,9 +71,9 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                     topics={
                         TopicName("connector-topic"): FromTopic(
-                            type=InputTopicTypes.INPUT
+                            type=InputTopicTypes.INPUT,
                         ),
-                    }
+                    },
                 ),
             )
 
@@ -83,11 +83,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         mocker: MockerFixture,
     ):
         mock_create_topics = mocker.patch.object(
-            connector.handlers.topic_handler, "create_topics"
+            connector.handlers.topic_handler, "create_topics",
         )
 
         mock_create_connector = mocker.patch.object(
-            connector.handlers.connector_handler, "create_connector"
+            connector.handlers.connector_handler, "create_connector",
         )
 
         mock = mocker.MagicMock()
@@ -108,13 +108,13 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         assert connector.handlers.connector_handler
 
         mock_destroy_connector = mocker.patch.object(
-            connector.handlers.connector_handler, "destroy_connector"
+            connector.handlers.connector_handler, "destroy_connector",
         )
 
         connector.destroy(dry_run=True)
 
         mock_destroy_connector.assert_called_once_with(
-            CONNECTOR_FULL_NAME, dry_run=True
+            CONNECTOR_FULL_NAME, dry_run=True,
         )
 
     def test_reset_when_dry_run_is_true(
@@ -137,10 +137,10 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     ):
         assert connector.handlers.connector_handler
         mock_delete_topics = mocker.patch.object(
-            connector.handlers.topic_handler, "delete_topics"
+            connector.handlers.topic_handler, "delete_topics",
         )
         mock_clean_connector = mocker.spy(
-            connector.handlers.connector_handler, "clean_connector"
+            connector.handlers.connector_handler, "clean_connector",
         )
 
         mock = mocker.MagicMock()
@@ -210,10 +210,10 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         assert connector.handlers.connector_handler
 
         mock_delete_topics = mocker.patch.object(
-            connector.handlers.topic_handler, "delete_topics"
+            connector.handlers.topic_handler, "delete_topics",
         )
         mock_clean_connector = mocker.spy(
-            connector.handlers.connector_handler, "clean_connector"
+            connector.handlers.connector_handler, "clean_connector",
         )
 
         mock = mocker.MagicMock()
@@ -286,10 +286,10 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         assert connector.handlers.connector_handler
 
         mock_delete_topics = mocker.patch.object(
-            connector.handlers.topic_handler, "delete_topics"
+            connector.handlers.topic_handler, "delete_topics",
         )
         mock_clean_connector = mocker.spy(
-            connector.handlers.connector_handler, "clean_connector"
+            connector.handlers.connector_handler, "clean_connector",
         )
 
         mock = mocker.MagicMock()

@@ -91,7 +91,7 @@ def test_windows_behaviour_keys_transformation(system, fake_environment_windows)
 
 @patch("platform.system")
 def test_windows_behaviour_keys_transformation_as_kwargs(
-    system, fake_environment_windows
+    system, fake_environment_windows,
 ):
     system.return_value = "Windows"
     environment = Environment(**fake_environment_windows)

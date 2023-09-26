@@ -37,7 +37,7 @@ log = logging.getLogger("")
 
 
 def _is_valid_component(
-    defined_component_types: set[str], component: type[PipelineComponent]
+    defined_component_types: set[str], component: type[PipelineComponent],
 ) -> bool:
     """Check whether a PipelineComponent subclass has a valid definition for the schema generation.
 
@@ -56,7 +56,7 @@ def _is_valid_component(
 
 
 def _add_components(
-    components_module: str, components: tuple[type[PipelineComponent]] | None = None
+    components_module: str, components: tuple[type[PipelineComponent]] | None = None,
 ) -> tuple[type[PipelineComponent]]:
     """Add components to a components tuple.
 
@@ -82,7 +82,7 @@ def _add_components(
 
 
 def gen_pipeline_schema(
-    components_module: str | None = None, include_stock_components: bool = True
+    components_module: str | None = None, include_stock_components: bool = True,
 ) -> None:
     """Generate a json schema from the models of pipeline components.
 
@@ -123,7 +123,7 @@ def gen_pipeline_schema(
         )
 
     AnnotatedPipelineComponents = Annotated[
-        PipelineComponents, Field(discriminator="type")
+        PipelineComponents, Field(discriminator="type"),
     ]
 
     schema = schema_json_of(
@@ -139,6 +139,6 @@ def gen_pipeline_schema(
 def gen_config_schema() -> None:
     """Generate a json schema from the model of pipeline config."""
     schema = schema_json_of(
-        PipelineConfig, title="KPOps config schema", indent=4, sort_keys=True
+        PipelineConfig, title="KPOps config schema", indent=4, sort_keys=True,
     )
     print(schema)

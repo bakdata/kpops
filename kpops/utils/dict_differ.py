@@ -51,7 +51,7 @@ class Diff(Generic[T]):
 
     @staticmethod
     def from_dicts(
-        d1: dict, d2: dict, ignore: set[str] | None = None
+        d1: dict, d2: dict, ignore: set[str] | None = None,
     ) -> Iterator[Diff]:
         for diff_type, keys, changes in diff(d1, d2, ignore=ignore):
             if not isinstance(changes, list):
@@ -86,8 +86,8 @@ def render_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> str | Non
             differ.compare(
                 to_yaml(d1) if d1 else "",
                 to_yaml(d2_filtered) if d2_filtered else "",
-            )
-        )
+            ),
+        ),
     )
 
 

@@ -32,12 +32,12 @@ class TestProxyWrapper:
     @pytest.fixture(autouse=True)
     def setup(self, httpx_mock: HTTPXMock):
         config = PipelineConfig(
-            defaults_path=DEFAULTS_PATH, environment="development", kafka_rest_host=HOST
+            defaults_path=DEFAULTS_PATH, environment="development", kafka_rest_host=HOST,
         )
         self.proxy_wrapper = ProxyWrapper(pipeline_config=config)
 
         with open(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses" / "cluster-info.json"
+            DEFAULTS_PATH / "kafka_rest_proxy_responses" / "cluster-info.json",
         ) as f:
             cluster_response = json.load(f)
 
@@ -62,7 +62,7 @@ class TestProxyWrapper:
 
     @patch("httpx.post")
     def test_should_create_topic_with_all_topic_configuration(
-        self, mock_post: MagicMock
+        self, mock_post: MagicMock,
     ):
         topic_spec = {
             "topic_name": "topic-X",
@@ -128,7 +128,7 @@ class TestProxyWrapper:
                 "data": [
                     {"name": "cleanup.policy", "operation": "DELETE"},
                     {"name": "compression.type", "value": "gzip"},
-                ]
+                ],
             },
         )
 
@@ -155,7 +155,7 @@ class TestProxyWrapper:
         )
 
     def test_should_log_topic_creation(
-        self, log_info_mock: MagicMock, httpx_mock: HTTPXMock
+        self, log_info_mock: MagicMock, httpx_mock: HTTPXMock,
     ):
         topic_spec = {
             "topic_name": "topic-X",
@@ -178,7 +178,7 @@ class TestProxyWrapper:
         log_info_mock.assert_called_once_with("Topic topic-X created.")
 
     def test_should_log_topic_deletion(
-        self, log_info_mock: MagicMock, httpx_mock: HTTPXMock
+        self, log_info_mock: MagicMock, httpx_mock: HTTPXMock,
     ):
         topic_name = "topic-X"
 
@@ -225,7 +225,7 @@ class TestProxyWrapper:
         assert get_topic_response == topic_response
 
     def test_should_rais_topic_not_found_exception_get_topic(
-        self, log_debug_mock: MagicMock, httpx_mock: HTTPXMock
+        self, log_debug_mock: MagicMock, httpx_mock: HTTPXMock,
     ):
         topic_name = "topic-X"
 
@@ -244,7 +244,7 @@ class TestProxyWrapper:
         log_debug_mock.assert_any_call("Topic topic-X not found.")
 
     def test_should_log_reset_default_topic_config_when_deleted(
-        self, log_info_mock: MagicMock, httpx_mock: HTTPXMock
+        self, log_info_mock: MagicMock, httpx_mock: HTTPXMock,
     ):
         topic_name = "topic-X"
         config_name = "cleanup.policy"
@@ -263,5 +263,5 @@ class TestProxyWrapper:
         )
 
         log_info_mock.assert_called_once_with(
-            f"Config of topic {topic_name} was altered."
+            f"Config of topic {topic_name} was altered.",
         )

@@ -6,17 +6,17 @@ from kpops.component_handlers.topic.model import (
 
 
 def parse_and_compare_topic_configs(
-    topic_config_in_cluster: TopicConfigResponse, topic_config: dict
+    topic_config_in_cluster: TopicConfigResponse, topic_config: dict,
 ) -> tuple[dict, dict]:
     comparable_in_cluster_config_dict, default_configs = parse_rest_proxy_topic_config(
-        topic_config_in_cluster
+        topic_config_in_cluster,
     )
 
     cluster_defaults_overwrite = set(topic_config.keys()) - set(
-        comparable_in_cluster_config_dict.keys()
+        comparable_in_cluster_config_dict.keys(),
     )
     config_overwrites = set(comparable_in_cluster_config_dict.keys()) - set(
-        topic_config.keys()
+        topic_config.keys(),
     )
     populate_default_configs(
         cluster_defaults_overwrite,

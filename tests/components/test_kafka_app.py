@@ -80,7 +80,7 @@ class TestKafkaApp:
         )
         helm_upgrade_install = mocker.patch.object(kafka_app.helm, "upgrade_install")
         print_helm_diff = mocker.patch.object(
-            kafka_app.dry_run_handler, "print_helm_diff"
+            kafka_app.dry_run_handler, "print_helm_diff",
         )
         mocker.patch.object(
             KafkaApp,

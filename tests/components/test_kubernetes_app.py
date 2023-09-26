@@ -46,7 +46,7 @@ class TestKubernetesApp:
     @pytest.fixture
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.components.base_components.kubernetes_app.Helm"
+            "kpops.components.base_components.kubernetes_app.Helm",
         ).return_value
 
     @pytest.fixture
@@ -113,7 +113,7 @@ class TestKubernetesApp:
         app_value: KubernetesTestValue,
     ):
         repo_config = HelmRepoConfig(
-            repository_name="test-repo", url="https://test.com/charts/"
+            repository_name="test-repo", url="https://test.com/charts/",
         )
         kubernetes_app = KubernetesApp(
             name="test-kubernetes-app",
@@ -211,7 +211,7 @@ class TestKubernetesApp:
         kubernetes_app.destroy(True)
 
         helm_mock.uninstall.assert_called_once_with(
-            "test-namespace", "${pipeline_name}-test-kubernetes-app", True
+            "test-namespace", "${pipeline_name}-test-kubernetes-app", True,
         )
 
         log_info_mock.assert_called_once_with(magentaify(stdout))
@@ -224,7 +224,7 @@ class TestKubernetesApp:
         repo_config: HelmRepoConfig,
     ):
         with pytest.raises(
-            ValueError, match=r"The component name .* is invalid for Kubernetes."
+            ValueError, match=r"The component name .* is invalid for Kubernetes.",
         ):
             KubernetesApp(
                 name="Not-Compatible*",
@@ -236,7 +236,7 @@ class TestKubernetesApp:
             )
 
         with pytest.raises(
-            ValueError, match=r"The component name .* is invalid for Kubernetes."
+            ValueError, match=r"The component name .* is invalid for Kubernetes.",
         ):
             KubernetesApp(
                 name="snake_case*",

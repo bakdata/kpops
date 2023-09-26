@@ -93,17 +93,17 @@ class BaseDefaultsComponent(BaseModel):
         config: PipelineConfig = kwargs["config"]
         log.debug(
             typer.style(
-                "Enriching component of type ", fg=typer.colors.GREEN, bold=False
+                "Enriching component of type ", fg=typer.colors.GREEN, bold=False,
             )
             + typer.style(
-                kwargs.get("type"), fg=typer.colors.GREEN, bold=True, underline=True
-            )
+                kwargs.get("type"), fg=typer.colors.GREEN, bold=True, underline=True,
+            ),
         )
         main_default_file_path, environment_default_file_path = get_defaults_file_paths(
-            config
+            config,
         )
         defaults = load_defaults(
-            self.__class__, main_default_file_path, environment_default_file_path
+            self.__class__, main_default_file_path, environment_default_file_path,
         )
         kwargs = update_nested(kwargs, defaults)
         return kwargs
@@ -166,13 +166,13 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
     content = load_yaml_file(path, substitution=ENV)
     if not isinstance(content, dict):
         raise TypeError(
-            "Default files should be structured as map ([app type] -> [default config]"
+            "Default files should be structured as map ([app type] -> [default config]",
         )
     value = content.get(key)
     if value is None:
         return {}
     log.debug(
-        f"\tFound defaults for component type {typer.style(key, bold=True, fg=typer.colors.MAGENTA)} in file:  {path}"
+        f"\tFound defaults for component type {typer.style(key, bold=True, fg=typer.colors.MAGENTA)} in file:  {path}",
     )
     return value
 
@@ -189,11 +189,11 @@ def get_defaults_file_paths(config: PipelineConfig) -> tuple[Path, Path]:
     """
     defaults_dir = Path(config.defaults_path).resolve()
     main_default_file_path = defaults_dir / Path(
-        config.defaults_filename_prefix
+        config.defaults_filename_prefix,
     ).with_suffix(".yaml")
 
     environment_default_file_path = defaults_dir / Path(
-        f"{config.defaults_filename_prefix}_{config.environment}"
+        f"{config.defaults_filename_prefix}_{config.environment}",
     ).with_suffix(".yaml")
 
     return main_default_file_path, environment_default_file_path

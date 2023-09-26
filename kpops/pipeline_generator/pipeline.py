@@ -64,13 +64,13 @@ class PipelineComponents(BaseModel):
         duplicates = [name for name, count in Counter(step_names).items() if count > 1]
         if duplicates:
             raise ValidationError(
-                f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
+                f"step names should be unique. duplicate step names: {', '.join(duplicates)}",
             )
 
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove
         with suppress(
-            AttributeError  # Some components like Kafka Connect do not have a name_override attribute
+            AttributeError,  # Some components like Kafka Connect do not have a name_override attribute
         ):
             if (app := getattr(component, "app")) and app.name_override is None:
                 app.name_override = component.full_name
@@ -88,7 +88,7 @@ def create_env_components_index(
     for component in environment_components:
         if "type" not in component or "name" not in component:
             raise ValueError(
-                "To override components per environment, every component should at least have a type and a name."
+                "To override components per environment, every component should at least have a type and a name.",
             )
         index[component["name"]] = component
     return index
@@ -138,14 +138,14 @@ class Pipeline:
         main_content = load_yaml_file(path, substitution=ENV)
         if not isinstance(main_content, list):
             raise TypeError(
-                f"The pipeline definition {path} should contain a list of components"
+                f"The pipeline definition {path} should contain a list of components",
             )
         env_content = []
         if (env_file := Pipeline.pipeline_filename_environment(path, config)).exists():
             env_content = load_yaml_file(env_file, substitution=ENV)
             if not isinstance(env_content, list):
                 raise TypeError(
-                    f"The pipeline definition {env_file} should contain a list of components"
+                    f"The pipeline definition {env_file} should contain a list of components",
                 )
 
         pipeline = cls(main_content, env_content, registry, config, handlers)
@@ -165,20 +165,20 @@ class Pipeline:
                     component_type: str = component_data["type"]
                 except KeyError as ke:
                     raise ValueError(
-                        "Every component must have a type defined, this component does not have one."
+                        "Every component must have a type defined, this component does not have one.",
                     ) from ke
                 component_class = self.registry[component_type]
                 self.apply_component(component_class, component_data)
             except Exception as ex:  # noqa: BLE001
                 if "name" in component_data:
                     raise ParsingException(
-                        f"Error enriching {component_data['type']} component {component_data['name']}"
+                        f"Error enriching {component_data['type']} component {component_data['name']}",
                     ) from ex
                 else:
                     raise ParsingException() from ex
 
     def apply_component(
-        self, component_class: type[PipelineComponent], component_data: dict
+        self, component_class: type[PipelineComponent], component_data: dict,
     ) -> None:
         """Instantiate, enrich and inflate pipeline component.
 
@@ -205,14 +205,14 @@ class Pipeline:
                     from_topic,
                 ) in enriched_component.from_.components.items():
                     original_from_component = self.components.find(
-                        original_from_component_name
+                        original_from_component_name,
                     )
                     inflated_from_component = original_from_component.inflate()[-1]
                     resolved_from_component = self.components.find(
-                        inflated_from_component.name
+                        inflated_from_component.name,
                     )
                     enriched_component.weave_from_topics(
-                        resolved_from_component.to, from_topic
+                        resolved_from_component.to, from_topic,
                     )
             elif self.components:
                 # read from previous component
@@ -260,7 +260,7 @@ class Pipeline:
             theme="ansi_dark",
         )
         Console(
-            width=1000  # HACK: overwrite console width to avoid truncating output
+            width=1000,  # HACK: overwrite console width to avoid truncating output
         ).print(syntax)
 
     def __iter__(self) -> Iterator[PipelineComponent]:
@@ -269,8 +269,8 @@ class Pipeline:
     def __str__(self) -> str:
         return yaml.dump(
             json.loads(  # HACK: serialize types on Pydantic model export, which are not serialized by .dict(); e.g. pathlib.Path
-                self.components.json(exclude_none=True, by_alias=True)
-            )
+                self.components.json(exclude_none=True, by_alias=True),
+            ),
         )
 
     def __len__(self) -> int:
@@ -296,14 +296,14 @@ class Pipeline:
             substitution_hardcoded,
         )
         substitution = generate_substitution(
-            json.loads(config.json()), existing_substitution=component_substitution
+            json.loads(config.json()), existing_substitution=component_substitution,
         )
 
         return json.loads(
             substitute_nested(
                 json.dumps(component_as_dict),
                 **update_nested_pair(substitution, ENV),
-            )
+            ),
         )
 
     def validate(self) -> None:

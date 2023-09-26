@@ -31,19 +31,19 @@ class RepoAuthFlags(BaseModel):
     """
 
     username: str | None = Field(
-        default=None, description=describe_attr("username", __doc__)
+        default=None, description=describe_attr("username", __doc__),
     )
     password: str | None = Field(
-        default=None, description=describe_attr("password", __doc__)
+        default=None, description=describe_attr("password", __doc__),
     )
     ca_file: Path | None = Field(
-        default=None, description=describe_attr("ca_file", __doc__)
+        default=None, description=describe_attr("ca_file", __doc__),
     )
     cert_file: Path | None = Field(
-        default=None, description=describe_attr("cert_file", __doc__)
+        default=None, description=describe_attr("cert_file", __doc__),
     )
     insecure_skip_tls_verify: bool = Field(
-        default=False, description=describe_attr("insecure_skip_tls_verify", __doc__)
+        default=False, description=describe_attr("insecure_skip_tls_verify", __doc__),
     )
 
     class Config(DescConfig):
@@ -73,11 +73,11 @@ class HelmRepoConfig(BaseModel):
     """
 
     repository_name: str = Field(
-        default=..., description=describe_attr("repository_name", __doc__)
+        default=..., description=describe_attr("repository_name", __doc__),
     )
     url: str = Field(default=..., description=describe_attr("url", __doc__))
     repo_auth_flags: RepoAuthFlags = Field(
-        default=RepoAuthFlags(), description=describe_attr("repo_auth_flags", __doc__)
+        default=RepoAuthFlags(), description=describe_attr("repo_auth_flags", __doc__),
     )
 
     class Config(DescConfig):
@@ -131,7 +131,7 @@ class HelmFlags(RepoAuthFlags):
                 [
                     "--set-file",
                     ",".join([f"{key}={path}" for key, path in self.set_file.items()]),
-                ]
+                ],
             )
         if self.create_namespace:
             command.append("--create-namespace")

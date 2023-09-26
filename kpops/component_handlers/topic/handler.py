@@ -35,10 +35,10 @@ class TopicHandler:
                 try:
                     self.proxy_wrapper.get_topic(topic_name=topic_name)
                     topic_config_in_cluster = self.proxy_wrapper.get_topic_config(
-                        topic_name=topic_name
+                        topic_name=topic_name,
                     )
                     differences = self.__get_topic_config_diff(
-                        topic_config_in_cluster, topic_config.configs
+                        topic_config_in_cluster, topic_config.configs,
                     )
 
                     if differences:
@@ -46,11 +46,11 @@ class TopicHandler:
                         for difference in differences:
                             if difference.diff_type is DiffType.REMOVE:
                                 json_body.append(
-                                    {"name": difference.key, "operation": "DELETE"}
+                                    {"name": difference.key, "operation": "DELETE"},
                                 )
                             elif config_value := difference.change.new_value:
                                 json_body.append(
-                                    {"name": difference.key, "value": config_value}
+                                    {"name": difference.key, "value": config_value},
                                 )
                         self.proxy_wrapper.batch_alter_topic_config(
                             topic_name=topic_name,
@@ -59,7 +59,7 @@ class TopicHandler:
 
                     else:
                         log.info(
-                            f"Topic Creation: config of topic {topic_name} didn't change. Skipping update."
+                            f"Topic Creation: config of topic {topic_name} didn't change. Skipping update.",
                         )
                 except TopicNotFoundException:
                     self.proxy_wrapper.create_topic(topic_spec=topic_spec)
@@ -74,15 +74,15 @@ class TopicHandler:
                     self.proxy_wrapper.delete_topic(topic_name=topic_name)
                 except TopicNotFoundException:
                     log.warning(
-                        f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping."
+                        f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping.",
                     )
 
     @staticmethod
     def __get_topic_config_diff(
-        cluster_config: TopicConfigResponse, current_config: dict
+        cluster_config: TopicConfigResponse, current_config: dict,
     ) -> list[Diff]:
         comparable_in_cluster_config_dict, _ = parse_rest_proxy_topic_config(
-            cluster_config
+            cluster_config,
         )
         return list(Diff.from_dicts(comparable_in_cluster_config_dict, current_config))
 
@@ -97,10 +97,10 @@ class TopicHandler:
             topic_name = topic_in_cluster.topic_name
             if topic_config:
                 topic_config_in_cluster = self.proxy_wrapper.get_topic_config(
-                    topic_name=topic_name
+                    topic_name=topic_name,
                 )
                 in_cluster_config, new_config = parse_and_compare_topic_configs(
-                    topic_config_in_cluster, topic_config.configs
+                    topic_config_in_cluster, topic_config.configs,
                 )
                 if diff := render_diff(in_cluster_config, new_config):
                     log.info(f"Config changes for topic {topic_name}:")
@@ -120,13 +120,13 @@ class TopicHandler:
 
             self.__check_partition_count(topic_in_cluster, topic_spec, effective_config)
             self.__check_replication_factor(
-                topic_in_cluster, topic_spec, effective_config
+                topic_in_cluster, topic_spec, effective_config,
             )
         except TopicNotFoundException:
             log.info(
                 greenify(
-                    f"Topic Creation: {topic_name} does not exist in the cluster. Creating topic."
-                )
+                    f"Topic Creation: {topic_name} does not exist in the cluster. Creating topic.",
+                ),
             )
             log.debug(f"POST /clusters/{self.proxy_wrapper.cluster_id}/topics HTTP/1.1")
             log.debug(f"Host: {self.proxy_wrapper.host}")
@@ -145,11 +145,11 @@ class TopicHandler:
             topic_spec.partitions_count or int(broker_config["num.partitions"])
         ):
             log.debug(
-                f"Topic Creation: partition count of topic {topic_name} did not change. Current partitions count {partition_count}. Updating configs."
+                f"Topic Creation: partition count of topic {topic_name} did not change. Current partitions count {partition_count}. Updating configs.",
             )
         else:
             raise TopicTransactionError(
-                f"Topic Creation: partition count of topic {topic_name} changed! Partitions count of topic {topic_name} is {partition_count}. The given partitions count {topic_spec.partitions_count}."
+                f"Topic Creation: partition count of topic {topic_name} changed! Partitions count of topic {topic_name} is {partition_count}. The given partitions count {topic_spec.partitions_count}.",
             )
 
     @staticmethod
@@ -165,11 +165,11 @@ class TopicHandler:
             or int(broker_config["default.replication.factor"])
         ):
             log.debug(
-                f"Topic Creation: replication factor of topic {topic_name} did not change. Current replication factor {replication_factor}. Updating configs."
+                f"Topic Creation: replication factor of topic {topic_name} did not change. Current replication factor {replication_factor}. Updating configs.",
             )
         else:
             raise TopicTransactionError(
-                f"Topic Creation: replication factor of topic {topic_name} changed! Replication factor of topic {topic_name} is {replication_factor}. The given replication count {topic_spec.replication_factor}."
+                f"Topic Creation: replication factor of topic {topic_name} changed! Replication factor of topic {topic_name} is {replication_factor}. The given replication count {topic_spec.replication_factor}.",
             )
 
     def __dry_run_topic_deletion(self, topic_name: str) -> None:
@@ -177,15 +177,15 @@ class TopicHandler:
             topic_in_cluster = self.proxy_wrapper.get_topic(topic_name=topic_name)
             log.info(
                 magentaify(
-                    f"Topic Deletion: topic {topic_in_cluster.topic_name} exists in the cluster. Deleting topic."
-                )
+                    f"Topic Deletion: topic {topic_in_cluster.topic_name} exists in the cluster. Deleting topic.",
+                ),
             )
             log.debug(
-                f"DELETE /clusters/{self.proxy_wrapper.cluster_id}/topics HTTP/1.1"
+                f"DELETE /clusters/{self.proxy_wrapper.cluster_id}/topics HTTP/1.1",
             )
         except TopicNotFoundException:
             log.warning(
-                f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping."
+                f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping.",
             )
             log.debug(f"Host: {self.proxy_wrapper.host}")
             log.debug(HEADERS)

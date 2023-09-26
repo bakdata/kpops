@@ -16,7 +16,7 @@ def trim_release_name(name: str, suffix: str = "") -> str:
     if len(name) > RELEASE_NAME_MAX_LEN:
         new_name = name[: (RELEASE_NAME_MAX_LEN - len(suffix))] + suffix
         log.critical(
-            f"Invalid Helm release name '{name}'. Truncating to {RELEASE_NAME_MAX_LEN} characters: \n {name} --> {new_name}"
+            f"Invalid Helm release name '{name}'. Truncating to {RELEASE_NAME_MAX_LEN} characters: \n {name} --> {new_name}",
         )
         name = new_name
     return name
