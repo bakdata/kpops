@@ -163,10 +163,10 @@ class Pipeline:
             try:
                 try:
                     component_type: str = component_data["type"]
-                except KeyError:
+                except KeyError as ke:
                     raise ValueError(
                         "Every component must have a type defined, this component does not have one."
-                    )
+                    ) from ke
                 component_class = self.registry[component_type]
                 self.apply_component(component_class, component_data)
             except Exception as ex:

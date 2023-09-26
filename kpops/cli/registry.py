@@ -37,17 +37,17 @@ class Registry:
     def __getitem__(self, component_type: str) -> type[PipelineComponent]:
         try:
             return self._classes[component_type]
-        except KeyError:
+        except KeyError as ke:
             raise ClassNotFoundError(
                 f"Could not find a component of type {component_type}"
-            )
+            ) from ke
 
 
 def find_class(module_name: str, baseclass: type[T]) -> type[T]:
     try:
         return next(_find_classes(module_name, baseclass))
-    except StopIteration:
-        raise ClassNotFoundError
+    except StopIteration as e:
+        raise ClassNotFoundError from e
 
 
 def _find_classes(module_name: str, baseclass: type[T]) -> Iterator[type[T]]:

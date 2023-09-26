@@ -37,8 +37,10 @@ class Helm:
         self,
         repository_name: str,
         repository_url: str,
-        repo_auth_flags: RepoAuthFlags = RepoAuthFlags(),
+        repo_auth_flags: RepoAuthFlags | None = None,
     ) -> None:
+        if repo_auth_flags is None:
+            repo_auth_flags = RepoAuthFlags()
         command = [
             "helm",
             "repo",
@@ -75,9 +77,11 @@ class Helm:
         dry_run: bool,
         namespace: str,
         values: dict,
-        flags: HelmUpgradeInstallFlags = HelmUpgradeInstallFlags(),
+        flags: HelmUpgradeInstallFlags | None = None,
     ) -> str:
         """Prepare and execute the `helm upgrade --install` command."""
+        if flags is None:
+            flags = HelmUpgradeInstallFlags()
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
 
@@ -126,7 +130,7 @@ class Helm:
         chart: str,
         namespace: str,
         values: dict,
-        flags: HelmTemplateFlags = HelmTemplateFlags(),
+        flags: HelmTemplateFlags | None = None,
     ) -> str:
         """From HELM: Render chart templates locally and display the output.
 
@@ -141,6 +145,8 @@ class Helm:
         :param flags: the flags to be set for `helm template`, defaults to HelmTemplateFlags()
         :return: the output of `helm template`
         """
+        if flags is None:
+            flags = HelmTemplateFlags()
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
             command = [

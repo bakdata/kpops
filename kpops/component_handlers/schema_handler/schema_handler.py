@@ -34,11 +34,11 @@ class SchemaHandler:
                 )
             schema_provider_class = find_class(self.components_module, SchemaProvider)
             return schema_provider_class()  # pyright: ignore[reportGeneralTypeIssues]
-        except ClassNotFoundError:
+        except ClassNotFoundError as e:
             raise ValueError(
                 f"No schema provider found in components module {self.components_module}. "
                 f"Please implement the abstract method in {SchemaProvider.__module__}.{SchemaProvider.__name__}."
-            )
+            ) from e
 
     @classmethod
     def load_schema_handler(

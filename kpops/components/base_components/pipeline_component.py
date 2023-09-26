@@ -158,12 +158,14 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     def weave_from_topics(
         self,
         to: ToSection | None,
-        from_topic: FromTopic = FromTopic(type=InputTopicTypes.INPUT),
+        from_topic: FromTopic | None = None,
     ) -> None:
         """Weave output topics of upstream component or from component into config.
 
         Override this method to apply custom logic
         """
+        if from_topic is None:
+            from_topic = FromTopic(type=InputTopicTypes.INPUT)
         if not to:
             return
         input_topics = [
