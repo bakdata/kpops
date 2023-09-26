@@ -62,7 +62,7 @@ class Helm:
                 )
                 is not None
             ):
-                log.error(f"Could not add repository {repository_name}. {e}")
+                log.exception(f"Could not add repository {repository_name}.")
             else:
                 raise
 
