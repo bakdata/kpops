@@ -13,7 +13,7 @@ class KafkaConnectorType(str, Enum):
 
 
 class KafkaConnectorConfig(BaseModel):
-    """Settings specific to Kafka Connectors."""
+    """Settings specific to Kafka Connectors"""
 
     connector_class: str
     name: str = Field(default=..., hidden_from_schema=True)
@@ -31,8 +31,7 @@ class KafkaConnectorConfig(BaseModel):
     @validator("connector_class")
     def connector_class_must_contain_dot(cls, connector_class: str) -> str:
         if "." not in connector_class:
-            msg = f"Invalid connector class {connector_class}"
-            raise ValueError(msg)
+            raise ValueError(f"Invalid connector class {connector_class}")
         return connector_class
 
     @property

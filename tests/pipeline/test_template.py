@@ -15,7 +15,7 @@ PIPELINE_BASE_DIR = str(RESOURCE_PATH.parent)
 
 
 class TestTemplate:
-    @pytest.fixture()
+    @pytest.fixture
     def run_command(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "_Helm__execute")
 

@@ -5,12 +5,12 @@ import pytest
 from kpops.utils.environment import Environment
 
 
-@pytest.fixture()
+@pytest.fixture
 def fake_environment_windows():
     return {"MY": "fake", "ENVIRONMENT": "here"}
 
 
-@pytest.fixture()
+@pytest.fixture
 def fake_environment_linux():
     return {"my": "fake", "environment": "here"}
 

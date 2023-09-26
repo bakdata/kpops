@@ -11,7 +11,7 @@ class DryRunHandler:
         self.namespace = namespace
 
     def print_helm_diff(self, stdout: str, helm_release_name: str, log: Logger) -> None:
-        """Print the diff of the last and current release of this component.
+        """Print the diff of the last and current release of this component
 
         :param stdout: The output of a Helm command that installs or upgrades the release
         :param helm_release_name: The Helm release name

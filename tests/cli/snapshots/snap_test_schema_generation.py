@@ -58,7 +58,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
         },
         "FromSection": {
             "additionalProperties": false,
-            "description": "Holds multiple input topics.",
+            "description": "Holds multiple input topics",
             "properties": {
                 "components": {
                     "additionalProperties": {
@@ -84,7 +84,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
         },
         "FromTopic": {
             "additionalProperties": false,
-            "description": "Input topic.",
+            "description": "Input topic",
             "properties": {
                 "role": {
                     "description": "Custom identifier belonging to a topic; define only if `type` is `pattern` or `None`",
@@ -104,7 +104,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "object"
         },
         "InputTopicTypes": {
-            "description": "Input topic types.\\n\\nINPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)",
+            "description": "Input topic types\\n\\nINPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)",
             "enum": [
                 "input",
                 "pattern"
@@ -113,7 +113,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "string"
         },
         "OutputTopicTypes": {
-            "description": "Types of output topic.\\n\\nOUTPUT (output topic), ERROR (error topic)",
+            "description": "Types of output topic\\n\\nOUTPUT (output topic), ERROR (error topic)",
             "enum": [
                 "output",
                 "error"
@@ -216,7 +216,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "object"
         },
         "SubPipelineComponentCorrectDocstr": {
-            "description": "Newline before title is removed.\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
+            "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
             "properties": {
                 "example_attr": {
                     "description": "Parameter description looks correct and it is not included in the class description, terminates here",
@@ -254,7 +254,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                 },
                 "type": {
                     "default": "sub-pipeline-component-correct-docstr",
-                    "description": "Newline before title is removed.\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
+                    "description": "Newline before title is removed\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
                     "enum": [
                         "sub-pipeline-component-correct-docstr"
                     ],
@@ -317,7 +317,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "object"
         },
         "ToSection": {
-            "description": "Holds multiple output topics.",
+            "description": "Holds multiple output topics",
             "properties": {
                 "models": {
                     "additionalProperties": {
@@ -343,7 +343,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
         },
         "TopicConfig": {
             "additionalProperties": false,
-            "description": "Configure an output topic.",
+            "description": "Configure an output topic",
             "properties": {
                 "configs": {
                     "additionalProperties": {

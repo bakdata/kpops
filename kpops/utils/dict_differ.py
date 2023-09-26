@@ -3,14 +3,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from difflib import Differ
 from enum import Enum
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import Generic, Iterable, Iterator, Sequence, TypeVar
 
 import typer
 import yaml
 from dictdiffer import diff, patch
-
-if TYPE_CHECKING:
-    from collections.abc import Iterable, Iterator, Sequence
 
 differ = Differ()
 
@@ -42,8 +39,7 @@ class Change(Generic[T]):  # Generic NamedTuple requires Python 3.11+
                 return Change(change, None)
             case DiffType.CHANGE if isinstance(change, tuple):
                 return Change(*change)
-        msg = f"{type} is not part of {DiffType}"
-        raise ValueError(msg)
+        raise ValueError(f"{type} is not part of {DiffType}")
 
 
 @dataclass
@@ -57,9 +53,9 @@ class Diff(Generic[T]):
         d1: dict, d2: dict, ignore: set[str] | None = None
     ) -> Iterator[Diff]:
         for diff_type, keys, changes in diff(d1, d2, ignore=ignore):
-            if not isinstance(changes_tmp := changes, list):
-                changes_tmp = [("", changes)]
-            for key, change in changes_tmp:
+            if not isinstance(changes, list):
+                changes = [("", changes)]
+            for key, change in changes:
                 yield Diff(
                     DiffType.from_str(diff_type),
                     Diff.__find_changed_key(keys, key),
@@ -68,7 +64,9 @@ class Diff(Generic[T]):
 
     @staticmethod
     def __find_changed_key(key_1: list[str] | str, key_2: str = "") -> str:
-        """Generate a string that points to the changed key in the dictionary."""
+        """
+        Generates a string that points to the changed key in the dictionary.
+        """
         if isinstance(key_1, list) and len(key_1) > 1:
             return f"{key_1[0]}[{key_1[1]}]"
         if not key_1:

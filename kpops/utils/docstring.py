@@ -4,7 +4,7 @@ log = logging.getLogger("docstring_utils")
 
 
 def describe_attr(name: str, docstr: str | None) -> str:
-    """Read attribute description from class docstring.
+    """Read attribute description from class docstring
 
     **Works only with reStructuredText docstrings.**
 
@@ -19,7 +19,7 @@ def describe_attr(name: str, docstr: str | None) -> str:
 
 
 def describe_object(docstr: str | None) -> str:
-    """Return description from an object's docstring.
+    """Return description from an object's docstring
 
     Excludes parameters and return definitions
 
@@ -44,7 +44,7 @@ def describe_object(docstr: str | None) -> str:
 
 
 def _trim_description_end(desc: str) -> str:
-    """Remove the unwanted text that comes after a description in a docstring.
+    """Remove the unwanted text that comes after a description in a docstring
 
     Also removes all whitespaces and newlines and replaces them with a single space.
 

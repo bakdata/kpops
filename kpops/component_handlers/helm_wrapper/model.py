@@ -1,6 +1,6 @@
-from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Iterator
 
 import yaml
 from pydantic import BaseConfig, BaseModel, Extra, Field
@@ -20,7 +20,7 @@ class HelmDiffConfig(BaseModel):
 
 
 class RepoAuthFlags(BaseModel):
-    """Authorisation-related flags for `helm repo`.
+    """Authorisation-related flags for `helm repo`
 
     :param username: Username, defaults to None
     :param password: Password, defaults to None
@@ -65,7 +65,7 @@ class RepoAuthFlags(BaseModel):
 
 
 class HelmRepoConfig(BaseModel):
-    """Helm repository configuration.
+    """Helm repository configuration
 
     :param repository_name: Name of the Helm repository
     :param url: URL to the Helm repository
@@ -85,7 +85,7 @@ class HelmRepoConfig(BaseModel):
 
 
 class HelmConfig(BaseModel):
-    """Global Helm configuration.
+    """Global Helm configuration
 
     :param context: Name of kubeconfig context (`--kube-context`)
     :param debug: Run Helm in Debug mode
@@ -180,8 +180,7 @@ class HelmTemplate:
         # Source: chart/templates/serviceaccount.yaml
         """
         if not source.startswith(HELM_SOURCE_PREFIX):
-            msg = "Not a valid Helm template source"
-            raise ParseError(msg)
+            raise ParseError("Not a valid Helm template source")
         return source.removeprefix(HELM_SOURCE_PREFIX).strip()
 
     @classmethod
@@ -206,9 +205,9 @@ class HelmChart:
 
     @property
     def manifest(self) -> str:
-        """Reads the manifest section of Helm stdout.
-
-        `helm upgrade --install` output message contains three sections in the following order:
+        """
+        Reads the manifest section of Helm stdout. `helm upgrade --install` output message contains three sections
+        in the following order:
 
         - HOOKS
         - MANIFEST

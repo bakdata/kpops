@@ -32,7 +32,7 @@ from tests.components.test_kafka_connector import (
 
 
 class TestKafkaSourceConnector(TestKafkaConnector):
-    @pytest.fixture()
+    @pytest.fixture
     def connector(
         self,
         config: PipelineConfig,

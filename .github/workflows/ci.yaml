@@ -35,16 +35,11 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-interaction
 
-      - name: Lint (ruff)
-        shell: bash
-        run: |
-          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
-          then
-            echo "::add-matcher::.github/ruff-matcher.json"
-            poetry run ruff check . --config pyproject.toml --output-format text --no-fix
-          else
-            poetry run pre-commit run ruff --all-files --show-diff-on-failure
-          fi;
+      - name: Lint (flake8)
+        run: poetry run pre-commit run flake8 --all-files --show-diff-on-failure
+
+      - name: Order of imports (isort)
+        run: poetry run pre-commit run isort --all-files --show-diff-on-failure
 
       - name: Formatting (black)
         run: poetry run pre-commit run black --all-files --show-diff-on-failure
@@ -63,6 +58,11 @@ jobs:
 
       - name: Generate pipeline definitions
         run: poetry run pre-commit run gen-docs-components --all-files --show-diff-on-failure
+
+      # TODO: enable when PEP 604 incompatibilty is in typer is resolved https://github.com/tiangolo/typer/issues/348
+      # See https://github.com/tiangolo/typer/pull/522
+      # - name: Syntax (pyupgrade)
+      #   run: poetry run pre-commit run --hook-stage manual pyupgrade --all-files
 
       - name: Test
         run: poetry run pytest tests

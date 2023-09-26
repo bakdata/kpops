@@ -29,15 +29,15 @@ class TestHelmWrapper:
         temp_file_mock.return_value.__enter__.return_value.name = "values.yaml"
         return temp_file_mock
 
-    @pytest.fixture()
+    @pytest.fixture
     def run_command(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "_Helm__execute")
 
-    @pytest.fixture()
+    @pytest.fixture
     def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.component_handlers.helm_wrapper.helm.log.warning")
 
-    @pytest.fixture()
+    @pytest.fixture
     def mock_get_version(self, mocker: MockerFixture) -> MagicMock:
         mock_get_version = mocker.patch.object(Helm, "get_version")
         mock_get_version.return_value = Version(major=3, minor=12, patch=0)
@@ -337,7 +337,8 @@ class TestHelmWrapper:
             """
         )
         with pytest.raises(ParseError, match="Not a valid Helm template source"):
-            list(Helm.load_manifest(stdout))
+            helm_template = list(Helm.load_manifest(stdout))
+            assert len(helm_template) == 0
 
     def test_load_manifest(self):
         stdout = dedent(
@@ -497,7 +498,7 @@ class TestHelmWrapper:
         )
 
     @pytest.mark.parametrize(
-        ("raw_version", "expected_version"),
+        "raw_version, expected_version",
         [
             ("v3.12.0+gc9f554d", Version(3, 12, 0)),
             ("v3.12.0", Version(3, 12, 0)),

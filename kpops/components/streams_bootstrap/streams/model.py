@@ -1,5 +1,4 @@
-from collections.abc import Mapping, Set
-from typing import Any
+from typing import AbstractSet, Any, Mapping
 
 from pydantic import BaseConfig, BaseModel, Extra, Field
 from typing_extensions import override
@@ -14,7 +13,7 @@ from kpops.utils.pydantic import CamelCaseConfig, DescConfig
 
 
 class StreamsConfig(KafkaStreamsConfig):
-    """Streams Bootstrap streams section.
+    """Streams Bootstrap streams section
 
     :param input_topics: Input topics, defaults to []
     :param input_pattern: Input pattern, defaults to None
@@ -76,14 +75,14 @@ class StreamsConfig(KafkaStreamsConfig):
     def dict(
         self,
         *,
-        include: None | Set[int | str] | Mapping[int | str, Any] = None,
-        exclude: None | Set[int | str] | Mapping[int | str, Any] = None,
+        include: None | AbstractSet[int | str] | Mapping[int | str, Any] = None,
+        exclude: None | AbstractSet[int | str] | Mapping[int | str, Any] = None,
         by_alias: bool = False,
         skip_defaults: bool | None = None,
         exclude_unset: bool = False,
         **kwargs,
     ) -> dict:
-        """Generate a dictionary representation of the model.
+        """Generate a dictionary representation of the model
 
         Optionally, specify which fields to include or exclude.
 
@@ -106,7 +105,7 @@ class StreamsConfig(KafkaStreamsConfig):
 
 
 class StreamsAppAutoScaling(BaseModel):
-    """Kubernetes Event-driven Autoscaling config.
+    """Kubernetes Event-driven Autoscaling config
 
     :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
     :param consumer_group: Name of the consumer group used for checking the

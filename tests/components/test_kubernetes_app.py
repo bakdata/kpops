@@ -27,7 +27,7 @@ class KubernetesTestValue(KubernetesAppConfig):
 
 
 class TestKubernetesApp:
-    @pytest.fixture()
+    @pytest.fixture
     def config(self) -> PipelineConfig:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
@@ -35,7 +35,7 @@ class TestKubernetesApp:
             helm_diff_config=HelmDiffConfig(),
         )
 
-    @pytest.fixture()
+    @pytest.fixture
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
             schema_handler=AsyncMock(),
@@ -43,25 +43,25 @@ class TestKubernetesApp:
             topic_handler=AsyncMock(),
         )
 
-    @pytest.fixture()
+    @pytest.fixture
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
             "kpops.components.base_components.kubernetes_app.Helm"
         ).return_value
 
-    @pytest.fixture()
+    @pytest.fixture
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kubernetes_app.log.info")
 
-    @pytest.fixture()
+    @pytest.fixture
     def app_value(self) -> KubernetesTestValue:
         return KubernetesTestValue(**{"name_override": "test-value"})
 
-    @pytest.fixture()
+    @pytest.fixture
     def repo_config(self) -> HelmRepoConfig:
         return HelmRepoConfig(repository_name="test", url="https://bakdata.com")
 
-    @pytest.fixture()
+    @pytest.fixture
     def kubernetes_app(
         self,
         config: PipelineConfig,
@@ -201,8 +201,8 @@ class TestKubernetesApp:
         helm_mock.add_repo.assert_called()
 
         assert (
-            str(error.value)
-            == "Please implement the helm_chart property of the kpops.components.base_components.kubernetes_app module."
+            "Please implement the helm_chart property of the kpops.components.base_components.kubernetes_app module."
+            == str(error.value)
         )
 
     @pytest.mark.asyncio()

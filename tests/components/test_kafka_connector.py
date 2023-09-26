@@ -18,7 +18,7 @@ CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 
 
 class TestKafkaConnector:
-    @pytest.fixture()
+    @pytest.fixture
     def config(self) -> PipelineConfig:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
@@ -31,7 +31,7 @@ class TestKafkaConnector:
             helm_diff_config=HelmDiffConfig(),
         )
 
-    @pytest.fixture()
+    @pytest.fixture
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
             schema_handler=AsyncMock(),
@@ -45,13 +45,13 @@ class TestKafkaConnector:
             "kpops.components.base_components.kafka_connector.Helm"
         ).return_value
 
-    @pytest.fixture()
+    @pytest.fixture
     def dry_run_handler(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
             "kpops.components.base_components.kafka_connector.DryRunHandler"
         ).return_value
 
-    @pytest.fixture()
+    @pytest.fixture
     def connector_config(self) -> KafkaConnectorConfig:
         return KafkaConnectorConfig(
             **{
@@ -79,7 +79,7 @@ class TestKafkaConnector:
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues]
+            app={"connector.class": CONNECTOR_CLASS},  # type: ignore
             namespace="test-namespace",
         )
         assert connector.app.name == CONNECTOR_FULL_NAME
@@ -91,7 +91,7 @@ class TestKafkaConnector:
                 name=CONNECTOR_NAME,
                 config=config,
                 handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore[reportGeneralTypeIssues]
+                app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore
                 namespace="test-namespace",
             )
 
@@ -102,6 +102,6 @@ class TestKafkaConnector:
                 name=CONNECTOR_NAME,
                 config=config,
                 handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues]
+                app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore
                 namespace="test-namespace",
             )

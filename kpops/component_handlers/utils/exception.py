@@ -10,11 +10,11 @@ class HttpxException(Exception):
         self.error_code = response.status_code
         self.error_msg = "Something went wrong!"
         try:
-            log.exception(
-                f"The request responded with the code {self.error_code}. Error body: {response.json()}",
+            log.error(
+                f"The request responded with the code {self.error_code}. Error body: {response.json()}"
             )
             response.raise_for_status()
         except httpx.HTTPError as e:
             self.error_msg = str(e)
-            log.exception(f"More information: {self.error_msg}")
+            log.error(f"More information: {self.error_msg}")
         super().__init__()
