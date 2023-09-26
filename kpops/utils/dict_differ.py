@@ -3,7 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from difflib import Differ
 from enum import Enum
-from typing import Generic, Iterable, Iterator, Sequence, TypeVar
+from typing import Generic, TypeVar
+from collections.abc import Iterable, Iterator, Sequence
 
 import typer
 import yaml

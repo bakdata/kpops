@@ -1,6 +1,6 @@
 import logging
 from collections.abc import Iterator
-from typing import Iterable
+from collections.abc import Iterable
 
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
 from kpops.utils.dict_differ import Change, render_diff

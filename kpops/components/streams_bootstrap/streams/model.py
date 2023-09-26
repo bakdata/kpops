@@ -1,4 +1,5 @@
-from typing import AbstractSet, Any, Mapping
+from typing import AbstractSet, Any
+from collections.abc import Mapping
 
 from pydantic import BaseConfig, BaseModel, Extra, Field
 from typing_extensions import override

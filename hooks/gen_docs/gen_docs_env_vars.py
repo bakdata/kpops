@@ -282,7 +282,7 @@ def __fill_csv_cli(target: Path) -> None:
         var_in_main = getattr(main, var_in_main_name)
         if (
             not var_in_main_name.startswith("__")
-            and isinstance(var_in_main, (OptionInfo, ArgumentInfo))
+            and isinstance(var_in_main, OptionInfo | ArgumentInfo)
             and var_in_main.envvar
         ):
             cli_env_var_description: list[str] = [

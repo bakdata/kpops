@@ -1,7 +1,8 @@
 import asyncio
 import logging
 from asyncio import TimeoutError
-from typing import Callable, TypeVar
+from typing import TypeVar
+from collections.abc import Callable
 
 log = logging.getLogger("Timeout")
 

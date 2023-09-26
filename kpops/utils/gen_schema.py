@@ -2,7 +2,8 @@ import inspect
 import logging
 from abc import ABC
 from enum import Enum
-from typing import Annotated, Any, Literal, Sequence, Union
+from typing import Annotated, Any, Literal, Union
+from collections.abc import Sequence
 
 from pydantic import BaseConfig, Field, schema, schema_json_of
 from pydantic.fields import FieldInfo, ModelField

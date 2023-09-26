@@ -5,7 +5,7 @@ import re
 import subprocess
 import tempfile
 from collections.abc import Iterator
-from typing import Iterable
+from collections.abc import Iterable
 
 import yaml
 
@@ -206,8 +206,7 @@ class Helm:
         log.debug(f"Executing {' '.join(command)}")
         process = subprocess.run(
             command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            capture_output=True,
             text=True,
         )
         Helm.parse_helm_command_stderr_output(process.stderr)

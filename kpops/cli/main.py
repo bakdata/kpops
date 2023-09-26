@@ -3,7 +3,8 @@ from __future__ import annotations
 import logging
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterator, Optional
+from typing import TYPE_CHECKING, Optional
+from collections.abc import Iterator
 
 import dtyper
 import typer
