@@ -45,9 +45,8 @@ pytest-mock = "^3.10.0"
 pytest-timeout = "^2.1.0"
 snapshottest = "^0.6.0"
 pre-commit = "^2.19.0"
-flake8 = "^4.0.1"
+ruff = "^0.0.291"
 black = "^23.7.0"
-isort = "^5.12.0"
 typer-cli = "^0.0.13"
 pyright = "^1.1.314"
 pytest-rerunfailures = "^11.1.2"
@@ -66,6 +65,94 @@ mkdocs-glightbox = "^0.3.1"
 mike = "^1.1.2"
 
 [tool.poetry_bumpversion.file."kpops/__init__.py"]
+
+[tool.ruff]
+# E203: whitespace before ':' -- Not PEP8 compliant, black won't correct it
+# E501: Line too long -- Clashes with `black`
+# D100-D107: Missing docstring for {} -- Inconvenient to enforce
+# RUF012: type class attrs with `ClassVar` -- Too strict/trigger-happy
+# UP007: `typer` Use X | Y for type annotations -- `typer` doesn't support it
+# RET505-RET508: Lots of false positives
+# PLR09: upper bound on number of arguments, functions, etc. -- Inconvenient to enforce
+# PLR2004: Magic value used in comparison, consider replacing {value} with a constant variable -- Inconvenient to enforce
+# TRY002, TRY003: Define your own exception class, avoid using long messages -- Inconvenient to enforce
+ignore = [
+  "E203",
+  "E501",
+  "D100",
+  "D101",
+  "D102",
+  "D103",
+  "D104",
+  "D105",
+  "D106",
+  "D107",
+  "RUF012",
+  "UP007",
+  "RET505",
+  "RET506",
+  "RET507",
+  "RET508",
+  "PLR09",
+  "PLR2004",
+  "TRY002",
+  "TRY003",
+]
+# For a list of all possible rules visit https://beta.ruff.rs/docs/rules/
+# Pyflakes(F), pycodestyle(E,W), mccabe(C90), isort(I), pyupgrade(UP), flake8-bugbear(B),
+# flake8-no-pep420(INP), ruff(RUF), pep8-naming (N), flake8-2020 (YTT), flake8-async (ASYNC),
+# flake8-blind-except (BLE), flake8-commas (COM), flake8-comprehensions (C4), flake8-debugger (T10),
+# flake8-errmsg (EM), flake8-future-annotations (FA), flake8-implicit-str-concat (ISC),
+# flake8-import-conventions (ICN), flake8-no-pep420 (INP), flake8-pie (PIE), flake8-pytest-style (PT)
+# flake8-quotes (Q), flake8-raise (RSE), flake8-return (RET), flake8-slots (SLOT),
+# flake8-simplify (SIM), flake8-type-checking (TCH), flake8-unused-arguments (ARG),
+# flake8-use-pathlib (PTH), pygrep-hooks (PGH), Pylint (PL), tryceratops (TRY), refurb (FURB), flake8-logging (LOG)
+select = [
+  "F",
+  "E",
+  "W",
+  "C90",
+  "I",
+  "D",
+  "UP",
+  "B",
+  "INP",
+  "RUF",
+  "YTT",
+  "ASYNC",
+  "BLE",
+  "COM",
+  "C4",
+  "T10",
+  "EM",
+  "FA",
+  "ISC",
+  "ICN",
+  "INP",
+  "PIE",
+  "PT",
+  "Q",
+  "RSE",
+  "RET",
+  "SLOT",
+  "SIM",
+  "TCH",
+  "ARG",
+  "PTH",
+  "PGH",
+  "PL",
+  "TRY",
+  "FURB",
+  "LOG",
+]
+format = "grouped"
+show-fixes = true
+task-tags = ["TODO", "HACK", "FIXME", "XXX"]
+target-version = "py310"
+
+[tool.ruff.pydocstyle]
+# Uses pep257-compatible docstrings
+convention = "pep257"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
