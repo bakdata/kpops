@@ -113,7 +113,6 @@ class BaseDefaultsComponent(BaseModel):
 
         :param kwargs: The init kwargs for the component
         """
-        pass
 
 
 def load_defaults(
