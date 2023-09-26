@@ -27,7 +27,8 @@ class Registry:
     _classes: ClassDict[PipelineComponent] = field(default_factory=dict, init=False)
 
     def find_components(self, module_name: str) -> None:
-        """Find all PipelineComponent subclasses in module
+        """Find all PipelineComponent subclasses in module.
+
         :param module_name: name of the python module.
         """
         for _class in _find_classes(module_name, PipelineComponent):

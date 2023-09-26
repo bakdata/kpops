@@ -9,7 +9,8 @@ T = TypeVar("T")
 
 
 def timeout(func: Callable[..., T], *, secs: int = 0) -> T | None:
-    """Sets a timeout for a given lambda function
+    """Set a timeout for a given lambda function.
+
     :param func: The callable function
     :param secs: The timeout in seconds.
     """

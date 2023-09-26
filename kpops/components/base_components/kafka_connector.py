@@ -306,7 +306,7 @@ class KafkaSourceConnector(KafkaConnector):
         self.__run_kafka_connect_resetter(dry_run)
 
     def __run_kafka_connect_resetter(self, dry_run: bool) -> None:
-        """Runs the connector resetter.
+        """Run the connector resetter.
 
         :param dry_run: Whether to do a dry run of the command
         """
@@ -361,7 +361,7 @@ class KafkaSinkConnector(KafkaConnector):
     def __run_kafka_connect_resetter(
         self, dry_run: bool, delete_consumer_group: bool
     ) -> None:
-        """Runs the connector resetter.
+        """Run the connector resetter.
 
         :param dry_run: Whether to do a dry run of the command
         :param delete_consumer_group: Whether the consumer group should be deleted or not

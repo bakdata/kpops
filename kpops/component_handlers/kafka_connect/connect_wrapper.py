@@ -38,7 +38,8 @@ class ConnectWrapper:
     def create_connector(
         self, connector_config: KafkaConnectorConfig
     ) -> KafkaConnectResponse:
-        """Creates a new connector
+        """Create a new connector.
+
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#post--connectors
         :param connector_config: The config of the connector
         :return: The current connector info if successful.
@@ -62,7 +63,10 @@ class ConnectWrapper:
 
     def get_connector(self, connector_name: str) -> KafkaConnectResponse:
         """Get information about the connector.
-        API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
+
+        API Reference:
+        https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
+
         :param connector_name: Nameof the crated connector
         :return: Information about the connector.
         """
@@ -87,7 +91,11 @@ class ConnectWrapper:
     def update_connector_config(
         self, connector_config: KafkaConnectorConfig
     ) -> KafkaConnectResponse:
-        """Create a new connector using the given configuration, or update the configuration for an existing connector.
+        """Create or update a connector.
+        
+        Create a new connector using the given configuration,or update the
+        configuration for an existing connector.
+
         :param connector_config: Configuration parameters for the connector.
         :return: Information about the connector after the change has been made.
         """
@@ -118,9 +126,11 @@ class ConnectWrapper:
     def validate_connector_config(
         self, connector_config: KafkaConnectorConfig
     ) -> list[str]:
-        """Validate connector config using the given configuration
+        """Validate connector config using the given configuration.
+
         :param connector_config: Configuration parameters for the connector.
-        :return:
+        :raises KafkaConnectError: Kafka Konnect error
+        :return: List of all found errors
         """
         response = httpx.put(
             url=f"{self._host}/connector-plugins/{connector_config.class_name}/config/validate",
@@ -133,7 +143,7 @@ class ConnectWrapper:
                 **response.json()
             )
 
-            errors = []
+            errors: list[str] = []
             if kafka_connect_error_response.error_count > 0:
                 for config in kafka_connect_error_response.configs:
                     if len(config.value.errors) > 0:
@@ -145,8 +155,12 @@ class ConnectWrapper:
         raise KafkaConnectError(response)
 
     def delete_connector(self, connector_name: str) -> None:
-        """Deletes a connector, halting all tasks and deleting its configuration.
-        API Reference:https://docs.confluent.io/platform/current/connect/references/restapi.html#delete--connectors-(string-name)-.
+        """Delete a connector, halting all tasks and deleting its configuration.
+
+        API Reference:
+            https://docs.confluent.io/platform/current/connect/references/restapi.html#delete--connectors-(string-name)-.
+        :param connector_name: Configuration parameters for the connector.
+        :raises ConnectorNotFoundException: Connector not found
         """
         response = httpx.delete(
             url=f"{self._host}/connectors/{connector_name}", headers=HEADERS

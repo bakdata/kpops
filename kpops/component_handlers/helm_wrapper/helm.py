@@ -77,7 +77,7 @@ class Helm:
         values: dict,
         flags: HelmUpgradeInstallFlags = HelmUpgradeInstallFlags(),
     ) -> str:
-        """Prepares and executes the `helm upgrade --install` command."""
+        """Prepare and execute the `helm upgrade --install` command."""
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
 
@@ -103,7 +103,7 @@ class Helm:
         release_name: str,
         dry_run: bool,
     ) -> str | None:
-        """Prepares and executes the helm uninstall command."""
+        """Prepare and execute the helm uninstall command."""
         command = [
             "helm",
             "uninstall",

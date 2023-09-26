@@ -185,7 +185,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         return [self]
 
     def template(self) -> None:
-        """Runs `helm template`.
+        """Run `helm template`.
 
         From HELM: Render chart templates locally and display the output.
         Any values that would normally be looked up or retrieved in-cluster will
