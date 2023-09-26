@@ -1,5 +1,5 @@
-from typing import AbstractSet, Any
-from collections.abc import Mapping
+from typing import Any
+from collections.abc import Mapping, Set
 
 from pydantic import BaseConfig, BaseModel, Extra, Field
 from typing_extensions import override
@@ -76,8 +76,8 @@ class StreamsConfig(KafkaStreamsConfig):
     def dict(
         self,
         *,
-        include: None | AbstractSet[int | str] | Mapping[int | str, Any] = None,
-        exclude: None | AbstractSet[int | str] | Mapping[int | str, Any] = None,
+        include: None | Set [int | str] | Mapping[int | str, Any] = None,
+        exclude: None | Set [int | str] | Mapping[int | str, Any] = None,
         by_alias: bool = False,
         skip_defaults: bool | None = None,
         exclude_unset: bool = False,
