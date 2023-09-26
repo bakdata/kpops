@@ -495,9 +495,9 @@ class TestConnectorApiWrapper:
         )
 
     def test_should_parse_validate_connector_config(self, httpx_mock: HTTPXMock):
-        with open(
+        with Path(
             DEFAULTS_PATH / "connect_validation_response.json",
-        ) as f:
+        ).open() as f:
             actual_response = json.load(f)
         httpx_mock.add_response(
             method="PUT",

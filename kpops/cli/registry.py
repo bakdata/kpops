@@ -3,6 +3,7 @@ from __future__ import annotations
 import importlib
 import inspect
 import os
+from pathlib import Path
 import sys
 from collections.abc import Iterator
 from dataclasses import dataclass, field
@@ -17,7 +18,7 @@ KPOPS_MODULE = __name__ + "."
 T = TypeVar("T")
 ClassDict = dict[str, type[T]]  # type -> class
 
-sys.path.append(os.getcwd())
+sys.path.append(str(Path.cwd()))
 
 
 @dataclass

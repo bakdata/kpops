@@ -20,7 +20,7 @@ def generate_hashkey(
 def load_yaml_file(
     file_path: Path, *, substitution: Mapping[str, Any] | None = None,
 ) -> dict | list[dict]:
-    with open(file_path) as yaml_file:
+    with file_path.open() as yaml_file:
         return yaml.load(substitute(yaml_file.read(), substitution), Loader=yaml.Loader)
 
 

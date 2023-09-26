@@ -51,19 +51,19 @@ class TestTopicHandler:
 
     @pytest.fixture(autouse=True)
     def get_topic_response_mock(self) -> MagicMock:
-        with open(
+        with Path(
             DEFAULTS_PATH / "kafka_rest_proxy_responses/get_topic_response.json",
-        ) as f:
+        ).open() as f:
             response = json.load(f)
 
-        with open(
+        with Path(
             DEFAULTS_PATH / "kafka_rest_proxy_responses/broker_response.json",
-        ) as f:
+        ).open() as f:
             broker_response = json.load(f)
 
-        with open(
+        with Path(
             DEFAULTS_PATH / "kafka_rest_proxy_responses/topic_config_response.json",
-        ) as f:
+        ).open() as f:
             response_topic_config = json.load(f)
 
         wrapper = MagicMock()
@@ -76,14 +76,14 @@ class TestTopicHandler:
 
     @pytest.fixture(autouse=True)
     def get_default_topic_response_mock(self) -> MagicMock:
-        with open(
+        with Path(
             DEFAULTS_PATH / "kafka_rest_proxy_responses/get_default_topic_response.json",
-        ) as f:
+        ).open() as f:
             response = json.load(f)
 
-        with open(
+        with Path(
             DEFAULTS_PATH / "kafka_rest_proxy_responses/broker_response.json",
-        ) as f:
+        ).open() as f:
             broker_response = json.load(f)
 
         wrapper = MagicMock()

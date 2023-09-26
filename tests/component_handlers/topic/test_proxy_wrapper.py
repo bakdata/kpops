@@ -36,9 +36,9 @@ class TestProxyWrapper:
         )
         self.proxy_wrapper = ProxyWrapper(pipeline_config=config)
 
-        with open(
+        with Path(
             DEFAULTS_PATH / "kafka_rest_proxy_responses" / "cluster-info.json",
-        ) as f:
+        ).open() as f:
             cluster_response = json.load(f)
 
         httpx_mock.add_response(
