@@ -77,16 +77,9 @@ mike = "^1.1.2"
 # PLR2004: Magic value used in comparison, consider replacing {value} with a constant variable -- Inconvenient to enforce
 # TRY002, TRY003: Define your own exception class, avoid using long messages -- Inconvenient to enforce
 ignore = [
-  "E203",
+  # "E203", # Add when out of nursery
   "E501",
-  "D100",
-  "D101",
-  "D102",
-  "D103",
-  "D104",
-  "D105",
-  "D106",
-  "D107",
+  "D1",
   "RUF012",
   "UP007",
   "RET505",
@@ -98,15 +91,6 @@ ignore = [
   "TRY002",
   "TRY003",
 ]
-# For a list of all possible rules visit https://beta.ruff.rs/docs/rules/
-# Pyflakes(F), pycodestyle(E,W), mccabe(C90), isort(I), pyupgrade(UP), flake8-bugbear(B),
-# flake8-no-pep420(INP), ruff(RUF), pep8-naming (N), flake8-2020 (YTT), flake8-async (ASYNC),
-# flake8-blind-except (BLE), flake8-commas (COM), flake8-comprehensions (C4), flake8-debugger (T10),
-# flake8-errmsg (EM), flake8-future-annotations (FA), flake8-implicit-str-concat (ISC),
-# flake8-import-conventions (ICN), flake8-no-pep420 (INP), flake8-pie (PIE), flake8-pytest-style (PT)
-# flake8-quotes (Q), flake8-raise (RSE), flake8-return (RET), flake8-slots (SLOT),
-# flake8-simplify (SIM), flake8-type-checking (TCH), flake8-unused-arguments (ARG),
-# flake8-use-pathlib (PTH), pygrep-hooks (PGH), Pylint (PL), tryceratops (TRY), refurb (FURB), flake8-logging (LOG)
 select = [
   "F",
   "E",
@@ -142,8 +126,8 @@ select = [
   "PGH",
   "PL",
   "TRY",
-  "FURB",
-  "LOG",
+  # "FURB", # Add when out of nursery
+  # "LOG", # Add when out of nursery
 ]
 output-format = "grouped"
 show-fixes = true
