@@ -98,6 +98,8 @@ ignore = [
   "TRY002",
   "TRY003",
 ]
+[tool.ruff.extend-per-file-ignores]
+"tests/*/__init__.py" = ["F401"]
 # For a list of all possible rules visit https://beta.ruff.rs/docs/rules/
 # Pyflakes(F), pycodestyle(E,W), mccabe(C90), isort(I), pyupgrade(UP), flake8-bugbear(B),
 # flake8-no-pep420(INP), ruff(RUF), pep8-naming (N), flake8-2020 (YTT), flake8-async (ASYNC),
