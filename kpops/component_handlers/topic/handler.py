@@ -65,7 +65,7 @@ class TopicHandler:
                     self.proxy_wrapper.create_topic(topic_spec=topic_spec)
 
     def delete_topics(self, to_section: ToSection, dry_run: bool) -> None:
-        for topic_name in to_section.topics.keys():
+        for topic_name in to_section.topics:
             if dry_run:
                 self.__dry_run_topic_deletion(topic_name=topic_name)
             else:

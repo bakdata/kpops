@@ -195,8 +195,8 @@ class TestKubernetesApp:
             kubernetes_app.deploy(True)
         helm_mock.add_repo.assert_called()
         assert (
-            "Please implement the helm_chart property of the kpops.components.base_components.kubernetes_app module."
-            == str(error.value)
+            str(error.value)
+            == "Please implement the helm_chart property of the kpops.components.base_components.kubernetes_app module."
         )
 
     def test_should_call_helm_uninstall_when_destroying_kubernetes_app(
