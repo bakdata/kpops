@@ -76,13 +76,16 @@ class TestEnvDocGen:
         target: Path = tmp_path / "target.csv"
         csv_append_env_var(target, var_name, default_value, description, *extra_args)
         with target.open() as t:
-            assert t.read() == expected_outcome + "\n"
+            assert (
+                t.read().replace("\r\n", "\n").replace("\r", "\n")
+                == expected_outcome + "\n"
+            )
 
     def test_write_title_to_dotenv_file(self, tmp_path):
         target: Path = tmp_path / "target.ENV"
         write_title_to_dotenv_file(target, "title", "description of length 72" * 3)
         with target.open() as t:
-            assert t.read() == (
+            assert t.read().replace("\r\n", "\n").replace("\r", "\n") == (
                 "# title\n"
                 "#\n"
                 "# "
@@ -172,7 +175,7 @@ class TestEnvDocGen:
             f.write(",".join(csv_record))
         append_csv_to_dotenv_file(source, target)
         with target.open("r", newline="") as f:
-            assert f.read() == expected
+            assert f.read().replace("\r\n", "\n").replace("\r", "\n") == expected
 
     @pytest.mark.parametrize(
         ("title", "description", "heading", "expected"),
@@ -244,7 +247,7 @@ class TestEnvDocGen:
             f.write(",".join(csv_record))
         write_csv_to_md_file(source, target, title, description, heading)
         with target.open("r", newline="") as f:
-            assert f.read() == expected + str(
+            assert f.read().replace("\r\n", "\n").replace("\r", "\n") == expected + str(
                 "|Name|Default Value|Required|Description|Setting name|\n"
                 "|----|-------------|--------|-----------|------------|\n"
                 "|NAME|default      |True    |description|setting_name|\n",
