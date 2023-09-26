@@ -34,7 +34,7 @@ log = logging.getLogger("KafkaConnector")
 
 
 class KafkaConnector(PipelineComponent, ABC):
-    """Base class for all Kafka connectors
+    """Base class for all Kafka connectors.
 
     Should only be used to set defaults
 
@@ -91,7 +91,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @cached_property
     def helm(self) -> Helm:
-        """Helm object that contains component-specific config such as repo"""
+        """Helm object that contains component-specific config such as repo."""
         helm_repo_config = self.repo_config
         helm = Helm(self.config.helm_config)
         helm.add_repo(
@@ -119,7 +119,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @property
     def helm_flags(self) -> HelmFlags:
-        """Return shared flags for Helm commands"""
+        """Return shared flags for Helm commands."""
         return HelmFlags(
             **self.repo_config.repo_auth_flags.dict(),
             version=self.version,
@@ -128,7 +128,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @property
     def template_flags(self) -> HelmTemplateFlags:
-        """Return flags for Helm template command"""
+        """Return flags for Helm template command."""
         return HelmTemplateFlags(
             **self.helm_flags.dict(),
             api_version=self.config.helm_config.api_version,
@@ -169,7 +169,7 @@ class KafkaConnector(PipelineComponent, ABC):
         retain_clean_jobs: bool,
         **kwargs,
     ) -> None:
-        """Clean the connector from the cluster
+        """Clean the connector from the cluster.
 
         At first, it deletes the previous cleanup job (connector resetter)
         to make sure that there is no running clean job in the cluster. Then it releases a cleanup job.
@@ -208,7 +208,7 @@ class KafkaConnector(PipelineComponent, ABC):
         dry_run: bool,
         **kwargs,
     ) -> str:
-        """Install connector resetter
+        """Install connector resetter.
 
         :param dry_run: Whether to dry run the command
         :return: The output of `helm upgrade --install`
@@ -233,7 +233,7 @@ class KafkaConnector(PipelineComponent, ABC):
         self,
         **kwargs,
     ) -> dict:
-        """Get connector resetter helm chart values
+        """Get connector resetter helm chart values.
 
         :return: The Helm chart values of the connector resetter
         """
@@ -251,7 +251,7 @@ class KafkaConnector(PipelineComponent, ABC):
         }
 
     def __uninstall_connect_resetter(self, release_name: str, dry_run: bool) -> None:
-        """Uninstall connector resetter
+        """Uninstall connector resetter.
 
         :param release_name: Name of the release to be uninstalled
         :param dry_run: Whether to do a dry run of the command
@@ -264,7 +264,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
 
 class KafkaSourceConnector(KafkaConnector):
-    """Kafka source connector model
+    """Kafka source connector model.
 
     :param offset_topic: offset.storage.topic,
         more info: https://kafka.apache.org/documentation/#connect_running,
@@ -306,7 +306,7 @@ class KafkaSourceConnector(KafkaConnector):
         self.__run_kafka_connect_resetter(dry_run)
 
     def __run_kafka_connect_resetter(self, dry_run: bool) -> None:
-        """Runs the connector resetter
+        """Runs the connector resetter.
 
         :param dry_run: Whether to do a dry run of the command
         """
@@ -318,7 +318,7 @@ class KafkaSourceConnector(KafkaConnector):
 
 
 class KafkaSinkConnector(KafkaConnector):
-    """Kafka sink connector model"""
+    """Kafka sink connector model."""
 
     _connector_type = KafkaConnectorType.SINK
 
@@ -361,7 +361,7 @@ class KafkaSinkConnector(KafkaConnector):
     def __run_kafka_connect_resetter(
         self, dry_run: bool, delete_consumer_group: bool
     ) -> None:
-        """Runs the connector resetter
+        """Runs the connector resetter.
 
         :param dry_run: Whether to do a dry run of the command
         :param delete_consumer_group: Whether the consumer group should be deleted or not

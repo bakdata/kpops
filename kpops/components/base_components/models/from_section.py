@@ -9,7 +9,7 @@ from kpops.utils.pydantic import DescConfig
 
 
 class InputTopicTypes(str, Enum):
-    """Input topic types
+    """Input topic types.
 
     INPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)
     """
@@ -19,7 +19,7 @@ class InputTopicTypes(str, Enum):
 
 
 class FromTopic(BaseModel):
-    """Input topic
+    """Input topic.
 
     :param type: Topic type, defaults to None
     :param role: Custom identifier belonging to a topic;
@@ -37,7 +37,7 @@ class FromTopic(BaseModel):
 
     @root_validator
     def extra_topic_role(cls, values: dict[str, Any]) -> dict[str, Any]:
-        """Ensure that cls.role is used correctly, assign type if needed"""
+        """Ensure that cls.role is used correctly, assign type if needed."""
         if values["type"] == InputTopicTypes.INPUT and values["role"]:
             raise ValueError("Define role only if `type` is `pattern` or `None`")
         return values
@@ -47,7 +47,7 @@ ComponentName = NewType("ComponentName", str)
 
 
 class FromSection(BaseModel):
-    """Holds multiple input topics
+    """Holds multiple input topics.
 
     :param topics: Input topics
     :param components: Components to read from

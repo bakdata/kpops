@@ -12,7 +12,7 @@ def timeout(func: Callable[..., T], *, secs: int = 0) -> T | None:
     """
     Sets a timeout for a given lambda function
     :param func: The callable function
-    :param secs: The timeout in seconds
+    :param secs: The timeout in seconds.
     """
 
     async def main_supervisor(func: Callable[..., T], secs: int) -> T:

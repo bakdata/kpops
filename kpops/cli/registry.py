@@ -29,7 +29,7 @@ class Registry:
     def find_components(self, module_name: str) -> None:
         """
         Find all PipelineComponent subclasses in module
-        :param module_name: name of the python module
+        :param module_name: name of the python module.
         """
         for _class in _find_classes(module_name, PipelineComponent):
             self._classes[_class.type] = _class

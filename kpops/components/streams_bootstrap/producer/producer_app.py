@@ -14,7 +14,7 @@ from kpops.utils.docstring import describe_attr
 
 
 class ProducerApp(KafkaApp):
-    """Producer component
+    """Producer component.
 
     This producer holds configuration to use as values for the streams bootstrap
     producer helm chart.

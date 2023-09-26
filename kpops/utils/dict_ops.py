@@ -2,7 +2,7 @@ from typing import Any, Mapping
 
 
 def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
-    """Nested update for 2 dictionaries
+    """Nested update for 2 dictionaries.
 
     Adds all new fields in ``other_dict`` to ``original_dict``.
     Does not update existing fields.
@@ -48,7 +48,7 @@ def update_nested(*argv: dict) -> dict:
 def flatten_mapping(
     nested_mapping: Mapping[str, Any], prefix: str | None = None, separator: str = "_"
 ) -> dict[str, Any]:
-    """Flattens a Mapping
+    """Flattens a Mapping.
 
     :param nested_mapping: Nested mapping that is to be flattened
     :param prefix: Prefix that will be applied to all top-level keys in the output., defaults to None
@@ -76,7 +76,7 @@ def generate_substitution(
     prefix: str | None = None,
     existing_substitution: dict | None = None,
 ) -> dict:
-    """Generate a complete substitution dict from a given dict
+    """Generate a complete substitution dict from a given dict.
 
     Finds all attributes that belong to a model and expands them to create
     a dict containing each variable name and value to substitute with.

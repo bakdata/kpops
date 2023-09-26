@@ -13,7 +13,7 @@ class KafkaConnectorType(str, Enum):
 
 
 class KafkaConnectorConfig(BaseModel):
-    """Settings specific to Kafka Connectors"""
+    """Settings specific to Kafka Connectors."""
 
     connector_class: str
     name: str = Field(default=..., hidden_from_schema=True)

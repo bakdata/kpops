@@ -10,7 +10,7 @@ from kpops.utils.docstring import describe_attr
 
 
 class StreamsApp(KafkaApp):
-    """StreamsApp component that configures a streams bootstrap app
+    """StreamsApp component that configures a streams bootstrap app.
 
     :param app: Application-specific settings
     """
@@ -67,7 +67,7 @@ class StreamsApp(KafkaApp):
         self.__run_streams_clean_up_job(dry_run, delete_output=True)
 
     def __run_streams_clean_up_job(self, dry_run: bool, delete_output: bool) -> None:
-        """Run clean job for this Streams app
+        """Run clean job for this Streams app.
 
         :param dry_run: Whether to do a dry run of the command
         :param delete_output: Whether to delete the output of the app that is being cleaned

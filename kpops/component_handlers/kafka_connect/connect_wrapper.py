@@ -20,9 +20,7 @@ log = logging.getLogger("KafkaConnectAPI")
 
 
 class ConnectWrapper:
-    """
-    Wraps Kafka Connect APIs
-    """
+    """Wraps Kafka Connect APIs."""
 
     def __init__(self, host: str | None):
         if not host:
@@ -44,7 +42,7 @@ class ConnectWrapper:
         Creates a new connector
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#post--connectors
         :param connector_config: The config of the connector
-        :return: The current connector info if successful
+        :return: The current connector info if successful.
         """
         config_json = connector_config.dict()
         connect_data = {"name": connector_config.name, "config": config_json}
@@ -68,7 +66,7 @@ class ConnectWrapper:
         Get information about the connector.
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
         :param connector_name: Nameof the crated connector
-        :return: Information about the connector
+        :return: Information about the connector.
         """
         response = httpx.get(
             url=f"{self._host}/connectors/{connector_name}", headers=HEADERS
@@ -153,7 +151,7 @@ class ConnectWrapper:
     def delete_connector(self, connector_name: str) -> None:
         """
         Deletes a connector, halting all tasks and deleting its configuration.
-        API Reference:https://docs.confluent.io/platform/current/connect/references/restapi.html#delete--connectors-(string-name)-
+        API Reference:https://docs.confluent.io/platform/current/connect/references/restapi.html#delete--connectors-(string-name)-.
         """
         response = httpx.delete(
             url=f"{self._host}/connectors/{connector_name}", headers=HEADERS

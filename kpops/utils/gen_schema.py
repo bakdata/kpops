@@ -58,7 +58,7 @@ def _is_valid_component(
 def _add_components(
     components_module: str, components: tuple[type[PipelineComponent]] | None = None
 ) -> tuple[type[PipelineComponent]]:
-    """Add components to a components tuple
+    """Add components to a components tuple.
 
     If an empty tuple is provided or it is not provided at all, the components
     types from the given module are 'tupled'
@@ -137,7 +137,7 @@ def gen_pipeline_schema(
 
 
 def gen_config_schema() -> None:
-    """Generate a json schema from the model of pipeline config"""
+    """Generate a json schema from the model of pipeline config."""
     schema = schema_json_of(
         PipelineConfig, title="KPOps config schema", indent=4, sort_keys=True
     )

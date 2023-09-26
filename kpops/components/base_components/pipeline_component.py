@@ -22,7 +22,7 @@ from kpops.utils.pydantic import DescConfig
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
-    """Base class for all components
+    """Base class for all components.
 
     :param name: Component name
     :param prefix: Pipeline prefix that will prefix every component name.
@@ -76,39 +76,39 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
 
     def set_input_pattern(self, name: str) -> None:
-        """Set input pattern
+        """Set input pattern.
 
         :param name: Input pattern name
         """
 
     def add_extra_input_pattern(self, role: str, topic: str) -> None:
-        """Add an input pattern of type extra
+        """Add an input pattern of type extra.
 
         :param role: Custom identifier belonging to one or multiple topics
         :param topic: Topic name
         """
 
     def set_output_topic(self, topic_name: str) -> None:
-        """Set output topic
+        """Set output topic.
 
         :param topic_name: Output topic name
         """
 
     def set_error_topic(self, topic_name: str) -> None:
-        """Set error topic
+        """Set error topic.
 
         :param topic_name: Error topic name
         """
 
     def add_extra_output_topic(self, topic_name: str, role: str) -> None:
-        """Add an output topic of type extra
+        """Add an output topic of type extra.
 
         :param topic_name: Output topic name
         :param role: Role that is unique to the extra output topic
         """
 
     def set_input_topics(self) -> None:
-        """Put values of config.from into the streams config section of streams bootstrap
+        """Put values of config.from into the streams config section of streams bootstrap.
 
         Supports extra_input_topics (topics by role) or input_topics.
         """
@@ -117,7 +117,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
                 self.apply_from_inputs(name, topic)
 
     def apply_from_inputs(self, name: str, topic: FromTopic) -> None:
-        """Add a `from` section input to the component config
+        """Add a `from` section input to the component config.
 
         :param name: Name of the field
         :param topic: Value of the field
@@ -133,7 +133,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
                 self.add_input_topics([name])
 
     def set_output_topics(self) -> None:
-        """Put values of config.to into the producer config section of streams bootstrap
+        """Put values of config.to into the producer config section of streams bootstrap.
 
         Supports extra_output_topics (topics by role) or output_topics.
         """
@@ -142,7 +142,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
                 self.apply_to_outputs(name, topic)
 
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:
-        """Add a `to` section input to the component config
+        """Add a `to` section input to the component config.
 
         :param name: Name of the field
         :param topic: Value of the field
@@ -160,7 +160,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         to: ToSection | None,
         from_topic: FromTopic = FromTopic(type=InputTopicTypes.INPUT),
     ) -> None:
-        """Weave output topics of upstream component or from component into config
+        """Weave output topics of upstream component or from component into config.
 
         Override this method to apply custom logic
         """
@@ -175,7 +175,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
             self.apply_from_inputs(input_topic, from_topic)
 
     def inflate(self) -> list[PipelineComponent]:
-        """Inflate a component
+        """Inflate a component.
 
         This is helpful if one component should result in multiple components.
         To support this, override this method and return a list of components
@@ -186,7 +186,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
 
     def template(self) -> None:
         """
-        Runs `helm template`
+        Runs `helm template`.
 
         From HELM: Render chart templates locally and display the output.
         Any values that would normally be looked up or retrieved in-cluster will
@@ -195,25 +195,25 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
 
     def deploy(self, dry_run: bool) -> None:
-        """Deploy the component (self) to the k8s cluster
+        """Deploy the component (self) to the k8s cluster.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
     def destroy(self, dry_run: bool) -> None:
-        """Uninstall the component (self) from the k8s cluster
+        """Uninstall the component (self) from the k8s cluster.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
     def reset(self, dry_run: bool) -> None:
-        """Reset component (self) state
+        """Reset component (self) state.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
     def clean(self, dry_run: bool) -> None:
-        """Remove component (self) and any trace of it
+        """Remove component (self) and any trace of it.
 
         :param dry_run: Whether to do a dry run of the command
         """

@@ -32,7 +32,7 @@ class ValidationError(Exception):
 
 
 class PipelineComponents(BaseModel):
-    """Stores the pipeline components"""
+    """Stores the pipeline components."""
 
     components: list[PipelineComponent] = []
 
@@ -79,7 +79,7 @@ class PipelineComponents(BaseModel):
 def create_env_components_index(
     environment_components: list[dict],
 ) -> dict[str, dict]:
-    """Create an index for all registered components in the project
+    """Create an index for all registered components in the project.
 
     :param environment_components: List of all components to be included
     :return: component index
@@ -120,7 +120,7 @@ class Pipeline:
         config: PipelineConfig,
         handlers: ComponentHandlers,
     ) -> Pipeline:
-        """Load pipeline definition from yaml
+        """Load pipeline definition from yaml.
 
         The file is often named ``pipeline.yaml``
 
@@ -152,7 +152,7 @@ class Pipeline:
         return pipeline
 
     def parse_components(self, component_list: list[dict]) -> None:
-        """Instantiate, enrich and inflate a list of components
+        """Instantiate, enrich and inflate a list of components.
 
         :param component_list: List of components
         :raises ValueError: Every component must have a type defined
@@ -224,7 +224,7 @@ class Pipeline:
         self,
         component: PipelineComponent,
     ) -> PipelineComponent:
-        """Enrich a pipeline component with env-specific config and substitute variables
+        """Enrich a pipeline component with env-specific config and substitute variables.
 
         :param component: Component to be enriched
         :returns: Enriched component
@@ -249,7 +249,7 @@ class Pipeline:
         )
 
     def print_yaml(self, substitution: dict | None = None) -> None:
-        """Print the generated pipeline definition
+        """Print the generated pipeline definition.
 
         :param substitution: Substitution dictionary, defaults to None
         """
@@ -277,7 +277,7 @@ class Pipeline:
         return len(self.components)
 
     def substitute_in_component(self, component_as_dict: dict) -> dict:
-        """Substitute all $-placeholders in a component in dict representation
+        """Substitute all $-placeholders in a component in dict representation.
 
         :param component_as_dict: Component represented as dict
         :return: Updated component
@@ -311,7 +311,7 @@ class Pipeline:
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: PipelineConfig) -> Path:
-        """Add the environment name from the PipelineConfig to the pipeline.yaml path
+        """Add the environment name from the PipelineConfig to the pipeline.yaml path.
 
         :param path: Path to pipeline.yaml file
         :param config: The PipelineConfig

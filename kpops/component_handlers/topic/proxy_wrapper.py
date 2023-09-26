@@ -21,9 +21,7 @@ HEADERS = {"Content-Type": "application/json"}
 
 
 class ProxyWrapper:
-    """
-    Wraps Kafka REST Proxy APIs
-    """
+    """Wraps Kafka REST Proxy APIs."""
 
     def __init__(self, pipeline_config: PipelineConfig) -> None:
         if not pipeline_config.kafka_rest_host:
@@ -38,7 +36,7 @@ class ProxyWrapper:
         """
         Gets the Kafka cluster ID by sending a requests to Kafka REST proxy.
         More information about the cluster ID can be found here:
-        https://docs.confluent.io/platform/current/kafka-rest/api.html#cluster-v3
+        https://docs.confluent.io/platform/current/kafka-rest/api.html#cluster-v3.
 
         Currently both Kafka and Kafka REST Proxy are only aware of the Kafka cluster pointed at by the
         bootstrap.servers configuration. Therefore, only one Kafka cluster will be returned.
@@ -77,7 +75,7 @@ class ProxyWrapper:
         """
         Deletes a topic
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#delete--clusters-cluster_id-topics-topic_name
-        :param topic_name: Name of the topic
+        :param topic_name: Name of the topic.
         """
         response = httpx.delete(
             url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
@@ -94,7 +92,7 @@ class ProxyWrapper:
         Returns the topic with the given topic_name.
         API Reference: https://docs.confluent.io/platform/current/kafka-rest/api.html#get--clusters-cluster_id-topics-topic_name
         :param topic_name: The topic name.
-        :return: Response of the get topic API
+        :return: Response of the get topic API.
         """
         response = httpx.get(
             url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",

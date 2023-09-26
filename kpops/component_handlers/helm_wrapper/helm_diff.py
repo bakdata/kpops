@@ -17,7 +17,7 @@ class HelmDiff:
         current_release: Iterable[HelmTemplate],
         new_release: Iterable[HelmTemplate],
     ) -> Iterator[Change[dict]]:
-        """Compare 2 releases and generate a Change object for each difference
+        """Compare 2 releases and generate a Change object for each difference.
 
         :param current_release: Iterable containing HelmTemplate objects for the current release
         :param new_release: Iterable containing HelmTemplate objects for the new release

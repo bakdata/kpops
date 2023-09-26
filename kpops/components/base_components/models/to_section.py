@@ -9,7 +9,7 @@ from kpops.utils.pydantic import DescConfig
 
 
 class OutputTopicTypes(str, Enum):
-    """Types of output topic
+    """Types of output topic.
 
     OUTPUT (output topic), ERROR (error topic)
     """
@@ -19,7 +19,7 @@ class OutputTopicTypes(str, Enum):
 
 
 class TopicConfig(BaseModel):
-    """Configure an output topic
+    """Configure an output topic.
 
     :param type: Topic type
     :param key_schema: Key schema class name
@@ -65,14 +65,14 @@ class TopicConfig(BaseModel):
 
     @root_validator
     def extra_topic_role(cls, values: dict[str, Any]) -> dict[str, Any]:
-        """Ensure that cls.role is used correctly, assign type if needed"""
+        """Ensure that cls.role is used correctly, assign type if needed."""
         if values["type"] and values["role"]:
             raise ValueError("Define `role` only if `type` is undefined")
         return values
 
 
 class ToSection(BaseModel):
-    """Holds multiple output topics
+    """Holds multiple output topics.
 
     :param topics: Output topics
     :param models: Data models

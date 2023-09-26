@@ -22,7 +22,7 @@ log = logging.getLogger("KafkaApp")
 
 
 class KafkaStreamsConfig(BaseModel):
-    """Kafka Streams config
+    """Kafka Streams config.
 
     :param brokers: Brokers
     :param schema_registry_url: URL of the schema registry, defaults to None
@@ -38,7 +38,7 @@ class KafkaStreamsConfig(BaseModel):
 
 
 class KafkaAppConfig(KubernetesAppConfig):
-    """Settings specific to Kafka Apps
+    """Settings specific to Kafka Apps.
 
     :param streams: Kafka streams config
     :param name_override: Override name with this value, defaults to None
@@ -82,7 +82,7 @@ class KafkaApp(KubernetesApp, ABC):
 
     @property
     def clean_up_helm_chart(self) -> str:
-        """Helm chart used to destroy and clean this component"""
+        """Helm chart used to destroy and clean this component."""
         raise NotImplementedError()
 
     @override
@@ -104,7 +104,7 @@ class KafkaApp(KubernetesApp, ABC):
         dry_run: bool,
         retain_clean_jobs: bool = False,
     ) -> None:
-        """Clean an app using the respective cleanup job
+        """Clean an app using the respective cleanup job.
 
         :param values: The value YAML for the chart
         :param dry_run: Dry run command
@@ -133,7 +133,7 @@ class KafkaApp(KubernetesApp, ABC):
             self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
 
     def __uninstall_clean_up_job(self, release_name: str, dry_run: bool) -> None:
-        """Uninstall clean up job
+        """Uninstall clean up job.
 
         :param release_name: Name of the Helm release
         :param dry_run: Whether to do a dry run of the command
@@ -147,7 +147,7 @@ class KafkaApp(KubernetesApp, ABC):
         values: dict,
         dry_run: bool,
     ) -> str:
-        """Install clean up job
+        """Install clean up job.
 
         :param release_name: Name of the Helm release
         :param suffix: Suffix to add to the release name, e.g. "-clean"

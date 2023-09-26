@@ -78,14 +78,14 @@ class BaseDefaultsComponent(BaseModel):
 
     @cached_classproperty
     def type(cls: type[Self]) -> str:  # pyright: ignore
-        """Return calling component's type
+        """Return calling component's type.
 
         :returns: Component class name in dash-case
         """
         return to_dash(cls.__name__)
 
     def extend_with_defaults(self, **kwargs) -> dict:
-        """Merge parent components' defaults with own
+        """Merge parent components' defaults with own.
 
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inheritted defaults
@@ -121,7 +121,7 @@ def load_defaults(
     defaults_file_path: Path,
     environment_defaults_file_path: Path | None = None,
 ) -> dict:
-    """Resolve component-specific defaults including environment defaults
+    """Resolve component-specific defaults including environment defaults.
 
     :param component_class: Component class
     :param defaults_file_path: Path to `defaults.yaml`
@@ -153,7 +153,7 @@ def load_defaults(
 
 
 def defaults_from_yaml(path: Path, key: str) -> dict:
-    """Read component-specific settings from a defaults yaml file and return @default if not found
+    """Read component-specific settings from a defaults yaml file and return @default if not found.
 
     :param path: Path to defaults yaml file
     :param key: Component type
@@ -178,7 +178,7 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
 
 
 def get_defaults_file_paths(config: PipelineConfig) -> tuple[Path, Path]:
-    """Return the paths to the main and the environment defaults-files
+    """Return the paths to the main and the environment defaults-files.
 
     The files need not exist, this function will only check if the dir set in
     `config.defaults_path` exists and return paths to the defaults files
