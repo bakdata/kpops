@@ -26,8 +26,7 @@ def timeout(func: Callable[..., T], *, secs: int = 0) -> T | None:
 
     loop = asyncio.get_event_loop()
     try:
-        complete = loop.run_until_complete(main_supervisor(func, secs))
-        return complete
+        return loop.run_until_complete(main_supervisor(func, secs))
     except TimeoutError:
         log.error(
             f"Kafka Connect operation {func.__name__} timed out after {secs} seconds. To increase the duration, set the `timeout` option in config.yaml.",

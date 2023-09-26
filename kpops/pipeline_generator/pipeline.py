@@ -153,8 +153,7 @@ class Pipeline:
                     msg,
                 )
 
-        pipeline = cls(main_content, env_content, registry, config, handlers)
-        return pipeline
+        return cls(main_content, env_content, registry, config, handlers)
 
     def parse_components(self, component_list: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components.

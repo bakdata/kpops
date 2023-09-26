@@ -105,8 +105,7 @@ class BaseDefaultsComponent(BaseModel):
         defaults = load_defaults(
             self.__class__, main_default_file_path, environment_default_file_path,
         )
-        kwargs = update_nested(kwargs, defaults)
-        return kwargs
+        return update_nested(kwargs, defaults)
 
     def _validate_custom(self, **kwargs) -> None:
         """Run custom validation on component.
