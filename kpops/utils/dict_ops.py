@@ -20,9 +20,8 @@ def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
             nested_val = original_dict.get(key, {})
             if isinstance(nested_val, dict):
                 original_dict[key] = update_nested_pair(nested_val, value)
-        else:
-            if key not in original_dict:
-                original_dict[key] = value
+        elif key not in original_dict:
+            original_dict[key] = value
     return original_dict
 
 

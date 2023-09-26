@@ -55,9 +55,9 @@ class Diff(Generic[T]):
         d1: dict, d2: dict, ignore: set[str] | None = None,
     ) -> Iterator[Diff]:
         for diff_type, keys, changes in diff(d1, d2, ignore=ignore):
-            if not isinstance(changes, list):
-                changes = [("", changes)]
-            for key, change in changes:
+            if not isinstance(changes_tmp:=changes, list):
+                changes_tmp = [("", changes)]
+            for key, change in changes_tmp:
                 yield Diff(
                     DiffType.from_str(diff_type),
                     Diff.__find_changed_key(keys, key),

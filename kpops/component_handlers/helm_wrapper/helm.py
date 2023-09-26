@@ -214,6 +214,7 @@ class Helm:
         log.debug(f"Executing {' '.join(command)}")
         process = subprocess.run(
             command,
+            check=True,
             capture_output=True,
             text=True,
         )
