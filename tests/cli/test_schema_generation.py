@@ -9,7 +9,7 @@ from pydantic import Field
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
-import tests.cli.resources.empty_module as empty_module
+from tests.cli.resources import empty_module
 from kpops.cli.main import app
 from kpops.components.base_components import PipelineComponent
 from kpops.utils.docstring import describe_attr
