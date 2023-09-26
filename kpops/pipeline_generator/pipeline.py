@@ -3,9 +3,8 @@ from __future__ import annotations
 import json
 import logging
 from collections import Counter
-from collections.abc import Iterator
 from contextlib import suppress
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import yaml
 from pydantic import BaseModel
@@ -19,6 +18,10 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
 from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+    from pathlib import Path
 
 log = logging.getLogger("PipelineGenerator")
 

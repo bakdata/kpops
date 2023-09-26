@@ -99,6 +99,8 @@ ignore = [
   "RET506", # Unnecessary {branch} after raise statement -- Lots of false positives
   "RET507", # Unnecessary {branch} after continue statement -- Lots of false positives
   "RET508", # Unnecessary {branch} after break statement -- Lots of false positives
+  "TCH001", # 
+  "TCH002",
   "PLR09", # upper bound on number of arguments, functions, etc. -- Inconvenient to enforce
   "PLR2004", # Magic value used in comparison, consider replacing {value} with a constant variable -- Inconvenient to enforce
   "PLW2901", # `for` loop variable `{var}` overwritten by assignment target -- Inconvenient to enforce
@@ -134,7 +136,7 @@ select = [
   "RET", # flake8-return
   "SLOT", # flake8-slots
   "SIM", # flake8-simplify
-  # "TCH", # flake8-type-checking, configure correctly and add
+  "TCH", # flake8-type-checking, configure correctly and add
   "PTH", # flake8-use-pathlib
   "PGH", # pygrep-hooks
   "PL", # Pylint

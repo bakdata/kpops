@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Iterator
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -24,6 +23,8 @@ from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from kpops.components.base_components import PipelineComponent
 
 LOG_DIVIDER = "#" * 100

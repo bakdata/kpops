@@ -1,14 +1,16 @@
 from __future__ import annotations
 
-from collections.abc import Iterable, Iterator, Sequence
 from dataclasses import dataclass
 from difflib import Differ
 from enum import Enum
-from typing import Generic, TypeVar
+from typing import TYPE_CHECKING, Generic, TypeVar
 
 import typer
 import yaml
 from dictdiffer import diff, patch
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator, Sequence
 
 differ = Differ()
 

@@ -3,14 +3,16 @@ from __future__ import annotations
 import importlib
 import inspect
 import sys
-from collections.abc import Iterator
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from kpops import __name__
 from kpops.cli.exception import ClassNotFoundError
 from kpops.components.base_components.pipeline_component import PipelineComponent
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 KPOPS_MODULE = __name__ + "."
 

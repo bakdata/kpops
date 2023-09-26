@@ -4,7 +4,7 @@ import logging
 import re
 import subprocess
 import tempfile
-from collections.abc import Iterable, Iterator
+from typing import TYPE_CHECKING
 
 import yaml
 
@@ -18,6 +18,9 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
     Version,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable, Iterator
 
 log = logging.getLogger("Helm")
 
