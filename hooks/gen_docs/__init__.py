@@ -1,24 +1,23 @@
 """Documentation generation."""
 
-from collections.abc import Generator
+from collections.abc import Iterator
 from enum import Enum
-from typing import Any
 
 
-class StrEnum(str, Enum):
+class IterableStrEnum(str, Enum):
     """Temporary replacement for StrEnum while we suppport python3.10"""
 
     @classmethod
-    def items(cls) -> Generator[tuple[Any, str], None, None]:
+    def items(cls) -> Iterator[tuple[str, str]]:
         """Return all item names and values in tuples."""
         return ((e.name, e.value) for e in cls)
 
     @classmethod
-    def keys(cls) -> Generator[str, None, None]:
+    def keys(cls) -> Iterator[str]:
         """Return all item names."""
         return (e.name for e in cls)
 
     @classmethod
-    def values(cls) -> Generator[Any, None, None]:
+    def values(cls) -> Iterator[str]:
         """Return all item values."""
         return (e.value for e in cls)
