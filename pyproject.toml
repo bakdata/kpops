@@ -101,6 +101,7 @@ ignore = [
   "RET508", # Unnecessary {branch} after break statement -- Lots of false positives
   "PLR09", # upper bound on number of arguments, functions, etc. -- Inconvenient to enforce
   "PLR2004", # Magic value used in comparison, consider replacing {value} with a constant variable -- Inconvenient to enforce
+  "PLW2901", # `for` loop variable `{var}` overwritten by assignment target -- Inconvenient to enforce
   "TRY002", # Create your own exception -- Inconvenient to enforce
   "TRY003", # Avoid specifying long messages outside the exception class -- Inconvenient to enforce
 ]
