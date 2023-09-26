@@ -70,7 +70,8 @@ def substitute_nested(input: str, **kwargs) -> str:
         steps.add(new_str)
         old_str, new_str = new_str, substitute(new_str, kwargs)
     if new_str != old_str:
+        msg = "An infinite loop condition detected. Check substitution variables."
         raise ValueError(
-            "An infinite loop condition detected. Check substitution variables.",
+            msg,
         )
     return old_str

@@ -180,7 +180,8 @@ class HelmTemplate:
         # Source: chart/templates/serviceaccount.yaml
         """
         if not source.startswith(HELM_SOURCE_PREFIX):
-            raise ParseError("Not a valid Helm template source")
+            msg = "Not a valid Helm template source"
+            raise ParseError(msg)
         return source.removeprefix(HELM_SOURCE_PREFIX).strip()
 
     @classmethod

@@ -165,8 +165,9 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
     """
     content = load_yaml_file(path, substitution=ENV)
     if not isinstance(content, dict):
+        msg = "Default files should be structured as map ([app type] -> [default config]"
         raise TypeError(
-            "Default files should be structured as map ([app type] -> [default config]",
+            msg,
         )
     value = content.get(key)
     if value is None:

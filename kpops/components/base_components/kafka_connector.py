@@ -85,7 +85,8 @@ class KafkaConnector(PipelineComponent, ABC):
         component_name = values["prefix"] + values["name"]
         connector_name: str | None = app.get("name")
         if connector_name is not None and connector_name != component_name:
-            raise ValueError("Connector name should be the same as component name")
+            msg = "Connector name should be the same as component name"
+            raise ValueError(msg)
         app["name"] = component_name
         return app
 
@@ -280,7 +281,8 @@ class KafkaSourceConnector(KafkaConnector):
 
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
-        raise NotImplementedError("Kafka source connector doesn't support FromSection")
+        msg = "Kafka source connector doesn't support FromSection"
+        raise NotImplementedError(msg)
 
     @override
     def template(self) -> None:

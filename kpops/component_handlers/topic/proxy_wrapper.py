@@ -25,8 +25,9 @@ class ProxyWrapper:
 
     def __init__(self, pipeline_config: PipelineConfig) -> None:
         if not pipeline_config.kafka_rest_host:
+            msg = "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
             raise ValueError(
-                "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST.",
+                msg,
             )
 
         self._host = pipeline_config.kafka_rest_host

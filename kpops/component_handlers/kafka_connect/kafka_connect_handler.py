@@ -114,8 +114,9 @@ class KafkaConnectHandler:
         errors = self._connect_wrapper.validate_connector_config(connector_config)
         if len(errors) > 0:
             formatted_errors = "\n".join(errors)
+            msg = f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors: {formatted_errors}"
             raise ConnectorStateException(
-                f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors: {formatted_errors}",
+                msg,
             )
         else:
             log.info(

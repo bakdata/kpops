@@ -38,8 +38,9 @@ class Registry:
         try:
             return self._classes[component_type]
         except KeyError as ke:
+            msg = f"Could not find a component of type {component_type}"
             raise ClassNotFoundError(
-                f"Could not find a component of type {component_type}",
+                msg,
             ) from ke
 
 

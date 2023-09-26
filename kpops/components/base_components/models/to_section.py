@@ -67,7 +67,8 @@ class TopicConfig(BaseModel):
     def extra_topic_role(cls, values: dict[str, Any]) -> dict[str, Any]:
         """Ensure that cls.role is used correctly, assign type if needed."""
         if values["type"] and values["role"]:
-            raise ValueError("Define `role` only if `type` is undefined")
+            msg = "Define `role` only if `type` is undefined"
+            raise ValueError(msg)
         return values
 
 

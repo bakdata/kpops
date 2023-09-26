@@ -44,7 +44,8 @@ class PipelineComponents(BaseModel):
         for component in self.components:
             if component_name == component.name:
                 return component
-        raise ValueError(f"Component {component_name} not found")
+        msg = f"Component {component_name} not found"
+        raise ValueError(msg)
 
     def add(self, component: PipelineComponent) -> None:
         self._populate_component_name(component)
@@ -63,8 +64,9 @@ class PipelineComponents(BaseModel):
         step_names = [component.full_name for component in self.components]
         duplicates = [name for name, count in Counter(step_names).items() if count > 1]
         if duplicates:
+            msg = f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
             raise ValidationError(
-                f"step names should be unique. duplicate step names: {', '.join(duplicates)}",
+                msg,
             )
 
     @staticmethod
@@ -87,8 +89,9 @@ def create_env_components_index(
     index: dict[str, dict] = {}
     for component in environment_components:
         if "type" not in component or "name" not in component:
+            msg = "To override components per environment, every component should at least have a type and a name."
             raise ValueError(
-                "To override components per environment, every component should at least have a type and a name.",
+                msg,
             )
         index[component["name"]] = component
     return index
@@ -137,15 +140,17 @@ class Pipeline:
 
         main_content = load_yaml_file(path, substitution=ENV)
         if not isinstance(main_content, list):
+            msg = f"The pipeline definition {path} should contain a list of components"
             raise TypeError(
-                f"The pipeline definition {path} should contain a list of components",
+                msg,
             )
         env_content = []
         if (env_file := Pipeline.pipeline_filename_environment(path, config)).exists():
             env_content = load_yaml_file(env_file, substitution=ENV)
             if not isinstance(env_content, list):
+                msg = f"The pipeline definition {env_file} should contain a list of components"
                 raise TypeError(
-                    f"The pipeline definition {env_file} should contain a list of components",
+                    msg,
                 )
 
         pipeline = cls(main_content, env_content, registry, config, handlers)
@@ -164,15 +169,17 @@ class Pipeline:
                 try:
                     component_type: str = component_data["type"]
                 except KeyError as ke:
+                    msg = "Every component must have a type defined, this component does not have one."
                     raise ValueError(
-                        "Every component must have a type defined, this component does not have one.",
+                        msg,
                     ) from ke
                 component_class = self.registry[component_type]
                 self.apply_component(component_class, component_data)
             except Exception as ex:  # noqa: BLE001
                 if "name" in component_data:
+                    msg = f"Error enriching {component_data['type']} component {component_data['name']}"
                     raise ParsingException(
-                        f"Error enriching {component_data['type']} component {component_data['name']}",
+                        msg,
                     ) from ex
                 else:
                     raise ParsingException() from ex
@@ -336,7 +343,8 @@ class Pipeline:
         """
         path_without_file = path.resolve().relative_to(base_dir.resolve()).parts[:-1]
         if not path_without_file:
-            raise ValueError("The pipeline-base-dir should not equal the pipeline-path")
+            msg = "The pipeline-base-dir should not equal the pipeline-path"
+            raise ValueError(msg)
         pipeline_name = "-".join(path_without_file)
         ENV["pipeline_name"] = pipeline_name
         for level, parent in enumerate(path_without_file):

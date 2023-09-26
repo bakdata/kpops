@@ -40,7 +40,8 @@ class Change(Generic[T]):  # Generic NamedTuple requires Python 3.11+
                 return Change(change, None)
             case DiffType.CHANGE if isinstance(change, tuple):
                 return Change(*change)
-        raise ValueError(f"{type} is not part of {DiffType}")
+        msg = f"{type} is not part of {DiffType}"
+        raise ValueError(msg)
 
 
 @dataclass

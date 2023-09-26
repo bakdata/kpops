@@ -26,7 +26,8 @@ original_field_schema = schema.field_schema
 # adapted from https://github.com/tiangolo/fastapi/issues/1378#issuecomment-764966955
 def field_schema(field: ModelField, **kwargs: Any) -> Any:
     if field.field_info.extra.get("hidden_from_schema"):
-        raise SkipField(f"{field.name} field is being hidden")
+        msg = f"{field.name} field is being hidden"
+        raise SkipField(msg)
     else:
         return original_field_schema(field, **kwargs)
 
@@ -102,7 +103,8 @@ def gen_pipeline_schema(
     if components_module:
         components = _add_components(components_module, components)
     if not components:
-        raise RuntimeError("No valid components found.")
+        msg = "No valid components found."
+        raise RuntimeError(msg)
     # Create a type union that will hold the union of all component types
     PipelineComponents = Union[components]  # type: ignore[valid-type]
 

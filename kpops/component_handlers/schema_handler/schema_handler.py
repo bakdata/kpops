@@ -29,15 +29,16 @@ class SchemaHandler:
     def schema_provider(self) -> SchemaProvider:
         try:
             if not self.components_module:
+                msg = f"The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your {SchemaProvider.__name__} implementation exists."
                 raise ValueError(
-                    f"The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your {SchemaProvider.__name__} implementation exists.",
+                    msg,
                 )
             schema_provider_class = find_class(self.components_module, SchemaProvider)
             return schema_provider_class()  # pyright: ignore[reportGeneralTypeIssues]
         except ClassNotFoundError as e:
+            msg = f"No schema provider found in components module {self.components_module}. Please implement the abstract method in {SchemaProvider.__module__}.{SchemaProvider.__name__}."
             raise ValueError(
-                f"No schema provider found in components module {self.components_module}. "
-                f"Please implement the abstract method in {SchemaProvider.__module__}.{SchemaProvider.__name__}.",
+                msg,
             ) from e
 
     @classmethod
@@ -144,8 +145,9 @@ class SchemaHandler:
                     if isinstance(schema, AvroSchema)
                     else str(schema)
                 )
+                msg = f"Schema is not compatible for {subject} and model {schema_class}. \n {json.dumps(schema_str, indent=4)}"
                 raise Exception(
-                    f"Schema is not compatible for {subject} and model {schema_class}. \n {json.dumps(schema_str, indent=4)}",
+                    msg,
                 )
         else:
             log.debug(

@@ -96,8 +96,9 @@ class KubernetesApp(PipelineComponent):
     @property
     def helm_chart(self) -> str:
         """Return component's Helm chart."""
+        msg = f"Please implement the helm_chart property of the {self.__module__} module."
         raise NotImplementedError(
-            f"Please implement the helm_chart property of the {self.__module__} module.",
+            msg,
         )
 
     @property
@@ -193,7 +194,8 @@ class KubernetesApp(PipelineComponent):
         :raises ValueError: The component name {name} is invalid for Kubernetes.
         """
         if not bool(KUBERNETES_NAME_CHECK_PATTERN.match(name)):
-            raise ValueError(f"The component name {name} is invalid for Kubernetes.")
+            msg = f"The component name {name} is invalid for Kubernetes."
+            raise ValueError(msg)
 
     @override
     def dict(self, *, exclude=None, **kwargs) -> dict[str, Any]:

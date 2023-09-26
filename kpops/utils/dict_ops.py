@@ -57,11 +57,13 @@ def flatten_mapping(
     :returns: "Flattened" mapping in the form of dict
     """
     if not isinstance(nested_mapping, Mapping):
-        raise TypeError("Argument nested_mapping is not a Mapping")
+        msg = "Argument nested_mapping is not a Mapping"
+        raise TypeError(msg)
     top: dict[str, Any] = {}
     for key, value in nested_mapping.items():
         if not isinstance(key, str):
-            raise TypeError(f"Argument nested_mapping contains a non-str key: {key}")
+            msg = f"Argument nested_mapping contains a non-str key: {key}"
+            raise TypeError(msg)
         if prefix:
             key = prefix + separator + key
         if isinstance(value, Mapping):

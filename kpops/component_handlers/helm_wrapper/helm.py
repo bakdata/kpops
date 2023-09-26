@@ -29,8 +29,9 @@ class Helm:
         self._debug = helm_config.debug
         self._version = self.get_version()
         if self._version.major != 3:
+            msg = f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
             raise RuntimeError(
-                f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}",
+                msg,
             )
 
     def add_repo(
@@ -183,8 +184,9 @@ class Helm:
         short_version = self.__execute(command)
         version_match = re.search(r"^v(\d+(?:\.\d+){0,2})", short_version)
         if version_match is None:
+            msg = f"Could not parse the Helm version.\n\nHelm output:\n{short_version}"
             raise RuntimeError(
-                f"Could not parse the Helm version.\n\nHelm output:\n{short_version}",
+                msg,
             )
         version = map(int, version_match.group(1).split("."))
         return Version(*version)
