@@ -52,7 +52,7 @@ class Helm:
 
         try:
             self.__execute(command)
-        except Exception as e:
+        except (ReleaseNotFoundException, RuntimeError) as e:
             if (
                 len(e.args) == 1
                 and re.match(

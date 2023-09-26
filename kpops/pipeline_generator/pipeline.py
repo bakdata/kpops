@@ -169,7 +169,7 @@ class Pipeline:
                     ) from ke
                 component_class = self.registry[component_type]
                 self.apply_component(component_class, component_data)
-            except Exception as ex:
+            except Exception as ex:  # noqa: BLE001
                 if "name" in component_data:
                     raise ParsingException(
                         f"Error enriching {component_data['type']} component {component_data['name']}"
