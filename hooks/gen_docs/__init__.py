@@ -5,7 +5,11 @@ from enum import Enum
 
 
 class IterableStrEnum(str, Enum):
-    """Temporary replacement for StrEnum while we suppport python3.10"""
+    """Polyfill that also introduces dict-like behavior
+
+    Introduces constructors that return a ``Generator`` object
+    either containing all items, only their names or their values.
+    """
 
     @classmethod
     def items(cls) -> Iterator[tuple[str, str]]:
