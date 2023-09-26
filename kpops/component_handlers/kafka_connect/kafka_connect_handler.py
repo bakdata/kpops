@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextlib
 import logging
 from typing import TYPE_CHECKING
 
@@ -13,12 +14,12 @@ from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
 
-try:
+with contextlib.suppress(ImportError):
     from typing import Self
-except ImportError:
-    from typing_extensions import Self
 
 if TYPE_CHECKING:
+    from typing_extensions import Self
+
     from kpops.cli.pipeline_config import PipelineConfig
 
 log = logging.getLogger("KafkaConnectHandler")

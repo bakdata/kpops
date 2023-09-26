@@ -3,16 +3,19 @@ from __future__ import annotations
 import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 from pydantic import Field
-from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
 from kpops.components.base_components import PipelineComponent
 from kpops.utils.docstring import describe_attr
 from tests.cli.resources import empty_module
+
+if TYPE_CHECKING:
+    from snapshottest.module import SnapshotTest
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
