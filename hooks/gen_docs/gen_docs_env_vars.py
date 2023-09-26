@@ -220,7 +220,7 @@ def write_csv_to_md_file(
     target: Path,
     title: str | None,
     description: str | None = None,
-    heading: str = "###",
+    heading: str | None = "###",
 ) -> None:
     """Write csv data from a file into a markdown file.
 
@@ -229,11 +229,15 @@ def write_csv_to_md_file(
     :param title: Title for the table, optional
 
     """
+    if heading:
+        heading += " "
+    else:
+        heading = ""
     with target.open("w+") as f:
         if title:
-            f.write(f"{heading} {title}\n")
+            f.write(f"{heading}{title}\n\n")
         if description:
-            f.write(f"\n{description}\n\n")
+            f.write(f"{description}\n\n")
         writer = MarkdownTableWriter()
         with source.open("r", newline="") as source_contents:
             writer.from_csv(source_contents.read())
@@ -281,7 +285,7 @@ def collect_fields(settings: type[BaseSettings]) -> Generator[ModelField, None, 
         yield field
 
 
-def __fill_csv_cli(target: Path) -> None:
+def fill_csv_cli(target: Path) -> None:
     """Append all CLI-commands-related env vars to a ``.csv`` file.
 
     Finds all CLI-commands-related env vars and appends them to a ``.csv``
@@ -341,7 +345,7 @@ def gen_vars(
     :param description_dotenv_file: The description to be written in the dotenv file
     :param columns: The column names in the table
     :param description_md_file: The description to be written in the markdown file
-    :param variable_extraction_function: Function that ooks for variables and appends
+    :param variable_extraction_function: Function that looks for variables and appends
         them to the temp csv file.
     """
     # Overwrite/create the temp csv file
@@ -396,5 +400,5 @@ if __name__ == "__main__":
         + DESCRIPTION_CLI_ENV_VARS,
         columns=list(EnvVarAttrs.values())[:-1],
         description_md_file=DESCRIPTION_CLI_ENV_VARS,
-        variable_extraction_function=__fill_csv_cli,
+        variable_extraction_function=fill_csv_cli,
     )
