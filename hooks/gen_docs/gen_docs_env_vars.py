@@ -2,7 +2,7 @@
 
 import csv
 import shutil
-from collections.abc import Callable, Generator
+from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
 from textwrap import fill
@@ -273,7 +273,7 @@ def fill_csv_pipeline_config(target: Path) -> None:
             )
 
 
-def collect_fields(settings: type[BaseSettings]) -> Generator[ModelField, None, None]:
+def collect_fields(settings: type[BaseSettings]) -> Iterator[ModelField]:
     """Collect and yield all fields in a settings class.
 
     :param model: settings class
