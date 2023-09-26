@@ -90,6 +90,8 @@ ignore = [
   "D415", # First line should end with a period, question mark, or exclamation point
   "D416", # Section name should end with a colon ("{name}")
   "D417", # Missing argument description in the docstring for {definition}: {name}
+  "B009", # Do not call getattr with a constant attribute value. -- Not always applicable
+  "B010", # Do not call setattr with a constant attribute value. -- Not always applicable
   "RUF012", # type class attrs with `ClassVar` -- Too strict/trigger-happy
   "UP007", # Use X | Y for type annotations -- `typer` doesn't support it
   "RET505", # Unnecessary {branch} after return statement -- Lots of false positives
