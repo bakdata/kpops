@@ -150,6 +150,9 @@ exclude = ["tests/*snapshots/*"]
 [tool.ruff.extend-per-file-ignores]
 "tests/*/__init__.py" = ["F401"]
 
+[tool.ruff.flake8-bugbear]
+extend-immutable-calls = ["typer.Argument"]
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
