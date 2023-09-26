@@ -79,7 +79,7 @@ class TestKafkaConnector:
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app={"connector.class": CONNECTOR_CLASS},  # type: ignore
+            app={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues]
             namespace="test-namespace",
         )
         assert connector.app.name == CONNECTOR_FULL_NAME
@@ -91,7 +91,7 @@ class TestKafkaConnector:
                 name=CONNECTOR_NAME,
                 config=config,
                 handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore
+                app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore[reportGeneralTypeIssues]
                 namespace="test-namespace",
             )
 
@@ -102,6 +102,6 @@ class TestKafkaConnector:
                 name=CONNECTOR_NAME,
                 config=config,
                 handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore
+                app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues]
                 namespace="test-namespace",
             )

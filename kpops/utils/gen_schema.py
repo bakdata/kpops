@@ -112,7 +112,7 @@ def gen_pipeline_schema(
     for component in components:
         component.__fields__["type"] = ModelField(
             name="type",
-            type_=Literal[component.type],  # type: ignore
+            type_=Literal[component.type],  # type: ignore[reportGeneralTypeIssues]
             required=False,
             default=component.type,
             final=True,

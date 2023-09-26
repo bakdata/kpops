@@ -77,7 +77,7 @@ class BaseDefaultsComponent(BaseModel):
             self._validate_custom(**kwargs)
 
     @cached_classproperty
-    def type(cls: type[Self]) -> str:  # pyright: ignore
+    def type(cls: type[Self]) -> str:  # pyright: ignore[reportGeneralTypeIssues]
         """Return calling component's type.
 
         :returns: Component class name in dash-case
