@@ -1,4 +1,5 @@
-from typing import TYPE_CHECKING
+from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -12,13 +13,10 @@ from hooks.gen_docs.gen_docs_env_vars import (
 )
 from tests.utils.resources.nested_base_settings import ParentSettings
 
-if TYPE_CHECKING:
-    from pathlib import Path
-
 
 class TestEnvDocGen:
     def test_collect_fields(self):
-        expected = [
+        expected: list[Any] = [
             "not_nested_field",
             "attr",
             Ellipsis,
@@ -66,14 +64,14 @@ class TestEnvDocGen:
     )
     def test_csv_append_env_var(
         self,
-        tmp_path,
-        var_name,
-        default_value,
-        description,
-        extra_args,
+        tmp_path: Path,
+        var_name: str,
+        default_value: Any,
+        description: str | list[str],
+        extra_args: tuple,
         expected_outcome,
     ):
-        target: Path = tmp_path / "target.csv"
+        target = tmp_path / "target.csv"
         csv_append_env_var(target, var_name, default_value, description, *extra_args)
         with target.open() as t:
             assert (
@@ -81,8 +79,8 @@ class TestEnvDocGen:
                 == expected_outcome + "\n"
             )
 
-    def test_write_title_to_dotenv_file(self, tmp_path):
-        target: Path = tmp_path / "target.ENV"
+    def test_write_title_to_dotenv_file(self, tmp_path: Path):
+        target = tmp_path / "target.ENV"
         write_title_to_dotenv_file(target, "title", "description of length 72" * 3)
         with target.open() as t:
             assert t.read().replace("\r\n", "\n").replace("\r", "\n") == (
@@ -95,7 +93,7 @@ class TestEnvDocGen:
             )
 
     @pytest.mark.parametrize(
-        ("name", "default", "required", "description", "setting_name", "expected"),
+        ("var_name", "default", "required", "description", "setting_name", "expected"),
         [
             pytest.param(
                 "NAME",
@@ -150,17 +148,17 @@ class TestEnvDocGen:
     )
     def test_append_csv_to_dotenv_file(
         self,
-        tmp_path,
-        name,
-        default,
-        required,
-        description,
-        setting_name,
-        expected,
+        tmp_path: Path,
+        var_name: str,
+        default: Any,
+        required: str,
+        description: str | list[str],
+        setting_name: str,
+        expected: str,
     ):
-        source: Path = tmp_path / "source.csv"
-        target: Path = tmp_path / "target.env"
-        csv_record = [name, default, required, description]
+        source = tmp_path / "source.csv"
+        target = tmp_path / "target.env"
+        csv_record = [var_name, default, required, description]
         csv_column_names = [
             EnvVarAttrs.NAME,
             EnvVarAttrs.DEFAULT_VALUE,
@@ -226,14 +224,14 @@ class TestEnvDocGen:
     )
     def test_write_csv_to_md_file(
         self,
-        tmp_path,
-        title,
-        description,
-        heading,
-        expected,
+        tmp_path: Path,
+        title: str,
+        description: str,
+        heading: str,
+        expected: str,
     ):
-        source: Path = tmp_path / "source.csv"
-        target: Path = tmp_path / "target.env"
+        source = tmp_path / "source.csv"
+        target = tmp_path / "target.env"
         csv_record = ["NAME", "default", "True", "description", "setting_name"]
         csv_column_names = [
             EnvVarAttrs.NAME,

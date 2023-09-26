@@ -330,7 +330,7 @@ def gen_vars(
     csv_file: Path,
     title_dotenv_file: str,
     description_dotenv_file: str,
-    columns: list,
+    columns: list[str],
     description_md_file: str,
     variable_extraction_function: Callable[[Path], None],
 ) -> None:
