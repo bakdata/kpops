@@ -8,7 +8,7 @@ from kpops.utils.environment import ENV
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 PIPELINE_PATH = Path("./some/random/path/for/testing/pipeline.yaml")
-DEFAULT_BASE_DIR = Path(".")
+DEFAULT_BASE_DIR = Path()
 
 
 def test_should_set_pipeline_name_with_default_base_dir():

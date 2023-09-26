@@ -31,7 +31,7 @@ LOG_DIVIDER = "#" * 100
 app = dtyper.Typer(pretty_exceptions_enable=False)
 
 BASE_DIR_PATH_OPTION: Path = typer.Option(
-    default=Path("."),
+    default=Path(),
     exists=True,
     dir_okay=True,
     file_okay=False,
