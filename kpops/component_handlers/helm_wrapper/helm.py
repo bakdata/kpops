@@ -64,7 +64,7 @@ class Helm:
             ):
                 log.error(f"Could not add repository {repository_name}. {e}")
             else:
-                raise e
+                raise
 
         if self._version.minor > 7:
             self.__execute(["helm", "repo", "update", repository_name])
