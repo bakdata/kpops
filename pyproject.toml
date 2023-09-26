@@ -134,7 +134,6 @@ select = [
   "SLOT", # flake8-slots
   "SIM", # flake8-simplify
   # "TCH", # flake8-type-checking, configure correctly and add
-  "ARG", # flake8-unused-arguments
   "PTH", # flake8-use-pathlib
   "PGH", # pygrep-hooks
   "PL", # Pylint
