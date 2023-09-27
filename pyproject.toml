@@ -94,6 +94,7 @@ ignore = [
   "B010", # Do not call setattr with a constant attribute value. -- Not always applicable
   "RUF012", # type class attrs with `ClassVar` -- Too strict/trigger-happy
   "UP007", # Use X | Y for type annotations -- `typer` doesn't support it
+  "COM812", # Checks for the absence of trailing commas -- leads to undesirable behavior from formatters
   "PIE804", # Unnecessary `dict` kwargs -- Inconvenient to enforce
   "RET505", # Unnecessary {branch} after return statement -- Lots of false positives
   "RET506", # Unnecessary {branch} after raise statement -- Lots of false positives
