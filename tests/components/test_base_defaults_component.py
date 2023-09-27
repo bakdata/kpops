@@ -77,9 +77,7 @@ class TestBaseDefaultsComponent:
         ],
     )
     def test_load_defaults(
-        self,
-        component_class: type[BaseDefaultsComponent],
-        defaults: dict,
+        self, component_class: type[BaseDefaultsComponent], defaults: dict
     ):
         assert (
             load_defaults(component_class, DEFAULTS_PATH / "defaults.yaml") == defaults
@@ -107,9 +105,7 @@ class TestBaseDefaultsComponent:
         ],
     )
     def test_load_defaults_with_environment(
-        self,
-        component_class: type[BaseDefaultsComponent],
-        defaults: dict,
+        self, component_class: type[BaseDefaultsComponent], defaults: dict
     ):
         assert (
             load_defaults(
@@ -121,9 +117,7 @@ class TestBaseDefaultsComponent:
         )
 
     def test_inherit_defaults(
-        self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         component = Child(config=config, handlers=handlers)
 
@@ -131,7 +125,7 @@ class TestBaseDefaultsComponent:
             component.name == "fake-child-name"
         ), "Child default should overwrite parent default"
         assert component.nice == {
-            "fake-value": "fake",
+            "fake-value": "fake"
         }, "Field introduce by child should be added"
         assert (
             component.value == 2.0
@@ -154,7 +148,7 @@ class TestBaseDefaultsComponent:
             component.name == "name-defined-in-pipeline_generator"
         ), "Kwargs should should overwrite all other values"
         assert component.nice == {
-            "fake-value": "fake",
+            "fake-value": "fake"
         }, "Field introduce by child should be added"
         assert (
             component.value == 2.0
@@ -167,9 +161,7 @@ class TestBaseDefaultsComponent:
         ), "Defaults in code should be kept for parents"
 
     def test_multiple_generations(
-        self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         component = GrandChild(config=config, handlers=handlers)
 
@@ -177,7 +169,7 @@ class TestBaseDefaultsComponent:
             component.name == "fake-child-name"
         ), "Child default should overwrite parent default"
         assert component.nice == {
-            "fake-value": "fake",
+            "fake-value": "fake"
         }, "Field introduce by child should be added"
         assert (
             component.value == 2.0
@@ -191,13 +183,11 @@ class TestBaseDefaultsComponent:
         assert component.grand_child == "grand-child-value"
 
     def test_env_var_substitution(
-        self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
+        self, config: PipelineConfig, handlers: ComponentHandlers
     ):
         ENV["pipeline_name"] = str(DEFAULTS_PATH)
         component = EnvVarTest(config=config, handlers=handlers)
 
         assert component.name == str(
-            DEFAULTS_PATH,
+            DEFAULTS_PATH
         ), "Environment variables should be substituted"

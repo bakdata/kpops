@@ -70,7 +70,7 @@ class TestTopicHandler:
         wrapper.get_topic.return_value = TopicResponse(**response)
         wrapper.get_broker_config.return_value = BrokerConfigResponse(**broker_response)
         wrapper.get_topic_config.return_value = TopicConfigResponse(
-            **response_topic_config,
+            **response_topic_config
         )
         return wrapper
 
@@ -121,8 +121,7 @@ class TestTopicHandler:
         wrapper.__dry_run_topic_creation.assert_not_called()
 
     def test_should_call_update_topic_config_when_topic_exists_and_with_dry_run_false(
-        self,
-        get_topic_response_mock: MagicMock,
+        self, get_topic_response_mock: MagicMock
     ):
         wrapper = get_topic_response_mock
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -148,9 +147,7 @@ class TestTopicHandler:
         wrapper.__dry_run_topic_creation.assert_not_called()
 
     def test_should_update_topic_config_when_one_config_changed(
-        self,
-        log_info_mock: MagicMock,
-        get_topic_response_mock: MagicMock,
+        self, log_info_mock: MagicMock, get_topic_response_mock: MagicMock
     ):
         wrapper = get_topic_response_mock
 
@@ -172,9 +169,7 @@ class TestTopicHandler:
         )
 
     def test_should_not_update_topic_config_when_config_not_changed(
-        self,
-        log_info_mock: MagicMock,
-        get_topic_response_mock: MagicMock,
+        self, log_info_mock: MagicMock, get_topic_response_mock: MagicMock
     ):
         wrapper = get_topic_response_mock
 
@@ -192,13 +187,11 @@ class TestTopicHandler:
 
         wrapper.batch_alter_topic_config.assert_not_called()
         log_info_mock.assert_called_once_with(
-            "Topic Creation: config of topic topic-X didn't change. Skipping update.",
+            "Topic Creation: config of topic topic-X didn't change. Skipping update."
         )
 
     def test_should_not_update_topic_config_when_config_not_changed_and_not_ordered(
-        self,
-        log_info_mock: MagicMock,
-        get_topic_response_mock: MagicMock,
+        self, log_info_mock: MagicMock, get_topic_response_mock: MagicMock
     ):
         wrapper = get_topic_response_mock
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -215,12 +208,11 @@ class TestTopicHandler:
 
         wrapper.batch_alter_topic_config.assert_not_called()
         log_info_mock.assert_called_once_with(
-            "Topic Creation: config of topic topic-X didn't change. Skipping update.",
+            "Topic Creation: config of topic topic-X didn't change. Skipping update."
         )
 
     def test_should_call_reset_topic_config_when_topic_exists_dry_run_false_and_topic_configs_change(
-        self,
-        get_topic_response_mock: MagicMock,
+        self, get_topic_response_mock: MagicMock
     ):
         wrapper = get_topic_response_mock
 
@@ -260,8 +252,7 @@ class TestTopicHandler:
         wrapper.create_topic.assert_not_called()
 
     def test_should_print_message_with_dry_run_true_and_topic_not_exists(
-        self,
-        log_info_mock: MagicMock,
+        self, log_info_mock: MagicMock
     ):
         wrapper = MagicMock()
         wrapper.get_topic.side_effect = TopicNotFoundException()
@@ -281,8 +272,8 @@ class TestTopicHandler:
 
         log_info_mock.assert_called_once_with(
             greenify(
-                "Topic Creation: topic-X does not exist in the cluster. Creating topic.",
-            ),
+                "Topic Creation: topic-X does not exist in the cluster. Creating topic."
+            )
         )
 
     def test_should_print_message_if_dry_run_and_topic_exists_with_same_partition_count_and_replication_factor(
@@ -305,19 +296,19 @@ class TestTopicHandler:
         topic_handler.create_topics(to_section=to_section, dry_run=True)
         wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
         assert log_info_mock.mock_calls == [
-            mock.call("Topic Creation: topic-X already exists in cluster."),
+            mock.call("Topic Creation: topic-X already exists in cluster.")
         ]
         assert log_debug_mock.mock_calls == [
             mock.call("HTTP/1.1 400 Bad Request"),
             mock.call({"Content-Type": "application/json"}),
             mock.call(
-                {"error_code": 40002, "message": "Topic 'topic-X' already exists."},
+                {"error_code": 40002, "message": "Topic 'topic-X' already exists."}
             ),
             mock.call(
-                "Topic Creation: partition count of topic topic-X did not change. Current partitions count 10. Updating configs.",
+                "Topic Creation: partition count of topic topic-X did not change. Current partitions count 10. Updating configs."
             ),
             mock.call(
-                "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 3. Updating configs.",
+                "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 3. Updating configs."
             ),
         ]
 
@@ -341,7 +332,7 @@ class TestTopicHandler:
         assert log_info_mock.mock_calls == [
             mock.call("Config changes for topic topic-X:"),
             mock.call(
-                "\n\x1b[32m+ cleanup.policy: compact\n\x1b[0m\x1b[32m+ compression.type: gzip\n\x1b[0m",
+                "\n\x1b[32m+ cleanup.policy: compact\n\x1b[0m\x1b[32m+ compression.type: gzip\n\x1b[0m"
             ),
             mock.call("Topic Creation: topic-X already exists in cluster."),
         ]
@@ -349,19 +340,18 @@ class TestTopicHandler:
             mock.call("HTTP/1.1 400 Bad Request"),
             mock.call({"Content-Type": "application/json"}),
             mock.call(
-                {"error_code": 40002, "message": "Topic 'topic-X' already exists."},
+                {"error_code": 40002, "message": "Topic 'topic-X' already exists."}
             ),
             mock.call(
-                "Topic Creation: partition count of topic topic-X did not change. Current partitions count 1. Updating configs.",
+                "Topic Creation: partition count of topic topic-X did not change. Current partitions count 1. Updating configs."
             ),
             mock.call(
-                "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 1. Updating configs.",
+                "Topic Creation: replication factor of topic topic-X did not change. Current replication factor 1. Updating configs."
             ),
         ]
 
     def test_should_exit_if_dry_run_and_topic_exists_different_partition_count(
-        self,
-        get_topic_response_mock: MagicMock,
+        self, get_topic_response_mock: MagicMock
     ):
         wrapper = get_topic_response_mock
 
@@ -383,8 +373,7 @@ class TestTopicHandler:
         wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
 
     def test_should_exit_if_dry_run_and_topic_exists_different_replication_factor(
-        self,
-        get_topic_response_mock: MagicMock,
+        self, get_topic_response_mock: MagicMock
     ):
         wrapper = get_topic_response_mock
 
@@ -406,9 +395,7 @@ class TestTopicHandler:
         wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
 
     def test_should_log_correct_message_when_delete_existing_topic_dry_run(
-        self,
-        log_info_mock: MagicMock,
-        get_topic_response_mock: MagicMock,
+        self, log_info_mock: MagicMock, get_topic_response_mock: MagicMock
     ):
         wrapper = get_topic_response_mock
 
@@ -427,13 +414,12 @@ class TestTopicHandler:
         wrapper.get_topic.assert_called_once_with(topic_name="topic-X")
         log_info_mock.assert_called_once_with(
             magentaify(
-                "Topic Deletion: topic topic-X exists in the cluster. Deleting topic.",
-            ),
+                "Topic Deletion: topic topic-X exists in the cluster. Deleting topic."
+            )
         )
 
     def test_should_log_correct_message_when_delete_non_existing_topic_dry_run(
-        self,
-        log_warning_mock: MagicMock,
+        self, log_warning_mock: MagicMock
     ):
         wrapper = MagicMock()
         wrapper.get_topic.side_effect = TopicNotFoundException
@@ -452,7 +438,7 @@ class TestTopicHandler:
 
         wrapper.get_topic.assert_called_once_with(topic_name="topic-X")
         log_warning_mock.assert_called_once_with(
-            "Topic Deletion: topic topic-X does not exist in the cluster and cannot be deleted. Skipping.",
+            "Topic Deletion: topic topic-X does not exist in the cluster and cannot be deleted. Skipping."
         )
 
     def test_should_call_delete_topic_not_dry_run(self):
@@ -475,8 +461,7 @@ class TestTopicHandler:
         ]
 
     def test_should_print_correct_warning_when_deleting_topic_that_does_not_exists_not_dry_run(
-        self,
-        log_warning_mock: MagicMock,
+        self, log_warning_mock: MagicMock
     ):
         wrapper = MagicMock()
         topic_handler = TopicHandler(proxy_wrapper=wrapper)
@@ -494,5 +479,5 @@ class TestTopicHandler:
 
         wrapper.get_topic.assert_called_once_with(topic_name="topic-X")
         log_warning_mock.assert_called_once_with(
-            "Topic Deletion: topic topic-X does not exist in the cluster and cannot be deleted. Skipping.",
+            "Topic Deletion: topic topic-X does not exist in the cluster and cannot be deleted. Skipping."
         )

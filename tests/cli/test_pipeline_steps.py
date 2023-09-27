@@ -45,9 +45,7 @@ def log_info(mocker: MockerFixture) -> MagicMock:
 
 def tests_filter_steps_to_apply(log_info: MagicMock, pipeline: Pipeline):
     filtered_steps = get_steps_to_apply(
-        pipeline,
-        "example2,example3",
-        FilterType.INCLUDE,
+        pipeline, "example2,example3", FilterType.INCLUDE
     )
 
     assert len(filtered_steps) == 2
@@ -56,7 +54,7 @@ def tests_filter_steps_to_apply(log_info: MagicMock, pipeline: Pipeline):
 
     assert log_info.call_count == 1
     log_info.assert_any_call(
-        "The following steps are included:\n['example2', 'example3']",
+        "The following steps are included:\n['example2', 'example3']"
     )
 
     filtered_steps = get_steps_to_apply(pipeline, None, FilterType.INCLUDE)
@@ -68,9 +66,7 @@ def tests_filter_steps_to_apply(log_info: MagicMock, pipeline: Pipeline):
 
 def tests_filter_steps_to_exclude(log_info: MagicMock, pipeline: Pipeline):
     filtered_steps = get_steps_to_apply(
-        pipeline,
-        "example2,example3",
-        FilterType.EXCLUDE,
+        pipeline, "example2,example3", FilterType.EXCLUDE
     )
 
     assert len(filtered_steps) == 1

@@ -46,9 +46,7 @@ def update_nested(*argv: dict) -> dict:
 
 
 def flatten_mapping(
-    nested_mapping: Mapping[str, Any],
-    prefix: str | None = None,
-    separator: str = "_",
+    nested_mapping: Mapping[str, Any], prefix: str | None = None, separator: str = "_"
 ) -> dict[str, Any]:
     """Flattens a Mapping.
 

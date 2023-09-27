@@ -30,8 +30,7 @@ class KafkaStreamsConfig(BaseModel):
 
     brokers: str = Field(default=..., description=describe_attr("brokers", __doc__))
     schema_registry_url: str | None = Field(
-        default=None,
-        description=describe_attr("schema_registry_url", __doc__),
+        default=None, description=describe_attr("schema_registry_url", __doc__)
     )
 
     class Config(CamelCaseConfig, DescConfig):
@@ -46,12 +45,10 @@ class KafkaAppConfig(KubernetesAppConfig):
     """
 
     streams: KafkaStreamsConfig = Field(
-        default=...,
-        description=describe_attr("streams", __doc__),
+        default=..., description=describe_attr("streams", __doc__)
     )
     name_override: str | None = Field(
-        default=None,
-        description=describe_attr("name_override", __doc__),
+        default=None, description=describe_attr("name_override", __doc__)
     )
 
 
@@ -92,14 +89,12 @@ class KafkaApp(KubernetesApp, ABC):
     def deploy(self, dry_run: bool) -> None:
         if self.to:
             self.handlers.topic_handler.create_topics(
-                to_section=self.to,
-                dry_run=dry_run,
+                to_section=self.to, dry_run=dry_run
             )
 
             if self.handlers.schema_handler:
                 self.handlers.schema_handler.submit_schemas(
-                    to_section=self.to,
-                    dry_run=dry_run,
+                    to_section=self.to, dry_run=dry_run
                 )
         super().deploy(dry_run)
 
@@ -118,8 +113,7 @@ class KafkaApp(KubernetesApp, ABC):
         """
         suffix = "-clean"
         clean_up_release_name = trim_release_name(
-            self.helm_release_name + suffix,
-            suffix,
+            self.helm_release_name + suffix, suffix
         )
         log.info(f"Uninstall old cleanup job for {clean_up_release_name}")
 
@@ -128,10 +122,7 @@ class KafkaApp(KubernetesApp, ABC):
         log.info(f"Init cleanup job for {clean_up_release_name}")
 
         stdout = self.__install_clean_up_job(
-            clean_up_release_name,
-            suffix,
-            values,
-            dry_run,
+            clean_up_release_name, suffix, values, dry_run
         )
 
         if dry_run:

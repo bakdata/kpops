@@ -34,10 +34,7 @@ class KafkaConnectHandler:
         self._timeout = timeout
 
     def create_connector(
-        self,
-        connector_config: KafkaConnectorConfig,
-        *,
-        dry_run: bool,
+        self, connector_config: KafkaConnectorConfig, *, dry_run: bool
     ) -> None:
         """Create a connector.
 
@@ -57,7 +54,7 @@ class KafkaConnectHandler:
 
                 timeout(
                     lambda: self._connect_wrapper.update_connector_config(
-                        connector_config,
+                        connector_config
                     ),
                     secs=self._timeout,
                 )
@@ -89,12 +86,11 @@ class KafkaConnectHandler:
                 )
             except ConnectorNotFoundException:
                 log.warning(
-                    f"Connector Destruction: the connector {connector_name} does not exist. Skipping.",
+                    f"Connector Destruction: the connector {connector_name} does not exist. Skipping."
                 )
 
     def __dry_run_connector_creation(
-        self,
-        connector_config: KafkaConnectorConfig,
+        self, connector_config: KafkaConnectorConfig
     ) -> None:
         connector_name = connector_config.name
         try:
@@ -110,7 +106,7 @@ class KafkaConnectHandler:
         except ConnectorNotFoundException:
             diff = render_diff({}, connector_config.dict())
             log.info(
-                f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n{diff}",
+                f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n{diff}"
             )
             log.debug("POST /connectors HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
@@ -119,12 +115,10 @@ class KafkaConnectHandler:
         if len(errors) > 0:
             formatted_errors = "\n".join(errors)
             msg = f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors: {formatted_errors}"
-            raise ConnectorStateException(
-                msg,
-            )
+            raise ConnectorStateException(msg)
         else:
             log.info(
-                f"Connector Creation: connector config for {connector_name} is valid!",
+                f"Connector Creation: connector config for {connector_name} is valid!"
             )
 
     def __dry_run_connector_deletion(self, connector_name: str) -> None:
@@ -132,14 +126,14 @@ class KafkaConnectHandler:
             self._connect_wrapper.get_connector(connector_name)
             log.info(
                 magentaify(
-                    f"Connector Destruction: connector {connector_name} already exists. Deleting connector.",
-                ),
+                    f"Connector Destruction: connector {connector_name} already exists. Deleting connector."
+                )
             )
             log.debug(f"DELETE /connectors/{connector_name} HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
         except ConnectorNotFoundException:
             log.warning(
-                f"Connector Destruction: connector {connector_name} does not exist and cannot be deleted. Skipping.",
+                f"Connector Destruction: connector {connector_name} does not exist and cannot be deleted. Skipping."
             )
 
     @classmethod

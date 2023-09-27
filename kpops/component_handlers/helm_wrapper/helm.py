@@ -32,9 +32,7 @@ class Helm:
         self._version = self.get_version()
         if self._version.major != 3:
             msg = f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
-            raise RuntimeError(
-                msg,
-            )
+            raise RuntimeError(msg)
 
     def add_repo(
         self,
@@ -124,7 +122,7 @@ class Helm:
             return self.__execute(command)
         except ReleaseNotFoundException:
             log.warning(
-                f"Release with name {release_name} not found. Could not uninstall app.",
+                f"Release with name {release_name} not found. Could not uninstall app."
             )
 
     def template(
@@ -187,9 +185,7 @@ class Helm:
         version_match = re.search(r"^v(\d+(?:\.\d+){0,2})", short_version)
         if version_match is None:
             msg = f"Could not parse the Helm version.\n\nHelm output:\n{short_version}"
-            raise RuntimeError(
-                msg,
-            )
+            raise RuntimeError(msg)
         version = map(int, version_match.group(1).split("."))
         return Version(*version)
 

@@ -52,13 +52,12 @@ class ShouldInflate(StreamsApp):
                         to=ToSection(
                             topics={
                                 TopicName("${component_type}"): TopicConfig(
-                                    type=OutputTopicTypes.OUTPUT,
+                                    type=OutputTopicTypes.OUTPUT
                                 ),
                                 TopicName("${component_name}"): TopicConfig(
-                                    type=None,
-                                    role="test",
+                                    type=None, role="test"
                                 ),
-                            },
+                            }
                         ),
                     )
                     inflate_steps.append(kafka_connector)
@@ -69,9 +68,9 @@ class ShouldInflate(StreamsApp):
                         to=ToSection(  # type: ignore[reportGeneralTypeIssues]
                             topics={
                                 TopicName(
-                                    f"{self.full_name}-" + "${component_name}",
-                                ): TopicConfig(type=OutputTopicTypes.OUTPUT),
-                            },
+                                    f"{self.full_name}-" + "${component_name}"
+                                ): TopicConfig(type=OutputTopicTypes.OUTPUT)
+                            }
                         ).dict(),
                     )
                     inflate_steps.append(streams_app)
@@ -81,9 +80,7 @@ class ShouldInflate(StreamsApp):
 
 class TestSchemaProvider(SchemaProvider):
     def provide_schema(
-        self,
-        schema_class: str,
-        models: dict[ModelName, ModelVersion],
+        self, schema_class: str, models: dict[ModelName, ModelVersion]
     ) -> Schema:
         schema = {
             "type": "record",

@@ -12,7 +12,7 @@ def test_trim_release_name_with_suffix():
 
 def test_trim_release_name_without_suffix():
     name = trim_release_name(
-        "example-component-name-too-long-fake-fakefakefakefakefake",
+        "example-component-name-too-long-fake-fakefakefakefakefake"
     )
     assert name == "example-component-name-too-long-fake-fakefakefakefak"
     assert len(name) == 52

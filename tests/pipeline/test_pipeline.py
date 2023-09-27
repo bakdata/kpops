@@ -48,8 +48,7 @@ class TestPipeline:
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_generate_with_steps_flag_should_write_log_warning(
-        self,
-        caplog: pytest.LogCaptureFixture,
+        self, caplog: pytest.LogCaptureFixture
     ):
         result = runner.invoke(
             app,
@@ -73,7 +72,7 @@ class TestPipeline:
                 logging.WARNING,
                 "The following flags are considered only when `--template` is set: \n \
                 '--steps'",
-            ),
+            )
         ]
 
         assert result.exit_code == 0

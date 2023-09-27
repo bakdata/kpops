@@ -41,9 +41,7 @@ class Registry:
             return self._classes[component_type]
         except KeyError as ke:
             msg = f"Could not find a component of type {component_type}"
-            raise ClassNotFoundError(
-                msg,
-            ) from ke
+            raise ClassNotFoundError(msg) from ke
 
 
 def find_class(module_name: str, baseclass: type[T]) -> type[T]:
@@ -59,7 +57,7 @@ def _find_classes(module_name: str, baseclass: type[T]) -> Iterator[type[T]]:
         if issubclass(_class, baseclass):
             # filter out internal kpops classes unless specifically requested
             if _class.__module__.startswith(
-                KPOPS_MODULE,
+                KPOPS_MODULE
             ) and not module_name.startswith(KPOPS_MODULE):
                 continue
             yield _class

@@ -31,9 +31,7 @@ class TopicConfig(BaseModel):
     """
 
     type: OutputTopicTypes | None = Field(
-        default=None,
-        title="Topic type",
-        description=describe_attr("type", __doc__),
+        default=None, title="Topic type", description=describe_attr("type", __doc__)
     )
     key_schema: str | None = Field(
         default=None,
@@ -56,8 +54,7 @@ class TopicConfig(BaseModel):
         description=describe_attr("replication_factor", __doc__),
     )
     configs: dict[str, str | int] = Field(
-        default={},
-        description=describe_attr("configs", __doc__),
+        default={}, description=describe_attr("configs", __doc__)
     )
     role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
@@ -83,12 +80,10 @@ class ToSection(BaseModel):
     """
 
     topics: dict[TopicName, TopicConfig] = Field(
-        default={},
-        description=describe_attr("topics", __doc__),
+        default={}, description=describe_attr("topics", __doc__)
     )
     models: dict[ModelName, ModelVersion] = Field(
-        default={},
-        description=describe_attr("models", __doc__),
+        default={}, description=describe_attr("models", __doc__)
     )
 
     class Config(DescConfig):

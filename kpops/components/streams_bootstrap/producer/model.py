@@ -15,12 +15,10 @@ class ProducerStreamsConfig(KafkaStreamsConfig):
     """
 
     extra_output_topics: dict[str, str] = Field(
-        default={},
-        description=describe_attr("extra_output_topics", __doc__),
+        default={}, description=describe_attr("extra_output_topics", __doc__)
     )
     output_topic: str | None = Field(
-        default=None,
-        description=describe_attr("output_topic", __doc__),
+        default=None, description=describe_attr("output_topic", __doc__)
     )
 
 
@@ -31,8 +29,7 @@ class ProducerValues(KafkaAppConfig):
     """
 
     streams: ProducerStreamsConfig = Field(
-        default=...,
-        description=describe_attr("streams", __doc__),
+        default=..., description=describe_attr("streams", __doc__)
     )
 
     class Config(BaseConfig):

@@ -13,7 +13,7 @@ class Environment(UserDict):
             mapping = {}
         if kwargs:
             mapping.update(
-                {transformation(key): value for key, value in kwargs.items()},
+                {transformation(key): value for key, value in kwargs.items()}
             )
         super().__init__(mapping)
 

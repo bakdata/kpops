@@ -40,7 +40,7 @@ class TestConnectorApiWrapper:
             **{
                 "connector.class": "com.bakdata.connect.TestConnector",
                 "name": "test-connector",
-            },
+            }
         )
 
     def test_should_through_exception_when_host_is_not_set(self):
@@ -58,8 +58,7 @@ class TestConnectorApiWrapper:
 
     @patch("httpx.post")
     def test_should_create_post_requests_for_given_connector_configuration(
-        self,
-        mock_post: MagicMock,
+        self, mock_post: MagicMock
     ):
         configs = {
             "connector.class": "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector",
@@ -85,9 +84,7 @@ class TestConnectorApiWrapper:
         )
 
     def test_should_return_correct_response_when_connector_created(
-        self,
-        httpx_mock: HTTPXMock,
-        connector_config: KafkaConnectorConfig,
+        self, httpx_mock: HTTPXMock, connector_config: KafkaConnectorConfig
     ):
         actual_response = {
             "name": "hdfs-sink-connector",
@@ -138,7 +135,7 @@ class TestConnectorApiWrapper:
         )
 
         log_warning.assert_called_with(
-            "Rebalancing in progress while creating a connector... Retrying...",
+            "Rebalancing in progress while creating a connector... Retrying..."
         )
 
     @patch("httpx.get")
@@ -155,9 +152,7 @@ class TestConnectorApiWrapper:
     @pytest.mark.flaky(reruns=5, condition=sys.platform.startswith("win32"))
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_getting_connector(
-        self,
-        log_info: MagicMock,
-        httpx_mock: HTTPXMock,
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -192,9 +187,7 @@ class TestConnectorApiWrapper:
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_raise_connector_not_found_when_getting_connector(
-        self,
-        log_info: MagicMock,
-        httpx_mock: HTTPXMock,
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -209,14 +202,12 @@ class TestConnectorApiWrapper:
             self.connect_wrapper.get_connector(connector_name)
 
         log_info.assert_called_once_with(
-            f"The named connector {connector_name} does not exists.",
+            f"The named connector {connector_name} does not exists."
         )
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_rebalance_in_progress_when_getting_connector(
-        self,
-        log_warning: MagicMock,
-        httpx_mock: HTTPXMock,
+        self, log_warning: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -234,7 +225,7 @@ class TestConnectorApiWrapper:
         )
 
         log_warning.assert_called_with(
-            "Rebalancing in progress while getting a connector... Retrying...",
+            "Rebalancing in progress while getting a connector... Retrying..."
         )
 
     @patch("httpx.put")
@@ -252,7 +243,7 @@ class TestConnectorApiWrapper:
         }
         with pytest.raises(KafkaConnectError):
             self.connect_wrapper.update_connector_config(
-                KafkaConnectorConfig(**configs),
+                KafkaConnectorConfig(**configs)
             )
 
         mock_put.assert_called_with(
@@ -296,11 +287,11 @@ class TestConnectorApiWrapper:
             status_code=200,
         )
         expected_response = self.connect_wrapper.update_connector_config(
-            connector_config,
+            connector_config
         )
         assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(
-            f"Config for connector {connector_name} updated.",
+            f"Config for connector {connector_name} updated."
         )
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
@@ -338,7 +329,7 @@ class TestConnectorApiWrapper:
             status_code=201,
         )
         expected_response = self.connect_wrapper.update_connector_config(
-            connector_config,
+            connector_config
         )
         assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {connector_name} created.")
@@ -366,13 +357,12 @@ class TestConnectorApiWrapper:
         )
 
         log_warning.assert_called_with(
-            "Rebalancing in progress while updating a connector... Retrying...",
+            "Rebalancing in progress while updating a connector... Retrying..."
         )
 
     @patch("httpx.delete")
     def test_should_create_correct_delete_connector_request(
-        self,
-        mock_delete: MagicMock,
+        self, mock_delete: MagicMock
     ):
         connector_name = "test-connector"
         with pytest.raises(KafkaConnectError):
@@ -385,9 +375,7 @@ class TestConnectorApiWrapper:
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_return_correct_response_when_deleting_connector(
-        self,
-        log_info: MagicMock,
-        httpx_mock: HTTPXMock,
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -422,9 +410,7 @@ class TestConnectorApiWrapper:
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     def test_should_raise_connector_not_found_when_deleting_connector(
-        self,
-        log_info: MagicMock,
-        httpx_mock: HTTPXMock,
+        self, log_info: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -439,14 +425,12 @@ class TestConnectorApiWrapper:
             self.connect_wrapper.delete_connector(connector_name)
 
         log_info.assert_called_once_with(
-            f"The named connector {connector_name} does not exists.",
+            f"The named connector {connector_name} does not exists."
         )
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     def test_should_raise_rebalance_in_progress_when_deleting_connector(
-        self,
-        log_warning: MagicMock,
-        httpx_mock: HTTPXMock,
+        self, log_warning: MagicMock, httpx_mock: HTTPXMock
     ):
         connector_name = "test-connector"
 
@@ -464,13 +448,12 @@ class TestConnectorApiWrapper:
         )
 
         log_warning.assert_called_with(
-            "Rebalancing in progress while deleting a connector... Retrying...",
+            "Rebalancing in progress while deleting a connector... Retrying..."
         )
 
     @patch("httpx.put")
     def test_should_create_correct_validate_connector_config_request(
-        self,
-        mock_put: MagicMock,
+        self, mock_put: MagicMock
     ):
         connector_config = KafkaConnectorConfig(
             **{
@@ -478,7 +461,7 @@ class TestConnectorApiWrapper:
                 "name": "FileStreamSinkConnector",
                 "tasks.max": "1",
                 "topics": "test-topic",
-            },
+            }
         )
         with pytest.raises(KafkaConnectError):
             self.connect_wrapper.validate_connector_config(connector_config)
@@ -491,8 +474,7 @@ class TestConnectorApiWrapper:
 
     @patch("httpx.put")
     def test_should_create_correct_validate_connector_config_and_name_gets_added(
-        self,
-        mock_put: MagicMock,
+        self, mock_put: MagicMock
     ):
         connector_name = "FileStreamSinkConnector"
         configs = {
@@ -503,7 +485,7 @@ class TestConnectorApiWrapper:
         }
         with pytest.raises(KafkaConnectError):
             self.connect_wrapper.validate_connector_config(
-                KafkaConnectorConfig(**configs),
+                KafkaConnectorConfig(**configs)
             )
 
         mock_put.assert_called_with(
@@ -532,9 +514,9 @@ class TestConnectorApiWrapper:
             "topics": "test-topic",
         }
         errors = self.connect_wrapper.validate_connector_config(
-            KafkaConnectorConfig(**configs),
+            KafkaConnectorConfig(**configs)
         )
 
         assert errors == [
-            "Found error for field file: Missing required configuration 'file' which has no default value.",
+            "Found error for field file: Missing required configuration 'file' which has no default value."
         ]

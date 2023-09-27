@@ -86,7 +86,7 @@ kafka_rest_proxy_response = {
                     "name": "log.flush.interval.messages",
                     "source": "DEFAULT_CONFIG",
                     "value": "9223372036854775807",
-                },
+                }
             ],
             "topic_name": "fake",
             "value": "9223372036854775807",
@@ -108,7 +108,7 @@ kafka_rest_proxy_response = {
                     "name": "flush.ms",
                     "source": "DEFAULT_CONFIG",
                     "value": "9223372036854775807",
-                },
+                }
             ],
             "topic_name": "fake",
             "value": "9223372036854775807",
@@ -247,7 +247,7 @@ def test_get_effective_config():
                     ],
                 },
             ],
-        },
+        }
     )
 
     effective_config = get_effective_config(

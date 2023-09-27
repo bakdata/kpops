@@ -27,8 +27,7 @@ class FromTopic(BaseModel):
     """
 
     type: InputTopicTypes | None = Field(
-        default=None,
-        description=describe_attr("type", __doc__),
+        default=None, description=describe_attr("type", __doc__)
     )
     role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 

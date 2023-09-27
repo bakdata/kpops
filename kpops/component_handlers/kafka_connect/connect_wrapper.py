@@ -36,8 +36,7 @@ class ConnectWrapper:
         return self._host
 
     def create_connector(
-        self,
-        connector_config: KafkaConnectorConfig,
+        self, connector_config: KafkaConnectorConfig
     ) -> KafkaConnectResponse:
         """Create a new connector.
 
@@ -48,9 +47,7 @@ class ConnectWrapper:
         config_json = connector_config.dict()
         connect_data = {"name": connector_config.name, "config": config_json}
         response = httpx.post(
-            url=f"{self._host}/connectors",
-            headers=HEADERS,
-            json=connect_data,
+            url=f"{self._host}/connectors", headers=HEADERS, json=connect_data
         )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_config.name} created.")
@@ -58,7 +55,7 @@ class ConnectWrapper:
             return KafkaConnectResponse(**response.json())
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(
-                "Rebalancing in progress while creating a connector... Retrying...",
+                "Rebalancing in progress while creating a connector... Retrying..."
             )
             time.sleep(1)
             self.create_connector(connector_config)
@@ -74,8 +71,7 @@ class ConnectWrapper:
         :return: Information about the connector.
         """
         response = httpx.get(
-            url=f"{self._host}/connectors/{connector_name}",
-            headers=HEADERS,
+            url=f"{self._host}/connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.OK:
             log.info(f"Connector {connector_name} exists.")
@@ -86,15 +82,14 @@ class ConnectWrapper:
             raise ConnectorNotFoundException
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(
-                "Rebalancing in progress while getting a connector... Retrying...",
+                "Rebalancing in progress while getting a connector... Retrying..."
             )
             sleep(1)
             self.get_connector(connector_name)
         raise KafkaConnectError(response)
 
     def update_connector_config(
-        self,
-        connector_config: KafkaConnectorConfig,
+        self, connector_config: KafkaConnectorConfig
     ) -> KafkaConnectResponse:
         """Create or update a connector.
 
@@ -122,15 +117,14 @@ class ConnectWrapper:
             return KafkaConnectResponse(**data)
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(
-                "Rebalancing in progress while updating a connector... Retrying...",
+                "Rebalancing in progress while updating a connector... Retrying..."
             )
             sleep(1)
             self.update_connector_config(connector_config)
         raise KafkaConnectError(response)
 
     def validate_connector_config(
-        self,
-        connector_config: KafkaConnectorConfig,
+        self, connector_config: KafkaConnectorConfig
     ) -> list[str]:
         """Validate connector config using the given configuration.
 
@@ -146,7 +140,7 @@ class ConnectWrapper:
 
         if response.status_code == httpx.codes.OK:
             kafka_connect_error_response = KafkaConnectConfigErrorResponse(
-                **response.json(),
+                **response.json()
             )
 
             errors: list[str] = []
@@ -155,7 +149,7 @@ class ConnectWrapper:
                     if len(config.value.errors) > 0:
                         for error in config.value.errors:
                             errors.append(
-                                f"Found error for field {config.value.name}: {error}",
+                                f"Found error for field {config.value.name}: {error}"
                             )
             return errors
         raise KafkaConnectError(response)
@@ -169,8 +163,7 @@ class ConnectWrapper:
         :raises ConnectorNotFoundException: Connector not found
         """
         response = httpx.delete(
-            url=f"{self._host}/connectors/{connector_name}",
-            headers=HEADERS,
+            url=f"{self._host}/connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Connector {connector_name} deleted.")
@@ -180,7 +173,7 @@ class ConnectWrapper:
             raise ConnectorNotFoundException
         elif response.status_code == httpx.codes.CONFLICT:
             log.warning(
-                "Rebalancing in progress while deleting a connector... Retrying...",
+                "Rebalancing in progress while deleting a connector... Retrying..."
             )
             sleep(1)
             self.delete_connector(connector_name)

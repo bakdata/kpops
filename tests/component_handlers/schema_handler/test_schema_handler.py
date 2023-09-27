@@ -28,28 +28,28 @@ TEST_SCHEMA_PROVIDER_MODULE = TestSchemaProvider.__module__
 @pytest.fixture(autouse=True)
 def log_info_mock(mocker: MockerFixture) -> MagicMock:
     return mocker.patch(
-        "kpops.component_handlers.schema_handler.schema_handler.log.info",
+        "kpops.component_handlers.schema_handler.schema_handler.log.info"
     )
 
 
 @pytest.fixture(autouse=True)
 def log_debug_mock(mocker: MockerFixture) -> MagicMock:
     return mocker.patch(
-        "kpops.component_handlers.schema_handler.schema_handler.log.debug",
+        "kpops.component_handlers.schema_handler.schema_handler.log.debug"
     )
 
 
 @pytest.fixture(autouse=False)
 def find_class_mock(mocker: MockerFixture) -> MagicMock:
     return mocker.patch(
-        "kpops.component_handlers.schema_handler.schema_handler.find_class",
+        "kpops.component_handlers.schema_handler.schema_handler.find_class"
     )
 
 
 @pytest.fixture(autouse=True)
 def schema_registry_mock(mocker: MockerFixture) -> MagicMock:
     schema_registry_mock = mocker.patch(
-        "kpops.component_handlers.schema_handler.schema_handler.SchemaRegistryClient",
+        "kpops.component_handlers.schema_handler.schema_handler.SchemaRegistryClient"
     )
     return schema_registry_mock.return_value
 
@@ -96,19 +96,16 @@ def test_should_lazy_load_schema_provider(find_class_mock: MagicMock):
         schema_registry_url="http://localhost:8081",
     )
     schema_handler = SchemaHandler.load_schema_handler(
-        TEST_SCHEMA_PROVIDER_MODULE,
-        config_enable,
+        TEST_SCHEMA_PROVIDER_MODULE, config_enable
     )
 
     assert schema_handler is not None
 
     schema_handler.schema_provider.provide_schema(
-        "com.bakdata.kpops.test.SchemaHandlerTest",
-        {},
+        "com.bakdata.kpops.test.SchemaHandlerTest", {}
     )
     schema_handler.schema_provider.provide_schema(
-        "com.bakdata.kpops.test.SomeOtherSchemaClass",
-        {},
+        "com.bakdata.kpops.test.SomeOtherSchemaClass", {}
     )
 
     find_class_mock.assert_called_once_with(TEST_SCHEMA_PROVIDER_MODULE, SchemaProvider)
@@ -116,8 +113,7 @@ def test_should_lazy_load_schema_provider(find_class_mock: MagicMock):
 
 def test_should_raise_value_error_if_schema_provider_class_not_found():
     schema_handler = SchemaHandler(
-        url="http://mock:8081",
-        components_module=NON_EXISTING_PROVIDER_MODULE,
+        url="http://mock:8081", components_module=NON_EXISTING_PROVIDER_MODULE
     )
 
     with pytest.raises(
@@ -127,8 +123,7 @@ def test_should_raise_value_error_if_schema_provider_class_not_found():
         f"{SchemaProvider.__module__}.{SchemaProvider.__name__}.",
     ):
         schema_handler.schema_provider.provide_schema(
-            "com.bakdata.kpops.test.SchemaHandlerTest",
-            {},
+            "com.bakdata.kpops.test.SchemaHandlerTest", {}
         )
 
 
@@ -160,19 +155,15 @@ def test_should_raise_value_error_when_schema_provider_is_called_and_components_
         match="The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your SchemaProvider implementation exists.",
     ):
         schema_handler.schema_provider.provide_schema(
-            "com.bakdata.kpops.test.SchemaHandlerTest",
-            {},
+            "com.bakdata.kpops.test.SchemaHandlerTest", {}
         )
 
 
 def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
-    to_section: ToSection,
-    log_info_mock: MagicMock,
-    schema_registry_mock: MagicMock,
+    to_section: ToSection, log_info_mock: MagicMock, schema_registry_mock: MagicMock
 ):
     schema_handler = SchemaHandler(
-        url="http://mock:8081",
-        components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
 
     schema_registry_mock.get_versions.return_value = []
@@ -180,7 +171,7 @@ def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
     schema_handler.submit_schemas(to_section, True)
 
     log_info_mock.assert_called_once_with(
-        greenify("Schema Submission: The subject topic-X-value will be submitted."),
+        greenify("Schema Submission: The subject topic-X-value will be submitted.")
     )
     schema_registry_mock.register.assert_not_called()
 
@@ -192,8 +183,7 @@ def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     schema_registry_mock: MagicMock,
 ):
     schema_handler = SchemaHandler(
-        url="http://mock:8081",
-        components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
 
     schema_registry_mock.get_versions.return_value = [1, 2, 3]
@@ -203,7 +193,7 @@ def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     schema_handler.submit_schemas(to_section, True)
 
     log_info_mock.assert_called_once_with(
-        f"Schema Submission: compatible schema for topic-X-value with model {topic_config.value_schema}.",
+        f"Schema Submission: compatible schema for topic-X-value with model {topic_config.value_schema}."
     )
     schema_registry_mock.register.assert_not_called()
 
@@ -215,8 +205,7 @@ def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatibl
 ):
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(
-        url="http://mock:8081",
-        components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
 
@@ -255,8 +244,7 @@ def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_ve
 ):
     schema_provider = TestSchemaProvider()
     schema_handler = SchemaHandler(
-        url="http://mock:8081",
-        components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
     schema = schema_provider.provide_schema(schema_class, {})
@@ -269,13 +257,13 @@ def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_ve
 
     assert log_info_mock.mock_calls == [
         mock.call(
-            f"Schema Submission: compatible schema for topic-X-value with model {topic_config.value_schema}.",
+            f"Schema Submission: compatible schema for topic-X-value with model {topic_config.value_schema}."
         ),
     ]
 
     assert log_debug_mock.mock_calls == [
         mock.call(
-            f"Schema Submission: schema was already submitted for the subject topic-X-value as version {registered_version.schema}. Therefore, the specified schema must be compatible.",
+            f"Schema Submission: schema was already submitted for the subject topic-X-value as version {registered_version.schema}. Therefore, the specified schema must be compatible."
         ),
     ]
 
@@ -292,8 +280,7 @@ def test_should_submit_non_existing_schema_when_not_dry(
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
     schema = schema_provider.provide_schema(schema_class, {})
     schema_handler = SchemaHandler(
-        url="http://mock:8081",
-        components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
 
     schema_registry_mock.get_versions.return_value = []
@@ -302,13 +289,12 @@ def test_should_submit_non_existing_schema_when_not_dry(
 
     subject = "topic-X-value"
     log_info_mock.assert_called_once_with(
-        f"Schema Submission: schema submitted for {subject} with model {topic_config.value_schema}.",
+        f"Schema Submission: schema submitted for {subject} with model {topic_config.value_schema}."
     )
 
     schema_registry_mock.get_versions.assert_not_called()
     schema_registry_mock.register.assert_called_once_with(
-        subject=subject,
-        schema=schema,
+        subject=subject, schema=schema
     )
 
 
@@ -318,8 +304,7 @@ def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     schema_registry_mock: MagicMock,
 ):
     schema_handler = SchemaHandler(
-        url="http://mock:8081",
-        components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
 
     schema_registry_mock.get_versions.return_value = []
@@ -327,19 +312,17 @@ def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     schema_handler.delete_schemas(to_section, True)
 
     log_info_mock.assert_called_once_with(
-        magentaify("Schema Deletion: will delete subject topic-X-value."),
+        magentaify("Schema Deletion: will delete subject topic-X-value.")
     )
 
     schema_registry_mock.delete_subject.assert_not_called()
 
 
 def test_should_delete_schemas_when_not_in_dry_run(
-    to_section: ToSection,
-    schema_registry_mock: MagicMock,
+    to_section: ToSection, schema_registry_mock: MagicMock
 ):
     schema_handler = SchemaHandler(
-        url="http://mock:8081",
-        components_module=TEST_SCHEMA_PROVIDER_MODULE,
+        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
     )
 
     schema_registry_mock.get_versions.return_value = []

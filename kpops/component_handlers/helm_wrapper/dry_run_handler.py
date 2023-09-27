@@ -18,7 +18,7 @@ class DryRunHandler:
         :param log: The Logger object of the component class
         """
         current_release = list(
-            self._helm.get_manifest(helm_release_name, self.namespace),
+            self._helm.get_manifest(helm_release_name, self.namespace)
         )
         if current_release:
             log.info(f"Helm release {helm_release_name} already exists")

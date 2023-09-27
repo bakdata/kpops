@@ -186,7 +186,7 @@ def test_render_diff(d1: dict, d2: dict, ignore: set[str] | None, output: str | 
                     diff_type=DiffType.CHANGE,
                     key="a.b",
                     change=Change(old_value=1, new_value=2),
-                ),
+                )
             ],
         ),
     ],

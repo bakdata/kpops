@@ -29,5 +29,5 @@ def timeout(func: Callable[..., T], *, secs: int = 0) -> T | None:
         return loop.run_until_complete(main_supervisor(func, secs))
     except TimeoutError:
         log.exception(
-            f"Kafka Connect operation {func.__name__} timed out after {secs} seconds. To increase the duration, set the `timeout` option in config.yaml.",
+            f"Kafka Connect operation {func.__name__} timed out after {secs} seconds. To increase the duration, set the `timeout` option in config.yaml."
         )
