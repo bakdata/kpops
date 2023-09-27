@@ -173,9 +173,7 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
         msg = (
             "Default files should be structured as map ([app type] -> [default config]"
         )
-        raise TypeError(
-            msg,
-        )
+        raise TypeError(msg)
     value = content.get(key)
     if value is None:
         return {}
