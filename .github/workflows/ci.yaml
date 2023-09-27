@@ -38,7 +38,7 @@ jobs:
       - name: Lint (ruff)
         run: |
           echo "::add-matcher::.github/ruff-matcher.json"
-          poetry run pre-commit run ruff --all-files --show-diff-on-failure
+          poetry run pre-commit run ruff --all-files --show-diff-on-failure --output-format "text"
 
       - name: Formatting (black)
         run: poetry run pre-commit run black --all-files --show-diff-on-failure
