@@ -1,4 +1,3 @@
-
 These variables are a lower priority alternative to the settings in `config.yaml`. Variables marked as required can instead be set in the pipeline config.
 
 |          Name           |Default Value|Required|                                                                                Description                                                                                 |   Setting name    |
