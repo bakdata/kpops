@@ -10,11 +10,12 @@ repos:
         require_serial: true # run once for all files
       - id: ruff-ci
         name: ruff-ci
-        entry: ruff check .
-        args: [ --config, pyproject.toml, --output-format, text, --no-fix]
+        entry: ruff
+        args: [ check, ".", --config, pyproject.toml, --output-format, text, --no-fix]
         language: system
         types_or: [python]
         require_serial: true # run once for all files
+        pass_filenames: false
         stages: [manual]
   - repo: local
     hooks:
