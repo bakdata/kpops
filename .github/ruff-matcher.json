@@ -4,7 +4,7 @@
             "owner": "ruff",
             "pattern": [
                 {
-                    "regexp": "^(.*)\/(.+\\.py):(\\d+):(\\d+):\\s([\\da-zA-Z]+)\\s(.*)$/mg",
+                    "regexp": "^(.*)\/(.+\\.py):(\\d+):(\\d+):\\s([\\da-zA-Z]+)\\s(.*)$",
                     "fromPath": 1,
                     "file": 2,
                     "line": 3,
