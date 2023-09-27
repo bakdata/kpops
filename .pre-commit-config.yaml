@@ -8,16 +8,14 @@ repos:
         language: system
         types_or: [python]
         require_serial: true # run once for all files
-  - repo: local
-    hooks:
-    - id: ruff-ci
-      name: ruff-ci
-      entry: ruff check .
-      args: [ --output-format, text, --no-fix]
-      language: system
-      types_or: [python]
-      require_serial: true # run once for all files
-      stages: [manual]
+      - id: ruff-ci
+        name: ruff-ci
+        entry: ruff check .
+        args: [ --config, pyproject.toml, --output-format, text, --no-fix]
+        language: system
+        types_or: [python]
+        require_serial: true # run once for all files
+        stages: [manual]
   - repo: local
     hooks:
       - id: black
