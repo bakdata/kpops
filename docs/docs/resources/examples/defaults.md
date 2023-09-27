@@ -13,7 +13,7 @@
 
 <!-- dprint-ignore-end -->
 
-## [Word-count Pipeline](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops/defaults){target=_blank}
+## [Word-count Pipeline](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops){target=_blank}
 
 <!-- dprint-ignore-start -->
 
