@@ -134,7 +134,7 @@ class KpopsConfig(BaseSettings):
         config_path = Path("config.yaml")
         env_file = ".env"
         env_file_encoding = "utf-8"
-        env_prefix = f"{ENV_PREFIX}"
+        env_prefix = ENV_PREFIX
 
         @classmethod
         def customise_sources(
