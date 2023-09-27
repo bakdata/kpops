@@ -36,7 +36,9 @@ jobs:
         run: poetry install --no-interaction
 
       - name: Lint (ruff)
-        run: poetry run pre-commit run ruff --all-files --show-diff-on-failure
+        run: |
+          echo "::add-matcher::.github/ruff-matcher.json"
+          poetry run pre-commit run ruff --all-files --show-diff-on-failure
 
       - name: Formatting (black)
         run: poetry run pre-commit run black --all-files --show-diff-on-failure

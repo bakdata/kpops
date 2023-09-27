@@ -1,0 +1,18 @@
+{
+    "problemMatcher": [
+        {
+            "owner": "ruff",
+            "pattern": [
+                {
+                    "regexp": "/^(.*)\/(.+\\.py):(\\d+):(\\d+):\\s([\\da-zA-Z]+)\\s(.*)$/mg",
+                    "fromPath": 1,
+                    "file": 2,
+                    "line": 3,
+                    "column": 4,
+                    "code": 5,
+                    "message": 6
+                }
+            ]
+        }
+    ]
+}
