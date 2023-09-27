@@ -3,21 +3,24 @@ from __future__ import annotations
 import json
 import logging
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 from schema_registry.client import SchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
 
 from kpops.cli.exception import ClassNotFoundError
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import find_class
 from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,
 )
-from kpops.components.base_components.models.to_section import ToSection
 from kpops.utils.colorify import greenify, magentaify
 
 log = logging.getLogger("SchemaHandler")
+
+if TYPE_CHECKING:
+    from kpops.cli.pipeline_config import PipelineConfig
+    from kpops.components.base_components.models.to_section import ToSection
 
 
 class SchemaHandler:

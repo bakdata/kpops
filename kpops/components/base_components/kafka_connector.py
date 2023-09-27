@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Any, NoReturn
+from typing import TYPE_CHECKING, Any, NoReturn
 
 from pydantic import Field, validator
 from typing_extensions import override
@@ -25,10 +25,12 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectResetterValues,
 )
 from kpops.components.base_components.base_defaults_component import deduplicate
-from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
+
+if TYPE_CHECKING:
+    from kpops.components.base_components.models.from_section import FromTopic
 
 log = logging.getLogger("KafkaConnector")
 

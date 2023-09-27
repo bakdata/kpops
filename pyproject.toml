@@ -99,7 +99,7 @@ ignore = [
   "RET506", # Unnecessary {branch} after raise statement -- Lots of false positives
   "RET507", # Unnecessary {branch} after continue statement -- Lots of false positives
   "RET508", # Unnecessary {branch} after break statement -- Lots of false positives
-  "TCH001", # Move application import {} into a type-checking block -- Breaks KPOps
+  # "TCH001", # Move application import {} into a type-checking block -- Breaks KPOps
   "PLR09", # upper bound on number of arguments, functions, etc. -- Inconvenient to enforce
   "PLR2004", # Magic value used in comparison, consider replacing {value} with a constant variable -- Inconvenient to enforce
   "PLW2901", # `for` loop variable `{var}` overwritten by assignment target -- Inconvenient to enforce
@@ -154,6 +154,9 @@ exclude = ["tests/*snapshots/*"]
 
 [tool.ruff.flake8-bugbear]
 extend-immutable-calls = ["typer.Argument"]
+
+[tool.ruff.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel", "kpops.components.base_components.kafka_app.KafkaApp"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
