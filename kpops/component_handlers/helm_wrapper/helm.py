@@ -4,8 +4,7 @@ import logging
 import re
 import subprocess
 import tempfile
-from collections.abc import Iterator
-from typing import Iterable
+from typing import TYPE_CHECKING
 
 import yaml
 
@@ -19,6 +18,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
     Version,
 )
+from collections.abc import Iterable, Iterator
 
 log = logging.getLogger("Helm")
 
@@ -29,16 +29,17 @@ class Helm:
         self._debug = helm_config.debug
         self._version = self.get_version()
         if self._version.major != 3:
-            raise RuntimeError(
-                f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
-            )
+            msg = f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
+            raise RuntimeError(msg)
 
     def add_repo(
         self,
         repository_name: str,
         repository_url: str,
-        repo_auth_flags: RepoAuthFlags = RepoAuthFlags(),
+        repo_auth_flags: RepoAuthFlags | None = None,
     ) -> None:
+        if repo_auth_flags is None:
+            repo_auth_flags = RepoAuthFlags()
         command = [
             "helm",
             "repo",
@@ -50,7 +51,7 @@ class Helm:
 
         try:
             self.__execute(command)
-        except Exception as e:
+        except (ReleaseNotFoundException, RuntimeError) as e:
             if (
                 len(e.args) == 1
                 and re.match(
@@ -59,9 +60,9 @@ class Helm:
                 )
                 is not None
             ):
-                log.error(f"Could not add repository {repository_name}. {e}")
+                log.exception(f"Could not add repository {repository_name}.")
             else:
-                raise e
+                raise
 
         if self._version.minor > 7:
             self.__execute(["helm", "repo", "update", repository_name])
@@ -75,9 +76,11 @@ class Helm:
         dry_run: bool,
         namespace: str,
         values: dict,
-        flags: HelmUpgradeInstallFlags = HelmUpgradeInstallFlags(),
+        flags: HelmUpgradeInstallFlags | None = None,
     ) -> str:
-        """Prepares and executes the `helm upgrade --install` command"""
+        """Prepare and execute the `helm upgrade --install` command."""
+        if flags is None:
+            flags = HelmUpgradeInstallFlags()
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
 
@@ -103,7 +106,7 @@ class Helm:
         release_name: str,
         dry_run: bool,
     ) -> str | None:
-        """Prepares and executes the helm uninstall command"""
+        """Prepare and execute the helm uninstall command."""
         command = [
             "helm",
             "uninstall",
@@ -126,7 +129,7 @@ class Helm:
         chart: str,
         namespace: str,
         values: dict,
-        flags: HelmTemplateFlags = HelmTemplateFlags(),
+        flags: HelmTemplateFlags | None = None,
     ) -> str:
         """From HELM: Render chart templates locally and display the output.
 
@@ -141,6 +144,8 @@ class Helm:
         :param flags: the flags to be set for `helm template`, defaults to HelmTemplateFlags()
         :return: the output of `helm template`
         """
+        if flags is None:
+            flags = HelmTemplateFlags()
         with tempfile.NamedTemporaryFile("w") as values_file:
             yaml.safe_dump(values, values_file)
             command = [
@@ -177,9 +182,8 @@ class Helm:
         short_version = self.__execute(command)
         version_match = re.search(r"^v(\d+(?:\.\d+){0,2})", short_version)
         if version_match is None:
-            raise RuntimeError(
-                f"Could not parse the Helm version.\n\nHelm output:\n{short_version}"
-            )
+            msg = f"Could not parse the Helm version.\n\nHelm output:\n{short_version}"
+            raise RuntimeError(msg)
         version = map(int, version_match.group(1).split("."))
         return Version(*version)
 
@@ -206,8 +210,8 @@ class Helm:
         log.debug(f"Executing {' '.join(command)}")
         process = subprocess.run(
             command,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
+            check=True,
+            capture_output=True,
             text=True,
         )
         Helm.parse_helm_command_stderr_output(process.stderr)
@@ -228,7 +232,7 @@ class Helm:
         for line in stderr.splitlines():
             lower = line.lower()
             if "release: not found" in lower:
-                raise ReleaseNotFoundException()
+                raise ReleaseNotFoundException
             elif "error" in lower:
                 raise RuntimeError(stderr)
             elif "warning" in lower:
