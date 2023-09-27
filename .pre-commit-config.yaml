@@ -10,7 +10,7 @@ repos:
       - id: ruff-ci
         name: ruff-ci
         entry: ruff
-        args: [ --config, pyproject.toml, --fix, --show-fixes, --exit-non-zero-on-fix, --output-format "text" ]
+        args: [ --config, pyproject.toml, --fix, --show-fixes, --exit-non-zero-on-fix, --output-format, text ]
         language: system
         types_or: [python]
         stages: [manual]
