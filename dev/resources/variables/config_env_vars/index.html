@@ -368,6 +368,11 @@
         Migrate from v1 to v2
       </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../user/migration-guide/v2-v3/">
+        Migrate from v2 to v3
+      </a>
+</li>
 </ul>
 </nav>
 </li>
@@ -472,28 +477,28 @@
 <td></td>
 <td>True</td>
 <td>The comma separated Kafka brokers address.</td>
-<td>brokers</td>
+<td>kafka_brokers</td>
 </tr>
 <tr>
 <td>KPOPS_SCHEMA_REGISTRY_URL</td>
-<td></td>
+<td>http://localhost:8081</td>
 <td>False</td>
 <td>Address of the Schema Registry.</td>
-<td>schema_registry_url</td>
+<td>url</td>
 </tr>
 <tr>
-<td>KPOPS_REST_PROXY_HOST</td>
-<td></td>
+<td>KPOPS_KAFKA_REST_URL</td>
+<td>http://localhost:8082</td>
 <td>False</td>
 <td>Address of the Kafka REST Proxy.</td>
-<td>kafka_rest_host</td>
+<td>url</td>
 </tr>
 <tr>
-<td>KPOPS_CONNECT_HOST</td>
-<td></td>
+<td>KPOPS_KAFKA_CONNECT_URL</td>
+<td>http://localhost:8083</td>
 <td>False</td>
 <td>Address of Kafka Connect.</td>
-<td>kafka_connect_host</td>
+<td>url</td>
 </tr>
 <tr>
 <td>KPOPS_TIMEOUT</td>
