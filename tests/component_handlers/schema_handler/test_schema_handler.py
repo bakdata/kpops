@@ -1,5 +1,4 @@
 import json
-from pathlib import Path
 from unittest import mock
 from unittest.mock import MagicMock
 
@@ -80,19 +79,15 @@ def kpops_config_with_sr_enabled() -> KpopsConfig:
     )
 
 
-def test_load_schema_handler():
-    config_enable = KpopsConfig(
-        defaults_path=Path("fake"),
-        environment="development",
-        schema_registry=SchemaRegistryConfig(enabled=True),
-    )
-
+def test_load_schema_handler(kpops_config_with_sr_enabled: KpopsConfig):
     assert isinstance(
-        SchemaHandler.load_schema_handler(TEST_SCHEMA_PROVIDER_MODULE, config_enable),
+        SchemaHandler.load_schema_handler(
+            TEST_SCHEMA_PROVIDER_MODULE, kpops_config_with_sr_enabled
+        ),
         SchemaHandler,
     )
 
-    config_disable = config_enable.copy()
+    config_disable = kpops_config_with_sr_enabled.copy()
     config_disable.schema_registry = SchemaRegistryConfig(enabled=False)
 
     assert (
@@ -101,14 +96,11 @@ def test_load_schema_handler():
     )
 
 
-def test_should_lazy_load_schema_provider(find_class_mock: MagicMock):
-    config_enable = KpopsConfig(
-        defaults_path=Path("fake"),
-        environment="development",
-        schema_registry=SchemaRegistryConfig(enabled=True),
-    )
+def test_should_lazy_load_schema_provider(
+    find_class_mock: MagicMock, kpops_config_with_sr_enabled: KpopsConfig
+):
     schema_handler = SchemaHandler.load_schema_handler(
-        TEST_SCHEMA_PROVIDER_MODULE, config_enable
+        TEST_SCHEMA_PROVIDER_MODULE, kpops_config_with_sr_enabled
     )
 
     assert schema_handler is not None
@@ -144,22 +136,22 @@ def test_should_raise_value_error_if_schema_provider_class_not_found(
     )
 
 
-def test_should_raise_value_error_when_schema_provider_is_called_and_components_module_is_empty():
-    config_enable = KpopsConfig(
-        defaults_path=Path("fake"),
-        environment="development",
-        schema_registry=SchemaRegistryConfig(enabled=True),
-    )
-
+def test_should_raise_value_error_when_schema_provider_is_called_and_components_module_is_empty(
+    kpops_config_with_sr_enabled: KpopsConfig,
+):
     with pytest.raises(ValueError):
-        schema_handler = SchemaHandler.load_schema_handler(None, config_enable)
+        schema_handler = SchemaHandler.load_schema_handler(
+            None, kpops_config_with_sr_enabled
+        )
         assert schema_handler is not None
         schema_handler.schema_provider.provide_schema(
             "com.bakdata.kpops.test.SchemaHandlerTest", {}
         )
 
     with pytest.raises(ValueError) as value_error:
-        schema_handler = SchemaHandler.load_schema_handler("", config_enable)
+        schema_handler = SchemaHandler.load_schema_handler(
+            "", kpops_config_with_sr_enabled
+        )
         assert schema_handler is not None
         schema_handler.schema_provider.provide_schema(
             "com.bakdata.kpops.test.SchemaHandlerTest", {}
