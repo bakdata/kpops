@@ -36,10 +36,15 @@ jobs:
         run: poetry install --no-interaction
 
       - name: Lint (ruff)
-        if: matrix.os == 'ubuntu-22.04' && matrix.python-version == '3.10'
         run: |
-          echo "::add-matcher::.github/ruff-matcher.json"
-          poetry run pre-commit run --hook-stage manual ruff-ci --all-files --show-diff-on-failure
+          if [[ $(python -V) == *"3.10"* ]];
+          then
+            echo "::add-matcher::.github/ruff-matcher.json";
+            poetry run pre-commit run --hook-stage manual ruff-ci --all-files --show-diff-on-failure;
+          else
+            poetry run pre-commit run ruff --all-files --show-diff-on-failure;
+          fi;
+          
 
       - name: Formatting (black)
         run: poetry run pre-commit run black --all-files --show-diff-on-failure
