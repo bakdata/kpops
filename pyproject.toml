@@ -153,6 +153,9 @@ exclude = ["tests/*snapshots/*"]
 [tool.ruff.extend-per-file-ignores]
 "tests/*/__init__.py" = ["F401"]
 
+[tool.ruff.isort]
+split-on-trailing-comma = false
+
 [tool.ruff.flake8-bugbear]
 extend-immutable-calls = ["typer.Argument"]
 
