@@ -19,7 +19,7 @@ from kpops.component_handlers.topic.model import (
 )
 
 if TYPE_CHECKING:
-    from kpops.cli.config import KafkaRestConfig
+    from kpops.config import KafkaRestConfig
 
 log = logging.getLogger("KafkaRestProxy")
 

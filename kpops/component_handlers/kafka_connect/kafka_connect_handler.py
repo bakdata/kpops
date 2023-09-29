@@ -19,7 +19,7 @@ except ImportError:
     from typing_extensions import Self
 
 if TYPE_CHECKING:
-    from kpops.cli.config import KpopsConfig
+    from kpops.config import KpopsConfig
 
 log = logging.getLogger("KafkaConnectHandler")
 

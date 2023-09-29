@@ -3,12 +3,12 @@ from unittest.mock import MagicMock
 
 import pytest
 
-from kpops.cli.config import KpopsConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
     load_defaults,
 )
+from kpops.config import KpopsConfig
 from kpops.utils.environment import ENV
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"

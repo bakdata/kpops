@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any
 from pydantic import AnyHttpUrl, BaseConfig, BaseSettings, Field, parse_obj_as
 
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
+from kpops.utils.docstring import describe_object
 from kpops.utils.yaml_loading import load_yaml_file
 
 if TYPE_CHECKING:
@@ -17,7 +18,7 @@ ENV_PREFIX = "KPOPS_"
 
 
 class TopicNameConfig(BaseSettings):
-    """Configures topic names."""
+    """Configure the topic name variables you can use in the pipeline definition."""
 
     default_output_topic_name: str = Field(
         default="${pipeline_name}-${component_name}",
@@ -34,9 +35,11 @@ class SchemaRegistryConfig(BaseSettings):
 
     enabled: bool = Field(
         default=False,
-        description="If the Schema Registry handler should be initialized.",
+        description="Whether the Schema Registry handler should be initialized.",
     )
     url: AnyHttpUrl = Field(
+        # For validating URLs use parse_obj_as
+        # https://github.com/pydantic/pydantic/issues/1106
         default=parse_obj_as(AnyHttpUrl, "http://localhost:8081"),
         env=f"{ENV_PREFIX}SCHEMA_REGISTRY_URL",
         description="Address of the Schema Registry.",
@@ -47,8 +50,6 @@ class KafkaRestConfig(BaseSettings):
     """Configuration for Kafka REST Proxy."""
 
     url: AnyHttpUrl = Field(
-        # For validating URLs use parse_obj_as
-        # https://github.com/pydantic/pydantic/issues/1106
         default=parse_obj_as(AnyHttpUrl, "http://localhost:8082"),
         env=f"{ENV_PREFIX}KAFKA_REST_URL",
         description="Address of the Kafka REST Proxy.",
@@ -93,19 +94,19 @@ class KpopsConfig(BaseSettings):
     )
     topic_name_config: TopicNameConfig = Field(
         default=TopicNameConfig(),
-        description="Configure the topic name variables you can use in the pipeline definition.",
+        description=describe_object(TopicNameConfig.__doc__),
     )
     schema_registry: SchemaRegistryConfig = Field(
         default=SchemaRegistryConfig(),
-        description="Configuration for Schema Registry.",
+        description=describe_object(SchemaRegistryConfig.__doc__),
     )
     kafka_rest: KafkaRestConfig = Field(
         default=KafkaRestConfig(),
-        description="Configuration for Kafka REST Proxy.",
+        description=describe_object(KafkaRestConfig.__doc__),
     )
     kafka_connect: KafkaConnectConfig = Field(
         default=KafkaConnectConfig(),
-        description="Configuration for Kafka Connect.",
+        description=describe_object(KafkaConnectConfig.__doc__),
     )
     timeout: int = Field(
         default=300,

@@ -21,7 +21,7 @@ except ImportError:
 from hooks import PATH_ROOT
 from hooks.gen_docs import IterableStrEnum
 from kpops.cli import main
-from kpops.cli.config import KpopsConfig
+from kpops.config import KpopsConfig
 
 PATH_DOCS_RESOURCES = PATH_ROOT / "docs/docs/resources"
 PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"

@@ -7,13 +7,13 @@ import pytest
 from pytest_httpx import HTTPXMock
 from pytest_mock import MockerFixture
 
-from kpops.cli.config import KpopsConfig
 from kpops.component_handlers.topic.exception import (
     KafkaRestProxyError,
     TopicNotFoundException,
 )
 from kpops.component_handlers.topic.model import TopicResponse, TopicSpec
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
+from kpops.config import KpopsConfig
 
 HEADERS = {"Content-Type": "application/json"}
 DEFAULT_HOST = "http://localhost:8082"

@@ -264,7 +264,7 @@
             "properties": {
                 "enabled": {
                     "default": false,
-                    "description": "If the Schema Registry handler should be initialized.",
+                    "description": "Whether the Schema Registry handler should be initialized.",
                     "env_names": [
                         "enabled"
                     ],
@@ -290,7 +290,7 @@
         },
         "TopicNameConfig": {
             "additionalProperties": false,
-            "description": "Configures topic names.",
+            "description": "Configure the topic name variables you can use in the pipeline definition.",
             "properties": {
                 "default_error_topic_name": {
                     "default": "${pipeline_name}-${component_name}-error",

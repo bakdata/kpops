@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 from pydantic import AnyHttpUrl, ValidationError, parse_obj_as
 
-from kpops.cli.config import (
+from kpops.config import (
     KafkaConnectConfig,
     KafkaRestConfig,
     KpopsConfig,
@@ -45,7 +45,7 @@ def test_kpops_config_with_different_invalid_urls():
             environment="development",
             kafka_brokers="http://broker:9092",
             kafka_connect=KafkaConnectConfig(
-                url=parse_obj_as(AnyHttpUrl, "in-valid-host")
+                url=parse_obj_as(AnyHttpUrl, "invalid-host")
             ),
         )
 
@@ -53,7 +53,7 @@ def test_kpops_config_with_different_invalid_urls():
         KpopsConfig(
             environment="development",
             kafka_brokers="http://broker:9092",
-            kafka_rest=KafkaRestConfig(url=parse_obj_as(AnyHttpUrl, "in-valid-host")),
+            kafka_rest=KafkaRestConfig(url=parse_obj_as(AnyHttpUrl, "invalid-host")),
         )
 
     with pytest.raises(ValidationError):
@@ -62,6 +62,6 @@ def test_kpops_config_with_different_invalid_urls():
             kafka_brokers="http://broker:9092",
             schema_registry=SchemaRegistryConfig(
                 enabled=True,
-                url=parse_obj_as(AnyHttpUrl, "in-valid-host"),
+                url=parse_obj_as(AnyHttpUrl, "invalid-host"),
             ),
         )

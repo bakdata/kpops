@@ -5,7 +5,6 @@ from unittest.mock import ANY, MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.config import KpopsConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.components import ProducerApp
@@ -13,6 +12,7 @@ from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
 )
+from kpops.config import KpopsConfig, TopicNameConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 

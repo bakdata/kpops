@@ -9,7 +9,6 @@ import dtyper
 import typer
 
 from kpops import __version__
-from kpops.cli.config import ENV_PREFIX, KpopsConfig
 from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
@@ -19,6 +18,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
+from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 

@@ -19,7 +19,7 @@ from kpops.component_handlers.kafka_connect.model import (
 )
 
 if TYPE_CHECKING:
-    from kpops.cli.config import KafkaConnectConfig
+    from kpops.config import KafkaConnectConfig
 
 HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 

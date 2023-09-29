@@ -5,7 +5,6 @@ import pytest
 from pytest_mock import MockerFixture
 from typing_extensions import override
 
-from kpops.cli.config import KpopsConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
@@ -17,6 +16,7 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
 )
+from kpops.config import KpopsConfig
 from kpops.utils.colorify import magentaify
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"

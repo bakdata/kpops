@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from kpops.cli.config import KpopsConfig
+from kpops.config import KpopsConfig
 from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.environment import ENV
 

@@ -9,8 +9,8 @@ from typing import TypeVar
 import typer
 from pydantic import BaseModel, Field
 
-from kpops.cli.config import KpopsConfig
 from kpops.component_handlers import ComponentHandlers
+from kpops.config import KpopsConfig
 from kpops.utils import cached_classproperty
 from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr

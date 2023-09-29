@@ -2,7 +2,6 @@ from pathlib import Path
 
 from pytest_mock import MockerFixture
 
-from kpops.cli.config import KpopsConfig, SchemaRegistryConfig
 from kpops.cli.main import setup_handlers
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
@@ -10,6 +9,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 )
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
+from kpops.config import KpopsConfig, SchemaRegistryConfig
 from tests.cli.resources.module import CustomSchemaProvider
 
 MODULE = CustomSchemaProvider.__module__
@@ -19,7 +19,6 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
     config = KpopsConfig(
         defaults_path=Path("fake"),
         environment="development",
-        schema_registry=SchemaRegistryConfig(),
         kafka_brokers="broker:9092",
     )
     connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")

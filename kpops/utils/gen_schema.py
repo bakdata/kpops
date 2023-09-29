@@ -8,9 +8,9 @@ from pydantic import BaseConfig, Field, schema, schema_json_of
 from pydantic.fields import FieldInfo, ModelField
 from pydantic.schema import SkipField
 
-from kpops.cli.config import KpopsConfig
 from kpops.cli.registry import _find_classes
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.config import KpopsConfig
 from kpops.utils.docstring import describe_object
 
 

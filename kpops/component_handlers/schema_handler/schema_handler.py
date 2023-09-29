@@ -7,7 +7,6 @@ from functools import cached_property
 from schema_registry.client import SchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
 
-from kpops.cli.config import KpopsConfig
 from kpops.cli.exception import ClassNotFoundError
 from kpops.cli.registry import find_class
 from kpops.component_handlers.schema_handler.schema_provider import (
@@ -15,6 +14,7 @@ from kpops.component_handlers.schema_handler.schema_provider import (
     SchemaProvider,
 )
 from kpops.components.base_components.models.to_section import ToSection
+from kpops.config import KpopsConfig
 from kpops.utils.colorify import greenify, magentaify
 
 log = logging.getLogger("SchemaHandler")

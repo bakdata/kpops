@@ -6,7 +6,6 @@ from unittest.mock import MagicMock, patch
 import pytest
 from pytest_httpx import HTTPXMock
 
-from kpops.cli.config import KpopsConfig
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
@@ -17,6 +16,7 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectResponse,
 )
 from kpops.component_handlers.kafka_connect.timeout import timeout
+from kpops.config import KpopsConfig
 
 HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 
