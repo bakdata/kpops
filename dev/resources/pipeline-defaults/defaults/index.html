@@ -371,6 +371,11 @@
         Migrate from v1 to v2
       </a>
 </li>
+<li class="md-nav__item">
+<a class="md-nav__link" href="../../../user/migration-guide/v2-v3/">
+        Migrate from v2 to v3
+      </a>
+</li>
 </ul>
 </nav>
 </li>
@@ -700,7 +705,7 @@
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w">  </span><span class="c1"># add the key-value pairs they need.</span>
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="w">  </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w">    </span><span class="nt">streams</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="w">      </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${brokers}</span><span class="w"> </span><span class="c1"># required</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="w">      </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${kafka_brokers}</span><span class="w"> </span><span class="c1"># required</span>
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="w">      </span><span class="nt">schemaRegistryUrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${schema_registry_url}</span>
 </span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="w">    </span><span class="nt">nameOverride</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">override-with-this-name</span><span class="w"> </span><span class="c1"># kafka-app-specific</span>
 </span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13"></a><span class="w">    </span><span class="nt">imageTag</span><span class="p">:</span><span class="w"> </span><span class="s">"1.0.0"</span><span class="w"> </span><span class="c1"># Example values that are shared between streams-app and producer-app</span>
@@ -863,7 +868,7 @@
 </span><span id="__span-0-170"><a id="__codelineno-0-170" name="__codelineno-0-170"></a><span class="w">  </span><span class="c1"># https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app</span>
 </span><span id="__span-0-171"><a id="__codelineno-0-171" name="__codelineno-0-171"></a><span class="w">  </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
 </span><span id="__span-0-172"><a id="__codelineno-0-172" name="__codelineno-0-172"></a><span class="w">    </span><span class="nt">streams</span><span class="p">:</span><span class="w"> </span><span class="c1"># required, producer-app-specific</span>
-</span><span id="__span-0-173"><a id="__codelineno-0-173" name="__codelineno-0-173"></a><span class="w">      </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${brokers}</span><span class="w"> </span><span class="c1"># required</span>
+</span><span id="__span-0-173"><a id="__codelineno-0-173" name="__codelineno-0-173"></a><span class="w">      </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${kafka_brokers}</span><span class="w"> </span><span class="c1"># required</span>
 </span><span id="__span-0-174"><a id="__codelineno-0-174" name="__codelineno-0-174"></a><span class="w">      </span><span class="nt">schemaRegistryUrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${schema_registry_url}</span>
 </span><span id="__span-0-175"><a id="__codelineno-0-175" name="__codelineno-0-175"></a><span class="w">      </span><span class="nt">outputTopic</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">output_topic</span>
 </span><span id="__span-0-176"><a id="__codelineno-0-176" name="__codelineno-0-176"></a><span class="w">      </span><span class="nt">extraOutputTopics</span><span class="p">:</span>
@@ -881,7 +886,7 @@
 </span><span id="__span-0-188"><a id="__codelineno-0-188" name="__codelineno-0-188"></a><span class="w">  </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
 </span><span id="__span-0-189"><a id="__codelineno-0-189" name="__codelineno-0-189"></a><span class="w">    </span><span class="c1"># Streams Bootstrap streams section</span>
 </span><span id="__span-0-190"><a id="__codelineno-0-190" name="__codelineno-0-190"></a><span class="w">    </span><span class="nt">streams</span><span class="p">:</span><span class="w"> </span><span class="c1"># required, streams-app-specific</span>
-</span><span id="__span-0-191"><a id="__codelineno-0-191" name="__codelineno-0-191"></a><span class="w">      </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${brokers}</span><span class="w"> </span><span class="c1"># required</span>
+</span><span id="__span-0-191"><a id="__codelineno-0-191" name="__codelineno-0-191"></a><span class="w">      </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${kafka_brokers}</span><span class="w"> </span><span class="c1"># required</span>
 </span><span id="__span-0-192"><a id="__codelineno-0-192" name="__codelineno-0-192"></a><span class="w">      </span><span class="nt">schemaRegistryUrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${schema_registry_url}</span>
 </span><span id="__span-0-193"><a id="__codelineno-0-193" name="__codelineno-0-193"></a><span class="w">      </span><span class="nt">inputTopics</span><span class="p">:</span>
 </span><span id="__span-0-194"><a id="__codelineno-0-194" name="__codelineno-0-194"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">topic1</span>
