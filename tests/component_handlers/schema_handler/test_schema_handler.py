@@ -141,7 +141,7 @@ def test_should_raise_value_error_if_schema_provider_class_not_found():
     ],
 )
 def test_should_raise_value_error_when_schema_provider_is_called_and_components_module_is_empty(
-    components_module,
+    components_module: str,
 ):
     config_enable = PipelineConfig(
         defaults_path=Path("fake"),
