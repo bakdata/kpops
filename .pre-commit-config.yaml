@@ -9,13 +9,14 @@ repos:
         types_or: [python]
         require_serial: true # run once for all files
         pass_filenames: false
-      - id: black
-        name: black
-        entry: black
+      - id: ruff-format
+        name: ruff-format
+        entry: ruff format .
+        args: [ --config, pyproject.toml ]
         language: system
-        types_or: [python, pyi]
+        types_or: [python]
         require_serial: true # run once for all files
-        exclude: ^tests/.*snapshots/
+        pass_filenames: false
       - id: pyright
         name: pyright
         entry: pyright
