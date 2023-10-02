@@ -1,10 +1,13 @@
+# -*- coding: utf-8 -*-
 # snapshottest: v1 - https://goo.gl/zC4yUc
+from __future__ import unicode_literals
 
 from snapshottest import Snapshot
 
+
 snapshots = Snapshot()
 
-snapshots["TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema-generation"] = """{
+snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema-generation'] = '''{
     "definitions": {
         "EmptyPipelineComponent": {
             "description": "",
@@ -429,4 +432,4 @@ snapshots["TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
     "title": "KPOps pipeline schema",
     "type": "array"
 }
-"""
+'''
