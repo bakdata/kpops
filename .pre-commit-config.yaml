@@ -9,8 +9,6 @@ repos:
         types_or: [python]
         require_serial: true # run once for all files
         pass_filenames: false
-  - repo: local
-    hooks:
       - id: black
         name: black
         entry: black
@@ -18,8 +16,6 @@ repos:
         types_or: [python, pyi]
         require_serial: true # run once for all files
         exclude: ^tests/.*snapshots/
-  - repo: local
-    hooks:
       - id: pyright
         name: pyright
         entry: pyright
@@ -27,8 +23,6 @@ repos:
         types: [python]
         require_serial: true # run once for all files
         exclude: ^tests/.*snapshots/
-  - repo: local
-    hooks:
       - id: gen-schema
         name: gen-schema
         entry: python hooks/gen_schema.py
