@@ -38,7 +38,7 @@ jobs:
       - name: Lint (ruff)
         shell: bash
         run: |
-          if [[ "$RUNNER_OS" == "Linux" && $(python -V) == *"3.10"* ]];
+          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]];
           then
             echo "::add-matcher::.github/ruff-matcher.json";
             poetry run pre-commit run --hook-stage manual ruff-ci --all-files --show-diff-on-failure;
