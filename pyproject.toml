@@ -160,6 +160,13 @@ extend-immutable-calls = ["typer.Argument"]
 [tool.ruff.flake8-type-checking]
 runtime-evaluated-base-classes = ["pydantic.BaseModel", "kpops.components.base_components.kafka_app.KafkaApp"]
 
+[tool.pyright]
+reportUnknownArgumentType	= "error"
+reportUnknownLambdaType	= "error"
+reportUnknownMemberType	= "error"
+reportUnknownParameterType = "error"
+reportUnknownVariableType	= "error"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
