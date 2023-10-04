@@ -1,9 +1,11 @@
+import json
 import logging
 from enum import Enum
 from typing import Annotated, Any, Literal, Sequence, Union
 
-from pydantic import Field, schema_json_of
+from pydantic import Field, GenerateSchema, TypeAdapter, schema_json_of
 from pydantic.fields import FieldInfo
+from pydantic.json_schema import JsonSchemaMode, model_json_schema, models_json_schema
 from pydantic.v1 import schema
 from pydantic.v1.schema import SkipField
 
@@ -53,8 +55,9 @@ def _is_valid_component(
 
 
 def _add_components(
-    components_module: str, components: tuple[type[PipelineComponent]] | None = None
-) -> tuple[type[PipelineComponent]]:
+    components_module: str,
+    components: tuple[type[PipelineComponent], ...] | None = None,
+) -> tuple[type[PipelineComponent], ...]:
     """Add components to a components tuple
 
     If an empty tuple is provided or it is not provided at all, the components
@@ -92,14 +95,14 @@ def gen_pipeline_schema(
         log.warning("No components are provided, no schema is generated.")
         return
     # Add stock components if enabled
-    components: tuple[type[PipelineComponent]] = tuple()
+    components: tuple[type[PipelineComponent], ...] = tuple()
     if include_stock_components:
         components = tuple(_find_classes("kpops.components", PipelineComponent))
     # Add custom components if provided
     if components_module:
         components = _add_components(components_module, components)
     # Create a type union that will hold the union of all component types
-    PipelineComponents = Union[components]  # type: ignore[valid-type]
+    PipelineComponents: Union[type[PipelineComponent], ...] = Union[components_moded]  # type: ignore[valid-type]
 
     # re-assign component type as Literal to work as discriminator
     for component in components:
@@ -113,24 +116,26 @@ def gen_pipeline_schema(
             # model_config=BaseConfig,
             # class_validators=None,
         )
+    components_moded = tuple([(component, "serialization") for component in components])
 
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="type")
     ]
 
-    schema = schema_json_of(
+    schema = model_json_schema(
         Sequence[AnnotatedPipelineComponents],
-        title="KPOps pipeline schema",
+        # title="KPOps pipeline schema",
         by_alias=True,
-        indent=4,
-        sort_keys=True,
     )
-    print(schema)
+    # schema = models_json_schema(
+    #     components_moded,
+    #     # title="KPOps pipeline schema",
+    #     by_alias=True,
+    # )
+    print(json.dumps(schema[1], indent=4, sort_keys=True))
 
 
 def gen_config_schema() -> None:
     """Generate a json schema from the model of pipeline config"""
-    schema = schema_json_of(
-        PipelineConfig, title="KPOps config schema", indent=4, sort_keys=True
-    )
-    print(schema)
+    schema = model_json_schema(PipelineConfig)
+    print(json.dumps(schema, indent=4, sort_keys=True))

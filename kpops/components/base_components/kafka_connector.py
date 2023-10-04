@@ -5,7 +5,7 @@ from abc import ABC
 from functools import cached_property
 from typing import Any, NoReturn
 
-from pydantic import Field, FieldValidationInfo, field_validator
+from pydantic import Field, ValidationInfo, field_validator
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -76,7 +76,7 @@ class KafkaConnector(PipelineComponent, ABC):
     def connector_config_should_have_component_name(
         cls,
         app: KafkaConnectorConfig | dict[str, str],
-        info: FieldValidationInfo,
+        info: ValidationInfo,
     ) -> Any:
         if isinstance(app, KafkaConnectorConfig):
             app = app.model_dump()

@@ -27,4 +27,4 @@ def gen_schema(scope: SchemaScope):
 
 if __name__ == "__main__":
     gen_schema(SchemaScope.PIPELINE)
-    gen_schema(SchemaScope.CONFIG)
+    # gen_schema(SchemaScope.CONFIG)
