@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any
 
-from pydantic import ConfigDict, Extra, Field, model_validator, root_validator
+from pydantic import ConfigDict, Field, model_validator
 
 from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.utils.docstring import describe_attr

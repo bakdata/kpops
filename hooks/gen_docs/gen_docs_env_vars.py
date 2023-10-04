@@ -250,24 +250,20 @@ def __fill_csv_pipeline_config(target: Path) -> None:
     """
     # NOTE: This does not see nested fields, hence if there are env vars in a class like
     # TopicConfig(), they wil not be listed. Possible fix with recursion.
-    config_fields = PipelineConfig.__fields__
-    for config_field in config_fields.values():
-        config_field_info = PipelineConfig.Config.get_field_info(config_field.name)
+    config_fields = PipelineConfig.model_fields
+    for field_name, field_value in config_fields.items():
         config_field_description: str = (
-            config_field.field_info.description
+            field_value.description
             or "No description available, please refer to the pipeline config documentation."
         )
-        config_field_default = None or config_field.field_info.default
-        if config_env_var := config_field_info.get(
-            "env",
-        ) or config_field.field_info.extra.get("env"):
-            csv_append_env_var(
-                target,
-                config_env_var,
-                config_field_default,
-                config_field_description,
-                config_field.name,
-            )
+        config_field_default = field_value.default
+        csv_append_env_var(
+            target,
+            field_value.serialization_alias or field_name,
+            config_field_default,
+            config_field_description,
+            field_name,
+        )
 
 
 def __fill_csv_cli(target: Path) -> None:

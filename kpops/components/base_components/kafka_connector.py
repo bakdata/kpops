@@ -5,7 +5,7 @@ from abc import ABC
 from functools import cached_property
 from typing import Any, NoReturn
 
-from pydantic import Field, field_validator, FieldValidationInfo
+from pydantic import Field, FieldValidationInfo, field_validator
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler

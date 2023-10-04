@@ -6,6 +6,7 @@ from pathlib import Path
 from typing import NamedTuple, cast
 
 import yaml
+from pydantic import FieldInfo
 
 from hooks import PATH_ROOT
 from kpops.cli.registry import _find_classes
@@ -40,11 +41,12 @@ KPOPS_COMPONENTS_INHERITANCE_REF = {
     ).type
     for component in KPOPS_COMPONENTS
 }
+
 KPOPS_COMPONENTS_SECTIONS = {
     component.type: [
         field_name
         for field_name, model in component.__fields__.items()
-        if not model.field_info.exclude
+        if not model.exclude
     ]
     for component in KPOPS_COMPONENTS
 }

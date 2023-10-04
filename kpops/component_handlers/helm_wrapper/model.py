@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Iterator
 
 import yaml
-from pydantic import BaseModel, ConfigDict, Extra, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.exception import ParseError

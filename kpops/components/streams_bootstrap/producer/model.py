@@ -32,6 +32,4 @@ class ProducerValues(KafkaAppConfig):
         default=..., description=describe_attr("streams", __doc__)
     )
 
-    model_config = ConfigDict(
-        extra="allow"
-    )
+    model_config = ConfigDict(extra="allow")

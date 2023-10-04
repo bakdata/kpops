@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseConfig, BaseModel, ConfigDict, Extra, Field, validator, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 from typing_extensions import override
 
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel, to_dot

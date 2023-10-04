@@ -5,7 +5,7 @@ import re
 from functools import cached_property
 from typing import Any
 
-from pydantic import ConfigDict, Extra, Field
+from pydantic import ConfigDict, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -162,7 +162,9 @@ class KubernetesApp(PipelineComponent):
 
         :returns: Thte values to be used by Helm
         """
-        return self.app.model_dump(by_alias=True, exclude_none=True, exclude_defaults=True)
+        return self.app.model_dump(
+            by_alias=True, exclude_none=True, exclude_defaults=True
+        )
 
     def print_helm_diff(self, stdout: str) -> None:
         """Print the diff of the last and current release of this component
@@ -202,7 +204,7 @@ class KubernetesApp(PipelineComponent):
         exclude.add("helm")
         exclude.add("helm_diff")
         return super().model_dump(exclude=exclude, **kwargs)
-    
+
     # @model_serializer(mode="wrap", when_used="always")
     # def serialize_model(self, handler) -> dict[str, Any]:
     #     # breakpoint()

@@ -2,7 +2,6 @@ from typing import Any
 
 from pydantic import ConfigDict, Field, model_serializer
 from pydantic.alias_generators import to_snake
-from typing_extensions import override
 
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
