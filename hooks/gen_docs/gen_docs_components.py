@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import NamedTuple, cast
 
 import yaml
-from pydantic import FieldInfo
 
 from hooks import PATH_ROOT
 from kpops.cli.registry import _find_classes
