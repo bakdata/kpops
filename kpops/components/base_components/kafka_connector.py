@@ -121,7 +121,7 @@ class KafkaConnector(PipelineComponent, ABC):
     def helm_flags(self) -> HelmFlags:
         """Return shared flags for Helm commands"""
         return HelmFlags(
-            **self.repo_config.repo_auth_flags.dict(),
+            **self.repo_config.repo_auth_flags.model_dump(),
             version=self.version,
             create_namespace=self.config.create_namespace,
         )
@@ -130,7 +130,7 @@ class KafkaConnector(PipelineComponent, ABC):
     def template_flags(self) -> HelmTemplateFlags:
         """Return flags for Helm template command"""
         return HelmTemplateFlags(
-            **self.helm_flags.dict(),
+            **self.helm_flags.model_dump(),
             api_version=self.config.helm_config.api_version,
         )
 
@@ -273,7 +273,7 @@ class KafkaConnector(PipelineComponent, ABC):
                 ),
                 connector_type=connector_type.value,
                 name_override=connector_name,
-            ).dict(),
+            ).model_dump(),
             **self.resetter_values,
         }
 

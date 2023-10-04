@@ -87,5 +87,5 @@ class KafkaConnectResetterValues(CamelCaseConfigModel):
     name_override: str
 
     @override
-    def dict(self, **_) -> dict[str, Any]:
-        return super().dict(by_alias=True, exclude_none=True)
+    def model_dump(self, **_) -> dict[str, Any]:
+        return super().model_dump(by_alias=True, exclude_none=True)

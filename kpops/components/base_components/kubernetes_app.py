@@ -104,7 +104,7 @@ class KubernetesApp(PipelineComponent):
     def helm_flags(self) -> HelmFlags:
         """Return shared flags for Helm commands"""
         return HelmFlags(
-            **self.repo_config.repo_auth_flags.dict(),
+            **self.repo_config.repo_auth_flags.model_dump(),
             version=self.version,
             create_namespace=self.config.create_namespace,
         )
@@ -113,7 +113,7 @@ class KubernetesApp(PipelineComponent):
     def template_flags(self) -> HelmTemplateFlags:
         """Return flags for Helm template command"""
         return HelmTemplateFlags(
-            **self.helm_flags.dict(),
+            **self.helm_flags.model_dump(),
             api_version=self.config.helm_config.api_version,
         )
 
@@ -131,7 +131,7 @@ class KubernetesApp(PipelineComponent):
     @property
     def deploy_flags(self) -> HelmUpgradeInstallFlags:
         """Return flags for Helm upgrade install command"""
-        return HelmUpgradeInstallFlags(**self.helm_flags.dict())
+        return HelmUpgradeInstallFlags(**self.helm_flags.model_dump())
 
     @override
     def deploy(self, dry_run: bool) -> None:
