@@ -114,6 +114,7 @@ class StreamsConfig(KafkaStreamsConfig):
         extra_fields = set()
         if self.model_extra is not None:
             extra_fields = set(self.model_extra.keys())
+        # fields = extra_fields.union(self.model_fields_set)
         fields = extra_fields.union(self.model_fields_set)
         if self.extra_input_topics:
             fields.add("extra_input_topics")
