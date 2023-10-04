@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseConfig, BaseModel, ConfigDict, Extra, Field, validator
+from pydantic import BaseConfig, BaseModel, ConfigDict, Extra, Field, validator, field_validator
 from typing_extensions import override
 
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel, to_dot
@@ -16,8 +16,8 @@ class KafkaConnectorConfig(DescConfigModel):
     """Settings specific to Kafka Connectors"""
 
     connector_class: str
-    name: str = Field(
-        default=...,
+    name: str | None = Field(
+        default=None,
         json_schema_extra={
             "hidden_from_schema": True,
         },
@@ -30,7 +30,7 @@ class KafkaConnectorConfig(DescConfigModel):
         json_schema_extra={"additional_properties": {"type": "string"}},
     )
 
-    @validator("connector_class")
+    @field_validator("connector_class")
     def connector_class_must_contain_dot(cls, connector_class: str) -> str:
         if "." not in connector_class:
             raise ValueError(f"Invalid connector class {connector_class}")
@@ -41,8 +41,8 @@ class KafkaConnectorConfig(DescConfigModel):
         return self.connector_class.split(".")[-1]
 
     @override
-    def dict(self, **_) -> dict[str, Any]:
-        return super().dict(by_alias=True, exclude_none=True)
+    def model_dump(self, **_) -> dict[str, Any]:
+        return super().model_dump(by_alias=True, exclude_none=True)
 
 
 class ConnectorTask(BaseModel):

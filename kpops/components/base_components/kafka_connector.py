@@ -5,7 +5,7 @@ from abc import ABC
 from functools import cached_property
 from typing import Any, NoReturn
 
-from pydantic import Field, validator
+from pydantic import Field, field_validator, FieldValidationInfo
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -71,19 +71,21 @@ class KafkaConnector(PipelineComponent, ABC):
         description=describe_attr("resetter_values", __doc__),
     )
 
-    @validator("app", pre=True)
+    @field_validator("app")
+    @classmethod
     def connector_config_should_have_component_name(
         cls,
         app: KafkaConnectorConfig | dict[str, str],
-        values: dict[str, Any],
-    ) -> dict[str, str]:
+        info: FieldValidationInfo,
+    ) -> Any:
         if isinstance(app, KafkaConnectorConfig):
-            app = app.dict()
-        component_name = values["prefix"] + values["name"]
+            app = app.model_dump()
+        component_name = info.data["prefix"] + info.data["name"]
         connector_name: str | None = app.get("name")
         if connector_name is not None and connector_name != component_name:
             raise ValueError("Connector name should be the same as component name")
         app["name"] = component_name
+        app = KafkaConnectorConfig(**app)
         return app
 
     @cached_property
