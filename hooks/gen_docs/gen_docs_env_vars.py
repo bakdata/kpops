@@ -21,7 +21,7 @@ except ImportError:
 from hooks import PATH_ROOT
 from hooks.gen_docs import IterableStrEnum
 from kpops.cli import main
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.config import KpopsConfig
 
 PATH_DOCS_RESOURCES = PATH_ROOT / "docs/docs/resources"
 PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
@@ -254,8 +254,8 @@ def fill_csv_pipeline_config(target: Path) -> None:
     :param target: The path to the `.csv` file. Note that it must already
         contain the column names
     """
-    for field in collect_fields(PipelineConfig):
-        field_info = PipelineConfig.Config.get_field_info(field.name)
+    for field in collect_fields(KpopsConfig):
+        field_info = KpopsConfig.Config.get_field_info(field.name)
         field_description: str = (
             field.field_info.description
             or "No description available, please refer to the pipeline config documentation."

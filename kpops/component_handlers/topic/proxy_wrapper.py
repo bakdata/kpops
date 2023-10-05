@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import logging
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 import httpx
+from pydantic import AnyHttpUrl
 
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.topic.exception import (
     KafkaRestProxyError,
     TopicNotFoundException,
@@ -15,6 +18,9 @@ from kpops.component_handlers.topic.model import (
     TopicSpec,
 )
 
+if TYPE_CHECKING:
+    from kpops.config import KafkaRestConfig
+
 log = logging.getLogger("KafkaRestProxy")
 
 HEADERS = {"Content-Type": "application/json"}
@@ -25,13 +31,8 @@ class ProxyWrapper:
     Wraps Kafka REST Proxy APIs
     """
 
-    def __init__(self, pipeline_config: PipelineConfig) -> None:
-        if not pipeline_config.kafka_rest_host:
-            raise ValueError(
-                "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
-            )
-
-        self._host = pipeline_config.kafka_rest_host
+    def __init__(self, config: KafkaRestConfig) -> None:
+        self._config: KafkaRestConfig = config
 
     @cached_property
     def cluster_id(self) -> str:
@@ -44,7 +45,7 @@ class ProxyWrapper:
         bootstrap.servers configuration. Therefore, only one Kafka cluster will be returned.
         :return: The Kafka cluster ID.
         """
-        response = httpx.get(url=f"{self._host}/v3/clusters")
+        response = httpx.get(url=f"{self._config.url}/v3/clusters")
         if response.status_code == httpx.codes.OK:
             cluster_information = response.json()
             return cluster_information["data"][0]["cluster_id"]
@@ -52,8 +53,8 @@ class ProxyWrapper:
         raise KafkaRestProxyError(response)
 
     @property
-    def host(self) -> str:
-        return self._host
+    def url(self) -> AnyHttpUrl:
+        return self._config.url
 
     def create_topic(self, topic_spec: TopicSpec) -> None:
         """
@@ -62,7 +63,7 @@ class ProxyWrapper:
         :param topic_spec: The topic specification.
         """
         response = httpx.post(
-            url=f"{self._host}/v3/clusters/{self.cluster_id}/topics",
+            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec.dict(exclude_none=True),
         )
@@ -80,7 +81,7 @@ class ProxyWrapper:
         :param topic_name: Name of the topic
         """
         response = httpx.delete(
-            url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
+            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
         if response.status_code == httpx.codes.NO_CONTENT:
@@ -97,7 +98,7 @@ class ProxyWrapper:
         :return: Response of the get topic API
         """
         response = httpx.get(
-            url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
+            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
         if response.status_code == httpx.codes.OK:
@@ -123,7 +124,7 @@ class ProxyWrapper:
         :return: The topic configuration.
         """
         response = httpx.get(
-            url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",
+            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",
             headers=HEADERS,
         )
 
@@ -150,7 +151,7 @@ class ProxyWrapper:
         :param config_name: The configuration parameter name.
         """
         response = httpx.post(
-            url=f"{self.host}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",
+            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={"data": json_body},
         )
@@ -167,7 +168,7 @@ class ProxyWrapper:
         :return: The broker configuration.
         """
         response = httpx.get(
-            url=f"{self.host}/v3/clusters/{self.cluster_id}/brokers/-/configs",
+            url=f"{self.url}/v3/clusters/{self.cluster_id}/brokers/-/configs",
             headers=HEADERS,
         )
 

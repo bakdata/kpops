@@ -241,7 +241,7 @@ class KafkaConnector(PipelineComponent, ABC):
             **KafkaConnectResetterValues(
                 config=KafkaConnectResetterConfig(
                     connector=self.full_name,
-                    brokers=self.config.brokers,
+                    brokers=self.config.kafka_brokers,
                     **kwargs,
                 ),
                 connector_type=self._connector_type.value,

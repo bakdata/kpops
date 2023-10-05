@@ -19,7 +19,7 @@ except ImportError:
     from typing_extensions import Self
 
 if TYPE_CHECKING:
-    from kpops.cli.pipeline_config import PipelineConfig
+    from kpops.config import KpopsConfig
 
 log = logging.getLogger("KafkaConnectHandler")
 
@@ -100,14 +100,14 @@ class KafkaConnectHandler:
 
             log.debug(connector_config.dict())
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
-            log.debug(f"HOST: {self._connect_wrapper.host}")
+            log.debug(f"HOST: {self._connect_wrapper.url}")
         except ConnectorNotFoundException:
             diff = render_diff({}, connector_config.dict())
             log.info(
                 f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n{diff}"
             )
             log.debug("POST /connectors HTTP/1.1")
-            log.debug(f"HOST: {self._connect_wrapper.host}")
+            log.debug(f"HOST: {self._connect_wrapper.url}")
 
         errors = self._connect_wrapper.validate_connector_config(connector_config)
         if len(errors) > 0:
@@ -129,15 +129,15 @@ class KafkaConnectHandler:
                 )
             )
             log.debug(f"DELETE /connectors/{connector_name} HTTP/1.1")
-            log.debug(f"HOST: {self._connect_wrapper.host}")
+            log.debug(f"HOST: {self._connect_wrapper.url}")
         except ConnectorNotFoundException:
             log.warning(
                 f"Connector Destruction: connector {connector_name} does not exist and cannot be deleted. Skipping."
             )
 
     @classmethod
-    def from_pipeline_config(cls, pipeline_config: PipelineConfig) -> Self:
+    def from_kpops_config(cls, config: KpopsConfig) -> Self:
         return cls(
-            connect_wrapper=ConnectWrapper(host=pipeline_config.kafka_connect_host),
-            timeout=pipeline_config.timeout,
+            connect_wrapper=ConnectWrapper(config.kafka_connect),
+            timeout=config.timeout,
         )
