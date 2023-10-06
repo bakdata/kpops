@@ -159,7 +159,7 @@ split-on-trailing-comma = false
 extend-immutable-calls = ["typer.Argument"]
 
 [tool.ruff.flake8-type-checking]
-runtime-evaluated-base-classes = ["pydantic.BaseModel", "kpops.components.base_components.kafka_app.KafkaApp"]
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
