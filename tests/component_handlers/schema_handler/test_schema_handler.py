@@ -76,7 +76,7 @@ def test_load_schema_handler():
         schema_registry_url="http://localhost:8081",
     )
 
-    config_disable = config_enable.copy()
+    config_disable = config_enable.model_copy()
     config_disable.schema_registry_url = None
     assert (
         SchemaHandler.load_schema_handler(TEST_SCHEMA_PROVIDER_MODULE, config_disable)

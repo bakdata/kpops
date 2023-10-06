@@ -101,8 +101,10 @@ def gen_pipeline_schema(
     # Add custom components if provided
     if components_module:
         components = _add_components(components_module, components)
+    if not components:
+        raise RuntimeError("No valid components found.")
     # Create a type union that will hold the union of all component types
-    PipelineComponents: Union[type[PipelineComponent], ...] = Union[components_moded]  # type: ignore[valid-type]
+    PipelineComponents = Union[components]  # type: ignore[valid-type]
 
     # re-assign component type as Literal to work as discriminator
     for component in components:
@@ -116,26 +118,33 @@ def gen_pipeline_schema(
             # model_config=BaseConfig,
             # class_validators=None,
         )
-    components_moded = tuple([(component, "serialization") for component in components])
-
+    components_moded = tuple([(component, "validation") for component in components])
+    # Create a type union that will hold the union of all component types
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="type")
     ]
 
-    schema = model_json_schema(
-        Sequence[AnnotatedPipelineComponents],
+    schema = models_json_schema(
+        components_moded,
         # title="KPOps pipeline schema",
         by_alias=True,
     )
-    # schema = models_json_schema(
-    #     components_moded,
-    #     # title="KPOps pipeline schema",
-    #     by_alias=True,
-    # )
-    print(json.dumps(schema[1], indent=4, sort_keys=True))
+    print(
+        json.dumps(
+            schema,
+            indent=4,
+            sort_keys=True,
+        )
+    )
 
 
 def gen_config_schema() -> None:
     """Generate a json schema from the model of pipeline config"""
     schema = model_json_schema(PipelineConfig)
-    print(json.dumps(schema, indent=4, sort_keys=True))
+    print(
+        json.dumps(
+            schema,
+            indent=4,
+            sort_keys=True
+        )
+    )
