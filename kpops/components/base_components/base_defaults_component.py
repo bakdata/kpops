@@ -46,12 +46,12 @@ class BaseDefaultsComponent(DescConfigModel):
         ignored_types=(cached_property, cached_classproperty),
     )
 
-    enrich: bool = Field(
+    enrich: Annotated[bool, WithJsonSchema({})] = Field(
         default=False,
         description=describe_attr("enrich", __doc__),
         exclude=True,
     )
-    config: PipelineConfig = Field(
+    config: Annotated[PipelineConfig, WithJsonSchema({})] = Field(
         default=...,
         description=describe_attr("config", __doc__),
         exclude=True,
@@ -61,7 +61,7 @@ class BaseDefaultsComponent(DescConfigModel):
         description=describe_attr("handlers", __doc__),
         exclude=True,
     )
-    validate_: bool = Field(
+    validate_: Annotated[bool, WithJsonSchema({})] = Field(
         validation_alias=AliasChoices("validate", "validate_"),
         default=True,
         description=describe_attr("validate", __doc__),

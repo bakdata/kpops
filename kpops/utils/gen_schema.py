@@ -101,7 +101,7 @@ def gen_pipeline_schema(
             # model_config=BaseConfig,
             # class_validators=None,
         )
-    components_moded = tuple([(component, "serialization") for component in components])
+    components_moded = tuple([(component, "validation") for component in components])
 
     schema = models_json_schema(
         components_moded,
