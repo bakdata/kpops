@@ -17,8 +17,9 @@ class KafkaConnectorConfig(DescConfigModel):
     """Settings specific to Kafka Connectors"""
 
     connector_class: str
-    name: Annotated[str | None, WithJsonSchema({})] = Field(
+    name: str | None = Field(
         default=None,
+        exclude=True,
     )
     model_config = ConfigDict(
         extra="allow",

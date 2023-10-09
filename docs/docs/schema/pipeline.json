@@ -59,66 +59,6 @@
             "title": "FromTopic",
             "type": "object"
         },
-        "HelmConfig": {
-            "description": "Global Helm configuration",
-            "properties": {
-                "api_version": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Kubernetes API version used for Capabilities.APIVersions",
-                    "title": "API version"
-                },
-                "context": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Name of kubeconfig context (`--kube-context`)",
-                    "examples": [
-                        "dev-storage"
-                    ],
-                    "title": "Context"
-                },
-                "debug": {
-                    "default": false,
-                    "description": "Run Helm in Debug mode",
-                    "title": "Debug",
-                    "type": "boolean"
-                }
-            },
-            "title": "HelmConfig",
-            "type": "object"
-        },
-        "HelmDiffConfig": {
-            "properties": {
-                "ignore": {
-                    "description": "Set of keys that should not be checked.",
-                    "examples": [
-                        "- name\n- imageTag"
-                    ],
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Ignore",
-                    "type": "array",
-                    "uniqueItems": true
-                }
-            },
-            "title": "HelmDiffConfig",
-            "type": "object"
-        },
         "HelmRepoConfig": {
             "description": "Helm repository configuration",
             "properties": {
@@ -176,14 +116,6 @@
                     ],
                     "description": "Application-specific settings"
                 },
-                "config": {
-                    "description": "Pipeline configuration to be accessed by this component"
-                },
-                "enrich": {
-                    "default": false,
-                    "description": "Whether to enrich component with defaults",
-                    "title": "Enrich"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -196,10 +128,6 @@
                     "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
-                },
-                "handlers": {
-                    "description": "Component handlers to be accessed by this component",
-                    "title": "Handlers"
                 },
                 "name": {
                     "description": "Component name",
@@ -248,11 +176,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "validate": {
-                    "default": true,
-                    "description": "Whether to run custom validation on the component",
-                    "title": "Validate"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -268,8 +191,6 @@
                 }
             },
             "required": [
-                "config",
-                "handlers",
                 "name",
                 "namespace",
                 "app"
@@ -321,14 +242,6 @@
                     ],
                     "description": "Application-specific settings"
                 },
-                "config": {
-                    "description": "Pipeline configuration to be accessed by this component"
-                },
-                "enrich": {
-                    "default": false,
-                    "description": "Whether to enrich component with defaults",
-                    "title": "Enrich"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -341,10 +254,6 @@
                     "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
-                },
-                "handlers": {
-                    "description": "Component handlers to be accessed by this component",
-                    "title": "Handlers"
                 },
                 "name": {
                     "description": "Component name",
@@ -398,11 +307,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "validate": {
-                    "default": true,
-                    "description": "Whether to run custom validation on the component",
-                    "title": "Validate"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -418,8 +322,6 @@
                 }
             },
             "required": [
-                "config",
-                "handlers",
                 "name",
                 "namespace",
                 "app"
@@ -437,10 +339,6 @@
                 "connector.class": {
                     "title": "Connector.Class",
                     "type": "string"
-                },
-                "name": {
-                    "default": null,
-                    "title": "Name"
                 }
             },
             "required": [
@@ -461,14 +359,6 @@
                     ],
                     "description": "Application-specific settings"
                 },
-                "config": {
-                    "description": "Pipeline configuration to be accessed by this component"
-                },
-                "enrich": {
-                    "default": false,
-                    "description": "Whether to enrich component with defaults",
-                    "title": "Enrich"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -481,10 +371,6 @@
                     "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
-                },
-                "handlers": {
-                    "description": "Component handlers to be accessed by this component",
-                    "title": "Handlers"
                 },
                 "name": {
                     "description": "Component name",
@@ -538,11 +424,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "validate": {
-                    "default": true,
-                    "description": "Whether to run custom validation on the component",
-                    "title": "Validate"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -558,8 +439,6 @@
                 }
             },
             "required": [
-                "config",
-                "handlers",
                 "name",
                 "namespace",
                 "app"
@@ -579,14 +458,6 @@
                     ],
                     "description": "Application-specific settings"
                 },
-                "config": {
-                    "description": "Pipeline configuration to be accessed by this component"
-                },
-                "enrich": {
-                    "default": false,
-                    "description": "Whether to enrich component with defaults",
-                    "title": "Enrich"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -599,10 +470,6 @@
                     "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
-                },
-                "handlers": {
-                    "description": "Component handlers to be accessed by this component",
-                    "title": "Handlers"
                 },
                 "name": {
                     "description": "Component name",
@@ -669,11 +536,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "validate": {
-                    "default": true,
-                    "description": "Whether to run custom validation on the component",
-                    "title": "Validate"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -689,8 +551,6 @@
                 }
             },
             "required": [
-                "config",
-                "handlers",
                 "name",
                 "namespace",
                 "app"
@@ -739,14 +599,6 @@
                     ],
                     "description": "Application-specific settings"
                 },
-                "config": {
-                    "description": "Pipeline configuration to be accessed by this component"
-                },
-                "enrich": {
-                    "default": false,
-                    "description": "Whether to enrich component with defaults",
-                    "title": "Enrich"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -759,10 +611,6 @@
                     "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
-                },
-                "handlers": {
-                    "description": "Component handlers to be accessed by this component",
-                    "title": "Handlers"
                 },
                 "name": {
                     "description": "Component name",
@@ -800,11 +648,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "validate": {
-                    "default": true,
-                    "description": "Whether to run custom validation on the component",
-                    "title": "Validate"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -820,8 +663,6 @@
                 }
             },
             "required": [
-                "config",
-                "handlers",
                 "name",
                 "namespace",
                 "app",
@@ -850,14 +691,6 @@
             "additionalProperties": true,
             "description": "Base class for all components",
             "properties": {
-                "config": {
-                    "description": "Pipeline configuration to be accessed by this component"
-                },
-                "enrich": {
-                    "default": false,
-                    "description": "Whether to enrich component with defaults",
-                    "title": "Enrich"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -870,10 +703,6 @@
                     "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
-                },
-                "handlers": {
-                    "description": "Component handlers to be accessed by this component",
-                    "title": "Handlers"
                 },
                 "name": {
                     "description": "Component name",
@@ -897,167 +726,12 @@
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
-                },
-                "validate": {
-                    "default": true,
-                    "description": "Whether to run custom validation on the component",
-                    "title": "Validate"
                 }
             },
             "required": [
-                "config",
-                "handlers",
                 "name"
             ],
             "title": "PipelineComponent",
-            "type": "object"
-        },
-        "PipelineConfig": {
-            "additionalProperties": false,
-            "description": "Pipeline configuration unrelated to the components.",
-            "properties": {
-                "KPOPS_connect_host": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Address of Kafka Connect.",
-                    "examples": [
-                        "http://localhost:8083"
-                    ],
-                    "title": "Kpops Connect Host"
-                },
-                "KPOPS_rest_proxy_host": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Address of the Kafka REST Proxy.",
-                    "examples": [
-                        "http://localhost:8082"
-                    ],
-                    "title": "Kpops Rest Proxy Host"
-                },
-                "brokers": {
-                    "description": "The comma separated Kafka brokers address.",
-                    "examples": [
-                        "broker1:9092,broker2:9092,broker3:9092"
-                    ],
-                    "title": "Brokers",
-                    "type": "string"
-                },
-                "create_namespace": {
-                    "default": false,
-                    "description": "Flag for `helm upgrade --install`. Create the release namespace if not present.",
-                    "title": "Create Namespace",
-                    "type": "boolean"
-                },
-                "defaults_filename_prefix": {
-                    "default": "defaults",
-                    "description": "The name of the defaults file and the prefix of the defaults environment file.",
-                    "title": "Defaults Filename Prefix",
-                    "type": "string"
-                },
-                "defaults_path": {
-                    "default": ".",
-                    "description": "The path to the folder containing the defaults.yaml file and the environment defaults files. Paths can either be absolute or relative to `config.yaml`",
-                    "examples": [
-                        "defaults",
-                        "."
-                    ],
-                    "format": "path",
-                    "title": "Defaults Path",
-                    "type": "string"
-                },
-                "environment": {
-                    "description": "The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
-                    "examples": [
-                        "development",
-                        "production"
-                    ],
-                    "title": "Environment",
-                    "type": "string"
-                },
-                "helm_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/HelmConfig"
-                        }
-                    ],
-                    "default": {
-                        "api_version": null,
-                        "context": null,
-                        "debug": false
-                    },
-                    "description": "Global flags for Helm."
-                },
-                "helm_diff_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/HelmDiffConfig"
-                        }
-                    ],
-                    "default": {
-                        "ignore": []
-                    },
-                    "description": "Configure Helm Diff."
-                },
-                "retain_clean_jobs": {
-                    "default": false,
-                    "description": "Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
-                    "title": "Retain Clean Jobs",
-                    "type": "boolean"
-                },
-                "schema_registry_url": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Address of the Schema Registry.",
-                    "examples": [
-                        "http://localhost:8081"
-                    ],
-                    "title": "Schema Registry Url"
-                },
-                "timeout": {
-                    "default": 300,
-                    "description": "The timeout in seconds that specifies when actions like deletion or deploy timeout.",
-                    "title": "Timeout",
-                    "type": "integer"
-                },
-                "topic_name_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/TopicNameConfig"
-                        }
-                    ],
-                    "default": {
-                        "default_error_topic_name": "${pipeline_name}-${component_name}-error",
-                        "default_output_topic_name": "${pipeline_name}-${component_name}"
-                    },
-                    "description": "Configure the topic name variables you can use in the pipeline definition."
-                }
-            },
-            "required": [
-                "environment",
-                "brokers"
-            ],
-            "title": "PipelineConfig",
             "type": "object"
         },
         "ProducerApp": {
@@ -1072,23 +746,11 @@
                     ],
                     "description": "Application-specific settings"
                 },
-                "config": {
-                    "description": "Pipeline configuration to be accessed by this component"
-                },
-                "enrich": {
-                    "default": false,
-                    "description": "Whether to enrich component with defaults",
-                    "title": "Enrich"
-                },
                 "from": {
                     "default": null,
                     "description": "Producer doesn't support FromSection",
                     "title": "From",
                     "type": "null"
-                },
-                "handlers": {
-                    "description": "Component handlers to be accessed by this component",
-                    "title": "Handlers"
                 },
                 "name": {
                     "description": "Component name",
@@ -1137,11 +799,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "validate": {
-                    "default": true,
-                    "description": "Whether to run custom validation on the component",
-                    "title": "Validate"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -1157,8 +814,6 @@
                 }
             },
             "required": [
-                "config",
-                "handlers",
                 "name",
                 "namespace",
                 "app"
@@ -1328,14 +983,6 @@
                     ],
                     "description": "Application-specific settings"
                 },
-                "config": {
-                    "description": "Pipeline configuration to be accessed by this component"
-                },
-                "enrich": {
-                    "default": false,
-                    "description": "Whether to enrich component with defaults",
-                    "title": "Enrich"
-                },
                 "from": {
                     "anyOf": [
                         {
@@ -1348,10 +995,6 @@
                     "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
-                },
-                "handlers": {
-                    "description": "Component handlers to be accessed by this component",
-                    "title": "Handlers"
                 },
                 "name": {
                     "description": "Component name",
@@ -1400,11 +1043,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "validate": {
-                    "default": true,
-                    "description": "Whether to run custom validation on the component",
-                    "title": "Validate"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -1420,8 +1058,6 @@
                 }
             },
             "required": [
-                "config",
-                "handlers",
                 "name",
                 "namespace",
                 "app"
@@ -1790,26 +1426,6 @@
                 }
             },
             "title": "TopicConfig",
-            "type": "object"
-        },
-        "TopicNameConfig": {
-            "additionalProperties": false,
-            "description": "Configures topic names.",
-            "properties": {
-                "default_error_topic_name": {
-                    "default": "${pipeline_name}-${component_name}-error",
-                    "description": "Configures the value for the variable ${error_topic_name}",
-                    "title": "Default Error Topic Name",
-                    "type": "string"
-                },
-                "default_output_topic_name": {
-                    "default": "${pipeline_name}-${component_name}",
-                    "description": "Configures the value for the variable ${output_topic_name}",
-                    "title": "Default Output Topic Name",
-                    "type": "string"
-                }
-            },
-            "title": "TopicNameConfig",
             "type": "object"
         }
     },

@@ -71,19 +71,19 @@ class StreamsConfig(KafkaStreamsConfig):
             self.extra_input_topics.get(role, []) + topics
         )
 
-    @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(self, handler) -> dict[str, Any]:
-        result = handler(self)
-        # if dict(result.items()).get("extraInputTopics"):
-        #     breakpoint()
-        extra_fields = set()
-        if self.model_extra is not None:
-            extra_fields = set(self.model_extra.keys())
-        fields = extra_fields.union(self.model_fields_set)
-        filtered_result_extra_set = {
-            k: v for k, v in result.items() if ((to_snake(k) in fields) or k in fields)
-        }
-        return filtered_result_extra_set
+    # @model_serializer(mode="wrap", when_used="always")
+    # def serialize_model(self, handler) -> dict[str, Any]:
+    #     result = handler(self)
+    #     # if dict(result.items()).get("extraInputTopics"):
+    #     #     breakpoint()
+    #     extra_fields = set()
+    #     if self.model_extra is not None:
+    #         extra_fields = set(self.model_extra.keys())
+    #     fields = extra_fields.union(self.model_fields_set)
+    #     filtered_result_extra_set = {
+    #         k: v for k, v in result.items() if ((to_snake(k) in fields) or k in fields)
+    #     }
+    #     return filtered_result_extra_set
 
 
 class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
