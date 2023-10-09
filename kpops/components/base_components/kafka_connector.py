@@ -73,7 +73,7 @@ class KafkaConnector(PipelineComponent, ABC):
         default_factory=dict,
         description=describe_attr("resetter_values", __doc__),
     )
-    _connector_type: KafkaConnectorType = Field()
+    connector_type: KafkaConnectorType = Field()
     @field_validator("app")
     @classmethod
     def connector_config_should_have_component_name(
@@ -190,7 +190,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
         log.info(
             magentaify(
-                f"Connector Cleanup: deploy Connect {self._connector_type.value} resetter for {self.full_name}"
+                f"Connector Cleanup: deploy Connect {self.connector_type.value} resetter for {self.full_name}"
             )
         )
 
@@ -246,7 +246,7 @@ class KafkaConnector(PipelineComponent, ABC):
                     brokers=self.config.brokers,
                     **kwargs,
                 ),
-                connector_type=self._connector_type.value,
+                connector_type=self.connector_type.value,
                 name_override=self.full_name,
             ).model_dump(),
             **self.resetter_values,
@@ -278,7 +278,7 @@ class KafkaSourceConnector(KafkaConnector):
         description=describe_attr("offset_topic", __doc__),
     )
 
-    _connector_type = KafkaConnectorType.SOURCE
+    connector_type: KafkaConnectorType = KafkaConnectorType.SOURCE
 
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
@@ -323,7 +323,7 @@ class KafkaSourceConnector(KafkaConnector):
 class KafkaSinkConnector(KafkaConnector):
     """Kafka sink connector model."""
 
-    _connector_type = KafkaConnectorType.SINK
+    connector_type: KafkaConnectorType = KafkaConnectorType.SINK
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
