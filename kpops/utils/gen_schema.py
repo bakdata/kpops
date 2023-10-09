@@ -1,10 +1,11 @@
 import json
 import logging
 from enum import Enum
-from typing import Literal
+from typing import Annotated, Literal, Union
 
-from pydantic import Field
+from pydantic import Field, TypeAdapter
 from pydantic.json_schema import model_json_schema, models_json_schema
+from pydantic_core import to_json
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
@@ -100,12 +101,13 @@ def gen_pipeline_schema(
             # model_config=BaseConfig,
             # class_validators=None,
         )
-    components_moded = tuple([(component, "validation") for component in components])
+    components_moded = tuple([(component, "serialization") for component in components])
 
     schema = models_json_schema(
         components_moded,
         title="KPOps pipeline schema",
         by_alias=True,
+        ref_template="#/definitions/{model}",
     )
     # breakpoint()
     stripped_schema_first_item = {k[0]: v for k, v in schema[0].items()}
@@ -133,6 +135,17 @@ def gen_pipeline_schema(
             sort_keys=True,
         )
     )
+
+    # Create a type union that will hold the union of all component types
+    # PipelineComponents = Union[components]  # type: ignore[valid-type]
+    # AnnotatedPipelineComponents = Annotated[
+    #     PipelineComponents, Field(discriminator="type")
+    # ]
+    # DumpablePipelineComponents = TypeAdapter(AnnotatedPipelineComponents)
+
+    # schema = to_json(AnnotatedPipelineComponents)
+
+    # print(schema)
 
 
 def gen_config_schema() -> None:
