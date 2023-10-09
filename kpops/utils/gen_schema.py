@@ -4,8 +4,7 @@ from enum import Enum
 from typing import Literal
 
 from pydantic import Field
-from pydantic.fields import FieldInfo
-from pydantic.json_schema import JsonSchemaMode, model_json_schema, models_json_schema
+from pydantic.json_schema import model_json_schema, models_json_schema
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
@@ -134,40 +133,6 @@ def gen_pipeline_schema(
             sort_keys=True,
         )
     )
-
-    """
-"items": {
-    "discriminator": {
-        "mapping": {
-            "empty-pipeline-component": "#/definitions/EmptyPipelineComponent",
-            "sub-pipeline-component": "#/definitions/SubPipelineComponent",
-            "sub-pipeline-component-correct": "#/definitions/SubPipelineComponentCorrect",
-            "sub-pipeline-component-correct-docstr": "#/definitions/SubPipelineComponentCorrectDocstr",
-            "sub-pipeline-component-no-schema-type-no-type": "#/definitions/SubPipelineComponentNoSchemaTypeNoType"
-        },
-        "propertyName": "type"
-    },
-    "oneOf": [
-        {
-            "$ref": "#/definitions/EmptyPipelineComponent"
-        },
-        {
-            "$ref": "#/definitions/SubPipelineComponent"
-        },
-        {
-            "$ref": "#/definitions/SubPipelineComponentCorrect"
-        },
-        {
-            "$ref": "#/definitions/SubPipelineComponentCorrectDocstr"
-        },
-        {
-            "$ref": "#/definitions/SubPipelineComponentNoSchemaTypeNoType"
-        }
-    ]
-},
-"title": "KPOps pipeline schema",
-"type": "array"
-    """
 
 
 def gen_config_schema() -> None:
