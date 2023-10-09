@@ -1,7 +1,7 @@
 import os
 import platform
 from collections import UserDict
-from typing import Callable
+from collections.abc import Callable
 
 
 class Environment(UserDict):

@@ -9,7 +9,7 @@ from kpops.utils.pydantic import DescConfigModel
 
 
 class InputTopicTypes(str, Enum):
-    """Input topic types
+    """Input topic types.
 
     INPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)
     """

@@ -17,7 +17,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 class TestKafkaApp:
-    @pytest.fixture
+    @pytest.fixture()
     def config(self) -> PipelineConfig:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
@@ -25,7 +25,7 @@ class TestKafkaApp:
             helm_diff_config=HelmDiffConfig(),
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
             schema_handler=MagicMock(),
@@ -93,7 +93,7 @@ class TestKafkaApp:
 
         print_helm_diff.assert_called_once()
         helm_upgrade_install.assert_called_once_with(
-            "example-name",
+            "${pipeline_name}-example-name",
             "test/test-chart",
             True,
             "test-namespace",

@@ -4,15 +4,16 @@ site_url: https://bakdata.github.io/kpops/
 remote_branch: gh-pages
 copyright: Copyright &copy; 2023 bakdata
 
+extra_css:
+  - stylesheets/extra.css
+
 theme:
   name: "material"
-  custom_dir: overrides
+  custom_dir: docs/overrides
   language: "en"
-  palette:
-    primary: "custom"
   font:
-    text: "Roboto"
-    code: "Roboto Mono"
+    text: "SF Pro"
+    code: "DejaVu Sans Mono"
   features:
     - navigation.sections
     - navigation.tabs
@@ -100,7 +101,13 @@ nav:
             - Environment variables: user/core-concepts/variables/environment_variables.md
             - Substitution: user/core-concepts/variables/substitution.md
     - References:
+      - Migration guide: 
+        - Migrate from v1 to v2: user/migration-guide/v1-v2.md
       - CLI usage: user/references/cli-commands.md
       - Editor integration: user/references/editor-integration.md
       - CI integration:
         - GitHub Actions: user/references/ci-integration/github-actions.md
+  - Developer Guide:
+      - Auto generation: developer/auto-generation.md
+      - Formatting: developer/formatting.md
+

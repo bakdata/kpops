@@ -1,7 +1,7 @@
 {
     "$defs": {
         "HelmConfig": {
-            "description": "Global Helm configuration",
+            "description": "Global Helm configuration.",
             "properties": {
                 "api_version": {
                     "anyOf": [

@@ -14,7 +14,3 @@ docs-config := base-directory / "docs/mkdocs.yml"
 # Serve current docs located in ./docs/docs
 serve-docs port="8000":
     poetry run mkdocs serve --config-file {{ docs-config }} --dev-addr localhost:{{ port }}
-
-# Serve docs deployed in branch 'documentation'
-serve-deployed-docs port="8000":
-    mike serve --config-file {{ docs-config }} --dev-addr localhost:{{ port }}

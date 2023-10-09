@@ -51,19 +51,19 @@ class TestTopicHandler:
 
     @pytest.fixture(autouse=True)
     def get_topic_response_mock(self) -> MagicMock:
-        with open(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses/get_topic_response.json"
-        ) as f:
+        with Path(
+            DEFAULTS_PATH / "kafka_rest_proxy_responses/get_topic_response.json",
+        ).open() as f:
             response = json.load(f)
 
-        with open(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses/broker_response.json"
-        ) as f:
+        with Path(
+            DEFAULTS_PATH / "kafka_rest_proxy_responses/broker_response.json",
+        ).open() as f:
             broker_response = json.load(f)
 
-        with open(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses/topic_config_response.json"
-        ) as f:
+        with Path(
+            DEFAULTS_PATH / "kafka_rest_proxy_responses/topic_config_response.json",
+        ).open() as f:
             response_topic_config = json.load(f)
 
         wrapper = MagicMock()
@@ -76,14 +76,15 @@ class TestTopicHandler:
 
     @pytest.fixture(autouse=True)
     def get_default_topic_response_mock(self) -> MagicMock:
-        with open(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses/get_default_topic_response.json"
-        ) as f:
+        with Path(
+            DEFAULTS_PATH
+            / "kafka_rest_proxy_responses/get_default_topic_response.json",
+        ).open() as f:
             response = json.load(f)
 
-        with open(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses/broker_response.json"
-        ) as f:
+        with Path(
+            DEFAULTS_PATH / "kafka_rest_proxy_responses/broker_response.json",
+        ).open() as f:
             broker_response = json.load(f)
 
         wrapper = MagicMock()
@@ -369,7 +370,7 @@ class TestTopicHandler:
             match="Topic Creation: partition count of topic topic-X changed! Partitions count of topic topic-X is 10. The given partitions count 200.",
         ):
             topic_handler.create_topics(to_section=to_section, dry_run=True)
-            wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
+        wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
 
     def test_should_exit_if_dry_run_and_topic_exists_different_replication_factor(
         self, get_topic_response_mock: MagicMock
@@ -391,7 +392,7 @@ class TestTopicHandler:
             match="Topic Creation: replication factor of topic topic-X changed! Replication factor of topic topic-X is 3. The given replication count 300.",
         ):
             topic_handler.create_topics(to_section=to_section, dry_run=True)
-            wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
+        wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
 
     def test_should_log_correct_message_when_delete_existing_topic_dry_run(
         self, log_info_mock: MagicMock, get_topic_response_mock: MagicMock

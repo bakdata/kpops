@@ -1,6 +1,6 @@
+from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterator
 
 import yaml
 from pydantic import BaseModel, ConfigDict, Field
@@ -172,7 +172,8 @@ class HelmTemplate:
         # Source: chart/templates/serviceaccount.yaml
         """
         if not source.startswith(HELM_SOURCE_PREFIX):
-            raise ParseError("Not a valid Helm template source")
+            msg = "Not a valid Helm template source"
+            raise ParseError(msg)
         return source.removeprefix(HELM_SOURCE_PREFIX).strip()
 
     @classmethod
@@ -197,9 +198,9 @@ class HelmChart:
 
     @property
     def manifest(self) -> str:
-        """
-        Reads the manifest section of Helm stdout. `helm upgrade --install` output message contains three sections
-        in the following order:
+        """Reads the manifest section of Helm stdout.
+
+        `helm upgrade --install` output message contains three sections in the following order:
 
         - HOOKS
         - MANIFEST

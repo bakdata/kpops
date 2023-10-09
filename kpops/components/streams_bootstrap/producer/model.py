@@ -8,7 +8,7 @@ from kpops.utils.docstring import describe_attr
 
 
 class ProducerStreamsConfig(KafkaStreamsConfig):
-    """Kafka Streams settings specific to Producer
+    """Kafka Streams settings specific to Producer.
 
     :param extra_output_topics: Extra output topics
     :param output_topic: Output topic, defaults to None
@@ -23,7 +23,7 @@ class ProducerStreamsConfig(KafkaStreamsConfig):
 
 
 class ProducerValues(KafkaAppConfig):
-    """Settings specific to producers
+    """Settings specific to producers.
 
     :param streams: Kafka Streams settings
     """

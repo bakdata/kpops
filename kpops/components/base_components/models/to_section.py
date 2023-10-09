@@ -9,7 +9,7 @@ from kpops.utils.pydantic import DescConfigModel
 
 
 class OutputTopicTypes(str, Enum):
-    """Types of output topic
+    """Types of output topic.
 
     OUTPUT (output topic), ERROR (error topic)
     """

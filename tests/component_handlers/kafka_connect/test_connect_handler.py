@@ -22,25 +22,25 @@ TOPIC_NAME = "test-topic"
 
 
 class TestConnectorHandler:
-    @pytest.fixture
+    @pytest.fixture()
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
             "kpops.component_handlers.kafka_connect.kafka_connect_handler.log.info"
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
             "kpops.component_handlers.kafka_connect.kafka_connect_handler.log.warning"
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def log_error_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
             "kpops.component_handlers.kafka_connect.kafka_connect_handler.log.error"
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def renderer_diff_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
             "kpops.component_handlers.kafka_connect.kafka_connect_handler.render_diff"
@@ -53,7 +53,7 @@ class TestConnectorHandler:
             timeout=0,
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def connector_config(self) -> KafkaConnectorConfig:
         return KafkaConnectorConfig(
             **{
@@ -250,6 +250,7 @@ class TestConnectorHandler:
         handler = self.connector_handler(connector_wrapper)
 
         handler.destroy_connector(CONNECTOR_NAME, dry_run=False)
+
         assert connector_wrapper.mock_calls == [
             mock.call.get_connector(CONNECTOR_NAME),
             mock.call.delete_connector(CONNECTOR_NAME),

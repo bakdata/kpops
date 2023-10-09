@@ -23,9 +23,9 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 class TestStreamsApp:
     STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
-    STREAMS_APP_CLEAN_NAME = "test-streams-app-with-long-name-0123456789abcd-clean"
+    STREAMS_APP_CLEAN_NAME = "test-streams-app-with-long-na-clean"
 
-    @pytest.fixture
+    @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
             schema_handler=MagicMock(),
@@ -33,7 +33,7 @@ class TestStreamsApp:
             topic_handler=MagicMock(),
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def config(self) -> PipelineConfig:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
@@ -45,7 +45,7 @@ class TestStreamsApp:
             helm_diff_config=HelmDiffConfig(),
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def streams_app(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
@@ -145,7 +145,9 @@ class TestStreamsApp:
 
     def test_should_validate(self, config: PipelineConfig, handlers: ComponentHandlers):
         # An exception should be raised when both role and type are defined and type is input
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match="Define role only if `type` is `pattern` or `None`"
+        ):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
                 config=config,
@@ -167,7 +169,9 @@ class TestStreamsApp:
             )
 
         # An exception should be raised when both role and type are defined and type is error
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match="Define `role` only if `type` is undefined"
+        ):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
                 config=config,
@@ -315,7 +319,7 @@ class TestStreamsApp:
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=dry_run),
             mocker.call.mock_helm_upgrade_install(
-                self.STREAMS_APP_NAME,
+                "${pipeline_name}-" + self.STREAMS_APP_NAME,
                 "bakdata-streams-bootstrap/streams-app",
                 dry_run,
                 "test-namespace",
@@ -351,7 +355,7 @@ class TestStreamsApp:
         streams_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
-            "test-namespace", self.STREAMS_APP_NAME, True
+            "test-namespace", "${pipeline_name}-" + self.STREAMS_APP_NAME, True
         )
 
     def test_reset_when_dry_run_is_false(
@@ -371,10 +375,12 @@ class TestStreamsApp:
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
+                "test-namespace",
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                dry_run,
             ),
             mocker.call.helm_upgrade_install(
-                self.STREAMS_APP_CLEAN_NAME,
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
                 "bakdata-streams-bootstrap/streams-app-cleanup-job",
                 dry_run,
                 "test-namespace",
@@ -388,7 +394,9 @@ class TestStreamsApp:
                 HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
+                "test-namespace",
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                dry_run,
             ),
         ]
 
@@ -411,10 +419,12 @@ class TestStreamsApp:
 
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
+                "test-namespace",
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                dry_run,
             ),
             mocker.call.helm_upgrade_install(
-                self.STREAMS_APP_CLEAN_NAME,
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
                 "bakdata-streams-bootstrap/streams-app-cleanup-job",
                 dry_run,
                 "test-namespace",
@@ -428,6 +438,8 @@ class TestStreamsApp:
                 HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
             ),
             mocker.call.helm_uninstall(
-                "test-namespace", self.STREAMS_APP_CLEAN_NAME, dry_run
+                "test-namespace",
+                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                dry_run,
             ),
         ]

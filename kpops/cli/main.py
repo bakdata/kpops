@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterator, Optional
+from typing import TYPE_CHECKING, Optional
 
 import dtyper
 import typer
@@ -24,6 +24,8 @@ from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from kpops.components.base_components import PipelineComponent
 
 LOG_DIVIDER = "#" * 100
@@ -31,7 +33,7 @@ LOG_DIVIDER = "#" * 100
 app = dtyper.Typer(pretty_exceptions_enable=False)
 
 BASE_DIR_PATH_OPTION: Path = typer.Option(
-    default=Path("."),
+    default=Path(),
     exists=True,
     dir_okay=True,
     file_okay=False,
@@ -145,14 +147,14 @@ def parse_steps(steps: str) -> set[str]:
 
 
 def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
-    return [step.name.removeprefix(step.prefix) for step in steps_to_apply]
+    return [step.name for step in steps_to_apply]
 
 
 def filter_steps_to_apply(
     pipeline: Pipeline, steps: set[str], filter_type: FilterType
 ) -> list[PipelineComponent]:
     def is_in_steps(component: PipelineComponent) -> bool:
-        return component.name.removeprefix(component.prefix) in steps
+        return component.name in steps
 
     log.debug(
         f"KPOPS_PIPELINE_STEPS is defined with values: {steps} and filter type of {filter_type.value}"
@@ -253,7 +255,9 @@ def generate(
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-    pipeline.print_yaml()
+
+    if not template:
+        pipeline.print_yaml()
 
     if template:
         steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
@@ -370,7 +374,7 @@ def clean(
 def version_callback(show_version: bool) -> None:
     if show_version:
         typer.echo(f"KPOps {__version__}")
-        raise typer.Exit()
+        raise typer.Exit
 
 
 @app.callback()

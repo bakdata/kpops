@@ -1,6 +1,5 @@
 ```mermaid
 flowchart BT
-    PipelineComponent --> BaseDefaultsComponent
     KubernetesApp --> PipelineComponent
     KafkaConnector --> PipelineComponent
     KafkaApp --> KubernetesApp
@@ -17,4 +16,5 @@ flowchart BT
     click KafkaSourceConnector "../kafka-source-connector"
     click KafkaSinkConnector "../kafka-sink-connector"
 ```
+
 <p style="text-align: center;"><i>KPOps component hierarchy</i></p>

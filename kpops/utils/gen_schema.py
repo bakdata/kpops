@@ -1,7 +1,10 @@
 import json
+import inspect
 import logging
+from abc import ABC
+from collections.abc import Sequence
 from enum import Enum
-from typing import Annotated, Literal, Union
+from typing import Annotated, Any, Literal, Union
 
 from pydantic import Field, TypeAdapter
 from pydantic.json_schema import model_json_schema, models_json_schema
@@ -24,19 +27,20 @@ log = logging.getLogger("")
 def _is_valid_component(
     defined_component_types: set[str], component: type[PipelineComponent]
 ) -> bool:
-    """
-    Check whether a PipelineComponent subclass has a valid definition for the schema generation.
+    """Check whether a PipelineComponent subclass has a valid definition for the schema generation.
 
     :param defined_component_types: types defined so far
     :param component: component type to be validated
     :return: Whether component is valid for schema generation
     """
+    if inspect.isabstract(component) or ABC in component.__bases__:
+        log.warning(f"SKIPPED {component.__name__}, component is abstract.")
+        return False
     if component.type in defined_component_types:
         log.warning(f"SKIPPED {component.__name__}, component type must be unique.")
         return False
-    else:
-        defined_component_types.add(component.type)
-        return True
+    defined_component_types.add(component.type)
+    return True
 
 
 def _add_components(
@@ -54,7 +58,7 @@ def _add_components(
     :return: Extended tuple
     """
     if components is None:
-        components = tuple()
+        components = tuple()  # noqa: C408
     # Set of existing types, against which to check the new ones
     defined_component_types = {component.type for component in components}
     custom_components = (
@@ -82,7 +86,7 @@ def gen_pipeline_schema(
     # Add stock components if enabled
     components: tuple[type[PipelineComponent], ...] = tuple()
     if include_stock_components:
-        components = tuple(_find_classes("kpops.components", PipelineComponent))
+        components = _add_components("kpops.components")
     # Add custom components if provided
     if components_module:
         components = _add_components(components_module, components)

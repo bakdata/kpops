@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from abc import ABC
 
 from pydantic import ConfigDict, Field
 from typing_extensions import override
@@ -38,7 +39,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
 
 
 class KafkaAppConfig(KubernetesAppConfig):
-    """Settings specific to Kafka Apps
+    """Settings specific to Kafka Apps.
 
     :param streams: Kafka streams config
     :param name_override: Override name with this value, defaults to None
@@ -52,7 +53,7 @@ class KafkaAppConfig(KubernetesAppConfig):
     )
 
 
-class KafkaApp(KubernetesApp):
+class KafkaApp(KubernetesApp, ABC):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.
@@ -82,8 +83,8 @@ class KafkaApp(KubernetesApp):
 
     @property
     def clean_up_helm_chart(self) -> str:
-        """Helm chart used to destroy and clean this component"""
-        raise NotImplementedError()
+        """Helm chart used to destroy and clean this component."""
+        raise NotImplementedError
 
     @override
     def deploy(self, dry_run: bool) -> None:
@@ -104,7 +105,7 @@ class KafkaApp(KubernetesApp):
         dry_run: bool,
         retain_clean_jobs: bool = False,
     ) -> None:
-        """Clean an app using the respective cleanup job
+        """Clean an app using the respective cleanup job.
 
         :param values: The value YAML for the chart
         :param dry_run: Dry run command
@@ -133,7 +134,7 @@ class KafkaApp(KubernetesApp):
             self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
 
     def __uninstall_clean_up_job(self, release_name: str, dry_run: bool) -> None:
-        """Uninstall clean up job
+        """Uninstall clean up job.
 
         :param release_name: Name of the Helm release
         :param dry_run: Whether to do a dry run of the command
@@ -147,10 +148,10 @@ class KafkaApp(KubernetesApp):
         values: dict,
         dry_run: bool,
     ) -> str:
-        """Install clean up job
+        """Install clean up job.
 
         :param release_name: Name of the Helm release
-        :param suffix: Suffix to add to the realease name, e.g. "-clean"
+        :param suffix: Suffix to add to the release name, e.g. "-clean"
         :param values: The Helm values for the chart
         :param dry_run: Whether to do a dry run of the command
         :return: Install clean up job with helm, return the output of the installation

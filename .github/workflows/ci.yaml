@@ -35,11 +35,16 @@ jobs:
       - name: Install dependencies
         run: poetry install --no-interaction
 
-      - name: Lint (flake8)
-        run: poetry run pre-commit run flake8 --all-files --show-diff-on-failure
-
-      - name: Order of imports (isort)
-        run: poetry run pre-commit run isort --all-files --show-diff-on-failure
+      - name: Lint (ruff)
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
+          then
+            echo "::add-matcher::.github/ruff-matcher.json"
+            poetry run ruff check . --config pyproject.toml --output-format text --no-fix
+          else
+            poetry run pre-commit run ruff --all-files --show-diff-on-failure
+          fi;
 
       - name: Formatting (black)
         run: poetry run pre-commit run black --all-files --show-diff-on-failure
@@ -59,16 +64,15 @@ jobs:
       - name: Generate pipeline definitions
         run: poetry run pre-commit run gen-docs-components --all-files --show-diff-on-failure
 
-      # TODO: enable when PEP 604 incompatibilty is in typer is resolved https://github.com/tiangolo/typer/issues/348
-      # See https://github.com/tiangolo/typer/pull/522
-      # - name: Syntax (pyupgrade)
-      #   run: poetry run pre-commit run --hook-stage manual pyupgrade --all-files
-
       - name: Test
         run: poetry run pytest tests
 
       - name: Install docs dependencies
         run: poetry install --with docs
+      
+      - name: Check markdown formatting
+        uses: dprint/check@v2.2
+        if: runner.os == 'Linux'
 
       - name: Test docs build (mkdocs)
         run: poetry run mkdocs build -f docs/mkdocs.yml
@@ -79,3 +83,46 @@ jobs:
     uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@v1.25.0
     secrets:
       pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
+  
+  publish-docs-from-main:
+    runs-on: ubuntu-22.04
+    if: ${{ github.ref == 'refs/heads/main' }}
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Publish docs from main branch
+        uses: ./.github/actions/update-docs
+        with:
+          username: ${{ secrets.GH_USERNAME }}
+          email: ${{ secrets.GH_EMAIL }}
+          token: ${{ secrets.GH_TOKEN }}
+          version: main 
+
+  publish-dev-docs-from-pr:
+    runs-on: ubuntu-22.04
+    if: ${{ github.event_name == 'pull_request' }}
+    needs: [test]
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+
+      # Checks to see if any files in the PR match one of the listed file types.
+      # This will return true if there's a file in docs folder that was added, deleted, or modified in the PR.
+      - name: Check if files in docs folder have changed
+        uses: dorny/paths-filter@v2
+        id: docs-changes
+        with:
+          filters: |
+            docs:
+              - added|deleted|modified: 'docs/**'
+
+      - name: Publish dev docs from PR 
+        if: steps.docs-changes.outputs.docs == 'true'
+        uses: ./.github/actions/update-docs
+        with:
+          username: ${{ secrets.GH_USERNAME }}
+          email: ${{ secrets.GH_EMAIL }}
+          token: ${{ secrets.GH_TOKEN }}
+          version: dev 

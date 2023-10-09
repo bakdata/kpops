@@ -1,3 +1,4 @@
+from collections.abc import Mapping, Set
 from typing import Any
 
 from pydantic import ConfigDict, Field, model_serializer
@@ -13,7 +14,7 @@ from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
 
 class StreamsConfig(KafkaStreamsConfig):
-    """Streams Bootstrap streams section
+    """Streams Bootstrap streams section.
 
     :param input_topics: Input topics, defaults to []
     :param input_pattern: Input pattern, defaults to None
