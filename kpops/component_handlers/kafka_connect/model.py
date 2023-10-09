@@ -2,7 +2,8 @@ from enum import Enum
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-from typing_extensions import override
+from pydantic.json_schema import WithJsonSchema
+from typing_extensions import Annotated, override
 
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel, to_dot
 
@@ -16,13 +17,9 @@ class KafkaConnectorConfig(DescConfigModel):
     """Settings specific to Kafka Connectors"""
 
     connector_class: str
-    name: str | None = Field(
+    name: Annotated[str | None, WithJsonSchema({})] = Field(
         default=None,
-        json_schema_extra={
-            "hidden_from_schema": True,
-        },
     )
-
     model_config = ConfigDict(
         extra="allow",
         alias_generator=to_dot,

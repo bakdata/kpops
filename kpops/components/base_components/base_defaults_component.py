@@ -8,6 +8,8 @@ from typing import TypeVar
 
 import typer
 from pydantic import AliasChoices, ConfigDict, Field
+from pydantic.json_schema import WithJsonSchema
+from typing_extensions import Annotated
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
@@ -48,34 +50,22 @@ class BaseDefaultsComponent(DescConfigModel):
         default=False,
         description=describe_attr("enrich", __doc__),
         exclude=True,
-        json_schema_extra={
-            "hidden_from_schema": True,
-        },
     )
     config: PipelineConfig = Field(
         default=...,
         description=describe_attr("config", __doc__),
         exclude=True,
-        json_schema_extra={
-            "hidden_from_schema": True,
-        },
     )
-    handlers: ComponentHandlers = Field(
+    handlers: Annotated[ComponentHandlers, WithJsonSchema({})] = Field(
         default=...,
         description=describe_attr("handlers", __doc__),
         exclude=True,
-        json_schema_extra={
-            "hidden_from_schema": True,
-        },
     )
     validate_: bool = Field(
         validation_alias=AliasChoices("validate", "validate_"),
         default=True,
         description=describe_attr("validate", __doc__),
         exclude=True,
-        json_schema_extra={
-            "hidden_from_schema": True,
-        },
     )
 
     def __init__(self, **kwargs) -> None:

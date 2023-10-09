@@ -1,13 +1,11 @@
 import json
 import logging
 from enum import Enum
-from typing import Annotated, Any, Literal, Sequence, Union
+from typing import Literal
 
-from pydantic import Field, GenerateSchema, TypeAdapter, schema_json_of
+from pydantic import Field
 from pydantic.fields import FieldInfo
 from pydantic.json_schema import JsonSchemaMode, model_json_schema, models_json_schema
-from pydantic.v1 import schema
-from pydantic.v1.schema import SkipField
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
@@ -19,19 +17,6 @@ class SchemaScope(str, Enum):
     PIPELINE = "pipeline"
     CONFIG = "config"
 
-
-original_field_schema = schema.field_schema
-
-
-# adapted from https://github.com/tiangolo/fastapi/issues/1378#issuecomment-764966955
-def field_schema(field, **kwargs: Any) -> Any:
-    if field.field_info.json_schema_extra.get("hidden_from_schema"):
-        raise SkipField(f"{field.name} field is being hidden")
-    else:
-        return original_field_schema(field, **kwargs)
-
-
-schema.field_schema = field_schema
 
 log = logging.getLogger("")
 
@@ -103,12 +88,10 @@ def gen_pipeline_schema(
         components = _add_components(components_module, components)
     if not components:
         raise RuntimeError("No valid components found.")
-    # Create a type union that will hold the union of all component types
-    PipelineComponents = Union[components]  # type: ignore[valid-type]
 
     # re-assign component type as Literal to work as discriminator
     for component in components:
-        component.model_fields["type"] = FieldInfo(
+        component.model_fields["type"] = Field(
             alias="type",
             type_=Literal[component.type],  # type: ignore
             default=component.type,
@@ -119,32 +102,75 @@ def gen_pipeline_schema(
             # class_validators=None,
         )
     components_moded = tuple([(component, "validation") for component in components])
-    # Create a type union that will hold the union of all component types
-    AnnotatedPipelineComponents = Annotated[
-        PipelineComponents, Field(discriminator="type")
-    ]
 
     schema = models_json_schema(
         components_moded,
-        # title="KPOps pipeline schema",
+        title="KPOps pipeline schema",
         by_alias=True,
     )
+    # breakpoint()
+    stripped_schema_first_item = {k[0]: v for k, v in schema[0].items()}
+    schema_first_item_adapted = {
+        "discriminator": {
+            "mapping": {},
+            "propertyName": "type",
+        },
+        "oneOf": [],
+        "type": "array",
+    }
+    mapping = {}
+    one_of = []
+    for k, v in stripped_schema_first_item.items():
+        mapping[k.type] = v["$ref"]
+        one_of.append(v)
+    schema_first_item_adapted["discriminator"]["mapping"] = mapping
+    schema_first_item_adapted["oneOf"] = one_of
+    complete_schema = schema[1].copy()
+    complete_schema["items"] = schema_first_item_adapted
     print(
         json.dumps(
-            schema,
+            complete_schema,
             indent=4,
             sort_keys=True,
         )
     )
 
+    """
+"items": {
+    "discriminator": {
+        "mapping": {
+            "empty-pipeline-component": "#/definitions/EmptyPipelineComponent",
+            "sub-pipeline-component": "#/definitions/SubPipelineComponent",
+            "sub-pipeline-component-correct": "#/definitions/SubPipelineComponentCorrect",
+            "sub-pipeline-component-correct-docstr": "#/definitions/SubPipelineComponentCorrectDocstr",
+            "sub-pipeline-component-no-schema-type-no-type": "#/definitions/SubPipelineComponentNoSchemaTypeNoType"
+        },
+        "propertyName": "type"
+    },
+    "oneOf": [
+        {
+            "$ref": "#/definitions/EmptyPipelineComponent"
+        },
+        {
+            "$ref": "#/definitions/SubPipelineComponent"
+        },
+        {
+            "$ref": "#/definitions/SubPipelineComponentCorrect"
+        },
+        {
+            "$ref": "#/definitions/SubPipelineComponentCorrectDocstr"
+        },
+        {
+            "$ref": "#/definitions/SubPipelineComponentNoSchemaTypeNoType"
+        }
+    ]
+},
+"title": "KPOps pipeline schema",
+"type": "array"
+    """
+
 
 def gen_config_schema() -> None:
     """Generate a json schema from the model of pipeline config"""
     schema = model_json_schema(PipelineConfig)
-    print(
-        json.dumps(
-            schema,
-            indent=4,
-            sort_keys=True
-        )
-    )
+    print(json.dumps(schema, indent=4, sort_keys=True))
