@@ -115,7 +115,6 @@ def gen_pipeline_schema(
             "propertyName": "type",
         },
         "oneOf": [],
-        "type": "array",
     }
     mapping = {}
     one_of = []
@@ -126,6 +125,7 @@ def gen_pipeline_schema(
     schema_first_item_adapted["oneOf"] = one_of
     complete_schema = schema[1].copy()
     complete_schema["items"] = schema_first_item_adapted
+    complete_schema["type"] = "array"
     print(
         json.dumps(
             complete_schema,

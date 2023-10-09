@@ -1908,8 +1908,8 @@
             {
                 "$ref": "#/$defs/StreamsApp"
             }
-        ],
-        "type": "array"
+        ]
     },
-    "title": "KPOps pipeline schema"
+    "title": "KPOps pipeline schema",
+    "type": "array"
 }
