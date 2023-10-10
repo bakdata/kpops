@@ -1,6 +1,6 @@
 from typing import Any
 
-from pydantic import ConfigDict, Field, model_serializer
+from pydantic import ConfigDict, Field, SerializationInfo, model_serializer
 from pydantic.alias_generators import to_snake
 
 from kpops.components.base_components.base_defaults_component import deduplicate
@@ -72,17 +72,58 @@ class StreamsConfig(KafkaStreamsConfig):
         )
 
     @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(self, handler) -> dict[str, Any]:
+    def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
+        # class _SerInfoClone:
+        #     def __init__(
+        #         self,
+        #         include,
+        #         exclude,
+        #         mode,
+        #         by_alias,
+        #         exclude_unset,
+        #         exclude_default,
+        #         exclude_none,
+        #         round_trip,
+        #     ):
+        #         self.include = include
+        #         self.exclude = exclude
+        #         self.mode = mode
+        #         self.by_alias = by_alias
+        #         self.exclude_unset = exclude_unset
+        #         self.exclude_default = exclude_default
+        #         self.exclude_none = exclude_none
+        #         self.round_trip = round_trip
+
+        # info2: _SerInfoClone = _SerInfoClone(
+        #     info.include,
+        #     info.exclude,
+        #     info.mode,
+        #     info.by_alias,
+        #     True,
+        #     True,
+        #     True,
+        #     info.round_trip,
+        # )
+        # breakpoint()
+        # return handler(self, info2)
         result = handler(self)
         # if dict(result.items()).get("extraInputTopics"):
         #     breakpoint()
         extra_fields = set()
         if self.model_extra is not None:
             extra_fields = set(self.model_extra.keys())
+        # fields = extra_fields.union(self.model_fields_set)
         fields = extra_fields.union(self.model_fields_set)
-        return {
+        if self.extra_input_topics:
+            fields.add("extra_input_topics")
+        if self.extra_input_patterns:
+            fields.add("extra_input_patterns")
+        if self.extra_output_topics:
+            fields.add("extra_output_topics")
+        filtered_result_extra_set = {
             k: v for k, v in result.items() if ((to_snake(k) in fields) or k in fields)
         }
+        return filtered_result_extra_set
 
 
 class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
