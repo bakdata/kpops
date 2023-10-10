@@ -1,4 +1,4 @@
-"""Generates the stock KPOps editor integration schemas"""
+"""Generates the stock KPOps editor integration schemas."""
 from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
@@ -10,7 +10,7 @@ PATH_TO_SCHEMA = PATH_ROOT / "docs/docs/schema"
 
 
 def gen_schema(scope: SchemaScope):
-    """Generates the specified schema and saves it to a file.
+    """Generate the specified schema and save it to a file.
 
     The file is located in docs/docs/schema and is named ``<scope.value>.json``
 
@@ -27,4 +27,4 @@ def gen_schema(scope: SchemaScope):
 
 if __name__ == "__main__":
     gen_schema(SchemaScope.PIPELINE)
-    gen_schema(SchemaScope.CONFIG)
+    # gen_schema(SchemaScope.CONFIG)

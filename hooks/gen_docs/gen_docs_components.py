@@ -40,11 +40,12 @@ KPOPS_COMPONENTS_INHERITANCE_REF = {
     ).type
     for component in KPOPS_COMPONENTS
 }
+
 KPOPS_COMPONENTS_SECTIONS = {
     component.type: [
         field_name
-        for field_name, model in component.__fields__.items()
-        if not model.field_info.exclude
+        for field_name, field_info in component.model_fields.items()  # pyright: ignore[reportGeneralTypeIssues]
+        if not field_info.exclude
     ]
     for component in KPOPS_COMPONENTS
 }
@@ -212,9 +213,9 @@ def get_sections(component_name: str, *, exist_changes: bool) -> KpopsComponent:
         ]
         component_sections_not_inherited: list[
             str
-        ] = DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES[  # type: ignore [reportGeneralTypeIssues]
+        ] = DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES[
             component_file_name
-        ]
+        ]  # type: ignore [reportGeneralTypeIssues]
     return KpopsComponent(component_sections, component_sections_not_inherited)
 
 

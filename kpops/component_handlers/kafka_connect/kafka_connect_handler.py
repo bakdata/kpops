@@ -8,18 +8,18 @@ from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     ConnectorStateException,
 )
-from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
 
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
-
 if TYPE_CHECKING:
+    try:
+        from typing import Self
+    except ImportError:
+        from typing_extensions import Self
+
     from kpops.cli.pipeline_config import PipelineConfig
+    from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 
 log = logging.getLogger("KafkaConnectHandler")
 
@@ -36,8 +36,10 @@ class KafkaConnectHandler:
     def create_connector(
         self, connector_config: KafkaConnectorConfig, *, dry_run: bool
     ) -> None:
-        """
-        Creates a connector. If the connector exists the config of that connector gets updated.
+        """Create a connector.
+
+        If the connector exists the config of that connector gets updated.
+
         :param connector_config: The connector config.
         :param dry_run: If the connector creation should be run in dry run mode.
         """
@@ -64,8 +66,8 @@ class KafkaConnectHandler:
                 )
 
     def destroy_connector(self, connector_name: str, *, dry_run: bool) -> None:
-        """
-        Deletes a connector resource from the cluster.
+        """Delete a connector resource from the cluster.
+
         :param connector_name: The connector name.
         :param dry_run: If the connector deletion should be run in dry run mode.
         """
@@ -95,14 +97,14 @@ class KafkaConnectHandler:
             connector = self._connect_wrapper.get_connector(connector_name)
 
             log.info(f"Connector Creation: connector {connector_name} already exists.")
-            if diff := render_diff(connector.config, connector_config.dict()):
+            if diff := render_diff(connector.config, connector_config.model_dump()):
                 log.info(f"Updating config:\n{diff}")
 
-            log.debug(connector_config.dict())
+            log.debug(connector_config.model_dump())
             log.debug(f"PUT /connectors/{connector_name}/config HTTP/1.1")
             log.debug(f"HOST: {self._connect_wrapper.host}")
         except ConnectorNotFoundException:
-            diff = render_diff({}, connector_config.dict())
+            diff = render_diff({}, connector_config.model_dump())
             log.info(
                 f"Connector Creation: connector {connector_name} does not exist. Creating connector with config:\n{diff}"
             )
@@ -112,9 +114,8 @@ class KafkaConnectHandler:
         errors = self._connect_wrapper.validate_connector_config(connector_config)
         if len(errors) > 0:
             formatted_errors = "\n".join(errors)
-            raise ConnectorStateException(
-                f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors: {formatted_errors}"
-            )
+            msg = f"Connector Creation: validating the connector config for connector {connector_name} resulted in the following errors: {formatted_errors}"
+            raise ConnectorStateException(msg)
         else:
             log.info(
                 f"Connector Creation: connector config for {connector_name} is valid!"

@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from pathlib import Path
 
 from pydantic import AliasChoices, Field
@@ -26,7 +28,7 @@ class PipelineConfig(BaseSettings):
     """Pipeline configuration unrelated to the components."""
 
     defaults_path: Path = Field(
-        default=Path("."),
+        default=Path(),
         examples=["defaults", "."],
         description="The path to the folder containing the defaults.yaml file and the environment defaults files. "
         "Paths can either be absolute or relative to `config.yaml`",
@@ -113,9 +115,9 @@ class PipelineConfig(BaseSettings):
         file_secret_settings: PydanticBaseSettingsSource,
     ):
         return (
+            env_settings,
             init_settings,
             YamlConfigSettingsSource(settings_cls),
             dotenv_settings,
-            env_settings,
             file_secret_settings,
         )

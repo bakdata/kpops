@@ -3,19 +3,22 @@ from __future__ import annotations
 import json
 import logging
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 from schema_registry.client import SchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
 
 from kpops.cli.exception import ClassNotFoundError
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import find_class
 from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,
 )
-from kpops.components.base_components.models.to_section import ToSection
 from kpops.utils.colorify import greenify, magentaify
+
+if TYPE_CHECKING:
+    from kpops.cli.pipeline_config import PipelineConfig
+    from kpops.components.base_components.models.to_section import ToSection
 
 log = logging.getLogger("SchemaHandler")
 
@@ -29,16 +32,13 @@ class SchemaHandler:
     def schema_provider(self) -> SchemaProvider:
         try:
             if not self.components_module:
-                raise ValueError(
-                    f"The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your {SchemaProvider.__name__} implementation exists."
-                )
+                msg = f"The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your {SchemaProvider.__name__} implementation exists."
+                raise ValueError(msg)
             schema_provider_class = find_class(self.components_module, SchemaProvider)
             return schema_provider_class()  # pyright: ignore[reportGeneralTypeIssues]
-        except ClassNotFoundError:
-            raise ValueError(
-                f"No schema provider found in components module {self.components_module}. "
-                f"Please implement the abstract method in {SchemaProvider.__module__}.{SchemaProvider.__name__}."
-            )
+        except ClassNotFoundError as e:
+            msg = f"No schema provider found in components module {self.components_module}. Please implement the abstract method in {SchemaProvider.__module__}.{SchemaProvider.__name__}."
+            raise ValueError(msg) from e
 
     @classmethod
     def load_schema_handler(
@@ -144,9 +144,8 @@ class SchemaHandler:
                     if isinstance(schema, AvroSchema)
                     else str(schema)
                 )
-                raise Exception(
-                    f"Schema is not compatible for {subject} and model {schema_class}. \n {json.dumps(schema_str, indent=4)}"
-                )
+                msg = f"Schema is not compatible for {subject} and model {schema_class}. \n {json.dumps(schema_str, indent=4)}"
+                raise Exception(msg)
         else:
             log.debug(
                 f"Schema Submission: schema was already submitted for the subject {subject} as version {registered_version.schema}. Therefore, the specified schema must be compatible."

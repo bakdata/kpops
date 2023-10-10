@@ -1,9 +1,7 @@
 from typing import Any
 
-from pydantic import ConfigDict, Field, model_serializer
+from pydantic import ConfigDict, Field, SerializationInfo, model_serializer
 from pydantic.alias_generators import to_snake
-from typing_extensions import override
-from pydantic_core.core_schema import SerializationInfo
 
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
@@ -15,7 +13,7 @@ from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
 
 class StreamsConfig(KafkaStreamsConfig):
-    """Streams Bootstrap streams section
+    """Streams Bootstrap streams section.
 
     :param input_topics: Input topics, defaults to []
     :param input_pattern: Input pattern, defaults to None
@@ -129,7 +127,7 @@ class StreamsConfig(KafkaStreamsConfig):
 
 
 class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
-    """Kubernetes Event-driven Autoscaling config
+    """Kubernetes Event-driven Autoscaling config.
 
     :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
     :param consumer_group: Name of the consumer group used for checking the

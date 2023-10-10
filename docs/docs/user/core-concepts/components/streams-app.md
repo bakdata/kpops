@@ -10,6 +10,8 @@ Configures a
 
 ### Configuration
 
+<!-- dprint-ignore-start -->
+
 ??? example "`pipeline.yaml`"
 
     ```yaml
@@ -17,6 +19,8 @@ Configures a
     ./docs/resources/pipeline-components/streams-app.yaml
     --8<--
     ```
+
+<!-- dprint-ignore-end -->
 
 ### Operations
 

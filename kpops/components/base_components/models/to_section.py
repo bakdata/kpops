@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any
 
-from pydantic import ConfigDict, Extra, Field, model_validator, root_validator
+from pydantic import ConfigDict, Field, model_validator
 
 from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.utils.docstring import describe_attr
@@ -9,7 +9,7 @@ from kpops.utils.pydantic import DescConfigModel
 
 
 class OutputTopicTypes(str, Enum):
-    """Types of output topic
+    """Types of output topic.
 
     OUTPUT (output topic), ERROR (error topic)
     """
@@ -19,7 +19,7 @@ class OutputTopicTypes(str, Enum):
 
 
 class TopicConfig(DescConfigModel):
-    """Configure an output topic
+    """Configure an output topic.
 
     :param type: Topic type
     :param key_schema: Key schema class name
@@ -66,14 +66,15 @@ class TopicConfig(DescConfigModel):
 
     @model_validator(mode="after")
     def extra_topic_role(cls, values: Any) -> Any:
-        """Ensure that cls.role is used correctly, assign type if needed"""
+        """Ensure that cls.role is used correctly, assign type if needed."""
         if values.type and values.role:
-            raise ValueError("Define `role` only if `type` is undefined")
+            msg = "Define `role` only if `type` is undefined"
+            raise ValueError(msg)
         return values
 
 
 class ToSection(DescConfigModel):
-    """Holds multiple output topics
+    """Holds multiple output topics.
 
     :param topics: Output topics
     :param models: Data models

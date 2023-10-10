@@ -1,4 +1,117 @@
 # Changelog
+## [2.0.9](https://github.com/bakdata/kpops/releases/tag/2.0.9) - Release Date: [2023-09-19]
+
+### 🐛 Fixes
+
+- Fix Kafka connect config name for deletion - [#361](https://github.com/bakdata/kpops/pull/361)
+
+
+### 📝 Documentation
+
+- Fix link to kpops-examples - [#357](https://github.com/bakdata/kpops/pull/357)
+
+
+
+
+
+
+## [2.0.8](https://github.com/bakdata/kpops/releases/tag/2.0.8) - Release Date: [2023-09-06]
+
+### 🐛 Fixes
+
+- Fix config.yaml overriding environment variables - [#353](https://github.com/bakdata/kpops/pull/353)
+
+
+### 🏭 Refactor
+
+- Refactor component prefix & name - [#326](https://github.com/bakdata/kpops/pull/326)
+
+- Remove unnecessary condition during inflate - [#328](https://github.com/bakdata/kpops/pull/328)
+
+
+
+
+
+
+## [2.0.7](https://github.com/bakdata/kpops/releases/tag/2.0.7) - Release Date: [2023-08-31]
+
+### 🐛 Fixes
+
+- Print only rendered templates when `--template` flag is set - [#350](https://github.com/bakdata/kpops/pull/350)
+
+
+### 📝 Documentation
+
+- Add migration guide - [#352](https://github.com/bakdata/kpops/pull/352)
+
+
+
+
+
+
+## [2.0.6](https://github.com/bakdata/kpops/releases/tag/2.0.6) - Release Date: [2023-08-30]
+
+### 🏭 Refactor
+
+- Simplify deployment with local Helm charts - [#349](https://github.com/bakdata/kpops/pull/349)
+
+
+
+
+
+
+## [2.0.5](https://github.com/bakdata/kpops/releases/tag/2.0.5) - Release Date: [2023-08-30]
+
+### 🐛 Fixes
+
+- Fix versioning of docs when releasing - [#346](https://github.com/bakdata/kpops/pull/346)
+
+
+
+
+
+
+## [2.0.4](https://github.com/bakdata/kpops/releases/tag/2.0.4) - Release Date: [2023-08-29]
+
+### 🐛 Fixes
+
+- Fix GitHub ref variable for pushing docs to main branch - [#343](https://github.com/bakdata/kpops/pull/343)
+
+
+### 📝 Documentation
+
+- Add `dprint` as the markdown formatter - [#337](https://github.com/bakdata/kpops/pull/337)
+
+- Publish pre-release docs for PRs & main branch - [#339](https://github.com/bakdata/kpops/pull/339)
+
+- Align docs colours - [#345](https://github.com/bakdata/kpops/pull/345)
+
+
+### 🌀 Miscellaneous
+
+- Exclude abstract components from pipeline schema - [#332](https://github.com/bakdata/kpops/pull/332)
+
+
+
+
+
+
+## [2.0.3](https://github.com/bakdata/kpops/releases/tag/2.0.3) - Release Date: [2023-08-24]
+
+### 🐛 Fixes
+
+- Fix GitHub action error in non-Python projects - [#340](https://github.com/bakdata/kpops/pull/340)
+
+
+### 🌀 Miscellaneous
+
+- Lint GitHub action - [#342](https://github.com/bakdata/kpops/pull/342)
+
+
+
+
+
+
 ## [2.0.2](https://github.com/bakdata/kpops/releases/tag/2.0.2) - Release Date: [2023-08-23]
 
 ### 📝 Documentation

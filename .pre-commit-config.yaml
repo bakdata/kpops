@@ -1,12 +1,14 @@
 repos:
-  - repo: https://github.com/pycqa/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-        args: ["--settings", "setup.cfg"]
-        exclude: ^tests/.*snapshots/
   - repo: local
     hooks:
+      - id: ruff
+        name: ruff
+        entry: ruff check .
+        args: [ --config, pyproject.toml, --fix, --show-fixes, --exit-non-zero-on-fix ]
+        language: system
+        types_or: [python]
+        require_serial: true # run once for all files
+        pass_filenames: false
       - id: black
         name: black
         entry: black
@@ -14,14 +16,6 @@ repos:
         types_or: [python, pyi]
         require_serial: true # run once for all files
         exclude: ^tests/.*snapshots/
-  - repo: https://github.com/pycqa/flake8
-    rev: 5.0.4
-    hooks:
-      - id: flake8
-        args: ["--config", "setup.cfg"]
-        exclude: ^tests/.*snapshots/
-  - repo: local
-    hooks:
       - id: pyright
         name: pyright
         entry: pyright
@@ -29,15 +23,6 @@ repos:
         types: [python]
         require_serial: true # run once for all files
         exclude: ^tests/.*snapshots/
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.1.0
-    hooks:
-      - id: pyupgrade
-        stages: [manual]
-        args: ["--py310-plus"]
-        exclude: ^tests/.*snapshots/
-  - repo: local
-    hooks:
       - id: gen-schema
         name: gen-schema
         entry: python hooks/gen_schema.py
@@ -81,3 +66,10 @@ repos:
             | kpops/components/.*\.py
           )$
         require_serial: true
+      - id: dprint
+        name: dprint 
+        entry: dprint fmt
+        language: system
+        types: [markdown]
+        require_serial: true
+        pass_filenames: false

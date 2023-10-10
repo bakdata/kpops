@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Any, NewType
 
-from pydantic import ConfigDict, Extra, Field, model_validator
+from pydantic import ConfigDict, Field, model_validator
 
 from kpops.components.base_components.models import TopicName
 from kpops.utils.docstring import describe_attr
@@ -9,7 +9,7 @@ from kpops.utils.pydantic import DescConfigModel
 
 
 class InputTopicTypes(str, Enum):
-    """Input topic types
+    """Input topic types.
 
     INPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)
     """
@@ -19,7 +19,7 @@ class InputTopicTypes(str, Enum):
 
 
 class FromTopic(DescConfigModel):
-    """Input topic
+    """Input topic.
 
     :param type: Topic type, defaults to None
     :param role: Custom identifier belonging to a topic;
@@ -39,9 +39,10 @@ class FromTopic(DescConfigModel):
     @model_validator(mode="after")
     @classmethod
     def extra_topic_role(cls, values: Any) -> Any:
-        """Ensure that cls.role is used correctly, assign type if needed"""
+        """Ensure that cls.role is used correctly, assign type if needed."""
         if values.type == InputTopicTypes.INPUT and values.role:
-            raise ValueError("Define role only if `type` is `pattern` or `None`")
+            msg = "Define role only if `type` is `pattern` or `None`"
+            raise ValueError(msg)
         return values
 
 
@@ -49,7 +50,7 @@ ComponentName = NewType("ComponentName", str)
 
 
 class FromSection(DescConfigModel):
-    """Holds multiple input topics
+    """Holds multiple input topics.
 
     :param topics: Input topics
     :param components: Components to read from
