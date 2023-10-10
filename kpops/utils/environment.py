@@ -1,21 +1,19 @@
 import os
 import platform
 from collections import UserDict
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 
 
-class Environment(UserDict):
-    def __init__(self, mapping=None, /, **kwargs) -> None:
-        transformation = Environment.__get_transformation()
+class Environment(UserDict[str, str]):
+    def __init__(self, mapping: Mapping[str, str] | None = None, /, **kwargs) -> None:
+        _transformer: Callable[[str], str] = Environment.__get_transformation()
+        env = os.environ
         if mapping is not None:
-            mapping = {transformation(key): value for key, value in mapping.items()}
-        else:
-            mapping = {}
+            env.update(mapping)
         if kwargs:
-            mapping.update(
-                {transformation(key): value for key, value in kwargs.items()}
-            )
-        super().__init__(mapping)
+            env.update(**kwargs)
+        env = {_transformer(key): value for key, value in env.items()}
+        super().__init__(env)
 
     @staticmethod
     def __key_camel_case_transform(key: str) -> str:
@@ -32,5 +30,10 @@ class Environment(UserDict):
         else:
             return Environment.__key_identity_transform
 
+    def __getitem__(self, key: str) -> str:
+        if key in self.data:
+            return self.data[key]
+        return os.environ[key]
 
-ENV = Environment(os.environ)
+
+ENV = Environment()

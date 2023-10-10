@@ -21,7 +21,7 @@ def fake_environment_linux(monkeypatch: pytest.MonkeyPatch):
 @patch("platform.system")
 def test_normal_behaviour_get_item(system, fake_environment_linux):
     system.return_value = "Linux"
-    environment = Environment(os.environ)
+    environment = Environment()
 
     assert environment["my"] == "fake"
     assert environment["environment"] == "here"
@@ -30,20 +30,20 @@ def test_normal_behaviour_get_item(system, fake_environment_linux):
 @patch("platform.system")
 def test_normal_behaviour_update_parent_item(system, fake_environment_linux):
     system.return_value = "Linux"
-    environment = Environment(os.environ)
+    environment = Environment()
 
     assert environment["my"] == "fake"
     assert environment["environment"] == "here"
     with pytest.raises(KeyError):
-        environment["test"]
+        environment["TEST"]
     os.environ["TEST"] = "test"
-    assert environment["test"] == "test"
+    assert environment["TEST"] == "test"
 
 
 @patch("platform.system")
 def test_normal_behaviour_get_item_as_kwargs(system, fake_environment_linux):
     system.return_value = "Linux"
-    environment = Environment(**os.environ)
+    environment = Environment()
 
     assert environment["my"] == "fake"
     assert environment["environment"] == "here"
@@ -52,7 +52,7 @@ def test_normal_behaviour_get_item_as_kwargs(system, fake_environment_linux):
 @patch("platform.system")
 def test_normal_behaviour_keys_transformation(system, fake_environment_linux):
     system.return_value = "Linux"
-    environment = Environment(os.environ)
+    environment = Environment()
     keys = set(environment.keys())
 
     assert "my" in keys
@@ -62,7 +62,7 @@ def test_normal_behaviour_keys_transformation(system, fake_environment_linux):
 @patch("platform.system")
 def test_normal_behaviour_set_key(system, fake_environment_linux):
     system.return_value = "Linux"
-    environment = Environment(os.environ)
+    environment = Environment()
     environment["extra"] = "key"
 
     keys = set(environment.keys())
@@ -75,7 +75,7 @@ def test_normal_behaviour_set_key(system, fake_environment_linux):
 @patch("platform.system")
 def test_windows_behaviour_set_key(system, fake_environment_windows):
     system.return_value = "Windows"
-    environment = Environment(os.environ)
+    environment = Environment()
     environment["extra"] = "key"
 
     keys = set(environment.keys())
@@ -88,7 +88,7 @@ def test_windows_behaviour_set_key(system, fake_environment_windows):
 @patch("platform.system")
 def test_normal_behaviour_keys_transformation_kwargs(system, fake_environment_linux):
     system.return_value = "Linux"
-    environment = Environment(**os.environ)
+    environment = Environment()
 
     keys = set(environment.keys())
     assert "my" in keys
@@ -98,7 +98,7 @@ def test_normal_behaviour_keys_transformation_kwargs(system, fake_environment_li
 @patch("platform.system")
 def test_windows_behaviour_keys_transformation(system, fake_environment_windows):
     system.return_value = "Windows"
-    environment = Environment(os.environ)
+    environment = Environment()
 
     keys = set(environment.keys())
     assert "my" in keys
@@ -110,7 +110,7 @@ def test_windows_behaviour_keys_transformation_as_kwargs(
     system, fake_environment_windows
 ):
     system.return_value = "Windows"
-    environment = Environment(**os.environ)
+    environment = Environment()
     keys = set(environment.keys())
     assert "my" in keys
     assert "environment" in keys
@@ -120,7 +120,7 @@ def test_windows_behaviour_keys_transformation_as_kwargs(
 def test_windows_behaviour_get_item(system, fake_environment_windows):
     system.return_value = "Windows"
 
-    environment = Environment(os.environ)
+    environment = Environment()
     assert environment["my"] == "fake"
     assert environment["environment"] == "here"
 
@@ -128,6 +128,6 @@ def test_windows_behaviour_get_item(system, fake_environment_windows):
 @patch("platform.system")
 def test_windows_behaviour_get_item_as_kwargs(system, fake_environment_windows):
     system.return_value = "Windows"
-    environment = Environment(**os.environ)
+    environment = Environment()
     assert environment["my"] == "fake"
     assert environment["environment"] == "here"
