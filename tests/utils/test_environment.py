@@ -35,7 +35,13 @@ def test_normal_behaviour_update_os_environ(system, fake_environment_linux):
     with pytest.raises(KeyError):
         environment["TEST"]
     os.environ["TEST"] = "test"
+    assert "TEST" in environment
     assert environment["TEST"] == "test"
+    keys = environment.keys()
+    assert "TEST" in keys
+    assert "test" in environment.values()
+    items = environment.items()
+    assert items["TEST"] == "test"
 
 
 @patch("platform.system")
