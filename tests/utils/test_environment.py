@@ -28,6 +28,19 @@ def test_normal_behaviour_get_item(system, fake_environment_linux):
 
 
 @patch("platform.system")
+def test_normal_behaviour_update_parent_item(system, fake_environment_linux):
+    system.return_value = "Linux"
+    environment = Environment(os.environ)
+
+    assert environment["my"] == "fake"
+    assert environment["environment"] == "here"
+    with pytest.raises(KeyError):
+        environment["test"]
+    os.environ["TEST"] = "test"
+    assert environment["test"] == "test"
+
+
+@patch("platform.system")
 def test_normal_behaviour_get_item_as_kwargs(system, fake_environment_linux):
     system.return_value = "Linux"
     environment = Environment(**os.environ)
