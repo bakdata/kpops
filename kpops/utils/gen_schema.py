@@ -1,14 +1,12 @@
-import json
 import inspect
+import json
 import logging
 from abc import ABC
-from collections.abc import Sequence
 from enum import Enum
-from typing import Annotated, Any, Literal, Union
+from typing import Literal
 
-from pydantic import Field, TypeAdapter
+from pydantic import Field
 from pydantic.json_schema import model_json_schema, models_json_schema
-from pydantic_core import to_json
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
@@ -47,7 +45,7 @@ def _add_components(
     components_module: str,
     components: tuple[type[PipelineComponent], ...] | None = None,
 ) -> tuple[type[PipelineComponent], ...]:
-    """Add components to a components tuple
+    """Add components to a components tuple.
 
     If an empty tuple is provided or it is not provided at all, the components
     types from the given module are 'tupled'
@@ -84,14 +82,15 @@ def gen_pipeline_schema(
         log.warning("No components are provided, no schema is generated.")
         return
     # Add stock components if enabled
-    components: tuple[type[PipelineComponent], ...] = tuple()
+    components: tuple[type[PipelineComponent], ...] = ()
     if include_stock_components:
         components = _add_components("kpops.components")
     # Add custom components if provided
     if components_module:
         components = _add_components(components_module, components)
     if not components:
-        raise RuntimeError("No valid components found.")
+        msg = "No valid components found."
+        raise RuntimeError(msg)
 
     # re-assign component type as Literal to work as discriminator
     for component in components:
@@ -153,6 +152,6 @@ def gen_pipeline_schema(
 
 
 def gen_config_schema() -> None:
-    """Generate a json schema from the model of pipeline config"""
+    """Generate a json schema from the model of pipeline config."""
     schema = model_json_schema(PipelineConfig)
     print(json.dumps(schema, indent=4, sort_keys=True))

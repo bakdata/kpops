@@ -6,10 +6,10 @@ from collections.abc import Callable, Iterator
 from dataclasses import dataclass
 from pathlib import Path
 from textwrap import fill
-from typing import Any
+from typing import Any, get_args
 
+from pydantic.fields import FieldInfo
 from pydantic_settings import BaseSettings
-from pydantic.fields import FieldInfo 
 from pytablewriter import MarkdownTableWriter
 from typer.models import ArgumentInfo, OptionInfo
 
@@ -269,16 +269,18 @@ def fill_csv_pipeline_config(target: Path) -> None:
         )
 
 
-def collect_fields(settings: type[BaseSettings]) -> Iterator[FieldInfo]:
+def collect_fields(settings: type[BaseSettings]) -> Iterator[tuple[str, FieldInfo]]:
     """Collect and yield all fields in a settings class.
 
     :param model: settings class
     :yield: all settings including nested ones in settings classes
     """
-    for field in settings.model_fields.values():
-        if field.annotation and issubclass(field_type := field.annotation, BaseSettings):
-            yield from collect_fields(field_type)
-        yield field
+    for field_name, field_value in settings.model_fields.items():
+        if field_value.annotation:
+            for field_type in get_args(field_value.annotation):
+                if field_type and issubclass(field_type, BaseSettings):
+                    yield from collect_fields(field_type)
+            yield field_name, field_value
 
 
 def fill_csv_cli(target: Path) -> None:

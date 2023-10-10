@@ -19,7 +19,7 @@ class InputTopicTypes(str, Enum):
 
 
 class FromTopic(DescConfigModel):
-    """Input topic
+    """Input topic.
 
     :param type: Topic type, defaults to None
     :param role: Custom identifier belonging to a topic;
@@ -39,9 +39,10 @@ class FromTopic(DescConfigModel):
     @model_validator(mode="after")
     @classmethod
     def extra_topic_role(cls, values: Any) -> Any:
-        """Ensure that cls.role is used correctly, assign type if needed"""
+        """Ensure that cls.role is used correctly, assign type if needed."""
         if values.type == InputTopicTypes.INPUT and values.role:
-            raise ValueError("Define role only if `type` is `pattern` or `None`")
+            msg = "Define role only if `type` is `pattern` or `None`"
+            raise ValueError(msg)
         return values
 
 
@@ -49,7 +50,7 @@ ComponentName = NewType("ComponentName", str)
 
 
 class FromSection(DescConfigModel):
-    """Holds multiple input topics
+    """Holds multiple input topics.
 
     :param topics: Input topics
     :param components: Components to read from

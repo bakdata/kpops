@@ -20,7 +20,7 @@ class HelmDiffConfig(BaseModel):
 
 
 class RepoAuthFlags(DescConfigModel):
-    """Authorisation-related flags for `helm repo`
+    """Authorisation-related flags for `helm repo`.
 
     :param username: Username, defaults to None
     :param password: Password, defaults to None
@@ -62,7 +62,7 @@ class RepoAuthFlags(DescConfigModel):
 
 
 class HelmRepoConfig(DescConfigModel):
-    """Helm repository configuration
+    """Helm repository configuration.
 
     :param repository_name: Name of the Helm repository
     :param url: URL to the Helm repository
@@ -79,7 +79,7 @@ class HelmRepoConfig(DescConfigModel):
 
 
 class HelmConfig(DescConfigModel):
-    """Global Helm configuration
+    """Global Helm configuration.
 
     :param context: Name of kubeconfig context (`--kube-context`)
     :param debug: Run Helm in Debug mode

@@ -1,18 +1,12 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
 
 from pydantic import AliasChoices, Field
 from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
 
 from kpops.cli.settings_sources import YamlConfigSettingsSource
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
-
-    from pydantic.env_settings import SettingsSourceCallable
 
 ENV_PREFIX = "KPOPS_"
 
@@ -34,7 +28,7 @@ class PipelineConfig(BaseSettings):
     """Pipeline configuration unrelated to the components."""
 
     defaults_path: Path = Field(
-        default=Path("."),
+        default=Path(),
         examples=["defaults", "."],
         description="The path to the folder containing the defaults.yaml file and the environment defaults files. "
         "Paths can either be absolute or relative to `config.yaml`",
@@ -121,9 +115,9 @@ class PipelineConfig(BaseSettings):
         file_secret_settings: PydanticBaseSettingsSource,
     ):
         return (
+            env_settings,
             init_settings,
             YamlConfigSettingsSource(settings_cls),
             dotenv_settings,
-            env_settings,
             file_secret_settings,
         )

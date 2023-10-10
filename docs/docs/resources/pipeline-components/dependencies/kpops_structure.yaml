@@ -18,6 +18,7 @@ kpops_components_fields:
   - repo_config
   - version
   - resetter_values
+  - connector_type
   kafka-sink-connector:
   - name
   - prefix
@@ -28,6 +29,7 @@ kpops_components_fields:
   - repo_config
   - version
   - resetter_values
+  - connector_type
   kafka-source-connector:
   - name
   - prefix
@@ -38,6 +40,7 @@ kpops_components_fields:
   - repo_config
   - version
   - resetter_values
+  - connector_type
   - offset_topic
   kubernetes-app:
   - name

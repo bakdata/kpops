@@ -122,7 +122,16 @@
             "title": "KafkaConnectorConfig",
             "type": "object"
         },
+        "KafkaConnectorType": {
+            "enum": [
+                "sink",
+                "source"
+            ],
+            "title": "KafkaConnectorType",
+            "type": "string"
+        },
         "KafkaSinkConnector": {
+            "additionalProperties": true,
             "description": "Kafka sink connector model.",
             "properties": {
                 "app": {
@@ -132,6 +141,14 @@
                         }
                     ],
                     "description": "Application-specific settings"
+                },
+                "connector_type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KafkaConnectorType"
+                        }
+                    ],
+                    "default": "sink"
                 },
                 "from": {
                     "anyOf": [
@@ -190,21 +207,23 @@
                     "anyOf": [
                         {
                             "$ref": "#/definitions/ToSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "Topic(s) into which the component will write output",
-                    "title": "To"
-                },
-                "type": {
-                    "default": "kafka-sink-connector",
-                    "description": "Kafka sink connector model.",
-                    "enum": [
-                        "kafka-sink-connector"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
                 },
                 "version": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": "1.0.4",
                     "description": "Helm chart version",
                     "title": "Version"
@@ -219,6 +238,7 @@
             "type": "object"
         },
         "KafkaSourceConnector": {
+            "additionalProperties": true,
             "description": "Kafka source connector model.",
             "properties": {
                 "app": {
@@ -228,6 +248,14 @@
                         }
                     ],
                     "description": "Application-specific settings"
+                },
+                "connector_type": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KafkaConnectorType"
+                        }
+                    ],
+                    "default": "source"
                 },
                 "from": {
                     "anyOf": [
@@ -299,21 +327,23 @@
                     "anyOf": [
                         {
                             "$ref": "#/definitions/ToSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "Topic(s) into which the component will write output",
-                    "title": "To"
-                },
-                "type": {
-                    "default": "kafka-source-connector",
-                    "description": "Kafka source connector model.",
-                    "enum": [
-                        "kafka-source-connector"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
                 },
                 "version": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": "1.0.4",
                     "description": "Helm chart version",
                     "title": "Version"
@@ -369,11 +399,15 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/definitions/HelmRepoConfig"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
                 "to": {
@@ -411,6 +445,7 @@
             "type": "object"
         },
         "KubernetesAppConfig": {
+            "additionalProperties": true,
             "description": "Settings specific to Kubernetes Apps.",
             "properties": {},
             "title": "KubernetesAppConfig",
@@ -426,6 +461,7 @@
             "type": "string"
         },
         "ProducerApp": {
+            "additionalProperties": true,
             "description": "Producer component.\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
             "properties": {
                 "app": {
@@ -481,21 +517,23 @@
                     "anyOf": [
                         {
                             "$ref": "#/definitions/ToSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "Topic(s) into which the component will write output",
-                    "title": "To"
-                },
-                "type": {
-                    "default": "producer-app",
-                    "description": "Producer component.\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
-                    "enum": [
-                        "producer-app"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
                 },
                 "version": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": "2.9.0",
                     "description": "Helm chart version",
                     "title": "Version"
@@ -510,6 +548,7 @@
             "type": "object"
         },
         "ProducerStreamsConfig": {
+            "additionalProperties": true,
             "description": "Kafka Streams settings specific to Producer.",
             "properties": {
                 "brokers": {
@@ -560,6 +599,7 @@
             "type": "object"
         },
         "ProducerValues": {
+            "additionalProperties": true,
             "description": "Settings specific to producers.",
             "properties": {
                 "nameOverride": {
@@ -658,6 +698,7 @@
             "type": "object"
         },
         "StreamsApp": {
+            "additionalProperties": true,
             "description": "StreamsApp component that configures a streams bootstrap app.",
             "properties": {
                 "app": {
@@ -720,21 +761,23 @@
                     "anyOf": [
                         {
                             "$ref": "#/definitions/ToSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "Topic(s) into which the component will write output",
-                    "title": "To"
-                },
-                "type": {
-                    "default": "streams-app",
-                    "description": "StreamsApp component that configures a streams bootstrap app.",
-                    "enum": [
-                        "streams-app"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
                 },
                 "version": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
                     "default": "2.9.0",
                     "description": "Helm chart version",
                     "title": "Version"
@@ -749,6 +792,7 @@
             "type": "object"
         },
         "StreamsAppAutoScaling": {
+            "additionalProperties": true,
             "description": "Kubernetes Event-driven Autoscaling config.",
             "properties": {
                 "consumerGroup": {
@@ -857,7 +901,12 @@
                     "title": "Nameoverride"
                 },
                 "streams": {
-                    "$ref": "#/definitions/StreamsConfig"
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/StreamsConfig"
+                        }
+                    ],
+                    "description": "Streams Bootstrap streams section"
                 }
             },
             "required": [
@@ -867,121 +916,12 @@
             "type": "object"
         },
         "StreamsConfig": {
-            "description": "Streams Bootstrap streams section.",
-            "properties": {
-                "brokers": {
-                    "description": "Brokers",
-                    "title": "Brokers",
-                    "type": "string"
-                },
-                "config": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "default": {},
-                    "description": "Configuration",
-                    "title": "Config",
-                    "type": "object"
-                },
-                "errorTopic": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Error topic",
-                    "title": "Errortopic"
-                },
-                "extraInputPatterns": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "default": {},
-                    "description": "Extra input patterns",
-                    "title": "Extrainputpatterns",
-                    "type": "object"
-                },
-                "extraInputTopics": {
-                    "additionalProperties": {
-                        "items": {
-                            "type": "string"
-                        },
-                        "type": "array"
-                    },
-                    "default": {},
-                    "description": "Extra input topics",
-                    "title": "Extrainputtopics",
-                    "type": "object"
-                },
-                "extraOutputTopics": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "default": {},
-                    "description": "Extra output topics",
-                    "title": "Extraoutputtopics",
-                    "type": "object"
-                },
-                "inputPattern": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Input pattern",
-                    "title": "Inputpattern"
-                },
-                "inputTopics": {
-                    "default": [],
-                    "description": "Input topics",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Inputtopics",
-                    "type": "array"
-                },
-                "outputTopic": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Output topic",
-                    "title": "Outputtopic"
-                },
-                "schemaRegistryUrl": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
-                }
-            },
-            "required": [
-                "brokers"
-            ],
+            "description": "Streams Bootstrap streams section.\n\n:param input_topics: Input topics, defaults to []\n:param input_pattern: Input pattern, defaults to None\n:param extra_input_topics: Extra input topics, defaults to {}\n:param extra_input_patterns: Extra input patterns, defaults to {}\n:param extra_output_topics: Extra output topics, defaults to {}\n:param output_topic: Output topic, defaults to None\n:param error_topic: Error topic, defaults to None\n:param config: Configuration, defaults to {}",
             "title": "StreamsConfig",
             "type": "object"
         },
         "ToSection": {
+            "additionalProperties": false,
             "description": "Holds multiple output topics.",
             "properties": {
                 "models": {

@@ -22,7 +22,9 @@ class TestEnvDocGen:
             Ellipsis,
             Ellipsis,
         ]
-        actual = [field.field_info.default for field in collect_fields(ParentSettings)]
+        actual = [
+            field_value.default for _, field_value in collect_fields(ParentSettings)
+        ]
         assert actual == expected
 
     @pytest.mark.parametrize(

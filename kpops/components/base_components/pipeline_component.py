@@ -1,7 +1,8 @@
 from __future__ import annotations
 
-from pydantic import AliasChoices, ConfigDict, Field
 from abc import ABC
+
+from pydantic import AliasChoices, ConfigDict, Field
 
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,

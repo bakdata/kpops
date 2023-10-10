@@ -8,8 +8,6 @@ from typing import TypeVar
 
 import typer
 from pydantic import AliasChoices, ConfigDict, Field
-from pydantic.json_schema import WithJsonSchema
-from typing_extensions import Annotated
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers

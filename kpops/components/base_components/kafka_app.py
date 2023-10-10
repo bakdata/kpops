@@ -22,7 +22,7 @@ log = logging.getLogger("KafkaApp")
 
 
 class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
-    """Kafka Streams config
+    """Kafka Streams config.
 
     :param brokers: Brokers
     :param schema_registry_url: URL of the schema registry, defaults to None

@@ -2,8 +2,7 @@ from enum import Enum
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
-from pydantic.json_schema import WithJsonSchema
-from typing_extensions import Annotated, override
+from typing_extensions import override
 
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel, to_dot
 
@@ -14,13 +13,10 @@ class KafkaConnectorType(str, Enum):
 
 
 class KafkaConnectorConfig(DescConfigModel):
-    """Settings specific to Kafka Connectors"""
+    """Settings specific to Kafka Connectors."""
 
     connector_class: str
-    name: str | None = Field(
-        default=None,
-        exclude=True,
-    )
+    name: str | None = Field(default=None)
     model_config = ConfigDict(
         extra="allow",
         alias_generator=to_dot,
