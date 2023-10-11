@@ -4,9 +4,12 @@ from collections.abc import MutableMapping
 
 
 class Environment(UserDict[str, str]):
+    """Internal environment wrapping OS environment."""
+
     def __init__(
         self, mapping: MutableMapping[str, str] | None = None, /, **kwargs
     ) -> None:
+        self._global = os.environ
         if mapping is None:
             mapping = {}
         if kwargs:
@@ -14,21 +17,22 @@ class Environment(UserDict[str, str]):
         super().__init__(mapping)
 
     def __getitem__(self, key: str) -> str:
-        if key in self.data:
+        try:
             return self.data[key]
-        return os.environ[key]
+        except KeyError:
+            return self._global[key]
 
     def __contains__(self, key: object) -> bool:
-        return super().__contains__(key) or os.environ.__contains__(key)
+        return super().__contains__(key) or self._global.__contains__(key)
 
     def keys(self) -> set[str]:
-        return set(super().keys()).union(os.environ.keys())
+        return set(super().keys()).union(self._global.keys())
 
     def values(self) -> set[str]:
-        return set(super().values()).union(os.environ.values())
+        return set(super().values()).union(self._global.values())
 
     def items(self) -> dict[str, str]:
-        return {**os.environ, **self.data}
+        return {**self._global, **self.data}
 
 
 ENV = Environment()
