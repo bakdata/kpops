@@ -114,6 +114,18 @@
                 "connector.class": {
                     "title": "Connector.Class",
                     "type": "string"
+                },
+                "name": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Name"
                 }
             },
             "required": [
@@ -121,14 +133,6 @@
             ],
             "title": "KafkaConnectorConfig",
             "type": "object"
-        },
-        "KafkaConnectorType": {
-            "enum": [
-                "sink",
-                "source"
-            ],
-            "title": "KafkaConnectorType",
-            "type": "string"
         },
         "KafkaSinkConnector": {
             "additionalProperties": true,
@@ -141,14 +145,6 @@
                         }
                     ],
                     "description": "Application-specific settings"
-                },
-                "connector_type": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/KafkaConnectorType"
-                        }
-                    ],
-                    "default": "sink"
                 },
                 "from": {
                     "anyOf": [
@@ -248,14 +244,6 @@
                         }
                     ],
                     "description": "Application-specific settings"
-                },
-                "connector_type": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/KafkaConnectorType"
-                        }
-                    ],
-                    "default": "source"
                 },
                 "from": {
                     "anyOf": [

@@ -105,7 +105,9 @@ class KubernetesApp(PipelineComponent):
     @property
     def helm_flags(self) -> HelmFlags:
         """Return shared flags for Helm commands."""
-        auth_flags = self.repo_config.repo_auth_flags.model_dump() if self.repo_config else {}
+        auth_flags = (
+            self.repo_config.repo_auth_flags.model_dump() if self.repo_config else {}
+        )
         return HelmFlags(
             **auth_flags,
             version=self.version,

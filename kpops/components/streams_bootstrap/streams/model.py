@@ -1,8 +1,7 @@
 from typing import Any
 
-from pydantic import ConfigDict, Field, SerializationInfo, SerializeAsAny, model_serializer
+from pydantic import ConfigDict, Field, SerializationInfo, model_serializer
 from pydantic.alias_generators import to_snake
-from pydantic_core import PydanticUndefined
 
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
@@ -79,17 +78,15 @@ class StreamsConfig(KafkaStreamsConfig):
         #     breakpoint()
         default_fields = {
             field_name: field_info.default
-            for field_name, field_info
-            in self.model_fields.items()
+            for field_name, field_info in self.model_fields.items()
         }
-        filtered_result = {
+        return {
             k: v
-            for k, v
-            in result.items()
+            for k, v in result.items()
             if (v != default_fields.get(k) and v is not None)
-                and (v != default_fields.get(to_snake(k)) and v is not None)
+            and (v != default_fields.get(to_snake(k)) and v is not None)
         }
-        return filtered_result
+
 
 class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
     """Kubernetes Event-driven Autoscaling config.

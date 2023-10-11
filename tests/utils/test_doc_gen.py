@@ -1,8 +1,8 @@
 from pathlib import Path
 from typing import Any
-from pydantic_core import PydanticUndefined
 
 import pytest
+from pydantic_core import PydanticUndefined
 
 from hooks.gen_docs.gen_docs_env_vars import (
     EnvVarAttrs,

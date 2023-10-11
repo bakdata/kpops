@@ -5,7 +5,7 @@ from abc import ABC
 from enum import Enum
 from typing import Literal
 
-from pydantic import Field
+from pydantic.fields import FieldInfo
 from pydantic.json_schema import model_json_schema, models_json_schema
 
 from kpops.cli.pipeline_config import PipelineConfig
@@ -94,9 +94,9 @@ def gen_pipeline_schema(
 
     # re-assign component type as Literal to work as discriminator
     for component in components:
-        component.model_fields["type"] = Field(
+        component.model_fields["type"] = FieldInfo(
             alias="type",
-            type_=Literal[component.type],  # type: ignore
+            annotation=Literal[component.type],  # type: ignore[reportGeneralTypeIssues]
             default=component.type,
             # final=True,
             title="Component type",

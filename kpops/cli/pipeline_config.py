@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing_extensions import override
 
 from pydantic import AliasChoices, Field
-from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, SettingsConfigDict
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+)
+from typing_extensions import override
 
 from kpops.cli.settings_sources import YamlConfigSettingsSource
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
@@ -107,7 +111,7 @@ class PipelineConfig(BaseSettings):
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
 
-    model_config = SettingsConfigDict(env_prefix='KPOPS_')    
+    model_config = SettingsConfigDict(env_prefix="KPOPS_")
 
     @override
     @classmethod

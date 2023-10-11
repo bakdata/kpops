@@ -491,7 +491,9 @@ class TestConnectorApiWrapper:
         mock_put.assert_called_with(
             url=f"{HOST}/connector-plugins/{connector_name}/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectorConfig(**{"name": connector_name, **configs}).model_dump(),
+            json=KafkaConnectorConfig(
+                **{"name": connector_name, **configs}
+            ).model_dump(),
         )
 
     def test_should_parse_validate_connector_config(self, httpx_mock: HTTPXMock):

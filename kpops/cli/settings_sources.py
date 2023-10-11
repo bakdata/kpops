@@ -1,9 +1,9 @@
 from pathlib import Path
 from typing import Any
-from typing_extensions import override
 
 from pydantic.fields import FieldInfo
 from pydantic_settings import PydanticBaseSettingsSource
+from typing_extensions import override
 
 from kpops.utils.yaml_loading import load_yaml_file
 
@@ -17,7 +17,7 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     def get_field_value(
         self,
         field: FieldInfo,
-        field_name: str,  # noqa:
+        field_name: str,
     ) -> tuple[Any, str, bool]:
         if self.path_to_config.exists() and isinstance(
             (file_content_yaml := load_yaml_file(self.path_to_config)), dict

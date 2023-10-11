@@ -63,6 +63,7 @@ class ConnectWrapper:
 
     def get_connector(self, connector_name: str | None) -> KafkaConnectResponse:
         """Get information about the connector.
+
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
         :param connector_name: Nameof the crated connector
         :return: Information about the connector.
