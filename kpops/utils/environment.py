@@ -26,17 +26,17 @@ class Environment(UserDict[str, str]):
         return super().__contains__(key) or self._global.__contains__(key)
 
     @property
-    def dict(self) -> dict[str, str]:
+    def _dict(self) -> dict[str, str]:
         return {**self._global, **self.data}
 
     def keys(self) -> KeysView[str]:
-        return KeysView(self.dict)
+        return KeysView(self._dict)
 
     def values(self) -> ValuesView[str]:
-        return ValuesView(self.dict)
+        return ValuesView(self._dict)
 
     def items(self) -> ItemsView[str, str]:
-        return ItemsView(self.dict)
+        return ItemsView(self._dict)
 
 
 ENV = Environment()
