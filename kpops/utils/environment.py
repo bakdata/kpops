@@ -7,7 +7,7 @@ class Environment(UserDict[str, str]):
     """Internal environment wrapping OS environment."""
 
     def __init__(
-        self, mapping: MutableMapping[str, str] | None = None, /, **kwargs
+        self, mapping: MutableMapping[str, str] | None = None, /, **kwargs: str
     ) -> None:
         self._global = os.environ
         if mapping is None:
