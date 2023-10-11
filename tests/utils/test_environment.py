@@ -1,4 +1,5 @@
 import os
+from collections.abc import ItemsView, KeysView, ValuesView
 from unittest.mock import ANY
 
 import pytest
@@ -37,10 +38,15 @@ def test_update_os_environ(environment: Environment):
     assert "TEST" in environment
     assert environment["TEST"] == "test"
     keys = environment.keys()
+    assert isinstance(keys, KeysView)
     assert "TEST" in keys
-    assert "test" in environment.values()
-    items = dict(environment.items())
-    assert items["TEST"] == "test"
+    values = environment.values()
+    assert isinstance(values, ValuesView)
+    assert "test" in values
+    items = environment.items()
+    assert isinstance(items, ItemsView)
+    d = dict(items)
+    assert d["TEST"] == "test"
 
 
 def test_mapping():
@@ -61,6 +67,14 @@ def test_kwargs():
 
 def test_dict(environment: Environment):
     assert environment.dict == {
+        "MY": "fake",
+        "ENVIRONMENT": "here",
+        "PYTEST_CURRENT_TEST": ANY,
+    }
+
+
+def test_dict_unpacking(environment: Environment):
+    assert {**environment} == {
         "MY": "fake",
         "ENVIRONMENT": "here",
         "PYTEST_CURRENT_TEST": ANY,
