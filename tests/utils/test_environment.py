@@ -50,7 +50,7 @@ def test_update_os_environ(environment: Environment):
 
 
 def test_mapping():
-    environment = Environment(**{"kwarg1": "value1", "kwarg2": "value2"})
+    environment = Environment({"kwarg1": "value1", "kwarg2": "value2"})
     assert environment["MY"] == "fake"
     assert environment["ENVIRONMENT"] == "here"
     assert environment["kwarg1"] == "value1"
@@ -66,7 +66,7 @@ def test_kwargs():
 
 
 def test_dict(environment: Environment):
-    assert environment.dict == {
+    assert environment._dict == {
         "MY": "fake",
         "ENVIRONMENT": "here",
         "PYTEST_CURRENT_TEST": ANY,
