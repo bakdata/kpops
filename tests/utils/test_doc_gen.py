@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Any
+from pydantic_core import PydanticUndefined
 
 import pytest
 
@@ -18,9 +19,8 @@ class TestEnvDocGen:
     def test_collect_fields(self):
         expected: list[Any] = [
             "not_nested_field",
-            "attr",
-            Ellipsis,
-            Ellipsis,
+            PydanticUndefined,
+            PydanticUndefined,
         ]
         actual = [
             field_value.default for _, field_value in collect_fields(ParentSettings)
