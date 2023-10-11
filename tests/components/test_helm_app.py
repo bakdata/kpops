@@ -13,20 +13,18 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.components.base_components.kubernetes_app import (
-    KubernetesApp,
-    KubernetesAppConfig,
-)
+from kpops.components.base_components.helm_app import HelmApp
+from kpops.components.base_components.kubernetes_app import KubernetesAppConfig
 from kpops.utils.colorify import magentaify
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
-class KubernetesTestValue(KubernetesAppConfig):
+class HelmTestValue(KubernetesAppConfig):
     name_override: str
 
 
-class TestKubernetesApp:
+class TestHelmApp:
     @pytest.fixture()
     def config(self) -> PipelineConfig:
         return PipelineConfig(
@@ -46,30 +44,30 @@ class TestKubernetesApp:
     @pytest.fixture()
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.components.base_components.kubernetes_app.Helm"
+            "kpops.components.base_components.helm_app.Helm"
         ).return_value
 
     @pytest.fixture()
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.components.base_components.kubernetes_app.log.info")
+        return mocker.patch("kpops.components.base_components.helm_app.log.info")
 
     @pytest.fixture()
-    def app_value(self) -> KubernetesTestValue:
-        return KubernetesTestValue(**{"name_override": "test-value"})
+    def app_value(self) -> HelmTestValue:
+        return HelmTestValue(**{"name_override": "test-value"})
 
     @pytest.fixture()
     def repo_config(self) -> HelmRepoConfig:
         return HelmRepoConfig(repository_name="test", url="https://bakdata.com")
 
     @pytest.fixture()
-    def kubernetes_app(
+    def helm_app(
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
-        app_value: KubernetesTestValue,
+        app_value: HelmTestValue,
         repo_config: HelmRepoConfig,
-    ) -> KubernetesApp:
-        return KubernetesApp(
+    ) -> HelmApp:
+        return HelmApp(
             name="test-kubernetes-app",
             config=config,
             handlers=handlers,
@@ -80,20 +78,20 @@ class TestKubernetesApp:
 
     def test_should_lazy_load_helm_wrapper_and_not_repo_add(
         self,
-        kubernetes_app: KubernetesApp,
+        helm_app: HelmApp,
         mocker: MockerFixture,
         helm_mock: MagicMock,
     ):
         helm_mock.add_repo.assert_not_called()
 
         mocker.patch.object(
-            KubernetesApp,
+            HelmApp,
             "helm_chart",
             return_value="test/test-chart",
             new_callable=mocker.PropertyMock,
         )
 
-        kubernetes_app.deploy(False)
+        helm_app.deploy(False)
 
         helm_mock.upgrade_install.assert_called_once_with(
             "${pipeline_name}-test-kubernetes-app",
@@ -110,12 +108,12 @@ class TestKubernetesApp:
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         mocker: MockerFixture,
-        app_value: KubernetesTestValue,
+        app_value: HelmTestValue,
     ):
         repo_config = HelmRepoConfig(
             repository_name="test-repo", url="https://test.com/charts/"
         )
-        kubernetes_app = KubernetesApp(
+        helm_app = HelmApp(
             name="test-kubernetes-app",
             config=config,
             handlers=handlers,
@@ -126,13 +124,13 @@ class TestKubernetesApp:
         )
 
         mocker.patch.object(
-            KubernetesApp,
+            HelmApp,
             "helm_chart",
             return_value="test/test-chart",
             new_callable=mocker.PropertyMock,
         )
 
-        kubernetes_app.deploy(dry_run=False)
+        helm_app.deploy(dry_run=False)
 
         assert helm_mock.mock_calls == [
             mocker.call.add_repo(
@@ -155,9 +153,9 @@ class TestKubernetesApp:
         config: PipelineConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
-        app_value: KubernetesTestValue,
+        app_value: HelmTestValue,
     ):
-        class AppWithLocalChart(KubernetesApp):
+        class AppWithLocalChart(HelmApp):
             repo_config: None = None
 
             @property
@@ -188,27 +186,27 @@ class TestKubernetesApp:
 
     def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
         self,
-        kubernetes_app: KubernetesApp,
+        helm_app: HelmApp,
         helm_mock: MagicMock,
     ):
         with pytest.raises(NotImplementedError) as error:
-            kubernetes_app.deploy(True)
+            helm_app.deploy(True)
         helm_mock.add_repo.assert_called()
         assert (
             str(error.value)
-            == "Please implement the helm_chart property of the kpops.components.base_components.kubernetes_app module."
+            == "Please implement the helm_chart property of the kpops.components.base_components.helm_app module."
         )
 
-    def test_should_call_helm_uninstall_when_destroying_kubernetes_app(
+    def test_should_call_helm_uninstall_when_destroying_helm_app(
         self,
-        kubernetes_app: KubernetesApp,
+        helm_app: HelmApp,
         helm_mock: MagicMock,
         log_info_mock: MagicMock,
     ):
-        stdout = 'KubernetesAppComponent - release "test-kubernetes-app" uninstalled'
+        stdout = 'AppComponent - release "test-kubernetes-app" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
-        kubernetes_app.destroy(True)
+        helm_app.destroy(True)
 
         helm_mock.uninstall.assert_called_once_with(
             "test-namespace", "${pipeline_name}-test-kubernetes-app", True
@@ -220,13 +218,13 @@ class TestKubernetesApp:
         self,
         config: PipelineConfig,
         handlers: ComponentHandlers,
-        app_value: KubernetesTestValue,
+        app_value: HelmTestValue,
         repo_config: HelmRepoConfig,
     ):
         with pytest.raises(
             ValueError, match=r"The component name .* is invalid for Kubernetes."
         ):
-            KubernetesApp(
+            HelmApp(
                 name="Not-Compatible*",
                 config=config,
                 handlers=handlers,
@@ -238,7 +236,7 @@ class TestKubernetesApp:
         with pytest.raises(
             ValueError, match=r"The component name .* is invalid for Kubernetes."
         ):
-            KubernetesApp(
+            HelmApp(
                 name="snake_case*",
                 config=config,
                 handlers=handlers,
@@ -247,7 +245,7 @@ class TestKubernetesApp:
                 repo_config=repo_config,
             )
 
-        assert KubernetesApp(
+        assert HelmApp(
             name="valid-name",
             config=config,
             handlers=handlers,

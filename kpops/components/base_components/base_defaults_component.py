@@ -1,5 +1,6 @@
 import inspect
 import logging
+from abc import ABC
 from collections import deque
 from collections.abc import Sequence
 from functools import cached_property
@@ -26,7 +27,7 @@ except ImportError:
 log = logging.getLogger("BaseDefaultsComponent")
 
 
-class BaseDefaultsComponent(BaseModel):
+class BaseDefaultsComponent(BaseModel, ABC):
     """Base for all components, handles defaults.
 
     Component defaults are usually provided in a yaml file called
