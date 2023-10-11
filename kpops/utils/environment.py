@@ -28,9 +28,7 @@ class Environment(UserDict[str, str]):
         return set(super().values()).union(os.environ.values())
 
     def items(self) -> dict[str, str]:
-        items = dict(super().items())
-        items.update(**os.environ)
-        return items
+        return {**os.environ, **self.data}
 
 
 ENV = Environment()

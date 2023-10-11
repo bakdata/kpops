@@ -40,7 +40,7 @@ def test_normal_behaviour_update_os_environ(system, fake_environment_linux):
     keys = environment.keys()
     assert "TEST" in keys
     assert "test" in environment.values()
-    items = environment.items()
+    items = dict(environment.items())
     assert items["TEST"] == "test"
 
 
