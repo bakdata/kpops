@@ -460,8 +460,7 @@ class TestPipeline:
 
     def test_env_vars_precedence_over_config(
         self,
-        monkeypatch: pytest.MonkeyPatch,
-        snapshot: SnapshotTest,
+        monkeypatch: pytest.MonkeyPatch
     ):
         monkeypatch.setenv(name="KPOPS_KAFKA_BROKERS", value="env_broker")
 

@@ -1,5 +1,6 @@
 from pathlib import Path
 from typing import Any
+from typing_extensions import override
 
 from pydantic.fields import FieldInfo
 from pydantic_settings import PydanticBaseSettingsSource
@@ -12,6 +13,7 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
 
     path_to_config = Path("config.yaml")
 
+    @override
     def get_field_value(
         self,
         field: FieldInfo,
@@ -24,11 +26,13 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
             return field_value, field_name, False
         return None, field_name, False
 
+    @override
     def prepare_field_value(
         self, field_name: str, field: FieldInfo, value: Any, value_is_complex: bool
     ) -> Any:
         return value
 
+    @override
     def __call__(self) -> dict[str, Any]:
         d: dict[str, Any] = {}
 

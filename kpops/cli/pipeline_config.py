@@ -1,9 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing_extensions import override
 
 from pydantic import AliasChoices, Field
-from pydantic_settings import BaseSettings, PydanticBaseSettingsSource
+from pydantic_settings import BaseSettings, PydanticBaseSettingsSource, SettingsConfigDict
 
 from kpops.cli.settings_sources import YamlConfigSettingsSource
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
@@ -48,6 +49,7 @@ class PipelineConfig(BaseSettings):
             "broker1:9092,broker2:9092,broker3:9092",
         ],
         description="The comma separated Kafka brokers address.",
+        validation_alias=AliasChoices("brokers", f"{ENV_PREFIX}kafka_brokers"),
     )
     defaults_filename_prefix: str = Field(
         default="defaults",
@@ -105,6 +107,9 @@ class PipelineConfig(BaseSettings):
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
 
+    model_config = SettingsConfigDict(env_prefix='KPOPS_')    
+
+    @override
     @classmethod
     def settings_customise_sources(
         cls,
@@ -114,6 +119,7 @@ class PipelineConfig(BaseSettings):
         dotenv_settings: PydanticBaseSettingsSource,
         file_secret_settings: PydanticBaseSettingsSource,
     ):
+        # breakpoint()
         return (
             env_settings,
             init_settings,
