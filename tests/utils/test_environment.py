@@ -1,4 +1,5 @@
 import os
+from unittest.mock import ANY
 
 import pytest
 
@@ -7,6 +8,8 @@ from kpops.utils.environment import Environment
 
 @pytest.fixture(autouse=True)
 def environment(monkeypatch: pytest.MonkeyPatch) -> Environment:
+    for key in os.environ:
+        monkeypatch.delenv(key)
     monkeypatch.setenv("MY", "fake")
     monkeypatch.setenv("ENVIRONMENT", "here")
     return Environment()
@@ -54,3 +57,11 @@ def test_kwargs():
     assert environment["ENVIRONMENT"] == "here"
     assert environment["kwarg1"] == "value1"
     assert environment["kwarg2"] == "value2"
+
+
+def test_dict(environment: Environment):
+    assert environment.dict == {
+        "MY": "fake",
+        "ENVIRONMENT": "here",
+        "PYTEST_CURRENT_TEST": ANY,
+    }

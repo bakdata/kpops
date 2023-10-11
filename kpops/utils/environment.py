@@ -1,6 +1,6 @@
 import os
 from collections import UserDict
-from collections.abc import MutableMapping
+from collections.abc import ItemsView, KeysView, MutableMapping, ValuesView
 
 
 class Environment(UserDict[str, str]):
@@ -25,14 +25,18 @@ class Environment(UserDict[str, str]):
     def __contains__(self, key: object) -> bool:
         return super().__contains__(key) or self._global.__contains__(key)
 
-    def keys(self) -> set[str]:
-        return set(super().keys()).union(self._global.keys())
-
-    def values(self) -> set[str]:
-        return set(super().values()).union(self._global.values())
-
-    def items(self) -> dict[str, str]:
+    @property
+    def dict(self) -> dict[str, str]:
         return {**self._global, **self.data}
+
+    def keys(self) -> KeysView[str]:
+        return KeysView(self.dict)
+
+    def values(self) -> ValuesView[str]:
+        return ValuesView(self.dict)
+
+    def items(self) -> ItemsView[str, str]:
+        return ItemsView(self.dict)
 
 
 ENV = Environment()
