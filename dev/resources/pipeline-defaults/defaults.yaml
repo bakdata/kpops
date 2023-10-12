@@ -1,3 +1,24 @@
+# Kubernetes apps managed through Helm with an associated Helm chart
+#
+# Parent of: KafkaApp
+# Child of: KubernetesApp
+helm-app:
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example.
+  app: # required
+    image: exampleImage # Example
+    debug: false # Example
+    commandLine: {} # Example
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
 # Base component for Kafka-based components.
 #
 # Parent of: ProducerApp, StreamsApp
@@ -7,7 +28,7 @@ kafka-app:
   # add the key-value pairs they need.
   app: # required
     streams: # required
-      brokers: ${brokers} # required
+      brokers: ${kafka_brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
     imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
@@ -95,7 +116,7 @@ kafka-source-connector:
   offset_topic: offset_topic
 # Base Kubernetes App
 #
-# Parent of: KafkaApp
+# Parent of: HelmApp
 # Child of: PipelineComponent
 kubernetes-app:
   # Pipeline prefix that will prefix every component name. If you wish to not
@@ -147,17 +168,6 @@ kubernetes-app:
     image: exampleImage # Example
     debug: false # Example
     commandLine: {} # Example
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repo_config:
-    repository_name: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "1.0.0" # Helm chart version
 # Holds configuration to use as values for the streams bootstrap producer-app Helm
 # chart.
 #
@@ -170,7 +180,7 @@ producer-app:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
     streams: # required, producer-app-specific
-      brokers: ${brokers} # required
+      brokers: ${kafka_brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
       outputTopic: output_topic
       extraOutputTopics:
@@ -188,7 +198,7 @@ streams-app:
   app: # required
     # Streams Bootstrap streams section
     streams: # required, streams-app-specific
-      brokers: ${brokers} # required
+      brokers: ${kafka_brokers} # required
       schemaRegistryUrl: ${schema_registry_url}
       inputTopics:
         - topic1
