@@ -1,4 +1,4 @@
-from __future__ import annotations
+# from __future__ import annotations
 
 from pydantic import Field
 from typing_extensions import override
@@ -14,7 +14,7 @@ from kpops.utils.docstring import describe_attr
 
 
 class ProducerApp(KafkaApp):
-    """Producer component
+    """Producer component.
 
     This producer holds configuration to use as values for the streams bootstrap
     producer helm chart.
@@ -40,7 +40,8 @@ class ProducerApp(KafkaApp):
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:
         match topic.type:
             case OutputTopicTypes.ERROR:
-                raise ValueError("Producer apps do not support error topics")
+                msg = "Producer apps do not support error topics"
+                raise ValueError(msg)
             case _:
                 super().apply_to_outputs(name, topic)
 

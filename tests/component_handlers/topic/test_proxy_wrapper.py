@@ -30,13 +30,13 @@ class TestProxyWrapper:
         return mocker.patch("kpops.component_handlers.topic.proxy_wrapper.log.debug")
 
     @pytest.fixture(autouse=True)
-    def setup(self, httpx_mock: HTTPXMock):
+    def _setup(self, httpx_mock: HTTPXMock):
         config = KpopsConfig(defaults_path=DEFAULTS_PATH, environment="development")
         self.proxy_wrapper = ProxyWrapper(config.kafka_rest)
 
-        with open(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses" / "cluster-info.json"
-        ) as f:
+        with Path(
+            DEFAULTS_PATH / "kafka_rest_proxy_responses" / "cluster-info.json",
+        ).open() as f:
             cluster_response = json.load(f)
 
         httpx_mock.add_response(

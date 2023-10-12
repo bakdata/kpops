@@ -1,8 +1,9 @@
 import inspect
 import logging
 from abc import ABC
+from collections.abc import Sequence
 from enum import Enum
-from typing import Annotated, Any, Literal, Sequence, Union
+from typing import Annotated, Any, Literal, Union
 
 from pydantic import BaseConfig, Field, schema, schema_json_of
 from pydantic.fields import FieldInfo, ModelField
@@ -25,7 +26,8 @@ original_field_schema = schema.field_schema
 # adapted from https://github.com/tiangolo/fastapi/issues/1378#issuecomment-764966955
 def field_schema(field: ModelField, **kwargs: Any) -> Any:
     if field.field_info.extra.get("hidden_from_schema"):
-        raise SkipField(f"{field.name} field is being hidden")
+        msg = f"{field.name} field is being hidden"
+        raise SkipField(msg)
     else:
         return original_field_schema(field, **kwargs)
 
@@ -38,8 +40,7 @@ log = logging.getLogger("")
 def _is_valid_component(
     defined_component_types: set[str], component: type[PipelineComponent]
 ) -> bool:
-    """
-    Check whether a PipelineComponent subclass has a valid definition for the schema generation.
+    """Check whether a PipelineComponent subclass has a valid definition for the schema generation.
 
     :param defined_component_types: types defined so far
     :param component: component type to be validated
@@ -58,7 +59,7 @@ def _is_valid_component(
 def _add_components(
     components_module: str, components: tuple[type[PipelineComponent]] | None = None
 ) -> tuple[type[PipelineComponent]]:
-    """Add components to a components tuple
+    """Add components to a components tuple.
 
     If an empty tuple is provided or it is not provided at all, the components
     types from the given module are 'tupled'
@@ -69,7 +70,7 @@ def _add_components(
     :return: Extended tuple
     """
     if components is None:
-        components = tuple()
+        components = tuple()  # noqa: C408
     # Set of existing types, against which to check the new ones
     defined_component_types = {component.type for component in components}
     custom_components = (
@@ -95,14 +96,15 @@ def gen_pipeline_schema(
         log.warning("No components are provided, no schema is generated.")
         return
     # Add stock components if enabled
-    components: tuple[type[PipelineComponent]] = tuple()
+    components: tuple[type[PipelineComponent]] = tuple()  # noqa: C408
     if include_stock_components:
         components = _add_components("kpops.components")
     # Add custom components if provided
     if components_module:
         components = _add_components(components_module, components)
     if not components:
-        raise RuntimeError("No valid components found.")
+        msg = "No valid components found."
+        raise RuntimeError(msg)
     # Create a type union that will hold the union of all component types
     PipelineComponents = Union[components]  # type: ignore[valid-type]
 
@@ -110,7 +112,7 @@ def gen_pipeline_schema(
     for component in components:
         component.__fields__["type"] = ModelField(
             name="type",
-            type_=Literal[component.type],  # type: ignore
+            type_=Literal[component.type],  # type: ignore[reportGeneralTypeIssues]
             required=False,
             default=component.type,
             final=True,
@@ -137,7 +139,7 @@ def gen_pipeline_schema(
 
 
 def gen_config_schema() -> None:
-    """Generate a json schema from the model of pipeline config"""
+    """Generate a json schema from the model of pipeline config."""
     schema = schema_json_of(
         KpopsConfig, title="KPOps config schema", indent=4, sort_keys=True
     )

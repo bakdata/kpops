@@ -2,7 +2,7 @@
     "$ref": "#/definitions/KpopsConfig",
     "definitions": {
         "HelmConfig": {
-            "description": "Global Helm configuration",
+            "description": "Global Helm configuration.",
             "properties": {
                 "api_version": {
                     "description": "Kubernetes API version used for Capabilities.APIVersions",

@@ -77,15 +77,15 @@ class BaseDefaultsComponent(BaseModel):
             self._validate_custom(**kwargs)
 
     @cached_classproperty
-    def type(cls: type[Self]) -> str:  # pyright: ignore
-        """Return calling component's type
+    def type(cls: type[Self]) -> str:  # pyright: ignore[reportGeneralTypeIssues]
+        """Return calling component's type.
 
         :returns: Component class name in dash-case
         """
         return to_dash(cls.__name__)
 
     def extend_with_defaults(self, **kwargs) -> dict:
-        """Merge parent components' defaults with own
+        """Merge parent components' defaults with own.
 
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inheritted defaults
@@ -105,15 +105,13 @@ class BaseDefaultsComponent(BaseModel):
         defaults = load_defaults(
             self.__class__, main_default_file_path, environment_default_file_path
         )
-        kwargs = update_nested(kwargs, defaults)
-        return kwargs
+        return update_nested(kwargs, defaults)
 
     def _validate_custom(self, **kwargs) -> None:
         """Run custom validation on component.
 
         :param kwargs: The init kwargs for the component
         """
-        pass
 
 
 def load_defaults(
@@ -121,7 +119,7 @@ def load_defaults(
     defaults_file_path: Path,
     environment_defaults_file_path: Path | None = None,
 ) -> dict:
-    """Resolve component-specific defaults including environment defaults
+    """Resolve component-specific defaults including environment defaults.
 
     :param component_class: Component class
     :param defaults_file_path: Path to `defaults.yaml`
@@ -153,7 +151,7 @@ def load_defaults(
 
 
 def defaults_from_yaml(path: Path, key: str) -> dict:
-    """Read component-specific settings from a defaults yaml file and return @default if not found
+    """Read component-specific settings from a defaults yaml file and return @default if not found.
 
     :param path: Path to defaults yaml file
     :param key: Component type
@@ -165,9 +163,10 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
     """
     content = load_yaml_file(path, substitution=ENV)
     if not isinstance(content, dict):
-        raise TypeError(
+        msg = (
             "Default files should be structured as map ([app type] -> [default config]"
         )
+        raise TypeError(msg)
     value = content.get(key)
     if value is None:
         return {}
@@ -178,7 +177,7 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
 
 
 def get_defaults_file_paths(config: KpopsConfig) -> tuple[Path, Path]:
-    """Return the paths to the main and the environment defaults-files
+    """Return the paths to the main and the environment defaults-files.
 
     The files need not exist, this function will only check if the dir set in
     `config.defaults_path` exists and return paths to the defaults files
@@ -199,10 +198,10 @@ def get_defaults_file_paths(config: KpopsConfig) -> tuple[Path, Path]:
     return main_default_file_path, environment_default_file_path
 
 
-T = TypeVar("T")
+_T = TypeVar("_T")
 
 
-def deduplicate(seq: Sequence[T]) -> list[T]:
+def deduplicate(seq: Sequence[_T]) -> list[_T]:
     """Deduplicate items of a sequence while preserving its order.
 
     :param seq: Sequence to be 'cleaned'

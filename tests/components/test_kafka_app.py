@@ -17,7 +17,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 class TestKafkaApp:
-    @pytest.fixture
+    @pytest.fixture()
     def config(self) -> KpopsConfig:
         return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
@@ -25,7 +25,7 @@ class TestKafkaApp:
             helm_diff_config=HelmDiffConfig(),
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
             schema_handler=MagicMock(),

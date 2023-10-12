@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Any, NoReturn
+from typing import TYPE_CHECKING, Any, NoReturn
 
 from pydantic import Field, validator
 from typing_extensions import override
@@ -25,16 +25,18 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectResetterValues,
 )
 from kpops.components.base_components.base_defaults_component import deduplicate
-from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
+
+if TYPE_CHECKING:
+    from kpops.components.base_components.models.from_section import FromTopic
 
 log = logging.getLogger("KafkaConnector")
 
 
 class KafkaConnector(PipelineComponent, ABC):
-    """Base class for all Kafka connectors
+    """Base class for all Kafka connectors.
 
     Should only be used to set defaults
 
@@ -85,13 +87,14 @@ class KafkaConnector(PipelineComponent, ABC):
         component_name = values["prefix"] + values["name"]
         connector_name: str | None = app.get("name")
         if connector_name is not None and connector_name != component_name:
-            raise ValueError("Connector name should be the same as component name")
+            msg = f"Connector name '{connector_name}' should be the same as component name '{component_name}'"
+            raise ValueError(msg)
         app["name"] = component_name
         return app
 
     @cached_property
     def helm(self) -> Helm:
-        """Helm object that contains component-specific config such as repo"""
+        """Helm object that contains component-specific config such as repo."""
         helm_repo_config = self.repo_config
         helm = Helm(self.config.helm_config)
         helm.add_repo(
@@ -105,8 +108,7 @@ class KafkaConnector(PipelineComponent, ABC):
     def _resetter_release_name(self) -> str:
         suffix = "-clean"
         clean_up_release_name = self.full_name + suffix
-        trimmed_name = trim_release_name(clean_up_release_name, suffix)
-        return trimmed_name
+        return trim_release_name(clean_up_release_name, suffix)
 
     @property
     def _resetter_helm_chart(self) -> str:
@@ -119,7 +121,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @property
     def helm_flags(self) -> HelmFlags:
-        """Return shared flags for Helm commands"""
+        """Return shared flags for Helm commands."""
         return HelmFlags(
             **self.repo_config.repo_auth_flags.dict(),
             version=self.version,
@@ -128,7 +130,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @property
     def template_flags(self) -> HelmTemplateFlags:
-        """Return flags for Helm template command"""
+        """Return flags for Helm template command."""
         return HelmTemplateFlags(
             **self.helm_flags.dict(),
             api_version=self.config.helm_config.api_version,
@@ -169,7 +171,7 @@ class KafkaConnector(PipelineComponent, ABC):
         retain_clean_jobs: bool,
         **kwargs,
     ) -> None:
-        """Clean the connector from the cluster
+        """Clean the connector from the cluster.
 
         At first, it deletes the previous cleanup job (connector resetter)
         to make sure that there is no running clean job in the cluster. Then it releases a cleanup job.
@@ -208,7 +210,7 @@ class KafkaConnector(PipelineComponent, ABC):
         dry_run: bool,
         **kwargs,
     ) -> str:
-        """Install connector resetter
+        """Install connector resetter.
 
         :param dry_run: Whether to dry run the command
         :return: The output of `helm upgrade --install`
@@ -233,7 +235,7 @@ class KafkaConnector(PipelineComponent, ABC):
         self,
         **kwargs,
     ) -> dict:
-        """Get connector resetter helm chart values
+        """Get connector resetter helm chart values.
 
         :return: The Helm chart values of the connector resetter
         """
@@ -251,7 +253,7 @@ class KafkaConnector(PipelineComponent, ABC):
         }
 
     def __uninstall_connect_resetter(self, release_name: str, dry_run: bool) -> None:
-        """Uninstall connector resetter
+        """Uninstall connector resetter.
 
         :param release_name: Name of the release to be uninstalled
         :param dry_run: Whether to do a dry run of the command
@@ -264,7 +266,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
 
 class KafkaSourceConnector(KafkaConnector):
-    """Kafka source connector model
+    """Kafka source connector model.
 
     :param offset_topic: offset.storage.topic,
         more info: https://kafka.apache.org/documentation/#connect_running,
@@ -280,7 +282,8 @@ class KafkaSourceConnector(KafkaConnector):
 
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
-        raise NotImplementedError("Kafka source connector doesn't support FromSection")
+        msg = "Kafka source connector doesn't support FromSection"
+        raise NotImplementedError(msg)
 
     @override
     def template(self) -> None:
@@ -306,7 +309,7 @@ class KafkaSourceConnector(KafkaConnector):
         self.__run_kafka_connect_resetter(dry_run)
 
     def __run_kafka_connect_resetter(self, dry_run: bool) -> None:
-        """Runs the connector resetter
+        """Run the connector resetter.
 
         :param dry_run: Whether to do a dry run of the command
         """
@@ -318,7 +321,7 @@ class KafkaSourceConnector(KafkaConnector):
 
 
 class KafkaSinkConnector(KafkaConnector):
-    """Kafka sink connector model"""
+    """Kafka sink connector model."""
 
     _connector_type = KafkaConnectorType.SINK
 
@@ -361,7 +364,7 @@ class KafkaSinkConnector(KafkaConnector):
     def __run_kafka_connect_resetter(
         self, dry_run: bool, delete_consumer_group: bool
     ) -> None:
-        """Runs the connector resetter
+        """Run the connector resetter.
 
         :param dry_run: Whether to do a dry run of the command
         :param delete_consumer_group: Whether the consumer group should be deleted or not

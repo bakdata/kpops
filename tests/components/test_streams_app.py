@@ -25,7 +25,7 @@ class TestStreamsApp:
     STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
     STREAMS_APP_CLEAN_NAME = "test-streams-app-with-long-na-clean"
 
-    @pytest.fixture
+    @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
             schema_handler=MagicMock(),
@@ -33,7 +33,7 @@ class TestStreamsApp:
             topic_handler=MagicMock(),
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def config(self) -> KpopsConfig:
         return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
@@ -45,7 +45,7 @@ class TestStreamsApp:
             helm_diff_config=HelmDiffConfig(),
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def streams_app(
         self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
@@ -145,7 +145,9 @@ class TestStreamsApp:
 
     def test_should_validate(self, config: KpopsConfig, handlers: ComponentHandlers):
         # An exception should be raised when both role and type are defined and type is input
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match="Define role only if `type` is `pattern` or `None`"
+        ):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
                 config=config,
@@ -167,7 +169,9 @@ class TestStreamsApp:
             )
 
         # An exception should be raised when both role and type are defined and type is error
-        with pytest.raises(ValueError):
+        with pytest.raises(
+            ValueError, match="Define `role` only if `type` is undefined"
+        ):
             StreamsApp(
                 name=self.STREAMS_APP_NAME,
                 config=config,

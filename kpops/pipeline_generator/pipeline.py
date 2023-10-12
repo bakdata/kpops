@@ -3,22 +3,26 @@ from __future__ import annotations
 import json
 import logging
 from collections import Counter
-from collections.abc import Iterator
 from contextlib import suppress
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import yaml
 from pydantic import BaseModel
 from rich.console import Console
 from rich.syntax import Syntax
 
-from kpops.cli.registry import Registry
-from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.config import KpopsConfig
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
 from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+    from pathlib import Path
+
+    from kpops.cli.registry import Registry
+    from kpops.component_handlers import ComponentHandlers
+    from kpops.config import KpopsConfig
 
 log = logging.getLogger("PipelineGenerator")
 
@@ -32,7 +36,7 @@ class ValidationError(Exception):
 
 
 class PipelineComponents(BaseModel):
-    """Stores the pipeline components"""
+    """Stores the pipeline components."""
 
     components: list[PipelineComponent] = []
 
@@ -44,7 +48,8 @@ class PipelineComponents(BaseModel):
         for component in self.components:
             if component_name == component.name:
                 return component
-        raise ValueError(f"Component {component_name} not found")
+        msg = f"Component {component_name} not found"
+        raise ValueError(msg)
 
     def add(self, component: PipelineComponent) -> None:
         self._populate_component_name(component)
@@ -63,9 +68,8 @@ class PipelineComponents(BaseModel):
         step_names = [component.full_name for component in self.components]
         duplicates = [name for name, count in Counter(step_names).items() if count > 1]
         if duplicates:
-            raise ValidationError(
-                f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
-            )
+            msg = f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
+            raise ValidationError(msg)
 
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove
@@ -79,7 +83,7 @@ class PipelineComponents(BaseModel):
 def create_env_components_index(
     environment_components: list[dict],
 ) -> dict[str, dict]:
-    """Create an index for all registered components in the project
+    """Create an index for all registered components in the project.
 
     :param environment_components: List of all components to be included
     :return: component index
@@ -87,9 +91,8 @@ def create_env_components_index(
     index: dict[str, dict] = {}
     for component in environment_components:
         if "type" not in component or "name" not in component:
-            raise ValueError(
-                "To override components per environment, every component should at least have a type and a name."
-            )
+            msg = "To override components per environment, every component should at least have a type and a name."
+            raise ValueError(msg)
         index[component["name"]] = component
     return index
 
@@ -120,7 +123,7 @@ class Pipeline:
         config: KpopsConfig,
         handlers: ComponentHandlers,
     ) -> Pipeline:
-        """Load pipeline definition from yaml
+        """Load pipeline definition from yaml.
 
         The file is often named ``pipeline.yaml``
 
@@ -137,22 +140,19 @@ class Pipeline:
 
         main_content = load_yaml_file(path, substitution=ENV)
         if not isinstance(main_content, list):
-            raise TypeError(
-                f"The pipeline definition {path} should contain a list of components"
-            )
+            msg = f"The pipeline definition {path} should contain a list of components"
+            raise TypeError(msg)
         env_content = []
         if (env_file := Pipeline.pipeline_filename_environment(path, config)).exists():
             env_content = load_yaml_file(env_file, substitution=ENV)
             if not isinstance(env_content, list):
-                raise TypeError(
-                    f"The pipeline definition {env_file} should contain a list of components"
-                )
+                msg = f"The pipeline definition {env_file} should contain a list of components"
+                raise TypeError(msg)
 
-        pipeline = cls(main_content, env_content, registry, config, handlers)
-        return pipeline
+        return cls(main_content, env_content, registry, config, handlers)
 
     def parse_components(self, component_list: list[dict]) -> None:
-        """Instantiate, enrich and inflate a list of components
+        """Instantiate, enrich and inflate a list of components.
 
         :param component_list: List of components
         :raises ValueError: Every component must have a type defined
@@ -163,19 +163,17 @@ class Pipeline:
             try:
                 try:
                     component_type: str = component_data["type"]
-                except KeyError:
-                    raise ValueError(
-                        "Every component must have a type defined, this component does not have one."
-                    )
+                except KeyError as ke:
+                    msg = "Every component must have a type defined, this component does not have one."
+                    raise ValueError(msg) from ke
                 component_class = self.registry[component_type]
                 self.apply_component(component_class, component_data)
-            except Exception as ex:
+            except Exception as ex:  # noqa: BLE001
                 if "name" in component_data:
-                    raise ParsingException(
-                        f"Error enriching {component_data['type']} component {component_data['name']}"
-                    ) from ex
+                    msg = f"Error enriching {component_data['type']} component {component_data['name']}"
+                    raise ParsingException(msg) from ex
                 else:
-                    raise ParsingException() from ex
+                    raise ParsingException from ex
 
     def apply_component(
         self, component_class: type[PipelineComponent], component_data: dict
@@ -224,7 +222,7 @@ class Pipeline:
         self,
         component: PipelineComponent,
     ) -> PipelineComponent:
-        """Enrich a pipeline component with env-specific config and substitute variables
+        """Enrich a pipeline component with env-specific config and substitute variables.
 
         :param component: Component to be enriched
         :returns: Enriched component
@@ -249,7 +247,7 @@ class Pipeline:
         )
 
     def print_yaml(self, substitution: dict | None = None) -> None:
-        """Print the generated pipeline definition
+        """Print the generated pipeline definition.
 
         :param substitution: Substitution dictionary, defaults to None
         """
@@ -277,7 +275,7 @@ class Pipeline:
         return len(self.components)
 
     def substitute_in_component(self, component_as_dict: dict) -> dict:
-        """Substitute all $-placeholders in a component in dict representation
+        """Substitute all $-placeholders in a component in dict representation.
 
         :param component_as_dict: Component represented as dict
         :return: Updated component
@@ -311,10 +309,10 @@ class Pipeline:
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: KpopsConfig) -> Path:
-        """Add the environment name from the PipelineConfig to the pipeline.yaml path
+        """Add the environment name from the KpopsConfig to the pipeline.yaml path.
 
         :param path: Path to pipeline.yaml file
-        :param config: The PipelineConfig
+        :param config: The KpopsConfig
         :returns: An absolute path to the pipeline_<environment>.yaml
         """
         return path.with_stem(f"{path.stem}_{config.environment}")
@@ -336,7 +334,8 @@ class Pipeline:
         """
         path_without_file = path.resolve().relative_to(base_dir.resolve()).parts[:-1]
         if not path_without_file:
-            raise ValueError("The pipeline-base-dir should not equal the pipeline-path")
+            msg = "The pipeline-base-dir should not equal the pipeline-path"
+            raise ValueError(msg)
         pipeline_name = "-".join(path_without_file)
         ENV["pipeline_name"] = pipeline_name
         for level, parent in enumerate(path_without_file):

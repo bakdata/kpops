@@ -123,44 +123,45 @@ def test_should_raise_value_error_if_schema_provider_class_not_found(
         components_module=NON_EXISTING_PROVIDER_MODULE,
     )
 
-    with pytest.raises(ValueError) as value_error:
+    with pytest.raises(
+        ValueError,
+        match="No schema provider found in components module pydantic.main. "
+        "Please implement the abstract method in "
+        f"{SchemaProvider.__module__}.{SchemaProvider.__name__}.",
+    ):
         schema_handler.schema_provider.provide_schema(
             "com.bakdata.kpops.test.SchemaHandlerTest", {}
         )
 
-    assert (
-        str(value_error.value)
-        == "No schema provider found in components module pydantic.main. "
-        "Please implement the abstract method in "
-        f"{SchemaProvider.__module__}.{SchemaProvider.__name__}."
-    )
 
-
+@pytest.mark.parametrize(
+    ("components_module"),
+    [
+        pytest.param(
+            None,
+            id="components_module = None",
+        ),
+        pytest.param(
+            "",
+            id="components_module = ''",
+        ),
+    ],
+)
 def test_should_raise_value_error_when_schema_provider_is_called_and_components_module_is_empty(
     kpops_config_with_sr_enabled: KpopsConfig,
+    components_module: str,
 ):
-    with pytest.raises(ValueError):
-        schema_handler = SchemaHandler.load_schema_handler(
-            None, kpops_config_with_sr_enabled
-        )
-        assert schema_handler is not None
-        schema_handler.schema_provider.provide_schema(
-            "com.bakdata.kpops.test.SchemaHandlerTest", {}
-        )
-
-    with pytest.raises(ValueError) as value_error:
-        schema_handler = SchemaHandler.load_schema_handler(
-            "", kpops_config_with_sr_enabled
-        )
-        assert schema_handler is not None
-        schema_handler.schema_provider.provide_schema(
-            "com.bakdata.kpops.test.SchemaHandlerTest", {}
-        )
-
-    assert (
-        str(value_error.value)
-        == "The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your SchemaProvider implementation exists."
+    schema_handler = SchemaHandler.load_schema_handler(
+        components_module, kpops_config_with_sr_enabled
     )
+    assert schema_handler is not None
+    with pytest.raises(
+        ValueError,
+        match="The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your SchemaProvider implementation exists.",
+    ):
+        schema_handler.schema_provider.provide_schema(
+            "com.bakdata.kpops.test.SchemaHandlerTest", {}
+        )
 
 
 def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
@@ -225,10 +226,9 @@ def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatibl
     schema_registry_mock.check_version.return_value = None
     schema_registry_mock.test_compatibility.return_value = False
 
-    with pytest.raises(Exception) as exception:
+    with pytest.raises(Exception, match="Schema is not compatible for") as exception:
         schema_handler.submit_schemas(to_section, True)
 
-    assert "Schema is not compatible for" in str(exception.value)
     EXPECTED_SCHEMA = {
         "type": "record",
         "name": "KPOps.Employee",
