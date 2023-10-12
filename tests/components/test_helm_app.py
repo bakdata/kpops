@@ -203,7 +203,7 @@ class TestHelmApp:
         helm_mock: MagicMock,
         log_info_mock: MagicMock,
     ):
-        stdout = 'AppComponent - release "test-helm-app" uninstalled'
+        stdout = 'HelmApp - release "test-helm-app" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
         helm_app.destroy(True)
