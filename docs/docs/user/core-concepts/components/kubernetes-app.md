@@ -2,7 +2,7 @@
 
 ### Usage
 
-Can be used to deploy any app in Kubernetes using Helm, for example, a REST service that serves Kafka data.
+Can be used to create components for any Kubernetes app.
 
 ### Configuration
 
@@ -22,11 +22,11 @@ Can be used to deploy any app in Kubernetes using Helm, for example, a REST serv
 
 #### deploy
 
-Deploy using Helm.
+Do nothing.
 
 #### destroy
 
-Uninstall Helm release.
+Do nothing.
 
 #### reset
 
