@@ -9,14 +9,14 @@ flowchart BT
     KafkaSourceConnector --> KafkaConnector
     KafkaSinkConnector --> KafkaConnector
 
-    click KubernetesApp "../kubernetes-app"
-    click HelmApp "../helm-app"
-    click KafkaApp "../kafka-app"
-    click StreamsApp "../streams-app"
-    click ProducerApp "../producer-app"
-    click KafkaConnector "../kafka-connector"
-    click KafkaSourceConnector "../kafka-source-connector"
-    click KafkaSinkConnector "../kafka-sink-connector"
+    click KubernetesApp "/kpops/user/core-concepts/components/kubernetes-app"
+    click HelmApp "/kpops/user/core-concepts/components/helm-app"
+    click KafkaApp "/kpops/user/core-concepts/components/kafka-app"
+    click StreamsApp "/kpops/user/core-concepts/components/streams-app"
+    click ProducerApp "/kpops/user/core-concepts/components/producer-app"
+    click KafkaConnector "/kpops/user/core-concepts/components/kafka-connector"
+    click KafkaSourceConnector "/kpops/user/core-concepts/components/kafka-source-connector"
+    click KafkaSinkConnector "/kpops/user/core-concepts/components/kafka-sink-connector"
 ```
 
 <p style="text-align: center;"><i>KPOps component hierarchy</i></p>
