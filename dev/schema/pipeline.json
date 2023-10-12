@@ -48,7 +48,7 @@
             "type": "object"
         },
         "HelmApp": {
-            "description": "Kubernetes apps managed through Helm with an associated Helm chart.",
+            "description": "Kubernetes app managed through Helm with an associated Helm chart.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -104,7 +104,7 @@
                 },
                 "type": {
                     "default": "helm-app",
-                    "description": "Kubernetes apps managed through Helm with an associated Helm chart.",
+                    "description": "Kubernetes app managed through Helm with an associated Helm chart.",
                     "enum": [
                         "helm-app"
                     ],
