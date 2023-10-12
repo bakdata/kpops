@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-import re
 from functools import cached_property
 from typing import Any
 
@@ -22,10 +21,6 @@ from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("HelmApp")
-
-KUBERNETES_NAME_CHECK_PATTERN = re.compile(
-    r"^(?![0-9]+$)(?!.*-$)(?!-)[a-z0-9-.]{1,253}(?<!_)$"
-)
 
 
 class HelmApp(KubernetesApp):
