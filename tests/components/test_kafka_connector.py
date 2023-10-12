@@ -5,11 +5,11 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig
 from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components.base_components.kafka_connector import KafkaConnector
+from kpops.config import KpopsConfig, TopicNameConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
@@ -20,15 +20,15 @@ CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 
 class TestKafkaConnector:
     @pytest.fixture()
-    def config(self) -> PipelineConfig:
-        return PipelineConfig(
+    def config(self) -> KpopsConfig:
+        return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
             ),
-            brokers="broker:9092",
+            kafka_brokers="broker:9092",
             helm_diff_config=HelmDiffConfig(),
         )
 
@@ -63,7 +63,7 @@ class TestKafkaConnector:
 
     def test_connector_config_name_override(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ):

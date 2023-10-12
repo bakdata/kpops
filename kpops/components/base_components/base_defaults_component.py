@@ -10,8 +10,8 @@ from typing import TypeVar
 import typer
 from pydantic import BaseModel, Field
 
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
+from kpops.config import KpopsConfig
 from kpops.utils import cached_classproperty
 from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr
@@ -46,7 +46,7 @@ class BaseDefaultsComponent(BaseModel, ABC):
         exclude=True,
         hidden_from_schema=True,
     )
-    config: PipelineConfig = Field(
+    config: KpopsConfig = Field(
         default=...,
         description=describe_attr("config", __doc__),
         exclude=True,
@@ -91,7 +91,7 @@ class BaseDefaultsComponent(BaseModel, ABC):
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inheritted defaults
         """
-        config: PipelineConfig = kwargs["config"]
+        config: KpopsConfig = kwargs["config"]
         log.debug(
             typer.style(
                 "Enriching component of type ", fg=typer.colors.GREEN, bold=False
@@ -177,7 +177,7 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
     return value
 
 
-def get_defaults_file_paths(config: PipelineConfig) -> tuple[Path, Path]:
+def get_defaults_file_paths(config: KpopsConfig) -> tuple[Path, Path]:
     """Return the paths to the main and the environment defaults-files.
 
     The files need not exist, this function will only check if the dir set in
@@ -199,10 +199,10 @@ def get_defaults_file_paths(config: PipelineConfig) -> tuple[Path, Path]:
     return main_default_file_path, environment_default_file_path
 
 
-T = TypeVar("T")
+_T = TypeVar("_T")
 
 
-def deduplicate(seq: Sequence[T]) -> list[T]:
+def deduplicate(seq: Sequence[_T]) -> list[_T]:
     """Deduplicate items of a sequence while preserving its order.
 
     :param seq: Sequence to be 'cleaned'

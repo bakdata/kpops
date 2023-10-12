@@ -4,12 +4,12 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
 )
+from kpops.config import KpopsConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
@@ -20,8 +20,8 @@ class KubernetesTestValue(KubernetesAppConfig):
 
 class TestKubernetesApp:
     @pytest.fixture()
-    def config(self) -> PipelineConfig:
-        return PipelineConfig(defaults_path=DEFAULTS_PATH, environment="development")
+    def config(self) -> KpopsConfig:
+        return KpopsConfig(defaults_path=DEFAULTS_PATH, environment="development")
 
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
@@ -42,7 +42,7 @@ class TestKubernetesApp:
     @pytest.fixture()
     def kubernetes_app(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         app_value: KubernetesTestValue,
     ) -> KubernetesApp:
@@ -56,7 +56,7 @@ class TestKubernetesApp:
 
     def test_should_raise_value_error_when_name_is_not_valid(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         app_value: KubernetesTestValue,
     ):
