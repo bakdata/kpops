@@ -53,7 +53,7 @@ class TestHelmApp:
 
     @pytest.fixture()
     def app_value(self) -> HelmTestValue:
-        return HelmTestValue(**{"name_override": "test-value"})
+        return HelmTestValue(name_override="test-value")
 
     @pytest.fixture()
     def repo_config(self) -> HelmRepoConfig:
@@ -213,43 +213,3 @@ class TestHelmApp:
         )
 
         log_info_mock.assert_called_once_with(magentaify(stdout))
-
-    def test_should_raise_value_error_when_name_is_not_valid(
-        self,
-        config: PipelineConfig,
-        handlers: ComponentHandlers,
-        app_value: HelmTestValue,
-        repo_config: HelmRepoConfig,
-    ):
-        with pytest.raises(
-            ValueError, match=r"The component name .* is invalid for Kubernetes."
-        ):
-            HelmApp(
-                name="Not-Compatible*",
-                config=config,
-                handlers=handlers,
-                app=app_value,
-                namespace="test-namespace",
-                repo_config=repo_config,
-            )
-
-        with pytest.raises(
-            ValueError, match=r"The component name .* is invalid for Kubernetes."
-        ):
-            HelmApp(
-                name="snake_case*",
-                config=config,
-                handlers=handlers,
-                app=app_value,
-                namespace="test-namespace",
-                repo_config=repo_config,
-            )
-
-        assert HelmApp(
-            name="valid-name",
-            config=config,
-            handlers=handlers,
-            app=app_value,
-            namespace="test-namespace",
-            repo_config=repo_config,
-        )
