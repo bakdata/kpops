@@ -89,6 +89,7 @@ nav:
           - Components:
               - Overview: user/core-concepts/components/overview.md
               - KubernetesApp: user/core-concepts/components/kubernetes-app.md
+              - HelmApp: user/core-concepts/components/helm-app.md
               - KafkaApp: user/core-concepts/components/kafka-app.md
               - StreamsApp: user/core-concepts/components/streams-app.md
               - ProducerApp: user/core-concepts/components/producer-app.md
