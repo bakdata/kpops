@@ -1,0 +1,5 @@
+# Kubernetes apps managed through Helm with an associated Helm chart
+#
+# Parent of: KafkaApp
+# Child of: KubernetesApp
+helm-app:
