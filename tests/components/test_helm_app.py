@@ -68,7 +68,7 @@ class TestHelmApp:
         repo_config: HelmRepoConfig,
     ) -> HelmApp:
         return HelmApp(
-            name="test-kubernetes-app",
+            name="test-helm-app",
             config=config,
             handlers=handlers,
             app=app_value,
@@ -94,7 +94,7 @@ class TestHelmApp:
         helm_app.deploy(False)
 
         helm_mock.upgrade_install.assert_called_once_with(
-            "${pipeline_name}-test-kubernetes-app",
+            "${pipeline_name}-test-helm-app",
             "test/test-chart",
             False,
             "test-namespace",
@@ -114,7 +114,7 @@ class TestHelmApp:
             repository_name="test-repo", url="https://test.com/charts/"
         )
         helm_app = HelmApp(
-            name="test-kubernetes-app",
+            name="test-helm-app",
             config=config,
             handlers=handlers,
             app=app_value,
@@ -139,7 +139,7 @@ class TestHelmApp:
                 RepoAuthFlags(),
             ),
             mocker.call.upgrade_install(
-                "${pipeline_name}-test-kubernetes-app",
+                "${pipeline_name}-test-helm-app",
                 "test/test-chart",
                 False,
                 "test-namespace",
@@ -203,13 +203,13 @@ class TestHelmApp:
         helm_mock: MagicMock,
         log_info_mock: MagicMock,
     ):
-        stdout = 'AppComponent - release "test-kubernetes-app" uninstalled'
+        stdout = 'AppComponent - release "test-helm-app" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
         helm_app.destroy(True)
 
         helm_mock.uninstall.assert_called_once_with(
-            "test-namespace", "${pipeline_name}-test-kubernetes-app", True
+            "test-namespace", "${pipeline_name}-test-helm-app", True
         )
 
         log_info_mock.assert_called_once_with(magentaify(stdout))
