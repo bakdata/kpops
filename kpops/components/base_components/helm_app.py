@@ -24,7 +24,7 @@ log = logging.getLogger("HelmApp")
 
 
 class HelmApp(KubernetesApp):
-    """Kubernetes apps managed through Helm wiht an associated Helm chart.
+    """Kubernetes apps managed through Helm with an associated Helm chart.
 
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to None this means that the command "helm repo add" is not called and Helm
