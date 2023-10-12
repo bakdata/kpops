@@ -29,9 +29,7 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 
 
 class HelmApp(KubernetesApp):
-    """Base class for all Kubernetes apps.
-
-    All built-in components are Kubernetes apps, except for the Kafka connectors.
+    """Kubernetes apps managed through Helm wiht an associated Helm chart.
 
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to None this means that the command "helm repo add" is not called and Helm

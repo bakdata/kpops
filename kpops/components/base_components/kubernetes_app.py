@@ -19,7 +19,7 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 
 
 class KubernetesAppConfig(BaseModel):
-    """Settings specific to Kubernetes Apps."""
+    """Settings specific to Kubernetes apps."""
 
     class Config(CamelCaseConfig, DescConfig):
         extra = Extra.allow
