@@ -274,11 +274,6 @@
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../user/core-concepts/components/helm-app.md">
-        HelmApp
-      </a>
-</li>
-<li class="md-nav__item">
 <a class="md-nav__link" href="../../user/core-concepts/components/kafka-app/">
         KafkaApp
       </a>
@@ -376,11 +371,6 @@
 <li class="md-nav__item">
 <a class="md-nav__link" href="../../user/migration-guide/v1-v2/">
         Migrate from v1 to v2
-      </a>
-</li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../user/migration-guide/v2-v3/">
-        Migrate from v2 to v3
       </a>
 </li>
 </ul>
@@ -583,7 +573,7 @@
 <ul>
 <li><code>cli_env_vars.env</code> -- All CLI environment variables in a <code>dotenv</code> file.</li>
 <li><code>cli_env_vars.md</code> -- All CLI environment variables in a table.</li>
-<li><code>config_env_vars.env</code> -- Almost all pipeline config environment variables in a <code>dotenv</code> file. The script checks for each field in <a href="https://github.com/bakdata/kpops/blob/main/kpops/cli/kpops_config.py"><code>KpopsConfig</code></a> whether it has an <code>env</code> attribute defined. The script is currently unable to visit the classes of fields like <code>topic_name_config</code>, hence any environment variables defined there would remain unknown to it.</li>
+<li><code>config_env_vars.env</code> -- Almost all pipeline config environment variables in a <code>dotenv</code> file. The script checks for each field in <a href="https://github.com/bakdata/kpops/blob/main/kpops/cli/pipeline_config.py"><code>PipelineConfig</code></a> whether it has an <code>env</code> attribute defined. The script is currently unable to visit the classes of fields like <code>topic_name_config</code>, hence any environment variables defined there would remain unknown to it.</li>
 <li><code>config_env_vars.env</code> -- Almost all pipeline config environment variables in a table.</li>
 <li><code>variable_substitution.yaml</code> -- A copy of <code>./tests/pipeline/resources/component-type-substitution/pipeline.yaml</code> used as an example of substitution.</li>
 </ul>

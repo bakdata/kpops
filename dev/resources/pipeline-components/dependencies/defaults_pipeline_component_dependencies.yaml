@@ -1,6 +1,3 @@
-helm-app.yaml:
-- app-helm-app.yaml
-- repo_config-helm-app.yaml
 kafka-app.yaml:
 - app-kafka-app.yaml
 - version-kafka-app.yaml
@@ -23,6 +20,8 @@ kubernetes-app.yaml:
 - to.yaml
 - namespace.yaml
 - app-kubernetes-app.yaml
+- repo_config-kubernetes-app.yaml
+- version.yaml
 producer-app.yaml:
 - from_-producer-app.yaml
 - app-producer-app.yaml

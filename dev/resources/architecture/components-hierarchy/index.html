@@ -269,11 +269,6 @@
       </a>
 </li>
 <li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/core-concepts/components/helm-app.md">
-        HelmApp
-      </a>
-</li>
-<li class="md-nav__item">
 <a class="md-nav__link" href="../../../user/core-concepts/components/kafka-app/">
         KafkaApp
       </a>
@@ -373,11 +368,6 @@
         Migrate from v1 to v2
       </a>
 </li>
-<li class="md-nav__item">
-<a class="md-nav__link" href="../../../user/migration-guide/v2-v3/">
-        Migrate from v2 to v3
-      </a>
-</li>
 </ul>
 </nav>
 </li>
@@ -460,8 +450,7 @@
 <h1>Components hierarchy</h1>
 <pre class="mermaid"><code>flowchart BT
     KubernetesApp --&gt; PipelineComponent
-    HelmApp --&gt; KubernetesApp
-    KafkaApp --&gt; HelmApp
+    KafkaApp --&gt; KubernetesApp
     StreamsApp --&gt; KafkaApp
     ProducerApp --&gt; KafkaApp
     KafkaConnector --&gt; PipelineComponent
@@ -469,7 +458,6 @@
     KafkaSinkConnector --&gt; KafkaConnector
 
     click KubernetesApp "/kpops/user/core-concepts/components/kubernetes-app"
-    click HelmApp "/kpops/user/core-concepts/components/helm-app"
     click KafkaApp "/kpops/user/core-concepts/components/kafka-app"
     click StreamsApp "/kpops/user/core-concepts/components/streams-app"
     click ProducerApp "/kpops/user/core-concepts/components/producer-app"
