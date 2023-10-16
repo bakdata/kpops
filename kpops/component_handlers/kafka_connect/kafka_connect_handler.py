@@ -78,7 +78,6 @@ class KafkaConnectHandler:
                     secs=self._timeout,
                 )
 
-
     async def destroy_connector(self, connector_name: str, *, dry_run: bool) -> None:
         """Delete a connector resource from the cluster.
 

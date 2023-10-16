@@ -242,7 +242,6 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         :param dry_run: Whether to do a dry run of the command
         """
 
-
     async def reset(self, dry_run: bool) -> None:
         """Reset component (self) state.
 
