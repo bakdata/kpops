@@ -5,7 +5,7 @@ import json
 import logging
 from collections import Counter
 from contextlib import suppress
-from typing import TYPE_CHECKING, Optional, Awaitable, Coroutine
+from typing import TYPE_CHECKING, Optional
 
 import networkx as nx
 import yaml
@@ -19,7 +19,7 @@ from kpops.utils.environment import ENV
 from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator, Callable
+    from collections.abc import Awaitable, Callable, Coroutine, Iterator
     from pathlib import Path
 
     from kpops.cli.pipeline_config import PipelineConfig
@@ -114,9 +114,7 @@ class PipelineComponents(BaseModel):
             for task in layer:
                 node = self._component_index[task]
                 if not node.is_topic:
-                    parallel_tasks.append(
-                        asyncio.create_task(runner(node.component))
-                    )
+                    parallel_tasks.append(asyncio.create_task(runner(node.component)))
 
             if parallel_tasks:
                 sorted_tasks.append(asyncio.gather(*parallel_tasks))
@@ -255,9 +253,7 @@ class Pipeline:
         reverse: bool,
         runner: Callable[[PipelineComponent], Coroutine],
     ) -> Awaitable:
-        return self.components.build_execution_graph_from(
-            components, reverse, runner
-        )
+        return self.components.build_execution_graph_from(components, reverse, runner)
 
     def parse_components(self, component_list: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components.

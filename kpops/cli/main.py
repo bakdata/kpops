@@ -4,8 +4,7 @@ import asyncio
 import logging
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Awaitable, Coroutine
-from collections.abc import Callable
+from typing import TYPE_CHECKING, Optional
 
 import dtyper
 import typer
@@ -25,7 +24,7 @@ from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Awaitable, Callable, Coroutine, Iterator
 
     from kpops.components.base_components import PipelineComponent
 
