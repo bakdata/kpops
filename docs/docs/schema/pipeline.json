@@ -2,7 +2,7 @@
     "definitions": {
         "FromSection": {
             "additionalProperties": false,
-            "description": "Holds multiple input topics",
+            "description": "Holds multiple input topics.",
             "properties": {
                 "components": {
                     "additionalProperties": {
@@ -28,7 +28,7 @@
         },
         "FromTopic": {
             "additionalProperties": false,
-            "description": "Input topic",
+            "description": "Input topic.",
             "properties": {
                 "role": {
                     "description": "Custom identifier belonging to a topic; define only if `type` is `pattern` or `None`",
@@ -48,7 +48,7 @@
             "type": "object"
         },
         "HelmRepoConfig": {
-            "description": "Helm repository configuration",
+            "description": "Helm repository configuration.",
             "properties": {
                 "repo_auth_flags": {
                     "allOf": [
@@ -85,7 +85,7 @@
             "type": "object"
         },
         "InputTopicTypes": {
-            "description": "Input topic types\n\nINPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)",
+            "description": "Input topic types.\n\nINPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)",
             "enum": [
                 "input",
                 "pattern"
@@ -97,7 +97,7 @@
             "additionalProperties": {
                 "type": "string"
             },
-            "description": "Settings specific to Kafka Connectors",
+            "description": "Settings specific to Kafka Connectors.",
             "properties": {
                 "connector.class": {
                     "title": "Connector.Class",
@@ -111,7 +111,7 @@
             "type": "object"
         },
         "KafkaSinkConnector": {
-            "description": "Kafka sink connector model",
+            "description": "Kafka sink connector model.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -183,7 +183,7 @@
                 },
                 "type": {
                     "default": "kafka-sink-connector",
-                    "description": "Kafka sink connector model",
+                    "description": "Kafka sink connector model.",
                     "enum": [
                         "kafka-sink-connector"
                     ],
@@ -206,7 +206,7 @@
             "type": "object"
         },
         "KafkaSourceConnector": {
-            "description": "Kafka source connector model",
+            "description": "Kafka source connector model.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -283,7 +283,7 @@
                 },
                 "type": {
                     "default": "kafka-source-connector",
-                    "description": "Kafka source connector model",
+                    "description": "Kafka source connector model.",
                     "enum": [
                         "kafka-source-connector"
                     ],
@@ -384,13 +384,13 @@
             "type": "object"
         },
         "KubernetesAppConfig": {
-            "description": "Settings specific to Kubernetes Apps",
+            "description": "Settings specific to Kubernetes Apps.",
             "properties": {},
             "title": "KubernetesAppConfig",
             "type": "object"
         },
         "OutputTopicTypes": {
-            "description": "Types of output topic\n\nOUTPUT (output topic), ERROR (error topic)",
+            "description": "Types of output topic.\n\nOUTPUT (output topic), ERROR (error topic)",
             "enum": [
                 "output",
                 "error"
@@ -399,7 +399,7 @@
             "type": "string"
         },
         "ProducerApp": {
-            "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
+            "description": "Producer component.\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -462,7 +462,7 @@
                 },
                 "type": {
                     "default": "producer-app",
-                    "description": "Producer component\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
+                    "description": "Producer component.\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
                     "enum": [
                         "producer-app"
                     ],
@@ -485,7 +485,7 @@
             "type": "object"
         },
         "ProducerStreamsConfig": {
-            "description": "Kafka Streams settings specific to Producer",
+            "description": "Kafka Streams settings specific to Producer.",
             "properties": {
                 "brokers": {
                     "description": "Brokers",
@@ -519,7 +519,7 @@
             "type": "object"
         },
         "ProducerValues": {
-            "description": "Settings specific to producers",
+            "description": "Settings specific to producers.",
             "properties": {
                 "nameOverride": {
                     "description": "Override name with this value",
@@ -543,7 +543,7 @@
             "type": "object"
         },
         "RepoAuthFlags": {
-            "description": "Authorisation-related flags for `helm repo`",
+            "description": "Authorisation-related flags for `helm repo`.",
             "properties": {
                 "ca_file": {
                     "description": "Path to CA bundle file to verify certificates of HTTPS-enabled servers",
@@ -578,7 +578,7 @@
             "type": "object"
         },
         "StreamsApp": {
-            "description": "StreamsApp component that configures a streams bootstrap app",
+            "description": "StreamsApp component that configures a streams bootstrap app.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -645,7 +645,7 @@
                 },
                 "type": {
                     "default": "streams-app",
-                    "description": "StreamsApp component that configures a streams bootstrap app",
+                    "description": "StreamsApp component that configures a streams bootstrap app.",
                     "enum": [
                         "streams-app"
                     ],
@@ -668,7 +668,7 @@
             "type": "object"
         },
         "StreamsAppAutoScaling": {
-            "description": "Kubernetes Event-driven Autoscaling config",
+            "description": "Kubernetes Event-driven Autoscaling config.",
             "properties": {
                 "consumerGroup": {
                     "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag.",
@@ -771,7 +771,7 @@
             "type": "object"
         },
         "StreamsConfig": {
-            "description": "Streams Bootstrap streams section",
+            "description": "Streams Bootstrap streams section.",
             "properties": {
                 "brokers": {
                     "description": "Brokers",
@@ -854,7 +854,7 @@
             "type": "object"
         },
         "ToSection": {
-            "description": "Holds multiple output topics",
+            "description": "Holds multiple output topics.",
             "properties": {
                 "models": {
                     "additionalProperties": {
@@ -880,7 +880,7 @@
         },
         "TopicConfig": {
             "additionalProperties": false,
-            "description": "Configure an output topic",
+            "description": "Configure an output topic.",
             "properties": {
                 "configs": {
                     "additionalProperties": {

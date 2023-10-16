@@ -30,16 +30,17 @@ class TestProxyWrapper:
     def log_debug_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.component_handlers.topic.proxy_wrapper.log.debug")
 
+
     @pytest_asyncio.fixture(autouse=True)
-    async def setup(self, httpx_mock: HTTPXMock):
+    async def _setup(self, httpx_mock: HTTPXMock):
         config = PipelineConfig(
             defaults_path=DEFAULTS_PATH, environment="development", kafka_rest_host=HOST
         )
         self.proxy_wrapper = ProxyWrapper(pipeline_config=config)
 
-        with open(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses" / "cluster-info.json"
-        ) as f:
+        with Path(
+            DEFAULTS_PATH / "kafka_rest_proxy_responses" / "cluster-info.json",
+        ).open() as f:
             cluster_response = json.load(f)
 
         httpx_mock.add_response(
@@ -55,12 +56,11 @@ class TestProxyWrapper:
     async def test_should_raise_exception_when_host_is_not_set(self):
         config = PipelineConfig(defaults_path=DEFAULTS_PATH, environment="development")
         config.kafka_rest_host = None
-        with pytest.raises(ValueError) as exception:
+        with pytest.raises(
+            ValueError,
+            match="The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST.",
+        ):
             ProxyWrapper(pipeline_config=config)
-        assert (
-            str(exception.value)
-            == "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
-        )
 
     @pytest.mark.asyncio
     @patch("httpx.AsyncClient.post")

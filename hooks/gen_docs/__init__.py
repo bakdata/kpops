@@ -1,30 +1,27 @@
 """Documentation generation."""
 
-from collections.abc import Generator
+from collections.abc import Iterator
 from enum import Enum
-from typing import Any, Generic, TypeVar
-
-_T = TypeVar("_T")
 
 
-class SuperEnum(Generic[_T], Enum):
-    """Adds constructors that return all items in a ``Generator``.
+class IterableStrEnum(str, Enum):
+    """Polyfill that also introduces dict-like behavior.
 
-    Introduces constructors that return a ``Generator`` object
+    Introduces constructors that return a ``Iterator`` object
     either containing all items, only their names or their values.
     """
 
     @classmethod
-    def items(cls) -> Generator[tuple[_T, Any], None, None]:
+    def items(cls) -> Iterator[tuple[str, str]]:
         """Return all item names and values in tuples."""
         return ((e.name, e.value) for e in cls)
 
     @classmethod
-    def keys(cls) -> Generator[_T, None, None]:
+    def keys(cls) -> Iterator[str]:
         """Return all item names."""
         return (e.name for e in cls)
 
     @classmethod
-    def values(cls) -> Generator[Any, None, None]:
+    def values(cls) -> Iterator[str]:
         """Return all item values."""
         return (e.value for e in cls)

@@ -4,7 +4,7 @@ import asyncio
 import logging
 from enum import Enum
 from pathlib import Path
-from typing import TYPE_CHECKING, Iterator, Optional
+from typing import TYPE_CHECKING, Optional
 
 import dtyper
 import typer
@@ -24,6 +24,8 @@ from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 
 if TYPE_CHECKING:
+    from collections.abc import Iterator
+
     from kpops.components.base_components import PipelineComponent
 
 LOG_DIVIDER = "#" * 100
@@ -31,7 +33,7 @@ LOG_DIVIDER = "#" * 100
 app = dtyper.Typer(pretty_exceptions_enable=False)
 
 BASE_DIR_PATH_OPTION: Path = typer.Option(
-    default=Path("."),
+    default=Path(),
     exists=True,
     dir_okay=True,
     file_okay=False,
@@ -388,7 +390,7 @@ def clean(
 def version_callback(show_version: bool) -> None:
     if show_version:
         typer.echo(f"KPOps {__version__}")
-        raise typer.Exit()
+        raise typer.Exit
 
 
 @app.callback()

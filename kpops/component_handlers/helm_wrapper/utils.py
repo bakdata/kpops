@@ -7,11 +7,11 @@ RELEASE_NAME_MAX_LEN = 52
 
 
 def trim_release_name(name: str, suffix: str = "") -> str:
-    """
-    Trim Helm release name while preserving suffix.
+    """Trim Helm release name while preserving suffix.
+
     :param name: The release name including optional suffix
     :param suffix: The release suffix to preserve
-    :return: Truncated release name
+    :return: Truncated release name.
     """
     if len(name) > RELEASE_NAME_MAX_LEN:
         new_name = name[: (RELEASE_NAME_MAX_LEN - len(suffix))] + suffix

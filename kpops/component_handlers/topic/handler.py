@@ -67,7 +67,7 @@ class TopicHandler:
                     await self.proxy_wrapper.create_topic(topic_spec=topic_spec)
 
     async def delete_topics(self, to_section: ToSection, dry_run: bool) -> None:
-        for topic_name in to_section.topics.keys():
+        for topic_name in to_section.topics:
             if dry_run:
                 await self.__dry_run_topic_deletion(topic_name=topic_name)
             else:
@@ -150,9 +150,8 @@ class TopicHandler:
                 f"Topic Creation: partition count of topic {topic_name} did not change. Current partitions count {partition_count}. Updating configs."
             )
         else:
-            raise TopicTransactionError(
-                f"Topic Creation: partition count of topic {topic_name} changed! Partitions count of topic {topic_name} is {partition_count}. The given partitions count {topic_spec.partitions_count}."
-            )
+            msg = f"Topic Creation: partition count of topic {topic_name} changed! Partitions count of topic {topic_name} is {partition_count}. The given partitions count {topic_spec.partitions_count}."
+            raise TopicTransactionError(msg)
 
     @staticmethod
     def __check_replication_factor(
@@ -170,9 +169,8 @@ class TopicHandler:
                 f"Topic Creation: replication factor of topic {topic_name} did not change. Current replication factor {replication_factor}. Updating configs."
             )
         else:
-            raise TopicTransactionError(
-                f"Topic Creation: replication factor of topic {topic_name} changed! Replication factor of topic {topic_name} is {replication_factor}. The given replication count {topic_spec.replication_factor}."
-            )
+            msg = f"Topic Creation: replication factor of topic {topic_name} changed! Replication factor of topic {topic_name} is {replication_factor}. The given replication count {topic_spec.replication_factor}."
+            raise TopicTransactionError(msg)
 
     async def __dry_run_topic_deletion(self, topic_name: str) -> None:
         try:
@@ -201,11 +199,11 @@ class TopicHandler:
 
     @classmethod
     def __prepare_body(cls, topic_name: str, topic_config: TopicConfig) -> TopicSpec:
-        """
-        Prepares the POST request body needed for the topic creation
+        """Prepare the POST request body needed for the topic creation.
+
         :param topic_name: The name of the topic
         :param topic_config: The topic config
-        :return:
+        :return: Topic specification
         """
         topic_spec_json: dict = topic_config.dict(
             include={

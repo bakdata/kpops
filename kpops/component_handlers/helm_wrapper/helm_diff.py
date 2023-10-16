@@ -1,6 +1,5 @@
 import logging
-from collections.abc import Iterator
-from typing import Iterable
+from collections.abc import Iterable, Iterator
 
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
 from kpops.utils.dict_differ import Change, render_diff
@@ -17,7 +16,7 @@ class HelmDiff:
         current_release: Iterable[HelmTemplate],
         new_release: Iterable[HelmTemplate],
     ) -> Iterator[Change[dict]]:
-        """Compare 2 releases and generate a Change object for each difference
+        """Compare 2 releases and generate a Change object for each difference.
 
         :param current_release: Iterable containing HelmTemplate objects for the current release
         :param new_release: Iterable containing HelmTemplate objects for the new release

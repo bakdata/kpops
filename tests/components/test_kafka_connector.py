@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
@@ -12,15 +13,13 @@ from kpops.components.base_components.kafka_connector import KafkaConnector
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
-CONNECTOR_NAME_PREFIXED = (
-    "${pipeline_name}-test-connector-with-long-name-0123456789abcdefghijklmnop"
-)
-CONNECTOR_CLEAN_NAME = "test-connector-with-long-name-0123456789abcdef-clean"
+CONNECTOR_FULL_NAME = "${pipeline_name}-" + CONNECTOR_NAME
+CONNECTOR_CLEAN_FULL_NAME = "${pipeline_name}-test-connector-with-long-name-clean"
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 
 
 class TestKafkaConnector:
-    @pytest.fixture
+    @pytest.fixture()
     def config(self) -> PipelineConfig:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
@@ -33,7 +32,7 @@ class TestKafkaConnector:
             helm_diff_config=HelmDiffConfig(),
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
             schema_handler=AsyncMock(),
@@ -47,18 +46,18 @@ class TestKafkaConnector:
             "kpops.components.base_components.kafka_connector.Helm"
         ).return_value
 
-    @pytest.fixture
+    @pytest.fixture()
     def dry_run_handler(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
             "kpops.components.base_components.kafka_connector.DryRunHandler"
         ).return_value
 
-    @pytest.fixture
+    @pytest.fixture()
     def connector_config(self) -> KafkaConnectorConfig:
         return KafkaConnectorConfig(
             **{
                 "connector.class": CONNECTOR_CLASS,
-                "name": CONNECTOR_NAME_PREFIXED,
+                "name": CONNECTOR_FULL_NAME,
             }
         )
 
@@ -75,35 +74,41 @@ class TestKafkaConnector:
             app=connector_config,
             namespace="test-namespace",
         )
-        assert connector.app.name == CONNECTOR_NAME_PREFIXED
+        assert connector.app.name == CONNECTOR_FULL_NAME
 
         connector = KafkaConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app={"connector.class": CONNECTOR_CLASS},  # type: ignore
+            app={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues]
             namespace="test-namespace",
         )
-        assert connector.app.name == CONNECTOR_NAME_PREFIXED
+        assert connector.app.name == CONNECTOR_FULL_NAME
 
         with pytest.raises(
-            ValueError, match="Connector name should be the same as component name"
+            ValueError,
+            match=re.escape(
+                f"Connector name 'different-name' should be the same as component name '{CONNECTOR_FULL_NAME}'"
+            ),
         ):
             KafkaConnector(
                 name=CONNECTOR_NAME,
                 config=config,
                 handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore
+                app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore[reportGeneralTypeIssues]
                 namespace="test-namespace",
             )
 
         with pytest.raises(
-            ValueError, match="Connector name should be the same as component name"
+            ValueError,
+            match=re.escape(
+                f"Connector name '' should be the same as component name '{CONNECTOR_FULL_NAME}'"
+            ),
         ):
             KafkaConnector(
                 name=CONNECTOR_NAME,
                 config=config,
                 handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore
+                app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues]
                 namespace="test-namespace",
             )

@@ -27,38 +27,19 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.utils.colorify import magentaify
 from tests.components.test_kafka_connector import (
-    CONNECTOR_CLEAN_NAME,
+    CONNECTOR_CLEAN_FULL_NAME,
+    CONNECTOR_FULL_NAME,
     CONNECTOR_NAME,
     TestKafkaConnector,
 )
 
 
 class TestKafkaSinkConnector(TestKafkaConnector):
-    @pytest.fixture
+    @pytest.fixture()
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kafka_connector.log.info")
 
-    @pytest.fixture
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=AsyncMock(),
-            connector_handler=AsyncMock(),
-            topic_handler=AsyncMock(),
-        )
-
-    @pytest.fixture(autouse=True)
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.Helm"
-        ).return_value
-
-    @pytest.fixture
-    def dry_run_handler(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.DryRunHandler"
-        ).return_value
-
-    @pytest.fixture
+    @pytest.fixture()
     def connector(
         self,
         config: PipelineConfig,
@@ -190,7 +171,9 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
         await connector.destroy(dry_run=True)
 
-        mock_destroy_connector.assert_called_once_with(CONNECTOR_NAME, dry_run=True)
+        mock_destroy_connector.assert_called_once_with(
+            CONNECTOR_FULL_NAME, dry_run=True
+        )
 
     @pytest.mark.asyncio
     async def test_reset_when_dry_run_is_true(
@@ -232,11 +215,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 dry_run=dry_run,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=dry_run,
@@ -249,15 +232,15 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     "connectorType": "sink",
                     "config": {
                         "brokers": "broker:9092",
-                        "connector": CONNECTOR_NAME,
+                        "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": False,
                     },
-                    "nameOverride": CONNECTOR_NAME,
+                    "nameOverride": CONNECTOR_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 dry_run=dry_run,
             ),
         ]
@@ -285,23 +268,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         log_info_mock: MagicMock,
         dry_run_handler: MagicMock,
         mocker: MockerFixture,
-        connector_config: KafkaConnectorConfig,
     ):
-        connector = KafkaSinkConnector(
-            name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app=connector_config,
-            namespace="test-namespace",
-            to=ToSection(
-                topics={
-                    TopicName("${output_topic_name}"): TopicConfig(
-                        type=OutputTopicTypes.OUTPUT, partitions_count=10
-                    ),
-                }
-            ),
-        )
-
         mock_delete_topics = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topics"
         )
@@ -320,12 +287,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         assert log_info_mock.mock_calls == [
             call.log_info(
                 magentaify(
-                    f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {CONNECTOR_NAME}"
+                    f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {CONNECTOR_FULL_NAME}"
                 )
             ),
             call.log_info(
                 magentaify(
-                    f"Connector Cleanup: deploy Connect {KafkaConnectorType.SINK.value} resetter for {CONNECTOR_NAME}"
+                    f"Connector Cleanup: deploy Connect {KafkaConnectorType.SINK.value} resetter for {CONNECTOR_FULL_NAME}"
                 )
             ),
             call.log_info(magentaify("Connector Cleanup: uninstall Kafka Resetter.")),
@@ -340,11 +307,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 dry_run=dry_run,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=dry_run,
@@ -357,15 +324,15 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     "connectorType": "sink",
                     "config": {
                         "brokers": "broker:9092",
-                        "connector": CONNECTOR_NAME,
+                        "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": True,
                     },
-                    "nameOverride": CONNECTOR_NAME,
+                    "nameOverride": CONNECTOR_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 dry_run=dry_run,
             ),
         ]
@@ -436,11 +403,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 dry_run=dry_run,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=dry_run,
@@ -453,15 +420,15 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     "connectorType": "sink",
                     "config": {
                         "brokers": "broker:9092",
-                        "connector": CONNECTOR_NAME,
+                        "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": True,
                     },
-                    "nameOverride": CONNECTOR_NAME,
+                    "nameOverride": CONNECTOR_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_NAME,
+                release_name=CONNECTOR_CLEAN_FULL_NAME,
                 dry_run=dry_run,
             ),
         ]
