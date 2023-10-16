@@ -267,7 +267,7 @@ class TestStreamsApp:
 
         assert streams_app.app.streams.input_topics == ["prev-output-topic", "b", "a"]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_deploy_order_when_dry_run_is_false(
         self,
         config: PipelineConfig,
@@ -350,7 +350,7 @@ class TestStreamsApp:
             ),
         ]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_destroy(self, streams_app: StreamsApp, mocker: MockerFixture):
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
@@ -360,7 +360,7 @@ class TestStreamsApp:
             "test-namespace", "${pipeline_name}-" + self.STREAMS_APP_NAME, True
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_reset_when_dry_run_is_false(
         self, streams_app: StreamsApp, mocker: MockerFixture
     ):
@@ -403,7 +403,7 @@ class TestStreamsApp:
             ),
         ]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
         streams_app: StreamsApp,
@@ -448,7 +448,7 @@ class TestStreamsApp:
             ),
         ]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_get_input_output_topics(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ):

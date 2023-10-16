@@ -40,7 +40,7 @@ class TestConnectorHandler:
             "kpops.component_handlers.kafka_connect.kafka_connect_handler.log.error"
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def connector_wrapper(self) -> AsyncMock:
         return AsyncMock()
 
@@ -66,7 +66,7 @@ class TestConnectorHandler:
             }
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_create_connector_in_dry_run(
         self,
         connector_config: KafkaConnectorConfig,
@@ -92,7 +92,7 @@ class TestConnectorHandler:
             ),
         ]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_log_correct_message_when_create_connector_and_connector_not_exists_in_dry_run(
         self, log_info_mock: MagicMock, connector_wrapper: AsyncMock
     ):
@@ -121,7 +121,7 @@ class TestConnectorHandler:
             ),
         ]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_log_correct_message_when_create_connector_and_connector_exists_in_dry_run(
         self, log_info_mock: MagicMock, connector_wrapper: AsyncMock
     ):
@@ -167,7 +167,7 @@ class TestConnectorHandler:
             ),
         ]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_log_invalid_config_when_create_connector_in_dry_run(
         self, connector_config: KafkaConnectorConfig, renderer_diff_mock: MagicMock
     ):
@@ -192,7 +192,7 @@ class TestConnectorHandler:
             connector_config
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_call_update_connector_config_when_connector_exists_not_dry_run(
         self, connector_config: KafkaConnectorConfig
     ):
@@ -207,7 +207,7 @@ class TestConnectorHandler:
             mock.call.update_connector_config(connector_config),
         ]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_call_create_connector_when_connector_does_not_exists_not_dry_run(
         self, connector_config: KafkaConnectorConfig
     ):
@@ -221,7 +221,7 @@ class TestConnectorHandler:
 
         connector_wrapper.create_connector.assert_called_once_with(connector_config)
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_print_correct_log_when_destroying_connector_in_dry_run(
         self, log_info_mock: MagicMock, connector_wrapper: AsyncMock
     ):
@@ -235,7 +235,7 @@ class TestConnectorHandler:
             )
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_print_correct_warning_log_when_destroying_connector_and_connector_exists_in_dry_run(
         self, log_warning_mock: MagicMock, connector_wrapper: AsyncMock
     ):
@@ -251,7 +251,7 @@ class TestConnectorHandler:
             f"Connector Destruction: connector {CONNECTOR_NAME} does not exist and cannot be deleted. Skipping."
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_call_delete_connector_when_destroying_existing_connector_not_dry_run(
         self, connector_wrapper: AsyncMock
     ):
@@ -264,7 +264,7 @@ class TestConnectorHandler:
             mock.call.delete_connector(CONNECTOR_NAME),
         ]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_print_correct_warning_log_when_destroying_connector_and_connector_exists_not_dry_run(
         self, log_warning_mock: MagicMock, connector_wrapper: AsyncMock
     ):

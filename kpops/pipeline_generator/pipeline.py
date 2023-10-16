@@ -71,7 +71,8 @@ class PipelineComponents(BaseModel):
 
     def validate_graph(self) -> None:
         if not nx.is_directed_acyclic_graph(self.graph):
-            raise ValueError("Pipeline is not a valid DAG.")
+            msg = "Pipeline is not a valid DAG."
+            raise ValueError(msg)
 
     def validate_unique_names(self) -> None:
         step_names = [component.full_name for component in self.components]

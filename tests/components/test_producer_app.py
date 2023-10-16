@@ -95,7 +95,7 @@ class TestProducerApp:
             "first-extra-topic": "extra-topic-1"
         }
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_deploy_order_when_dry_run_is_false(
         self,
         producer_app: ProducerApp,
@@ -141,7 +141,7 @@ class TestProducerApp:
             ),
         ]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_destroy(
         self,
         producer_app: ProducerApp,
@@ -155,7 +155,7 @@ class TestProducerApp:
             "test-namespace", "${pipeline_name}-" + self.PRODUCER_APP_NAME, True
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_not_reset_producer_app(
         self,
         producer_app: ProducerApp,
@@ -207,7 +207,7 @@ class TestProducerApp:
             ),
         ]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
         self, mocker: MockerFixture, producer_app: ProducerApp
     ):

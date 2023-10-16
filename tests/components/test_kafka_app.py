@@ -57,7 +57,7 @@ class TestKafkaApp:
         assert kafka_app.version == "2.9.0"
         assert kafka_app.namespace == "test-namespace"
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_deploy_kafka_app(
         self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
     ):

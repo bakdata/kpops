@@ -78,7 +78,7 @@ class TestKubernetesApp:
             repo_config=repo_config,
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_lazy_load_helm_wrapper_and_not_repo_add(
         self,
         kubernetes_app: KubernetesApp,
@@ -105,7 +105,7 @@ class TestKubernetesApp:
             HelmUpgradeInstallFlags(),
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
         self,
         config: PipelineConfig,
@@ -152,7 +152,7 @@ class TestKubernetesApp:
             ),
         ]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_deploy_app_with_local_helm_chart(
         self,
         config: PipelineConfig,
@@ -189,7 +189,7 @@ class TestKubernetesApp:
             HelmUpgradeInstallFlags(),
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
         self,
         kubernetes_app: KubernetesApp,
@@ -205,7 +205,7 @@ class TestKubernetesApp:
             == "Please implement the helm_chart property of the kpops.components.base_components.kubernetes_app module."
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_call_helm_uninstall_when_destroying_kubernetes_app(
         self,
         kubernetes_app: KubernetesApp,
