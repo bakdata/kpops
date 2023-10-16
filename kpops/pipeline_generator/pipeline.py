@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from collections import Counter
 from contextlib import suppress
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Awaitable
 
 import networkx as nx
 import yaml
@@ -36,11 +37,21 @@ class ValidationError(Exception):
     pass
 
 
+class InternalNodeRepresentation(BaseModel):
+    name: str
+    component: Optional[PipelineComponent]
+    is_topic: bool
+
+    class Config:
+        frozen = True
+
+
 class PipelineComponents(BaseModel):
     """Stores the pipeline components."""
 
     components: list[PipelineComponent] = []
     graph: nx.DiGraph = Field(default=nx.DiGraph(), exclude=True)
+    _component_index: dict[str, InternalNodeRepresentation] = {}
 
     class Config:
         arbitrary_types_allowed = True
@@ -69,6 +80,38 @@ class PipelineComponents(BaseModel):
     def __len__(self) -> int:
         return len(self.components)
 
+    def build_deploy_graph_task(self, dry_run: bool):
+        async def run_graph_tasks(tasks: list[Awaitable]):
+            for pending_task in tasks:
+                await pending_task
+
+        transformed_graph = self.graph.copy()
+        root_node = "root_node_bfs"
+        transformed_graph.add_node(root_node)
+
+        for node in self.graph:
+            predecessors = list(self.graph.predecessors(node))
+            if not predecessors:
+                transformed_graph.add_edge(root_node, node)
+
+        layers_graph = list(nx.bfs_layers(transformed_graph, root_node))
+
+        sorted_tasks = []
+
+        for layer in layers_graph[1:]:
+            parallel_tasks = []
+            for task in layer:
+                node = self._component_index[task]
+                if not node.is_topic:
+                    parallel_tasks.append(
+                        asyncio.create_task(node.component.deploy(dry_run))
+                    )
+
+            if parallel_tasks:
+                sorted_tasks.append(asyncio.gather(*parallel_tasks))
+
+        return run_graph_tasks(sorted_tasks)
+
     def validate_graph(self) -> None:
         if not nx.is_directed_acyclic_graph(self.graph):
             raise ValueError("Pipeline is not a valid DAG.")
@@ -82,19 +125,34 @@ class PipelineComponents(BaseModel):
 
     def generate_graph(self) -> None:
         for component in self.components:
-            self.graph.add_node(component.id)
+            node_component = InternalNodeRepresentation(
+                name=component.id, component=component, is_topic=False
+            )
+            self._component_index[node_component.name] = node_component
+
+            self.graph.add_node(node_component.name)
 
             for input_topic in component.inputs:
-                self.__add_input(input_topic, component.id)
+                self.__add_input(input_topic, node_component.name)
 
             for output_topic in component.outputs:
-                self.__add_output(output_topic, component.id)
+                self.__add_output(output_topic, node_component.name)
 
     def __add_output(self, output_topic: str, source: str) -> None:
+        output_node = InternalNodeRepresentation(
+            name=output_topic, component=None, is_topic=True
+        )
+        self._component_index[output_node.name] = output_node
+
         self.graph.add_node(output_topic)
         self.graph.add_edge(source, output_topic)
 
     def __add_input(self, input_topic: str, component_node_name: str) -> None:
+        input_node = InternalNodeRepresentation(
+            name=input_topic, component=None, is_topic=True
+        )
+        self._component_index[input_node.name] = input_node
+
         self.graph.add_node(input_topic)
         self.graph.add_edge(input_topic, component_node_name)
 

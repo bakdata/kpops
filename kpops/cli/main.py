@@ -255,7 +255,6 @@ def generate(
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, pipeline_config
     )
-
     if not template:
         pipeline.print_yaml()
 
@@ -286,14 +285,13 @@ def deploy(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
-    pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
-    )
-
-    steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
-
     async def async_deploy():
+        pipeline_config = create_pipeline_config(config, defaults, verbose)
+        pipeline = setup_pipeline(
+            pipeline_base_dir, pipeline_path, components_module, pipeline_config
+        )
+
+        steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
         for component in steps_to_apply:
             log_action("Deploy", component)
             await component.deploy(dry_run)
@@ -315,13 +313,12 @@ def destroy(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
-    pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
-    )
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
-
     async def async_destroy():
+        pipeline_config = create_pipeline_config(config, defaults, verbose)
+        pipeline = setup_pipeline(
+            pipeline_base_dir, pipeline_path, components_module, pipeline_config
+        )
+        pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
         for component in pipeline_steps:
             log_action("Destroy", component)
             await component.destroy(dry_run)
@@ -343,13 +340,12 @@ def reset(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
-    pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
-    )
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
-
     async def async_reset():
+        pipeline_config = create_pipeline_config(config, defaults, verbose)
+        pipeline = setup_pipeline(
+            pipeline_base_dir, pipeline_path, components_module, pipeline_config
+        )
+        pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
         for component in pipeline_steps:
             log_action("Reset", component)
             await component.destroy(dry_run)
@@ -372,13 +368,12 @@ def clean(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
-    pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
-    )
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
-
     async def async_clean():
+        pipeline_config = create_pipeline_config(config, defaults, verbose)
+        pipeline = setup_pipeline(
+            pipeline_base_dir, pipeline_path, components_module, pipeline_config
+        )
+        pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
         for component in pipeline_steps:
             log_action("Clean", component)
             await component.destroy(dry_run)
