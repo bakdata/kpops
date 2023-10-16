@@ -5,7 +5,7 @@ import json
 import logging
 from collections import Counter
 from contextlib import suppress
-from typing import TYPE_CHECKING, Optional, Awaitable
+from typing import TYPE_CHECKING, Optional, Awaitable, Coroutine
 
 import networkx as nx
 import yaml
@@ -19,7 +19,7 @@ from kpops.utils.environment import ENV
 from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Iterator, Callable
     from pathlib import Path
 
     from kpops.cli.pipeline_config import PipelineConfig
@@ -80,12 +80,23 @@ class PipelineComponents(BaseModel):
     def __len__(self) -> int:
         return len(self.components)
 
-    def build_deploy_graph_task(self, dry_run: bool):
-        async def run_graph_tasks(tasks: list[Awaitable]):
-            for pending_task in tasks:
+    def build_execution_graph_from(
+        self,
+        components: list[PipelineComponent],
+        reverse: bool,
+        runner: Callable[[PipelineComponent], Coroutine],
+    ):
+        async def run_graph_tasks(pending_tasks: list[Awaitable]):
+            for pending_task in pending_tasks:
                 await pending_task
 
-        transformed_graph = self.graph.copy()
+        nodes = [node_component.id for node_component in components]
+
+        transformed_graph = self.graph.subgraph(nodes)
+
+        if reverse:
+            transformed_graph = transformed_graph.reverse()
+
         root_node = "root_node_bfs"
         transformed_graph.add_node(root_node)
 
@@ -104,7 +115,7 @@ class PipelineComponents(BaseModel):
                 node = self._component_index[task]
                 if not node.is_topic:
                     parallel_tasks.append(
-                        asyncio.create_task(node.component.deploy(dry_run))
+                        asyncio.create_task(runner(node.component))
                     )
 
             if parallel_tasks:
@@ -237,6 +248,16 @@ class Pipeline:
                 raise TypeError(msg)
 
         return cls(main_content, env_content, registry, config, handlers)
+
+    async def build_execution_graph_from(
+        self,
+        components: list[PipelineComponent],
+        reverse: bool,
+        runner: Callable[[PipelineComponent], Coroutine],
+    ) -> Awaitable:
+        return self.components.build_execution_graph_from(
+            components, reverse, runner
+        )
 
     def parse_components(self, component_list: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components.
