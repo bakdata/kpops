@@ -113,7 +113,7 @@ class PipelineComponents(BaseModel):
             parallel_tasks = []
             for task in layer:
                 node = self._component_index[task]
-                if not node.is_topic:
+                if node.component is not None and not node.is_topic:
                     parallel_tasks.append(asyncio.create_task(runner(node.component)))
 
             if parallel_tasks:
