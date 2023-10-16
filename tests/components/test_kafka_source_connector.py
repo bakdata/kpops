@@ -77,7 +77,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 ),
             )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_deploy_order(
         self,
         connector: KafkaSourceConnector,
@@ -100,7 +100,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             mocker.call.mock_create_connector(connector.app, dry_run=True),
         ]
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_destroy(
         self,
         connector: KafkaSourceConnector,
@@ -119,7 +119,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             CONNECTOR_FULL_NAME, dry_run=True
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_reset_when_dry_run_is_true(
         self,
         connector: KafkaSourceConnector,
@@ -131,7 +131,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
         dry_run_handler.print_helm_diff.assert_called_once()
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_reset_when_dry_run_is_false(
         self,
         connector: KafkaSourceConnector,
@@ -193,7 +193,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         mock_delete_topics.assert_not_called()
         dry_run_handler.print_helm_diff.assert_not_called()
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_clean_when_dry_run_is_true(
         self,
         connector: KafkaSourceConnector,
@@ -205,7 +205,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
         dry_run_handler.print_helm_diff.assert_called_once()
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_clean_when_dry_run_is_false(
         self,
         connector: KafkaSourceConnector,
@@ -270,7 +270,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
         dry_run_handler.print_helm_diff.assert_not_called()
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_false(
         self,
         config: PipelineConfig,
@@ -347,7 +347,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         mock_delete_topics.assert_not_called()
         dry_run_handler.print_helm_diff.assert_not_called()
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_true(
         self,
         config: PipelineConfig,

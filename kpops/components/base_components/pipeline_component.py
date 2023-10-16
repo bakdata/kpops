@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
-from collections.abc import Iterator
+from typing import TYPE_CHECKING
 
 from pydantic import Extra, Field
 
@@ -20,6 +20,9 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfig
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
@@ -238,7 +241,6 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
 
         :param dry_run: Whether to do a dry run of the command
         """
-
 
     async def reset(self, dry_run: bool) -> None:
         """Reset component (self) state.

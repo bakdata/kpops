@@ -107,13 +107,11 @@ class ProxyWrapper:
 
         API Reference:
         https://docs.confluent.io/platform/current/kafka-rest/api.html#get--clusters-cluster_id-topics-topic_name
-
         :param topic_name: The topic name.
         :raises TopicNotFoundException: Topic not found
         :raises KafkaRestProxyError: Kafka REST proxy error
         :return: Response of the get topic API.
         """
-
         response = await self._client.get(
             url=f"/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
@@ -139,13 +137,11 @@ class ProxyWrapper:
 
         API Reference:
         https://docs.confluent.io/platform/current/kafka-rest/api.html#acl-v3
-
         :param topic_name: The topic name.
         :raises TopicNotFoundException: Topic not found
         :raises KafkaRestProxyError: Kafka REST proxy error
         :return: The topic configuration.
         """
-
         response = await self._client.get(
             url=f"/{self.cluster_id}/topics/{topic_name}/configs",
             headers=HEADERS,

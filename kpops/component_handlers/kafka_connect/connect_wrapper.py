@@ -44,7 +44,6 @@ class ConnectWrapper:
         :param connector_config: The config of the connector
         :return: The current connector info if successful.
         """
-
         config_json = connector_config.dict()
         connect_data = {"name": connector_config.name, "config": config_json}
         response = await self._client.post(
@@ -98,11 +97,9 @@ class ConnectWrapper:
 
         Create a new connector using the given configuration,or update the
         configuration for an existing connector.
-
         :param connector_config: Configuration parameters for the connector.
         :return: Information about the connector after the change has been made.
         """
-
         connector_name = connector_config.name
         config_json = connector_config.dict()
         response = await self._client.put(
@@ -137,7 +134,6 @@ class ConnectWrapper:
         :raises KafkaConnectError: Kafka Konnect error
         :return: List of all found errors
         """
-
         response = await self._client.put(
             url=f"{self._host}/connector-plugins/{connector_config.class_name}/config/validate",
             headers=HEADERS,

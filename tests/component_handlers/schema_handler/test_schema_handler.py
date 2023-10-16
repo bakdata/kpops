@@ -160,7 +160,7 @@ def test_should_raise_value_error_when_schema_provider_is_called_and_components_
         )
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
     to_section: ToSection, log_info_mock: MagicMock, schema_registry_mock: AsyncMock
 ):
@@ -178,7 +178,7 @@ async def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_t
     schema_registry_mock.register.assert_not_called()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     topic_config: TopicConfig,
     to_section: ToSection,
@@ -201,7 +201,7 @@ async def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     schema_registry_mock.register.assert_not_called()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatible_and_dry_run_true(
     topic_config: TopicConfig,
     to_section: ToSection,
@@ -239,7 +239,7 @@ async def test_should_raise_exception_when_submit_schema_that_exists_and_not_com
     schema_registry_mock.register.assert_not_called()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_version_and_dry_run_true(
     topic_config: TopicConfig,
     to_section: ToSection,
@@ -275,7 +275,7 @@ async def test_should_log_debug_when_submit_schema_that_exists_and_registered_un
     schema_registry_mock.register.assert_not_called()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_should_submit_non_existing_schema_when_not_dry(
     topic_config: TopicConfig,
     to_section: ToSection,
@@ -304,7 +304,7 @@ async def test_should_submit_non_existing_schema_when_not_dry(
     )
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     to_section: ToSection,
     log_info_mock: MagicMock,
@@ -325,7 +325,7 @@ async def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     schema_registry_mock.delete_subject.assert_not_called()
 
 
-@pytest.mark.asyncio
+@pytest.mark.asyncio()
 async def test_should_delete_schemas_when_not_in_dry_run(
     to_section: ToSection, schema_registry_mock: MagicMock
 ):

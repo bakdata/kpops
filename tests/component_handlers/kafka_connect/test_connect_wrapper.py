@@ -57,7 +57,7 @@ class TestConnectorApiWrapper:
             == "The Kafka Connect host is not set. Please set the host in the config."
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("httpx.AsyncClient.post")
     async def test_should_create_post_requests_for_given_connector_configuration(
         self, mock_post: AsyncMock
@@ -85,7 +85,7 @@ class TestConnectorApiWrapper:
             },
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_return_correct_response_when_connector_created(
         self, httpx_mock: HTTPXMock, connector_config: KafkaConnectorConfig
     ):
@@ -122,7 +122,7 @@ class TestConnectorApiWrapper:
 
         assert KafkaConnectResponse(**actual_response) == expected_response
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_should_raise_connector_exists_exception_when_connector_exists(
         self,
@@ -149,7 +149,7 @@ class TestConnectorApiWrapper:
             "Rebalancing in progress while creating a connector... Retrying..."
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("httpx.AsyncClient.get")
     async def test_should_create_correct_get_connector_request(
         self, mock_get: AsyncMock
@@ -164,7 +164,7 @@ class TestConnectorApiWrapper:
         )
 
     @pytest.mark.flaky(reruns=5, condition=sys.platform.startswith("win32"))
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     async def test_should_return_correct_response_when_getting_connector(
         self, log_info: MagicMock, httpx_mock: HTTPXMock
@@ -200,7 +200,7 @@ class TestConnectorApiWrapper:
         assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {connector_name} exists.")
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     async def test_should_raise_connector_not_found_when_getting_connector(
         self, log_info: MagicMock, httpx_mock: HTTPXMock
@@ -221,7 +221,7 @@ class TestConnectorApiWrapper:
             f"The named connector {connector_name} does not exists."
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_should_raise_rebalance_in_progress_when_getting_connector(
         self, log_warning: MagicMock, httpx_mock: HTTPXMock
@@ -248,7 +248,7 @@ class TestConnectorApiWrapper:
             "Rebalancing in progress while getting a connector... Retrying..."
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("httpx.AsyncClient.put")
     async def test_should_create_correct_update_connector_request(
         self, mock_put: AsyncMock
@@ -275,7 +275,7 @@ class TestConnectorApiWrapper:
             json=KafkaConnectorConfig(**configs).dict(),
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     async def test_should_return_correct_response_when_update_connector(
         self,
@@ -319,7 +319,7 @@ class TestConnectorApiWrapper:
             f"Config for connector {connector_name} updated."
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     async def test_should_return_correct_response_when_update_connector_created(
         self,
@@ -360,7 +360,7 @@ class TestConnectorApiWrapper:
         assert KafkaConnectResponse(**actual_response) == expected_response
         log_info.assert_called_once_with(f"Connector {connector_name} created.")
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_should_raise_connector_exists_exception_when_update_connector(
         self,
@@ -390,7 +390,7 @@ class TestConnectorApiWrapper:
             "Rebalancing in progress while updating a connector... Retrying..."
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("httpx.AsyncClient.delete")
     async def test_should_create_correct_delete_connector_request(
         self, mock_delete: AsyncMock
@@ -404,7 +404,7 @@ class TestConnectorApiWrapper:
             headers=HEADERS,
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     async def test_should_return_correct_response_when_deleting_connector(
         self, log_info: MagicMock, httpx_mock: HTTPXMock
@@ -440,7 +440,7 @@ class TestConnectorApiWrapper:
 
         log_info.assert_called_once_with(f"Connector {connector_name} deleted.")
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
     async def test_should_raise_connector_not_found_when_deleting_connector(
         self, log_info: MagicMock, httpx_mock: HTTPXMock
@@ -461,7 +461,7 @@ class TestConnectorApiWrapper:
             f"The named connector {connector_name} does not exists."
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.warning")
     async def test_should_raise_rebalance_in_progress_when_deleting_connector(
         self, log_warning: MagicMock, httpx_mock: HTTPXMock
@@ -488,7 +488,7 @@ class TestConnectorApiWrapper:
             "Rebalancing in progress while deleting a connector... Retrying..."
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("httpx.AsyncClient.put")
     async def test_should_create_correct_validate_connector_config_request(
         self, mock_put: AsyncMock
@@ -510,7 +510,7 @@ class TestConnectorApiWrapper:
             json=connector_config.dict(),
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     @patch("httpx.AsyncClient.put")
     async def test_should_create_correct_validate_connector_config_and_name_gets_added(
         self, mock_put: AsyncMock
@@ -533,7 +533,7 @@ class TestConnectorApiWrapper:
             json=KafkaConnectorConfig(**{"name": connector_name, **configs}).dict(),
         )
 
-    @pytest.mark.asyncio
+    @pytest.mark.asyncio()
     async def test_should_parse_validate_connector_config(self, httpx_mock: HTTPXMock):
         with Path(
             DEFAULTS_PATH / "connect_validation_response.json",
