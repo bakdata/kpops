@@ -112,19 +112,24 @@ class PipelineComponents(BaseModel):
         sorted_tasks = []
 
         for layer in layers_graph[1:]:
-            parallel_tasks = []
-            for task in layer:
-                self.__get_parallel_task_from(parallel_tasks, runner, task)
+            parallel_tasks = self.__get_parallel_task_from(layer, runner)
 
             if parallel_tasks:
                 sorted_tasks.append(run_parallel_tasks(parallel_tasks))
 
-        return run_graph_tasks(sorted_tasks)
+        print(sorted_tasks)
+        execution = run_graph_tasks(sorted_tasks)
+        print(execution)
+        return execution
 
-    def __get_parallel_task_from(self, parallel_tasks, runner, task):
-        node = self._component_index[task]
-        if node.component is not None and not node.is_topic:
-            parallel_tasks.append(runner(node.component))
+    def __get_parallel_task_from(self, layer, runner):
+        parallel_tasks = []
+        for node_in_layer in layer:
+            component_node = self._component_index[node_in_layer]
+            if component_node.component is not None and not component_node.is_topic:
+                parallel_tasks.append(runner(component_node.component))
+
+        return parallel_tasks
 
     def validate_graph(self) -> None:
         if not nx.is_directed_acyclic_graph(self.graph):
