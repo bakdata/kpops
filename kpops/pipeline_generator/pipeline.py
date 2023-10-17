@@ -87,11 +87,12 @@ class PipelineComponents(BaseModel):
         runner: Callable[[PipelineComponent], Coroutine],
     ):
         async def run_parallel_tasks(tasks):
-            asyncio.create_task(*tasks)
+            return asyncio.gather(*tasks)
 
         async def run_graph_tasks(pending_tasks: list[Awaitable]):
-            for pending_task in pending_tasks:
-                await pending_task
+            parallel_layer = [await task for task in pending_tasks]
+            for parallel_task in parallel_layer:
+                await parallel_task
 
         nodes = [node_component.id for node_component in components]
         transformed_graph = self.graph.subgraph(nodes).copy()
