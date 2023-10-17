@@ -317,7 +317,10 @@ def deploy(
         pipeline_tasks = get_concurrently_tasks_to_execute(
             pipeline, steps, filter_type, deploy_runner
         )
-        await pipeline_tasks
+        test = await pipeline_tasks
+        print(test)
+        test2 = await test
+        print(test2)
 
     asyncio.run(async_deploy())
 
