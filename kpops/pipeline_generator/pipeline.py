@@ -86,7 +86,6 @@ class PipelineComponents(BaseModel):
         reverse: bool,
         runner: Callable[[PipelineComponent], Coroutine],
     ):
-
         async def run_parallel_tasks(tasks):
             await asyncio.gather(*tasks)
 
