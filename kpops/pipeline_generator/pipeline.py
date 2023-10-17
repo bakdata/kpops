@@ -94,7 +94,7 @@ class PipelineComponents(BaseModel):
                 await pending_task
 
         nodes = [node_component.id for node_component in components]
-        transformed_graph = self.graph.subgraph(nodes)
+        transformed_graph = self.graph.subgraph(nodes).copy()
 
         if reverse:
             transformed_graph = transformed_graph.reverse()
