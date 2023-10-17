@@ -87,7 +87,7 @@ class PipelineComponents(BaseModel):
         runner: Callable[[PipelineComponent], Coroutine],
     ):
         async def run_parallel_tasks(tasks):
-            await asyncio.gather(*tasks)
+            asyncio.create_task(*tasks)
 
         async def run_graph_tasks(pending_tasks: list[Awaitable]):
             for pending_task in pending_tasks:
