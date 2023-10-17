@@ -86,6 +86,10 @@ class PipelineComponents(BaseModel):
         reverse: bool,
         runner: Callable[[PipelineComponent], Coroutine],
     ):
+
+        async def run_parallel_tasks(tasks):
+            await asyncio.gather(*tasks)
+
         async def run_graph_tasks(pending_tasks: list[Awaitable]):
             for pending_task in pending_tasks:
                 await pending_task
@@ -114,10 +118,10 @@ class PipelineComponents(BaseModel):
             for task in layer:
                 node = self._component_index[task]
                 if node.component is not None and not node.is_topic:
-                    parallel_tasks.append(asyncio.create_task(runner(node.component)))
+                    parallel_tasks.append(runner(node.component))
 
             if parallel_tasks:
-                sorted_tasks.append(asyncio.gather(*parallel_tasks))
+                sorted_tasks.append(run_parallel_tasks(parallel_tasks))
 
         return run_graph_tasks(sorted_tasks)
 
