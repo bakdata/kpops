@@ -1,21 +1,4 @@
 # Changelog
-## [2.0.10](https://github.com/bakdata/kpops/releases/tag/2.0.10) - Release Date: [2023-10-12]
-
-### 🌀 Miscellaneous
-
-- Fix environment variables documentation generation - [#362](https://github.com/bakdata/kpops/pull/362)
-
-- Introduce ruff - [#363](https://github.com/bakdata/kpops/pull/363)
-
-- Print details on connector name mismatch error - [#369](https://github.com/bakdata/kpops/pull/369)
-
-- Enable transparent OS environment lookups from internal environment - [#368](https://github.com/bakdata/kpops/pull/368)
-
-
-
-
-
-
 ## [2.0.9](https://github.com/bakdata/kpops/releases/tag/2.0.9) - Release Date: [2023-09-19]
 
 ### 🐛 Fixes
