@@ -1,42 +1,36 @@
 import os
+import platform
 from collections import UserDict
-from collections.abc import ItemsView, KeysView, MutableMapping, ValuesView
+from collections.abc import Callable
 
 
-class Environment(UserDict[str, str]):
-    """Internal environment wrapping OS environment."""
-
-    def __init__(
-        self, mapping: MutableMapping[str, str] | None = None, /, **kwargs: str
-    ) -> None:
-        self._global = os.environ
-        if mapping is None:
+class Environment(UserDict):
+    def __init__(self, mapping=None, /, **kwargs) -> None:
+        transformation = Environment.__get_transformation()
+        if mapping is not None:
+            mapping = {transformation(key): value for key, value in mapping.items()}
+        else:
             mapping = {}
         if kwargs:
-            mapping.update(**kwargs)
+            mapping.update(
+                {transformation(key): value for key, value in kwargs.items()}
+            )
         super().__init__(mapping)
 
-    def __getitem__(self, key: str) -> str:
-        try:
-            return self.data[key]
-        except KeyError:
-            return self._global[key]
+    @staticmethod
+    def __key_camel_case_transform(key: str) -> str:
+        return key.lower()
 
-    def __contains__(self, key: object) -> bool:
-        return super().__contains__(key) or self._global.__contains__(key)
+    @staticmethod
+    def __key_identity_transform(key: str) -> str:
+        return key
 
-    @property
-    def _dict(self) -> dict[str, str]:
-        return {**self._global, **self.data}
-
-    def keys(self) -> KeysView[str]:
-        return KeysView(self._dict)
-
-    def values(self) -> ValuesView[str]:
-        return ValuesView(self._dict)
-
-    def items(self) -> ItemsView[str, str]:
-        return ItemsView(self._dict)
+    @staticmethod
+    def __get_transformation() -> Callable[[str], str]:
+        if platform.system() == "Windows":
+            return Environment.__key_camel_case_transform
+        else:
+            return Environment.__key_identity_transform
 
 
-ENV = Environment()
+ENV = Environment(os.environ)

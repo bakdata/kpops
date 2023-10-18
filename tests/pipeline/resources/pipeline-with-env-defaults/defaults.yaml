@@ -34,5 +34,6 @@ kafka-connector:
     key.ignore: "false"
     linger.ms: "5000"
     max.buffered.records: "20000"
+    name: "sink-connector"
     read.timeout.ms: "120000"
     tasks.max: "1"
