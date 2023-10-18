@@ -212,9 +212,9 @@ def get_sections(component_name: str, *, exist_changes: bool) -> KpopsComponent:
         ]
         component_sections_not_inherited: list[
             str
-        ] = DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES[
+        ] = DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES[  # type: ignore [reportGeneralTypeIssues]
             component_file_name
-        ]  # type: ignore [reportGeneralTypeIssues]
+        ]
     return KpopsComponent(component_sections, component_sections_not_inherited)
 
 

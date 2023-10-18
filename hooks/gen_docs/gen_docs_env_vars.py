@@ -2,14 +2,12 @@
 
 import csv
 import shutil
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from textwrap import fill
 from typing import Any
 
-from pydantic import BaseSettings
-from pydantic.fields import ModelField
 from pytablewriter import MarkdownTableWriter
 from typer.models import ArgumentInfo, OptionInfo
 
@@ -19,7 +17,7 @@ except ImportError:
     from typing_extensions import Self
 
 from hooks import PATH_ROOT
-from hooks.gen_docs import IterableStrEnum
+from hooks.gen_docs import SuperEnum
 from kpops.cli import main
 from kpops.cli.pipeline_config import PipelineConfig
 
@@ -92,7 +90,7 @@ class EnvVar:
         )
 
 
-class EnvVarAttrs(IterableStrEnum):
+class EnvVarAttrs(str, SuperEnum):
     """The attr names are used as columns for the markdown tables."""
 
     NAME = "Name"
@@ -105,7 +103,7 @@ class EnvVarAttrs(IterableStrEnum):
 def csv_append_env_var(
     file: Path,
     name: str,
-    default_value: Any,
+    default_value,
     description: str | list[str] | None,
     *args,
 ) -> None:
@@ -220,7 +218,7 @@ def write_csv_to_md_file(
     target: Path,
     title: str | None,
     description: str | None = None,
-    heading: str | None = "###",
+    heading: str = "###",
 ) -> None:
     """Write csv data from a file into a markdown file.
 
@@ -229,15 +227,11 @@ def write_csv_to_md_file(
     :param title: Title for the table, optional
 
     """
-    if heading:
-        heading += " "
-    else:
-        heading = ""
     with target.open("w+") as f:
         if title:
-            f.write(f"{heading}{title}\n\n")
+            f.write(f"{heading} {title}\n")
         if description:
-            f.write(f"{description}\n\n")
+            f.write(f"\n{description}\n\n")
         writer = MarkdownTableWriter()
         with source.open("r", newline="") as source_contents:
             writer.from_csv(source_contents.read())
@@ -245,7 +239,7 @@ def write_csv_to_md_file(
         writer.dump(output=f)
 
 
-def fill_csv_pipeline_config(target: Path) -> None:
+def __fill_csv_pipeline_config(target: Path) -> None:
     """Append all ``PipelineConfig``-related env vars to a ``.csv`` file.
 
     Finds all ``PipelineConfig``-related env vars and appends them to
@@ -254,38 +248,29 @@ def fill_csv_pipeline_config(target: Path) -> None:
     :param target: The path to the `.csv` file. Note that it must already
         contain the column names
     """
-    for field in collect_fields(PipelineConfig):
-        field_info = PipelineConfig.Config.get_field_info(field.name)
-        field_description: str = (
-            field.field_info.description
+    # NOTE: This does not see nested fields, hence if there are env vars in a class like
+    # TopicConfig(), they wil not be listed. Possible fix with recursion.
+    config_fields = PipelineConfig.__fields__
+    for config_field in config_fields.values():
+        config_field_info = PipelineConfig.Config.get_field_info(config_field.name)
+        config_field_description: str = (
+            config_field.field_info.description
             or "No description available, please refer to the pipeline config documentation."
         )
-        field_default = field.field_info.default
-        if config_env_var := field_info.get(
+        config_field_default = None or config_field.field_info.default
+        if config_env_var := config_field_info.get(
             "env",
-        ) or field.field_info.extra.get("env"):
+        ) or config_field.field_info.extra.get("env"):
             csv_append_env_var(
                 target,
                 config_env_var,
-                field_default,
-                field_description,
-                field.name,
+                config_field_default,
+                config_field_description,
+                config_field.name,
             )
 
 
-def collect_fields(settings: type[BaseSettings]) -> Iterator[ModelField]:
-    """Collect and yield all fields in a settings class.
-
-    :param model: settings class
-    :yield: all settings including nested ones in settings classes
-    """
-    for field in settings.__fields__.values():
-        if issubclass(field_type := field.type_, BaseSettings):
-            yield from collect_fields(field_type)
-        yield field
-
-
-def fill_csv_cli(target: Path) -> None:
+def __fill_csv_cli(target: Path) -> None:
     """Append all CLI-commands-related env vars to a ``.csv`` file.
 
     Finds all CLI-commands-related env vars and appends them to a ``.csv``
@@ -297,7 +282,7 @@ def fill_csv_cli(target: Path) -> None:
         var_in_main = getattr(main, var_in_main_name)
         if (
             not var_in_main_name.startswith("__")
-            and isinstance(var_in_main, OptionInfo | ArgumentInfo)
+            and isinstance(var_in_main, (OptionInfo, ArgumentInfo))
             and var_in_main.envvar
         ):
             cli_env_var_description: list[str] = [
@@ -330,7 +315,7 @@ def gen_vars(
     csv_file: Path,
     title_dotenv_file: str,
     description_dotenv_file: str,
-    columns: list[str],
+    columns: list,
     description_md_file: str,
     variable_extraction_function: Callable[[Path], None],
 ) -> None:
@@ -345,7 +330,7 @@ def gen_vars(
     :param description_dotenv_file: The description to be written in the dotenv file
     :param columns: The column names in the table
     :param description_md_file: The description to be written in the markdown file
-    :param variable_extraction_function: Function that looks for variables and appends
+    :param variable_extraction_function: Function that ooks for variables and appends
         them to the temp csv file.
     """
     # Overwrite/create the temp csv file
@@ -388,7 +373,7 @@ if __name__ == "__main__":
         + DESCRIPTION_CONFIG_ENV_VARS,
         columns=list(EnvVarAttrs.values()),
         description_md_file=DESCRIPTION_CONFIG_ENV_VARS,
-        variable_extraction_function=fill_csv_pipeline_config,
+        variable_extraction_function=__fill_csv_pipeline_config,
     )
     # Find all cli-related env variables, write them into a file
     gen_vars(
@@ -400,5 +385,5 @@ if __name__ == "__main__":
         + DESCRIPTION_CLI_ENV_VARS,
         columns=list(EnvVarAttrs.values())[:-1],
         description_md_file=DESCRIPTION_CLI_ENV_VARS,
-        variable_extraction_function=fill_csv_cli,
+        variable_extraction_function=__fill_csv_cli,
     )
