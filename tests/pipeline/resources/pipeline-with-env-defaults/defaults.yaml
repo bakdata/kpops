@@ -1,5 +1,5 @@
 kubernetes-app:
-  name: ${component_type}
+  name: "${component_type}"
   namespace: example-namespace
 kafka-app:
   app:
@@ -24,7 +24,7 @@ streams-app: # inherits from kafka-app
           cleanup.policy: compact,delete
 
 kafka-connector:
-  name: sink-connector
+  name: "sink-connector"
   app:
     batch.size: "2000"
     behavior.on.malformed.documents: "warn"
