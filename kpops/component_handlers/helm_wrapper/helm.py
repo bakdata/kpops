@@ -217,12 +217,12 @@ class Helm:
                 capture_output=True,
                 text=True,
             )
-            log.debug(process.stdout)
-            return process.stdout
         except subprocess.CalledProcessError as e:
             Helm.parse_helm_command_stderr_output(e.stderr)
             log.debug(e.stdout)
             return e.stdout
+        log.debug(process.stdout)
+        return process.stdout
 
     def __set_global_flags(self, command: list[str]) -> list[str]:
         if self._context:

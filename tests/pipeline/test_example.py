@@ -1,3 +1,8 @@
+import os
+from collections.abc import Iterator
+from unittest import mock
+
+import pytest
 import yaml
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
@@ -8,6 +13,7 @@ runner = CliRunner()
 
 
 class TestExample:
+    @pytest.mark.usefixtures("_mock_env")
     def test_atm_fraud(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,

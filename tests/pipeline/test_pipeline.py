@@ -1,5 +1,8 @@
 import logging
+import os
+from collections.abc import Iterator
 from pathlib import Path
+from unittest import mock
 
 import pytest
 import yaml
@@ -15,7 +18,7 @@ runner = CliRunner()
 RESOURCE_PATH = Path(__file__).parent / "resources"
 PIPELINE_BASE_DIR_PATH = RESOURCE_PATH.parent
 
-
+@pytest.mark.usefixtures("_mock_env")
 class TestPipeline:
     def test_python_api(self):
         pipeline = kpops.generate(
