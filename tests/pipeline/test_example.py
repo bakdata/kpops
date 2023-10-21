@@ -1,7 +1,3 @@
-import os
-from collections.abc import Iterator
-from unittest import mock
-
 import pytest
 import yaml
 from snapshottest.module import SnapshotTest
