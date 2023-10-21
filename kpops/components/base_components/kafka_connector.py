@@ -87,7 +87,7 @@ class KafkaConnector(PipelineComponent, ABC):
         component_name = values["prefix"] + values["name"]
         connector_name: str | None = app.get("name")
         if connector_name is not None and connector_name != component_name:
-            msg = "Connector name should be the same as component name"
+            msg = f"Connector name '{connector_name}' should be the same as component name '{component_name}'"
             raise ValueError(msg)
         app["name"] = component_name
         return app

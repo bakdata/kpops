@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kpops"
-version = "2.0.9"
+version = "2.0.10"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
 authors = ["bakdata <opensource@bakdata.com>"]
 license = "MIT"
@@ -158,7 +158,7 @@ split-on-trailing-comma = false
 extend-immutable-calls = ["typer.Argument"]
 
 [tool.ruff.flake8-type-checking]
-runtime-evaluated-base-classes = ["pydantic.BaseModel", "kpops.components.base_components.kafka_app.KafkaApp"]
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
