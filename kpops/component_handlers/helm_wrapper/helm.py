@@ -210,15 +210,19 @@ class Helm:
     def __execute(self, command: list[str]) -> str:
         command = self.__set_global_flags(command)
         log.debug(f"Executing {' '.join(command)}")
-        process = subprocess.run(
-            command,
-            check=True,
-            capture_output=True,
-            text=True,
-        )
-        Helm.parse_helm_command_stderr_output(process.stderr)
-        log.debug(process.stdout)
-        return process.stdout
+        try:
+            process = subprocess.run(
+                command,
+                check=True,
+                capture_output=True,
+                text=True,
+            )
+            log.debug(process.stdout)
+            return process.stdout
+        except subprocess.CalledProcessError as e:
+            Helm.parse_helm_command_stderr_output(e.stderr)
+            log.debug(e.stdout)
+            return e.stdout
 
     def __set_global_flags(self, command: list[str]) -> list[str]:
         if self._context:
