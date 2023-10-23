@@ -21,7 +21,7 @@ class TestProducerApp:
     PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
     PRODUCER_APP_CLEAN_NAME = "test-producer-app-with-long-n-clean"
 
-    @pytest.fixture
+    @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
             schema_handler=AsyncMock(),
@@ -29,7 +29,7 @@ class TestProducerApp:
             topic_handler=AsyncMock(),
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def config(self) -> PipelineConfig:
         return PipelineConfig(
             defaults_path=DEFAULTS_PATH,
@@ -40,7 +40,7 @@ class TestProducerApp:
             ),
         )
 
-    @pytest.fixture
+    @pytest.fixture()
     def producer_app(
         self, config: PipelineConfig, handlers: ComponentHandlers
     ) -> ProducerApp:

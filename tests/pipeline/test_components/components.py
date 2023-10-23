@@ -44,7 +44,8 @@ class ShouldInflate(StreamsApp):
                         config=self.config,
                         handlers=self.handlers,
                         namespace="example-namespace",
-                        app={  # type: ignore # FIXME
+                        # FIXME
+                        app={  # type: ignore[reportGeneralTypeIssues]
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },
@@ -64,7 +65,7 @@ class ShouldInflate(StreamsApp):
                         name=f"{self.name}-inflated-streams-app",
                         config=self.config,
                         handlers=self.handlers,
-                        to=ToSection(  # type: ignore
+                        to=ToSection(  # type: ignore[reportGeneralTypeIssues]
                             topics={
                                 TopicName(
                                     f"{self.full_name}-" + "${component_name}"
