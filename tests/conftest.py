@@ -6,11 +6,11 @@ import pytest
 
 
 @pytest.fixture()
-def _mock_env() -> Iterator[None]:
+def mock_env() -> Iterator[os._Environ[str]]:
     """Clear ``os.environ``.
 
-    :yield: None. Prevents the function and the mock
+    :yield: ``os.environ``. Prevents the function and the mock
         context from exiting.
     """
     with mock.patch.dict(os.environ, clear=True):
-        yield
+        yield os.environ

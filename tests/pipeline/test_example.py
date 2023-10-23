@@ -8,7 +8,7 @@ from kpops.cli.main import app
 runner = CliRunner()
 
 
-@pytest.mark.usefixtures("_mock_env")
+@pytest.mark.usefixtures("mock_env")
 class TestExample:
     def test_atm_fraud(self, snapshot: SnapshotTest):
         result = runner.invoke(
