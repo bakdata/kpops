@@ -45,6 +45,16 @@ jobs:
           else
             poetry run pre-commit run ruff --all-files --show-diff-on-failure
           fi;
+      - name: Lint (ruff)
+        shell: bash
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
+          then
+            echo "::add-matcher::.github/ruff-matcher.json"
+            poetry run ruff check . --config pyproject.toml --output-format text --no-fix
+          else
+            poetry run pre-commit run ruff --all-files --show-diff-on-failure
+          fi;
 
       - name: Formatting (ruff)
         run: poetry run pre-commit run ruff-format --all-files --show-diff-on-failure
