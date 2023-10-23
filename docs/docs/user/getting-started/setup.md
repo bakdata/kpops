@@ -14,6 +14,8 @@ In this part, you will set up KPOps. This includes:
 
 ## Setup Kubernetes with k3d
 
+<!-- dprint-ignore-start -->
+
 If you don't have access to an existing Kubernetes cluster, this section will guide you through creating a local cluster. We recommend the lightweight Kubernetes distribution [k3s](https://k3s.io/){target=_blank} for this. [k3d](https://k3d.io/){target=_blank} is a wrapper around k3s in Docker that lets you get started fast.
 
    1. You can install k3d with its installation script:
@@ -36,8 +38,6 @@ If you don't have access to an existing Kubernetes cluster, this section will gu
       k3d cluster create kpops --k3s-arg "--no-deploy=traefik@server:*" --registry-use k3d-kpops-registry.localhost:12345
       ```
 
-<!-- dprint-ignore-start -->
-
 !!! Note
     Creating a new k3d cluster automatically configures `kubectl` to connect to the local cluster by modifying your `~/.kube/config`. In case you manually set the `KUBECONFIG` variable or don't want k3d to modify your config, k3d offers [many other options](https://k3d.io/v5.4.6/usage/kubeconfig/#handling-kubeconfigs){target=_blank}.
 
@@ -46,6 +46,8 @@ If you don't have access to an existing Kubernetes cluster, this section will gu
 You can check the cluster status with `kubectl get pods -n kube-system`. If all returned elements have a `STATUS` of `Running` or `Completed`, then the cluster is up and running.
 
 ## Deploy Kafka
+
+<!-- dprint-ignore-start -->
 
 [Kafka](https://kafka.apache.org/){target=_blank} is an open-source data streaming platform. More information about Kafka can be found in the [documentation](https://kafka.apache.org/documentation/){target=_blank}. To deploy Kafka, this guide uses Confluent's [Helm chart](https://github.com/confluentinc/cp-helm-charts){target=_blank}.
 
@@ -87,8 +89,6 @@ You can check the cluster status with `kubectl get pods -n kube-system`. If all 
          --wait \
          k8kafka confluentinc/cp-helm-charts
       ```
-
-<!-- dprint-ignore-start -->
 
 ??? example "Kafka Helm chart values (`kafka.yaml`)"
     An example value configuration for Confluent's Helm chart. This configuration deploys a single Kafka Broker, a Schema Registry, Zookeeper, Kafka Rest Proxy, and Kafka Connect with minimal resources.
