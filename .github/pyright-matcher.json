@@ -4,7 +4,7 @@
             "owner": "pyright",
             "pattern": [
                 {
-                    "regexp": "^(.*\\.py)$",
+                    "regexp": "^(\\S*\\.py)$",
                     "file": 1
                 },
                 {
