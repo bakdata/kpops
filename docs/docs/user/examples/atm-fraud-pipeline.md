@@ -72,6 +72,8 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 ### Deploying the ATM fraud detection pipeline
 
+<!-- dprint-ignore-start -->
+
 1. Export environment variables in your terminal:
 
     ```shell
@@ -87,8 +89,6 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
     --config ./examples/bakdata/atm-fraud-detection/config.yaml \
     --execute
     ```
-
-<!-- dprint-ignore-start -->
 
 !!! Note
     You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be
@@ -119,6 +119,8 @@ You should be able to see pipeline shown in the image below:
     Kafka Connect needs some time to set up the connector. 
     Moreover, Streams Explorer needs a while to scrape the information from Kafka connect.
     Therefore, it might take a bit until you see the whole graph.
+
+<!-- dprint-ignore-end -->
 
 ## Teardown resources
 

@@ -67,6 +67,8 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 ### Deploying the Word-count pipeline
 
+<!-- dprint-ignore-start -->
+
 1. Copy the [configuration](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops){target=_blank} from the [kpops-examples repository](https://github.com/bakdata/kpops-examples/tree/main/word-count){target=_blank} into `kpops>examples>bakdata>word-count` like so:
 
     ```
@@ -96,8 +98,6 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
     --config ./examples/bakdata/word-count/config.yaml \
     --execute
     ```
-
-<!-- dprint-ignore-start -->
 
 !!! Note
     You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be
@@ -144,6 +144,8 @@ helm --namespace kpops uninstall redis
 
 ### Word-count pipeline
 
+<!-- dprint-ignore-start -->
+
 1. Export environment variables in your terminal.
 
     ```shell
@@ -161,8 +163,6 @@ helm --namespace kpops uninstall redis
     --execute
     ```
 
-<!-- dprint-ignore-start -->
-
 !!! Note
     You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be
     destroyed correctly.
@@ -173,6 +173,8 @@ helm --namespace kpops uninstall redis
 <!-- dprint-ignore-end -->
 
 ## Common errors
+
+<!-- dprint-ignore-start -->
 
 - `deploy` fails:
     1. Read the error message.
@@ -185,3 +187,5 @@ helm --namespace kpops uninstall redis
     2. Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
     3. Run `clean`.
     4. If `clean` fails, follow the steps in [teardown](../teardown).
+
+<!-- dprint-ignore-end -->
