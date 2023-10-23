@@ -6,7 +6,11 @@ from enum import Enum
 from typing import Literal
 
 from pydantic.fields import FieldInfo
-from pydantic.json_schema import model_json_schema, models_json_schema, GenerateJsonSchema
+from pydantic.json_schema import (
+    GenerateJsonSchema,
+    model_json_schema,
+    models_json_schema,
+)
 
 from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
@@ -17,6 +21,7 @@ from kpops.utils.docstring import describe_object
 class SchemaScope(str, Enum):
     PIPELINE = "pipeline"
     CONFIG = "config"
+
 
 class MultiComponentGenerateJsonSchema(GenerateJsonSchema):
     ...
