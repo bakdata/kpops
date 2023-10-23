@@ -134,6 +134,8 @@ helm --namespace kpops uninstall postgresql
 
 ### ATM fraud pipeline
 
+<!-- dprint-ignore-start -->
+
 1. Export environment variables in your terminal.
 
     ```shell
@@ -151,7 +153,6 @@ helm --namespace kpops uninstall postgresql
     --execute
     ```
 
-<!-- dprint-ignore-start --> 
 !!! Note
     You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be
     destroyed correctly.
