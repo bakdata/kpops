@@ -210,17 +210,13 @@ class Helm:
     def __execute(self, command: list[str]) -> str:
         command = self.__set_global_flags(command)
         log.debug(f"Executing {' '.join(command)}")
-        try:
-            process = subprocess.run(
-                command,
-                check=True,
-                capture_output=True,
-                text=True,
-            )
-        except subprocess.CalledProcessError as e:
-            Helm.parse_helm_command_stderr_output(e.stderr)
-            log.debug(e.stdout)
-            return e.stdout
+        process = subprocess.run(
+            command,
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        Helm.parse_helm_command_stderr_output(process.stderr)
         log.debug(process.stdout)
         return process.stdout
 
