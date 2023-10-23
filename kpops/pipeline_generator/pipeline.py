@@ -86,15 +86,31 @@ class PipelineComponents(BaseModel):
         reverse: bool,
         runner: Callable[[PipelineComponent], Coroutine],
     ):
+        print("This are components for subgraph")
+        for component in components:
+            print(component.id)
+
+        print("built graph")
+        print(self.graph.nodes)
+        print(self.graph.edges)
+
         async def run_parallel_tasks(tasks):
-            await asyncio.gather(*tasks)
+            asyncio_tasks = []
+            for coroutine in tasks:
+                print("this is coroutine")
+                print(coroutine)
+                asyncio_tasks.append((asyncio.create_task(coroutine)))
+            await asyncio.gather(*asyncio_tasks)
 
         async def run_graph_tasks(pending_tasks: list[Awaitable]):
             for pending_task in pending_tasks:
                 await pending_task
 
         nodes = [node_component.id for node_component in components]
-        transformed_graph = self.graph.subgraph(nodes).copy()
+        transformed_graph = self.graph.copy()
+        print("This is subgraph")
+        print(transformed_graph.nodes)
+        print(transformed_graph.edges)
 
         if reverse:
             transformed_graph = transformed_graph.reverse()
@@ -105,13 +121,16 @@ class PipelineComponents(BaseModel):
         for node in self.graph:
             predecessors = list(self.graph.predecessors(node))
             if not predecessors:
+                print("Here the transformation")
+                print(node)
                 transformed_graph.add_edge(root_node, node)
 
         layers_graph = list(nx.bfs_layers(transformed_graph, root_node))
 
         sorted_tasks = []
-
+        print(layers_graph)
         for layer in layers_graph[1:]:
+            print(layer)
             parallel_tasks = self.__get_parallel_task_from(layer, runner)
 
             if parallel_tasks:
@@ -124,9 +143,11 @@ class PipelineComponents(BaseModel):
 
     def __get_parallel_task_from(self, layer, runner):
         parallel_tasks = []
+
         for node_in_layer in layer:
             component_node = self._component_index[node_in_layer]
             if component_node.component is not None and not component_node.is_topic:
+                print(component_node.name)
                 parallel_tasks.append(runner(component_node.component))
 
         return parallel_tasks
@@ -219,6 +240,8 @@ class Pipeline:
         self.parse_components(component_list)
         self.components.generate_graph()
         self.validate()
+        print("Este es graph")
+        print(self.components.graph.nodes)
 
     @classmethod
     def load_from_yaml(
@@ -257,7 +280,7 @@ class Pipeline:
 
         return cls(main_content, env_content, registry, config, handlers)
 
-    async def build_execution_graph_from(
+    def build_execution_graph_from(
         self,
         components: list[PipelineComponent],
         reverse: bool,

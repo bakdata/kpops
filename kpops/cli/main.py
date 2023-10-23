@@ -306,6 +306,7 @@ def deploy(
     verbose: bool = VERBOSE_OPTION,
 ):
     async def deploy_runner(component: PipelineComponent):
+        print("Entre en runner de ", component.name )
         await component.deploy(dry_run)
 
     async def async_deploy():
@@ -317,10 +318,7 @@ def deploy(
         pipeline_tasks = get_concurrently_tasks_to_execute(
             pipeline, steps, filter_type, deploy_runner
         )
-        test = await pipeline_tasks
-        print(test)
-        test2 = await test
-        print(test2)
+        await pipeline_tasks
 
     asyncio.run(async_deploy())
 
