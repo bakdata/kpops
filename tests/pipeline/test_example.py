@@ -1,3 +1,4 @@
+import pytest
 import yaml
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
@@ -7,6 +8,7 @@ from kpops.cli.main import app
 runner = CliRunner()
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestExample:
     def test_atm_fraud(self, snapshot: SnapshotTest):
         result = runner.invoke(
