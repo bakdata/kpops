@@ -74,19 +74,19 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 1. Export environment variables in your terminal:
 
-   ```shell
-   export DOCKER_REGISTRY=bakdata && \
-   export NAMESPACE=kpops
-   ```
+    ```shell
+    export DOCKER_REGISTRY=bakdata && \
+    export NAMESPACE=kpops
+    ```
 
 2. Deploy the pipeline
 
-   ```shell
-   poetry run kpops deploy ./examples/bakdata/atm-fraud-detection/pipeline.yaml \
-   --pipeline-base-dir ./examples \
-   --config ./examples/bakdata/atm-fraud-detection/config.yaml \
-   --execute
-   ```
+    ```shell
+    poetry run kpops deploy ./examples/bakdata/atm-fraud-detection/pipeline.yaml \
+    --pipeline-base-dir ./examples \
+    --config ./examples/bakdata/atm-fraud-detection/config.yaml \
+    --execute
+    ```
 
 <!-- dprint-ignore-start -->
 
