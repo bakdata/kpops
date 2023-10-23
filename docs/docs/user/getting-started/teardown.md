@@ -36,7 +36,7 @@ In case that doesn't work, the pipeline can always be taken down manually with `
     --execute
     ```
 
-<!-- dprint-ignore-start -->
+<!-- dprint-ignore-end -->
 
 ## Infrastructure
 
