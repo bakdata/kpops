@@ -1,17 +1,14 @@
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from pydantic import BaseConfig, BaseSettings, Field
+from pydantic.env_settings import SettingsSourceCallable
 
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.yaml_loading import load_yaml_file
-
-if TYPE_CHECKING:
-    from collections.abc import Callable
-
-    from pydantic.env_settings import SettingsSourceCallable
 
 ENV_PREFIX = "KPOPS_"
 

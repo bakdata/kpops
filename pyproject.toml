@@ -45,7 +45,7 @@ pytest-mock = "^3.10.0"
 pytest-timeout = "^2.1.0"
 snapshottest = "^0.6.0"
 pre-commit = "^2.19.0"
-ruff = "^0.0.292"
+ruff = "^0.1.1"
 black = "^23.7.0"
 typer-cli = "^0.0.13"
 pyright = "^1.1.314"
@@ -60,7 +60,6 @@ optional = true
 mkdocs = "^1.4.2"
 mkdocs-macros-plugin = "^0.7.0"
 mkdocs-material = "^9.0.0"
-mkdocs-material-extensions = "^1.1.1"
 mkdocs-glightbox = "^0.3.1"
 mkdocs-exclude-search = "^0.6.5"
 mike = "^1.1.2"
@@ -136,7 +135,6 @@ select = [
   "RET", # flake8-return
   "SLOT", # flake8-slots
   "SIM", # flake8-simplify
-  "TCH", # flake8-type-checking, configure correctly and add
   "PTH", # flake8-use-pathlib
   "PGH", # pygrep-hooks
   "PL", # Pylint
