@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
@@ -85,7 +86,10 @@ class TestKafkaConnector:
         assert connector.app.name == CONNECTOR_FULL_NAME
 
         with pytest.raises(
-            ValueError, match="Connector name should be the same as component name"
+            ValueError,
+            match=re.escape(
+                f"Connector name 'different-name' should be the same as component name '{CONNECTOR_FULL_NAME}'"
+            ),
         ):
             KafkaConnector(
                 name=CONNECTOR_NAME,
@@ -96,7 +100,10 @@ class TestKafkaConnector:
             )
 
         with pytest.raises(
-            ValueError, match="Connector name should be the same as component name"
+            ValueError,
+            match=re.escape(
+                f"Connector name '' should be the same as component name '{CONNECTOR_FULL_NAME}'"
+            ),
         ):
             KafkaConnector(
                 name=CONNECTOR_NAME,
