@@ -60,6 +60,7 @@
             "type": "object"
         },
         "HelmApp": {
+            "additionalProperties": true,
             "description": "Kubernetes app managed through Helm with an associated Helm chart.",
             "properties": {
                 "app": {
@@ -68,15 +69,18 @@
                             "$ref": "#/definitions/KubernetesAppConfig"
                         }
                     ],
-                    "description": "Application-specific settings",
-                    "title": "App"
+                    "description": "Application-specific settings"
                 },
                 "from": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/definitions/FromSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
                 },
@@ -97,36 +101,41 @@
                     "type": "string"
                 },
                 "repo_config": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/definitions/HelmRepoConfig"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
-                    "title": "Repo Config"
+                    "default": null,
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
                 "to": {
-                    "allOf": [
+                    "anyOf": [
                         {
                             "$ref": "#/definitions/ToSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "Topic(s) into which the component will write output",
-                    "title": "To"
-                },
-                "type": {
-                    "default": "helm-app",
-                    "description": "Kubernetes app managed through Helm with an associated Helm chart.",
-                    "enum": [
-                        "helm-app"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
                 },
                 "version": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Helm chart version",
-                    "title": "Version",
-                    "type": "string"
+                    "title": "Version"
                 }
             },
             "required": [
@@ -424,7 +433,8 @@
             "type": "object"
         },
         "KubernetesAppConfig": {
-            "description": "Settings specific to Kubernetes apps.",
+            "additionalProperties": true,
+            "description": "Settings specific to Kubernetes Apps.",
             "properties": {},
             "title": "KubernetesAppConfig",
             "type": "object"

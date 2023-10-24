@@ -49,7 +49,7 @@ class ConnectWrapper:
         config_json = connector_config.model_dump()
         connect_data = {"name": connector_config.name, "config": config_json}
         response = httpx.post(
-            url=f"{self.url}/connectors", headers=HEADERS, json=connect_data
+            url=f"{self.url}connectors", headers=HEADERS, json=connect_data
         )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_config.name} created.")
@@ -74,7 +74,7 @@ class ConnectWrapper:
             msg = "Connector name not set"
             raise Exception(msg)
         response = httpx.get(
-            url=f"{self.url}/connectors/{connector_name}", headers=HEADERS
+            url=f"{self.url}connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.OK:
             log.info(f"Connector {connector_name} exists.")
@@ -105,7 +105,7 @@ class ConnectWrapper:
         connector_name = connector_config.name
         config_json = connector_config.model_dump()
         response = httpx.put(
-            url=f"{self.url}/connectors/{connector_name}/config",
+            url=f"{self.url}connectors/{connector_name}/config",
             headers=HEADERS,
             json=config_json,
         )
@@ -136,7 +136,7 @@ class ConnectWrapper:
         :return: List of all found errors
         """
         response = httpx.put(
-            url=f"{self.url}/connector-plugins/{connector_config.class_name}/config/validate",
+            url=f"{self.url}connector-plugins/{connector_config.class_name}/config/validate",
             headers=HEADERS,
             json=connector_config.model_dump(),
         )
@@ -166,7 +166,7 @@ class ConnectWrapper:
         :raises ConnectorNotFoundException: Connector not found
         """
         response = httpx.delete(
-            url=f"{self.url}/connectors/{connector_name}", headers=HEADERS
+            url=f"{self.url}connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Connector {connector_name} deleted.")

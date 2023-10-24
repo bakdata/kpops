@@ -1,20 +1,18 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import override
 
-from pydantic import AliasChoices, Field, AnyHttpUrl, parse_obj_as
+from pydantic import AnyHttpUrl, Field, TypeAdapter
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
     SettingsConfigDict,
 )
+from typing_extensions import override
 
 from kpops.cli.settings_sources import YamlConfigSettingsSource
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.docstring import describe_object
-from kpops.utils.yaml_loading import load_yaml_file
-
 
 ENV_PREFIX = "KPOPS_"
 
@@ -42,8 +40,7 @@ class SchemaRegistryConfig(BaseSettings):
     url: AnyHttpUrl = Field(
         # For validating URLs use parse_obj_as
         # https://github.com/pydantic/pydantic/issues/1106
-        default=parse_obj_as(AnyHttpUrl, "http://localhost:8081"),
-        validation_alias=f"{ENV_PREFIX}SCHEMA_REGISTRY_URL",
+        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8081"),
         description="Address of the Schema Registry.",
     )
 
@@ -52,8 +49,7 @@ class KafkaRestConfig(BaseSettings):
     """Configuration for Kafka REST Proxy."""
 
     url: AnyHttpUrl = Field(
-        default=parse_obj_as(AnyHttpUrl, "http://localhost:8082"),
-        validation_alias=f"{ENV_PREFIX}KAFKA_REST_URL",
+        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8082"),
         description="Address of the Kafka REST Proxy.",
     )
 
@@ -62,8 +58,7 @@ class KafkaConnectConfig(BaseSettings):
     """Configuration for Kafka Connect."""
 
     url: AnyHttpUrl = Field(
-        default=parse_obj_as(AnyHttpUrl, "http://localhost:8083"),
-        validation_alias=f"{ENV_PREFIX}KAFKA_CONNECT_URL",
+        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8083"),
         description="Address of Kafka Connect.",
     )
 
@@ -92,7 +87,6 @@ class KpopsConfig(BaseSettings):
             "broker1:9092,broker2:9092,broker3:9092",
         ],
         description="The comma separated Kafka brokers address.",
-        validation_alias=AliasChoices("brokers", f"{ENV_PREFIX}kafka_brokers"),
     )
     defaults_filename_prefix: str = Field(
         default="defaults",
