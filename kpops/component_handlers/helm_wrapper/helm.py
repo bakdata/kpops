@@ -34,6 +34,8 @@ class Helm:
             msg = f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
             raise RuntimeError(msg)
 
+
+
     def add_repo(
         self,
         repository_name: str,
@@ -71,7 +73,7 @@ class Helm:
         else:
             self.__execute(["helm", "repo", "update"])
 
-    def upgrade_install(
+    async def upgrade_install(
         self,
         release_name: str,
         chart: str,
@@ -102,7 +104,7 @@ class Helm:
                 command.append("--dry-run")
             return self.__execute(command)
 
-    def uninstall(
+    async def uninstall(
         self,
         namespace: str,
         release_name: str,

@@ -240,8 +240,6 @@ class Pipeline:
         self.parse_components(component_list)
         self.components.generate_graph()
         self.validate()
-        print("Este es graph")
-        print(self.components.graph.nodes)
 
     @classmethod
     def load_from_yaml(

@@ -306,7 +306,6 @@ def deploy(
     verbose: bool = VERBOSE_OPTION,
 ):
     async def deploy_runner(component: PipelineComponent):
-        print("Entre en runner de ", component.name )
         await component.deploy(dry_run)
 
     async def async_deploy():
