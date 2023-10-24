@@ -32,6 +32,9 @@ theme:
 plugins:
   - macros
   - search
+  - exclude-search:
+      exclude:
+        - resources/*
   - glightbox
 
 extra:
