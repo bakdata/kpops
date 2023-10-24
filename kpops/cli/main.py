@@ -222,7 +222,7 @@ def schema(
         \n\n\n
         pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide [COMPONENTS_MODULES].
         \n\n\n
-        config: Schema of PipelineConfig.""",
+        config: Schema of KpopsConfig.""",
     ),
     components_module: Optional[str] = COMPONENTS_MODULES,
     include_stock_components: bool = typer.Option(

@@ -246,9 +246,9 @@ def write_csv_to_md_file(
 
 
 def fill_csv_pipeline_config(target: Path) -> None:
-    """Append all ``PipelineConfig``-related env vars to a ``.csv`` file.
+    """Append all ``KpopsConfig``-related env vars to a ``.csv`` file.
 
-    Finds all ``PipelineConfig``-related env vars and appends them to
+    Finds all ``KpopsConfig``-related env vars and appends them to
     a ``.csv`` file.
 
     :param target: The path to the `.csv` file. Note that it must already
