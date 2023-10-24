@@ -79,7 +79,7 @@ class HelmApp(KubernetesApp):
     @property
     def helm_flags(self) -> HelmFlags:
         """Return shared flags for Helm commands."""
-        auth_flags = self.repo_config.repo_auth_flags.dict() if self.repo_config else {}
+        auth_flags = self.repo_config.repo_auth_flags.model_dump() if self.repo_config else {}
         return HelmFlags(
             **auth_flags,
             version=self.version,
@@ -90,7 +90,7 @@ class HelmApp(KubernetesApp):
     def template_flags(self) -> HelmTemplateFlags:
         """Return flags for Helm template command."""
         return HelmTemplateFlags(
-            **self.helm_flags.dict(),
+            **self.helm_flags.model_dump(),
             api_version=self.config.helm_config.api_version,
         )
 
@@ -108,7 +108,7 @@ class HelmApp(KubernetesApp):
     @property
     def deploy_flags(self) -> HelmUpgradeInstallFlags:
         """Return flags for Helm upgrade install command."""
-        return HelmUpgradeInstallFlags(**self.helm_flags.dict())
+        return HelmUpgradeInstallFlags(**self.helm_flags.model_dump())
 
     @override
     def deploy(self, dry_run: bool) -> None:
@@ -139,7 +139,7 @@ class HelmApp(KubernetesApp):
 
         :returns: Thte values to be used by Helm
         """
-        return self.app.dict(by_alias=True, exclude_none=True, exclude_defaults=True)
+        return self.app.model_dump(by_alias=True, exclude_none=True, exclude_defaults=True)
 
     def print_helm_diff(self, stdout: str) -> None:
         """Print the diff of the last and current release of this component.
@@ -156,6 +156,7 @@ class HelmApp(KubernetesApp):
         new_release = Helm.load_manifest(stdout)
         self.helm_diff.log_helm_diff(log, current_release, new_release)
 
+    # TODO(Ivan Yordanov): replace with a function decorated with `@model_serializer`
     @override
     def dict(self, *, exclude=None, **kwargs) -> dict[str, Any]:
         # HACK: workaround for Pydantic to exclude cached properties during model export
@@ -163,4 +164,4 @@ class HelmApp(KubernetesApp):
             exclude = set()
         exclude.add("helm")
         exclude.add("helm_diff")
-        return super().dict(exclude=exclude, **kwargs)
+        return super().model_dump(exclude=exclude, **kwargs)
