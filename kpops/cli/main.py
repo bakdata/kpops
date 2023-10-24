@@ -69,7 +69,22 @@ PIPELINE_PATH_ARG: Path = typer.Argument(
     help="Path to YAML with pipeline definition",
 )
 
-PIPELINE_STEPS: str | None = typer.Option(
+PROJECT_PATH: Path = typer.Argument(
+    default=...,
+    exists=True,
+    file_okay=False,
+    dir_okay=True,
+    readable=True,
+    resolve_path=True,
+    help="Path for a new KPOps project.",
+)
+
+PROJECT_NAME: Optional[str] = typer.Option(
+    default=None,
+    help="Name of the new KPOps project. A new directory with the provided name will be created. Leave empty to use the existing dir provided via `--path`.",
+)
+
+PIPELINE_STEPS: Optional[str] = typer.Option(
     default=None,
     envvar=f"{ENV_PREFIX}PIPELINE_STEPS",
     help="Comma separated list of steps to apply the command on",
@@ -207,6 +222,28 @@ def create_pipeline_config(
 
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+    help="Create a new a KPOps project."
+)
+def init(
+    path: Path = PROJECT_PATH,
+    name: Optional[str] = PROJECT_NAME,
+):
+    if name:
+        path = path / name
+    elif next(path.iterdir(), False):
+        log.warning("Please provide a path to an empty directory.")
+        return
+    path.mkdir(exist_ok=True)
+    pipeline_name = "pipeline"
+    defaults_name = "defaults"
+    config_name = "config"
+    for file_name in [pipeline_name, defaults_name, config_name]:
+        file_name = file_name + ".yaml"
+        Path(path / file_name).touch(exist_ok=False)
+
+
+
+@app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
     help="""
     Generate json schema.
 
@@ -257,7 +294,6 @@ def generate(
 
     if not template:
         pipeline.print_yaml()
-
     if template:
         steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
         for component in steps_to_apply:
@@ -267,7 +303,6 @@ def generate(
             "The following flags are considered only when `--template` is set: \n \
                 '--steps'"
         )
-
     return pipeline
 
 
