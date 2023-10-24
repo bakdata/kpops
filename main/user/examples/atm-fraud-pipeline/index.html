@@ -1720,16 +1720,18 @@ Add the helm repository:</p>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>kubectl<span class="w"> </span>port-forward<span class="w"> </span>--namespace<span class="w"> </span>kpops<span class="w"> </span>service/k8kafka-cp-kafka-connect<span class="w"> </span><span class="m">8083</span>:8083
 </span></code></pre></div></td></tr></table></div>
 <h3 id="deploying-the-atm-fraud-detection-pipeline">Deploying the ATM fraud detection pipeline<a class="headerlink" href="#deploying-the-atm-fraud-detection-pipeline" title="Permanent link">&para;</a></h3>
+<!-- dprint-ignore-start -->
+
 <ol>
-<li>Export environment variables in your terminal:</li>
-</ol>
+<li>
+<p>Export environment variables in your terminal:</p>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
 <span class="normal"><a href="#__codelineno-5-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DOCKER_REGISTRY</span><span class="o">=</span>bakdata<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="nb">export</span><span class="w"> </span><span class="nv">NAMESPACE</span><span class="o">=</span>kpops
 </span></code></pre></div></td></tr></table></div>
-<ol>
-<li>Deploy the pipeline</li>
-</ol>
+</li>
+<li>
+<p>Deploy the pipeline</p>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
 <span class="normal"><a href="#__codelineno-6-2">2</a></span>
 <span class="normal"><a href="#__codelineno-6-3">3</a></span>
@@ -1738,8 +1740,8 @@ Add the helm repository:</p>
 </span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3"></a>--config<span class="w"> </span>./examples/bakdata/atm-fraud-detection/config.yaml<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4"></a>--execute
 </span></code></pre></div></td></tr></table></div>
-<!-- dprint-ignore-start -->
-
+</li>
+</ol>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You can use the <code>--dry-run</code> flag instead of the <code>--execute</code> flag and check the logs if your pipeline will be
@@ -1767,12 +1769,16 @@ You should be able to see pipeline shown in the image below:</p>
 Moreover, Streams Explorer needs a while to scrape the information from Kafka connect.
 Therefore, it might take a bit until you see the whole graph.</p>
 </div>
+<!-- dprint-ignore-end -->
+
 <h2 id="teardown-resources">Teardown resources<a class="headerlink" href="#teardown-resources" title="Permanent link">&para;</a></h2>
 <h3 id="postrgresql">PostrgreSQL<a class="headerlink" href="#postrgresql" title="Permanent link">&para;</a></h3>
 <p>PostgreSQL can be uninstalled by running the following command:</p>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a>helm<span class="w"> </span>--namespace<span class="w"> </span>kpops<span class="w"> </span>uninstall<span class="w"> </span>postgresql
 </span></code></pre></div></td></tr></table></div>
 <h3 id="atm-fraud-pipeline">ATM fraud pipeline<a class="headerlink" href="#atm-fraud-pipeline" title="Permanent link">&para;</a></h3>
+<!-- dprint-ignore-start -->
+
 <ol>
 <li>
 <p>Export environment variables in your terminal.</p>
@@ -1795,7 +1801,6 @@ Therefore, it might take a bit until you see the whole graph.</p>
 </span></code></pre></div></td></tr></table></div>
 </li>
 </ol>
-<!-- dprint-ignore-start -->
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>You can use the <code>--dry-run</code> flag instead of the <code>--execute</code> flag and check the logs if your pipeline will be
