@@ -158,7 +158,7 @@ class HelmApp(KubernetesApp):
 
     # TODO(Ivan Yordanov): replace with a function decorated with `@model_serializer`
     @override
-    def dict(self, *, exclude=None, **kwargs) -> dict[str, Any]:
+    def model_dump(self, *, exclude=None, **kwargs) -> dict[str, Any]:
         # HACK: workaround for Pydantic to exclude cached properties during model export
         if exclude is None:
             exclude = set()
