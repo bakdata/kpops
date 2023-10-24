@@ -1,4 +1,26 @@
 # Changelog
+## [2.0.11](https://github.com/bakdata/kpops/releases/tag/2.0.11) - Release Date: [2023-10-24]
+
+### 🐛 Fixes
+
+- Fix early exit upon Helm exit code 1 - [#376](https://github.com/bakdata/kpops/pull/376)
+
+- Fix docs setup page list indentation - [#377](https://github.com/bakdata/kpops/pull/377)
+
+
+### 📝 Documentation
+
+- Migrate deprecated mkdocs-material-extensions - [#378](https://github.com/bakdata/kpops/pull/378)
+
+- Fix docs setup page list indentation - [#377](https://github.com/bakdata/kpops/pull/377)
+
+- Exclude resources from docs search - [#371](https://github.com/bakdata/kpops/pull/371)
+
+
+
+
+
+
 ## [2.0.10](https://github.com/bakdata/kpops/releases/tag/2.0.10) - Release Date: [2023-10-12]
 
 ### 🌀 Miscellaneous
