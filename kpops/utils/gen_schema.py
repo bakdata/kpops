@@ -12,9 +12,9 @@ from pydantic.json_schema import (
     models_json_schema,
 )
 
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.config import KpopsConfig
 from kpops.utils.docstring import describe_object
 
 
@@ -161,5 +161,5 @@ def gen_pipeline_schema(
 
 def gen_config_schema() -> None:
     """Generate a json schema from the model of pipeline config."""
-    schema = model_json_schema(PipelineConfig)
+    schema = model_json_schema(KpopsConfig)
     print(json.dumps(schema, indent=4, sort_keys=True))

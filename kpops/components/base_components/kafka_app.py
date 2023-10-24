@@ -11,10 +11,8 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import trim_release_name
-from kpops.components.base_components.kubernetes_app import (
-    KubernetesApp,
-    KubernetesAppConfig,
-)
+from kpops.components.base_components.helm_app import HelmApp
+from kpops.components.base_components.kubernetes_app import KubernetesAppConfig
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
@@ -53,7 +51,7 @@ class KafkaAppConfig(KubernetesAppConfig):
     )
 
 
-class KafkaApp(KubernetesApp, ABC):
+class KafkaApp(HelmApp, ABC):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.

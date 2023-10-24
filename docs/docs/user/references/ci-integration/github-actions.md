@@ -1,8 +1,6 @@
 # GitHub Actions integration
 
-We provided a GitHub composite action called
-[kpops-runner](https://github.com/bakdata/kpops/tree/main/actions/kpops-runner/action.yaml)
-that installs all the necessary dependencies and runs KPOps commands with the given parameters.
+We provided a GitHub composite action `bakdata/kpops` that installs and executes KPOps commands with the given parameters.
 
 ## Input Parameters
 
@@ -28,7 +26,7 @@ steps:
   # ...
   # This step is useful for debugging reasons
   - name: Generate Kafka pipeline
-    uses: bakdata/kpops/actions/kpops-runner@main
+    uses: bakdata/kpops@main
     with:
       command: generate
       working-directory: home/my-kpops-root-dir
@@ -36,7 +34,7 @@ steps:
       kpops-version: 1.2.3
 
   - name: Deploy Kafka pipeline
-    uses: bakdata/kpops/actions/kpops-runner@main
+    uses: bakdata/kpops@main
     with:
       command: deploy --execute
       working-directory: home/my-kpops-root-dir
@@ -45,13 +43,12 @@ steps:
   # ...
 ```
 
-It is possible to execute the KPOps runner on
-a dev version from the [test.pypi](https://test.pypi.org/project/kpops/#history).
+It is possible to use a pre-release KPOps version from [TestPyPI](https://test.pypi.org/project/kpops/#history).
 
 ```yaml
 steps:
   - name: Deploy Kafka pipeline
-    uses: bakdata/kpops/actions/kpops-runner@main
+    uses: bakdata/kpops@main
     with:
       command: deploy --execute
       working-directory: home/my-kpops-root-dir

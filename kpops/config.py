@@ -1,23 +1,26 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import override
 
-from pydantic import AliasChoices, Field
+from pydantic import AliasChoices, Field, AnyHttpUrl, parse_obj_as
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
     SettingsConfigDict,
 )
-from typing_extensions import override
 
 from kpops.cli.settings_sources import YamlConfigSettingsSource
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
+from kpops.utils.docstring import describe_object
+from kpops.utils.yaml_loading import load_yaml_file
+
 
 ENV_PREFIX = "KPOPS_"
 
 
 class TopicNameConfig(BaseSettings):
-    """Configures topic names."""
+    """Configure the topic name variables you can use in the pipeline definition."""
 
     default_output_topic_name: str = Field(
         default="${pipeline_name}-${component_name}",
@@ -29,7 +32,43 @@ class TopicNameConfig(BaseSettings):
     )
 
 
-class PipelineConfig(BaseSettings):
+class SchemaRegistryConfig(BaseSettings):
+    """Configuration for Schema Registry."""
+
+    enabled: bool = Field(
+        default=False,
+        description="Whether the Schema Registry handler should be initialized.",
+    )
+    url: AnyHttpUrl = Field(
+        # For validating URLs use parse_obj_as
+        # https://github.com/pydantic/pydantic/issues/1106
+        default=parse_obj_as(AnyHttpUrl, "http://localhost:8081"),
+        validation_alias=f"{ENV_PREFIX}SCHEMA_REGISTRY_URL",
+        description="Address of the Schema Registry.",
+    )
+
+
+class KafkaRestConfig(BaseSettings):
+    """Configuration for Kafka REST Proxy."""
+
+    url: AnyHttpUrl = Field(
+        default=parse_obj_as(AnyHttpUrl, "http://localhost:8082"),
+        validation_alias=f"{ENV_PREFIX}KAFKA_REST_URL",
+        description="Address of the Kafka REST Proxy.",
+    )
+
+
+class KafkaConnectConfig(BaseSettings):
+    """Configuration for Kafka Connect."""
+
+    url: AnyHttpUrl = Field(
+        default=parse_obj_as(AnyHttpUrl, "http://localhost:8083"),
+        validation_alias=f"{ENV_PREFIX}KAFKA_CONNECT_URL",
+        description="Address of Kafka Connect.",
+    )
+
+
+class KpopsConfig(BaseSettings):
     """Pipeline configuration unrelated to the components."""
 
     defaults_path: Path = Field(
@@ -47,7 +86,7 @@ class PipelineConfig(BaseSettings):
         description="The environment you want to generate and deploy the pipeline to. "
         "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
     )
-    brokers: str = Field(
+    kafka_brokers: str = Field(
         default=...,
         examples=[
             "broker1:9092,broker2:9092,broker3:9092",
@@ -61,34 +100,19 @@ class PipelineConfig(BaseSettings):
     )
     topic_name_config: TopicNameConfig = Field(
         default=TopicNameConfig(),
-        description="Configure the topic name variables you can use in the pipeline definition.",
+        description=describe_object(TopicNameConfig.__doc__),
     )
-    schema_registry_url: str | None = Field(
-        default=None,
-        examples=[
-            "http://localhost:8081",
-        ],
-        description="Address of the Schema Registry.",
+    schema_registry: SchemaRegistryConfig = Field(
+        default=SchemaRegistryConfig(),
+        description=describe_object(SchemaRegistryConfig.__doc__),
     )
-    kafka_rest_host: str | None = Field(
-        default=None,
-        validation_alias=AliasChoices(
-            f"{ENV_PREFIX}rest_proxy_host", "kafka_rest_host"
-        ),
-        examples=[
-            "http://localhost:8082",
-        ],
-        description="Address of the Kafka REST Proxy.",
+    kafka_rest: KafkaRestConfig = Field(
+        default=KafkaRestConfig(),
+        description=describe_object(KafkaRestConfig.__doc__),
     )
-    kafka_connect_host: str | None = Field(
-        default=None,
-        validation_alias=AliasChoices(
-            f"{ENV_PREFIX}connect_host", "kafka_connect_host"
-        ),
-        examples=[
-            "http://localhost:8083",
-        ],
-        description="Address of Kafka Connect.",
+    kafka_connect: KafkaConnectConfig = Field(
+        default=KafkaConnectConfig(),
+        description=describe_object(KafkaConnectConfig.__doc__),
     )
     timeout: int = Field(
         default=300,

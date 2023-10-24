@@ -7,5 +7,5 @@ kubernetes-app:
 kafka-app:
   app:
     streams:
-      brokers: ${brokers}
+      brokers: ${kafka_brokers}
       schemaRegistryUrl: ${schema_registry_url}
