@@ -1,6 +1,6 @@
 # Base Kubernetes App
 #
-# Parent of: KafkaApp
+# Parent of: HelmApp
 # Child of: PipelineComponent
 kubernetes-app:
   # Pipeline prefix that will prefix every component name. If you wish to not
@@ -52,14 +52,3 @@ kubernetes-app:
     image: exampleImage # Example
     debug: false # Example
     commandLine: {} # Example
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repo_config:
-    repository_name: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "1.0.0" # Helm chart version
