@@ -4,7 +4,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from typing_extensions import override
 
-from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel, to_dot
+from kpops.utils.pydantic import CamelCaseConfigModel, to_dot, DescConfigModel
 
 
 class KafkaConnectorType(str, Enum):
@@ -17,11 +17,17 @@ class KafkaConnectorConfig(DescConfigModel):
 
     connector_class: str
     name: str | None = Field(default=None)
+
+    @override
+    @staticmethod
+    def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
+        super(KafkaConnectorConfig, KafkaConnectorConfig).json_schema_extra(schema, model)
+        schema["additional_properties"] = {"type": "string"}
+
     model_config = ConfigDict(
         extra="allow",
         alias_generator=to_dot,
-        # TODO(sujuka99): combine with ``json_schema_extra`` of ``DescCohnfigModel``
-        json_schema_extra={"additional_properties": {"type": "string"}},
+        json_schema_extra=json_schema_extra,
     )
 
     @field_validator("connector_class")
@@ -35,6 +41,7 @@ class KafkaConnectorConfig(DescConfigModel):
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
 
+    # TODO(Ivan Yordanov): replace with a function decorated with `@model_serializer`
     @override
     def model_dump(self, **_) -> dict[str, Any]:
         return super().model_dump(by_alias=True, exclude_none=True)
@@ -81,6 +88,7 @@ class KafkaConnectResetterValues(CamelCaseConfigModel):
     config: KafkaConnectResetterConfig
     name_override: str
 
+    # TODO(Ivan Yordanov): replace with a function decorated with `@model_serializer`
     @override
     def model_dump(self, **_) -> dict[str, Any]:
         return super().model_dump(by_alias=True, exclude_none=True)

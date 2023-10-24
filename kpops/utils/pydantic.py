@@ -21,10 +21,6 @@ def to_dot(s: str) -> str:
     return s.replace("_", ".")
 
 
-def schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
-    schema["description"] = describe_object(model.__doc__)
-
-
 class CamelCaseConfigModel(BaseModel):
     model_config = ConfigDict(
         alias_generator=to_camel,
@@ -33,4 +29,9 @@ class CamelCaseConfigModel(BaseModel):
 
 
 class DescConfigModel(BaseModel):
-    model_config = ConfigDict(json_schema_extra=schema_extra)
+
+    @staticmethod
+    def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
+        schema["description"] = describe_object(model.__doc__)
+
+    model_config = ConfigDict(json_schema_extra=json_schema_extra)
