@@ -650,6 +650,20 @@ i18n = ["babel (>=2.9.0)"]
 min-versions = ["babel (==2.9.0)", "click (==7.0)", "colorama (==0.4)", "ghp-import (==1.0)", "importlib-metadata (==4.3)", "jinja2 (==2.11.1)", "markdown (==3.2.1)", "markupsafe (==2.0.1)", "mergedeep (==1.3.4)", "packaging (==20.5)", "pathspec (==0.11.1)", "platformdirs (==2.2.0)", "pyyaml (==5.1)", "pyyaml-env-tag (==0.1)", "typing-extensions (==3.10)", "watchdog (==2.0)"]
 
 [[package]]
+name = "mkdocs-exclude-search"
+version = "0.6.5"
+description = "A mkdocs plugin that lets you exclude selected files or sections from the search index."
+optional = false
+python-versions = ">=3.6"
+files = [
+    {file = "mkdocs-exclude-search-0.6.5.tar.gz", hash = "sha256:6a126367653caf946c56e446ff30ffdec931438a3e2a8740feff3f8682d52a54"},
+    {file = "mkdocs_exclude_search-0.6.5-py3-none-any.whl", hash = "sha256:475e372dd17195700acd00213bcc804280d63f39cb7a0c76a801aceefd2807a6"},
+]
+
+[package.dependencies]
+mkdocs = ">=1.0.4"
+
+[[package]]
 name = "mkdocs-glightbox"
 version = "0.3.4"
 description = "MkDocs plugin supports image lightbox with GLightbox."
@@ -1803,4 +1817,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "d46da53e55dc8260864458cc9eef32f71eae0799836806dbc766c751bdac3b80"
+content-hash = "dfdbdd18867682898d908dd3a3e19741993478eb7b722d3dd14a5c2acd0b9826"
