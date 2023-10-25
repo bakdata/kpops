@@ -84,14 +84,14 @@
     connector.class: io.confluent.connect.jdbc.JdbcSinkConnector
     tasks.max: 1
     topics: ${pipeline_name}-account-linker-topic
-    connection.url: jdbc:postgresql://postgresql-dev.kpops.svc.cluster.local:5432/app_db
+    connection.url: jdbc:postgresql://postgresql-dev.${NAMESPACE}.svc.cluster.local:5432/app_db
     connection.user: app1
     connection.password: AppPassword
     connection.ds.pool.size: 5
     insert.mode: insert
     insert.mode.databaselevel: true
     value.converter: io.confluent.connect.avro.AvroConverter
-    value.converter.schema.registry.url: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081
+    value.converter.schema.registry.url: http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081
     key.converter: org.apache.kafka.connect.storage.StringConverter
     transforms: flatten
     transforms.flatten.type: org.apache.kafka.connect.transforms.Flatten$Value

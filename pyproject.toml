@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kpops"
-version = "2.0.10"
+version = "2.0.11"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
 authors = ["bakdata <opensource@bakdata.com>"]
 license = "MIT"
@@ -56,11 +56,11 @@ pytablewriter = { extras = ["from"], version = "^1.0.0" }
 optional = true
 
 [tool.poetry.group.docs.dependencies]
+mkdocs = "^1.4.2"
 mkdocs-macros-plugin = "^0.7.0"
 mkdocs-material = "^9.0.0"
-mkdocs = "^1.4.2"
-mkdocs-material-extensions = "^1.1.1"
 mkdocs-glightbox = "^0.3.1"
+mkdocs-exclude-search = "^0.6.5"
 mike = "^1.1.2"
 
 [tool.poetry_bumpversion.file."kpops/__init__.py"]
@@ -134,7 +134,6 @@ select = [
   "RET", # flake8-return
   "SLOT", # flake8-slots
   "SIM", # flake8-simplify
-  "TCH", # flake8-type-checking, configure correctly and add
   "PTH", # flake8-use-pathlib
   "PGH", # pygrep-hooks
   "PL", # Pylint

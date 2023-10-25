@@ -4,9 +4,9 @@ topic_name_config:
   default_error_topic_name: "${pipeline_name}-${component_name}-dead-letter-topic"
   default_output_topic_name: "${pipeline_name}-${component_name}-topic"
 
-brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+brokers: "http://k8kafka-cp-kafka-headless.${NAMESPACE}.svc.cluster.local:9092"
 
-schema_registry_url: "http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081"
+schema_registry_url: "http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081"
 
 kafka_rest_host: "http://localhost:8082"
 
