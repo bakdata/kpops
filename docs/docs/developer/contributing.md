@@ -29,7 +29,7 @@ If you cannot find your Editor of choices or you want something more custom, [`r
 
 ### Markdown
 
-To ensure a consistent markdown style, we use [dprint](https://dprint.dev) to check and reformat.
+To ensure a consistent markdown style, we use [dprint](https://dprint.dev)'s [Markdown code formatter](https://dprint.dev/plugins/markdown/).
 
 **Configuration**
 
