@@ -4,6 +4,7 @@ import logging
 import re
 import subprocess
 import tempfile
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import yaml
@@ -200,7 +201,8 @@ class Helm:
             if line.startswith("---"):
                 is_beginning = True
                 if template_name and current_yaml_doc:
-                    yield HelmTemplate.load(template_name, "\n".join(current_yaml_doc))
+                    manifest = KubernetesManifest.from_yaml("\n".join(current_yaml_doc))
+                    yield HelmTemplate(Path(template_name), manifest)
                     template_name = None
                     current_yaml_doc.clear()
             elif is_beginning:

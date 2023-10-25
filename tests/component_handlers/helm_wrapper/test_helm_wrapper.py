@@ -13,6 +13,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmConfig,
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
+    KubernetesManifest,
     ParseError,
     RepoAuthFlags,
     Version,
@@ -280,22 +281,18 @@ class TestHelmWrapper:
                 f"validate_console_output() raised ReleaseNotFoundException unexpectedly!\nError message: {ReleaseNotFoundException}"
             )
 
-    def test_helm_template_load(self):
-        stdout = dedent(
-            """
-            ---
-            # Source: chart/templates/test2.yaml
-            apiVersion: v1
-            kind: ServiceAccount
-            metadata:
-                labels:
-                    foo: bar
-            """
+    def test_helm_template(self):
+        path = Path("test2.yaml")
+        manifest = KubernetesManifest(
+            {
+                "apiVersion": "v1",
+                "kind": "ServiceAccount",
+                "metadata": {"labels": {"foo": "bar"}},
+            }
         )
-
-        helm_template = HelmTemplate.load("test2.yaml", stdout)
-        assert helm_template.filepath == "test2.yaml"
-        assert helm_template.template == {
+        helm_template = HelmTemplate(path, manifest)
+        assert helm_template.filepath == path
+        assert helm_template.manifest == {
             "apiVersion": "v1",
             "kind": "ServiceAccount",
             "metadata": {"labels": {"foo": "bar"}},
@@ -320,10 +317,10 @@ class TestHelmWrapper:
         assert all(
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
         )
-        assert helm_templates[0].filepath == "chart/templates/test3a.yaml"
-        assert helm_templates[0].template == {"data": [{"a": 1}, {"b": 2}]}
-        assert helm_templates[1].filepath == "chart/templates/test3b.yaml"
-        assert helm_templates[1].template == {"foo": "bar"}
+        assert helm_templates[0].filepath == Path("chart/templates/test3a.yaml")
+        assert helm_templates[0].manifest == {"data": [{"a": 1}, {"b": 2}]}
+        assert helm_templates[1].filepath == Path("chart/templates/test3b.yaml")
+        assert helm_templates[1].manifest == {"foo": "bar"}
 
     def test_raise_parse_error_when_helm_content_is_invalid(self):
         stdout = dedent(
@@ -388,10 +385,10 @@ class TestHelmWrapper:
         assert all(
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
         )
-        assert helm_templates[0].filepath == "chart/templates/test3a.yaml"
-        assert helm_templates[0].template == {"data": [{"a": 1}, {"b": 2}]}
-        assert helm_templates[1].filepath == "chart/templates/test3b.yaml"
-        assert helm_templates[1].template == {"foo": "bar"}
+        assert helm_templates[0].filepath == Path("chart/templates/test3a.yaml")
+        assert helm_templates[0].manifest == {"data": [{"a": 1}, {"b": 2}]}
+        assert helm_templates[1].filepath == Path("chart/templates/test3b.yaml")
+        assert helm_templates[1].manifest == {"foo": "bar"}
 
     def test_helm_get_manifest(self, helm: Helm, mock_execute: MagicMock):
         mock_execute.return_value = dedent(
@@ -415,8 +412,8 @@ class TestHelmWrapper:
             ],
         )
         assert len(helm_templates) == 1
-        assert helm_templates[0].filepath == "chart/templates/test.yaml"
-        assert helm_templates[0].template == {"data": [{"a": 1}, {"b": 2}]}
+        assert helm_templates[0].filepath == Path("chart/templates/test.yaml")
+        assert helm_templates[0].manifest == {"data": [{"a": 1}, {"b": 2}]}
 
         mock_execute.side_effect = ReleaseNotFoundException()
         assert helm.get_manifest("test-release", "test-namespace") == ()
