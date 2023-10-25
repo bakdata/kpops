@@ -37,6 +37,10 @@ Generated
 - `pipeline-components/*\.yaml` -- All single-component pipeline definitions and one big (complete) `pipeline.yaml` that contains all of them.
 - `pipeline-defaults/*\.yaml` -- All single-component defaults definitions and one big (complete) `defaults.yaml` that contains all of them.
 
+#### [Contributing](../developer/contributing.md)
+
+Copied from [`CONTRIBUTING.md`](https://github.com/bakdata/kpops/blob/main/CONTRIBUTING.md)
+
 ### [Editor integration](https://github.com/bakdata/kpops/blob/main/hooks/gen_schema.py)
 
 #### [Schemas](https://github.com/bakdata/kpops/tree/main/docs/docs/schema)
