@@ -1,6 +1,7 @@
 site_name: KPOps
-repo_url: https://github.com/bakdata/kpops/
 site_url: https://bakdata.github.io/kpops/
+repo_name: KPOps
+repo_url: https://github.com/bakdata/kpops/
 remote_branch: gh-pages
 copyright: Copyright &copy; 2023 bakdata
 
