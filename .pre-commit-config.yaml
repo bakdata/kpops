@@ -1,8 +1,8 @@
 repos:
   - repo: local
     hooks:
-      - id: ruff
-        name: ruff
+      - id: ruff-lint
+        name: ruff-lint
         entry: ruff check .
         args: [ --config, pyproject.toml, --fix, --show-fixes, --exit-non-zero-on-fix ]
         language: system
