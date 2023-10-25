@@ -72,6 +72,7 @@ ignore = [
   # "E111", # Checks for indentation with a non-multiple of 4 spaces, add when out of nursery
   # "E114", # Checks for indentation of comments with a non-multiple of 4 spaces, add when out of nursery
   # "E117", # Checks for over-indented code, add when out of nursery
+  "E501", # Line too long
   "D206", # Checks for docstrings that are indented with tabs.
   "D300", # Checks for docstrings that use '''triple single quotes''' instead of """triple double quotes""".
   "Q000", # Checks for inline strings that use single quotes.
@@ -168,9 +169,6 @@ extend-immutable-calls = ["typer.Argument"]
 
 [tool.ruff.flake8-type-checking]
 runtime-evaluated-base-classes = ["pydantic.BaseModel"]
-
-[tool.ruff.format]
-skip-magic-trailing-comma = true # Existing trailing commas as an indication that short lines should be left separate is ignored.
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
