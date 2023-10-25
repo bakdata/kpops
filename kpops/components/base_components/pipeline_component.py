@@ -4,6 +4,7 @@ from abc import ABC
 
 from pydantic import Extra, Field
 
+from kpops.component_handlers.kubernetes.model import KubernetesManifest
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
 )
@@ -186,7 +187,8 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
         return [self]
 
-    def template(self) -> None:
+    def template(self) -> KubernetesManifest:
+        # TODO: docs should not be related to Helm
         """Run `helm template`.
 
         From HELM: Render chart templates locally and display the output.
@@ -194,6 +196,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         be faked locally. Additionally, none of the server-side testing of chart
         validity (e.g. whether an API is supported) is done.
         """
+        return KubernetesManifest()
 
     def deploy(self, dry_run: bool) -> None:
         """Deploy the component (self) to the k8s cluster.

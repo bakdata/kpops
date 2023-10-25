@@ -24,6 +24,7 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectResetterConfig,
     KafkaConnectResetterValues,
 )
+from kpops.component_handlers.kubernetes.model import KubernetesManifest
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -284,18 +285,17 @@ class KafkaSourceConnector(KafkaConnector):
         raise NotImplementedError(msg)
 
     @override
-    def template(self) -> None:
+    def template(self) -> KubernetesManifest:
         values = self._get_kafka_connect_resetter_values(
             offset_topic=self.offset_topic,
         )
-        stdout = self.helm.template(
+        return self.helm.template(
             self._resetter_release_name,
             self._resetter_helm_chart,
             self.namespace,
             values,
             self.template_flags,
         )
-        print(stdout)
 
     @override
     def reset(self, dry_run: bool) -> None:
@@ -331,16 +331,15 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "topics", ",".join(topics))
 
     @override
-    def template(self) -> None:
+    def template(self) -> KubernetesManifest:
         values = self._get_kafka_connect_resetter_values()
-        stdout = self.helm.template(
+        return self.helm.template(
             self._resetter_release_name,
             self._resetter_helm_chart,
             self.namespace,
             values,
             self.template_flags,
         )
-        print(stdout)
 
     @override
     def set_input_pattern(self, name: str) -> None:

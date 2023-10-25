@@ -169,7 +169,7 @@ HELM_SOURCE_PREFIX = "# Source: "
 @dataclass
 class HelmTemplate:
     filepath: str
-    template: dict
+    template: dict  # TODO: manifest
 
     @staticmethod
     def parse_source(source: str) -> str:

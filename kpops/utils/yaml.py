@@ -6,6 +6,8 @@ from typing import Any
 import yaml
 from cachetools import cached
 from cachetools.keys import hashkey
+from rich.console import Console
+from rich.syntax import Syntax
 
 
 def generate_hashkey(
@@ -73,3 +75,21 @@ def substitute_nested(input: str, **kwargs) -> str:
         msg = "An infinite loop condition detected. Check substitution variables."
         raise ValueError(msg)
     return old_str
+
+
+def print_yaml(data: Mapping | str, substitution: dict | None = None) -> None:
+    """Print the generated component definition.
+
+    :param substitution: Substitution dictionary, defaults to None
+    """
+    if not isinstance(data, str):
+        data = yaml.dump(data)
+    syntax = Syntax(
+        substitute(data, substitution),
+        "yaml",
+        background_color="default",
+        theme="ansi_dark",
+    )
+    Console(
+        width=1000  # HACK: overwrite console width to avoid truncating output
+    ).print(syntax)

@@ -30,8 +30,10 @@ class TestHelmWrapper:
         return temp_file_mock
 
     @pytest.fixture()
-    def run_command(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch.object(Helm, "_Helm__execute")
+    def mock_execute(self, mocker: MockerFixture) -> MagicMock:
+        mock_execute = mocker.patch.object(Helm, "_Helm__execute")
+        mock_execute.return_value = ""
+        return mock_execute
 
     @pytest.fixture()
     def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
@@ -43,12 +45,14 @@ class TestHelmWrapper:
         mock_get_version.return_value = Version(major=3, minor=12, patch=0)
         return mock_get_version
 
-    def test_should_call_run_command_method_when_helm_install_with_defaults(
-        self, run_command: MagicMock, mock_get_version: MagicMock
-    ):
-        helm_wrapper = Helm(helm_config=HelmConfig())
+    @pytest.fixture()
+    def helm(self, mock_get_version: MagicMock) -> Helm:
+        return Helm(helm_config=HelmConfig())
 
-        helm_wrapper.upgrade_install(
+    def test_should_call_run_command_method_when_helm_install_with_defaults(
+        self, helm: Helm, mock_execute: MagicMock
+    ):
+        helm.upgrade_install(
             release_name="test-release",
             chart=f"bakdata-streams-bootstrap/{AppType.STREAMS_APP.value}",
             dry_run=False,
@@ -56,7 +60,7 @@ class TestHelmWrapper:
             values={"commandLine": "test"},
             flags=HelmUpgradeInstallFlags(),
         )
-        run_command.assert_called_once_with(
+        mock_execute.assert_called_once_with(
             [
                 "helm",
                 "upgrade",
@@ -74,7 +78,7 @@ class TestHelmWrapper:
         )
 
     def test_should_include_configured_tls_parameters_on_add_when_version_is_old(
-        self, run_command: MagicMock, mocker: MockerFixture
+        self, mock_execute: MagicMock, mocker: MockerFixture
     ):
         mock_get_version = mocker.patch.object(Helm, "get_version")
         mock_get_version.return_value = Version(major=3, minor=6, patch=0)
@@ -85,7 +89,7 @@ class TestHelmWrapper:
             "fake",
             RepoAuthFlags(ca_file=Path("a_file.ca"), insecure_skip_tls_verify=True),
         )
-        assert run_command.mock_calls == [
+        assert mock_execute.mock_calls == [
             mock.call(
                 [
                     "helm",
@@ -104,16 +108,14 @@ class TestHelmWrapper:
         ]
 
     def test_should_include_configured_tls_parameters_on_add_when_version_is_new(
-        self, run_command: MagicMock, mock_get_version: MagicMock
+        self, helm: Helm, mock_execute: MagicMock
     ):
-        helm = Helm(HelmConfig())
-
         helm.add_repo(
             "test-repository",
             "fake",
             RepoAuthFlags(ca_file=Path("a_file.ca"), insecure_skip_tls_verify=True),
         )
-        assert run_command.mock_calls == [
+        assert mock_execute.mock_calls == [
             mock.call(
                 [
                     "helm",
@@ -132,10 +134,9 @@ class TestHelmWrapper:
         ]
 
     def test_should_include_configured_tls_parameters_on_update(
-        self, run_command: MagicMock, mock_get_version: MagicMock
+        self, helm: Helm, mock_execute: MagicMock
     ):
-        helm_wrapper = Helm(helm_config=HelmConfig())
-        helm_wrapper.upgrade_install(
+        helm.upgrade_install(
             release_name="test-release",
             chart="test-repository/test-chart",
             dry_run=False,
@@ -147,7 +148,7 @@ class TestHelmWrapper:
             ),
         )
 
-        run_command.assert_called_once_with(
+        mock_execute.assert_called_once_with(
             [
                 "helm",
                 "upgrade",
@@ -168,10 +169,9 @@ class TestHelmWrapper:
         )
 
     def test_should_call_run_command_method_when_helm_install_with_non_defaults(
-        self, run_command: MagicMock, mock_get_version: MagicMock
+        self, helm: Helm, mock_execute: MagicMock
     ):
-        helm_wrapper = Helm(helm_config=HelmConfig())
-        helm_wrapper.upgrade_install(
+        helm.upgrade_install(
             release_name="test-release",
             chart="test-repository/streams-app",
             namespace="test-namespace",
@@ -187,7 +187,7 @@ class TestHelmWrapper:
                 version="2.4.2",
             ),
         )
-        run_command.assert_called_once_with(
+        mock_execute.assert_called_once_with(
             [
                 "helm",
                 "upgrade",
@@ -213,27 +213,25 @@ class TestHelmWrapper:
         )
 
     def test_should_call_run_command_method_when_uninstalling_streams_app(
-        self, run_command: MagicMock, mock_get_version: MagicMock
+        self, helm: Helm, mock_execute: MagicMock
     ):
-        helm_wrapper = Helm(helm_config=HelmConfig())
-        helm_wrapper.uninstall(
+        helm.uninstall(
             namespace="test-namespace",
             release_name="test-release",
             dry_run=False,
         )
-        run_command.assert_called_once_with(
+        mock_execute.assert_called_once_with(
             ["helm", "uninstall", "test-release", "--namespace", "test-namespace"],
         )
 
     def test_should_log_warning_when_release_not_found(
         self,
-        run_command: MagicMock,
+        helm: Helm,
+        mock_execute: MagicMock,
         log_warning_mock: MagicMock,
-        mock_get_version: MagicMock,
     ):
-        helm_wrapper = Helm(helm_config=HelmConfig())
-        run_command.side_effect = ReleaseNotFoundException()
-        helm_wrapper.uninstall(
+        mock_execute.side_effect = ReleaseNotFoundException()
+        helm.uninstall(
             namespace="test-namespace",
             release_name="test-release",
             dry_run=False,
@@ -244,16 +242,14 @@ class TestHelmWrapper:
         )
 
     def test_should_call_run_command_method_when_installing_streams_app__with_dry_run(
-        self, run_command: MagicMock, mock_get_version: MagicMock
+        self, helm: Helm, mock_execute: MagicMock
     ):
-        helm_wrapper = Helm(helm_config=HelmConfig())
-
-        helm_wrapper.uninstall(
+        helm.uninstall(
             namespace="test-namespace",
             release_name="test-release",
             dry_run=True,
         )
-        run_command.assert_called_once_with(
+        mock_execute.assert_called_once_with(
             [
                 "helm",
                 "uninstall",
@@ -397,11 +393,8 @@ class TestHelmWrapper:
         assert helm_templates[1].filepath == "chart/templates/test3b.yaml"
         assert helm_templates[1].template == {"foo": "bar"}
 
-    def test_helm_get_manifest(
-        self, run_command: MagicMock, mock_get_version: MagicMock
-    ):
-        helm_wrapper = Helm(helm_config=HelmConfig())
-        run_command.return_value = dedent(
+    def test_helm_get_manifest(self, helm: Helm, mock_execute: MagicMock):
+        mock_execute.return_value = dedent(
             """
             ---
             # Source: chart/templates/test.yaml
@@ -410,10 +403,8 @@ class TestHelmWrapper:
                 - b: 2
             """
         )
-        helm_templates = list(
-            helm_wrapper.get_manifest("test-release", "test-namespace")
-        )
-        run_command.assert_called_once_with(
+        helm_templates = list(helm.get_manifest("test-release", "test-namespace"))
+        mock_execute.assert_called_once_with(
             command=[
                 "helm",
                 "get",
@@ -427,15 +418,13 @@ class TestHelmWrapper:
         assert helm_templates[0].filepath == "chart/templates/test.yaml"
         assert helm_templates[0].template == {"data": [{"a": 1}, {"b": 2}]}
 
-        run_command.side_effect = ReleaseNotFoundException()
-        assert helm_wrapper.get_manifest("test-release", "test-namespace") == ()
+        mock_execute.side_effect = ReleaseNotFoundException()
+        assert helm.get_manifest("test-release", "test-namespace") == ()
 
     def test_should_call_run_command_method_when_helm_template_with_optional_args(
-        self, run_command: MagicMock, mock_get_version: MagicMock
+        self, helm: Helm, mock_execute: MagicMock
     ):
-        helm_wrapper = Helm(helm_config=HelmConfig())
-
-        helm_wrapper.template(
+        helm.template(
             release_name="test-release",
             chart="bakdata-streams-bootstrap/streams-app",
             namespace="test-ns",
@@ -446,7 +435,7 @@ class TestHelmWrapper:
                 cert_file=Path("a_file.pem"),
             ),
         )
-        run_command.assert_called_once_with(
+        mock_execute.assert_called_once_with(
             [
                 "helm",
                 "template",
@@ -469,18 +458,15 @@ class TestHelmWrapper:
         )
 
     def test_should_call_run_command_method_when_helm_template_without_optional_args(
-        self, run_command: MagicMock, mock_get_version: MagicMock
+        self, helm: Helm, mock_execute: MagicMock
     ):
-        helm_wrapper = Helm(helm_config=HelmConfig())
-
-        helm_wrapper.template(
+        helm.template(
             release_name="test-release",
             chart="bakdata-streams-bootstrap/streams-app",
             namespace="test-ns",
             values={"commandLine": "test"},
-            flags=HelmTemplateFlags(),
         )
-        run_command.assert_called_once_with(
+        mock_execute.assert_called_once_with(
             [
                 "helm",
                 "template",
@@ -507,14 +493,14 @@ class TestHelmWrapper:
     )
     def test_should_call_helm_version(
         self,
-        run_command: MagicMock,
+        mock_execute: MagicMock,
         raw_version: str,
         expected_version: Version,
     ):
-        run_command.return_value = raw_version
+        mock_execute.return_value = raw_version
         helm = Helm(helm_config=HelmConfig())
 
-        run_command.assert_called_once_with(
+        mock_execute.assert_called_once_with(
             [
                 "helm",
                 "version",
@@ -525,9 +511,9 @@ class TestHelmWrapper:
         assert helm._version == expected_version
 
     def test_should_raise_exception_if_helm_version_is_old(
-        self, run_command: MagicMock
+        self, mock_execute: MagicMock
     ):
-        run_command.return_value = "v2.9.0+gc9f554d"
+        mock_execute.return_value = "v2.9.0+gc9f554d"
         with pytest.raises(
             RuntimeError,
             match="The supported Helm version is 3.x.x. The current Helm version is 2.9.0",
@@ -535,9 +521,9 @@ class TestHelmWrapper:
             Helm(helm_config=HelmConfig())
 
     def test_should_raise_exception_if_helm_version_cannot_be_parsed(
-        self, run_command: MagicMock
+        self, mock_execute: MagicMock
     ):
-        run_command.return_value = "123"
+        mock_execute.return_value = "123"
         with pytest.raises(
             RuntimeError, match="Could not parse the Helm version.\n\nHelm output:\n123"
         ):

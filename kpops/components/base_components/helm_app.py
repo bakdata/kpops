@@ -16,6 +16,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
+from kpops.component_handlers.kubernetes.model import KubernetesManifest
 from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
@@ -95,15 +96,14 @@ class HelmApp(KubernetesApp):
         )
 
     @override
-    def template(self) -> None:
-        stdout = self.helm.template(
+    def template(self) -> KubernetesManifest:
+        return self.helm.template(
             self.helm_release_name,
             self.helm_chart,
             self.namespace,
             self.to_helm_values(),
             self.template_flags,
         )
-        print(stdout)
 
     @property
     def deploy_flags(self) -> HelmUpgradeInstallFlags:

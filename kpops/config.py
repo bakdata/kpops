@@ -9,7 +9,7 @@ from pydantic.env_settings import SettingsSourceCallable
 
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.docstring import describe_object
-from kpops.utils.yaml_loading import load_yaml_file
+from kpops.utils.yaml import load_yaml_file
 
 ENV_PREFIX = "KPOPS_"
 

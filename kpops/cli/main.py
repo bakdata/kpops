@@ -21,6 +21,7 @@ from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
+from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -245,7 +246,7 @@ def generate(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    template: bool = typer.Option(False, help="Run Helm template"),
+    template: bool = typer.Option(False, help="Run Helm template"),  # TODO: update docs
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     verbose: bool = VERBOSE_OPTION,
@@ -256,12 +257,13 @@ def generate(
     )
 
     if not template:
-        pipeline.print_yaml()
+        print_yaml(str(pipeline))
 
     if template:
         steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
         for component in steps_to_apply:
-            component.template()
+            manifest = component.template()
+            print_yaml(manifest)
     elif steps:
         log.warning(
             "The following flags are considered only when `--template` is set: \n \
