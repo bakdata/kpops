@@ -84,10 +84,10 @@ ignore = [
   "ISC001", # Checks for implicitly concatenated strings on a single line.
   "ISC002", # Checks for implicitly concatenated strings that span multiple lines.
 # Rules in conflict with `ruff-format` -- END
+  "D1", # Missing docstring for {} -- Inconvenient to enforce
 # The following "D" rules do not correspond to our coding style. We use the pep257 convention, but
 # "D212" should not be ignored. In ruff (0.0.291) we cannot select a rule that is excluded by specifying
 # a convention, hence our only option is to manually replicate it.
-  "D1", # Missing docstring for {} -- Inconvenient to enforce
   "D203", # 1 blank line required before class docstring
   "D213", # Multi-line docstring summary should start at the second line
   "D214", # Section is over-indented ("{name}")
