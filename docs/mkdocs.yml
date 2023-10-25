@@ -113,8 +113,6 @@ nav:
         - GitHub Actions: user/references/ci-integration/github-actions.md
   - Developer Guide:
     - Getting Started: developer/getting-started.md
-    - Style:
-      - Python: developer/style/python.md
-      - Markdown: developer/style/markdown.md
+    - Contributing: developer/contributing.md
     - Code base:
       - Auto generation: developer/auto-generation.md
