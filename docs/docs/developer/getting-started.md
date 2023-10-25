@@ -4,5 +4,9 @@
 
 Find more about our code-style or insights into KPOps' code base here in our developer guide.
 
+<!-- dprint-ignore-start -->
+
 !!! wip "WIP"
     The developer guide is still under construction. If you have a question left unanswered here, feel free to ask it by opening an issue.
+
+<!-- dprint-ignore-end -->
