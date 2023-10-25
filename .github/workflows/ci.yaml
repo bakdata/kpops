@@ -64,6 +64,9 @@ jobs:
       - name: Generate pipeline definitions
         run: poetry run pre-commit run gen-docs-components --all-files --show-diff-on-failure
 
+      - name: Copy contribution guide into docs
+        run: poetry run pre-commit gen-docs-contributing --all-files --show-diff-on-failure
+
       - name: Test
         run: poetry run pytest tests
 

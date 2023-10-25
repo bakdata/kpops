@@ -39,6 +39,7 @@ repos:
         types: [python]
         require_serial: true
         exclude: ^tests/.*snapshots/
+        pass_filenames: false
       - id: gen-docs-env-vars
         name: gen-docs-env-vars
         entry: python hooks/gen_docs/gen_docs_env_vars.py
@@ -46,6 +47,7 @@ repos:
         types: [python]
         require_serial: true
         exclude: ^tests/.*snapshots/
+        pass_filenames: false
       - id: gen-docs-components
         name: gen-docs-components
         entry: python hooks/gen_docs/gen_docs_components.py
@@ -67,6 +69,13 @@ repos:
             | kpops/components/.*\.py
           )$
         require_serial: true
+      - id: gen-docs-contributing
+        name: gen-docs-contributing
+        entry: python hooks/gen_docs/gen_docs_contributing.py
+        language: system
+        types: [python]
+        require_serial: true
+        pass_filenames: false
       - id: dprint
         name: dprint 
         entry: dprint fmt
