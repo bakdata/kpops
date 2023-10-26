@@ -24,5 +24,5 @@ class KubernetesManifest(UserDict[str, Json]):
 
     @classmethod
     def from_json(cls, /, content: str) -> Self:
-        manifest: dict = json.loads(content)
+        manifest: dict[str, Json] = json.loads(content)
         return cls(manifest)
