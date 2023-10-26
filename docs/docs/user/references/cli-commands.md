@@ -18,7 +18,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `clean`: Clean pipeline steps
 * `deploy`: Deploy pipeline steps
 * `destroy`: Destroy pipeline steps
-* `generate`: Enriches pipelines steps with defaults.
+* `generate`: Enrich pipeline steps with defaults.
 * `render`: In addition to generate, renders final...
 * `reset`: Reset pipeline steps
 * `schema`: Generate json schema.
@@ -103,7 +103,7 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 
 ## `kpops generate`
 
-Enriches pipelines steps with defaults. The output is used as input for the deploy/destroy/... commands.
+Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).
 
 **Usage**:
 

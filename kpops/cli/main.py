@@ -237,7 +237,7 @@ def schema(
 
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
-    help="Enriches pipelines steps with defaults. The output is used as input for the deploy/destroy/... commands."
+    help="Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...)."
 )
 def generate(
     pipeline_path: Path = PIPELINE_PATH_ARG,
