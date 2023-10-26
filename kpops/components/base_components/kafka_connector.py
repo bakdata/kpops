@@ -285,7 +285,7 @@ class KafkaSourceConnector(KafkaConnector):
         raise NotImplementedError(msg)
 
     @override
-    def template(self) -> KubernetesManifest:
+    def render(self) -> KubernetesManifest:
         values = self._get_kafka_connect_resetter_values(
             offset_topic=self.offset_topic,
         )
@@ -331,7 +331,7 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "topics", ",".join(topics))
 
     @override
-    def template(self) -> KubernetesManifest:
+    def render(self) -> KubernetesManifest:
         values = self._get_kafka_connect_resetter_values()
         return self.helm.template(
             self._resetter_release_name,

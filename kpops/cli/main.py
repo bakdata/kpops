@@ -278,7 +278,7 @@ def render(
     )
     steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
     for component in steps_to_apply:
-        manifest = component.template()
+        manifest = component.render()
         print_yaml(manifest)
         yield manifest
 
