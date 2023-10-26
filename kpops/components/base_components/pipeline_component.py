@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from abc import ABC
 from collections.abc import Mapping
+from typing import TypeAlias
 
 from pydantic import Extra, Field
 
@@ -20,6 +21,8 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfig
+
+Resource: TypeAlias = list[Mapping]  # representation of final resource  # TODO: move?
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
@@ -187,9 +190,9 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
         return [self]
 
-    def render(self) -> Mapping:
+    def render(self) -> Resource:
         """Render final component resources, e.g. Kubernetes manifest."""
-        return {}
+        return []
 
     def deploy(self, dry_run: bool) -> None:
         """Deploy component, e.g. to the Kubernetes cluster.

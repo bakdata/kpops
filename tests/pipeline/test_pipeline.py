@@ -23,6 +23,7 @@ class TestPipeline:
             "tests.pipeline.test_components",
             pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
             defaults=RESOURCE_PATH,
+            output=False,
         )
         assert len(pipeline) == 3
 

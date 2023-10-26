@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Iterator, Mapping
+from collections.abc import Iterator
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -19,6 +19,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
+from kpops.components.base_components.pipeline_component import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
@@ -271,7 +272,7 @@ def render(
     filter_type: FilterType = FILTER_TYPE,
     output: bool = OUTPUT_OPTION,
     verbose: bool = VERBOSE_OPTION,
-) -> list[Mapping]:
+) -> list[Resource]:
     pipeline = generate(
         pipeline_path=pipeline_path,
         components_module=components_module,
@@ -282,13 +283,14 @@ def render(
         verbose=verbose,
     )
     steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
-    manifests: list[Mapping] = []
+    resources: list[Resource] = []
     for component in steps_to_apply:
-        manifest = component.render()
-        manifests.append(manifest)
+        resource = component.render()
+        resources.append(resource)
         if output:
-            print_yaml(manifest)
-    return manifests
+            for manifest in resource:
+                print_yaml(manifest)
+    return resources
 
 
 @app.command(

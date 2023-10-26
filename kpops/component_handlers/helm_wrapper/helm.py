@@ -20,6 +20,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     Version,
 )
 from kpops.component_handlers.kubernetes.model import KubernetesManifest
+from kpops.components.base_components.pipeline_component import Resource
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
@@ -134,7 +135,7 @@ class Helm:
         namespace: str,
         values: dict,
         flags: HelmTemplateFlags | None = None,
-    ) -> KubernetesManifest:
+    ) -> Resource:
         """From Helm: Render chart templates locally and display the output.
 
         Any values that would normally be looked up or retrieved in-cluster will
@@ -146,7 +147,7 @@ class Helm:
         :param namespace: The Kubernetes namespace the command should execute in
         :param values: `values.yaml` to be used
         :param flags: the flags to be set for `helm template`, defaults to HelmTemplateFlags()
-        :return: the rendered manifest
+        :return: the rendered resource (list of Kubernetes manifests)
         """
         if flags is None:
             flags = HelmTemplateFlags()
@@ -164,7 +165,8 @@ class Helm:
             ]
             command.extend(flags.to_command())
             output = self.__execute(command)
-            return KubernetesManifest.from_yaml(output)
+            manifests = KubernetesManifest.from_yaml(output)
+            return list(manifests)
 
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
         command = [
@@ -201,7 +203,10 @@ class Helm:
             if line.startswith("---"):
                 is_beginning = True
                 if template_name and current_yaml_doc:
-                    manifest = KubernetesManifest.from_yaml("\n".join(current_yaml_doc))
+                    manifests = KubernetesManifest.from_yaml(
+                        "\n".join(current_yaml_doc)
+                    )
+                    manifest = next(manifests)  # only 1 manifest
                     yield HelmTemplate(Path(template_name), manifest)
                     template_name = None
                     current_yaml_doc.clear()

@@ -21,15 +21,18 @@ class TestKubernetesManifest:
                             foo: bar
                     """
                 ),
-                KubernetesManifest(
-                    {
-                        "apiVersion": "v1",
-                        "kind": "ServiceAccount",
-                        "metadata": {"labels": {"foo": "bar"}},
-                    }
-                ),
+                [
+                    KubernetesManifest(
+                        {
+                            "apiVersion": "v1",
+                            "kind": "ServiceAccount",
+                            "metadata": {"labels": {"foo": "bar"}},
+                        }
+                    )
+                ],
             )
         ],
     )
     def test_from_yaml(self, helm_template: str, expected_manifest: KubernetesManifest):
-        assert KubernetesManifest.from_yaml(helm_template) == expected_manifest
+        manifests = KubernetesManifest.from_yaml(helm_template)
+        assert list(manifests) == expected_manifest

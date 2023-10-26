@@ -24,10 +24,12 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectResetterConfig,
     KafkaConnectResetterValues,
 )
-from kpops.component_handlers.kubernetes.model import KubernetesManifest
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
-from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.base_components.pipeline_component import (
+    PipelineComponent,
+    Resource,
+)
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
 
@@ -285,7 +287,7 @@ class KafkaSourceConnector(KafkaConnector):
         raise NotImplementedError(msg)
 
     @override
-    def render(self) -> KubernetesManifest:
+    def render(self) -> Resource:
         values = self._get_kafka_connect_resetter_values(
             offset_topic=self.offset_topic,
         )
@@ -331,7 +333,7 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "topics", ",".join(topics))
 
     @override
-    def render(self) -> KubernetesManifest:
+    def render(self) -> Resource:
         values = self._get_kafka_connect_resetter_values()
         return self.helm.template(
             self._resetter_release_name,
