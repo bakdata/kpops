@@ -188,7 +188,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         return [self]
 
     def template(self) -> Mapping:
-        """Generate manifest representation, e.g. for Kubernetes."""
+        """Render component template, e.g. Kubernetes manifest."""
         return {}
 
     def deploy(self, dry_run: bool) -> None:

@@ -246,7 +246,10 @@ def generate(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    template: bool = typer.Option(False, help="Run Helm template"),  # TODO: update docs
+    template: bool = typer.Option(
+        False,
+        help="Render component templates, e.g. Kubernetes manifest",
+    ),
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     verbose: bool = VERBOSE_OPTION,
