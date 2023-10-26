@@ -245,19 +245,12 @@ def generate(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    steps: Optional[str] = PIPELINE_STEPS,
-    filter_type: FilterType = FILTER_TYPE,
     verbose: bool = VERBOSE_OPTION,
 ) -> Pipeline:
     kpops_config = create_kpops_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )
-    if steps:
-        log.warning(
-            "The following flags are considered only when `--template` is set: \n \
-                '--steps'"
-        )
     print_yaml(str(pipeline))
     return pipeline
 
@@ -281,8 +274,6 @@ def render(
         pipeline_base_dir=pipeline_base_dir,
         defaults=defaults,
         config=config,
-        steps=steps,
-        filter_type=filter_type,
         verbose=verbose,
     )
     steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
