@@ -16,8 +16,8 @@ PIPELINE_BASE_DIR_PATH = RESOURCE_PATH.parent
 
 
 @pytest.mark.usefixtures("mock_env")
-class TestPipeline:
-    def test_python_api_generate(self):
+class TestGenerate:
+    def test_python_api(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
             "tests.pipeline.test_components",
