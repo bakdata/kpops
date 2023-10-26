@@ -19,7 +19,7 @@ class TestTemplate:
     @pytest.fixture()
     def mock_execute(self, mocker: MockerFixture) -> MagicMock:
         mock_execute = mocker.patch.object(Helm, "_Helm__execute")
-        mock_execute.return_value = ""
+        mock_execute.return_value = ""  # Helm Template
         return mock_execute
 
     @pytest.fixture()
