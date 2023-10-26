@@ -19,7 +19,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `deploy`: Deploy pipeline steps
 * `destroy`: Destroy pipeline steps
 * `generate`: Enrich pipeline steps with defaults.
-* `render`: In addition to generate, renders final...
+* `render`: In addition to generate, render final...
 * `reset`: Reset pipeline steps
 * `schema`: Generate json schema.
 
@@ -126,7 +126,7 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 
 ## `kpops render`
 
-In addition to generate, renders final resources for each pipeline step, e.g. Kubernetes manifests.
+In addition to generate, render final resources for each pipeline step, e.g. Kubernetes manifests.
 
 **Usage**:
 

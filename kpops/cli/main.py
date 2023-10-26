@@ -256,7 +256,7 @@ def generate(
 
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
-    help="In addition to generate, renders final resources for each pipeline step, e.g. Kubernetes manifests."
+    help="In addition to generate, render final resources for each pipeline step, e.g. Kubernetes manifests."
 )
 def render(
     pipeline_path: Path = PIPELINE_PATH_ARG,
@@ -296,7 +296,7 @@ def deploy(
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-):
+) -> None:
     kpops_config = create_kpops_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
@@ -320,7 +320,7 @@ def destroy(
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-):
+) -> None:
     kpops_config = create_kpops_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
@@ -344,7 +344,7 @@ def reset(
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-):
+) -> None:
     kpops_config = create_kpops_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
@@ -369,7 +369,7 @@ def clean(
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-):
+) -> None:
     kpops_config = create_kpops_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
