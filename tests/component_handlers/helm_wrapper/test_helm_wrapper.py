@@ -292,11 +292,7 @@ class TestHelmWrapper:
         )
         helm_template = HelmTemplate(path, manifest)
         assert helm_template.filepath == path
-        assert helm_template.manifest == {
-            "apiVersion": "v1",
-            "kind": "ServiceAccount",
-            "metadata": {"labels": {"foo": "bar"}},
-        }
+        assert helm_template.manifest == manifest
 
     def test_load_manifest_with_no_notes(self):
         stdout = dedent(
@@ -318,9 +314,11 @@ class TestHelmWrapper:
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
         )
         assert helm_templates[0].filepath == Path("chart/templates/test3a.yaml")
-        assert helm_templates[0].manifest == {"data": [{"a": 1}, {"b": 2}]}
+        assert helm_templates[0].manifest == KubernetesManifest(
+            {"data": [{"a": 1}, {"b": 2}]}
+        )
         assert helm_templates[1].filepath == Path("chart/templates/test3b.yaml")
-        assert helm_templates[1].manifest == {"foo": "bar"}
+        assert helm_templates[1].manifest == KubernetesManifest({"foo": "bar"})
 
     def test_raise_parse_error_when_helm_content_is_invalid(self):
         stdout = dedent(
@@ -386,9 +384,11 @@ class TestHelmWrapper:
             isinstance(helm_template, HelmTemplate) for helm_template in helm_templates
         )
         assert helm_templates[0].filepath == Path("chart/templates/test3a.yaml")
-        assert helm_templates[0].manifest == {"data": [{"a": 1}, {"b": 2}]}
+        assert helm_templates[0].manifest == KubernetesManifest(
+            {"data": [{"a": 1}, {"b": 2}]}
+        )
         assert helm_templates[1].filepath == Path("chart/templates/test3b.yaml")
-        assert helm_templates[1].manifest == {"foo": "bar"}
+        assert helm_templates[1].manifest == KubernetesManifest({"foo": "bar"})
 
     def test_helm_get_manifest(self, helm: Helm, mock_execute: MagicMock):
         mock_execute.return_value = dedent(
@@ -413,7 +413,9 @@ class TestHelmWrapper:
         )
         assert len(helm_templates) == 1
         assert helm_templates[0].filepath == Path("chart/templates/test.yaml")
-        assert helm_templates[0].manifest == {"data": [{"a": 1}, {"b": 2}]}
+        assert helm_templates[0].manifest == KubernetesManifest(
+            {"data": [{"a": 1}, {"b": 2}]}
+        )
 
         mock_execute.side_effect = ReleaseNotFoundException()
         assert helm.get_manifest("test-release", "test-namespace") == ()
