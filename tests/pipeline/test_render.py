@@ -15,7 +15,7 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 PIPELINE_BASE_DIR = str(RESOURCE_PATH.parent)
 
 
-class TestTemplate:
+class TestRender:
     @pytest.fixture()
     def mock_execute(self, mocker: MockerFixture) -> MagicMock:
         mock_execute = mocker.patch.object(Helm, "_Helm__execute")
@@ -32,17 +32,16 @@ class TestTemplate:
     def helm(self, mock_get_version: MagicMock) -> Helm:
         return Helm(helm_config=HelmConfig())
 
-    def test_default_template_config(self, mock_execute: MagicMock):
+    def test_render_default_config(self, mock_execute: MagicMock):
         result = runner.invoke(
             app,
             [
-                "generate",
+                "render",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
-                "--template",
             ],
             catch_exceptions=False,
         )
@@ -65,11 +64,11 @@ class TestTemplate:
         )
         assert result.exit_code == 0
 
-    def test_template_config_with_flags(self, mock_execute: MagicMock):
+    def test_render_custom_config(self, mock_execute: MagicMock):
         result = runner.invoke(
             app,
             [
-                "generate",
+                "render",
                 "--pipeline-base-dir",
                 PIPELINE_BASE_DIR,
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
@@ -77,7 +76,6 @@ class TestTemplate:
                 str(RESOURCE_PATH / "no-topics-defaults"),
                 "--config",
                 str(RESOURCE_PATH / "custom-config/config.yaml"),
-                "--template",
             ],
             catch_exceptions=False,
         )

@@ -19,6 +19,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `deploy`: Deploy pipeline steps
 * `destroy`: Destroy pipeline steps
 * `generate`: Enriches pipelines steps with defaults.
+* `render`: In addition to generate, renders final...
 * `reset`: Reset pipeline steps
 * `schema`: Generate json schema.
 
@@ -120,7 +121,31 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
-* `--template / --no-template`: Render component templates, e.g. Kubernetes manifests  [default: no-template]
+* `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
+* `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
+* `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--help`: Show this message and exit.
+
+## `kpops render`
+
+In addition to generate, renders final resources for each pipeline step, e.g. Kubernetes manifests.
+
+**Usage**:
+
+```console
+$ kpops render [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
+```
+
+**Arguments**:
+
+* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
+
+**Options**:
+
+* `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
+* `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]

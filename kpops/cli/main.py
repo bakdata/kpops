@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Iterator, Mapping
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -24,8 +25,6 @@ from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_
 from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
-
     from kpops.components.base_components import PipelineComponent
 
 LOG_DIVIDER = "#" * 100
@@ -246,10 +245,6 @@ def generate(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    template: bool = typer.Option(
-        False,
-        help="Render component templates, e.g. Kubernetes manifests",
-    ),
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     verbose: bool = VERBOSE_OPTION,
@@ -258,22 +253,43 @@ def generate(
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )
-
-    if not template:
-        print_yaml(str(pipeline))
-
-    if template:
-        steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
-        for component in steps_to_apply:
-            manifest = component.template()
-            print_yaml(manifest)
-    elif steps:
+    if steps:
         log.warning(
             "The following flags are considered only when `--template` is set: \n \
                 '--steps'"
         )
-
+    print_yaml(str(pipeline))
     return pipeline
+
+
+@app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+    help="In addition to generate, renders final resources for each pipeline step, e.g. Kubernetes manifests."
+)
+def render(
+    pipeline_path: Path = PIPELINE_PATH_ARG,
+    components_module: Optional[str] = COMPONENTS_MODULES,
+    pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
+    config: Path = CONFIG_PATH_OPTION,
+    steps: Optional[str] = PIPELINE_STEPS,
+    filter_type: FilterType = FILTER_TYPE,
+    verbose: bool = VERBOSE_OPTION,
+) -> Iterator[Mapping]:
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        components_module=components_module,
+        pipeline_base_dir=pipeline_base_dir,
+        defaults=defaults,
+        config=config,
+        steps=steps,
+        filter_type=filter_type,
+        verbose=verbose,
+    )
+    steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
+    for component in steps_to_apply:
+        manifest = component.template()
+        print_yaml(manifest)
+        yield manifest
 
 
 @app.command(
@@ -294,7 +310,6 @@ def deploy(
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )
-
     steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
     for component in steps_to_apply:
         log_action("Deploy", component)
