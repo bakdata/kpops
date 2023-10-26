@@ -178,7 +178,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
             self.apply_from_inputs(input_topic, from_topic)
 
     def inflate(self) -> list[PipelineComponent]:
-        """Inflate a component.
+        """Inflate component.
 
         This is helpful if one component should result in multiple components.
         To support this, override this method and return a list of components
@@ -192,25 +192,25 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         return {}
 
     def deploy(self, dry_run: bool) -> None:
-        """Deploy the component (self) to the k8s cluster.
+        """Deploy component, e.g. to the Kubernetes cluster.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
     def destroy(self, dry_run: bool) -> None:
-        """Uninstall the component (self) from the k8s cluster.
+        """Uninstall component, e.g. from the Kubernetes cluster.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
     def reset(self, dry_run: bool) -> None:
-        """Reset component (self) state.
+        """Reset component state.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
     def clean(self, dry_run: bool) -> None:
-        """Remove component (self) and any trace of it.
+        """Destroy component including related states.
 
         :param dry_run: Whether to do a dry run of the command
         """
