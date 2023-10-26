@@ -195,13 +195,13 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         return []
 
     def deploy(self, dry_run: bool) -> None:
-        """Deploy component, e.g. to the Kubernetes cluster.
+        """Deploy component, e.g. to Kubernetes cluster.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
     def destroy(self, dry_run: bool) -> None:
-        """Uninstall component, e.g. from the Kubernetes cluster.
+        """Uninstall component, e.g. from Kubernetes cluster.
 
         :param dry_run: Whether to do a dry run of the command
         """
