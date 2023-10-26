@@ -208,9 +208,9 @@ def create_kpops_config(
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
     help="""
-    Generate json schema.
+    Generate JSON schema.
 
-    The schemas can be used to enable support for kpops files in a text editor.
+    The schemas can be used to enable support for KPOps files in a text editor.
     """
 )
 def schema(
@@ -220,7 +220,7 @@ def schema(
         help="""
         Scope of the generated schema
         \n\n\n
-        pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide [COMPONENTS_MODULES].
+        pipeline: Schema of PipelineComponents. Includes the built-in KPOps components by default. To include custom components, provide [COMPONENTS_MODULES].
         \n\n\n
         config: Schema of KpopsConfig.""",
     ),

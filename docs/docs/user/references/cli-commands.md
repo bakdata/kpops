@@ -21,7 +21,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `generate`: Enrich pipeline steps with defaults.
 * `render`: In addition to generate, render final...
 * `reset`: Reset pipeline steps
-* `schema`: Generate json schema.
+* `schema`: Generate JSON schema.
 
 ## `kpops clean`
 
@@ -177,9 +177,9 @@ $ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 
 ## `kpops schema`
 
-Generate json schema.
+Generate JSON schema.
 
-The schemas can be used to enable support for kpops files in a text editor.
+The schemas can be used to enable support for KPOps files in a text editor.
 
 **Usage**:
 
@@ -195,7 +195,7 @@ $ kpops schema [OPTIONS] SCOPE:{pipeline|config} [COMPONENTS_MODULE]
 
 
 
-        pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide [COMPONENTS_MODULES].
+        pipeline: Schema of PipelineComponents. Includes the built-in KPOps components by default. To include custom components, provide [COMPONENTS_MODULES].
         
 
 
