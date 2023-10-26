@@ -93,6 +93,7 @@ FILTER_TYPE: FilterType = typer.Option(
     help="Whether the --steps option should include/exclude the steps",
 )
 
+OUTPUT_OPTION = typer.Option(True, help="Enable output printing")
 VERBOSE_OPTION = typer.Option(False, help="Enable verbose printing")
 
 COMPONENTS_MODULES: str | None = typer.Argument(
@@ -245,13 +246,15 @@ def generate(
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
+    output: bool = OUTPUT_OPTION,
     verbose: bool = VERBOSE_OPTION,
 ) -> Pipeline:
     kpops_config = create_kpops_config(config, defaults, verbose)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )
-    print_yaml(str(pipeline))
+    if output:
+        print_yaml(str(pipeline))
     return pipeline
 
 
@@ -266,21 +269,26 @@ def render(
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
+    output: bool = OUTPUT_OPTION,
     verbose: bool = VERBOSE_OPTION,
-) -> Iterator[Mapping]:
+) -> list[Mapping]:
     pipeline = generate(
         pipeline_path=pipeline_path,
         components_module=components_module,
         pipeline_base_dir=pipeline_base_dir,
         defaults=defaults,
         config=config,
+        output=False,
         verbose=verbose,
     )
     steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
+    manifests: list[Mapping] = []
     for component in steps_to_apply:
         manifest = component.render()
-        print_yaml(manifest)
-        yield manifest
+        manifests.append(manifest)
+        if output:
+            print_yaml(manifest)
+    return manifests
 
 
 @app.command(

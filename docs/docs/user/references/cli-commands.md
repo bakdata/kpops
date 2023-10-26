@@ -121,6 +121,7 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
+* `--output / --no-output`: Enable output printing  [default: output]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
 * `--help`: Show this message and exit.
 
@@ -146,6 +147,7 @@ $ kpops render [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
+* `--output / --no-output`: Enable output printing  [default: output]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
 * `--help`: Show this message and exit.
 
