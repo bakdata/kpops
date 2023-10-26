@@ -9,10 +9,10 @@ try:
 except ImportError:
     from typing_extensions import Self
 
-JSON: TypeAlias = dict[str, "JSON"] | list["JSON"] | str | int | float | bool | None
+Json: TypeAlias = dict[str, "Json"] | list["Json"] | str | int | float | bool | None
 
 
-class KubernetesManifest(UserDict[str, JSON]):
+class KubernetesManifest(UserDict[str, Json]):
     """Representation of a Kubernetes API object as YAML/JSON mapping."""
 
     @classmethod
