@@ -78,7 +78,7 @@ def substitute_nested(input: str, **kwargs) -> str:
 
 
 def print_yaml(data: Mapping | str, substitution: dict | None = None) -> None:
-    """Print the generated component definition.
+    """Print YAML object with syntax highlighting.
 
     :param data: YAML document
     :param substitution: Substitution dictionary, defaults to None
