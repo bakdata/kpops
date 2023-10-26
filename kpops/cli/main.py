@@ -248,7 +248,7 @@ def generate(
     config: Path = CONFIG_PATH_OPTION,
     template: bool = typer.Option(
         False,
-        help="Render component templates, e.g. Kubernetes manifests.",
+        help="Render component templates, e.g. Kubernetes manifests",
     ),
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
