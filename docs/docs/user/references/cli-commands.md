@@ -127,7 +127,7 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 
 ## `kpops render`
 
-In addition to generate, render final resources for each pipeline step, e.g. Kubernetes manifests.
+In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.
 
 **Usage**:
 
