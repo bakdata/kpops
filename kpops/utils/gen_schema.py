@@ -2,20 +2,17 @@ import inspect
 import json
 import logging
 from abc import ABC
+from collections.abc import Sequence
 from enum import Enum
-from typing import Literal
+from typing import Annotated, Literal, Union
 
+from pydantic import BaseModel, Field
 from pydantic.fields import FieldInfo
-from pydantic.json_schema import (
-    GenerateJsonSchema,
-    model_json_schema,
-    models_json_schema,
-)
+from pydantic.json_schema import GenerateJsonSchema, model_json_schema
 
 from kpops.cli.registry import _find_classes
-from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components import PipelineComponent
 from kpops.config import KpopsConfig
-from kpops.utils.docstring import describe_object
 
 
 class SchemaScope(str, Enum):
@@ -90,6 +87,7 @@ def gen_pipeline_schema(
         log.warning("No components are provided, no schema is generated.")
         return
     # Add stock components if enabled
+    # components: tuple[type[PipelineComponent], ...] = (PipelineComponent,KubernetesApp,)
     components: tuple[type[PipelineComponent], ...] = ()
     if include_stock_components:
         components = _add_components("kpops.components")
@@ -103,49 +101,80 @@ def gen_pipeline_schema(
     # re-assign component type as Literal to work as discriminator
     for component in components:
         component.model_fields["type"] = FieldInfo(
-            alias="type",
             annotation=Literal[component.type],  # type: ignore[reportGeneralTypeIssues]
             default=component.type,
             # final=True,
-            title="Component type",
-            description=describe_object(component.__doc__),
+            # title="Component type",
+            # description=describe_object(component.__doc__),
             # model_config=BaseConfig,
             # class_validators=None,
         )
-    components_moded = tuple([(component, "serialization") for component in components])
+        extra_schema = {
+            "type": "model-field",
+            "schema": {
+                "type": "literal",
+                "expected": [component.type],
+                "metadata": {
+                    "pydantic.internal.needs_apply_discriminated_union": False
+                },
+            },
+            "metadata": {
+                "pydantic_js_functions": [],
+                "pydantic_js_annotation_functions": [],
+            },
+        }
+        if "schema" not in component.__pydantic_core_schema__["schema"]:
+            component.__pydantic_core_schema__["schema"]["fields"][
+                "type"
+            ] = extra_schema
+        else:
+            component.__pydantic_core_schema__["schema"]["schema"]["fields"][
+                "type"
+            ] = extra_schema
 
-    schema = models_json_schema(
-        components_moded,
-        title="KPOps pipeline schema",
-        by_alias=True,
-        ref_template="#/definitions/{model}",
-    )
-    # breakpoint()
-    stripped_schema_first_item = {k[0]: v for k, v in schema[0].items()}
-    schema_first_item_adapted = {
-        "discriminator": {
-            "mapping": {},
-            "propertyName": "type",
-        },
-        "oneOf": [],
-    }
-    mapping = {}
-    one_of = []
-    for k, v in stripped_schema_first_item.items():
-        mapping[k.type] = v["$ref"]
-        one_of.append(v)
-    schema_first_item_adapted["discriminator"]["mapping"] = mapping
-    schema_first_item_adapted["oneOf"] = one_of
-    complete_schema = schema[1].copy()
-    complete_schema["items"] = schema_first_item_adapted
-    complete_schema["type"] = "array"
-    print(
-        json.dumps(
-            complete_schema,
-            indent=4,
-            sort_keys=True,
-        )
-    )
+    PipelineComponents = Union[components]  # type: ignore[valid-type]
+    AnnotatedPipelineComponents = Annotated[
+        PipelineComponents, Field(discriminator="type")
+    ]
+
+    class PipelineSchema(BaseModel):
+        components: Sequence[AnnotatedPipelineComponents]
+
+    schema = PipelineSchema.model_json_schema()
+
+    # info, schema = models_json_schema(
+    #     components_moded,
+    #     title="KPOps pipeline schema",
+    #     by_alias=True,
+    #     # ref_template="#/definitions/{model}",
+    # )
+    print(json.dumps(schema, indent=4, sort_keys=True))
+
+    # stripped_schema_first_item = {k[0]: v for k, v in schema[0].items()}
+    # schema_first_item_adapted = {
+    #     "discriminator": {
+    #         "mapping": {},
+    #         "propertyName": "type",
+    #     },
+    #     "oneOf": [],
+    # }
+    # mapping = {}
+    # one_of = []
+    # for k, v in stripped_schema_first_item.items():
+    #     mapping[k.type] = v["$ref"]
+    #     one_of.append(v)
+    # schema_first_item_adapted["discriminator"]["mapping"] = mapping
+    # schema_first_item_adapted["oneOf"] = one_of
+    # complete_schema = schema[1].copy()
+    # complete_schema["items"] = schema_first_item_adapted
+    # complete_schema["type"] = "array"
+    # print(
+    #     json.dumps(
+    #         complete_schema,
+    #         indent=4,
+    #         sort_keys=True,
+    #     )
+    # )
 
     # Create a type union that will hold the union of all component types
     # PipelineComponents = Union[components]  # type: ignore[valid-type]

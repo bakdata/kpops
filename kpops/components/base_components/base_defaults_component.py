@@ -9,6 +9,7 @@ from typing import TypeVar
 
 import typer
 from pydantic import AliasChoices, ConfigDict, Field
+from pydantic.json_schema import SkipJsonSchema
 
 from kpops.component_handlers import ComponentHandlers
 from kpops.config import KpopsConfig
@@ -55,7 +56,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         description=describe_attr("config", __doc__),
         exclude=True,
     )
-    handlers: ComponentHandlers = Field(
+    handlers: SkipJsonSchema[ComponentHandlers] = Field(
         default=...,
         description=describe_attr("handlers", __doc__),
         exclude=True,
