@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, call, AsyncMock
+from unittest.mock import AsyncMock, MagicMock, call
 
 import pytest
 from pytest_mock import MockerFixture

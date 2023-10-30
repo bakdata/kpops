@@ -87,16 +87,12 @@ class PipelineComponents(BaseModel):
         runner: Callable[[PipelineComponent], Coroutine],
     ):
 
-        sub_graph_nodes = []
-        for component in components:
-            sub_graph_nodes.append(component.id)
-            sub_graph_nodes.append(list(component.inputs))
-            sub_graph_nodes.append(list(component.outputs))
+        sub_graph_nodes = self.__get_graph_nodes(components)
 
         async def run_parallel_tasks(tasks):
             asyncio_tasks = []
             for coroutine in tasks:
-                asyncio_tasks.append((asyncio.create_task(coroutine)))
+                asyncio_tasks.append(asyncio.create_task(coroutine))
             await asyncio.gather(*asyncio_tasks)
 
         async def run_graph_tasks(pending_tasks: list[Awaitable]):
@@ -126,8 +122,15 @@ class PipelineComponents(BaseModel):
         if reverse:
             sorted_tasks.reverse()
 
-        execution = run_graph_tasks(sorted_tasks)
-        return execution
+        return run_graph_tasks(sorted_tasks)
+
+    def __get_graph_nodes(self, components):
+        sub_graph_nodes = []
+        for component in components:
+            sub_graph_nodes.append(component.id)
+            sub_graph_nodes.append(list(component.inputs))
+            sub_graph_nodes.append(list(component.outputs))
+        return sub_graph_nodes
 
     def __get_parallel_task_from(self, layer, runner):
         parallel_tasks = []
