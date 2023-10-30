@@ -124,11 +124,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "type": {
-                    "const": "helm-app",
-                    "default": "helm-app",
-                    "title": "Type"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -303,11 +298,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "type": {
-                    "const": "kafka-sink-connector",
-                    "default": "kafka-sink-connector",
-                    "title": "Type"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -420,11 +410,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "type": {
-                    "const": "kafka-source-connector",
-                    "default": "kafka-source-connector",
-                    "title": "Type"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -527,11 +512,6 @@
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
-                },
-                "type": {
-                    "const": "producer-app",
-                    "default": "producer-app",
-                    "title": "Type"
                 },
                 "version": {
                     "anyOf": [
@@ -776,11 +756,6 @@
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
-                },
-                "type": {
-                    "const": "streams-app",
-                    "default": "streams-app",
-                    "title": "Type"
                 },
                 "version": {
                     "anyOf": [

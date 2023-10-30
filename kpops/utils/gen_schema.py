@@ -101,8 +101,9 @@ def gen_pipeline_schema(
     # re-assign component type as Literal to work as discriminator
     for component in components:
         component.model_fields["type"] = FieldInfo(
-            annotation=SkipJsonSchema[Literal[component.type]],  # type: ignore[reportGeneralTypeIssues]
+            annotation=Literal[component.type],  # type: ignore[reportGeneralTypeIssues]
             default=component.type,
+            exclude=True,
         )
         extra_schema = {
             "type": "model-field",
@@ -113,7 +114,9 @@ def gen_pipeline_schema(
                     "expected": [component.type],
                     "metadata": {
                         "pydantic.internal.needs_apply_discriminated_union": False,
-                        "pydantic_js_annotation_functions": [],
+                        "pydantic_js_annotation_functions": [
+                            SkipJsonSchema().__get_pydantic_json_schema__  # pyright:ignore[reportGeneralTypeIssues]
+                        ],
                     },
                 },
                 "default": component.type,
