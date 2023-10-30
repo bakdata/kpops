@@ -9,6 +9,12 @@ from typing import Annotated, Literal, Union
 from pydantic import Field, RootModel
 from pydantic.fields import FieldInfo
 from pydantic.json_schema import GenerateJsonSchema, SkipJsonSchema, model_json_schema
+from pydantic_core.core_schema import (
+    DefinitionsSchema,
+    LiteralSchema,
+    ModelField,
+    ModelFieldsSchema,
+)
 
 from kpops.cli.registry import _find_classes
 from kpops.components import PipelineComponent
@@ -87,7 +93,6 @@ def gen_pipeline_schema(
         log.warning("No components are provided, no schema is generated.")
         return
     # Add stock components if enabled
-    # components: tuple[type[PipelineComponent], ...] = (PipelineComponent,KubernetesApp,)
     components: tuple[type[PipelineComponent], ...] = ()
     if include_stock_components:
         components = _add_components("kpops.components")
@@ -101,40 +106,29 @@ def gen_pipeline_schema(
     # re-assign component type as Literal to work as discriminator
     for component in components:
         component.model_fields["type"] = FieldInfo(
-            annotation=Literal[component.type],  # type: ignore[reportGeneralTypeIssues]
+            annotation=Literal[component.type],  # type:ignore[valid-type]
             default=component.type,
             exclude=True,
         )
-        extra_schema = {
-            "type": "model-field",
-            "schema": {
-                "type": "default",
-                "schema": {
-                    "type": "literal",
-                    "expected": [component.type],
-                    "metadata": {
-                        "pydantic.internal.needs_apply_discriminated_union": False,
-                        "pydantic_js_annotation_functions": [
-                            SkipJsonSchema().__get_pydantic_json_schema__  # pyright:ignore[reportGeneralTypeIssues]
-                        ],
-                    },
+        core_schema: DefinitionsSchema = (
+            component.__pydantic_core_schema__
+        )  # pyright:ignore[reportGeneralTypeIssues]
+        model_schema: ModelFieldsSchema = core_schema["schema"][
+            "schema"
+        ]  # pyright:ignore[reportGeneralTypeIssues,reportTypedDictNotRequiredAccess]
+        model_schema["fields"]["type"] = ModelField(
+            type="model-field",
+            schema=LiteralSchema(
+                type="literal",
+                expected=[component.type],
+                metadata={
+                    "pydantic.internal.needs_apply_discriminated_union": False,
+                    "pydantic_js_annotation_functions": [
+                        SkipJsonSchema().__get_pydantic_json_schema__  # pyright:ignore[reportGeneralTypeIssues]
+                    ],
                 },
-                "default": component.type,
-            },
-            "serialization_exclude": True,
-            "metadata": {
-                "pydantic_js_functions": [],
-                "pydantic_js_annotation_functions": [],
-            },
-        }
-        if "schema" not in component.__pydantic_core_schema__["schema"]:
-            component.__pydantic_core_schema__["schema"]["fields"][
-                "type"
-            ] = extra_schema
-        else:
-            component.__pydantic_core_schema__["schema"]["schema"]["fields"][
-                "type"
-            ] = extra_schema
+            ),
+        )
 
     PipelineComponents = Union[components]  # type: ignore[valid-type]
     AnnotatedPipelineComponents = Annotated[
@@ -142,7 +136,9 @@ def gen_pipeline_schema(
     ]
 
     class PipelineSchema(RootModel):
-        root: Sequence[AnnotatedPipelineComponents]  # pyright:ignore[reportGeneralTypeIssues]
+        root: Sequence[
+            AnnotatedPipelineComponents  # pyright:ignore[reportGeneralTypeIssues]
+        ]
 
     schema = PipelineSchema.model_json_schema(by_alias=True)
     print(json.dumps(schema, indent=4, sort_keys=True))

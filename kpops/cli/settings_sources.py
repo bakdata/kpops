@@ -7,6 +7,7 @@ from typing_extensions import override
 
 from kpops.utils.yaml_loading import load_yaml_file
 
+
 # TODO(Ivan Yordanov): Test!
 class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     """Loads variables from a YAML file at the project's root."""
