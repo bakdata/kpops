@@ -5,7 +5,7 @@ from abc import ABC
 from functools import cached_property
 from typing import Any, NoReturn
 
-from pydantic import Field, ValidationInfo, field_validator
+from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -46,7 +46,6 @@ class KafkaConnector(PipelineComponent, ABC):
     :param version: Helm chart version, defaults to "1.0.4"
     :param resetter_values: Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.,
         defaults to dict
-    :param _connector_type: Defines the type of the connector (Source or Sink)
     """
 
     namespace: str = Field(
@@ -71,7 +70,7 @@ class KafkaConnector(PipelineComponent, ABC):
         default_factory=dict,
         description=describe_attr("resetter_values", __doc__),
     )
-    _connector_type: KafkaConnectorType
+    _connector_type: KafkaConnectorType = PrivateAttr()
 
     @field_validator("app")
     @classmethod
@@ -276,7 +275,7 @@ class KafkaSourceConnector(KafkaConnector):
         description=describe_attr("offset_topic", __doc__),
     )
 
-    _connector_type: KafkaConnectorType = KafkaConnectorType.SOURCE
+    _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
@@ -321,7 +320,7 @@ class KafkaSourceConnector(KafkaConnector):
 class KafkaSinkConnector(KafkaConnector):
     """Kafka sink connector model."""
 
-    _connector_type: KafkaConnectorType = KafkaConnectorType.SINK
+    _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SINK)
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
