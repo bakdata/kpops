@@ -6,7 +6,7 @@ from collections.abc import Sequence
 from enum import Enum
 from typing import Annotated, Literal, Union
 
-from pydantic import BaseModel, Field
+from pydantic import Field, RootModel
 from pydantic.fields import FieldInfo
 from pydantic.json_schema import GenerateJsonSchema, model_json_schema
 
@@ -137,8 +137,8 @@ def gen_pipeline_schema(
         PipelineComponents, Field(discriminator="type")
     ]
 
-    class PipelineSchema(BaseModel):
-        components: Sequence[AnnotatedPipelineComponents]
+    class PipelineSchema(RootModel):
+        root: Sequence[AnnotatedPipelineComponents]
 
     schema = PipelineSchema.model_json_schema()
 
