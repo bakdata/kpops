@@ -103,11 +103,6 @@ def gen_pipeline_schema(
         component.model_fields["type"] = FieldInfo(
             annotation=Literal[component.type],  # type: ignore[reportGeneralTypeIssues]
             default=component.type,
-            # final=True,
-            # title="Component type",
-            # description=describe_object(component.__doc__),
-            # model_config=BaseConfig,
-            # class_validators=None,
         )
         extra_schema = {
             "type": "model-field",
@@ -138,54 +133,10 @@ def gen_pipeline_schema(
     ]
 
     class PipelineSchema(RootModel):
-        root: Sequence[AnnotatedPipelineComponents]
+        root: Sequence[AnnotatedPipelineComponents]  # type: ignore
 
-    schema = PipelineSchema.model_json_schema()
-
-    # info, schema = models_json_schema(
-    #     components_moded,
-    #     title="KPOps pipeline schema",
-    #     by_alias=True,
-    #     # ref_template="#/definitions/{model}",
-    # )
+    schema = PipelineSchema.model_json_schema(by_alias=True)
     print(json.dumps(schema, indent=4, sort_keys=True))
-
-    # stripped_schema_first_item = {k[0]: v for k, v in schema[0].items()}
-    # schema_first_item_adapted = {
-    #     "discriminator": {
-    #         "mapping": {},
-    #         "propertyName": "type",
-    #     },
-    #     "oneOf": [],
-    # }
-    # mapping = {}
-    # one_of = []
-    # for k, v in stripped_schema_first_item.items():
-    #     mapping[k.type] = v["$ref"]
-    #     one_of.append(v)
-    # schema_first_item_adapted["discriminator"]["mapping"] = mapping
-    # schema_first_item_adapted["oneOf"] = one_of
-    # complete_schema = schema[1].copy()
-    # complete_schema["items"] = schema_first_item_adapted
-    # complete_schema["type"] = "array"
-    # print(
-    #     json.dumps(
-    #         complete_schema,
-    #         indent=4,
-    #         sort_keys=True,
-    #     )
-    # )
-
-    # Create a type union that will hold the union of all component types
-    # PipelineComponents = Union[components]  # type: ignore[valid-type]
-    # AnnotatedPipelineComponents = Annotated[
-    #     PipelineComponents, Field(discriminator="type")
-    # ]
-    # DumpablePipelineComponents = TypeAdapter(AnnotatedPipelineComponents)
-
-    # schema = to_json(AnnotatedPipelineComponents)
-
-    # print(schema)
 
 
 def gen_config_schema() -> None:
