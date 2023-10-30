@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, AsyncMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -32,6 +32,15 @@ from tests.components.test_kafka_connector import (
 
 
 class TestKafkaSourceConnector(TestKafkaConnector):
+
+    @pytest.fixture(autouse=True)
+    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+        async_mock = AsyncMock()
+        return mocker.patch(
+            "kpops.components.base_components.kafka_connector.Helm",
+            return_value=async_mock,
+        ).return_value
+
     @pytest.fixture()
     def connector(
         self,

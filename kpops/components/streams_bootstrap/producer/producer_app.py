@@ -75,7 +75,7 @@ class ProducerApp(KafkaApp):
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        self._run_clean_up_job(
+        await self._run_clean_up_job(
             values=self.to_helm_values(),
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,

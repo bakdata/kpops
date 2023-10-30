@@ -74,13 +74,13 @@ class StreamsApp(KafkaApp):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        self.__run_streams_clean_up_job(dry_run, delete_output=False)
+        await self.__run_streams_clean_up_job(dry_run, delete_output=False)
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        self.__run_streams_clean_up_job(dry_run, delete_output=True)
+        await self.__run_streams_clean_up_job(dry_run, delete_output=True)
 
-    def __run_streams_clean_up_job(self, dry_run: bool, delete_output: bool) -> None:
+    async def __run_streams_clean_up_job(self, dry_run: bool, delete_output: bool) -> None:
         """Run clean job for this Streams app.
 
         :param dry_run: Whether to do a dry run of the command
@@ -88,7 +88,7 @@ class StreamsApp(KafkaApp):
         """
         values = self.to_helm_values()
         values["streams"]["deleteOutput"] = delete_output
-        self._run_clean_up_job(
+        await self._run_clean_up_job(
             values=values,
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,

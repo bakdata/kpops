@@ -98,7 +98,7 @@ class KafkaApp(KubernetesApp, ABC):
                 )
         await super().deploy(dry_run)
 
-    def _run_clean_up_job(
+    async def _run_clean_up_job(
         self,
         values: dict,
         dry_run: bool,
@@ -117,11 +117,11 @@ class KafkaApp(KubernetesApp, ABC):
         )
         log.info(f"Uninstall old cleanup job for {clean_up_release_name}")
 
-        self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
+        await self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
 
         log.info(f"Init cleanup job for {clean_up_release_name}")
 
-        stdout = self.__install_clean_up_job(
+        stdout = await self.__install_clean_up_job(
             clean_up_release_name, suffix, values, dry_run
         )
 
@@ -130,17 +130,17 @@ class KafkaApp(KubernetesApp, ABC):
 
         if not retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {clean_up_release_name}")
-            self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
+            await self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
 
-    def __uninstall_clean_up_job(self, release_name: str, dry_run: bool) -> None:
+    async def __uninstall_clean_up_job(self, release_name: str, dry_run: bool) -> None:
         """Uninstall clean up job.
 
         :param release_name: Name of the Helm release
         :param dry_run: Whether to do a dry run of the command
         """
-        self.helm.uninstall(self.namespace, release_name, dry_run)
+        await self.helm.uninstall(self.namespace, release_name, dry_run)
 
-    def __install_clean_up_job(
+    async def __install_clean_up_job(
         self,
         release_name: str,
         suffix: str,
@@ -156,7 +156,7 @@ class KafkaApp(KubernetesApp, ABC):
         :return: Install clean up job with helm, return the output of the installation
         """
         clean_up_release_name = trim_release_name(release_name, suffix)
-        return self.helm.upgrade_install(
+        return await self.helm.upgrade_install(
             clean_up_release_name,
             self.clean_up_helm_chart,
             dry_run,

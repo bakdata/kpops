@@ -398,6 +398,7 @@ def clean(
     verbose: bool = VERBOSE_OPTION,
 ):
     async def clean_runner(component: PipelineComponent):
+        await component.destroy(dry_run)
         await component.clean(dry_run)
 
     async def async_clean():

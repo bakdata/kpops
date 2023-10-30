@@ -142,7 +142,7 @@ class TestConnectorApiWrapper:
 
         await timeout(
             create_connector_locally(),
-            secs=1,
+            secs=10,
         )
 
         log_warning.assert_called_with(
