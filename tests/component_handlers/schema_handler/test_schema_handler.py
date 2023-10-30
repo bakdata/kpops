@@ -74,7 +74,8 @@ def kpops_config_with_sr_enabled() -> KpopsConfig:
         environment="development",
         kafka_brokers="broker:9092",
         schema_registry=SchemaRegistryConfig(
-            enabled=True, url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081")
+            enabled=True,
+            url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),
         ),
     )
 

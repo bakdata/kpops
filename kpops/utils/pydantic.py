@@ -29,7 +29,6 @@ class CamelCaseConfigModel(BaseModel):
 
 
 class DescConfigModel(BaseModel):
-
     @staticmethod
     def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
         schema["description"] = describe_object(model.__doc__)

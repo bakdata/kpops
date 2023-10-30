@@ -44,7 +44,7 @@ KPOPS_COMPONENTS_INHERITANCE_REF = {
 KPOPS_COMPONENTS_SECTIONS = {
     component.type: [
         field_name
-        for field_name, field_info in component.model_fields.items()  # pyright: ignore[reportGeneralTypeIssues]
+        for field_name, field_info in component.model_fields.items()
         if not field_info.exclude
     ]
     for component in KPOPS_COMPONENTS

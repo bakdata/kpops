@@ -4,7 +4,7 @@ from typing import Any, Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 from typing_extensions import override
 
-from kpops.utils.pydantic import CamelCaseConfigModel, to_dot, DescConfigModel
+from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel, to_dot
 
 
 class KafkaConnectorType(str, Enum):
@@ -21,7 +21,9 @@ class KafkaConnectorConfig(DescConfigModel):
     @override
     @staticmethod
     def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
-        super(KafkaConnectorConfig, KafkaConnectorConfig).json_schema_extra(schema, model)
+        super(KafkaConnectorConfig, KafkaConnectorConfig).json_schema_extra(
+            schema, model
+        )
         schema["additional_properties"] = {"type": "string"}
 
     model_config = ConfigDict(

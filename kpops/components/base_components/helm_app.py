@@ -79,7 +79,9 @@ class HelmApp(KubernetesApp):
     @property
     def helm_flags(self) -> HelmFlags:
         """Return shared flags for Helm commands."""
-        auth_flags = self.repo_config.repo_auth_flags.model_dump() if self.repo_config else {}
+        auth_flags = (
+            self.repo_config.repo_auth_flags.model_dump() if self.repo_config else {}
+        )
         return HelmFlags(
             **auth_flags,
             version=self.version,
@@ -139,7 +141,9 @@ class HelmApp(KubernetesApp):
 
         :returns: Thte values to be used by Helm
         """
-        return self.app.model_dump(by_alias=True, exclude_none=True, exclude_defaults=True)
+        return self.app.model_dump(
+            by_alias=True, exclude_none=True, exclude_defaults=True
+        )
 
     def print_helm_diff(self, stdout: str) -> None:
         """Print the diff of the last and current release of this component.
