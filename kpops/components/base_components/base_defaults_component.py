@@ -46,12 +46,12 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         ignored_types=(cached_property, cached_classproperty),
     )
 
-    enrich: bool = Field(
+    enrich: SkipJsonSchema[bool] = Field(
         default=False,
         description=describe_attr("enrich", __doc__),
         exclude=True,
     )
-    config: KpopsConfig = Field(
+    config: SkipJsonSchema[KpopsConfig] = Field(
         default=...,
         description=describe_attr("config", __doc__),
         exclude=True,
@@ -61,7 +61,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         description=describe_attr("handlers", __doc__),
         exclude=True,
     )
-    validate_: bool = Field(
+    validate_: SkipJsonSchema[bool] = Field(
         validation_alias=AliasChoices("validate", "validate_"),
         default=True,
         description=describe_attr("validate", __doc__),

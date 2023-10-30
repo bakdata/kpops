@@ -8,7 +8,7 @@ from typing import Annotated, Literal, Union
 
 from pydantic import Field, RootModel
 from pydantic.fields import FieldInfo
-from pydantic.json_schema import GenerateJsonSchema, model_json_schema
+from pydantic.json_schema import GenerateJsonSchema, SkipJsonSchema, model_json_schema
 
 from kpops.cli.registry import _find_classes
 from kpops.components import PipelineComponent
@@ -101,18 +101,24 @@ def gen_pipeline_schema(
     # re-assign component type as Literal to work as discriminator
     for component in components:
         component.model_fields["type"] = FieldInfo(
-            annotation=Literal[component.type],  # type: ignore[reportGeneralTypeIssues]
+            annotation=SkipJsonSchema[Literal[component.type]],  # type: ignore[reportGeneralTypeIssues]
             default=component.type,
         )
         extra_schema = {
             "type": "model-field",
             "schema": {
-                "type": "literal",
-                "expected": [component.type],
-                "metadata": {
-                    "pydantic.internal.needs_apply_discriminated_union": False
+                "type": "default",
+                "schema": {
+                    "type": "literal",
+                    "expected": [component.type],
+                    "metadata": {
+                        "pydantic.internal.needs_apply_discriminated_union": False,
+                        "pydantic_js_annotation_functions": [],
+                    },
                 },
+                "default": component.type,
             },
+            "serialization_exclude": True,
             "metadata": {
                 "pydantic_js_functions": [],
                 "pydantic_js_annotation_functions": [],
@@ -133,7 +139,7 @@ def gen_pipeline_schema(
     ]
 
     class PipelineSchema(RootModel):
-        root: Sequence[AnnotatedPipelineComponents]  # type: ignore
+        root: Sequence[AnnotatedPipelineComponents]  # pyright:ignore[reportGeneralTypeIssues]
 
     schema = PipelineSchema.model_json_schema(by_alias=True)
     print(json.dumps(schema, indent=4, sort_keys=True))

@@ -6,7 +6,7 @@
             "properties": {
                 "components": {
                     "additionalProperties": {
-                        "$ref": "#/definitions/FromTopic"
+                        "$ref": "#/$defs/FromTopic"
                     },
                     "default": {},
                     "description": "Components to read from",
@@ -15,7 +15,7 @@
                 },
                 "topics": {
                     "additionalProperties": {
-                        "$ref": "#/definitions/FromTopic"
+                        "$ref": "#/$defs/FromTopic"
                     },
                     "default": {},
                     "description": "Input topics",
@@ -46,7 +46,7 @@
                 "type": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/InputTopicTypes"
+                            "$ref": "#/$defs/InputTopicTypes"
                         },
                         {
                             "type": "null"
@@ -66,7 +66,7 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/KubernetesAppConfig"
+                            "$ref": "#/$defs/KubernetesAppConfig"
                         }
                     ],
                     "description": "Application-specific settings"
@@ -74,7 +74,7 @@
                 "from": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/FromSection"
+                            "$ref": "#/$defs/FromSection"
                         },
                         {
                             "type": "null"
@@ -103,7 +103,7 @@
                 "repo_config": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/HelmRepoConfig"
+                            "$ref": "#/$defs/HelmRepoConfig"
                         },
                         {
                             "type": "null"
@@ -115,7 +115,7 @@
                 "to": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/ToSection"
+                            "$ref": "#/$defs/ToSection"
                         },
                         {
                             "type": "null"
@@ -123,6 +123,11 @@
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
+                },
+                "type": {
+                    "const": "helm-app",
+                    "default": "helm-app",
+                    "title": "Type"
                 },
                 "version": {
                     "anyOf": [
@@ -152,7 +157,7 @@
                 "repo_auth_flags": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/RepoAuthFlags"
+                            "$ref": "#/$defs/RepoAuthFlags"
                         }
                     ],
                     "default": {
@@ -228,7 +233,7 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/KafkaConnectorConfig"
+                            "$ref": "#/$defs/KafkaConnectorConfig"
                         }
                     ],
                     "description": "Application-specific settings"
@@ -236,7 +241,7 @@
                 "from": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/FromSection"
+                            "$ref": "#/$defs/FromSection"
                         },
                         {
                             "type": "null"
@@ -265,7 +270,7 @@
                 "repo_config": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/HelmRepoConfig"
+                            "$ref": "#/$defs/HelmRepoConfig"
                         }
                     ],
                     "default": {
@@ -289,7 +294,7 @@
                 "to": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/ToSection"
+                            "$ref": "#/$defs/ToSection"
                         },
                         {
                             "type": "null"
@@ -297,6 +302,11 @@
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
+                },
+                "type": {
+                    "const": "kafka-sink-connector",
+                    "default": "kafka-sink-connector",
+                    "title": "Type"
                 },
                 "version": {
                     "anyOf": [
@@ -327,7 +337,7 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/KafkaConnectorConfig"
+                            "$ref": "#/$defs/KafkaConnectorConfig"
                         }
                     ],
                     "description": "Application-specific settings"
@@ -335,7 +345,7 @@
                 "from": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/FromSection"
+                            "$ref": "#/$defs/FromSection"
                         },
                         {
                             "type": "null"
@@ -377,7 +387,7 @@
                 "repo_config": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/HelmRepoConfig"
+                            "$ref": "#/$defs/HelmRepoConfig"
                         }
                     ],
                     "default": {
@@ -401,7 +411,7 @@
                 "to": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/ToSection"
+                            "$ref": "#/$defs/ToSection"
                         },
                         {
                             "type": "null"
@@ -409,6 +419,11 @@
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
+                },
+                "type": {
+                    "const": "kafka-source-connector",
+                    "default": "kafka-source-connector",
+                    "title": "Type"
                 },
                 "version": {
                     "anyOf": [
@@ -455,7 +470,7 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ProducerValues"
+                            "$ref": "#/$defs/ProducerValues"
                         }
                     ],
                     "description": "Application-specific settings"
@@ -485,7 +500,7 @@
                 "repo_config": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/HelmRepoConfig"
+                            "$ref": "#/$defs/HelmRepoConfig"
                         }
                     ],
                     "default": {
@@ -504,7 +519,7 @@
                 "to": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/ToSection"
+                            "$ref": "#/$defs/ToSection"
                         },
                         {
                             "type": "null"
@@ -512,6 +527,11 @@
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
+                },
+                "type": {
+                    "const": "producer-app",
+                    "default": "producer-app",
+                    "title": "Type"
                 },
                 "version": {
                     "anyOf": [
@@ -606,7 +626,7 @@
                 "streams": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/ProducerStreamsConfig"
+                            "$ref": "#/$defs/ProducerStreamsConfig"
                         }
                     ],
                     "description": "Kafka Streams settings"
@@ -692,7 +712,7 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/StreamsAppConfig"
+                            "$ref": "#/$defs/StreamsAppConfig"
                         }
                     ],
                     "description": "Application-specific settings"
@@ -700,7 +720,7 @@
                 "from": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/FromSection"
+                            "$ref": "#/$defs/FromSection"
                         },
                         {
                             "type": "null"
@@ -729,7 +749,7 @@
                 "repo_config": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/HelmRepoConfig"
+                            "$ref": "#/$defs/HelmRepoConfig"
                         }
                     ],
                     "default": {
@@ -748,7 +768,7 @@
                 "to": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/ToSection"
+                            "$ref": "#/$defs/ToSection"
                         },
                         {
                             "type": "null"
@@ -756,6 +776,11 @@
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
+                },
+                "type": {
+                    "const": "streams-app",
+                    "default": "streams-app",
+                    "title": "Type"
                 },
                 "version": {
                     "anyOf": [
@@ -866,7 +891,7 @@
                 "autoscaling": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/StreamsAppAutoScaling"
+                            "$ref": "#/$defs/StreamsAppAutoScaling"
                         },
                         {
                             "type": "null"
@@ -891,7 +916,7 @@
                 "streams": {
                     "allOf": [
                         {
-                            "$ref": "#/definitions/StreamsConfig"
+                            "$ref": "#/$defs/StreamsConfig"
                         }
                     ],
                     "description": "Streams Bootstrap streams section"
@@ -904,7 +929,118 @@
             "type": "object"
         },
         "StreamsConfig": {
-            "description": "Streams Bootstrap streams section.\n\n:param input_topics: Input topics, defaults to []\n:param input_pattern: Input pattern, defaults to None\n:param extra_input_topics: Extra input topics, defaults to {}\n:param extra_input_patterns: Extra input patterns, defaults to {}\n:param extra_output_topics: Extra output topics, defaults to {}\n:param output_topic: Output topic, defaults to None\n:param error_topic: Error topic, defaults to None\n:param config: Configuration, defaults to {}",
+            "additionalProperties": true,
+            "description": "Streams Bootstrap streams section.",
+            "properties": {
+                "brokers": {
+                    "description": "Brokers",
+                    "title": "Brokers",
+                    "type": "string"
+                },
+                "config": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Configuration",
+                    "title": "Config",
+                    "type": "object"
+                },
+                "errorTopic": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Error topic",
+                    "title": "Errortopic"
+                },
+                "extraInputPatterns": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra input patterns",
+                    "title": "Extrainputpatterns",
+                    "type": "object"
+                },
+                "extraInputTopics": {
+                    "additionalProperties": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "default": {},
+                    "description": "Extra input topics",
+                    "title": "Extrainputtopics",
+                    "type": "object"
+                },
+                "extraOutputTopics": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra output topics",
+                    "title": "Extraoutputtopics",
+                    "type": "object"
+                },
+                "inputPattern": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Input pattern",
+                    "title": "Inputpattern"
+                },
+                "inputTopics": {
+                    "default": [],
+                    "description": "Input topics",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Inputtopics",
+                    "type": "array"
+                },
+                "outputTopic": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Output topic",
+                    "title": "Outputtopic"
+                },
+                "schemaRegistryUrl": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "URL of the schema registry",
+                    "title": "Schemaregistryurl"
+                }
+            },
+            "required": [
+                "brokers"
+            ],
             "title": "StreamsConfig",
             "type": "object"
         },
@@ -923,7 +1059,7 @@
                 },
                 "topics": {
                     "additionalProperties": {
-                        "$ref": "#/definitions/TopicConfig"
+                        "$ref": "#/$defs/TopicConfig"
                     },
                     "default": {},
                     "description": "Output topics",
@@ -1009,7 +1145,7 @@
                 "type": {
                     "anyOf": [
                         {
-                            "$ref": "#/definitions/OutputTopicTypes"
+                            "$ref": "#/$defs/OutputTopicTypes"
                         },
                         {
                             "type": "null"
@@ -1040,32 +1176,32 @@
     "items": {
         "discriminator": {
             "mapping": {
-                "helm-app": "#/definitions/HelmApp",
-                "kafka-sink-connector": "#/definitions/KafkaSinkConnector",
-                "kafka-source-connector": "#/definitions/KafkaSourceConnector",
-                "producer-app": "#/definitions/ProducerApp",
-                "streams-app": "#/definitions/StreamsApp"
+                "helm-app": "#/$defs/HelmApp",
+                "kafka-sink-connector": "#/$defs/KafkaSinkConnector",
+                "kafka-source-connector": "#/$defs/KafkaSourceConnector",
+                "producer-app": "#/$defs/ProducerApp",
+                "streams-app": "#/$defs/StreamsApp"
             },
             "propertyName": "type"
         },
         "oneOf": [
             {
-                "$ref": "#/definitions/HelmApp"
+                "$ref": "#/$defs/HelmApp"
             },
             {
-                "$ref": "#/definitions/KafkaSinkConnector"
+                "$ref": "#/$defs/KafkaSinkConnector"
             },
             {
-                "$ref": "#/definitions/KafkaSourceConnector"
+                "$ref": "#/$defs/KafkaSourceConnector"
             },
             {
-                "$ref": "#/definitions/ProducerApp"
+                "$ref": "#/$defs/ProducerApp"
             },
             {
-                "$ref": "#/definitions/StreamsApp"
+                "$ref": "#/$defs/StreamsApp"
             }
         ]
     },
-    "title": "KPOps pipeline schema",
+    "title": "PipelineSchema",
     "type": "array"
 }
