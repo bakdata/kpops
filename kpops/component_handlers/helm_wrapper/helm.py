@@ -35,8 +35,6 @@ class Helm:
             msg = f"The supported Helm version is 3.x.x. The current Helm version is {self._version.major}.{self._version.minor}.{self._version.patch}"
             raise RuntimeError(msg)
 
-
-
     def add_repo(
         self,
         repository_name: str,
@@ -230,14 +228,13 @@ class Helm:
         proc = await asyncio.create_subprocess_shell(
             " ".join(command),
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE)
+            stderr=asyncio.subprocess.PIPE,
+        )
 
         stdout, stderr = await proc.communicate()
         Helm.parse_helm_command_stderr_output(stderr.decode())
         log.debug(stdout)
         return stdout.decode()
-
-
 
     def __set_global_flags(self, command: list[str]) -> list[str]:
         if self._context:

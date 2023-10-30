@@ -203,7 +203,9 @@ class KafkaConnector(PipelineComponent, ABC):
 
         if not retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
-            await self.__uninstall_connect_resetter(self._resetter_release_name, dry_run)
+            await self.__uninstall_connect_resetter(
+                self._resetter_release_name, dry_run
+            )
 
     async def __install_connect_resetter(
         self,
@@ -252,7 +254,9 @@ class KafkaConnector(PipelineComponent, ABC):
             **self.resetter_values,
         }
 
-    async def __uninstall_connect_resetter(self, release_name: str, dry_run: bool) -> None:
+    async def __uninstall_connect_resetter(
+        self, release_name: str, dry_run: bool
+    ) -> None:
         """Uninstall connector resetter.
 
         :param release_name: Name of the release to be uninstalled

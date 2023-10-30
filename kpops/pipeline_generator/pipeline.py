@@ -86,7 +86,6 @@ class PipelineComponents(BaseModel):
         reverse: bool,
         runner: Callable[[PipelineComponent], Coroutine],
     ):
-
         sub_graph_nodes = self.__get_graph_nodes(components)
 
         async def run_parallel_tasks(tasks):

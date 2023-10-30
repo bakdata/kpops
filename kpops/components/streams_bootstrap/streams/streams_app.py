@@ -80,7 +80,9 @@ class StreamsApp(KafkaApp):
     async def clean(self, dry_run: bool) -> None:
         await self.__run_streams_clean_up_job(dry_run, delete_output=True)
 
-    async def __run_streams_clean_up_job(self, dry_run: bool, delete_output: bool) -> None:
+    async def __run_streams_clean_up_job(
+        self, dry_run: bool, delete_output: bool
+    ) -> None:
         """Run clean job for this Streams app.
 
         :param dry_run: Whether to do a dry run of the command

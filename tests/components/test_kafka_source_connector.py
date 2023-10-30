@@ -32,7 +32,6 @@ from tests.components.test_kafka_connector import (
 
 
 class TestKafkaSourceConnector(TestKafkaConnector):
-
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         async_mock = AsyncMock()
