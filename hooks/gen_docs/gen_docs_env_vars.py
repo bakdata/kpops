@@ -268,6 +268,7 @@ def fill_csv_pipeline_config(target: Path) -> None:
             field_name,
         )
 
+
 # TODO(Ivan Yordanov): Should we yield both the nested fields and their parents?
 def collect_fields(settings: type[BaseSettings]) -> Iterator[tuple[str, FieldInfo]]:
     """Collect and yield all fields in a settings class.
