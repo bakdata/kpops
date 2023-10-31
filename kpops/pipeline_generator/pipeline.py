@@ -39,11 +39,8 @@ class ValidationError(Exception):
 
 class InternalNodeRepresentation(BaseModel):
     name: str
-    component: Optional[PipelineComponent]
+    component: PipelineComponent | None
     is_topic: bool
-
-    class Config:
-        frozen = True
 
 
 class PipelineComponents(BaseModel):
@@ -85,7 +82,7 @@ class PipelineComponents(BaseModel):
         components: list[PipelineComponent],
         reverse: bool,
         runner: Callable[[PipelineComponent], Coroutine],
-    ):
+    ) -> Coroutine:
         sub_graph_nodes = self.__get_graph_nodes(components)
 
         async def run_parallel_tasks(tasks):
@@ -127,8 +124,8 @@ class PipelineComponents(BaseModel):
         sub_graph_nodes = []
         for component in components:
             sub_graph_nodes.append(component.id)
-            sub_graph_nodes.append(list(component.inputs))
-            sub_graph_nodes.append(list(component.outputs))
+            sub_graph_nodes.extend(list(component.inputs))
+            sub_graph_nodes.extend(list(component.outputs))
         return sub_graph_nodes
 
     def __get_parallel_task_from(self, layer, runner):

@@ -224,9 +224,8 @@ class Helm:
     async def __async_execute(self, command: list[str]):
         command = self.__set_global_flags(command)
         log.debug(f"Executing {' '.join(command)}")
-        print(command)
-        proc = await asyncio.create_subprocess_shell(
-            " ".join(command),
+        proc = await asyncio.create_subprocess_exec(
+            *command,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )

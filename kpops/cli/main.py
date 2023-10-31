@@ -83,6 +83,13 @@ DRY_RUN: bool = typer.Option(
 )
 
 
+PARALLEL: bool = typer.Option(
+    False,
+    "--parallel/--no-parallel",
+    help="Run the kpops command in parallel",
+)
+
+
 class FilterType(str, Enum):
     INCLUDE = "include"
     EXCLUDE = "exclude"
@@ -304,8 +311,10 @@ def deploy(
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
     async def deploy_runner(component: PipelineComponent):
+        log_action("Deploy", component)
         await component.deploy(dry_run)
 
     async def async_deploy():
@@ -313,11 +322,15 @@ def deploy(
         pipeline = setup_pipeline(
             pipeline_base_dir, pipeline_path, components_module, pipeline_config
         )
-
-        pipeline_tasks = get_concurrently_tasks_to_execute(
-            pipeline, steps, filter_type, deploy_runner
-        )
-        await pipeline_tasks
+        if parallel:
+            pipeline_tasks = get_concurrently_tasks_to_execute(
+                pipeline, steps, filter_type, deploy_runner
+            )
+            await pipeline_tasks
+        else:
+            steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
+            for component in steps_to_apply:
+                await deploy_runner(component)
 
     asyncio.run(async_deploy())
 
@@ -335,8 +348,10 @@ def destroy(
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
     async def destroy_runner(component: PipelineComponent):
+        log_action("Destroy", component)
         await component.destroy(dry_run)
 
     async def async_destroy():
@@ -344,10 +359,15 @@ def destroy(
         pipeline = setup_pipeline(
             pipeline_base_dir, pipeline_path, components_module, pipeline_config
         )
-        pipeline_tasks = get_reverse_concurrently_tasks_to_execute(
-            pipeline, steps, filter_type, destroy_runner
-        )
-        await pipeline_tasks
+        if parallel:
+            pipeline_tasks = get_reverse_concurrently_tasks_to_execute(
+                pipeline, steps, filter_type, destroy_runner
+            )
+            await pipeline_tasks
+        else:
+            pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
+            for component in pipeline_steps:
+                await destroy_runner(component)
 
     asyncio.run(async_destroy())
 
@@ -365,8 +385,10 @@ def reset(
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
     async def reset_runner(component: PipelineComponent):
+        log_action("Reset", component)
         await component.destroy(dry_run)
         await component.reset(dry_run)
 
@@ -375,10 +397,15 @@ def reset(
         pipeline = setup_pipeline(
             pipeline_base_dir, pipeline_path, components_module, pipeline_config
         )
-        pipeline_tasks = get_reverse_concurrently_tasks_to_execute(
-            pipeline, steps, filter_type, reset_runner
-        )
-        await pipeline_tasks
+        if parallel:
+            pipeline_tasks = get_reverse_concurrently_tasks_to_execute(
+                pipeline, steps, filter_type, reset_runner
+            )
+            await pipeline_tasks
+        else:
+            pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
+            for component in pipeline_steps:
+                await reset_runner(component)
 
     asyncio.run(async_reset())
 
@@ -396,8 +423,10 @@ def clean(
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
     async def clean_runner(component: PipelineComponent):
+        log_action("Clean", component)
         await component.destroy(dry_run)
         await component.clean(dry_run)
 
@@ -406,10 +435,15 @@ def clean(
         pipeline = setup_pipeline(
             pipeline_base_dir, pipeline_path, components_module, pipeline_config
         )
-        pipeline_steps = get_reverse_concurrently_tasks_to_execute(
-            pipeline, steps, filter_type, clean_runner
-        )
-        await pipeline_steps
+        if parallel:
+            pipeline_steps = get_reverse_concurrently_tasks_to_execute(
+                pipeline, steps, filter_type, clean_runner
+            )
+            await pipeline_steps
+        else:
+            pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
+            for component in pipeline_steps:
+                await clean_runner(component)
 
     asyncio.run(async_clean())
 
