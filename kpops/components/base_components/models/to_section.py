@@ -64,6 +64,7 @@ class TopicConfig(DescConfigModel):
         populate_by_name=True,
     )
 
+    # TODO(Ivan Yordanov): check if `values` is needed, refine type annotation
     @model_validator(mode="after")
     def extra_topic_role(cls, values: Any) -> Any:
         """Ensure that cls.role is used correctly, assign type if needed."""

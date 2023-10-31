@@ -141,7 +141,6 @@ class KpopsConfig(BaseSettings):
         dotenv_settings: PydanticBaseSettingsSource,
         file_secret_settings: PydanticBaseSettingsSource,
     ):
-        # breakpoint()
         return (
             env_settings,
             init_settings,
