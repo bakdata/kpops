@@ -698,6 +698,8 @@
       
         
       
+        
+      
     
     
     
@@ -759,6 +761,26 @@
   
   <span class="md-ellipsis">
     KubernetesApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../helm-app.md" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HelmApp
   </span>
   
 
@@ -1188,6 +1210,8 @@
       
         
       
+        
+      
     
     
     
@@ -1229,6 +1253,26 @@
   
   <span class="md-ellipsis">
     Migrate from v1 to v2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../migration-guide/v2-v3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v2 to v3
   </span>
   
 
@@ -1737,7 +1781,7 @@
 </span><span id="__span-0-51"><a id="__codelineno-0-51" name="__codelineno-0-51"></a><span class="w">  </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
 </span><span id="__span-0-52"><a id="__codelineno-0-52" name="__codelineno-0-52"></a><span class="w">    </span><span class="c1"># Streams Bootstrap streams section</span>
 </span><span id="__span-0-53"><a id="__codelineno-0-53" name="__codelineno-0-53"></a><span class="w">    </span><span class="nt">streams</span><span class="p">:</span><span class="w"> </span><span class="c1"># required, streams-app-specific</span>
-</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="w">      </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${brokers}</span><span class="w"> </span><span class="c1"># required</span>
+</span><span id="__span-0-54"><a id="__codelineno-0-54" name="__codelineno-0-54"></a><span class="w">      </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${kafka_brokers}</span><span class="w"> </span><span class="c1"># required</span>
 </span><span id="__span-0-55"><a id="__codelineno-0-55" name="__codelineno-0-55"></a><span class="w">      </span><span class="nt">schemaRegistryUrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${schema_registry_url}</span>
 </span><span id="__span-0-56"><a id="__codelineno-0-56" name="__codelineno-0-56"></a><span class="w">      </span><span class="nt">inputTopics</span><span class="p">:</span>
 </span><span id="__span-0-57"><a id="__codelineno-0-57" name="__codelineno-0-57"></a><span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">topic1</span>
