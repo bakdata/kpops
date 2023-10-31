@@ -5,7 +5,7 @@ import json
 import logging
 from collections import Counter
 from contextlib import suppress
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import networkx as nx
 import yaml
