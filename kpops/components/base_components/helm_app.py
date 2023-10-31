@@ -17,7 +17,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.components.base_components.kubernetes_app import KubernetesApp
-from kpops.components.base_components.pipeline_component import Resource
+from kpops.components.base_components.models.resource import Resource
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
 

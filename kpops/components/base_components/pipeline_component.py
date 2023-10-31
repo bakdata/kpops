@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC
-from collections.abc import Mapping
-from typing import TypeAlias
 
 from pydantic import Extra, Field
 
@@ -14,6 +12,7 @@ from kpops.components.base_components.models.from_section import (
     FromTopic,
     InputTopicTypes,
 )
+from kpops.components.base_components.models.resource import Resource
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -21,8 +20,6 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfig
-
-Resource: TypeAlias = list[Mapping]  # representation of final resource  # TODO: move?
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):

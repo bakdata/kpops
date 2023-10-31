@@ -19,7 +19,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
-from kpops.components.base_components.pipeline_component import Resource
+from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema

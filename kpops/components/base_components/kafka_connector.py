@@ -26,10 +26,8 @@ from kpops.component_handlers.kafka_connect.model import (
 )
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
-from kpops.components.base_components.pipeline_component import (
-    PipelineComponent,
-    Resource,
-)
+from kpops.components.base_components.models.resource import Resource
+from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
 

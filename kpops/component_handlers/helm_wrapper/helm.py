@@ -20,7 +20,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     Version,
 )
 from kpops.component_handlers.kubernetes.model import KubernetesManifest
-from kpops.components.base_components.pipeline_component import Resource
+from kpops.components.base_components.models.resource import Resource
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator

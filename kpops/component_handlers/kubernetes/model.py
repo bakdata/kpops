@@ -10,6 +10,8 @@ try:
 except ImportError:
     from typing_extensions import Self
 
+
+# JSON values
 Json: TypeAlias = dict[str, "Json"] | list["Json"] | str | int | float | bool | None
 
 
