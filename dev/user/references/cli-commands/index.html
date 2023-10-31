@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://bakdata.github.io/kpops/dev/user/references/cli-commands/">
       
       
-        <link rel="prev" href="../../migration-guide/v2-v3/">
+        <link rel="prev" href="../../migration-guide/v1-v2/">
       
       
         <link rel="next" href="../editor-integration/">
@@ -694,8 +694,6 @@
       
         
       
-        
-      
     
     
     
@@ -757,26 +755,6 @@
   
   <span class="md-ellipsis">
     KubernetesApp
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../core-concepts/components/helm-app.md" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    HelmApp
   </span>
   
 
@@ -1113,8 +1091,6 @@
       
         
       
-        
-      
     
     
     
@@ -1156,26 +1132,6 @@
   
   <span class="md-ellipsis">
     Migrate from v1 to v2
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../migration-guide/v2-v3/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Migrate from v2 to v3
   </span>
   
 
@@ -1615,6 +1571,7 @@
 <li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: include]</li>
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
+<li><code>--parallel / --no-parallel</code>: Run the kpops command in parallel  [default: no-parallel]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h2 id="kpops-deploy"><code>kpops deploy</code><a class="headerlink" href="#kpops-deploy" title="Permanent link">&para;</a></h2>
@@ -1636,6 +1593,7 @@
 <li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: include]</li>
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
+<li><code>--parallel / --no-parallel</code>: Run the kpops command in parallel  [default: no-parallel]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h2 id="kpops-destroy"><code>kpops destroy</code><a class="headerlink" href="#kpops-destroy" title="Permanent link">&para;</a></h2>
@@ -1657,6 +1615,7 @@
 <li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: include]</li>
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
+<li><code>--parallel / --no-parallel</code>: Run the kpops command in parallel  [default: no-parallel]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h2 id="kpops-generate"><code>kpops generate</code><a class="headerlink" href="#kpops-generate" title="Permanent link">&para;</a></h2>
@@ -1699,6 +1658,7 @@
 <li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: include]</li>
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
+<li><code>--parallel / --no-parallel</code>: Run the kpops command in parallel  [default: no-parallel]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h2 id="kpops-schema"><code>kpops schema</code><a class="headerlink" href="#kpops-schema" title="Permanent link">&para;</a></h2>
@@ -1714,7 +1674,7 @@
 <span class="normal">2</span>
 <span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide [COMPONENTS_MODULES].
 
-config: Schema of KpopsConfig.  [required]
+config: Schema of PipelineConfig.  [required]
 </code></pre></div></td></tr></table></div>
 <ul>
 <li><code>[COMPONENTS_MODULE]</code>: Custom Python module containing your project-specific components</li>

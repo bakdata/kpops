@@ -1,37 +1,19 @@
 {
-    "$ref": "#/definitions/KpopsConfig",
+    "$ref": "#/definitions/PipelineConfig",
     "definitions": {
         "HelmConfig": {
             "description": "Global Helm configuration.",
             "properties": {
                 "api_version": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
                     "description": "Kubernetes API version used for Capabilities.APIVersions",
-                    "title": "API version"
+                    "title": "API version",
+                    "type": "string"
                 },
                 "context": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
                     "description": "Name of kubeconfig context (`--kube-context`)",
-                    "examples": [
-                        "dev-storage"
-                    ],
-                    "title": "Context"
+                    "example": "dev-storage",
+                    "title": "Context",
+                    "type": "string"
                 },
                 "debug": {
                     "default": false,
@@ -47,9 +29,7 @@
             "properties": {
                 "ignore": {
                     "description": "Set of keys that should not be checked.",
-                    "examples": [
-                        "- name\n- imageTag"
-                    ],
+                    "example": "- name\n- imageTag",
                     "items": {
                         "type": "string"
                     },
@@ -61,57 +41,25 @@
             "title": "HelmDiffConfig",
             "type": "object"
         },
-        "KafkaConnectConfig": {
-            "additionalProperties": false,
-            "description": "Configuration for Kafka Connect.",
-            "properties": {
-                "url": {
-                    "default": "http://localhost:8083",
-                    "description": "Address of Kafka Connect.",
-                    "env": "KPOPS_KAFKA_CONNECT_URL",
-                    "env_names": [
-                        "kpops_kafka_connect_url"
-                    ],
-                    "format": "uri",
-                    "maxLength": 65536,
-                    "minLength": 1,
-                    "title": "Url",
-                    "type": "string"
-                }
-            },
-            "title": "KafkaConnectConfig",
-            "type": "object"
-        },
-        "KafkaRestConfig": {
-            "additionalProperties": false,
-            "description": "Configuration for Kafka REST Proxy.",
-            "properties": {
-                "url": {
-                    "default": "http://localhost:8082",
-                    "description": "Address of the Kafka REST Proxy.",
-                    "env": "KPOPS_KAFKA_REST_URL",
-                    "env_names": [
-                        "kpops_kafka_rest_url"
-                    ],
-                    "format": "uri",
-                    "maxLength": 65536,
-                    "minLength": 1,
-                    "title": "Url",
-                    "type": "string"
-                }
-            },
-            "title": "KafkaRestConfig",
-            "type": "object"
-        },
-        "KpopsConfig": {
+        "PipelineConfig": {
             "additionalProperties": false,
             "description": "Pipeline configuration unrelated to the components.",
             "properties": {
+                "brokers": {
+                    "description": "The comma separated Kafka brokers address.",
+                    "env": "KPOPS_KAFKA_BROKERS",
+                    "env_names": [
+                        "kpops_kafka_brokers"
+                    ],
+                    "example": "broker1:9092,broker2:9092,broker3:9092",
+                    "title": "Brokers",
+                    "type": "string"
+                },
                 "create_namespace": {
                     "default": false,
                     "description": "Flag for `helm upgrade --install`. Create the release namespace if not present.",
                     "env_names": [
-                        "kpops_create_namespace"
+                        "create_namespace"
                     ],
                     "title": "Create Namespace",
                     "type": "boolean"
@@ -120,7 +68,7 @@
                     "default": "defaults",
                     "description": "The name of the defaults file and the prefix of the defaults environment file.",
                     "env_names": [
-                        "kpops_defaults_filename_prefix"
+                        "defaults_filename_prefix"
                     ],
                     "title": "Defaults Filename Prefix",
                     "type": "string"
@@ -129,7 +77,7 @@
                     "default": ".",
                     "description": "The path to the folder containing the defaults.yaml file and the environment defaults files. Paths can either be absolute or relative to `config.yaml`",
                     "env_names": [
-                        "kpops_defaults_path"
+                        "defaults_path"
                     ],
                     "example": "defaults",
                     "format": "path",
@@ -159,7 +107,7 @@
                     },
                     "description": "Global flags for Helm.",
                     "env_names": [
-                        "kpops_helm_config"
+                        "helm_config"
                     ],
                     "title": "Helm Config"
                 },
@@ -174,49 +122,29 @@
                     },
                     "description": "Configure Helm Diff.",
                     "env_names": [
-                        "kpops_helm_diff_config"
+                        "helm_diff_config"
                     ],
                     "title": "Helm Diff Config"
                 },
-                "kafka_brokers": {
-                    "description": "The comma separated Kafka brokers address.",
-                    "env": "KPOPS_KAFKA_BROKERS",
+                "kafka_connect_host": {
+                    "description": "Address of Kafka Connect.",
+                    "env": "KPOPS_CONNECT_HOST",
                     "env_names": [
-                        "kpops_kafka_brokers"
+                        "kpops_connect_host"
                     ],
-                    "example": "broker1:9092,broker2:9092,broker3:9092",
-                    "title": "Kafka Brokers",
+                    "example": "http://localhost:8083",
+                    "title": "Kafka Connect Host",
                     "type": "string"
                 },
-                "kafka_connect": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/KafkaConnectConfig"
-                        }
-                    ],
-                    "default": {
-                        "url": "http://localhost:8083"
-                    },
-                    "description": "Configuration for Kafka Connect.",
+                "kafka_rest_host": {
+                    "description": "Address of the Kafka REST Proxy.",
+                    "env": "KPOPS_REST_PROXY_HOST",
                     "env_names": [
-                        "kpops_kafka_connect"
+                        "kpops_rest_proxy_host"
                     ],
-                    "title": "Kafka Connect"
-                },
-                "kafka_rest": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/KafkaRestConfig"
-                        }
-                    ],
-                    "default": {
-                        "url": "http://localhost:8082"
-                    },
-                    "description": "Configuration for Kafka REST Proxy.",
-                    "env_names": [
-                        "kpops_kafka_rest"
-                    ],
-                    "title": "Kafka Rest"
+                    "example": "http://localhost:8082",
+                    "title": "Kafka Rest Host",
+                    "type": "string"
                 },
                 "retain_clean_jobs": {
                     "default": false,
@@ -228,21 +156,15 @@
                     "title": "Retain Clean Jobs",
                     "type": "boolean"
                 },
-                "schema_registry": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/SchemaRegistryConfig"
-                        }
-                    ],
-                    "default": {
-                        "enabled": false,
-                        "url": "http://localhost:8081"
-                    },
-                    "description": "Configuration for Schema Registry.",
+                "schema_registry_url": {
+                    "description": "Address of the Schema Registry.",
+                    "env": "KPOPS_SCHEMA_REGISTRY_URL",
                     "env_names": [
-                        "kpops_schema_registry"
+                        "kpops_schema_registry_url"
                     ],
-                    "title": "Schema Registry"
+                    "example": "http://localhost:8081",
+                    "title": "Schema Registry Url",
+                    "type": "string"
                 },
                 "timeout": {
                     "default": 300,
@@ -266,51 +188,21 @@
                     },
                     "description": "Configure the topic name variables you can use in the pipeline definition.",
                     "env_names": [
-                        "kpops_topic_name_config"
+                        "topic_name_config"
                     ],
                     "title": "Topic Name Config"
                 }
             },
             "required": [
                 "environment",
-                "kafka_brokers"
+                "brokers"
             ],
-            "title": "KpopsConfig",
-            "type": "object"
-        },
-        "SchemaRegistryConfig": {
-            "additionalProperties": false,
-            "description": "Configuration for Schema Registry.",
-            "properties": {
-                "enabled": {
-                    "default": false,
-                    "description": "Whether the Schema Registry handler should be initialized.",
-                    "env_names": [
-                        "enabled"
-                    ],
-                    "title": "Enabled",
-                    "type": "boolean"
-                },
-                "url": {
-                    "default": "http://localhost:8081",
-                    "description": "Address of the Schema Registry.",
-                    "env": "KPOPS_SCHEMA_REGISTRY_URL",
-                    "env_names": [
-                        "kpops_schema_registry_url"
-                    ],
-                    "format": "uri",
-                    "maxLength": 65536,
-                    "minLength": 1,
-                    "title": "Url",
-                    "type": "string"
-                }
-            },
-            "title": "SchemaRegistryConfig",
+            "title": "PipelineConfig",
             "type": "object"
         },
         "TopicNameConfig": {
             "additionalProperties": false,
-            "description": "Configure the topic name variables you can use in the pipeline definition.",
+            "description": "Configures topic names.",
             "properties": {
                 "default_error_topic_name": {
                     "default": "${pipeline_name}-${component_name}-error",
