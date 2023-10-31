@@ -195,14 +195,22 @@ def log_action(action: str, pipeline_component: PipelineComponent):
 
 
 def create_kpops_config(
-    config: Path, defaults: Optional[Path], verbose: bool
+    config: Path,
+    defaults: Path | None = None,
+    components_module: str | None = None,
+    pipeline_base_dir: Path | None = None,
+    verbose: bool = False,
 ) -> KpopsConfig:
     setup_logging_level(verbose)
     YamlConfigSettingsSource.path_to_config = config
+    kpops_config = KpopsConfig()
+    if components_module:
+        kpops_config.components_module = components_module
+    if pipeline_base_dir:
+        kpops_config.pipeline_base_dir = pipeline_base_dir
     if defaults:
-        kpops_config = KpopsConfig(defaults_path=defaults)
+        kpops_config.defaults_path = defaults
     else:
-        kpops_config = KpopsConfig()
         kpops_config.defaults_path = config.parent / kpops_config.defaults_path
     return kpops_config
 
@@ -226,13 +234,19 @@ def schema(
         config: Schema of KpopsConfig.""",
     ),
     components_module: Optional[str] = COMPONENTS_MODULES,
+    config: Path = CONFIG_PATH_OPTION,
     include_stock_components: bool = typer.Option(
         default=True, help="Include the built-in KPOps components."
     ),
 ) -> None:
     match scope:
         case SchemaScope.PIPELINE:
-            gen_pipeline_schema(components_module, include_stock_components)
+            kpops_config = create_kpops_config(
+                config, components_module=components_module
+            )
+            gen_pipeline_schema(
+                kpops_config.components_module, include_stock_components
+            )
         case SchemaScope.CONFIG:
             gen_config_schema()
 
@@ -251,7 +265,9 @@ def generate(
     filter_type: FilterType = FILTER_TYPE,
     verbose: bool = VERBOSE_OPTION,
 ) -> Pipeline:
-    kpops_config = create_kpops_config(config, defaults, verbose)
+    kpops_config = create_kpops_config(
+        config, defaults, components_module, pipeline_base_dir, verbose
+    )
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )
@@ -286,7 +302,9 @@ def deploy(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
-    kpops_config = create_kpops_config(config, defaults, verbose)
+    kpops_config = create_kpops_config(
+        config, defaults, components_module, pipeline_base_dir, verbose
+    )
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )
@@ -311,7 +329,9 @@ def destroy(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
-    kpops_config = create_kpops_config(config, defaults, verbose)
+    kpops_config = create_kpops_config(
+        config, defaults, components_module, pipeline_base_dir, verbose
+    )
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )
@@ -335,7 +355,9 @@ def reset(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
-    kpops_config = create_kpops_config(config, defaults, verbose)
+    kpops_config = create_kpops_config(
+        config, defaults, components_module, pipeline_base_dir, verbose
+    )
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )
@@ -360,7 +382,9 @@ def clean(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
-    kpops_config = create_kpops_config(config, defaults, verbose)
+    kpops_config = create_kpops_config(
+        config, defaults, components_module, pipeline_base_dir, verbose
+    )
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )

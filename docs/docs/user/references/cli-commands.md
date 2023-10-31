@@ -182,5 +182,6 @@ $ kpops schema [OPTIONS] SCOPE:{pipeline|config} [COMPONENTS_MODULE]
 
 **Options**:
 
+* `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--include-stock-components / --no-include-stock-components`: Include the built-in KPOps components.  [default: include-stock-components]
 * `--help`: Show this message and exit.
