@@ -1,4 +1,4 @@
-"""Copies ``CONTROBUTING.md`` from root to the docs."""
+"""Copies ``CONTRIBUTING.md`` from root to the docs."""
 import shutil
 from pathlib import Path
 from tempfile import TemporaryFile
