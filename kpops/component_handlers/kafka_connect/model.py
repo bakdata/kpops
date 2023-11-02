@@ -56,7 +56,7 @@ class KafkaConnectorConfig(DescConfigModel):
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
 
-    # TODO(Ivan Yordanov): Do it properly. Currently hacky and potentially unsafe
+    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")
     def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
         result = exclude_by_value(handler(self), None)

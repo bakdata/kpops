@@ -162,7 +162,7 @@ class HelmApp(KubernetesApp):
         self.helm_diff.log_helm_diff(log, current_release, new_release)
 
     # HACK: workaround for Pydantic to exclude cached properties during model export
-    # TODO(Ivan Yordanov): Do it properly. Currently hacky and potentially unsafe
+    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")
     def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
         return exclude_by_name(handler(self), "helm", "helm_diff")

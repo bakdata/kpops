@@ -76,7 +76,7 @@ class StreamsConfig(KafkaStreamsConfig):
             self.extra_input_topics.get(role, []) + topics
         )
 
-    # TODO(Ivan Yordanov): Do it properly. Currently hacky and potentially unsafe
+    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")
     def serialize_model(
         self, handler: Callable, info: SerializationInfo
