@@ -37,13 +37,12 @@ class FromTopic(DescConfigModel):
     )
 
     @model_validator(mode="after")
-    @classmethod
-    def extra_topic_role(cls, values: Any) -> Any:
+    def extra_topic_role(self) -> Any:
         """Ensure that cls.role is used correctly, assign type if needed."""
-        if values.type == InputTopicTypes.INPUT and values.role:
+        if self.type == InputTopicTypes.INPUT and self.role:
             msg = "Define role only if `type` is `pattern` or `None`"
             raise ValueError(msg)
-        return values
+        return self
 
 
 ComponentName = NewType("ComponentName", str)

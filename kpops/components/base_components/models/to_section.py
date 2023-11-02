@@ -64,14 +64,13 @@ class TopicConfig(DescConfigModel):
         populate_by_name=True,
     )
 
-    # TODO(Ivan Yordanov): check if `values` is needed, refine type annotation
     @model_validator(mode="after")
-    def extra_topic_role(cls, values: Any) -> Any:
+    def extra_topic_role(self) -> Any:
         """Ensure that cls.role is used correctly, assign type if needed."""
-        if values.type and values.role:
+        if self.type and self.role:
             msg = "Define `role` only if `type` is undefined"
             raise ValueError(msg)
-        return values
+        return self
 
 
 class ToSection(DescConfigModel):
