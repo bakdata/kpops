@@ -67,20 +67,20 @@ repos:
             | kpops/components/.*\.py
           )$
         require_serial: true
-      - id: gen-docs-contributing
-        name: gen-docs-contributing
-        entry: python hooks/gen_docs/gen_docs_contributing.py
-        language: system
-        types: [python]
-        require_serial: true
-        pass_filenames: false
-      - id: gen-docs-changelog
-        name: gen-docs-changelog
-        entry: python hooks/gen_docs/gen_docs_changelog.py
-        language: system
-        types: [python]
-        require_serial: true
-        pass_filenames: false
+      # - id: gen-docs-contributing
+      #   name: gen-docs-contributing
+      #   entry: python hooks/gen_docs/gen_docs_contributing.py
+      #   language: system
+      #   types: [python]
+      #   require_serial: true
+      #   pass_filenames: false
+      # - id: gen-docs-changelog
+      #   name: gen-docs-changelog
+      #   entry: python hooks/gen_docs/gen_docs_changelog.py
+      #   language: system
+      #   types: [python]
+      #   require_serial: true
+      #   pass_filenames: false
       - id: dprint
         name: dprint 
         entry: dprint fmt
