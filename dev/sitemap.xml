@@ -11,12 +11,7 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://bakdata.github.io/kpops/dev/developer/contributing/</loc>
-         <lastmod>2023-11-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://bakdata.github.io/kpops/dev/developer/getting-started/</loc>
+         <loc>https://bakdata.github.io/kpops/dev/developer/formatting/</loc>
          <lastmod>2023-11-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -52,11 +47,6 @@
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/dev/resources/variables/config_env_vars/</loc>
-         <lastmod>2023-11-02</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://bakdata.github.io/kpops/dev/user/changelog/</loc>
          <lastmod>2023-11-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -147,6 +137,11 @@
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/dev/user/migration-guide/v1-v2/</loc>
+         <lastmod>2023-11-02</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://bakdata.github.io/kpops/dev/user/migration-guide/v2-v3/</loc>
          <lastmod>2023-11-02</lastmod>
          <changefreq>daily</changefreq>
     </url>
