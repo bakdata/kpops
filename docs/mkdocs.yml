@@ -83,6 +83,7 @@ nav:
       KPOps Documentation: index.md
   - User Guide:
     - What is KPOps: user/what-is-kpops.md
+    - Changelog: user/changelog.md
     - Getting Started:
       - Setup: user/getting-started/setup.md
       - Quick start: user/getting-started/quick-start.md
