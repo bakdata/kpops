@@ -1,7 +1,7 @@
+from collections.abc import Callable
 from typing import Any
 
 from pydantic import ConfigDict, Field, SerializationInfo, model_serializer
-from pydantic.alias_generators import to_snake
 
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
@@ -9,7 +9,12 @@ from kpops.components.base_components.kafka_app import (
     KafkaStreamsConfig,
 )
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
+from kpops.utils.pydantic import (
+    CamelCaseConfigModel,
+    DescConfigModel,
+    exclude_by_value,
+    exclude_defaults,
+)
 
 
 class StreamsConfig(KafkaStreamsConfig):
@@ -73,20 +78,10 @@ class StreamsConfig(KafkaStreamsConfig):
 
     # TODO(Ivan Yordanov): Do it properly. Currently hacky and potentially unsafe
     @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
-        result = handler(self)
-        # if dict(result.items()).get("extraInputTopics"):
-        #     breakpoint()
-        default_fields = {
-            field_name: field_info.default
-            for field_name, field_info in self.model_fields.items()
-        }
-        return {
-            k: v
-            for k, v in result.items()
-            if (v != default_fields.get(k) and v is not None)
-            and (v != default_fields.get(to_snake(k)) and v is not None)
-        }
+    def serialize_model(
+        self, handler: Callable, info: SerializationInfo
+    ) -> dict[str, Any]:
+        return exclude_defaults(self, exclude_by_value(handler(self)))
 
 
 class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):

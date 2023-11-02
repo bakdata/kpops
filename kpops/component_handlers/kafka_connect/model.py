@@ -1,10 +1,23 @@
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    SerializationInfo,
+    field_validator,
+    model_serializer,
+)
 from typing_extensions import override
 
-from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel, to_dot
+from kpops.utils.pydantic import (
+    CamelCaseConfigModel,
+    DescConfigModel,
+    by_alias,
+    exclude_by_value,
+    to_dot,
+)
 
 
 class KafkaConnectorType(str, Enum):
@@ -43,10 +56,11 @@ class KafkaConnectorConfig(DescConfigModel):
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
 
-    # TODO(Ivan Yordanov): replace with a function decorated with `@model_serializer`
-    @override
-    def model_dump(self, **_) -> dict[str, Any]:
-        return super().model_dump(by_alias=True, exclude_none=True)
+    # TODO(Ivan Yordanov): Do it properly. Currently hacky and potentially unsafe
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
+        result = exclude_by_value(handler(self), None)
+        return {by_alias(name, self): value for name, value in result.items()}
 
 
 class ConnectorTask(BaseModel):
@@ -90,7 +104,9 @@ class KafkaConnectResetterValues(CamelCaseConfigModel):
     config: KafkaConnectResetterConfig
     name_override: str
 
-    # TODO(Ivan Yordanov): replace with a function decorated with `@model_serializer`
+    # TODO(Ivan Yordanov): Replace with a function decorated with `@model_serializer`
+    # BEWARE! All default values are enforced, hard to replicate without
+    # access to ``model_dump``
     @override
     def model_dump(self, **_) -> dict[str, Any]:
         return super().model_dump(by_alias=True, exclude_none=True)
