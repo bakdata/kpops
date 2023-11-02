@@ -19,7 +19,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
-from kpops.config import ENV_PREFIX, KpopsConfig
+from kpops.config import KpopsConfig
 from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 
@@ -27,6 +27,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
     from kpops.components.base_components import PipelineComponent
+
+ENV_PREFIX = KpopsConfig.model_config.get("env_prefix")
 
 LOG_DIVIDER = "#" * 100
 

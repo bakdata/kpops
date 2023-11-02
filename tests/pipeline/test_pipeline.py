@@ -483,6 +483,30 @@ class TestPipeline:
             == "env_broker"
         )
 
+    def test_nested_config_env_vars(self, monkeypatch: pytest.MonkeyPatch):
+        monkeypatch.setenv(
+            name="KPOPS_SCHEMA_REGISTRY__URL", value="http://somename:1234"
+        )
+
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                str(RESOURCE_PATH / "custom-config/config.yaml"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
+            == "http://somename:1234/"
+        )
+
     def test_model_serialization(self, snapshot: SnapshotTest):
         """Test model serialization of component containing pathlib.Path attribute."""
         result = runner.invoke(
