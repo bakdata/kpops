@@ -24,7 +24,7 @@ class TopicNameConfig(BaseSettings):
     )
     default_error_topic_name: str = Field(
         default="${pipeline_name}-${component_name}-error",
-        description="Configures the value for the variable ${error_topic_name}",
+        description="Configures the value for the variable ${topic_name_config_default_error_topic_name}",
     )
 
 
