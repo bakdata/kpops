@@ -47,7 +47,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             namespace="test-namespace",
             to=ToSection(
                 topics={
-                    TopicName("${output_topic_name}"): TopicConfig(
+                    TopicName("${topic_name_config_default_output_topic_name}"): TopicConfig(
                         type=OutputTopicTypes.OUTPUT, partitions_count=10
                     ),
                 }

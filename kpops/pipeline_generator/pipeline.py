@@ -281,18 +281,7 @@ class Pipeline:
         :return: Updated component
         """
         config = self.config
-        # Leftover variables that were previously introduced in the component by the substitution
-        # functions, still hardcoded, because of their names.
-        # TODO: Get rid of them
-        substitution_hardcoded = {
-            "error_topic_name": config.topic_name_config.default_error_topic_name,
-            "output_topic_name": config.topic_name_config.default_output_topic_name,
-        }
-        component_substitution = generate_substitution(
-            component_as_dict,
-            "component",
-            substitution_hardcoded,
-        )
+        component_substitution = generate_substitution(component_as_dict, "component")
         substitution = generate_substitution(
             json.loads(config.json()), existing_substitution=component_substitution
         )

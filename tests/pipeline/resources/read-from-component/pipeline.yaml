@@ -2,7 +2,7 @@
   name: producer1
   to:
     topics:
-      ${output_topic_name}:
+      ${topic_name_config_default_output_topic_name}:
         type: output
 
 - type: producer-app
@@ -10,7 +10,7 @@
   prefix: ""
   to:
     topics:
-      ${output_topic_name}:
+      ${topic_name_config_default_output_topic_name}:
         type: output
 
 - type: should-inflate
@@ -28,7 +28,7 @@
         type: input
   to:
     topics:
-      ${output_topic_name}:
+      ${topic_name_config_default_output_topic_name}:
         type: output
 
 - type: streams-app
