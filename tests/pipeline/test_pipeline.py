@@ -542,14 +542,17 @@ class TestPipeline:
                 "--dotenv",
                 str(RESOURCE_PATH / "dotenv/.env"),
                 "--dotenv",
-                str(RESOURCE_PATH / "dotenv/custom.env")
+                str(RESOURCE_PATH / "dotenv/custom.env"),
             ],
             catch_exceptions=False,
         )
         assert result.exit_code == 0
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
-        assert enriched_pipeline["components"][1]["app"]["streams"]["schemaRegistryUrl"] == "http://notlocalhost:8081/"
+        assert (
+            enriched_pipeline["components"][1]["app"]["streams"]["schemaRegistryUrl"]
+            == "http://notlocalhost:8081/"
+        )
 
     def test_short_topic_definition(self):
         result = runner.invoke(

@@ -125,7 +125,7 @@ class KpopsConfig(BaseSettings):
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
 
-    model_config = SettingsConfigDict(env_prefix="KPOPS_", env_nested_delimiter="__", env_file=".env")
+    model_config = SettingsConfigDict(env_prefix="KPOPS_", env_nested_delimiter="__")
 
     @override
     @classmethod
