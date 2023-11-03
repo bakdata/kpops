@@ -1,6 +1,6 @@
-# Contribution
+# How to contribute
 
-**Welcome!** We are glad to have you visit our contributibg guide!
+**Welcome!** We are glad to have you visit our contributing guide!
 
 If you find any bugs or have suggestions for improvements, please open an [issue](https://github.com/bakdata/kpops/issues/new) and optionally a [pull request (PR)](https://github.com/bakdata/kpops/compare). In the case of a PR, we would appreciate it if you preface it with an issue outlining your goal and means of achieving it.
 
