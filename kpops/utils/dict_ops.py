@@ -78,7 +78,7 @@ def generate_substitution(
     prefix: str | None = None,
     existing_substitution: dict | None = None,
     separator: str | None = None,
-) -> dict:
+) -> dict[Any, Any]:
     """Generate a complete substitution dict from a given dict.
 
     Finds all attributes that belong to a model and expands them to create

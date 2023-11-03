@@ -2,16 +2,19 @@
 
 import csv
 import shutil
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
+from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
 from textwrap import fill
-from typing import Any, get_args
+from typing import Any
 
-from pydantic.fields import FieldInfo
-from pydantic_settings import BaseSettings
+from pydantic import BaseModel
+from pydantic_core import PydanticUndefined
 from pytablewriter import MarkdownTableWriter
 from typer.models import ArgumentInfo, OptionInfo
+
+from kpops.utils.dict_ops import generate_substitution
 
 try:
     from typing import Self
@@ -127,7 +130,7 @@ def csv_append_env_var(
                 width=68,
             )
     required = False
-    if default_value == Ellipsis:
+    if default_value in [Ellipsis, PydanticUndefined]:
         required = True
         default_value = ""
     elif default_value is None:
@@ -254,7 +257,13 @@ def fill_csv_pipeline_config(target: Path) -> None:
     :param target: The path to the `.csv` file. Note that it must already
         contain the column names
     """
-    for field_name, field_value in collect_fields(KpopsConfig):
+    for (field_name, field_value), env_var_name in zip(
+        generate_substitution(collect_fields(KpopsConfig), separator=".").items(),
+        generate_substitution(collect_fields(KpopsConfig), separator="__").keys(),
+        strict=True,
+    ):
+        with suppress(KeyError):  # In case the prefix is ever removed from KpopsConfig
+            env_var_name = KpopsConfig.model_config["env_prefix"] + env_var_name
         field_description: str = (
             field_value.description
             or "No description available, please refer to the pipeline config documentation."
@@ -262,7 +271,7 @@ def fill_csv_pipeline_config(target: Path) -> None:
         field_default = field_value.default
         csv_append_env_var(
             target,
-            field_value.serialization_alias or field_name,
+            env_var_name.upper(),
             field_default,
             field_description,
             field_name,
@@ -270,18 +279,39 @@ def fill_csv_pipeline_config(target: Path) -> None:
 
 
 # TODO(Ivan Yordanov): Separate complex fields into their "leaves"
-def collect_fields(settings: type[BaseSettings]) -> Iterator[tuple[str, FieldInfo]]:
+def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
     """Collect and yield all fields in a settings class.
 
     :param model: settings class
     :yield: all settings including nested ones in settings classes
     """
-    for field_name, field_value in settings.model_fields.items():
-        if field_value.annotation:
-            for field_type in get_args(field_value.annotation):
-                if field_type and issubclass(field_type, BaseSettings):
-                    yield from collect_fields(field_type)
-            yield field_name, field_value
+
+    def patched_issubclass_of_basemodel(cls):
+        """Pydantic breaks issubclass.
+
+        ``issubclass(set[str], set)  # True``
+        ``issubclass(BaseSettings, BaseModel)  # True``
+        ``issubclass(set[str], BaseModel)  # raises exception``
+
+        :param cls: class to check
+        :return: Whether cls is subclass of ``BaseModel``
+        """
+        try:
+            return issubclass(cls, BaseModel)
+        except TypeError as e:
+            if str(e) == "issubclass() arg 1 must be a class":
+                return False
+            raise
+
+    seen_fields = {}
+    for field_name, field_value in model.model_fields.items():
+        if field_value.annotation and patched_issubclass_of_basemodel(
+            field_value.annotation
+        ):
+            seen_fields[field_name] = collect_fields(field_value.annotation)
+        else:
+            seen_fields[field_name] = field_value
+    return seen_fields
 
 
 def fill_csv_cli(target: Path) -> None:
