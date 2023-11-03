@@ -280,10 +280,10 @@ def fill_csv_pipeline_config(target: Path) -> None:
 
 # TODO(Ivan Yordanov): Separate complex fields into their "leaves"
 def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
-    """Collect and yield all fields in a settings class.
+    """Collect and return a ``dict`` of all fields in a settings class.
 
     :param model: settings class
-    :yield: all settings including nested ones in settings classes
+    :return: ``dict`` of all fields in a settings class
     """
 
     def patched_issubclass_of_basemodel(cls):
