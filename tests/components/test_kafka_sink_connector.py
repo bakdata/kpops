@@ -54,9 +54,9 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             namespace="test-namespace",
             to=ToSection(
                 topics={
-                    TopicName("${topic_name_config_default_output_topic_name}"): TopicConfig(
-                        type=OutputTopicTypes.OUTPUT, partitions_count=10
-                    ),
+                    TopicName(
+                        "${topic_name_config_default_output_topic_name}"
+                    ): TopicConfig(type=OutputTopicTypes.OUTPUT, partitions_count=10),
                 }
             ),
         )

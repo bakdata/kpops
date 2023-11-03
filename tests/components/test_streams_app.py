@@ -228,8 +228,14 @@ class TestStreamsApp:
             "first-extra-topic": "extra-topic-1",
             "second-extra-topic": "extra-topic-2",
         }
-        assert streams_app.app.streams.output_topic == "${topic_name_config_default_output_topic_name}"
-        assert streams_app.app.streams.error_topic == "${topic_name_config_default_error_topic_name}"
+        assert (
+            streams_app.app.streams.output_topic
+            == "${topic_name_config_default_output_topic_name}"
+        )
+        assert (
+            streams_app.app.streams.error_topic
+            == "${topic_name_config_default_error_topic_name}"
+        )
 
     def test_weave_inputs_from_prev_component(
         self, config: KpopsConfig, handlers: ComponentHandlers

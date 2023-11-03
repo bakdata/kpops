@@ -90,7 +90,10 @@ class TestProducerApp:
             },
         )
 
-        assert producer_app.app.streams.output_topic == "${topic_name_config_default_output_topic_name}"
+        assert (
+            producer_app.app.streams.output_topic
+            == "${topic_name_config_default_output_topic_name}"
+        )
         assert producer_app.app.streams.extra_output_topics == {
             "first-extra-topic": "extra-topic-1"
         }
