@@ -269,7 +269,7 @@ def fill_csv_pipeline_config(target: Path) -> None:
         )
 
 
-# TODO(Ivan Yordanov): Should we yield both the nested fields and their parents?
+# TODO(Ivan Yordanov): Separate complex fields into their "leaves"
 def collect_fields(settings: type[BaseSettings]) -> Iterator[tuple[str, FieldInfo]]:
     """Collect and yield all fields in a settings class.
 

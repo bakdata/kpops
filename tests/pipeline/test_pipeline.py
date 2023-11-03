@@ -527,6 +527,30 @@ class TestPipeline:
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
+    def test_dotenv_support(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--config",
+                str(RESOURCE_PATH / "dotenv/config.yaml"),
+                "--dotenv",
+                str(RESOURCE_PATH / "dotenv/.env"),
+                "--dotenv",
+                str(RESOURCE_PATH / "dotenv/custom.env")
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert enriched_pipeline["components"][1]["app"]["streams"]["schemaRegistryUrl"] == "http://notlocalhost:8081/"
+
     def test_short_topic_definition(self):
         result = runner.invoke(
             app,
