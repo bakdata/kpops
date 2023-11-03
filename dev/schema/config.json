@@ -5,15 +5,33 @@
             "description": "Global Helm configuration.",
             "properties": {
                 "api_version": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Kubernetes API version used for Capabilities.APIVersions",
-                    "title": "API version",
-                    "type": "string"
+                    "title": "API version"
                 },
                 "context": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Name of kubeconfig context (`--kube-context`)",
-                    "example": "dev-storage",
-                    "title": "Context",
-                    "type": "string"
+                    "examples": [
+                        "dev-storage"
+                    ],
+                    "title": "Context"
                 },
                 "debug": {
                     "default": false,
@@ -29,7 +47,9 @@
             "properties": {
                 "ignore": {
                     "description": "Set of keys that should not be checked.",
-                    "example": "- name\n- imageTag",
+                    "examples": [
+                        "- name\n- imageTag"
+                    ],
                     "items": {
                         "type": "string"
                     },
@@ -294,7 +314,7 @@
             "properties": {
                 "default_error_topic_name": {
                     "default": "${pipeline_name}-${component_name}-error",
-                    "description": "Configures the value for the variable ${topic_name_config_default_error_topic_name}",
+                    "description": "Configures the value for the variable ${error_topic_name}",
                     "env_names": [
                         "default_error_topic_name"
                     ],

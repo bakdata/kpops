@@ -681,6 +681,8 @@
       
         
       
+        
+      
     
     
     
@@ -742,6 +744,26 @@
   
   <span class="md-ellipsis">
     KubernetesApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user/core-concepts/components/helm-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HelmApp
   </span>
   
 
@@ -1420,49 +1442,91 @@
 </thead>
 <tbody>
 <tr>
-<td>KPOPS_ENVIRONMENT</td>
-<td></td>
-<td>True</td>
+<td>defaults_path</td>
+<td>.</td>
+<td>False</td>
+<td>The path to the folder containing the defaults.yaml file and the environment defaults files. Paths can either be absolute or relative to <code>config.yaml</code></td>
+<td>defaults_path</td>
+</tr>
+<tr>
+<td>environment</td>
+<td>PydanticUndefined</td>
+<td>False</td>
 <td>The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).</td>
 <td>environment</td>
 </tr>
 <tr>
-<td>KPOPS_KAFKA_BROKERS</td>
-<td></td>
-<td>True</td>
+<td>kafka_brokers</td>
+<td>PydanticUndefined</td>
+<td>False</td>
 <td>The comma separated Kafka brokers address.</td>
 <td>kafka_brokers</td>
 </tr>
 <tr>
-<td>KPOPS_SCHEMA_REGISTRY_URL</td>
-<td>http://localhost:8081</td>
+<td>defaults_filename_prefix</td>
+<td>defaults</td>
 <td>False</td>
-<td>Address of the Schema Registry.</td>
-<td>url</td>
+<td>The name of the defaults file and the prefix of the defaults environment file.</td>
+<td>defaults_filename_prefix</td>
 </tr>
 <tr>
-<td>KPOPS_KAFKA_REST_URL</td>
-<td>http://localhost:8082</td>
+<td>topic_name_config</td>
+<td>default_output_topic_name='${pipeline_name}-${component_name}' default_error_topic_name='${pipeline_name}-${component_name}-error'</td>
 <td>False</td>
-<td>Address of the Kafka REST Proxy.</td>
-<td>url</td>
+<td>Configure the topic name variables you can use in the pipeline definition.</td>
+<td>topic_name_config</td>
 </tr>
 <tr>
-<td>KPOPS_KAFKA_CONNECT_URL</td>
-<td>http://localhost:8083</td>
+<td>schema_registry</td>
+<td>enabled=False url=Url('http://localhost:8081/')</td>
 <td>False</td>
-<td>Address of Kafka Connect.</td>
-<td>url</td>
+<td>Configuration for Schema Registry.</td>
+<td>schema_registry</td>
 </tr>
 <tr>
-<td>KPOPS_TIMEOUT</td>
+<td>kafka_rest</td>
+<td>url=Url('http://localhost:8082/')</td>
+<td>False</td>
+<td>Configuration for Kafka REST Proxy.</td>
+<td>kafka_rest</td>
+</tr>
+<tr>
+<td>kafka_connect</td>
+<td>url=Url('http://localhost:8083/')</td>
+<td>False</td>
+<td>Configuration for Kafka Connect.</td>
+<td>kafka_connect</td>
+</tr>
+<tr>
+<td>timeout</td>
 <td>300</td>
 <td>False</td>
 <td>The timeout in seconds that specifies when actions like deletion or deploy timeout.</td>
 <td>timeout</td>
 </tr>
 <tr>
-<td>KPOPS_RETAIN_CLEAN_JOBS</td>
+<td>create_namespace</td>
+<td>False</td>
+<td>False</td>
+<td>Flag for <code>helm upgrade --install</code>. Create the release namespace if not present.</td>
+<td>create_namespace</td>
+</tr>
+<tr>
+<td>helm_config</td>
+<td>context=None debug=False api_version=None</td>
+<td>False</td>
+<td>Global flags for Helm.</td>
+<td>helm_config</td>
+</tr>
+<tr>
+<td>helm_diff_config</td>
+<td>ignore=set()</td>
+<td>False</td>
+<td>Configure Helm Diff.</td>
+<td>helm_diff_config</td>
+</tr>
+<tr>
+<td>retain_clean_jobs</td>
 <td>False</td>
 <td>False</td>
 <td>Whether to retain clean up jobs in the cluster or uninstall the, after completion.</td>
