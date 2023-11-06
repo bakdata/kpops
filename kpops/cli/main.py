@@ -19,7 +19,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
-from kpops.config import ENV_PREFIX, KpopsConfig
+from kpops.config import KpopsConfig
 from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 
@@ -28,9 +28,23 @@ if TYPE_CHECKING:
 
     from kpops.components.base_components import PipelineComponent
 
+ENV_PREFIX = KpopsConfig.model_config.get("env_prefix")
+
 LOG_DIVIDER = "#" * 100
 
 app = dtyper.Typer(pretty_exceptions_enable=False)
+
+DOTENV_PATH_OPTION: Optional[list[Path]] = typer.Option(
+    default=None,
+    exists=True,
+    dir_okay=False,
+    file_okay=True,
+    envvar=f"{ENV_PREFIX}DOTENV_PATH",
+    help=(
+        "Path to dotenvfile. Multiple files can be provided. "
+        "The files will be loaded in order, with each file overriding the previous one."
+    ),
+)
 
 BASE_DIR_PATH_OPTION: Path = typer.Option(
     default=Path(),
@@ -199,11 +213,12 @@ def create_kpops_config(
     defaults: Path | None = None,
     components_module: str | None = None,
     pipeline_base_dir: Path | None = None,
+    dotenv: list[Path] | None = None,
     verbose: bool = False,
 ) -> KpopsConfig:
     setup_logging_level(verbose)
     YamlConfigSettingsSource.path_to_config = config
-    kpops_config = KpopsConfig()
+    kpops_config = KpopsConfig(_env_file=dotenv)  # pyright: ignore [reportGeneralTypeIssues]
     if components_module:
         kpops_config.components_module = components_module
     if pipeline_base_dir:
@@ -258,6 +273,7 @@ def generate(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     template: bool = typer.Option(False, help="Run Helm template"),
@@ -266,7 +282,7 @@ def generate(
     verbose: bool = VERBOSE_OPTION,
 ) -> Pipeline:
     kpops_config = create_kpops_config(
-        config, defaults, components_module, pipeline_base_dir, verbose
+        config, defaults, components_module, pipeline_base_dir, dotenv, verbose
     )
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
@@ -288,13 +304,12 @@ def generate(
     return pipeline
 
 
-@app.command(
-    help="Deploy pipeline steps"
-)  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Deploy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def deploy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
@@ -303,7 +318,7 @@ def deploy(
     verbose: bool = VERBOSE_OPTION,
 ):
     kpops_config = create_kpops_config(
-        config, defaults, components_module, pipeline_base_dir, verbose
+        config, defaults, components_module, pipeline_base_dir, dotenv, verbose
     )
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
@@ -315,13 +330,12 @@ def deploy(
         component.deploy(dry_run)
 
 
-@app.command(
-    help="Destroy pipeline steps"
-)  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Destroy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def destroy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
@@ -330,7 +344,7 @@ def destroy(
     verbose: bool = VERBOSE_OPTION,
 ):
     kpops_config = create_kpops_config(
-        config, defaults, components_module, pipeline_base_dir, verbose
+        config, defaults, components_module, pipeline_base_dir, dotenv, verbose
     )
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
@@ -341,13 +355,12 @@ def destroy(
         component.destroy(dry_run)
 
 
-@app.command(
-    help="Reset pipeline steps"
-)  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Reset pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def reset(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
@@ -356,7 +369,7 @@ def reset(
     verbose: bool = VERBOSE_OPTION,
 ):
     kpops_config = create_kpops_config(
-        config, defaults, components_module, pipeline_base_dir, verbose
+        config, defaults, components_module, pipeline_base_dir, dotenv, verbose
     )
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
@@ -368,13 +381,12 @@ def reset(
         component.reset(dry_run)
 
 
-@app.command(
-    help="Clean pipeline steps"
-)  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Clean pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8eneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def clean(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
@@ -383,7 +395,7 @@ def clean(
     verbose: bool = VERBOSE_OPTION,
 ):
     kpops_config = create_kpops_config(
-        config, defaults, components_module, pipeline_base_dir, verbose
+        config, defaults, components_module, pipeline_base_dir, dotenv, verbose
     )
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config

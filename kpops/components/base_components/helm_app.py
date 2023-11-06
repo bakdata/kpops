@@ -4,7 +4,7 @@ import logging
 from functools import cached_property
 from typing import Any
 
-from pydantic import Field
+from pydantic import Field, SerializationInfo, model_serializer
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -19,6 +19,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import exclude_by_name
 
 log = logging.getLogger("HelmApp")
 
@@ -160,12 +161,8 @@ class HelmApp(KubernetesApp):
         new_release = Helm.load_manifest(stdout)
         self.helm_diff.log_helm_diff(log, current_release, new_release)
 
-    # TODO(Ivan Yordanov): replace with a function decorated with `@model_serializer`
-    @override
-    def model_dump(self, *, exclude=None, **kwargs) -> dict[str, Any]:
-        # HACK: workaround for Pydantic to exclude cached properties during model export
-        if exclude is None:
-            exclude = set()
-        exclude.add("helm")
-        exclude.add("helm_diff")
-        return super().model_dump(exclude=exclude, **kwargs)
+    # HACK: workaround for Pydantic to exclude cached properties during model export
+    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
+        return exclude_by_name(handler(self), "helm", "helm_diff")
