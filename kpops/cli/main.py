@@ -112,7 +112,7 @@ VERBOSE_OPTION = typer.Option(False, help="Enable verbose printing")
 
 COMPONENTS_MODULES: str | None = typer.Argument(
     default=None,
-    help="Custom Python module containing your project-specific components",
+    help="Custom Python module defining project-specific KPOps components",
 )
 
 logger = logging.getLogger()

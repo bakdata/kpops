@@ -77,8 +77,14 @@ class KpopsConfig(BaseSettings):
         description="The environment you want to generate and deploy the pipeline to. "
         "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
     )
-    components_module: str | None = None
-    pipeline_base_dir: Path = Path()
+    components_module: str | None = Field(
+        default=...,
+        description="Custom Python module defining project-specific KPOps components",
+    )
+    pipeline_base_dir: Path = Field(
+        default=Path(),
+        description="Base directory to the pipelines (default is current working directory)",
+    )
     kafka_brokers: str = Field(
         default=...,
         examples=[

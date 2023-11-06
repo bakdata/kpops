@@ -35,7 +35,7 @@ $ kpops clean [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Arguments**:
 
 * `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
-* `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
+* `[COMPONENTS_MODULE]`: Custom Python module defining project-specific KPOps components
 
 **Options**:
 
@@ -62,7 +62,7 @@ $ kpops deploy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Arguments**:
 
 * `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
-* `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
+* `[COMPONENTS_MODULE]`: Custom Python module defining project-specific KPOps components
 
 **Options**:
 
@@ -89,7 +89,7 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Arguments**:
 
 * `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
-* `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
+* `[COMPONENTS_MODULE]`: Custom Python module defining project-specific KPOps components
 
 **Options**:
 
@@ -116,7 +116,7 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Arguments**:
 
 * `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
-* `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
+* `[COMPONENTS_MODULE]`: Custom Python module defining project-specific KPOps components
 
 **Options**:
 
@@ -143,7 +143,7 @@ $ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Arguments**:
 
 * `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
-* `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
+* `[COMPONENTS_MODULE]`: Custom Python module defining project-specific KPOps components
 
 **Options**:
 
@@ -183,7 +183,7 @@ $ kpops schema [OPTIONS] SCOPE:{pipeline|config} [COMPONENTS_MODULE]
 
 
         config: Schema of KpopsConfig.  [required]
-* `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
+* `[COMPONENTS_MODULE]`: Custom Python module defining project-specific KPOps components
 
 **Options**:
 
