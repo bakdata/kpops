@@ -43,11 +43,11 @@ jobs:
             echo "::add-matcher::.github/ruff-matcher.json"
             poetry run ruff check . --config pyproject.toml --output-format text --no-fix
           else
-            poetry run pre-commit run ruff --all-files --show-diff-on-failure
+            poetry run pre-commit run ruff-lint --all-files --show-diff-on-failure
           fi;
 
-      - name: Formatting (black)
-        run: poetry run pre-commit run black --all-files --show-diff-on-failure
+      - name: Formatting (ruff)
+        run: poetry run pre-commit run ruff-format --all-files --show-diff-on-failure
 
       - name: Typing (pyright)
         run: poetry run pre-commit run pyright --all-files

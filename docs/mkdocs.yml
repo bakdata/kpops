@@ -1,6 +1,7 @@
 site_name: KPOps
-repo_url: https://github.com/bakdata/kpops/
 site_url: https://bakdata.github.io/kpops/
+repo_name: KPOps
+repo_url: https://github.com/bakdata/kpops/
 remote_branch: gh-pages
 copyright: Copyright &copy; 2023 bakdata
 
@@ -82,6 +83,7 @@ nav:
       KPOps Documentation: index.md
   - User Guide:
     - What is KPOps: user/what-is-kpops.md
+    - Changelog: user/changelog.md
     - Getting Started:
       - Setup: user/getting-started/setup.md
       - Quick start: user/getting-started/quick-start.md
@@ -111,5 +113,7 @@ nav:
       - CI integration:
         - GitHub Actions: user/references/ci-integration/github-actions.md
   - Developer Guide:
+    - Getting Started: developer/getting-started.md
+    - Contributing: developer/contributing.md
+    - Code base:
       - Auto generation: developer/auto-generation.md
-      - Formatting: developer/formatting.md
