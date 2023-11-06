@@ -60,7 +60,7 @@ class KafkaConnectConfig(BaseSettings):
 
 
 class KpopsConfig(BaseSettings):
-    """Pipeline configuration unrelated to the components."""
+    """Global configuration for KPOps project."""
 
     defaults_path: Path = Field(
         default=Path(),

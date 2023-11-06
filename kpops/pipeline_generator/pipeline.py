@@ -130,7 +130,7 @@ class Pipeline:
         :param base_dir: Base directory to the pipelines (default is current working directory)
         :param path: Path to pipeline definition yaml file
         :param registry: Pipeline components registry
-        :param config: Pipeline config
+        :param config: KPOps config
         :param handlers: Component handlers
         :raises TypeError: The pipeline definition should contain a list of components
         :raises TypeError: The env-specific pipeline definition should contain a list of components

@@ -145,6 +145,6 @@ def gen_pipeline_schema(
 
 
 def gen_config_schema() -> None:
-    """Generate a json schema from the model of pipeline config."""
+    """Generate JSON schema from the model."""
     schema = model_json_schema(KpopsConfig)
     print(json.dumps(schema, indent=4, sort_keys=True))
