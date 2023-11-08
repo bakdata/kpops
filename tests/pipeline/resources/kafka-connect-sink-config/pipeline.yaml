@@ -3,5 +3,5 @@
   name: test-connector
   to:
     topics:
-      ${topic_name_config_default_error_topic_name}:
+      ${error_topic_name}:
         type: error

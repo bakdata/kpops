@@ -16,7 +16,7 @@ streams-app: # inherits from kafka-app
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
   to:
     topics:
-      ${topic_name_config_default_error_topic_name}:
+      ${error_topic_name}:
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
         partitions_count: 1

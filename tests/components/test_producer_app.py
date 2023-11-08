@@ -57,7 +57,7 @@ class TestProducerApp:
                 "clean_schemas": True,
                 "to": {
                     "topics": {
-                        "${topic_name_config_default_output_topic_name}": TopicConfig(
+                        "${output_topic_name}": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                     }
@@ -78,7 +78,7 @@ class TestProducerApp:
                 },
                 "to": {
                     "topics": {
-                        "${topic_name_config_default_output_topic_name}": TopicConfig(
+                        "${output_topic_name}": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
@@ -90,10 +90,7 @@ class TestProducerApp:
             },
         )
 
-        assert (
-            producer_app.app.streams.output_topic
-            == "${topic_name_config_default_output_topic_name}"
-        )
+        assert producer_app.app.streams.output_topic == "${output_topic_name}"
         assert producer_app.app.streams.extra_output_topics == {
             "first-extra-topic": "extra-topic-1"
         }
@@ -126,7 +123,7 @@ class TestProducerApp:
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "${topic_name_config_default_output_topic_name}",
+                        "outputTopic": "${output_topic_name}",
                     },
                 },
                 HelmUpgradeInstallFlags(
@@ -190,7 +187,7 @@ class TestProducerApp:
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "${topic_name_config_default_output_topic_name}",
+                        "outputTopic": "${output_topic_name}",
                     },
                 },
                 HelmUpgradeInstallFlags(version="2.4.2", wait=True, wait_for_jobs=True),
@@ -235,7 +232,7 @@ class TestProducerApp:
                 {
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "${topic_name_config_default_output_topic_name}",
+                        "outputTopic": "${output_topic_name}",
                     },
                 },
                 HelmUpgradeInstallFlags(version="2.4.2", wait=True, wait_for_jobs=True),

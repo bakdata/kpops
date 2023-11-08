@@ -17,7 +17,7 @@ kafka-app:
 producer-app:
   to:
     topics:
-      ${topic_name_config_default_output_topic_name}:
+      ${output_topic_name}:
         partitions_count: 3
 
 streams-app:
@@ -28,8 +28,8 @@ streams-app:
       optimizeLeaveGroupBehavior: false
   to:
     topics:
-      ${topic_name_config_default_error_topic_name}:
+      ${error_topic_name}:
         type: error
         partitions_count: 1
-      ${topic_name_config_default_output_topic_name}:
+      ${output_topic_name}:
         partitions_count: 3
