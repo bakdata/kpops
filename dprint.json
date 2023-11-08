@@ -4,7 +4,8 @@
   "markdown": {},
   "toml": {},
   "includes": [
-    "**/*.{md}"
+    "**/*.{md}",
+    "**/*.{toml}"
   ],
   "excludes": [
     ".pytest_cache/**",
