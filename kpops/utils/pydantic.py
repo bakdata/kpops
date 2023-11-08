@@ -27,7 +27,7 @@ def to_dot(s: str) -> str:
     return s.replace("_", ".")
 
 
-def by_alias(field_name: str, model: BaseModel) -> str:
+def by_alias(model: BaseModel, field_name: str) -> str:
     """Return field alias if exists else field name.
 
     :param field_name: Name of the field to get alias of
