@@ -10,9 +10,9 @@ from pydantic_settings import (
 )
 from typing_extensions import override
 
-from kpops.cli.settings_sources import YamlConfigSettingsSource
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.docstring import describe_object
+from kpops.utils.pydantic import YamlConfigSettingsSource
 
 ENV_PREFIX = "KPOPS_"
 
