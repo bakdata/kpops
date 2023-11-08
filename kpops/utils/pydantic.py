@@ -6,7 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_snake
 from pydantic.fields import FieldInfo
 from pydantic_settings import PydanticBaseSettingsSource
-from typing_extensions import override
+from typing_extensions import TypeVar, override
 
 from kpops.utils.docstring import describe_object
 from kpops.utils.yaml_loading import load_yaml_file
@@ -36,9 +36,12 @@ def by_alias(model: BaseModel, field_name: str) -> str:
     return model.model_fields.get(field_name, Field()).alias or field_name
 
 
+_V = TypeVar("_V")
+
+
 def exclude_by_value(
-    dumped_model: dict[str, Any], *excluded_values: Any
-) -> dict[str, Any]:
+    dumped_model: dict[str, _V], *excluded_values: Any
+) -> dict[str, _V]:
     """Strip all key-value pairs with certain values.
 
     :param dumped_model: Dumped model
@@ -53,8 +56,8 @@ def exclude_by_value(
 
 
 def exclude_by_name(
-    dumped_model: dict[str, Any], *excluded_fields: str
-) -> dict[str, Any]:
+    dumped_model: dict[str, _V], *excluded_fields: str
+) -> dict[str, _V]:
     """Strip all key-value pairs with certain field names.
 
     :param dumped_model: Dumped model
@@ -68,7 +71,7 @@ def exclude_by_name(
     }
 
 
-def exclude_defaults(model: BaseModel, dumped_model: dict[str, Any]) -> dict[str, str]:
+def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str, _V]:
     """Strip all key-value pairs with default values.
 
     :param model: Model
