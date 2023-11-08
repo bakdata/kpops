@@ -4,7 +4,10 @@
   "markdown": {},
   "malva": {},
   "includes": [
-    "**/*.{md}"
+    "**/*.{md}",
+    "**/*.{css}",
+    "**/*.{scss}",
+    "**/*.{sass}"
   ],
   "excludes": [
     ".pytest_cache/**",
