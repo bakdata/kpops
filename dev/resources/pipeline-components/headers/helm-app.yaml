@@ -1,3 +1,0 @@
-# Kubernetes app managed through Helm with an associated Helm chart
-- type: helm-app
-  name: helm-app # required
