@@ -314,7 +314,7 @@
             "properties": {
                 "default_error_topic_name": {
                     "default": "${pipeline_name}-${component_name}-error",
-                    "description": "Configures the value for the variable ${topic_name_config_default_error_topic_name}",
+                    "description": "Configures the value for the variable ${error_topic_name}",
                     "env_names": [
                         "default_error_topic_name"
                     ],

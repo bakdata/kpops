@@ -23,6 +23,14 @@ All of them are prefixed with `component_` and follow the following form: `compo
 
 These variables include all fields in the [config](../config.md) and refer to the pipeline configuration that is independent of the components.
 
+<!-- dprint-ignore-start -->
+
+!!! info Aliases
+    `error_topic_name` is an alias for `topic_name_config_default_error_topic_name`  
+    `output_topic_name` is an alias for `topic_name_config_default_output_topic_name`
+
+<!-- dprint-ignore-end -->
+
 ## Environment variables
 
 Environment variables such as `$PATH` can be used in the pipeline definition and defaults without any transformation following the form `${ENV_VAR_NAME}`. This, of course, includes variables like the ones relevant to the [KPOps cli](../../references/cli-commands.md) that are exported by the user.
