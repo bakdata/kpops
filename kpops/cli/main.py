@@ -41,7 +41,7 @@ DOTENV_PATH_OPTION: Optional[list[Path]] = typer.Option(
     file_okay=True,
     envvar=f"{ENV_PREFIX}DOTENV_PATH",
     help=(
-        "Path to dotenvfile. Multiple files can be provided. "
+        "Path to dotenv file. Multiple files can be provided. "
         "The files will be loaded in order, with each file overriding the previous one."
     ),
 )
