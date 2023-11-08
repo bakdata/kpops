@@ -14,6 +14,8 @@ from kpops.cli.settings_sources import YamlConfigSettingsSource
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.docstring import describe_object
 
+ENV_PREFIX = "KPOPS_"
+
 
 class TopicNameConfig(BaseSettings):
     """Configure the topic name variables you can use in the pipeline definition."""
@@ -125,7 +127,7 @@ class KpopsConfig(BaseSettings):
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
 
-    model_config = SettingsConfigDict(env_prefix="KPOPS_", env_nested_delimiter="__")
+    model_config = SettingsConfigDict(env_prefix=ENV_PREFIX, env_nested_delimiter="__")
 
     @override
     @classmethod
