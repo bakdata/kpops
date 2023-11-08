@@ -52,3 +52,18 @@ background-color: rgb(255, 77, 6);
 -webkit-mask-image: var(--md-admonition-icon--wip);
         mask-image: var(--md-admonition-icon--wip);
 }
+
+.md-typeset .admonition.wip,
+.md-typeset details.wip {
+border-color: rgb(160, 45, 0);
+}
+.md-typeset .wip > .admonition-title,
+.md-typeset .wip > summary {
+background-color: rgb(255, 195, 172);
+}
+.md-typeset .wip > .admonition-title::before,
+.md-typeset .wip > summary::before {
+background-color: rgb(255, 77, 6);
+-webkit-mask-image: var(--md-admonition-icon--wip);
+        mask-image: var(--md-admonition-icon--wip);
+}
