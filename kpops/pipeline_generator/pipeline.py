@@ -279,7 +279,7 @@ class Pipeline:
         config = self.config
         # Leftover variables that were previously introduced in the component by the substitution
         # functions, still hardcoded, because of their names.
-        # TODO: Get rid of them
+        # TODO(Ivan Yordanov): Get rid of them
         substitution_hardcoded = {
             "error_topic_name": config.topic_name_config.default_error_topic_name,
             "output_topic_name": config.topic_name_config.default_output_topic_name,

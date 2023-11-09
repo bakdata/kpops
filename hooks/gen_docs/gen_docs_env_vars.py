@@ -277,8 +277,6 @@ def fill_csv_pipeline_config(target: Path) -> None:
             field_name,
         )
 
-
-# TODO(Ivan Yordanov): Separate complex fields into their "leaves"
 def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
     """Collect and return a ``dict`` of all fields in a settings class.
 
