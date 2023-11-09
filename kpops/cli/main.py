@@ -18,7 +18,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
-from kpops.config import KpopsConfig
+from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 from kpops.utils.pydantic import YamlConfigSettingsSource
@@ -27,8 +27,6 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
     from kpops.components.base_components import PipelineComponent
-
-ENV_PREFIX = KpopsConfig.model_config.get("env_prefix")
 
 LOG_DIVIDER = "#" * 100
 
@@ -213,15 +211,12 @@ def create_kpops_config(
 ) -> KpopsConfig:
     setup_logging_level(verbose)
     YamlConfigSettingsSource.path_to_config = config
+    kpops_config = KpopsConfig(
+        _env_file=dotenv  # pyright: ignore[reportGeneralTypeIssues]
+    )
     if defaults:
-        kpops_config = KpopsConfig(
-            defaults_path=defaults,
-            _env_file=dotenv,  # pyright: ignore [reportGeneralTypeIssues]
-        )
+        kpops_config.defaults_path = defaults
     else:
-        kpops_config = KpopsConfig(
-            _env_file=dotenv  # pyright: ignore [reportGeneralTypeIssues]
-        )
         kpops_config.defaults_path = config.parent / kpops_config.defaults_path
     return kpops_config
 
