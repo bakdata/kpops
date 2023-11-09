@@ -1575,14 +1575,14 @@
 </tr>
 <tr>
 <td>KPOPS_TOPIC_NAME_CONFIG__DEFAULT_OUTPUT_TOPIC_NAME</td>
-<td>${pipeline_name}-${component__name}</td>
+<td>${pipeline_name}-${component_name}</td>
 <td>False</td>
 <td>Configures the value for the variable ${output_topic_name}</td>
 <td>topic_name_config.default_output_topic_name</td>
 </tr>
 <tr>
 <td>KPOPS_TOPIC_NAME_CONFIG__DEFAULT_ERROR_TOPIC_NAME</td>
-<td>${pipeline_name}-${component__name}-error</td>
+<td>${pipeline_name}-${component_name}-error</td>
 <td>False</td>
 <td>Configures the value for the variable ${error_topic_name}</td>
 <td>topic_name_config.default_error_topic_name</td>
@@ -1759,10 +1759,10 @@
 </span><span id="__span-0-23"><a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="n">KPOPS_DEFAULTS_FILENAME_PREFIX</span><span class="o">=</span><span class="n">defaults</span>
 </span><span id="__span-0-24"><a id="__codelineno-0-24" name="__codelineno-0-24"></a><span class="c1"># topic_name_config.default_output_topic_name</span>
 </span><span id="__span-0-25"><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="c1"># Configures the value for the variable ${output_topic_name}</span>
-</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="n">KPOPS_TOPIC_NAME_CONFIG__DEFAULT_OUTPUT_TOPIC_NAME</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">pipeline_name</span><span class="p">}</span><span class="o">-</span><span class="err">$</span><span class="p">{</span><span class="n">component__name</span><span class="p">}</span>
+</span><span id="__span-0-26"><a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="n">KPOPS_TOPIC_NAME_CONFIG__DEFAULT_OUTPUT_TOPIC_NAME</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">pipeline_name</span><span class="p">}</span><span class="o">-</span><span class="err">$</span><span class="p">{</span><span class="n">component_name</span><span class="p">}</span>
 </span><span id="__span-0-27"><a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="c1"># topic_name_config.default_error_topic_name</span>
 </span><span id="__span-0-28"><a id="__codelineno-0-28" name="__codelineno-0-28"></a><span class="c1"># Configures the value for the variable ${error_topic_name}</span>
-</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="n">KPOPS_TOPIC_NAME_CONFIG__DEFAULT_ERROR_TOPIC_NAME</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">pipeline_name</span><span class="p">}</span><span class="o">-</span><span class="err">$</span><span class="p">{</span><span class="n">component__name</span><span class="p">}</span><span class="o">-</span><span class="n">error</span>
+</span><span id="__span-0-29"><a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="n">KPOPS_TOPIC_NAME_CONFIG__DEFAULT_ERROR_TOPIC_NAME</span><span class="o">=</span><span class="err">$</span><span class="p">{</span><span class="n">pipeline_name</span><span class="p">}</span><span class="o">-</span><span class="err">$</span><span class="p">{</span><span class="n">component_name</span><span class="p">}</span><span class="o">-</span><span class="n">error</span>
 </span><span id="__span-0-30"><a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="c1"># schema_registry.enabled</span>
 </span><span id="__span-0-31"><a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="c1"># Whether the Schema Registry handler should be initialized.</span>
 </span><span id="__span-0-32"><a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="n">KPOPS_SCHEMA_REGISTRY__ENABLED</span><span class="o">=</span><span class="kc">False</span>
