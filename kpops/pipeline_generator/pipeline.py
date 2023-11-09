@@ -291,7 +291,9 @@ class Pipeline:
             separator="__",
         )
         substitution = generate_substitution(
-            config.model_dump(mode="json"), existing_substitution=component_substitution, separator="__"
+            config.model_dump(mode="json"),
+            existing_substitution=component_substitution,
+            separator="__",
         )
 
         return json.loads(
