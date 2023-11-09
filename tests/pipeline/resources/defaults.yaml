@@ -1,12 +1,12 @@
 kubernetes-app:
-  name: "${component_type}"
+  name: "${component__type}"
   namespace: example-namespace
 
 kafka-app:
   app:
     streams:
       brokers: "${kafka_brokers}"
-      schema_registry_url: "${schema_registry_url}"
+      schema_registry_url: "${schema_registry__url}"
   version: "2.4.2"
 
 producer-app: {} # inherits from kafka-app

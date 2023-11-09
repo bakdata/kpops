@@ -19,11 +19,11 @@ class TopicNameConfig(BaseSettings):
     """Configure the topic name variables you can use in the pipeline definition."""
 
     default_output_topic_name: str = Field(
-        default="${pipeline_name}-${component_name}",
+        default="${pipeline_name}-${component__name}",
         description="Configures the value for the variable ${output_topic_name}",
     )
     default_error_topic_name: str = Field(
-        default="${pipeline_name}-${component_name}-error",
+        default="${pipeline_name}-${component__name}-error",
         description="Configures the value for the variable ${error_topic_name}",
     )
 

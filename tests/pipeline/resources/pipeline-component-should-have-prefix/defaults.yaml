@@ -8,4 +8,4 @@ kafka-app:
   app:
     streams:
       brokers: ${kafka_brokers}
-      schemaRegistryUrl: ${schema_registry_url}
+      schemaRegistryUrl: ${schema_registry__url}

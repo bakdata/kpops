@@ -288,9 +288,10 @@ class Pipeline:
             component_as_dict,
             "component",
             substitution_hardcoded,
+            separator="__",
         )
         substitution = generate_substitution(
-            config.model_dump(mode="json"), existing_substitution=component_substitution
+            config.model_dump(mode="json"), existing_substitution=component_substitution, separator="__"
         )
 
         return json.loads(
