@@ -434,7 +434,7 @@
         },
         "KubernetesAppConfig": {
             "additionalProperties": true,
-            "description": "Settings specific to Kubernetes Apps.",
+            "description": "Settings specific to Kubernetes apps.",
             "properties": {},
             "title": "KubernetesAppConfig",
             "type": "object"
