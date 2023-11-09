@@ -634,3 +634,22 @@ class TestPipeline:
                 ],
                 catch_exceptions=False,
             )
+
+    def test_temp_any_values_in_app_streams_config(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(
+                    RESOURCE_PATH
+                    / "temp-any-values-in-app-streams-config/pipeline.yaml"
+                ),
+                "--defaults",
+                str(RESOURCE_PATH / "temp-any-values-in-app-streams-config"),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0

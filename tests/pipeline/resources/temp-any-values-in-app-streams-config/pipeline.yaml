@@ -1,0 +1,5 @@
+- type: streams-app
+  app:
+    streams:
+      config:
+        max.poll.records: 100
