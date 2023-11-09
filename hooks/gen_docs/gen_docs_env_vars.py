@@ -277,6 +277,7 @@ def fill_csv_pipeline_config(target: Path) -> None:
             field_name,
         )
 
+
 def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
     """Collect and return a ``dict`` of all fields in a settings class.
 
