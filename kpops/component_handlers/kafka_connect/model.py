@@ -60,7 +60,7 @@ class KafkaConnectorConfig(DescConfigModel):
     @model_serializer(mode="wrap", when_used="always")
     def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
         result = exclude_by_value(handler(self), None)
-        return {by_alias(name, self): value for name, value in result.items()}
+        return {by_alias(self, name): value for name, value in result.items()}
 
 
 class ConnectorTask(BaseModel):
