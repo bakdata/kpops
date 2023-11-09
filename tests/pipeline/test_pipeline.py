@@ -635,21 +635,22 @@ class TestPipeline:
                 catch_exceptions=False,
             )
 
-    def test_temp_any_values_in_app_streams_config(self):
+    def test_temp_trim_release_name(self):
         result = runner.invoke(
             app,
             [
                 "generate",
                 "--pipeline-base-dir",
                 str(PIPELINE_BASE_DIR_PATH),
-                str(
-                    RESOURCE_PATH
-                    / "temp-any-values-in-app-streams-config/pipeline.yaml"
-                ),
+                str(RESOURCE_PATH / "temp-trim-release-name/pipeline.yaml"),
                 "--defaults",
-                str(RESOURCE_PATH / "temp-any-values-in-app-streams-config"),
+                str(RESOURCE_PATH / "temp-trim-release-name"),
             ],
             catch_exceptions=False,
         )
-
         assert result.exit_code == 0
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline["components"][0]["name"]
+            == "in-order-to-have-len-fifty-two-name-should-end--here"
+        )

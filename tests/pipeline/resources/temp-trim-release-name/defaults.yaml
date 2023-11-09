@@ -1,5 +1,4 @@
 kubernetes-app:
-  name: "${component_type}"
   namespace: example-namespace
 
 kafka-app:
