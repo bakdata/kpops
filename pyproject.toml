@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kpops"
-version = "2.0.10"
+version = "2.0.11"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
 authors = ["bakdata <opensource@bakdata.com>"]
 license = "MIT"
@@ -45,7 +45,7 @@ pytest-mock = "^3.10.0"
 pytest-timeout = "^2.1.0"
 snapshottest = "^0.6.0"
 pre-commit = "^2.19.0"
-ruff = "^0.1.1"
+ruff = "^0.1.5"
 typer-cli = "^0.0.13"
 pyright = "^1.1.314"
 pytest-rerunfailures = "^11.1.2"
@@ -56,19 +56,34 @@ pytablewriter = { extras = ["from"], version = "^1.0.0" }
 optional = true
 
 [tool.poetry.group.docs.dependencies]
+mkdocs = "^1.4.2"
 mkdocs-macros-plugin = "^0.7.0"
 mkdocs-material = "^9.0.0"
-mkdocs = "^1.4.2"
-mkdocs-material-extensions = "^1.1.1"
 mkdocs-glightbox = "^0.3.1"
+mkdocs-exclude-search = "^0.6.5"
 mike = "^1.1.2"
 
 [tool.poetry_bumpversion.file."kpops/__init__.py"]
 
 [tool.ruff]
 ignore = [
-  # "E203", # whitespace before ':' -- Not PEP8 compliant, black won't correct it, add when out of nursery
-  "E501", # Line too long -- Clashes with `black`
+# Rules in conflict with `ruff-format` -- START
+  "W191", # Checks for indentation that uses tabs. Spaces are preferred.
+  # "E111", # Checks for indentation with a non-multiple of 4 spaces, add when out of nursery
+  # "E114", # Checks for indentation of comments with a non-multiple of 4 spaces, add when out of nursery
+  # "E117", # Checks for over-indented code, add when out of nursery
+  "E501", # Line too long
+  "D206", # Checks for docstrings that are indented with tabs.
+  "D300", # Checks for docstrings that use '''triple single quotes''' instead of """triple double quotes""".
+  "Q000", # Checks for inline strings that use single quotes.
+  "Q001", # Checks for multiline strings that use single quotes
+  "Q002", # Checks for docstrings that use single quotes.
+  "Q003", # Checks for strings that include escaped quotes.
+  "COM812", # Checks for the absence of trailing commas.
+  "COM819", # Checks for the presence of prohibited trailing commas.
+  "ISC001", # Checks for implicitly concatenated strings on a single line.
+  "ISC002", # Checks for implicitly concatenated strings that span multiple lines.
+# Rules in conflict with `ruff-format` -- END
   "D1", # Missing docstring for {} -- Inconvenient to enforce
 # The following "D" rules do not correspond to our coding style. We use the pep257 convention, but
 # "D212" should not be ignored. In ruff (0.0.291) we cannot select a rule that is excluded by specifying
@@ -93,7 +108,6 @@ ignore = [
   "B010", # Do not call setattr with a constant attribute value. -- Not always applicable
   "RUF012", # type class attrs with `ClassVar` -- Too strict/trigger-happy
   "UP007", # Use X | Y for type annotations -- `typer` doesn't support it
-  "COM812", # Checks for the absence of trailing commas -- leads to undesirable behavior from formatters
   "PIE804", # Unnecessary `dict` kwargs -- Inconvenient to enforce
   "RET505", # Unnecessary {branch} after return statement -- Lots of false positives
   "RET506", # Unnecessary {branch} after raise statement -- Lots of false positives
@@ -145,13 +159,10 @@ output-format = "grouped"
 show-fixes = true
 task-tags = ["TODO", "HACK", "FIXME", "XXX"]
 target-version = "py310"
-exclude = ["tests/*snapshots/*"]
+extend-exclude = ["tests/*snapshots/*"]
 
 [tool.ruff.extend-per-file-ignores]
 "tests/*/__init__.py" = ["F401"]
-
-[tool.ruff.isort]
-split-on-trailing-comma = false
 
 [tool.ruff.flake8-bugbear]
 extend-immutable-calls = ["typer.Argument"]

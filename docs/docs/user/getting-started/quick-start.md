@@ -67,37 +67,37 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 ### Deploying the Word-count pipeline
 
+<!-- dprint-ignore-start -->
+
 1. Copy the [configuration](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops){target=_blank} from the [kpops-examples repository](https://github.com/bakdata/kpops-examples/tree/main/word-count){target=_blank} into `kpops>examples>bakdata>word-count` like so:
 
-   ```
-   kpops
-   ├── examples
-   |   ├── bakdata
-   |   |   ├── word-count
-   |   |   |   ├── config.yaml
-   |   |   |   ├── defaults
-   |   |   |   │   └── defaults.yaml
-   |   |   |   └── pipeline.yaml
-   |   |   |
-   ```
+    ```
+    kpops
+    ├── examples
+    |   ├── bakdata
+    |   |   ├── word-count
+    |   |   |   ├── config.yaml
+    |   |   |   ├── defaults
+    |   |   |   │   └── defaults.yaml
+    |   |   |   └── pipeline.yaml
+    |   |   |
+    ```
 
 2. Export environment variables in your terminal:
 
-   ```shell
-   export DOCKER_REGISTRY=bakdata && \
-   export NAMESPACE=kpops
-   ```
+    ```shell
+    export DOCKER_REGISTRY=bakdata && \
+    export NAMESPACE=kpops
+    ```
 
 3. Deploy the pipeline
 
-   ```shell
-   kpops deploy ./examples/bakdata/word-count/pipeline.yaml \
-   --pipeline-base-dir ./examples \
-   --config ./examples/bakdata/word-count/config.yaml \
-   --execute
-   ```
-
-<!-- dprint-ignore-start -->
+    ```shell
+    kpops deploy ./examples/bakdata/word-count/pipeline.yaml \
+    --pipeline-base-dir ./examples \
+    --config ./examples/bakdata/word-count/config.yaml \
+    --execute
+    ```
 
 !!! Note
     You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be
@@ -144,24 +144,24 @@ helm --namespace kpops uninstall redis
 
 ### Word-count pipeline
 
+<!-- dprint-ignore-start -->
+
 1. Export environment variables in your terminal.
 
-   ```shell
-   export DOCKER_REGISTRY=bakdata && \
-   export NAMESPACE=kpops
-   ```
+    ```shell
+    export DOCKER_REGISTRY=bakdata && \
+    export NAMESPACE=kpops
+    ```
 
 2. Remove the pipeline
 
-   ```shell
-   kpops clean ./examples/bakdata/word-count/pipeline.yaml \
-   --pipeline-base-dir ./examples \
-   --config ./examples/bakdata/word-count/config.yaml \
-   --verbose \
-   --execute
-   ```
-
-<!-- dprint-ignore-start -->
+    ```shell
+    kpops clean ./examples/bakdata/word-count/pipeline.yaml \
+    --pipeline-base-dir ./examples \
+    --config ./examples/bakdata/word-count/config.yaml \
+    --verbose \
+    --execute
+    ```
 
 !!! Note
     You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be
@@ -174,14 +174,18 @@ helm --namespace kpops uninstall redis
 
 ## Common errors
 
+<!-- dprint-ignore-start -->
+
 - `deploy` fails:
-  1. Read the error message.
-  2. Try to correct the mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
-  3. Run `clean`.
-  4. Run `deploy --dry-run` to avoid having to `clean` again. If an error is dropped, start over from step 1.
-  5. If the dry-run is successful, run `deploy`.
+    1. Read the error message.
+    2. Try to correct the mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
+    3. Run `clean`.
+    4. Run `deploy --dry-run` to avoid having to `clean` again. If an error is dropped, start over from step 1.
+    5. If the dry-run is successful, run `deploy`.
 - `clean` fails:
-  1. Read the error message.
-  2. Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
-  3. Run `clean`.
-  4. If `clean` fails, follow the steps in [teardown](../teardown).
+    1. Read the error message.
+    2. Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
+    3. Run `clean`.
+    4. If `clean` fails, follow the steps in [teardown](../teardown).
+
+<!-- dprint-ignore-end -->

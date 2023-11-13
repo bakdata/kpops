@@ -43,7 +43,7 @@ jobs:
             echo "::add-matcher::.github/ruff-matcher.json"
             poetry run ruff check . --config pyproject.toml --output-format text --no-fix
           else
-            poetry run pre-commit run ruff --all-files --show-diff-on-failure
+            poetry run pre-commit run ruff-lint --all-files --show-diff-on-failure
           fi;
       - name: Lint (ruff)
         shell: bash
