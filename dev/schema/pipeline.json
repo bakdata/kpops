@@ -913,6 +913,9 @@
                     "type": "string"
                 },
                 "config": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
                     "default": {},
                     "description": "Configuration",
                     "title": "Config",

@@ -1442,91 +1442,119 @@
 </thead>
 <tbody>
 <tr>
-<td>defaults_path</td>
+<td>KPOPS_DEFAULTS_PATH</td>
 <td>.</td>
 <td>False</td>
 <td>The path to the folder containing the defaults.yaml file and the environment defaults files. Paths can either be absolute or relative to <code>config.yaml</code></td>
 <td>defaults_path</td>
 </tr>
 <tr>
-<td>environment</td>
-<td>PydanticUndefined</td>
-<td>False</td>
+<td>KPOPS_ENVIRONMENT</td>
+<td></td>
+<td>True</td>
 <td>The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).</td>
 <td>environment</td>
 </tr>
 <tr>
-<td>kafka_brokers</td>
-<td>PydanticUndefined</td>
-<td>False</td>
+<td>KPOPS_KAFKA_BROKERS</td>
+<td></td>
+<td>True</td>
 <td>The comma separated Kafka brokers address.</td>
 <td>kafka_brokers</td>
 </tr>
 <tr>
-<td>defaults_filename_prefix</td>
+<td>KPOPS_DEFAULTS_FILENAME_PREFIX</td>
 <td>defaults</td>
 <td>False</td>
 <td>The name of the defaults file and the prefix of the defaults environment file.</td>
 <td>defaults_filename_prefix</td>
 </tr>
 <tr>
-<td>topic_name_config</td>
-<td>default_output_topic_name='${pipeline_name}-${component_name}' default_error_topic_name='${pipeline_name}-${component_name}-error'</td>
+<td>KPOPS_TOPIC_NAME_CONFIG__DEFAULT_OUTPUT_TOPIC_NAME</td>
+<td>${pipeline_name}-${component__name}</td>
 <td>False</td>
-<td>Configure the topic name variables you can use in the pipeline definition.</td>
-<td>topic_name_config</td>
+<td>Configures the value for the variable ${output_topic_name}</td>
+<td>topic_name_config.default_output_topic_name</td>
 </tr>
 <tr>
-<td>schema_registry</td>
-<td>enabled=False url=Url('http://localhost:8081/')</td>
+<td>KPOPS_TOPIC_NAME_CONFIG__DEFAULT_ERROR_TOPIC_NAME</td>
+<td>${pipeline_name}-${component__name}-error</td>
 <td>False</td>
-<td>Configuration for Schema Registry.</td>
-<td>schema_registry</td>
+<td>Configures the value for the variable ${error_topic_name}</td>
+<td>topic_name_config.default_error_topic_name</td>
 </tr>
 <tr>
-<td>kafka_rest</td>
-<td>url=Url('http://localhost:8082/')</td>
+<td>KPOPS_SCHEMA_REGISTRY__ENABLED</td>
 <td>False</td>
-<td>Configuration for Kafka REST Proxy.</td>
-<td>kafka_rest</td>
+<td>False</td>
+<td>Whether the Schema Registry handler should be initialized.</td>
+<td>schema_registry.enabled</td>
 </tr>
 <tr>
-<td>kafka_connect</td>
-<td>url=Url('http://localhost:8083/')</td>
+<td>KPOPS_SCHEMA_REGISTRY__URL</td>
+<td>http://localhost:8081/</td>
 <td>False</td>
-<td>Configuration for Kafka Connect.</td>
-<td>kafka_connect</td>
+<td>Address of the Schema Registry.</td>
+<td>schema_registry.url</td>
 </tr>
 <tr>
-<td>timeout</td>
+<td>KPOPS_KAFKA_REST__URL</td>
+<td>http://localhost:8082/</td>
+<td>False</td>
+<td>Address of the Kafka REST Proxy.</td>
+<td>kafka_rest.url</td>
+</tr>
+<tr>
+<td>KPOPS_KAFKA_CONNECT__URL</td>
+<td>http://localhost:8083/</td>
+<td>False</td>
+<td>Address of Kafka Connect.</td>
+<td>kafka_connect.url</td>
+</tr>
+<tr>
+<td>KPOPS_TIMEOUT</td>
 <td>300</td>
 <td>False</td>
 <td>The timeout in seconds that specifies when actions like deletion or deploy timeout.</td>
 <td>timeout</td>
 </tr>
 <tr>
-<td>create_namespace</td>
+<td>KPOPS_CREATE_NAMESPACE</td>
 <td>False</td>
 <td>False</td>
 <td>Flag for <code>helm upgrade --install</code>. Create the release namespace if not present.</td>
 <td>create_namespace</td>
 </tr>
 <tr>
-<td>helm_config</td>
-<td>context=None debug=False api_version=None</td>
+<td>KPOPS_HELM_CONFIG__CONTEXT</td>
+<td></td>
 <td>False</td>
-<td>Global flags for Helm.</td>
-<td>helm_config</td>
+<td>Name of kubeconfig context (<code>--kube-context</code>)</td>
+<td>helm_config.context</td>
 </tr>
 <tr>
-<td>helm_diff_config</td>
-<td>ignore=set()</td>
+<td>KPOPS_HELM_CONFIG__DEBUG</td>
 <td>False</td>
-<td>Configure Helm Diff.</td>
-<td>helm_diff_config</td>
+<td>False</td>
+<td>Run Helm in Debug mode</td>
+<td>helm_config.debug</td>
 </tr>
 <tr>
-<td>retain_clean_jobs</td>
+<td>KPOPS_HELM_CONFIG__API_VERSION</td>
+<td></td>
+<td>False</td>
+<td>Kubernetes API version used for Capabilities.APIVersions</td>
+<td>helm_config.api_version</td>
+</tr>
+<tr>
+<td>KPOPS_HELM_DIFF_CONFIG__IGNORE</td>
+<td></td>
+<td>True</td>
+<td>Set of keys that should not be checked.</td>
+<td>helm_diff_config.ignore</td>
+</tr>
+<tr>
+<td>KPOPS_RETAIN_CLEAN_JOBS</td>
 <td>False</td>
 <td>False</td>
 <td>Whether to retain clean up jobs in the cluster or uninstall the, after completion.</td>
