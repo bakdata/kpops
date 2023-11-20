@@ -18,12 +18,12 @@ try:
 except ImportError:
     from typing_extensions import Self
 
-from hooks import PATH_ROOT
+from hooks import ROOT
 from hooks.gen_docs import IterableStrEnum
 from kpops.cli import main
 from kpops.cli.pipeline_config import PipelineConfig
 
-PATH_DOCS_RESOURCES = PATH_ROOT / "docs/docs/resources"
+PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
 PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
 
 PATH_CONFIG_ENV_VARS_DOTENV_FILE = PATH_DOCS_VARIABLES / "config_env_vars.env"
@@ -374,8 +374,7 @@ def gen_vars(
 if __name__ == "__main__":
     # copy examples from tests resources
     shutil.copyfile(
-        PATH_ROOT
-        / "tests/pipeline/resources/component-type-substitution/pipeline.yaml",
+        ROOT / "tests/pipeline/resources/component-type-substitution/pipeline.yaml",
         PATH_DOCS_VARIABLES / "variable_substitution.yaml",
     )
     # Find all config-related env variables and write them into a file

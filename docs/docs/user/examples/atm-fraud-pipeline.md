@@ -72,23 +72,23 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 ### Deploying the ATM fraud detection pipeline
 
+<!-- dprint-ignore-start -->
+
 1. Export environment variables in your terminal:
 
-   ```shell
-   export DOCKER_REGISTRY=bakdata && \
-   export NAMESPACE=kpops
-   ```
+    ```shell
+    export DOCKER_REGISTRY=bakdata && \
+    export NAMESPACE=kpops
+    ```
 
 2. Deploy the pipeline
 
-   ```shell
-   poetry run kpops deploy ./examples/bakdata/atm-fraud-detection/pipeline.yaml \
-   --pipeline-base-dir ./examples \
-   --config ./examples/bakdata/atm-fraud-detection/config.yaml \
-   --execute
-   ```
-
-<!-- dprint-ignore-start -->
+    ```shell
+    poetry run kpops deploy ./examples/bakdata/atm-fraud-detection/pipeline.yaml \
+    --pipeline-base-dir ./examples \
+    --config ./examples/bakdata/atm-fraud-detection/config.yaml \
+    --execute
+    ```
 
 !!! Note
     You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be
@@ -120,6 +120,8 @@ You should be able to see pipeline shown in the image below:
     Moreover, Streams Explorer needs a while to scrape the information from Kafka connect.
     Therefore, it might take a bit until you see the whole graph.
 
+<!-- dprint-ignore-end -->
+
 ## Teardown resources
 
 ### PostrgreSQL
@@ -131,6 +133,8 @@ helm --namespace kpops uninstall postgresql
 ```
 
 ### ATM fraud pipeline
+
+<!-- dprint-ignore-start -->
 
 1. Export environment variables in your terminal.
 
@@ -149,7 +153,6 @@ helm --namespace kpops uninstall postgresql
     --execute
     ```
 
-<!-- dprint-ignore-start --> 
 !!! Note
     You can use the `--dry-run` flag instead of the `--execute` flag and check the logs if your pipeline will be
     destroyed correctly.

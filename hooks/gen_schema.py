@@ -3,10 +3,10 @@ from contextlib import redirect_stdout
 from io import StringIO
 from pathlib import Path
 
-from hooks import PATH_ROOT
+from hooks import ROOT
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 
-PATH_TO_SCHEMA = PATH_ROOT / "docs/docs/schema"
+PATH_TO_SCHEMA = ROOT / "docs/docs/schema"
 
 
 def gen_schema(scope: SchemaScope):
