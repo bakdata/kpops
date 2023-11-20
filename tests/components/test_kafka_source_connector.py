@@ -30,6 +30,8 @@ from tests.components.test_kafka_connector import (
     TestKafkaConnector,
 )
 
+CLEAN_SUFFIX = "-clean"
+
 
 class TestKafkaSourceConnector(TestKafkaConnector):
     @pytest.fixture()
@@ -177,7 +179,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "fullnameOverride": CONNECTOR_FULL_NAME,
+                    "fullnameOverride": CONNECTOR_FULL_NAME + CLEAN_SUFFIX,
                 },
             ),
             mocker.call.helm.uninstall(
@@ -252,7 +254,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "fullnameOverride": CONNECTOR_FULL_NAME,
+                    "fullnameOverride": CONNECTOR_FULL_NAME + CLEAN_SUFFIX,
                 },
             ),
             mocker.call.helm.uninstall(
@@ -327,7 +329,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "fullnameOverride": CONNECTOR_FULL_NAME,
+                    "fullnameOverride": CONNECTOR_FULL_NAME + CLEAN_SUFFIX,
                 },
             ),
             mocker.call.helm.uninstall(

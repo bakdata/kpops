@@ -33,6 +33,8 @@ from tests.components.test_kafka_connector import (
     TestKafkaConnector,
 )
 
+CLEAN_SUFFIX = "-clean"
+
 
 class TestKafkaSinkConnector(TestKafkaConnector):
     @pytest.fixture()
@@ -231,7 +233,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": False,
                     },
-                    "fullnameOverride": CONNECTOR_FULL_NAME,
+                    "fullnameOverride": CONNECTOR_FULL_NAME + CLEAN_SUFFIX,
                 },
             ),
             mocker.call.helm.uninstall(
@@ -321,7 +323,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": True,
                     },
-                    "fullnameOverride": CONNECTOR_FULL_NAME,
+                    "fullnameOverride": CONNECTOR_FULL_NAME + CLEAN_SUFFIX,
                 },
             ),
             mocker.call.helm.uninstall(
@@ -415,7 +417,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": True,
                     },
-                    "fullnameOverride": CONNECTOR_FULL_NAME,
+                    "fullnameOverride": CONNECTOR_FULL_NAME + CLEAN_SUFFIX,
                 },
             ),
             mocker.call.helm.uninstall(
