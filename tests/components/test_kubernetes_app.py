@@ -23,7 +23,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 class KubernetesTestValue(KubernetesAppConfig):
-    name_override: str
+    fullname_override: str
 
 
 class TestKubernetesApp:
@@ -55,7 +55,7 @@ class TestKubernetesApp:
 
     @pytest.fixture()
     def app_value(self) -> KubernetesTestValue:
-        return KubernetesTestValue(**{"name_override": "test-value"})
+        return KubernetesTestValue(**{"fullname_override": "test-value"})
 
     @pytest.fixture()
     def repo_config(self) -> HelmRepoConfig:
@@ -100,7 +100,7 @@ class TestKubernetesApp:
             "test/test-chart",
             False,
             "test-namespace",
-            {"nameOverride": "test-value"},
+            {"fullnameOverride": "test-value"},
             HelmUpgradeInstallFlags(),
         )
 
@@ -145,7 +145,7 @@ class TestKubernetesApp:
                 "test/test-chart",
                 False,
                 "test-namespace",
-                {"nameOverride": "test-value"},
+                {"fullnameOverride": "test-value"},
                 HelmUpgradeInstallFlags(version="3.4.5"),
             ),
         ]
@@ -182,7 +182,7 @@ class TestKubernetesApp:
             "path/to/helm/charts/",
             False,
             "test-namespace",
-            {"nameOverride": "test-value"},
+            {"fullnameOverride": "test-value"},
             HelmUpgradeInstallFlags(),
         )
 

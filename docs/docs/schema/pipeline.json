@@ -521,9 +521,9 @@
         "ProducerValues": {
             "description": "Settings specific to producers.",
             "properties": {
-                "nameOverride": {
-                    "description": "Override name with this value",
-                    "title": "Nameoverride",
+                "fullnameOverride": {
+                    "description": "Override the full release and chart name",
+                    "title": "Fullnameoverride",
                     "type": "string"
                 },
                 "streams": {
@@ -749,9 +749,9 @@
                     "description": "Kubernetes Event-driven Autoscaling config",
                     "title": "Autoscaling"
                 },
-                "nameOverride": {
-                    "description": "Override name with this value",
-                    "title": "Nameoverride",
+                "fullnameOverride": {
+                    "description": "Override the full release and chart name",
+                    "title": "Fullnameoverride",
                     "type": "string"
                 },
                 "streams": {

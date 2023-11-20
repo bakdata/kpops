@@ -14,7 +14,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'debug': True,
                 'image': '${DOCKER_REGISTRY}/atm-demo-accountproducer',
                 'imageTag': '1.0.0',
-                'nameOverride': 'account-producer',
+                'fullnameOverride': 'account-producer',
                 'prometheus': {
                     'jmx': {
                         'enabled': False
@@ -65,7 +65,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'debug': True,
                 'image': '${DOCKER_REGISTRY}/atm-demo-transactionavroproducer',
                 'imageTag': '1.0.0',
-                'nameOverride': 'transaction-avro-producer',
+                'fullnameOverride': 'transaction-avro-producer',
                 'prometheus': {
                     'jmx': {
                         'enabled': False
@@ -121,7 +121,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'labels': {
                     'pipeline': 'bakdata-atm-fraud-detection'
                 },
-                'nameOverride': 'transaction-joiner',
+                'fullnameOverride': 'transaction-joiner',
                 'prometheus': {
                     'jmx': {
                         'enabled': False
@@ -183,7 +183,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'labels': {
                     'pipeline': 'bakdata-atm-fraud-detection'
                 },
-                'nameOverride': 'fraud-detector',
+                'fullnameOverride': 'fraud-detector',
                 'prometheus': {
                     'jmx': {
                         'enabled': False
@@ -245,7 +245,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'labels': {
                     'pipeline': 'bakdata-atm-fraud-detection'
                 },
-                'nameOverride': 'account-linker',
+                'fullnameOverride': 'account-linker',
                 'prometheus': {
                     'jmx': {
                         'enabled': False

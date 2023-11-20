@@ -41,14 +41,14 @@ class KafkaAppConfig(KubernetesAppConfig):
     """Settings specific to Kafka Apps.
 
     :param streams: Kafka streams config
-    :param name_override: Override name with this value, defaults to None
+    :param fullname_override: Override the full release and chart name, defaults to None
     """
 
     streams: KafkaStreamsConfig = Field(
         default=..., description=describe_attr("streams", __doc__)
     )
-    name_override: str | None = Field(
-        default=None, description=describe_attr("name_override", __doc__)
+    fullname_override: str | None = Field(
+        default=None, description=describe_attr("fullname_override", __doc__)
     )
 
 
@@ -153,7 +153,7 @@ class KafkaApp(KubernetesApp, ABC):
         :param suffix: Suffix to add to the release name, e.g. "-clean"
         :param values: The Helm values for the chart
         :param dry_run: Whether to do a dry run of the command
-        :return: Install clean up job with helm, return the output of the installation
+        :return: Return the output of the installation
         """
         clean_up_release_name = trim_release_name(release_name, suffix)
         return self.helm.upgrade_install(

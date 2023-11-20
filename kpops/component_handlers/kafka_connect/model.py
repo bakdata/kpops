@@ -87,7 +87,7 @@ class KafkaConnectResetterConfig(BaseModel):
 class KafkaConnectResetterValues(BaseModel):
     connector_type: Literal["source", "sink"]
     config: KafkaConnectResetterConfig
-    name_override: str
+    fullname_override: str
 
     class Config(CamelCaseConfig):
         pass
