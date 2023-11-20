@@ -7,15 +7,15 @@ from typing import NamedTuple, cast
 
 import yaml
 
-from hooks import PATH_ROOT
+from hooks import ROOT
 from kpops.cli.registry import _find_classes
 from kpops.components import KafkaConnector, PipelineComponent
 from kpops.utils.colorify import redify, yellowify
 from kpops.utils.yaml_loading import load_yaml_file
 
-PATH_KPOPS_MAIN = PATH_ROOT / "kpops/cli/main.py"
-PATH_CLI_COMMANDS_DOC = PATH_ROOT / "docs/docs/user/references/cli-commands.md"
-PATH_DOCS_RESOURCES = PATH_ROOT / "docs/docs/resources"
+PATH_KPOPS_MAIN = ROOT / "kpops/cli/main.py"
+PATH_CLI_COMMANDS_DOC = ROOT / "docs/docs/user/references/cli-commands.md"
+PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
 PATH_DOCS_COMPONENTS = PATH_DOCS_RESOURCES / "pipeline-components"
 PATH_DOCS_COMPONENTS_DEPENDENCIES = (
     PATH_DOCS_COMPONENTS / "dependencies/pipeline_component_dependencies.yaml"
@@ -212,16 +212,14 @@ def get_sections(component_name: str, *, exist_changes: bool) -> KpopsComponent:
         ]
         component_sections_not_inherited: list[
             str
-        ] = DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES[
-            component_file_name
-        ]  # type: ignore [reportGeneralTypeIssues]
+        ] = DEFAULTS_PIPELINE_COMPONENT_DEPENDENCIES[component_file_name]  # type: ignore [reportGeneralTypeIssues]
     return KpopsComponent(component_sections, component_sections_not_inherited)
 
 
 if __name__ == "__main__":
     # Check if the dependencies have been modified
     if not {
-        str(file.relative_to(PATH_ROOT)) for file in DANGEROUS_FILES_TO_CHANGE
+        str(file.relative_to(ROOT)) for file in DANGEROUS_FILES_TO_CHANGE
     }.isdisjoint(SCRIPT_ARGUMENTS):
         # Set `is_change_present` to indicate that dependencies need to be regenerated
         is_change_present = True

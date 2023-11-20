@@ -298,9 +298,7 @@ def generate(
     return pipeline
 
 
-@app.command(
-    help="Deploy pipeline steps"
-)  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Deploy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def deploy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
@@ -335,9 +333,7 @@ def deploy(
     asyncio.run(async_deploy())
 
 
-@app.command(
-    help="Destroy pipeline steps"
-)  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Destroy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def destroy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
@@ -372,9 +368,7 @@ def destroy(
     asyncio.run(async_destroy())
 
 
-@app.command(
-    help="Reset pipeline steps"
-)  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Reset pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def reset(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
@@ -410,9 +404,7 @@ def reset(
     asyncio.run(async_reset())
 
 
-@app.command(
-    help="Clean pipeline steps"
-)  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Clean pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def clean(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
