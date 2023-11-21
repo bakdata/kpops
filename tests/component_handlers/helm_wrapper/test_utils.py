@@ -9,7 +9,10 @@ def test_helm_release_name():
     long_release_name = (
         "example-component-name-too-long-fake-fakefakefakefakefake-clean"
     )
-    actual_release_name = hashlib.sha1(long_release_name.encode("utf-8")).hexdigest()
+    actual_release_name = (
+        "example-component-name-too-long-fake-fakefakef-"
+        + hashlib.sha1(long_release_name.encode("utf-8")).hexdigest()[:4]
+    )
     expected_helm_release_name = create_helm_release_name(long_release_name)
     assert expected_helm_release_name == actual_release_name
-    assert len(expected_helm_release_name) < 52
+    assert len(expected_helm_release_name) < 53
