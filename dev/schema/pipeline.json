@@ -522,7 +522,7 @@
             "description": "Settings specific to producers.",
             "properties": {
                 "fullnameOverride": {
-                    "description": "Override the full release and chart name",
+                    "description": "Overrides fully the release and chart name",
                     "title": "Fullnameoverride",
                     "type": "string"
                 },
@@ -750,7 +750,7 @@
                     "title": "Autoscaling"
                 },
                 "fullnameOverride": {
-                    "description": "Override the full release and chart name",
+                    "description": "Overrides fully the release and chart name",
                     "title": "Fullnameoverride",
                     "type": "string"
                 },
