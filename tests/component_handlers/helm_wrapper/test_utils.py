@@ -9,7 +9,7 @@ def test_helm_release_name_for_long_names():
     long_release_name = "example-component-name-too-long-fake-fakefakefakefakefake"
     actual_release_name = (
         "example-component-name-too-long-fake-fakefakef-"
-        + hashlib.sha1(long_release_name.encode("utf-8")).hexdigest()[36:]
+        + hashlib.sha1(long_release_name.encode("utf-8")).hexdigest()[:4]
     )
     expected_helm_release_name = create_helm_release_name(long_release_name)
 
