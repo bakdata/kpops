@@ -1,0 +1,192 @@
+
+
+- type: producer-app
+  name: transaction-avro-producer-1
+  app:
+    replicaCount: 7
+    image: ${DOCKER_REGISTRY}/custom-transaction-producer
+    imageTag: latest
+    commandLine:
+      REAL_TX: 19
+      ITERATION: 20
+    prometheus:
+      jmx:
+        enabled: false
+    debug: true
+    deployment: true
+  to:
+    topics:
+      my-output-topic-with-multiple-producers:
+        type: output
+        partitions_count: 3
+
+- type: producer-app
+  name: transaction-avro-producer-2
+  app:
+    replicaCount: 1
+    image: ${DOCKER_REGISTRY}/custom-transaction-producer
+    imageTag: latest
+    commandLine:
+      REAL_TX: 19
+      ITERATION: 20
+    prometheus:
+      jmx:
+        enabled: false
+    debug: true
+    deployment: true
+  to:
+    topics:
+      my-output-topic-with-multiple-producers:
+        type: output
+        partitions_count: 3
+
+
+- type: producer-app
+  name: transaction-avro-producer-3
+  app:
+    replicaCount: 1
+    image: ${DOCKER_REGISTRY}/custom-transaction-producer
+    imageTag: latest
+    commandLine:
+      REAL_TX: 19
+      ITERATION: 20
+    prometheus:
+      jmx:
+        enabled: false
+    debug: true
+    deployment: true
+  to:
+    topics:
+      my-output-topic-with-multiple-producers:
+        type: output
+        partitions_count: 3
+
+
+- type: streams-app
+  name: transaction-joiner
+  app:
+    replicaCount: 1
+    image: ${DOCKER_REGISTRY}/atm-demo-transactionjoiner
+    imageTag: 1.0.0
+    commandLine:
+      PRODUCTIVE: false
+    annotations:
+      consumerGroup: atm-transactionjoiner-atm-fraud-joinedtransactions-topic
+    prometheus:
+      jmx:
+        enabled: false
+    debug: true
+
+
+- type: streams-app
+  name: fraud-detector
+  app:
+    replicaCount: 1
+    image: ${DOCKER_REGISTRY}/atm-demo-frauddetector
+    imageTag: 1.0.0
+    commandLine:
+      PRODUCTIVE: false
+    annotations:
+      consumerGroup: atm-frauddetector-atm-fraud-possiblefraudtransactions-topic
+    prometheus:
+      jmx:
+        enabled: false
+    debug: true
+
+- type: streams-app
+  name: account-linker
+  from:
+    components:
+      fraud-detector:
+        type: input
+  app:
+    replicaCount: 1
+    image: ${DOCKER_REGISTRY}/atm-demo-accountlinker
+    imageTag: 1.0.0
+    commandLine:
+      PRODUCTIVE: false
+    annotations:
+      consumerGroup: atm-accountlinker-atm-fraud-output-topic
+    prometheus:
+      jmx:
+        enabled: false
+    debug: true
+
+- type: kafka-sink-connector
+  name: s3-connector-1
+  app:
+    connector.class: io.confluent.connect.s3.S3SinkConnector
+    format.class: io.confluent.connect.s3.format.json.JsonFormat
+    tasks.max: 10
+    topics: ${pipeline_name}-account-linker-topic
+    aws.access.key.id: local-identity
+    aws.secret.access.key: local-credential
+    store.url: "http://localhost:80"
+    s3.bucket.name: my-test-bucket
+    flush.size: 1000
+    storage.class: io.confluent.connect.s3.storage.S3Storage
+    value.converter.schema.registry.url: "http://localhost:8081"
+    topics.dir: atm1
+    path.format: "'year'=YYYY/'month'=MM/'day'=dd/'hour'=HH"
+    partitioner.class: "io.confluent.connect.storage.partitioner.TimeBasedPartitioner"
+    partition.duration.ms: "3600000"
+    key.converter.schema.registry.url: "http://localhost:8081"
+    behavior.on.null.values: "ignore"
+    value.converter: "io.confluent.connect.avro.AvroConverter"
+    key.converter: "org.apache.kafka.connect.storage.StringConverter"
+    locale: en-US
+    timezone: UTC
+    rotate.schedule.interval.ms: 60000
+
+- type: kafka-sink-connector
+  name: s3-connector-2
+  app:
+    connector.class: io.confluent.connect.s3.S3SinkConnector
+    format.class: io.confluent.connect.s3.format.json.JsonFormat
+    tasks.max: 10
+    topics: ${pipeline_name}-account-linker-topic
+    aws.access.key.id: local-identity
+    aws.secret.access.key: local-credential
+    store.url: "http://localhost:80"
+    s3.bucket.name: my-test-bucket
+    flush.size: 1000
+    storage.class: io.confluent.connect.s3.storage.S3Storage
+    value.converter.schema.registry.url: "http://localhost:8081"
+    topics.dir: atm2
+    path.format: "'year'=YYYY/'month'=MM/'day'=dd/'hour'=HH"
+    partitioner.class: "io.confluent.connect.storage.partitioner.TimeBasedPartitioner"
+    partition.duration.ms: "3600000"
+    key.converter.schema.registry.url: "http://localhost:8081"
+    behavior.on.null.values: "ignore"
+    value.converter: "io.confluent.connect.avro.AvroConverter"
+    key.converter: "org.apache.kafka.connect.storage.StringConverter"
+    locale: en-US
+    timezone: UTC
+    rotate.schedule.interval.ms: 60000
+
+
+- type: kafka-sink-connector
+  name: s3-connector-3
+  app:
+    connector.class: io.confluent.connect.s3.S3SinkConnector
+    format.class: io.confluent.connect.s3.format.json.JsonFormat
+    tasks.max: 10
+    topics: ${pipeline_name}-account-linker-topic
+    aws.access.key.id: local-identity
+    aws.secret.access.key: local-credential
+    store.url: "http://localhost:80"
+    s3.bucket.name: my-test-bucket
+    flush.size: 1000
+    storage.class: io.confluent.connect.s3.storage.S3Storage
+    value.converter.schema.registry.url: "http://localhost:8081"
+    topics.dir: atm3
+    path.format: "'year'=YYYY/'month'=MM/'day'=dd/'hour'=HH"
+    partitioner.class: "io.confluent.connect.storage.partitioner.TimeBasedPartitioner"
+    partition.duration.ms: "3600000"
+    key.converter.schema.registry.url: "http://localhost:8081"
+    behavior.on.null.values: "ignore"
+    value.converter: "io.confluent.connect.avro.AvroConverter"
+    key.converter: "org.apache.kafka.connect.storage.StringConverter"
+    locale: en-US
+    timezone: UTC
+    rotate.schedule.interval.ms: 60000

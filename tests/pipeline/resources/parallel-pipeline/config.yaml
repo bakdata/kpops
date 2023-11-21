@@ -1,0 +1,15 @@
+environment: development
+
+topic_name_config:
+  default_error_topic_name: "${pipeline_name}-${component_name}-dead-letter-topic"
+  default_output_topic_name: "${pipeline_name}-${component_name}-topic"
+
+brokers: "localhost:9092"
+
+schema_registry_url: "http://localhost:8081"
+
+kafka_rest_host: "http://localhost:8082"
+
+kafka_connect_host: "http://localhost:8083"
+
+defaults_path: .

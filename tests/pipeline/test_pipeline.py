@@ -1,5 +1,8 @@
+import asyncio
 import logging
 from pathlib import Path
+from unittest import mock
+from unittest.mock import AsyncMock
 
 import pytest
 import yaml
@@ -8,6 +11,7 @@ from typer.testing import CliRunner
 
 import kpops
 from kpops.cli.main import app
+from kpops.components import PipelineComponent
 from kpops.pipeline_generator.pipeline import ParsingException, ValidationError
 
 runner = CliRunner()
@@ -632,3 +636,123 @@ class TestPipeline:
         edges = list(pipeline.components.graph.edges)
         assert component == f"component-{topic}"
         assert (component, topic) in edges
+
+    @pytest.mark.asyncio()
+    async def test_parallel_execution_graph(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
+            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
+            defaults=RESOURCE_PATH / "parallel-pipeline",
+            config=RESOURCE_PATH / "parallel-pipeline/config.yaml",
+        )
+
+        called_component = AsyncMock()
+
+        sleep_table_components = {
+            "transaction-avro-producer-1": 1,
+            "transaction-avro-producer-2": 0,
+            "transaction-avro-producer-3": 2,
+            "transaction-joiner": 3,
+            "fraud-detector": 2,
+            "account-linker": 0,
+            "s3-connector-1": 2,
+            "s3-connector-2": 1,
+            "s3-connector-3": 0,
+        }
+
+        async def name_runner(component: PipelineComponent):
+            await asyncio.sleep(sleep_table_components[component.name])
+            await called_component(component.name)
+
+        execution_graph = pipeline.build_execution_graph_from(
+            list(pipeline.components), False, name_runner
+        )
+
+        await execution_graph
+
+        assert called_component.mock_calls == [
+            mock.call("transaction-avro-producer-2"),
+            mock.call("transaction-avro-producer-1"),
+            mock.call("transaction-avro-producer-3"),
+            mock.call("transaction-joiner"),
+            mock.call("fraud-detector"),
+            mock.call("account-linker"),
+            mock.call("s3-connector-3"),
+            mock.call("s3-connector-2"),
+            mock.call("s3-connector-1"),
+        ]
+
+    @pytest.mark.asyncio()
+    async def test_subgraph_execution(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
+            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
+            defaults=RESOURCE_PATH / "parallel-pipeline",
+            config=RESOURCE_PATH / "parallel-pipeline/config.yaml",
+        )
+
+        list_of_components = list(pipeline.components)
+
+        called_component = AsyncMock()
+
+        async def name_runner(component: PipelineComponent):
+            await called_component(component.name)
+
+        execution_graph = pipeline.build_execution_graph_from(
+            [list_of_components[0], list_of_components[3], list_of_components[6]],
+            False,
+            name_runner,
+        )
+
+        await execution_graph
+
+        assert called_component.mock_calls == [
+            mock.call("transaction-avro-producer-1"),
+            mock.call("s3-connector-1"),
+            mock.call("transaction-joiner"),
+        ]
+
+    @pytest.mark.asyncio()
+    async def test_parallel_execution_graph_reverse(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
+            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
+            defaults=RESOURCE_PATH / "parallel-pipeline",
+            config=RESOURCE_PATH / "parallel-pipeline/config.yaml",
+        )
+
+        called_component = AsyncMock()
+
+        sleep_table_components = {
+            "transaction-avro-producer-1": 1,
+            "transaction-avro-producer-2": 0,
+            "transaction-avro-producer-3": 2,
+            "transaction-joiner": 3,
+            "fraud-detector": 2,
+            "account-linker": 0,
+            "s3-connector-1": 2,
+            "s3-connector-2": 1,
+            "s3-connector-3": 0,
+        }
+
+        async def name_runner(component: PipelineComponent):
+            await asyncio.sleep(sleep_table_components[component.name])
+            await called_component(component.name)
+
+        execution_graph = pipeline.build_execution_graph_from(
+            list(pipeline.components), True, name_runner
+        )
+
+        await execution_graph
+
+        assert called_component.mock_calls == [
+            mock.call("s3-connector-3"),
+            mock.call("s3-connector-2"),
+            mock.call("s3-connector-1"),
+            mock.call("account-linker"),
+            mock.call("fraud-detector"),
+            mock.call("transaction-joiner"),
+            mock.call("transaction-avro-producer-2"),
+            mock.call("transaction-avro-producer-1"),
+            mock.call("transaction-avro-producer-3"),
+        ]
