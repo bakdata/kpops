@@ -19,9 +19,8 @@ def create_helm_release_name(name: str) -> str:
     """
     if len(name) > RELEASE_NAME_MAX_LEN:
         exact_name = name[:RELEASE_NAME_MAX_LEN]
-        new_name = (
-            exact_name[:-6] + "-" + hashlib.sha1(name.encode(ENCODING)).hexdigest()[:4]
-        )
+        hash_name = hashlib.sha1(name.encode(ENCODING)).hexdigest()
+        new_name = exact_name[:-6] + "-" + hash_name[len(hash_name) - 4 :]
         log.critical(
             f"Invalid Helm release name '{name}'. Truncating to {RELEASE_NAME_MAX_LEN} characters: \n {name} --> {new_name}"
         )
