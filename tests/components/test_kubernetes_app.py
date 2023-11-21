@@ -13,11 +13,14 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
+from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
 )
 from kpops.utils.colorify import magentaify
+
+HELM_RELEASE_NAME = create_helm_release_name("${pipeline_name}-test-kubernetes-app")
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
@@ -96,7 +99,7 @@ class TestKubernetesApp:
         kubernetes_app.deploy(False)
 
         helm_mock.upgrade_install.assert_called_once_with(
-            "${pipeline_name}-test-kubernetes-app",
+            HELM_RELEASE_NAME,
             "test/test-chart",
             False,
             "test-namespace",
@@ -141,7 +144,7 @@ class TestKubernetesApp:
                 RepoAuthFlags(),
             ),
             mocker.call.upgrade_install(
-                "${pipeline_name}-test-kubernetes-app",
+                HELM_RELEASE_NAME,
                 "test/test-chart",
                 False,
                 "test-namespace",
@@ -178,7 +181,7 @@ class TestKubernetesApp:
         helm_mock.add_repo.assert_not_called()
 
         helm_mock.upgrade_install.assert_called_once_with(
-            "${pipeline_name}-test-app-with-local-chart",
+            create_helm_release_name("${pipeline_name}-test-app-with-local-chart"),
             "path/to/helm/charts/",
             False,
             "test-namespace",
@@ -211,7 +214,7 @@ class TestKubernetesApp:
         kubernetes_app.destroy(True)
 
         helm_mock.uninstall.assert_called_once_with(
-            "test-namespace", "${pipeline_name}-test-kubernetes-app", True
+            "test-namespace", HELM_RELEASE_NAME, True
         )
 
         log_info_mock.assert_called_once_with(magentaify(stdout))

@@ -19,6 +19,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
 PRODUCER_APP_FULL_NAME = "${pipeline_name}-" + PRODUCER_APP_NAME
+PRODUCER_APP_RELEASE_NAME = create_helm_release_name(PRODUCER_APP_FULL_NAME)
 PRODUCER_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
     PRODUCER_APP_FULL_NAME + "-clean"
 )
@@ -120,7 +121,7 @@ class TestProducerApp:
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=producer_app.to, dry_run=False),
             mocker.call.mock_helm_upgrade_install(
-                PRODUCER_APP_FULL_NAME,
+                PRODUCER_APP_RELEASE_NAME,
                 "bakdata-streams-bootstrap/producer-app",
                 False,
                 "test-namespace",
@@ -154,7 +155,7 @@ class TestProducerApp:
         producer_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
-            "test-namespace", PRODUCER_APP_FULL_NAME, True
+            "test-namespace", PRODUCER_APP_RELEASE_NAME, True
         )
 
     def test_should_not_reset_producer_app(

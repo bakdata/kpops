@@ -11,6 +11,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
 )
+from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components import KafkaApp
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
@@ -93,7 +94,7 @@ class TestKafkaApp:
 
         print_helm_diff.assert_called_once()
         helm_upgrade_install.assert_called_once_with(
-            "${pipeline_name}-example-name",
+            create_helm_release_name("${pipeline_name}-example-name"),
             "test/test-chart",
             True,
             "test-namespace",

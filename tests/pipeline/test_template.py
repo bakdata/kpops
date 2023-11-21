@@ -7,6 +7,9 @@ from typer.testing import CliRunner
 
 from kpops.cli.main import app
 from kpops.component_handlers.helm_wrapper.helm import Helm
+from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+
+HELM_RELEASE_NAME = create_helm_release_name("resources-custom-config-app2")
 
 runner = CliRunner()
 
@@ -40,7 +43,7 @@ class TestTemplate:
             [
                 "helm",
                 "template",
-                "resources-custom-config-app2",
+                HELM_RELEASE_NAME,
                 "bakdata-streams-bootstrap/streams-app",
                 "--namespace",
                 "development-namespace",
@@ -79,7 +82,7 @@ class TestTemplate:
             [
                 "helm",
                 "template",
-                "resources-custom-config-app2",
+                HELM_RELEASE_NAME,
                 "bakdata-streams-bootstrap/streams-app",
                 "--namespace",
                 "development-namespace",

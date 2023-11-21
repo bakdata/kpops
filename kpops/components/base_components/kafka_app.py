@@ -85,6 +85,12 @@ class KafkaApp(KubernetesApp, ABC):
         """Helm chart used to destroy and clean this component."""
         raise NotImplementedError
 
+    @property
+    def clean_up_release_name(self) -> str:
+        suffix = "-clean"
+        # TODO: Should this be self.helm_release_name + suffix ?
+        return create_helm_release_name(self.full_name + suffix)
+
     @override
     def deploy(self, dry_run: bool) -> None:
         if self.to:
@@ -110,24 +116,24 @@ class KafkaApp(KubernetesApp, ABC):
         :param dry_run: Dry run command
         :param retain_clean_jobs: Whether to retain the cleanup job, defaults to False
         """
-        suffix = "-clean"
-        clean_up_release_name = create_helm_release_name(
-            self.helm_release_name + suffix
+        log.info(f"Uninstall old cleanup job for {self.clean_up_release_name}")
+
+        self.__uninstall_clean_up_job(self.clean_up_release_name, dry_run)
+
+        log.info(f"Init cleanup job for {self.clean_up_release_name}")
+
+        stdout = self.__install_clean_up_job(
+            self.clean_up_release_name, values, dry_run
         )
-        log.info(f"Uninstall old cleanup job for {clean_up_release_name}")
-
-        self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
-
-        log.info(f"Init cleanup job for {clean_up_release_name}")
-
-        stdout = self.__install_clean_up_job(clean_up_release_name, values, dry_run)
 
         if dry_run:
-            self.dry_run_handler.print_helm_diff(stdout, clean_up_release_name, log)
+            self.dry_run_handler.print_helm_diff(
+                stdout, self.clean_up_release_name, log
+            )
 
         if not retain_clean_jobs:
-            log.info(f"Uninstall cleanup job for {clean_up_release_name}")
-            self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
+            log.info(f"Uninstall cleanup job for {self.clean_up_release_name}")
+            self.__uninstall_clean_up_job(self.clean_up_release_name, dry_run)
 
     def __uninstall_clean_up_job(self, release_name: str, dry_run: bool) -> None:
         """Uninstall clean up job.

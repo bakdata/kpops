@@ -17,6 +17,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
+from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
@@ -91,7 +92,7 @@ class KubernetesApp(PipelineComponent):
     @property
     def helm_release_name(self) -> str:
         """The name for the Helm release. Can be overridden."""
-        return self.full_name
+        return create_helm_release_name(self.full_name)
 
     @property
     def helm_chart(self) -> str:
