@@ -1,29 +1,15 @@
-from kpops.component_handlers.helm_wrapper.utils import trim_release_name
+import hashlib
+
+from kpops.component_handlers.helm_wrapper.utils import (
+    create_helm_release_name,
+)
 
 
-def test_trim_release_name_with_suffix():
-    name = trim_release_name(
-        "example-component-name-too-long-fake-fakefakefakefakefake-clean",
-        suffix="-clean",
+def test_helm_release_name():
+    long_release_name = (
+        "example-component-name-too-long-fake-fakefakefakefakefake-clean"
     )
-    assert name == "example-component-name-too-long-fake-fakefakef-clean"
-    assert len(name) == 52
-
-
-def test_trim_release_name_without_suffix():
-    name = trim_release_name(
-        "example-component-name-too-long-fake-fakefakefakefakefake"
-    )
-    assert name == "example-component-name-too-long-fake-fakefakefakefak"
-    assert len(name) == 52
-
-
-def test_no_trim_release_name():
-    assert (
-        trim_release_name("normal-name-with-no-need-of-trim-clean", suffix="-clean")
-        == "normal-name-with-no-need-of-trim-clean"
-    )
-    assert (
-        trim_release_name("normal-name-with-no-need-of-trim")
-        == "normal-name-with-no-need-of-trim"
-    )
+    actual_release_name = hashlib.sha1(long_release_name.encode("utf-8")).hexdigest()
+    expected_helm_release_name = create_helm_release_name(long_release_name)
+    assert expected_helm_release_name == actual_release_name
+    assert len(expected_helm_release_name) < 52

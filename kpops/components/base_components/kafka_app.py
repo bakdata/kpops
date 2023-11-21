@@ -10,7 +10,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import trim_release_name
+from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppConfig,
@@ -109,11 +109,10 @@ class KafkaApp(KubernetesApp, ABC):
         :param values: The value YAML for the chart
         :param dry_run: Dry run command
         :param retain_clean_jobs: Whether to retain the cleanup job, defaults to False
-        :return:
         """
         suffix = "-clean"
-        clean_up_release_name = trim_release_name(
-            self.helm_release_name + suffix, suffix
+        clean_up_release_name = create_helm_release_name(
+            self.helm_release_name + suffix
         )
         log.info(f"Uninstall old cleanup job for {clean_up_release_name}")
 
@@ -121,9 +120,7 @@ class KafkaApp(KubernetesApp, ABC):
 
         log.info(f"Init cleanup job for {clean_up_release_name}")
 
-        stdout = self.__install_clean_up_job(
-            clean_up_release_name, suffix, values, dry_run
-        )
+        stdout = self.__install_clean_up_job(clean_up_release_name, values, dry_run)
 
         if dry_run:
             self.dry_run_handler.print_helm_diff(stdout, clean_up_release_name, log)
@@ -143,7 +140,6 @@ class KafkaApp(KubernetesApp, ABC):
     def __install_clean_up_job(
         self,
         release_name: str,
-        suffix: str,
         values: dict,
         dry_run: bool,
     ) -> str:
@@ -155,9 +151,8 @@ class KafkaApp(KubernetesApp, ABC):
         :param dry_run: Whether to do a dry run of the command
         :return: Return the output of the installation
         """
-        clean_up_release_name = trim_release_name(release_name, suffix)
         return self.helm.upgrade_install(
-            clean_up_release_name,
+            release_name,
             self.clean_up_helm_chart,
             dry_run,
             self.namespace,

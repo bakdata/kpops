@@ -8,13 +8,15 @@ from pytest_mock import MockerFixture
 from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig
+from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components.base_components.kafka_connector import KafkaConnector
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_FULL_NAME = "${pipeline_name}-" + CONNECTOR_NAME
-CONNECTOR_CLEAN_FULL_NAME = "${pipeline_name}-test-connector-with-long-name-clean"
+CONNECTOR_CLEAN_FULL_NAME = CONNECTOR_FULL_NAME + "-clean"
+CONNECTOR_CLEAN_RELEASE_NAME = create_helm_release_name(CONNECTOR_CLEAN_FULL_NAME)
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 
 

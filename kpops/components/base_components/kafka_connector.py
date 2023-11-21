@@ -17,7 +17,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import trim_release_name
+from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
     KafkaConnectorType,
@@ -106,7 +106,7 @@ class KafkaConnector(PipelineComponent, ABC):
     def _resetter_release_name(self) -> str:
         suffix = "-clean"
         clean_up_release_name = self.full_name + suffix
-        return trim_release_name(clean_up_release_name, suffix)
+        return create_helm_release_name(clean_up_release_name)
 
     @property
     def _resetter_helm_chart(self) -> str:
