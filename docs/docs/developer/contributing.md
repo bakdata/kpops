@@ -18,6 +18,10 @@ Our configuration can be found in [KPOps](https://github.com/bakdata/kpops)' top
 
 To ensure a consistent markdown style, we use [dprint](https://dprint.dev)'s [Markdown code formatter](https://dprint.dev/plugins/markdown/). Our configuration can be found [here](https://github.com/bakdata/kpops/blob/main/dprint.json).
 
+### CSS
+
+To ensure a consistent CSS style, we use the [malva](https://github.com/g-plane/malva) [dprint](https://dprint.dev)'s plugin. Our configuration can be found [here](https://github.com/bakdata/kpops/blob/main/dprint.json).
+
 ### TOML
 
 To ensure a consistent TOML style, we use [dprint](https://dprint.dev)'s [TOML code formatter](https://dprint.dev/plugins/toml/). Our configuration can be found [here](https://github.com/bakdata/kpops/blob/main/dprint.json).
