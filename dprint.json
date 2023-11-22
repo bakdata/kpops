@@ -2,8 +2,10 @@
   "$schema": "https://dprint.dev/schemas/v0.json",
   "incremental": true,
   "markdown": {},
+  "toml": {},
   "includes": [
-    "**/*.{md}"
+    "**/*.{md}",
+    "**/*.{toml}"
   ],
   "excludes": [
     ".pytest_cache/**",
@@ -15,6 +17,7 @@
     "**/config_env_vars.md"
   ],
   "plugins": [
-    "https://plugins.dprint.dev/markdown-0.16.0.wasm"
+    "https://plugins.dprint.dev/markdown-0.16.0.wasm",
+    "https://plugins.dprint.dev/toml-0.5.4.wasm"
   ]
 }

@@ -70,7 +70,7 @@ jobs:
       - name: Install docs dependencies
         run: poetry install --with docs
       
-      - name: Check markdown formatting
+      - name: Check markdown, toml formatting
         uses: dprint/check@v2.2
         if: runner.os == 'Linux'
 
