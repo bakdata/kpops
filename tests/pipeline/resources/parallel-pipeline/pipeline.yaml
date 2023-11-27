@@ -1,5 +1,3 @@
-
-
 - type: producer-app
   name: transaction-avro-producer-1
   app:
