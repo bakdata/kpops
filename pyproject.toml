@@ -28,7 +28,7 @@ kpops = "kpops.cli.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-pydantic = { extras = ["dotenv"], version = "^2.4.2" }
+pydantic = { extras = ["dotenv"], version = "^2.5.2" }
 pydantic-settings = "^2.0.3"
 rich = "^12.4.4"
 PyYAML = "^6.0"
@@ -46,7 +46,7 @@ pytest-mock = "^3.10.0"
 pytest-timeout = "^2.1.0"
 snapshottest = "^0.6.0"
 pre-commit = "^2.19.0"
-ruff = "^0.1.1"
+ruff = "^0.1.6"
 black = "^23.7.0"
 typer-cli = "^0.0.13"
 pyright = "^1.1.314"
