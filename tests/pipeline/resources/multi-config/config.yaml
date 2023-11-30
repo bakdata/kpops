@@ -1,0 +1,15 @@
+environment: development
+defaults_path: ../no-topics-defaults
+topic_name_config:
+  default_error_topic_name: "${component_name}-dead-letter-topic"
+  default_output_topic_name: "${component_name}-test-topic"
+kafka_brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
+kafka_connect:
+  url: "http://localhost:8083"
+kafka_rest:
+  url: "http://localhost:8082"
+schema_registry:
+  enabled: true
+  url: "http://localhost:8081"
+helm_config:
+  api_version: "2.1.1"

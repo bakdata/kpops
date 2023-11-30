@@ -505,6 +505,26 @@ class TestPipeline:
             == "http://somename:1234/"
         )
 
+    def test_env_specific_config(self, monkeypatch: pytest.MonkeyPatch):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                str(RESOURCE_PATH / "multi-config/config_env.yaml"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
+            == "http://correct:8081/"
+        )
+
     def test_model_serialization(self, snapshot: SnapshotTest):
         """Test model serialization of component containing pathlib.Path attribute."""
         result = runner.invoke(

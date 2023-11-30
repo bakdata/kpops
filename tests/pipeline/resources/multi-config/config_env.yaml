@@ -1,0 +1,4 @@
+environment: "correct"
+schema_registry:
+  enabled: true
+  url: "http://correct:8081"
