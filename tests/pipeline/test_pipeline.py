@@ -505,7 +505,8 @@ class TestPipeline:
             == "http://somename:1234/"
         )
 
-    def test_env_specific_config(self, monkeypatch: pytest.MonkeyPatch):
+    def test_env_specific_config(self, caplog: pytest.LogCaptureFixture):
+        config_path = str(RESOURCE_PATH / "multi-config/config_env.yaml")
         result = runner.invoke(
             app,
             [
@@ -514,7 +515,7 @@ class TestPipeline:
                 str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
-                str(RESOURCE_PATH / "multi-config/config_env.yaml"),
+                config_path,
             ],
             catch_exceptions=False,
         )
@@ -524,6 +525,16 @@ class TestPipeline:
             enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
             == "http://correct:8081/"
         )
+        assert caplog.record_tuples == [
+            (
+                "root",
+                logging.WARNING,
+                (
+                    f"Ignoring environment setting in {config_path}, "
+                    "it must not be specified in an environment-specific config."
+                ),
+            )
+        ]
 
     def test_model_serialization(self, snapshot: SnapshotTest):
         """Test model serialization of component containing pathlib.Path attribute."""
