@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -5,6 +6,7 @@ import humps
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_snake
 from pydantic.fields import FieldInfo
+from pydantic_core import PydanticUndefined
 from pydantic_settings import PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
 
@@ -111,6 +113,8 @@ class DescConfigModel(BaseModel):
 class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     """Loads variables from a YAML file at the project's root."""
 
+    log = logging.getLogger()
+
     path_to_config = Path("config.yaml")
 
     @override
@@ -150,4 +154,28 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
             if field_value is not None:
                 d[field_key] = field_value
 
+        if "config." not in self.path_to_config.parts[-1]:
+            if d.get("environment"):
+                d["environment"] = PydanticUndefined
+                self.log.warning(
+                    f"Ignoring environment setting in {self.path_to_config}, "
+                    "it must not be specified in an environment-specific config."
+                )
+            if (
+                root_config_path := Path(self.path_to_config.parent / "config.yaml")
+            ).exists():
+                self.path_to_config = root_config_path
+                for field_name, field in self.settings_cls.model_fields.items():
+                    field_value, field_key, value_is_complex = self.get_field_value(
+                        field,
+                        field_name,
+                    )
+                    field_value = self.prepare_field_value(
+                        field_name,
+                        field,
+                        field_value,
+                        value_is_complex,
+                    )
+                    if field_value is not None:
+                        d[field_key] = field_value
         return d
