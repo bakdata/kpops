@@ -128,11 +128,9 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
         elif self.path_to_settings.is_file():
             msg = f"Path to config directory {self.path_to_settings} must point to a directory."
             raise ValueError(msg)
-        # Collect settings files
         default_settings = self.__load_settings(
             self.path_to_settings / f"{self.settings_file_base_name}.yaml"
         )
-        self.environment = self.environment or default_settings.get("environment")
         env_settings = (
             self.__load_settings(
                 self.path_to_settings
@@ -141,12 +139,6 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
             if self.environment
             else {}
         )
-        if env_settings.get("environment"):
-            env_settings["environment"] = self.environment
-            self.log.warning(
-                f"Ignoring environment setting in {self.path_to_settings}, "
-                "it must not be specified in an environment-specific config."
-            )
         self.settings = update_nested_pair(env_settings, default_settings)
 
     @staticmethod

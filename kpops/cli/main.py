@@ -113,8 +113,9 @@ COMPONENTS_MODULES: str | None = typer.Argument(
     help="Custom Python module containing your project-specific components",
 )
 
-ENVIRONMENT: str | None = typer.Argument(
+ENVIRONMENT: str | None = typer.Option(
     default=None,
+    envvar=f"{ENV_PREFIX}ENVIRONMENT",
     help=KpopsConfig.model_fields["environment"].description,
 )
 
@@ -212,10 +213,15 @@ def log_action(action: str, pipeline_component: PipelineComponent):
 
 
 def create_kpops_config(
-    config: Path, defaults: Optional[Path], verbose: bool, dotenv: Optional[list[Path]]
+    config: Path,
+    defaults: Optional[Path],
+    verbose: bool,
+    dotenv: Optional[list[Path]],
+    environment: Optional[str],
 ) -> KpopsConfig:
     setup_logging_level(verbose)
     YamlConfigSettingsSource.path_to_settings = config
+    YamlConfigSettingsSource.environment = environment
     kpops_config = KpopsConfig(
         _env_file=dotenv  # pyright: ignore[reportGeneralTypeIssues]
     )
@@ -270,9 +276,9 @@ def generate(
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     verbose: bool = VERBOSE_OPTION,
-    # environment: Optional[str] = ENVIRONMENT
+    environment: Optional[str] = ENVIRONMENT,
 ) -> Pipeline:
-    kpops_config = create_kpops_config(config, defaults, verbose, dotenv)
+    kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )
@@ -307,9 +313,9 @@ def deploy(
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-    # environment: Optional[str] = ENVIRONMENT
+    environment: Optional[str] = ENVIRONMENT,
 ) -> None:
-    kpops_config = create_kpops_config(config, defaults, verbose, dotenv)
+    kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )
@@ -334,9 +340,9 @@ def destroy(
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-    # environment: Optional[str] = ENVIRONMENT
+    environment: Optional[str] = ENVIRONMENT,
 ) -> None:
-    kpops_config = create_kpops_config(config, defaults, verbose, dotenv)
+    kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )
@@ -360,9 +366,9 @@ def reset(
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-    # environment: Optional[str] = ENVIRONMENT
+    environment: Optional[str] = ENVIRONMENT,
 ) -> None:
-    kpops_config = create_kpops_config(config, defaults, verbose, dotenv)
+    kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )
@@ -387,9 +393,9 @@ def clean(
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-    # environment: Optional[str] = ENVIRONMENT
+    environment: Optional[str] = ENVIRONMENT,
 ) -> None:
-    kpops_config = create_kpops_config(config, defaults, verbose, dotenv)
+    kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config
     )

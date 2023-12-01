@@ -396,7 +396,7 @@ class TestPipeline:
         config_dict["defaults_path"] = str(
             (RESOURCE_PATH / "no-topics-defaults").absolute(),
         )
-        temp_config_path = RESOURCE_PATH / "custom-config/temp_config.yaml"
+        temp_config_path = RESOURCE_PATH / "custom-config/config_custom.yaml"
         try:
             with temp_config_path.open("w") as abs_config_yaml:
                 yaml.dump(config_dict, abs_config_yaml)
@@ -408,7 +408,7 @@ class TestPipeline:
                     str(PIPELINE_BASE_DIR_PATH),
                     str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                     "--config",
-                    str(temp_config_path),
+                    str(temp_config_path.parent),
                 ],
                 catch_exceptions=False,
             )
@@ -505,7 +505,10 @@ class TestPipeline:
             == "http://somename:1234/"
         )
 
-    def test_env_specific_config(self, caplog: pytest.LogCaptureFixture):
+    def test_env_specific_config_env_def_in_env_var(
+        self, monkeypatch: pytest.MonkeyPatch
+    ):
+        monkeypatch.setenv(name="KPOPS_ENVIRONMENT", value="no_env")
         config_path = str(RESOURCE_PATH / "multi-config")
         result = runner.invoke(
             app,
@@ -525,18 +528,33 @@ class TestPipeline:
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
-            == "http://correct:8081/"
+            == "http://noenv:8081/"
         )
-        assert caplog.record_tuples == [
-            (
-                "root",
-                logging.WARNING,
-                (
-                    f"Ignoring environment setting in {config_path}, "
-                    "it must not be specified in an environment-specific config."
-                ),
-            )
-        ]
+
+    def test_env_specific_config_env_def_in_cli(self):
+        config_path = str(RESOURCE_PATH / "multi-config")
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                config_path,
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--environment",
+                "no_env",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
+            == "http://noenv:8081/"
+        )
 
     def test_model_serialization(self, snapshot: SnapshotTest):
         """Test model serialization of component containing pathlib.Path attribute."""

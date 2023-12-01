@@ -142,8 +142,8 @@ class KpopsConfig(BaseSettings):
     ):
         return (
             env_settings,
+            dotenv_settings,
             init_settings,
             YamlConfigSettingsSource(settings_cls),
-            dotenv_settings,
             file_secret_settings,
         )
