@@ -162,13 +162,21 @@
             "type": "string"
         },
         "environment": {
-            "description": "The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). To be defined only in the default config definition, i.e. `config.yaml`.",
+            "anyOf": [
+                {
+                    "type": "string"
+                },
+                {
+                    "type": "null"
+                }
+            ],
+            "default": null,
+            "description": "The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). ",
             "examples": [
                 "development",
                 "production"
             ],
-            "title": "Environment",
-            "type": "string"
+            "title": "Environment"
         },
         "helm_config": {
             "allOf": [
@@ -262,7 +270,6 @@
         }
     },
     "required": [
-        "environment",
         "kafka_brokers"
     ],
     "title": "KpopsConfig",

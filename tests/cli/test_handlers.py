@@ -52,7 +52,6 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
 def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     config = KpopsConfig(
         defaults_path=Path("fake"),
-        environment="development",
         schema_registry=SchemaRegistryConfig(enabled=True),
         kafka_brokers="broker:9092",
     )

@@ -16,7 +16,7 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 PIPELINE_BASE_DIR_PATH = RESOURCE_PATH.parent
 
 
-@pytest.mark.usefixtures("mock_env")
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class TestPipeline:
     def test_python_api(self):
         pipeline = kpops.generate(
@@ -111,6 +111,8 @@ class TestPipeline:
                 "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -322,6 +324,8 @@ class TestPipeline:
                 str(RESOURCE_PATH / "kafka-connect-sink/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "pipeline-with-env-defaults"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -366,6 +370,8 @@ class TestPipeline:
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
                 str(RESOURCE_PATH / "custom-config"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -409,6 +415,8 @@ class TestPipeline:
                     str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                     "--config",
                     str(temp_config_path.parent),
+                    "--environment",
+                    "development",
                 ],
                 catch_exceptions=False,
             )
@@ -440,6 +448,8 @@ class TestPipeline:
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -471,6 +481,8 @@ class TestPipeline:
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
                 str(RESOURCE_PATH / "custom-config"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -495,6 +507,8 @@ class TestPipeline:
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
                 str(RESOURCE_PATH / "custom-config"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -508,7 +522,7 @@ class TestPipeline:
     def test_env_specific_config_env_def_in_env_var(
         self, monkeypatch: pytest.MonkeyPatch
     ):
-        monkeypatch.setenv(name="KPOPS_ENVIRONMENT", value="no_env")
+        monkeypatch.setenv(name="KPOPS_ENVIRONMENT", value="production")
         config_path = str(RESOURCE_PATH / "multi-config")
         result = runner.invoke(
             app,
@@ -528,7 +542,7 @@ class TestPipeline:
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
-            == "http://noenv:8081/"
+            == "http://production:8081/"
         )
 
     def test_env_specific_config_env_def_in_cli(self):
@@ -545,7 +559,7 @@ class TestPipeline:
                 "--defaults",
                 str(RESOURCE_PATH),
                 "--environment",
-                "no_env",
+                "production",
             ],
             catch_exceptions=False,
         )
@@ -553,7 +567,32 @@ class TestPipeline:
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
-            == "http://noenv:8081/"
+            == "http://production:8081/"
+        )
+
+    def test_env_specific_config_env_def_in_dotenv(self):
+        config_path = str(RESOURCE_PATH / "multi-config")
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                config_path,
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--dotenv",
+                str(config_path + "/.env"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
+            == "http://production:8081/"
         )
 
     def test_model_serialization(self, snapshot: SnapshotTest):

@@ -116,7 +116,10 @@ COMPONENTS_MODULES: str | None = typer.Argument(
 ENVIRONMENT: str | None = typer.Option(
     default=None,
     envvar=f"{ENV_PREFIX}ENVIRONMENT",
-    help=KpopsConfig.model_fields["environment"].description,
+    help=(
+        "The environment you want to generate and deploy the pipeline to. "
+        "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). "
+    ),
 )
 
 logger = logging.getLogger()

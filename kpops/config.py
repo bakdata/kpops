@@ -64,21 +64,22 @@ class KafkaConnectConfig(BaseSettings):
 class KpopsConfig(BaseSettings):
     """Pipeline configuration unrelated to the components."""
 
-    defaults_path: Path = Field(
-        default=Path(),
-        examples=["defaults", "."],
-        description="The path to the folder containing the defaults.yaml file and the environment defaults files. "
-        "Paths can either be absolute or relative to `config.yaml`",
-    )
-    environment: str = Field(
-        default=...,
+    # Cannot be set in config.yaml to avoid confusion
+    environment: str | None = Field(
+        default=None,
+        exclude=True,
         examples=[
             "development",
             "production",
         ],
         description="The environment you want to generate and deploy the pipeline to. "
-        "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). "
-        "To be defined only in the default config definition, i.e. `config.yaml`.",
+        "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). ",
+    )
+    defaults_path: Path = Field(
+        default=Path(),
+        examples=["defaults", "."],
+        description="The path to the folder containing the defaults.yaml file and the environment defaults files. "
+        "Paths can either be absolute or relative to `config.yaml`",
     )
     kafka_brokers: str = Field(
         default=...,
@@ -142,8 +143,8 @@ class KpopsConfig(BaseSettings):
     ):
         return (
             env_settings,
-            dotenv_settings,
             init_settings,
             YamlConfigSettingsSource(settings_cls),
+            dotenv_settings,
             file_secret_settings,
         )

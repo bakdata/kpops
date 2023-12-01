@@ -47,7 +47,7 @@ $ kpops clean [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
-* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). To be defined only in the default config definition, i.e. `config.yaml`.  [env var: KPOPS_ENVIRONMENT]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--help`: Show this message and exit.
 
 ## `kpops deploy`
@@ -75,7 +75,7 @@ $ kpops deploy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
-* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). To be defined only in the default config definition, i.e. `config.yaml`.  [env var: KPOPS_ENVIRONMENT]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--help`: Show this message and exit.
 
 ## `kpops destroy`
@@ -103,7 +103,7 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
-* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). To be defined only in the default config definition, i.e. `config.yaml`.  [env var: KPOPS_ENVIRONMENT]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--help`: Show this message and exit.
 
 ## `kpops generate`
@@ -131,7 +131,7 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
-* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). To be defined only in the default config definition, i.e. `config.yaml`.  [env var: KPOPS_ENVIRONMENT]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--help`: Show this message and exit.
 
 ## `kpops reset`
@@ -159,7 +159,7 @@ $ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
-* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). To be defined only in the default config definition, i.e. `config.yaml`.  [env var: KPOPS_ENVIRONMENT]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--help`: Show this message and exit.
 
 ## `kpops schema`

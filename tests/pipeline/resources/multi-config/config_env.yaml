@@ -1,4 +1,0 @@
-environment: "correct"
-schema_registry:
-  enabled: true
-  url: "http://env:8081"
