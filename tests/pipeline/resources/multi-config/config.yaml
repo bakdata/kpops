@@ -1,4 +1,4 @@
-environment: development
+environment: env
 defaults_path: ../no-topics-defaults
 topic_name_config:
   default_error_topic_name: "${component_name}-dead-letter-topic"

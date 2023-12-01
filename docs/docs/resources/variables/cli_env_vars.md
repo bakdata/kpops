@@ -3,7 +3,7 @@ These variables are a lower priority alternative to the commands' flags. If a va
 |         Name          |Default Value|Required|                                                            Description                                                            |
 |-----------------------|-------------|--------|-----------------------------------------------------------------------------------------------------------------------------------|
 |KPOPS_PIPELINE_BASE_DIR|.            |False   |Base directory to the pipelines (default is current working directory)                                                             |
-|KPOPS_CONFIG_PATH      |config.yaml  |False   |Path to the config.yaml file                                                                                                       |
+|KPOPS_CONFIG_PATH      |.            |False   |Path to the dir containing config.yaml files                                                                                       |
 |KPOPS_DEFAULT_PATH     |             |False   |Path to defaults folder                                                                                                            |
 |KPOPS_DOTENV_PATH      |             |False   |Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.|
 |KPOPS_PIPELINE_PATH    |             |True    |Path to YAML with pipeline definition                                                                                              |

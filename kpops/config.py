@@ -77,7 +77,8 @@ class KpopsConfig(BaseSettings):
             "production",
         ],
         description="The environment you want to generate and deploy the pipeline to. "
-        "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
+        "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). "
+        "To be defined only in the default config definition, i.e. `config.yaml`.",
     )
     kafka_brokers: str = Field(
         default=...,

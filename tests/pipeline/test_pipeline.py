@@ -222,7 +222,7 @@ class TestPipeline:
                 "--defaults",
                 str(RESOURCE_PATH),
                 "--config",
-                str(RESOURCE_PATH / "kafka-connect-sink-config/config.yaml"),
+                str(RESOURCE_PATH / "kafka-connect-sink-config"),
             ],
             catch_exceptions=False,
         )
@@ -365,7 +365,7 @@ class TestPipeline:
                 str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
-                str(RESOURCE_PATH / "custom-config/config.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
             ],
             catch_exceptions=False,
         )
@@ -470,7 +470,7 @@ class TestPipeline:
                 str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
-                str(RESOURCE_PATH / "custom-config/config.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
             ],
             catch_exceptions=False,
         )
@@ -494,7 +494,7 @@ class TestPipeline:
                 str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
-                str(RESOURCE_PATH / "custom-config/config.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
             ],
             catch_exceptions=False,
         )
@@ -506,7 +506,7 @@ class TestPipeline:
         )
 
     def test_env_specific_config(self, caplog: pytest.LogCaptureFixture):
-        config_path = str(RESOURCE_PATH / "multi-config/config_env.yaml")
+        config_path = str(RESOURCE_PATH / "multi-config")
         result = runner.invoke(
             app,
             [
@@ -516,6 +516,8 @@ class TestPipeline:
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
                 config_path,
+                "--defaults",
+                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
@@ -567,7 +569,7 @@ class TestPipeline:
                 "--defaults",
                 str(RESOURCE_PATH),
                 "--config",
-                str(RESOURCE_PATH / "dotenv/config.yaml"),
+                str(RESOURCE_PATH / "dotenv"),
                 "--dotenv",
                 str(RESOURCE_PATH / "dotenv/.env"),
                 "--dotenv",

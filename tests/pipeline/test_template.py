@@ -69,7 +69,7 @@ class TestTemplate:
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
                 "--config",
-                str(RESOURCE_PATH / "custom-config/config.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
                 "--template",
             ],
             catch_exceptions=False,
