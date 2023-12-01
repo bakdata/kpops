@@ -6,10 +6,10 @@ import humps
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_snake
 from pydantic.fields import FieldInfo
-from pydantic_core import PydanticUndefined
 from pydantic_settings import PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
 
+from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.docstring import describe_object
 from kpops.utils.yaml_loading import load_yaml_file
 
@@ -115,7 +115,46 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
 
     log = logging.getLogger()
 
-    path_to_config = Path("config.yaml")
+    path_to_settings = Path()
+    settings_file_base_name = "config"
+    environment: str | None = None
+
+    def __init__(self, settings_cls):
+        super().__init__(settings_cls)
+        # Check if path to settings yaml definition is valid
+        if not self.path_to_settings.exists():
+            msg = f"Path to config directory {self.path_to_settings} does not exist."
+            raise ValueError(msg)
+        elif self.path_to_settings.is_file():
+            msg = f"Path to config directory {self.path_to_settings} must point to a directory."
+            raise ValueError(msg)
+        # Collect settings files
+        default_settings = self.__load_setting(
+            self.path_to_settings / f"{self.settings_file_base_name}.yaml"
+        )
+        env_settings = (
+            self.__load_setting(
+                self.path_to_settings
+                / f"{self.settings_file_base_name}_{self.environment}.yaml"
+            )
+            if self.environment
+            else {}
+        )
+        if env_settings.get("environment"):
+            env_settings["environment"] = None
+            self.log.warning(
+                f"Ignoring environment setting in {self.path_to_settings}, "
+                "it must not be specified in an environment-specific config."
+            )
+        self.settings = update_nested_pair(env_settings, default_settings)
+
+    @staticmethod
+    def __load_setting(file: Path) -> dict:
+        if not file.exists():
+            return {}
+        if isinstance((loaded_file := load_yaml_file(file)), dict):
+            return loaded_file
+        return {}
 
     @override
     def get_field_value(
@@ -123,12 +162,7 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
         field: FieldInfo,
         field_name: str,
     ) -> tuple[Any, str, bool]:
-        if self.path_to_config.exists() and isinstance(
-            (file_content_yaml := load_yaml_file(self.path_to_config)), dict
-        ):
-            field_value = file_content_yaml.get(field_name)
-            return field_value, field_name, False
-        return None, field_name, False
+        return self.settings.get(field_name), field_name, False
 
     @override
     def prepare_field_value(
@@ -139,7 +173,6 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     @override
     def __call__(self) -> dict[str, Any]:
         d: dict[str, Any] = {}
-
         for field_name, field in self.settings_cls.model_fields.items():
             field_value, field_key, value_is_complex = self.get_field_value(
                 field,
@@ -153,29 +186,4 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
             )
             if field_value is not None:
                 d[field_key] = field_value
-
-        if "config." not in self.path_to_config.parts[-1]:
-            if d.get("environment"):
-                d["environment"] = PydanticUndefined
-                self.log.warning(
-                    f"Ignoring environment setting in {self.path_to_config}, "
-                    "it must not be specified in an environment-specific config."
-                )
-            if (
-                root_config_path := Path(self.path_to_config.parent / "config.yaml")
-            ).exists():
-                self.path_to_config = root_config_path
-                for field_name, field in self.settings_cls.model_fields.items():
-                    field_value, field_key, value_is_complex = self.get_field_value(
-                        field,
-                        field_name,
-                    )
-                    field_value = self.prepare_field_value(
-                        field_name,
-                        field,
-                        field_value,
-                        value_is_complex,
-                    )
-                    if field_value is not None:
-                        d[field_key] = field_value
         return d
