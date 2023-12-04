@@ -1252,6 +1252,26 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#allow-overriding-config-files" class="md-nav__link">
+    Allow overriding config files
+  </a>
+  
+    <nav class="md-nav" aria-label="Allow overriding config files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configyaml_1" class="md-nav__link">
+    config.yaml
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1544,6 +1564,26 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#allow-overriding-config-files" class="md-nav__link">
+    Allow overriding config files
+  </a>
+  
+    <nav class="md-nav" aria-label="Allow overriding config files">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configyaml_1" class="md-nav__link">
+    config.yaml
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1643,6 +1683,19 @@
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w"> </span>   with:
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w"> </span>     command: deploy --execute
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w"> </span>     # ...
+</span></code></pre></div></td></tr></table></div>
+<h2 id="allow-overriding-config-files"><a href="https://github.com/bakdata/kpops/pull/391">Allow overriding config files</a><a class="headerlink" href="#allow-overriding-config-files" title="Permanent link">&para;</a></h2>
+<p><code>environment</code> is no longer specified in <code>config.yaml</code>. Instead, it can be either set via the cli flag <code>--environment</code> or with the environment variable <code>KPOPS_ENVIRONMENT</code>.</p>
+<h4 id="configyaml_1">config.yaml<a class="headerlink" href="#configyaml_1" title="Permanent link">&para;</a></h4>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span>
+<span class="normal"><a href="#__codelineno-3-4">4</a></span>
+<span class="normal"><a href="#__codelineno-3-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="gd">- environment: development</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w"> </span> kafka_brokers: &quot;http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092&quot;
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="w"> </span> schema_registry:
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="w"> </span>   enabled: true
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w"> </span>   url: &quot;http://my-custom-sr.url:8081&quot;
 </span></code></pre></div></td></tr></table></div>
 
 
