@@ -16,7 +16,7 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 PIPELINE_BASE_DIR_PATH = RESOURCE_PATH.parent
 
 
-@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
+@pytest.mark.usefixtures("mock_env", "_load_yaml_file_clear_cache")
 class TestPipeline:
     def test_python_api(self):
         pipeline = kpops.generate(
@@ -560,31 +560,6 @@ class TestPipeline:
                 str(RESOURCE_PATH),
                 "--environment",
                 "production",
-            ],
-            catch_exceptions=False,
-        )
-        assert result.exit_code == 0
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
-        assert (
-            enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
-            == "http://production:8081/"
-        )
-
-    def test_env_specific_config_env_def_in_dotenv(self):
-        config_path = str(RESOURCE_PATH / "multi-config")
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
-                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
-                "--config",
-                config_path,
-                "--defaults",
-                str(RESOURCE_PATH),
-                "--dotenv",
-                str(config_path + "/.env"),
             ],
             catch_exceptions=False,
         )

@@ -136,6 +136,7 @@ def setup_pipeline(
     pipeline_path: Path,
     components_module: str | None,
     kpops_config: KpopsConfig,
+    environment: str | None,
 ) -> Pipeline:
     registry = Registry()
     if components_module:
@@ -144,7 +145,7 @@ def setup_pipeline(
 
     handlers = setup_handlers(components_module, kpops_config)
     return Pipeline.load_from_yaml(
-        pipeline_base_dir, pipeline_path, registry, kpops_config, handlers
+        pipeline_base_dir, pipeline_path, environment, registry, kpops_config, handlers
     )
 
 
@@ -283,7 +284,7 @@ def generate(
 ) -> Pipeline:
     kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, kpops_config
+        pipeline_base_dir, pipeline_path, components_module, kpops_config, environment
     )
 
     if not template:
@@ -320,7 +321,7 @@ def deploy(
 ) -> None:
     kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, kpops_config
+        pipeline_base_dir, pipeline_path, components_module, kpops_config, environment
     )
 
     steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
@@ -347,7 +348,7 @@ def destroy(
 ) -> None:
     kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, kpops_config
+        pipeline_base_dir, pipeline_path, components_module, kpops_config, environment
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
     for component in pipeline_steps:
@@ -373,7 +374,7 @@ def reset(
 ) -> None:
     kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, kpops_config
+        pipeline_base_dir, pipeline_path, components_module, kpops_config, environment
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
     for component in pipeline_steps:
@@ -400,7 +401,7 @@ def clean(
 ) -> None:
     kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, kpops_config
+        pipeline_base_dir, pipeline_path, components_module, kpops_config, environment
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
     for component in pipeline_steps:

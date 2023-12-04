@@ -145,9 +145,6 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     @staticmethod
     def __load_settings(file: Path) -> dict:
         if file.exists() and isinstance((loaded_file := load_yaml_file(file)), dict):
-            if loaded_file.get("environment") is not None:
-                msg = "Environment must not be specified in config.yaml."
-                raise ValueError(msg)
             return loaded_file
         return {}
 

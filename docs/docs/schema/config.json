@@ -161,23 +161,6 @@
             "title": "Defaults Path",
             "type": "string"
         },
-        "environment": {
-            "anyOf": [
-                {
-                    "type": "string"
-                },
-                {
-                    "type": "null"
-                }
-            ],
-            "default": null,
-            "description": "The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). ",
-            "examples": [
-                "development",
-                "production"
-            ],
-            "title": "Environment"
-        },
         "helm_config": {
             "allOf": [
                 {

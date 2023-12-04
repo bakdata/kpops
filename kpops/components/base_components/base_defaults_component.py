@@ -99,7 +99,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             )
         )
         main_default_file_path, environment_default_file_path = get_defaults_file_paths(
-            config
+            config, ENV.get("environment")
         )
         defaults = load_defaults(
             self.__class__, main_default_file_path, environment_default_file_path
@@ -175,7 +175,9 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
     return value
 
 
-def get_defaults_file_paths(config: KpopsConfig) -> tuple[Path, Path]:
+def get_defaults_file_paths(
+    config: KpopsConfig, environment: str | None
+) -> tuple[Path, Path]:
     """Return the paths to the main and the environment defaults-files.
 
     The files need not exist, this function will only check if the dir set in
@@ -183,6 +185,7 @@ def get_defaults_file_paths(config: KpopsConfig) -> tuple[Path, Path]:
     calculated from it. It is up to the caller to handle any false paths.
 
     :param config: Pipeline configuration
+    :param environment: Environment
     :returns: The defaults files paths
     """
     defaults_dir = Path(config.defaults_path).resolve()
@@ -190,9 +193,12 @@ def get_defaults_file_paths(config: KpopsConfig) -> tuple[Path, Path]:
         config.defaults_filename_prefix
     ).with_suffix(".yaml")
 
-    environment_default_file_path = defaults_dir / Path(
-        f"{config.defaults_filename_prefix}_{config.environment}"
-    ).with_suffix(".yaml")
+    environment_default_file_path = (
+        defaults_dir
+        / Path(f"{config.defaults_filename_prefix}_{environment}").with_suffix(".yaml")
+        if environment is not None
+        else main_default_file_path
+    )
 
     return main_default_file_path, environment_default_file_path
 

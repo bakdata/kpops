@@ -64,17 +64,6 @@ class KafkaConnectConfig(BaseSettings):
 class KpopsConfig(BaseSettings):
     """Pipeline configuration unrelated to the components."""
 
-    # Cannot be set in config.yaml to avoid confusion
-    environment: str | None = Field(
-        default=None,
-        exclude=True,
-        examples=[
-            "development",
-            "production",
-        ],
-        description="The environment you want to generate and deploy the pipeline to. "
-        "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). ",
-    )
     defaults_path: Path = Field(
         default=Path(),
         examples=["defaults", "."],

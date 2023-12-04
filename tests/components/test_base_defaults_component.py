@@ -39,10 +39,7 @@ class EnvVarTest(BaseDefaultsComponent):
 
 @pytest.fixture()
 def config() -> KpopsConfig:
-    return KpopsConfig(
-        defaults_path=DEFAULTS_PATH,
-        environment="development",
-    )
+    return KpopsConfig(defaults_path=DEFAULTS_PATH)
 
 
 @pytest.fixture()
@@ -117,6 +114,7 @@ class TestBaseDefaultsComponent:
         )
 
     def test_inherit_defaults(self, config: KpopsConfig, handlers: ComponentHandlers):
+        ENV["environment"] = "development"
         component = Child(config=config, handlers=handlers)
 
         assert (
