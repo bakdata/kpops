@@ -138,7 +138,7 @@ class Pipeline:
         :returns: Initialized pipeline object
         """
         Pipeline.set_pipeline_name_env_vars(base_dir, path)
-        Pipeline.set_working_environment(environment)
+        Pipeline.set_environment_name(environment)
 
         main_content = load_yaml_file(path, substitution=ENV)
         if not isinstance(main_content, list):
@@ -347,6 +347,13 @@ class Pipeline:
             ENV[f"pipeline_name_{level}"] = parent
 
     @staticmethod
-    def set_working_environment(env_name: str | None) -> None:
-        if env_name is not None:
-            ENV["environment"] = env_name
+    def set_environment_name(environment: str | None) -> None:
+        """Set the environment name.
+
+        It will be used to find environment-specific pipeline definitions,
+        defaults and configs.
+
+        :param environment: Environment name
+        """
+        if environment is not None:
+            ENV["environment"] = environment
