@@ -545,8 +545,21 @@ class TestPipeline:
             == "http://production:8081/"
         )
 
-    def test_env_specific_config_env_def_in_cli(self):
-        config_path = str(RESOURCE_PATH / "multi-config")
+    @pytest.mark.parametrize(
+        ("config_dir", "expected_url"),
+        [
+            pytest.param("multi-config", "http://production:8081/", id="multi-config"),
+            pytest.param(
+                "env-specific-config-only",
+                "http://localhost:8081/",
+                id="env-specific-config-only",
+            ),
+        ],
+    )
+    def test_env_specific_config_env_def_in_cli(
+        self, config_dir: str, expected_url: str
+    ):
+        config_path = str(RESOURCE_PATH / config_dir)
         result = runner.invoke(
             app,
             [
@@ -567,7 +580,7 @@ class TestPipeline:
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
-            == "http://production:8081/"
+            == expected_url
         )
 
     def test_model_serialization(self, snapshot: SnapshotTest):
