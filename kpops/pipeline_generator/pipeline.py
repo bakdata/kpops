@@ -146,11 +146,9 @@ class Pipeline:
             raise TypeError(msg)
         env_content = []
         if (
-            ENV.get("environment") is not None
+            environment
             and (
-                env_file := Pipeline.pipeline_filename_environment(
-                    path, ENV["environment"]
-                )
+                env_file := Pipeline.pipeline_filename_environment(path, environment)
             ).exists()
         ):
             env_content = load_yaml_file(env_file, substitution=ENV)
@@ -313,14 +311,14 @@ class Pipeline:
         self.components.validate_unique_names()
 
     @staticmethod
-    def pipeline_filename_environment(path: Path, environment: str) -> Path:
+    def pipeline_filename_environment(pipeline_path: Path, environment: str) -> Path:
         """Add the environment name from the KpopsConfig to the pipeline.yaml path.
 
-        :param path: Path to pipeline.yaml file
+        :param pipeline_path: Path to pipeline.yaml file
         :param config: The KpopsConfig
         :returns: An absolute path to the pipeline_<environment>.yaml
         """
-        return path.with_stem(f"{path.stem}_{environment}")
+        return pipeline_path.with_stem(f"{pipeline_path.stem}_{environment}")
 
     @staticmethod
     def set_pipeline_name_env_vars(base_dir: Path, path: Path) -> None:
