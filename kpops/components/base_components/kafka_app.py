@@ -88,8 +88,7 @@ class KafkaApp(KubernetesApp, ABC):
     @property
     def clean_up_release_name(self) -> str:
         suffix = "-clean"
-        # TODO: Should this be self.helm_release_name + suffix ?
-        return create_helm_release_name(self.full_name + suffix)
+        return create_helm_release_name(self.helm_release_name + suffix)
 
     @override
     def deploy(self, dry_run: bool) -> None:
