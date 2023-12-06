@@ -1685,7 +1685,9 @@
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w"> </span>     # ...
 </span></code></pre></div></td></tr></table></div>
 <h2 id="allow-overriding-config-files"><a href="https://github.com/bakdata/kpops/pull/391">Allow overriding config files</a><a class="headerlink" href="#allow-overriding-config-files" title="Permanent link">&para;</a></h2>
+<p>Specifying the environment is no longer mandatory. If not defined, only the default files will be used.</p>
 <p><code>environment</code> is no longer specified in <code>config.yaml</code>. Instead, it can be either set via the cli flag <code>--environment</code> or with the environment variable <code>KPOPS_ENVIRONMENT</code>.</p>
+<p>The <code>--config</code> flag in the CLI now points to the directory that contains <code>config*.yaml</code> files. The files to be used are resolved based on the provided (or not) <code>environment</code>.</p>
 <h4 id="configyaml_1">config.yaml<a class="headerlink" href="#configyaml_1" title="Permanent link">&para;</a></h4>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
 <span class="normal"><a href="#__codelineno-3-2">2</a></span>
