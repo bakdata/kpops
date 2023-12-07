@@ -16,6 +16,11 @@ from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
 from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
 
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
+
 if TYPE_CHECKING:
     from collections.abc import Iterator
     from pathlib import Path
@@ -143,7 +148,7 @@ class PipelineParser:
         registry: Registry,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-    ) -> Pipeline:
+    ) -> Self:
         """Load pipeline definition from yaml.
 
         The file is often named ``pipeline.yaml``
@@ -172,8 +177,7 @@ class PipelineParser:
                 msg = f"The pipeline definition {env_file} should contain a list of components"
                 raise TypeError(msg)
 
-        parser = cls(main_content, env_content, registry, config, handlers)
-        return parser.pipeline
+        return cls(main_content, env_content, registry, config, handlers)
 
     def parse_components(self, component_list: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components.
