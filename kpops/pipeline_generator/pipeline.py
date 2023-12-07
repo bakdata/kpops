@@ -35,7 +35,7 @@ class ValidationError(Exception):
     pass
 
 
-class PipelineComponents(RootModel):
+class Pipeline(RootModel):
     """Stores the pipeline components."""
 
     root: list[SerializeAsAny[PipelineComponent]] = []
@@ -106,7 +106,7 @@ class PipelineParser:
         config: KpopsConfig,
         handlers: ComponentHandlers,
     ) -> None:
-        self.components: PipelineComponents = PipelineComponents()
+        self.pipeline: Pipeline = Pipeline()
         self.handlers = handlers
         self.config = config
         self.registry = registry
@@ -203,21 +203,21 @@ class PipelineParser:
                     original_from_component_name,
                     from_topic,
                 ) in enriched_component.from_.components.items():
-                    original_from_component = self.components.find(
+                    original_from_component = self.pipeline.find(
                         original_from_component_name
                     )
                     inflated_from_component = original_from_component.inflate()[-1]
-                    resolved_from_component = self.components.find(
+                    resolved_from_component = self.pipeline.find(
                         inflated_from_component.name
                     )
                     enriched_component.weave_from_topics(
                         resolved_from_component.to, from_topic
                     )
-            elif self.components:
+            elif self.pipeline:
                 # read from previous component
-                prev_component = self.components.last
+                prev_component = self.pipeline.last
                 enriched_component.weave_from_topics(prev_component.to)
-            self.components.add(enriched_component)
+            self.pipeline.add(enriched_component)
 
     def enrich_component(
         self,
@@ -262,15 +262,15 @@ class PipelineParser:
         ).print(syntax)
 
     def __iter__(self) -> Iterator[PipelineComponent]:
-        return iter(self.components)
+        return iter(self.pipeline)
 
     def __str__(self) -> str:
         return yaml.dump(
-            self.components.model_dump(mode="json", by_alias=True, exclude_none=True)
+            self.pipeline.model_dump(mode="json", by_alias=True, exclude_none=True)
         )
 
     def __len__(self) -> int:
-        return len(self.components)
+        return len(self.pipeline)
 
     def substitute_in_component(self, component_as_dict: dict) -> dict:
         """Substitute all $-placeholders in a component in dict representation.
@@ -303,7 +303,7 @@ class PipelineParser:
         )
 
     def validate(self) -> None:
-        self.components.validate_unique_names()
+        self.pipeline.validate_unique_names()
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: KpopsConfig) -> Path:
