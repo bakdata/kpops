@@ -8,6 +8,7 @@ from pydantic import (
     field_validator,
     model_serializer,
 )
+from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
 from kpops.utils.pydantic import (
@@ -28,7 +29,7 @@ class KafkaConnectorConfig(DescConfigModel):
     """Settings specific to Kafka Connectors."""
 
     connector_class: str
-    name: str  # TODO: hide from schema
+    name: SkipJsonSchema[str]
 
     @override
     @staticmethod
