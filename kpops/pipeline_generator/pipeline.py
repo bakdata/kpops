@@ -4,6 +4,7 @@ import json
 import logging
 from collections import Counter
 from contextlib import suppress
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 import yaml
@@ -118,17 +119,12 @@ def create_env_components_index(
     return index
 
 
+@dataclass
 class PipelineParser:
-    def __init__(
-        self,
-        registry: Registry,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ) -> None:
-        self.pipeline: Pipeline = Pipeline()
-        self.handlers = handlers
-        self.config = config
-        self.registry = registry
+    config: KpopsConfig
+    registry: Registry
+    handlers: ComponentHandlers
+    pipeline: Pipeline = field(init=False, default_factory=Pipeline)
 
     def parse(
         self,
