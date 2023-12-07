@@ -19,7 +19,7 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.config import ENV_PREFIX, KpopsConfig
-from kpops.pipeline_generator.pipeline import Pipeline, PipelineParser
+from kpops.pipeline import Pipeline, PipelineParser
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 from kpops.utils.pydantic import YamlConfigSettingsSource
 

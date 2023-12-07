@@ -3,7 +3,7 @@ from pathlib import Path
 import pytest
 
 from kpops.config import KpopsConfig
-from kpops.pipeline_generator.pipeline import PipelineParser
+from kpops.pipeline import PipelineParser
 from kpops.utils.environment import ENV
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"

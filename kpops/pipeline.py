@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from kpops.component_handlers import ComponentHandlers
     from kpops.config import KpopsConfig
 
-log = logging.getLogger("PipelineGenerator")
+log = logging.getLogger("PipelineParser")
 
 
 class ParsingException(Exception):

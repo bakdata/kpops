@@ -7,7 +7,7 @@ from pytest_mock import MockerFixture
 
 from kpops.cli.main import FilterType, get_steps_to_apply
 from kpops.components import PipelineComponent
-from kpops.pipeline_generator.pipeline import Pipeline
+from kpops.pipeline import Pipeline
 
 PREFIX = "example-prefix-"
 

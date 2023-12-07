@@ -8,7 +8,7 @@ from typer.testing import CliRunner
 
 import kpops
 from kpops.cli.main import app
-from kpops.pipeline_generator.pipeline import ParsingException, ValidationError
+from kpops.pipeline import ParsingException, ValidationError
 
 runner = CliRunner()
 
