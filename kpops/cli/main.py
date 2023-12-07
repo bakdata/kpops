@@ -19,7 +19,7 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.config import ENV_PREFIX, KpopsConfig
-from kpops.pipeline_generator.pipeline import PipelineParser
+from kpops.pipeline_generator.pipeline import Pipeline, PipelineParser
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 from kpops.utils.pydantic import YamlConfigSettingsSource
 
@@ -127,14 +127,14 @@ def setup_pipeline(
     pipeline_path: Path,
     components_module: str | None,
     kpops_config: KpopsConfig,
-) -> PipelineParser:
+) -> Pipeline:
     registry = Registry()
     if components_module:
         registry.find_components(components_module)
     registry.find_components("kpops.components")
 
     handlers = setup_handlers(components_module, kpops_config)
-    return PipelineParser.load_from_yaml(
+    return PipelineParser.load_yaml(
         pipeline_base_dir, pipeline_path, registry, kpops_config, handlers
     )
 
@@ -163,7 +163,7 @@ def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
 
 
 def filter_steps_to_apply(
-    pipeline: PipelineParser, steps: set[str], filter_type: FilterType
+    pipeline: Pipeline, steps: set[str], filter_type: FilterType
 ) -> list[PipelineComponent]:
     def is_in_steps(component: PipelineComponent) -> bool:
         return component.name in steps
@@ -185,7 +185,7 @@ def filter_steps_to_apply(
 
 
 def get_steps_to_apply(
-    pipeline: PipelineParser, steps: str | None, filter_type: FilterType
+    pipeline: Pipeline, steps: str | None, filter_type: FilterType
 ) -> list[PipelineComponent]:
     if steps:
         return filter_steps_to_apply(pipeline, parse_steps(steps), filter_type)
@@ -193,7 +193,7 @@ def get_steps_to_apply(
 
 
 def reverse_pipeline_steps(
-    pipeline: PipelineParser, steps: str | None, filter_type: FilterType
+    pipeline: Pipeline, steps: str | None, filter_type: FilterType
 ) -> Iterator[PipelineComponent]:
     return reversed(get_steps_to_apply(pipeline, steps, filter_type))
 
@@ -265,7 +265,7 @@ def generate(
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     verbose: bool = VERBOSE_OPTION,
-) -> PipelineParser:
+) -> Pipeline:
     kpops_config = create_kpops_config(config, defaults, verbose, dotenv)
     pipeline = setup_pipeline(
         pipeline_base_dir, pipeline_path, components_module, kpops_config

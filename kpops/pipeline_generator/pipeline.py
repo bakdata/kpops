@@ -64,12 +64,33 @@ class Pipeline(RootModel):
     def __len__(self) -> int:
         return len(self.root)
 
+    def to_yaml(self) -> str:
+        return yaml.dump(self.model_dump(mode="json", by_alias=True, exclude_none=True))
+
+    def validate(self) -> None:
+        self.validate_unique_names()
+
     def validate_unique_names(self) -> None:
         step_names = [component.full_name for component in self.root]
         duplicates = [name for name, count in Counter(step_names).items() if count > 1]
         if duplicates:
             msg = f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
             raise ValidationError(msg)
+
+    def print_yaml(self, substitution: dict | None = None) -> None:
+        """Print the generated pipeline definition.
+
+        :param substitution: Substitution dictionary, defaults to None
+        """
+        syntax = Syntax(
+            substitute(self.to_yaml(), substitution),
+            "yaml",
+            background_color="default",
+            theme="ansi_dark",
+        )
+        Console(
+            width=1000  # HACK: overwrite console width to avoid truncating output
+        ).print(syntax)
 
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove
@@ -112,17 +133,17 @@ class PipelineParser:
         self.registry = registry
         self.env_components_index = create_env_components_index(environment_components)
         self.parse_components(component_list)
-        self.validate()
+        self.pipeline.validate()
 
     @classmethod
-    def load_from_yaml(
+    def load_yaml(
         cls,
         base_dir: Path,
         path: Path,
         registry: Registry,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-    ) -> PipelineParser:
+    ) -> Pipeline:
         """Load pipeline definition from yaml.
 
         The file is often named ``pipeline.yaml``
@@ -151,7 +172,8 @@ class PipelineParser:
                 msg = f"The pipeline definition {env_file} should contain a list of components"
                 raise TypeError(msg)
 
-        return cls(main_content, env_content, registry, config, handlers)
+        parser = cls(main_content, env_content, registry, config, handlers)
+        return parser.pipeline
 
     def parse_components(self, component_list: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components.
@@ -246,32 +268,6 @@ class PipelineParser:
             **component_data,
         )
 
-    def print_yaml(self, substitution: dict | None = None) -> None:
-        """Print the generated pipeline definition.
-
-        :param substitution: Substitution dictionary, defaults to None
-        """
-        syntax = Syntax(
-            substitute(str(self), substitution),
-            "yaml",
-            background_color="default",
-            theme="ansi_dark",
-        )
-        Console(
-            width=1000  # HACK: overwrite console width to avoid truncating output
-        ).print(syntax)
-
-    def __iter__(self) -> Iterator[PipelineComponent]:
-        return iter(self.pipeline)
-
-    def __str__(self) -> str:
-        return yaml.dump(
-            self.pipeline.model_dump(mode="json", by_alias=True, exclude_none=True)
-        )
-
-    def __len__(self) -> int:
-        return len(self.pipeline)
-
     def substitute_in_component(self, component_as_dict: dict) -> dict:
         """Substitute all $-placeholders in a component in dict representation.
 
@@ -301,9 +297,6 @@ class PipelineParser:
                 **update_nested_pair(substitution, ENV),
             )
         )
-
-    def validate(self) -> None:
-        self.pipeline.validate_unique_names()
 
     @staticmethod
     def pipeline_filename_environment(path: Path, config: KpopsConfig) -> Path:
@@ -337,4 +330,5 @@ class PipelineParser:
         pipeline_name = "-".join(path_without_file)
         ENV["pipeline_name"] = pipeline_name
         for level, parent in enumerate(path_without_file):
+            ENV[f"pipeline_name_{level}"] = parent
             ENV[f"pipeline_name_{level}"] = parent
