@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 import yaml
-from pydantic import RootModel, SerializeAsAny
+from pydantic import Field, RootModel, SerializeAsAny
 from rich.console import Console
 from rich.syntax import Syntax
 
@@ -37,9 +37,11 @@ class ValidationError(Exception):
 
 
 class Pipeline(RootModel):
-    """Stores the pipeline components."""
+    """Pipeline representation."""
 
-    root: list[SerializeAsAny[PipelineComponent]] = []
+    root: list[SerializeAsAny[PipelineComponent]] = Field(
+        default=[], title="Components"
+    )
 
     @property
     def last(self) -> PipelineComponent:
