@@ -128,11 +128,17 @@ class PipelineParser:
 
     def parse(
         self,
-        component_list: list[dict],
+        components: list[dict],
         environment_components: list[dict],
     ) -> Pipeline:
+        """Parse pipeline from sequence of component dictionaries.
+
+        :param components: List of components
+        :param environment_components: List of environment-specific components
+        :returns: Initialized pipeline object
+        """
         self.env_components_index = create_env_components_index(environment_components)
-        self.parse_components(component_list)
+        self.parse_components(components)
         self.pipeline.validate()
         return self.pipeline
 
@@ -147,9 +153,6 @@ class PipelineParser:
 
         :param base_dir: Base directory to the pipelines (default is current working directory)
         :param path: Path to pipeline definition yaml file
-        :param registry: Pipeline components registry
-        :param config: Pipeline config
-        :param handlers: Component handlers
         :raises TypeError: The pipeline definition should contain a list of components
         :raises TypeError: The env-specific pipeline definition should contain a list of components
         :returns: Initialized pipeline object
@@ -171,15 +174,15 @@ class PipelineParser:
 
         return self.parse(main_content, env_content)
 
-    def parse_components(self, component_list: list[dict]) -> None:
+    def parse_components(self, components: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components.
 
-        :param component_list: List of components
+        :param components: List of components
         :raises ValueError: Every component must have a type defined
         :raises ParsingException: Error enriching component
         :raises ParsingException: All undefined exceptions
         """
-        for component_data in component_list:
+        for component_data in components:
             try:
                 try:
                     component_type: str = component_data["type"]
