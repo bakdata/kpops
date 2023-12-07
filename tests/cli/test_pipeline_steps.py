@@ -6,7 +6,8 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.cli.main import FilterType, get_steps_to_apply
-from kpops.pipeline_generator.pipeline import PipelineParser
+from kpops.components import PipelineComponent
+from kpops.pipeline_generator.pipeline import Pipeline
 
 PREFIX = "example-prefix-"
 
@@ -24,18 +25,12 @@ test_component_3 = TestComponent("example3")
 
 
 @pytest.fixture(autouse=True)
-def pipeline() -> PipelineParser:
-    class TestPipelineParser:
-        components = [
-            test_component_1,
-            test_component_2,
-            test_component_3,
-        ]
-
-        def __iter__(self):
-            return iter(self.components)
-
-    return cast(PipelineParser, TestPipelineParser())
+def pipeline() -> Pipeline:
+    pipeline = Pipeline()
+    pipeline.add(cast(PipelineComponent, test_component_1))
+    pipeline.add(cast(PipelineComponent, test_component_2))
+    pipeline.add(cast(PipelineComponent, test_component_3))
+    return pipeline
 
 
 @pytest.fixture(autouse=True)
@@ -43,7 +38,7 @@ def log_info(mocker: MockerFixture) -> MagicMock:
     return mocker.patch("kpops.cli.main.log.info")
 
 
-def tests_filter_steps_to_apply(log_info: MagicMock, pipeline: PipelineParser):
+def tests_filter_steps_to_apply(log_info: MagicMock, pipeline: Pipeline):
     filtered_steps = get_steps_to_apply(
         pipeline, "example2,example3", FilterType.INCLUDE
     )
@@ -64,7 +59,7 @@ def tests_filter_steps_to_apply(log_info: MagicMock, pipeline: PipelineParser):
     assert len(filtered_steps) == 3
 
 
-def tests_filter_steps_to_exclude(log_info: MagicMock, pipeline: PipelineParser):
+def tests_filter_steps_to_exclude(log_info: MagicMock, pipeline: Pipeline):
     filtered_steps = get_steps_to_apply(
         pipeline, "example2,example3", FilterType.EXCLUDE
     )
