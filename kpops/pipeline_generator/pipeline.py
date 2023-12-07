@@ -97,7 +97,7 @@ def create_env_components_index(
     return index
 
 
-class Pipeline:
+class PipelineParser:
     def __init__(
         self,
         component_list: list[dict],
@@ -122,7 +122,7 @@ class Pipeline:
         registry: Registry,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-    ) -> Pipeline:
+    ) -> PipelineParser:
         """Load pipeline definition from yaml.
 
         The file is often named ``pipeline.yaml``
@@ -136,14 +136,16 @@ class Pipeline:
         :raises TypeError: The env-specific pipeline definition should contain a list of components
         :returns: Initialized pipeline object
         """
-        Pipeline.set_pipeline_name_env_vars(base_dir, path)
+        PipelineParser.set_pipeline_name_env_vars(base_dir, path)
 
         main_content = load_yaml_file(path, substitution=ENV)
         if not isinstance(main_content, list):
             msg = f"The pipeline definition {path} should contain a list of components"
             raise TypeError(msg)
         env_content = []
-        if (env_file := Pipeline.pipeline_filename_environment(path, config)).exists():
+        if (
+            env_file := PipelineParser.pipeline_filename_environment(path, config)
+        ).exists():
             env_content = load_yaml_file(env_file, substitution=ENV)
             if not isinstance(env_content, list):
                 msg = f"The pipeline definition {env_file} should contain a list of components"
