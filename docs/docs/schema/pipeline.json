@@ -203,20 +203,13 @@
                     "type": "string"
                 },
                 "name": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Name"
+                    "title": "Name",
+                    "type": "string"
                 }
             },
             "required": [
-                "connector.class"
+                "connector.class",
+                "name"
             ],
             "title": "KafkaConnectorConfig",
             "type": "object"

@@ -4,7 +4,6 @@ from typing import Any, Literal
 from pydantic import (
     BaseModel,
     ConfigDict,
-    Field,
     SerializationInfo,
     field_validator,
     model_serializer,
@@ -29,7 +28,7 @@ class KafkaConnectorConfig(DescConfigModel):
     """Settings specific to Kafka Connectors."""
 
     connector_class: str
-    name: str | None = Field(default=None)
+    name: str  # TODO: hide from schema
 
     @override
     @staticmethod
