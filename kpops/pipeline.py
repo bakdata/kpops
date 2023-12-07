@@ -9,13 +9,11 @@ from typing import TYPE_CHECKING
 
 import yaml
 from pydantic import Field, RootModel, SerializeAsAny
-from rich.console import Console
-from rich.syntax import Syntax
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
-from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
+from kpops.utils.yaml import load_yaml_file, substitute_nested
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -79,21 +77,6 @@ class Pipeline(RootModel):
         if duplicates:
             msg = f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
             raise ValidationError(msg)
-
-    def print_yaml(self, substitution: dict | None = None) -> None:
-        """Print the generated pipeline definition.
-
-        :param substitution: Substitution dictionary, defaults to None
-        """
-        syntax = Syntax(
-            substitute(self.to_yaml(), substitution),
-            "yaml",
-            background_color="default",
-            theme="ansi_dark",
-        )
-        Console(
-            width=1000  # HACK: overwrite console width to avoid truncating output
-        ).print(syntax)
 
     @staticmethod
     def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove

@@ -22,6 +22,7 @@ from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline import Pipeline, PipelineParser
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 from kpops.utils.pydantic import YamlConfigSettingsSource
+from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -271,7 +272,7 @@ def generate(
     )
 
     if not template:
-        pipeline.print_yaml()
+        print_yaml(pipeline.to_yaml())
 
     if template:
         steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)

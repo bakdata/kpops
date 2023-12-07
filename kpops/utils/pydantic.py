@@ -9,7 +9,7 @@ from pydantic_settings import PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
 
 from kpops.utils.docstring import describe_object
-from kpops.utils.yaml_loading import load_yaml_file
+from kpops.utils.yaml import load_yaml_file
 
 
 def to_camel(s: str) -> str:
