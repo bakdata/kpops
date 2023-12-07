@@ -16,11 +16,6 @@ from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
 from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
 
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
-
 if TYPE_CHECKING:
     from collections.abc import Iterator
     from pathlib import Path
@@ -126,8 +121,6 @@ def create_env_components_index(
 class PipelineParser:
     def __init__(
         self,
-        component_list: list[dict],
-        environment_components: list[dict],
         registry: Registry,
         config: KpopsConfig,
         handlers: ComponentHandlers,
@@ -136,19 +129,22 @@ class PipelineParser:
         self.handlers = handlers
         self.config = config
         self.registry = registry
+
+    def parse(
+        self,
+        component_list: list[dict],
+        environment_components: list[dict],
+    ) -> Pipeline:
         self.env_components_index = create_env_components_index(environment_components)
         self.parse_components(component_list)
         self.pipeline.validate()
+        return self.pipeline
 
-    @classmethod
     def load_yaml(
-        cls,
+        self,
         base_dir: Path,
         path: Path,
-        registry: Registry,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ) -> Self:
+    ) -> Pipeline:
         """Load pipeline definition from yaml.
 
         The file is often named ``pipeline.yaml``
@@ -170,14 +166,14 @@ class PipelineParser:
             raise TypeError(msg)
         env_content = []
         if (
-            env_file := PipelineParser.pipeline_filename_environment(path, config)
+            env_file := PipelineParser.pipeline_filename_environment(path, self.config)
         ).exists():
             env_content = load_yaml_file(env_file, substitution=ENV)
             if not isinstance(env_content, list):
                 msg = f"The pipeline definition {env_file} should contain a list of components"
                 raise TypeError(msg)
 
-        return cls(main_content, env_content, registry, config, handlers)
+        return self.parse(main_content, env_content)
 
     def parse_components(self, component_list: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components.

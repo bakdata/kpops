@@ -134,10 +134,8 @@ def setup_pipeline(
     registry.find_components("kpops.components")
 
     handlers = setup_handlers(components_module, kpops_config)
-    parser = PipelineParser.load_yaml(
-        pipeline_base_dir, pipeline_path, registry, kpops_config, handlers
-    )
-    return parser.pipeline
+    parser = PipelineParser(registry, kpops_config, handlers)
+    return parser.load_yaml(pipeline_base_dir, pipeline_path)
 
 
 def setup_handlers(
