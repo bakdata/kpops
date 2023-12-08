@@ -115,42 +115,46 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
 
     log = logging.getLogger()
 
-    path_to_settings = Path()
-    settings_file_base_name = "config"
+    path_to_config = Path()
+    config_file_base_name = "config"
     environment: str | None = None
 
     def __init__(self, settings_cls) -> None:
         super().__init__(settings_cls)
-        self.is_path_settings_file_valid()
-        default_settings = self.__load_settings(
-            self.path_to_settings / f"{self.settings_file_base_name}.yaml"
+        self.is_path_config_file_valid()
+        default_config = self.load_config(
+            self.path_to_config / f"{self.config_file_base_name}.yaml"
         )
-        env_settings = (
-            self.__load_settings(
-                self.path_to_settings
-                / f"{self.settings_file_base_name}_{self.environment}.yaml"
+        env_config = (
+            self.load_config(
+                self.path_to_config
+                / f"{self.config_file_base_name}_{self.environment}.yaml"
             )
             if self.environment
             else {}
         )
-        self.settings = update_nested_pair(env_settings, default_settings)
-        self.settings["environment"] = self.environment
+        self.config = update_nested_pair(env_config, default_config)
 
-    def is_path_settings_file_valid(self) -> None:
-        """Check if the specified settings file exists.
+    def is_path_config_file_valid(self) -> None:
+        """Check if the specified config file exists.
 
         :raises ValueError: Path to config directory does not exist.
         :raises ValueError: Path to config directory must point to a directory.
         """
-        if not self.path_to_settings.exists():
-            msg = f"Path to config directory {self.path_to_settings} does not exist."
+        if not self.path_to_config.exists():
+            msg = f"Path to config directory {self.path_to_config} does not exist."
             raise ValueError(msg)
-        elif self.path_to_settings.is_file():
-            msg = f"Path to config directory {self.path_to_settings} must point to a directory."
+        elif self.path_to_config.is_file():
+            msg = f"Path to config directory {self.path_to_config} must point to a directory."
             raise ValueError(msg)
 
     @staticmethod
-    def __load_settings(file: Path) -> dict:
+    def load_config(file: Path) -> dict:
+        """Load yaml file if it exists
+        
+        :param file: Path to a ``config*.yaml``
+        :return: Dict containing the config or empty dict if file doesn't exist
+        """
         if file.exists() and isinstance((loaded_file := load_yaml_file(file)), dict):
             return loaded_file
         return {}
@@ -161,7 +165,7 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
         field: FieldInfo,
         field_name: str,
     ) -> tuple[Any, str, bool]:
-        return self.settings.get(field_name), field_name, False
+        return self.config.get(field_name), field_name, False
 
     @override
     def prepare_field_value(
