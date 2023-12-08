@@ -523,7 +523,7 @@
             "properties": {
                 "fullnameOverride": {
                     "description": "Fully overrides the release and chart name",
-                    "title": "Fullnameoverride",
+                    "title": "Fullname override",
                     "type": "string"
                 },
                 "streams": {
@@ -751,7 +751,7 @@
                 },
                 "fullnameOverride": {
                     "description": "Fully overrides the release and chart name",
-                    "title": "Fullnameoverride",
+                    "title": "Fullname override",
                     "type": "string"
                 },
                 "streams": {
