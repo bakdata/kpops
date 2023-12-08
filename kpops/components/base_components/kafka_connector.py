@@ -72,7 +72,7 @@ class KafkaConnector(PipelineComponent, ABC):
     )
     _connector_type: KafkaConnectorType = PrivateAttr()
 
-    @field_validator("app")
+    @field_validator("app", mode="before")
     @classmethod
     def connector_config_should_have_component_name(
         cls,
@@ -81,7 +81,7 @@ class KafkaConnector(PipelineComponent, ABC):
     ) -> Any:
         if isinstance(app, KafkaConnectorConfig):
             app = app.model_dump()
-        component_name = info.data["prefix"] + info.data["name"]
+        component_name: str = info.data["prefix"] + info.data["name"]
         connector_name: str | None = app.get("name")
         if connector_name is not None and connector_name != component_name:
             msg = f"Connector name '{connector_name}' should be the same as component name '{component_name}'"
