@@ -19,6 +19,6 @@ def mock_env() -> Iterator[os._Environ[str]]:
 
 
 @pytest.fixture()
-def _load_yaml_file_clear_cache() -> Iterator[None]:
+def load_yaml_file_clear_cache() -> Iterator[None]:
     yield
     load_yaml_file.cache.clear()

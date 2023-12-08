@@ -16,7 +16,7 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 PIPELINE_BASE_DIR_PATH = RESOURCE_PATH.parent
 
 
-@pytest.mark.usefixtures("mock_env", "_load_yaml_file_clear_cache")
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class TestPipeline:
     def test_python_api(self):
         pipeline = kpops.generate(

@@ -150,8 +150,8 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
 
     @staticmethod
     def load_config(file: Path) -> dict:
-        """Load yaml file if it exists
-        
+        """Load yaml file if it exists.
+
         :param file: Path to a ``config*.yaml``
         :return: Dict containing the config or empty dict if file doesn't exist
         """
