@@ -41,7 +41,7 @@ class KafkaAppConfig(KubernetesAppConfig):
     """Settings specific to Kafka Apps.
 
     :param streams: Kafka streams config
-    :param fullname_override: Overrides fully the release and chart name, defaults to None
+    :param fullname_override:Fully overrides the release and chart name, defaults to None
     """
 
     streams: KafkaStreamsConfig = Field(
