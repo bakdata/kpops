@@ -1,9 +1,9 @@
 - type: scheduled-producer
   app:
     labels:
-      app_type: "${component__type}"
-      app_name: "${component__name}"
-      app_schedule: "${component__app__schedule}"
+      app_type: "${component.type}"
+      app_name: "${component.name}"
+      app_schedule: "${component.app.schedule}"
     commandLine:
       FAKE_ARG: "fake-arg-value"
     schedule: "30 3/8 * * *"
@@ -20,11 +20,11 @@
   name: "filter-app"
   app:
     labels:
-      app_type: "${component__type}"
-      app_name: "${component__name}"
-      app_resources_requests_memory: "${component__app__resources__requests__memory}"
-      ${component__type}: "${component__app__labels__app_name}-${component__app__labels__app_type}"
-      test_placeholder_in_placeholder: "${component__app__labels__${component__type}}"
+      app_type: "${component.type}"
+      app_name: "${component.name}"
+      app_resources_requests_memory: "${component.app.resources.requests.memory}"
+      ${component.type}: "${component.app.labels.app_name}-${component.app.labels.app_type}"
+      test_placeholder_in_placeholder: "${component.app.labels.${component.type}}"
     commandLine:
       TYPE: "nothing"
     resources:

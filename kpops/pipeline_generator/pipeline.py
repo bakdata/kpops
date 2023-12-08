@@ -288,20 +288,22 @@ class Pipeline:
             component_as_dict,
             "component",
             substitution_hardcoded,
-            separator="__",
+            separator=".",
         )
         substitution = generate_substitution(
             config.model_dump(mode="json"),
             existing_substitution=component_substitution,
-            separator="__",
+            separator=".",
         )
 
-        return json.loads(
+        result =  json.loads(
             substitute_nested(
                 json.dumps(component_as_dict),
                 **update_nested_pair(substitution, ENV),
             )
         )
+        breakpoint()
+        return result
 
     def validate(self) -> None:
         self.components.validate_unique_names()

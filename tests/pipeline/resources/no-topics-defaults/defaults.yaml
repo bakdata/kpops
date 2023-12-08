@@ -2,7 +2,7 @@ kafka-app:
   app:
     streams:
       brokers: "${kafka_brokers}"
-      schemaRegistryUrl: "${schema_registry__url}"
+      schemaRegistryUrl: "${schema_registry.url}"
 
 producer-app:
   to:

@@ -2,8 +2,8 @@ environment: development
 defaults_path: ..
 kafka_brokers: "broker:9092"
 topic_name_config: 
-  default_error_topic_name: ${component__type}-error-topic
-  default_output_topic_name: ${component__type}-output-topic
+  default_error_topic_name: ${component.type}-error-topic
+  default_output_topic_name: ${component.type}-output-topic
 helm_diff_config: 
   enable: false
 kafka_connect:
