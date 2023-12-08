@@ -1125,6 +1125,8 @@
       
         
       
+        
+      
     
     
     
@@ -1166,6 +1168,26 @@
   
   <span class="md-ellipsis">
     Migrate from v1 to v2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../migration-guide/v2-v3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v2 to v3
   </span>
   
 
@@ -1512,20 +1534,22 @@
 definition <a href="../../../../resources/pipeline-components/pipeline/"><code>pipeline.yaml</code></a>.</p>
 <pre class="mermaid"><code>flowchart BT
     KubernetesApp --&gt; PipelineComponent
-    KafkaConnector --&gt; PipelineComponent
-    KafkaApp --&gt; KubernetesApp
+    HelmApp --&gt; KubernetesApp
+    KafkaApp --&gt; HelmApp
     StreamsApp --&gt; KafkaApp
     ProducerApp --&gt; KafkaApp
+    KafkaConnector --&gt; PipelineComponent
     KafkaSourceConnector --&gt; KafkaConnector
     KafkaSinkConnector --&gt; KafkaConnector
-    
-    click KubernetesApp "../kubernetes-app"
-    click KafkaApp "../kafka-app"
-    click StreamsApp "../streams-app"
-    click ProducerApp "../producer-app"
-    click KafkaConnector "../kafka-connector"
-    click KafkaSourceConnector "../kafka-source-connector"
-    click KafkaSinkConnector "../kafka-sink-connector"</code></pre>
+
+    click KubernetesApp "/kpops/user/core-concepts/components/kubernetes-app"
+    click HelmApp "/kpops/user/core-concepts/components/helm-app"
+    click KafkaApp "/kpops/user/core-concepts/components/kafka-app"
+    click StreamsApp "/kpops/user/core-concepts/components/streams-app"
+    click ProducerApp "/kpops/user/core-concepts/components/producer-app"
+    click KafkaConnector "/kpops/user/core-concepts/components/kafka-connector"
+    click KafkaSourceConnector "/kpops/user/core-concepts/components/kafka-source-connector"
+    click KafkaSinkConnector "/kpops/user/core-concepts/components/kafka-sink-connector"</code></pre>
 <p style="text-align: center;"><i>KPOps component hierarchy</i></p>
 
 

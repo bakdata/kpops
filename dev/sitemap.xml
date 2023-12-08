@@ -76,6 +76,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://bakdata.github.io/kpops/dev/user/core-concepts/components/helm-app/</loc>
+         <lastmod>2023-12-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://bakdata.github.io/kpops/dev/user/core-concepts/components/kafka-app/</loc>
          <lastmod>2023-12-08</lastmod>
          <changefreq>daily</changefreq>
@@ -147,6 +152,11 @@
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/dev/user/migration-guide/v1-v2/</loc>
+         <lastmod>2023-12-08</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
+         <loc>https://bakdata.github.io/kpops/dev/user/migration-guide/v2-v3/</loc>
          <lastmod>2023-12-08</lastmod>
          <changefreq>daily</changefreq>
     </url>
