@@ -1,8 +1,8 @@
-# KubernetesApp
+# HelmApp
 
 ### Usage
 
-Can be used to create components for any Kubernetes app.
+Can be used to deploy any app in Kubernetes using Helm, for example, a REST service that serves Kafka data.
 
 ### Configuration
 
@@ -12,7 +12,7 @@ Can be used to create components for any Kubernetes app.
 
     ```yaml
     --8<--
-    ./docs/resources/pipeline-components/kubernetes-app.yaml
+    ./docs/resources/pipeline-components/helm-app.yaml
     --8<--
     ```
 
@@ -22,11 +22,11 @@ Can be used to create components for any Kubernetes app.
 
 #### deploy
 
-Do nothing.
+Deploy using Helm.
 
 #### destroy
 
-Do nothing.
+Uninstall Helm release.
 
 #### reset
 

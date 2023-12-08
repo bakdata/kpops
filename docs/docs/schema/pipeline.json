@@ -47,6 +47,84 @@
             "title": "FromTopic",
             "type": "object"
         },
+        "HelmApp": {
+            "description": "Kubernetes app managed through Helm with an associated Helm chart.",
+            "properties": {
+                "app": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/KubernetesAppConfig"
+                        }
+                    ],
+                    "description": "Application-specific settings",
+                    "title": "App"
+                },
+                "from": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/FromSection"
+                        }
+                    ],
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "repo_config": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/HelmRepoConfig"
+                        }
+                    ],
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
+                    "title": "Repo Config"
+                },
+                "to": {
+                    "allOf": [
+                        {
+                            "$ref": "#/definitions/ToSection"
+                        }
+                    ],
+                    "description": "Topic(s) into which the component will write output",
+                    "title": "To"
+                },
+                "type": {
+                    "default": "helm-app",
+                    "description": "Kubernetes app managed through Helm with an associated Helm chart.",
+                    "enum": [
+                        "helm-app"
+                    ],
+                    "title": "Component type",
+                    "type": "string"
+                },
+                "version": {
+                    "description": "Helm chart version",
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "namespace",
+                "app"
+            ],
+            "title": "HelmApp",
+            "type": "object"
+        },
         "HelmRepoConfig": {
             "description": "Helm repository configuration.",
             "properties": {
@@ -305,86 +383,8 @@
             "title": "KafkaSourceConnector",
             "type": "object"
         },
-        "KubernetesApp": {
-            "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
-            "properties": {
-                "app": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/KubernetesAppConfig"
-                        }
-                    ],
-                    "description": "Application-specific settings",
-                    "title": "App"
-                },
-                "from": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/FromSection"
-                        }
-                    ],
-                    "description": "Topic(s) and/or components from which the component will read input",
-                    "title": "From"
-                },
-                "name": {
-                    "description": "Component name",
-                    "title": "Name",
-                    "type": "string"
-                },
-                "namespace": {
-                    "description": "Namespace in which the component shall be deployed",
-                    "title": "Namespace",
-                    "type": "string"
-                },
-                "prefix": {
-                    "default": "${pipeline_name}-",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "title": "Prefix",
-                    "type": "string"
-                },
-                "repo_config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/HelmRepoConfig"
-                        }
-                    ],
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component",
-                    "title": "Repo Config"
-                },
-                "to": {
-                    "allOf": [
-                        {
-                            "$ref": "#/definitions/ToSection"
-                        }
-                    ],
-                    "description": "Topic(s) into which the component will write output",
-                    "title": "To"
-                },
-                "type": {
-                    "default": "kubernetes-app",
-                    "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
-                    "enum": [
-                        "kubernetes-app"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
-                },
-                "version": {
-                    "description": "Helm chart version",
-                    "title": "Version",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name",
-                "namespace",
-                "app"
-            ],
-            "title": "KubernetesApp",
-            "type": "object"
-        },
         "KubernetesAppConfig": {
-            "description": "Settings specific to Kubernetes Apps.",
+            "description": "Settings specific to Kubernetes apps.",
             "properties": {},
             "title": "KubernetesAppConfig",
             "type": "object"
@@ -940,9 +940,9 @@
     "items": {
         "discriminator": {
             "mapping": {
+                "helm-app": "#/definitions/HelmApp",
                 "kafka-sink-connector": "#/definitions/KafkaSinkConnector",
                 "kafka-source-connector": "#/definitions/KafkaSourceConnector",
-                "kubernetes-app": "#/definitions/KubernetesApp",
                 "producer-app": "#/definitions/ProducerApp",
                 "streams-app": "#/definitions/StreamsApp"
             },
@@ -950,13 +950,13 @@
         },
         "oneOf": [
             {
+                "$ref": "#/definitions/HelmApp"
+            },
+            {
                 "$ref": "#/definitions/KafkaSinkConnector"
             },
             {
                 "$ref": "#/definitions/KafkaSourceConnector"
-            },
-            {
-                "$ref": "#/definitions/KubernetesApp"
             },
             {
                 "$ref": "#/definitions/ProducerApp"

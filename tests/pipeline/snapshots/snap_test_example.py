@@ -23,12 +23,12 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'replicaCount': 1,
                 'schedule': '0 12 * * *',
                 'streams': {
-                    'brokers': 'http://k8kafka-cp-kafka-headless.${NAMESPACE}.svc.cluster.local:9092',
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'extraOutputTopics': {
                     },
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-account-producer-topic',
-                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081'
+                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
                 },
                 'suspend': True
             },
@@ -74,12 +74,12 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 'replicaCount': 1,
                 'schedule': '0 12 * * *',
                 'streams': {
-                    'brokers': 'http://k8kafka-cp-kafka-headless.${NAMESPACE}.svc.cluster.local:9092',
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'extraOutputTopics': {
                     },
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-transaction-avro-producer-topic',
-                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081'
+                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
                 },
                 'suspend': True
             },
@@ -129,14 +129,14 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 },
                 'replicaCount': 1,
                 'streams': {
-                    'brokers': 'http://k8kafka-cp-kafka-headless.${NAMESPACE}.svc.cluster.local:9092',
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'errorTopic': 'bakdata-atm-fraud-detection-transaction-joiner-dead-letter-topic',
                     'inputTopics': [
                         'bakdata-atm-fraud-detection-transaction-avro-producer-topic'
                     ],
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-transaction-joiner-topic',
-                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081'
+                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
                 }
             },
             'name': 'transaction-joiner',
@@ -191,14 +191,14 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 },
                 'replicaCount': 1,
                 'streams': {
-                    'brokers': 'http://k8kafka-cp-kafka-headless.${NAMESPACE}.svc.cluster.local:9092',
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'errorTopic': 'bakdata-atm-fraud-detection-fraud-detector-dead-letter-topic',
                     'inputTopics': [
                         'bakdata-atm-fraud-detection-transaction-joiner-topic'
                     ],
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-fraud-detector-topic',
-                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081'
+                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
                 }
             },
             'name': 'fraud-detector',
@@ -253,7 +253,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                 },
                 'replicaCount': 1,
                 'streams': {
-                    'brokers': 'http://k8kafka-cp-kafka-headless.${NAMESPACE}.svc.cluster.local:9092',
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'errorTopic': 'bakdata-atm-fraud-detection-account-linker-dead-letter-topic',
                     'extraInputTopics': {
                         'accounts': [
@@ -265,7 +265,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     ],
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-account-linker-topic',
-                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081'
+                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
                 }
             },
             'from': {

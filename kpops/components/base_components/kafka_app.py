@@ -10,9 +10,8 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kubernetes_app import (
-    KubernetesApp,
     KubernetesAppConfig,
 )
 from kpops.utils.docstring import describe_attr
@@ -52,7 +51,7 @@ class KafkaAppConfig(KubernetesAppConfig):
     )
 
 
-class KafkaApp(KubernetesApp, ABC):
+class KafkaApp(HelmApp, ABC):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.
@@ -84,11 +83,6 @@ class KafkaApp(KubernetesApp, ABC):
     def clean_up_helm_chart(self) -> str:
         """Helm chart used to destroy and clean this component."""
         raise NotImplementedError
-
-    @property
-    def clean_up_release_name(self) -> str:
-        suffix = "-clean"
-        return create_helm_release_name(self.helm_release_name + suffix)
 
     @override
     def deploy(self, dry_run: bool) -> None:

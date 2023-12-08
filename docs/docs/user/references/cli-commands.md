@@ -177,7 +177,7 @@ $ kpops schema [OPTIONS] SCOPE:{pipeline|config} [COMPONENTS_MODULE]
 
 
 
-        config: Schema of PipelineConfig.  [required]
+        config: Schema of KpopsConfig.  [required]
 * `[COMPONENTS_MODULE]`: Custom Python module containing your project-specific components
 
 **Options**:

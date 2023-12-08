@@ -5,7 +5,6 @@ from unittest.mock import ANY, MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
@@ -14,6 +13,7 @@ from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
 )
+from kpops.config import KpopsConfig, TopicNameConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
@@ -35,8 +35,8 @@ class TestProducerApp:
         )
 
     @pytest.fixture()
-    def config(self) -> PipelineConfig:
-        return PipelineConfig(
+    def config(self) -> KpopsConfig:
+        return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
             environment="development",
             topic_name_config=TopicNameConfig(
@@ -47,7 +47,7 @@ class TestProducerApp:
 
     @pytest.fixture()
     def producer_app(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> ProducerApp:
         return ProducerApp(
             name=PRODUCER_APP_NAME,
@@ -70,7 +70,7 @@ class TestProducerApp:
             },
         )
 
-    def test_output_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
+    def test_output_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
             name=PRODUCER_APP_NAME,
             config=config,

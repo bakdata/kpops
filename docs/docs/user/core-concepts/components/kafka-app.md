@@ -1,6 +1,6 @@
 # KafkaApp
 
-Subclass of [_KubernetesApp_](kubernetes-app.md).
+Subclass of [_HelmApp_](helm-app.md).
 
 ### Usage
 
@@ -26,7 +26,7 @@ Subclass of [_KubernetesApp_](kubernetes-app.md).
 
 #### deploy
 
-In addition to [KubernetesApp's `deploy`](kubernetes-app.md#deploy):
+In addition to [HelmApp's `deploy`](helm-app.md#deploy):
 
 - Create topics if provided (optional)
 - Submit Avro schemas to the registry if provided (optional)

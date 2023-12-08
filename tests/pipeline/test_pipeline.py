@@ -459,11 +459,7 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    def test_env_vars_precedence_over_config(
-        self,
-        monkeypatch: pytest.MonkeyPatch,
-        snapshot: SnapshotTest,
-    ):
+    def test_env_vars_precedence_over_config(self, monkeypatch: pytest.MonkeyPatch):
         monkeypatch.setenv(name="KPOPS_KAFKA_BROKERS", value="env_broker")
 
         result = runner.invoke(

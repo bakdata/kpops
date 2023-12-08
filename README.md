@@ -29,6 +29,10 @@ You can install it with [pip](https://github.com/pypa/pip):
 pip install kpops
 ```
 
+# GitHub action
+
+Please refer to the [GitHub Actions section](https://bakdata.github.io/kpops/latest/user/references/ci-integration/github-actions) for the documentation.
+
 ## Contributing
 
 We are happy if you want to contribute to this project.

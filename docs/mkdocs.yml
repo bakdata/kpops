@@ -59,7 +59,7 @@ markdown_extensions:
   - pymdownx.keys
   - pymdownx.details
   - pymdownx.snippets:
-      base_path: 'docs/'
+      base_path: "docs/"
       url_download: true
       url_timeout: false
   - pymdownx.caret
@@ -108,6 +108,7 @@ nav:
     - References:
       - Migration guide:
         - Migrate from v1 to v2: user/migration-guide/v1-v2.md
+        - Migrate from v2 to v3: user/migration-guide/v2-v3.md
       - CLI usage: user/references/cli-commands.md
       - Editor integration: user/references/editor-integration.md
       - CI integration:
