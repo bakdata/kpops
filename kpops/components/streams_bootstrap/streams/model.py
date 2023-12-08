@@ -51,7 +51,7 @@ class StreamsConfig(KafkaStreamsConfig):
     error_topic: str | None = Field(
         default=None, description=describe_attr("error_topic", __doc__)
     )
-    config: dict[str, str] = Field(
+    config: dict[str, Any] = Field(
         default={}, description=describe_attr("config", __doc__)
     )
 

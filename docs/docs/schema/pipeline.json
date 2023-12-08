@@ -201,18 +201,6 @@
                 "connector.class": {
                     "title": "Connector.Class",
                     "type": "string"
-                },
-                "name": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Name"
                 }
             },
             "required": [
@@ -913,9 +901,6 @@
                     "type": "string"
                 },
                 "config": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
                     "default": {},
                     "description": "Configuration",
                     "title": "Config",
