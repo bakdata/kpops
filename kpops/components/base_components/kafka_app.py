@@ -47,7 +47,9 @@ class KafkaAppConfig(KubernetesAppConfig):
         default=..., description=describe_attr("streams", __doc__)
     )
     fullname_override: str | None = Field(
-        default=None, description=describe_attr("fullname_override", __doc__)
+        default=None,
+        title="Fullname override",
+        description=describe_attr("fullname_override", __doc__),
     )
 
 
