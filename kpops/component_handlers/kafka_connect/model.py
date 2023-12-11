@@ -4,11 +4,11 @@ from typing import Any, Literal
 from pydantic import (
     BaseModel,
     ConfigDict,
-    Field,
     SerializationInfo,
     field_validator,
     model_serializer,
 )
+from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
 from kpops.utils.pydantic import (
@@ -29,7 +29,7 @@ class KafkaConnectorConfig(DescConfigModel):
     """Settings specific to Kafka Connectors."""
 
     connector_class: str
-    name: str | None = Field(default=None)
+    name: SkipJsonSchema[str]
 
     @override
     @staticmethod

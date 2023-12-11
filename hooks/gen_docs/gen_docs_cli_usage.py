@@ -2,10 +2,10 @@
 
 import subprocess
 
-from hooks import PATH_ROOT
+from hooks import ROOT
 
-PATH_KPOPS_MAIN = PATH_ROOT / "kpops/cli/main.py"
-PATH_CLI_COMMANDS_DOC = PATH_ROOT / "docs/docs/user/references/cli-commands.md"
+PATH_KPOPS_MAIN = ROOT / "kpops/cli/main.py"
+PATH_CLI_COMMANDS_DOC = ROOT / "docs/docs/user/references/cli-commands.md"
 
 # TODO(Ivan Yordanov): try to use typer_cli.main.docs here instead
 # https://github.com/bakdata/kpops/issues/297
