@@ -34,8 +34,6 @@ from tests.components.test_kafka_connector import (
     TestKafkaConnector,
 )
 
-CLEAN_SUFFIX = "-clean"
-
 
 class TestKafkaSinkConnector(TestKafkaConnector):
     @pytest.fixture()

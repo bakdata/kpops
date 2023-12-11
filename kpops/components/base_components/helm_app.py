@@ -72,7 +72,7 @@ class HelmApp(KubernetesApp):
     @property
     def clean_up_release_name(self) -> str:
         suffix = "-clean"
-        return create_helm_release_name(self.helm_release_name + suffix)
+        return create_helm_release_name(self.helm_release_name, suffix)
 
     @property
     def helm_chart(self) -> str:

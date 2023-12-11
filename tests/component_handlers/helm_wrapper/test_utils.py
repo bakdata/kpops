@@ -15,14 +15,13 @@ def test_helm_release_name_for_long_names():
 
 def test_helm_release_name_for_install_and_clean_must_be_different():
     long_release_name = "example-component-name-too-long-fake-fakefakefakefakefake"
-    long_clean_release_name = (
-        "example-component-name-too-long-fake-fakefakefakefakefake-clean"
+
+    helm_clean_release_name = create_helm_release_name(long_release_name, "-clean")
+    expected_helm_release_name = (
+        "example-component-name-too-long-fake-fakefakef-0a7fc-clean"
     )
 
-    helm_release_name = create_helm_release_name(long_release_name)
-    helm_clean_release_name = create_helm_release_name(long_clean_release_name)
-
-    assert helm_release_name != helm_clean_release_name
+    assert expected_helm_release_name != helm_clean_release_name
 
 
 def test_helm_release_name_for_short_names():

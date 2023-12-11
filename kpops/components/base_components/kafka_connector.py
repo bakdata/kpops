@@ -105,8 +105,7 @@ class KafkaConnector(PipelineComponent, ABC):
     @property
     def _resetter_release_name(self) -> str:
         suffix = "-clean"
-        clean_up_release_name = self.full_name + suffix
-        return create_helm_release_name(clean_up_release_name)
+        return create_helm_release_name(self.full_name, suffix)
 
     @property
     def _resetter_helm_chart(self) -> str:

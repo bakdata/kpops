@@ -7,20 +7,22 @@ ENCODING = "utf-8"
 RELEASE_NAME_MAX_LEN = 52
 
 
-def create_helm_release_name(name: str) -> str:
+def create_helm_release_name(name: str, suffix: str = "") -> str:
     """Shortens the long Helm release name.
 
     Creates a 52 character long release name if the name length exceeds the Helm release character length.
-    It first trims the string and fetches the first 52 characters.
-    Then it replaces the last 6 characters with the SHA-1 encoded string (with "-") to avoid collision.
+    It first trims the string and fetches the first RELEASE_NAME_MAX_LEN - len(suffix) characters.
+    Then it replaces the last 6 characters with the SHA-1 encoded string (with "-") to avoid collision
+    and append the suffix if given.
 
-    :param: name: The Helm release name to be shortened.
+    :param name: The Helm release name to be shortened.
+    :param suffix: The release suffix to preserve
     :return: Trimmed + hashed version of the release name if it exceeds the Helm release character length otherwise the actual release name
     """
     if len(name) > RELEASE_NAME_MAX_LEN:
-        exact_name = name[:RELEASE_NAME_MAX_LEN]
+        exact_name = name[: RELEASE_NAME_MAX_LEN - len(suffix)]
         hash_name = hashlib.sha1(name.encode(ENCODING)).hexdigest()
-        new_name = exact_name[:-6] + "-" + hash_name[:5]
+        new_name = exact_name[:-6] + "-" + hash_name[:5] + suffix
         log.critical(
             f"Invalid Helm release name '{name}'. Truncating and hashing the release name: \n {name} --> {new_name}"
         )
