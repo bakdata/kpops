@@ -583,6 +583,25 @@ class TestPipeline:
             == expected_url
         )
 
+    def test_config_dir_doesnt_exist(self):
+        with pytest.raises(ValueError, match=r"Config directory .* does not exist."):
+            runner.invoke(
+                app,
+                [
+                    "generate",
+                    "--pipeline-base-dir",
+                    str(PIPELINE_BASE_DIR_PATH),
+                    str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                    "--config",
+                    "./non-existent-dir",
+                    "--defaults",
+                    str(RESOURCE_PATH),
+                    "--environment",
+                    "production",
+                ],
+                catch_exceptions=False,
+            )
+
     def test_model_serialization(self, snapshot: SnapshotTest):
         """Test model serialization of component containing pathlib.Path attribute."""
         result = runner.invoke(

@@ -224,7 +224,7 @@ def create_kpops_config(
     environment: Optional[str],
 ) -> KpopsConfig:
     setup_logging_level(verbose)
-    YamlConfigSettingsSource.path_to_config = config
+    YamlConfigSettingsSource.config_dir = config
     YamlConfigSettingsSource.environment = environment
     kpops_config = KpopsConfig(
         _env_file=dotenv  # pyright: ignore[reportGeneralTypeIssues]

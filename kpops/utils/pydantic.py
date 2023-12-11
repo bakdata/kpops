@@ -115,19 +115,19 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
 
     log = logging.getLogger()
 
-    path_to_config = Path()
+    config_dir = Path()
     config_file_base_name = "config"
     environment: str | None = None
 
     def __init__(self, settings_cls) -> None:
         super().__init__(settings_cls)
-        self.is_path_config_file_valid()
+        self.is_config_dir_valid()
         default_config = self.load_config(
-            self.path_to_config / f"{self.config_file_base_name}.yaml"
+            self.config_dir / f"{self.config_file_base_name}.yaml"
         )
         env_config = (
             self.load_config(
-                self.path_to_config
+                self.config_dir
                 / f"{self.config_file_base_name}_{self.environment}.yaml"
             )
             if self.environment
@@ -135,17 +135,13 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
         )
         self.config = update_nested_pair(env_config, default_config)
 
-    def is_path_config_file_valid(self) -> None:
-        """Check if the specified config file exists.
+    def is_config_dir_valid(self) -> None:
+        """Check whether the specified config directory exists.
 
-        :raises ValueError: Path to config directory does not exist.
-        :raises ValueError: Path to config directory must point to a directory.
+        :raises ValueError: Config directory does not exist.
         """
-        if not self.path_to_config.exists():
-            msg = f"Path to config directory {self.path_to_config} does not exist."
-            raise ValueError(msg)
-        elif self.path_to_config.is_file():
-            msg = f"Path to config directory {self.path_to_config} must point to a directory."
+        if not self.config_dir.is_dir():
+            msg = f"Config directory {self.config_dir} does not exist."
             raise ValueError(msg)
 
     @staticmethod
