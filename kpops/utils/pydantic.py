@@ -121,7 +121,7 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
 
     def __init__(self, settings_cls) -> None:
         super().__init__(settings_cls)
-        self.is_config_dir_valid()
+        self.check_config_dir_exists()
         default_config = self.load_config(
             self.config_dir / f"{self.config_file_base_name}.yaml"
         )
@@ -135,7 +135,7 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
         )
         self.config = update_nested_pair(env_config, default_config)
 
-    def is_config_dir_valid(self) -> None:
+    def check_config_dir_exists(self) -> None:
         """Check whether the specified config directory exists.
 
         :raises ValueError: Config directory does not exist.
