@@ -107,6 +107,8 @@ _sentinel_dict = {}
 
 
 class ImprovedTemplate(Template):
+    """Introduces the dot as an allowed character in placeholders."""
+
     idpattern = r"(?a:[_a-z][_.a-z0-9]*)"
 
     @override
