@@ -1,11 +1,14 @@
 from collections.abc import Mapping
 from pathlib import Path
-from string import Template
 from typing import Any
 
 import yaml
 from cachetools import cached
 from cachetools.keys import hashkey
+
+from kpops.utils.dict_ops import ImprovedTemplate
+
+# from kpops.utils.dict_ops import ImprovedTemplate
 
 
 def generate_hashkey(
@@ -33,7 +36,12 @@ def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str
     """
     if not substitution:
         return input
-    return Template(input).safe_substitute(**substitution)
+
+    def prepare_substitution(substitution: Mapping[str, Any]) -> dict[str, Any]:
+        """Replace dots with underscores in the substitution keys."""
+        return {k.replace(".", "__"): v for k, v in substitution.items()}
+
+    return ImprovedTemplate(input).safe_substitute(**prepare_substitution(substitution))
 
 
 def substitute_nested(input: str, **kwargs) -> str:

@@ -1,5 +1,10 @@
+import re
+from collections import ChainMap as _ChainMap
 from collections.abc import Mapping
+from string import Template
 from typing import Any
+
+from typing_extensions import override
 
 
 def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
@@ -96,3 +101,36 @@ def generate_substitution(
     return update_nested(
         existing_substitution or {}, flatten_mapping(input, prefix, separator)
     )
+
+
+_sentinel_dict = {}
+
+
+class ImprovedTemplate(Template):
+    idpattern = r"(?a:[_a-z][_.a-z0-9]*)"
+
+    @override
+    def safe_substitute(self, mapping=_sentinel_dict, /, **kws) -> str:
+        if mapping is _sentinel_dict:
+            mapping = kws
+        elif kws:
+            mapping = _ChainMap(kws, mapping)
+
+        # Helper function for .sub()
+        def convert(mo: re.Match):
+            named = mo.group("named") or mo.group("braced")
+            if named is not None:
+                try:
+                    if "." not in named:
+                        return str(mapping[named])
+                    return str(mapping[named.replace(".", "__")])
+                except KeyError:
+                    return mo.group()
+            if mo.group("escaped") is not None:
+                return self.delimiter
+            if mo.group("invalid") is not None:
+                return mo.group()
+            msg = "Unrecognized named group in pattern"
+            raise ValueError(msg, self.pattern)
+
+        return self.pattern.sub(convert, self.template)
