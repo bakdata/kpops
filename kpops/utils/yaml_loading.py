@@ -31,7 +31,6 @@ def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str
     :param substitution: The key-value mapping containing substitutions
     :return: Substituted input string
     """
-    {"placeholder.something": "new value"}
     if not substitution:
         return input
     return Template(input).safe_substitute(**substitution)
