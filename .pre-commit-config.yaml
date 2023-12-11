@@ -1,21 +1,20 @@
 repos:
   - repo: local
     hooks:
-      - id: ruff
-        name: ruff
-        entry: ruff check .
-        args: [ --config, pyproject.toml, --fix, --show-fixes, --exit-non-zero-on-fix ]
+      - id: ruff-lint
+        name: ruff-lint
+        entry: ruff check
+        args: [ --force-exclude, --config, pyproject.toml, --fix, --show-fixes, --exit-non-zero-on-fix ]
         language: system
         types_or: [python]
         require_serial: true # run once for all files
-        pass_filenames: false
-      - id: black
-        name: black
-        entry: black
+      - id: ruff-format
+        name: ruff-format
+        entry: ruff format
+        args: [ --force-exclude, --config, pyproject.toml ]
         language: system
-        types_or: [python, pyi]
+        types_or: [python]
         require_serial: true # run once for all files
-        exclude: ^tests/.*snapshots/
       - id: pyright
         name: pyright
         entry: pyright
@@ -38,6 +37,7 @@ repos:
         types: [python]
         require_serial: true
         exclude: ^tests/.*snapshots/
+        pass_filenames: false
       - id: gen-docs-env-vars
         name: gen-docs-env-vars
         entry: python hooks/gen_docs/gen_docs_env_vars.py
@@ -45,6 +45,7 @@ repos:
         types: [python]
         require_serial: true
         exclude: ^tests/.*snapshots/
+        pass_filenames: false
       - id: gen-docs-components
         name: gen-docs-components
         entry: python hooks/gen_docs/gen_docs_components.py
@@ -67,7 +68,7 @@ repos:
           )$
         require_serial: true
       - id: dprint
-        name: dprint 
+        name: dprint
         entry: dprint fmt
         language: system
         types: [markdown]
