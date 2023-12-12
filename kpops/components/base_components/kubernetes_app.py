@@ -4,12 +4,12 @@ import logging
 import re
 from abc import ABC
 
-from pydantic import BaseModel, Extra, Field
+from pydantic import ConfigDict, Field
 from typing_extensions import override
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
 log = logging.getLogger("KubernetesApp")
 
@@ -18,11 +18,12 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 )
 
 
-class KubernetesAppConfig(BaseModel):
+class KubernetesAppConfig(CamelCaseConfigModel, DescConfigModel):
     """Settings specific to Kubernetes apps."""
 
-    class Config(CamelCaseConfig, DescConfig):
-        extra = Extra.allow
+    model_config = ConfigDict(
+        extra="allow",
+    )
 
 
 class KubernetesApp(PipelineComponent, ABC):

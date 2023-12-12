@@ -8,7 +8,8 @@ from pathlib import Path
 from typing import TypeVar
 
 import typer
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, ConfigDict, Field
+from pydantic.json_schema import SkipJsonSchema
 
 from kpops.component_handlers import ComponentHandlers
 from kpops.config import KpopsConfig
@@ -16,7 +17,7 @@ from kpops.utils import cached_classproperty
 from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
-from kpops.utils.pydantic import DescConfig, to_dash
+from kpops.utils.pydantic import DescConfigModel, to_dash
 from kpops.utils.yaml_loading import load_yaml_file
 
 try:
@@ -27,7 +28,7 @@ except ImportError:
 log = logging.getLogger("BaseDefaultsComponent")
 
 
-class BaseDefaultsComponent(BaseModel, ABC):
+class BaseDefaultsComponent(DescConfigModel, ABC):
     """Base for all components, handles defaults.
 
     Component defaults are usually provided in a yaml file called
@@ -40,35 +41,32 @@ class BaseDefaultsComponent(BaseModel, ABC):
     :param validate: Whether to run custom validation on the component, defaults to True
     """
 
-    enrich: bool = Field(
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        ignored_types=(cached_property, cached_classproperty),
+    )
+
+    enrich: SkipJsonSchema[bool] = Field(
         default=False,
         description=describe_attr("enrich", __doc__),
         exclude=True,
-        hidden_from_schema=True,
     )
-    config: KpopsConfig = Field(
+    config: SkipJsonSchema[KpopsConfig] = Field(
         default=...,
         description=describe_attr("config", __doc__),
         exclude=True,
-        hidden_from_schema=True,
     )
-    handlers: ComponentHandlers = Field(
+    handlers: SkipJsonSchema[ComponentHandlers] = Field(
         default=...,
         description=describe_attr("handlers", __doc__),
         exclude=True,
-        hidden_from_schema=True,
     )
-    validate_: bool = Field(
-        alias="validate",
+    validate_: SkipJsonSchema[bool] = Field(
+        validation_alias=AliasChoices("validate", "validate_"),
         default=True,
         description=describe_attr("validate", __doc__),
         exclude=True,
-        hidden_from_schema=True,
     )
-
-    class Config(DescConfig):
-        arbitrary_types_allowed = True
-        keep_untouched = (cached_property, cached_classproperty)
 
     def __init__(self, **kwargs) -> None:
         if kwargs.get("enrich", True):

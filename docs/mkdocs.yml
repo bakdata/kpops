@@ -82,39 +82,40 @@ nav:
   - Home:
       KPOps Documentation: index.md
   - User Guide:
-    - What is KPOps: user/what-is-kpops.md
-    - Changelog: user/changelog.md
-    - Getting Started:
-      - Setup: user/getting-started/setup.md
-      - Quick start: user/getting-started/quick-start.md
-      - Teardown: user/getting-started/teardown.md
-    - Examples:
-      - ATM Fraud detection pipeline: user/examples/atm-fraud-pipeline.md
-    - Core Concepts:
-        - Components:
-            - Overview: user/core-concepts/components/overview.md
-            - KubernetesApp: user/core-concepts/components/kubernetes-app.md
-            - KafkaApp: user/core-concepts/components/kafka-app.md
-            - StreamsApp: user/core-concepts/components/streams-app.md
-            - ProducerApp: user/core-concepts/components/producer-app.md
-            - KafkaConnector: user/core-concepts/components/kafka-connector.md
-            - KafkaSinkConnector: user/core-concepts/components/kafka-sink-connector.md
-            - KafkaSourceConnector: user/core-concepts/components/kafka-source-connector.md
-        - Config: user/core-concepts/config.md
-        - Defaults: user/core-concepts/defaults.md
-        - Variables:
-            - Environment variables: user/core-concepts/variables/environment_variables.md
-            - Substitution: user/core-concepts/variables/substitution.md
-    - References:
-      - Migration guide:
-        - Migrate from v1 to v2: user/migration-guide/v1-v2.md
-        - Migrate from v2 to v3: user/migration-guide/v2-v3.md
-      - CLI usage: user/references/cli-commands.md
-      - Editor integration: user/references/editor-integration.md
-      - CI integration:
-        - GitHub Actions: user/references/ci-integration/github-actions.md
+      - What is KPOps: user/what-is-kpops.md
+      - Changelog: user/changelog.md
+      - Getting Started:
+          - Setup: user/getting-started/setup.md
+          - Quick start: user/getting-started/quick-start.md
+          - Teardown: user/getting-started/teardown.md
+      - Examples:
+          - ATM Fraud detection pipeline: user/examples/atm-fraud-pipeline.md
+      - Core Concepts:
+          - Components:
+              - Overview: user/core-concepts/components/overview.md
+              - KubernetesApp: user/core-concepts/components/kubernetes-app.md
+              - HelmApp: user/core-concepts/components/helm-app.md
+              - KafkaApp: user/core-concepts/components/kafka-app.md
+              - StreamsApp: user/core-concepts/components/streams-app.md
+              - ProducerApp: user/core-concepts/components/producer-app.md
+              - KafkaConnector: user/core-concepts/components/kafka-connector.md
+              - KafkaSinkConnector: user/core-concepts/components/kafka-sink-connector.md
+              - KafkaSourceConnector: user/core-concepts/components/kafka-source-connector.md
+          - Config: user/core-concepts/config.md
+          - Defaults: user/core-concepts/defaults.md
+          - Variables:
+              - Environment variables: user/core-concepts/variables/environment_variables.md
+              - Substitution: user/core-concepts/variables/substitution.md
+      - References:
+          - Migration guide:
+              - Migrate from v1 to v2: user/migration-guide/v1-v2.md
+              - Migrate from v2 to v3: user/migration-guide/v2-v3.md
+          - CLI usage: user/references/cli-commands.md
+          - Editor integration: user/references/editor-integration.md
+          - CI integration:
+              - GitHub Actions: user/references/ci-integration/github-actions.md
   - Developer Guide:
-    - Getting Started: developer/getting-started.md
-    - Contributing: developer/contributing.md
-    - Code base:
-      - Auto generation: developer/auto-generation.md
+      - Getting Started: developer/getting-started.md
+      - Contributing: developer/contributing.md
+      - Code base:
+          - Auto generation: developer/auto-generation.md

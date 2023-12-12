@@ -481,6 +481,30 @@ class TestPipeline:
             == "env_broker"
         )
 
+    def test_nested_config_env_vars(self, monkeypatch: pytest.MonkeyPatch):
+        monkeypatch.setenv(
+            name="KPOPS_SCHEMA_REGISTRY__URL", value="http://somename:1234"
+        )
+
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                str(RESOURCE_PATH / "custom-config/config.yaml"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
+            == "http://somename:1234/"
+        )
+
     def test_model_serialization(self, snapshot: SnapshotTest):
         """Test model serialization of component containing pathlib.Path attribute."""
         result = runner.invoke(
@@ -500,6 +524,33 @@ class TestPipeline:
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_dotenv_support(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--config",
+                str(RESOURCE_PATH / "dotenv/config.yaml"),
+                "--dotenv",
+                str(RESOURCE_PATH / "dotenv/.env"),
+                "--dotenv",
+                str(RESOURCE_PATH / "dotenv/custom.env"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline["components"][1]["app"]["streams"]["schemaRegistryUrl"]
+            == "http://notlocalhost:8081/"
+        )
 
     def test_short_topic_definition(self):
         result = runner.invoke(
@@ -583,3 +634,23 @@ class TestPipeline:
                 ],
                 catch_exceptions=False,
             )
+
+    def test_temp_trim_release_name(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "temp-trim-release-name/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH / "temp-trim-release-name"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline["components"][0]["name"]
+            == "in-order-to-have-len-fifty-two-name-should-end--here"
+        )

@@ -70,7 +70,7 @@ class TestDictOps:
                     },
                 },
                 problems=99,
-            ).json()
+            ).model_dump_json()
         )
         existing_substitution = {
             "key1": "Everything",

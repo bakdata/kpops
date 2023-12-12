@@ -4,6 +4,7 @@ from typing import Any
 from unittest.mock import MagicMock, patch
 
 import pytest
+from pydantic import AnyHttpUrl
 from pytest_httpx import HTTPXMock
 from pytest_mock import MockerFixture
 
@@ -45,7 +46,7 @@ class TestProxyWrapper:
             json=cluster_response,
             status_code=200,
         )
-        assert self.proxy_wrapper.url == DEFAULT_HOST
+        assert self.proxy_wrapper.url == AnyHttpUrl(DEFAULT_HOST)
         assert self.proxy_wrapper.cluster_id == "cluster-1"
 
     @patch("httpx.post")

@@ -30,7 +30,7 @@ class SchemaHandler:
         components_module: str | None,
     ) -> None:
         self.schema_registry_client = SchemaRegistryClient(
-            kpops_config.schema_registry.url
+            str(kpops_config.schema_registry.url)
         )
         self.components_module = components_module
 

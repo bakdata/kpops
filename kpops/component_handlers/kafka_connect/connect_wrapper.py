@@ -46,10 +46,10 @@ class ConnectWrapper:
         :param connector_config: The config of the connector
         :return: The current connector info if successful.
         """
-        config_json = connector_config.dict()
+        config_json = connector_config.model_dump()
         connect_data = {"name": connector_config.name, "config": config_json}
         response = httpx.post(
-            url=f"{self.url}/connectors", headers=HEADERS, json=connect_data
+            url=f"{self.url}connectors", headers=HEADERS, json=connect_data
         )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_config.name} created.")
@@ -66,14 +66,12 @@ class ConnectWrapper:
     def get_connector(self, connector_name: str) -> KafkaConnectResponse:
         """Get information about the connector.
 
-        API Reference:
-        https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
-
+        API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
         :param connector_name: Nameof the crated connector
         :return: Information about the connector.
         """
         response = httpx.get(
-            url=f"{self.url}/connectors/{connector_name}", headers=HEADERS
+            url=f"{self.url}connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.OK:
             log.info(f"Connector {connector_name} exists.")
@@ -102,9 +100,9 @@ class ConnectWrapper:
         :return: Information about the connector after the change has been made.
         """
         connector_name = connector_config.name
-        config_json = connector_config.dict()
+        config_json = connector_config.model_dump()
         response = httpx.put(
-            url=f"{self.url}/connectors/{connector_name}/config",
+            url=f"{self.url}connectors/{connector_name}/config",
             headers=HEADERS,
             json=config_json,
         )
@@ -135,9 +133,9 @@ class ConnectWrapper:
         :return: List of all found errors
         """
         response = httpx.put(
-            url=f"{self.url}/connector-plugins/{connector_config.class_name}/config/validate",
+            url=f"{self.url}connector-plugins/{connector_config.class_name}/config/validate",
             headers=HEADERS,
-            json=connector_config.dict(),
+            json=connector_config.model_dump(),
         )
 
         if response.status_code == httpx.codes.OK:
@@ -165,7 +163,7 @@ class ConnectWrapper:
         :raises ConnectorNotFoundException: Connector not found
         """
         response = httpx.delete(
-            url=f"{self.url}/connectors/{connector_name}", headers=HEADERS
+            url=f"{self.url}connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Connector {connector_name} deleted.")

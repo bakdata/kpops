@@ -26,7 +26,7 @@ runner = CliRunner()
 # type is inherited from PipelineComponent
 class EmptyPipelineComponent(PipelineComponent):
     class Config:
-        anystr_strip_whitespace = True
+        str_strip_whitespace = True
 
 
 # abstract component inheriting from ABC should be excluded

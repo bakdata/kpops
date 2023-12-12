@@ -7,7 +7,7 @@ from contextlib import suppress
 from typing import TYPE_CHECKING
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, SerializeAsAny
 from rich.console import Console
 from rich.syntax import Syntax
 
@@ -38,7 +38,7 @@ class ValidationError(Exception):
 class PipelineComponents(BaseModel):
     """Stores the pipeline components."""
 
-    components: list[PipelineComponent] = []
+    components: list[SerializeAsAny[PipelineComponent]] = []
 
     @property
     def last(self) -> PipelineComponent:
@@ -192,7 +192,6 @@ class Pipeline:
             **component_data,
         )
         component = self.enrich_component(component)
-
         # inflate & enrich components
         for inflated_component in component.inflate():  # TODO: recursively
             enriched_component = self.enrich_component(inflated_component)
@@ -230,8 +229,7 @@ class Pipeline:
         component.validate_ = True
         env_component_as_dict = update_nested_pair(
             self.env_components_index.get(component.name, {}),
-            # HACK: Pydantic .dict() doesn't create jsonable dict
-            json.loads(component.json(by_alias=True)),
+            component.model_dump(mode="json", by_alias=True),
         )
         # HACK: make sure component type is set for inflated components, because property is not serialized by Pydantic
         env_component_as_dict["type"] = component.type
@@ -266,9 +264,7 @@ class Pipeline:
 
     def __str__(self) -> str:
         return yaml.dump(
-            json.loads(  # HACK: serialize types on Pydantic model export, which are not serialized by .dict(); e.g. pathlib.Path
-                self.components.json(exclude_none=True, by_alias=True)
-            )
+            self.components.model_dump(mode="json", by_alias=True, exclude_none=True)
         )
 
     def __len__(self) -> int:
@@ -283,7 +279,7 @@ class Pipeline:
         config = self.config
         # Leftover variables that were previously introduced in the component by the substitution
         # functions, still hardcoded, because of their names.
-        # TODO: Get rid of them
+        # TODO(Ivan Yordanov): Get rid of them
         substitution_hardcoded = {
             "error_topic_name": config.topic_name_config.default_error_topic_name,
             "output_topic_name": config.topic_name_config.default_output_topic_name,
@@ -294,7 +290,7 @@ class Pipeline:
             substitution_hardcoded,
         )
         substitution = generate_substitution(
-            json.loads(config.json()), existing_substitution=component_substitution
+            config.model_dump(mode="json"), existing_substitution=component_substitution
         )
 
         return json.loads(

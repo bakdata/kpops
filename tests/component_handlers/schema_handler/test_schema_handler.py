@@ -3,7 +3,7 @@ from unittest import mock
 from unittest.mock import MagicMock
 
 import pytest
-from pydantic import AnyHttpUrl, BaseModel, parse_obj_as
+from pydantic import AnyHttpUrl, BaseModel, TypeAdapter
 from pytest_mock import MockerFixture
 from schema_registry.client.schema import AvroSchema
 from schema_registry.client.utils import SchemaVersion
@@ -74,7 +74,8 @@ def kpops_config_with_sr_enabled() -> KpopsConfig:
         environment="development",
         kafka_brokers="broker:9092",
         schema_registry=SchemaRegistryConfig(
-            enabled=True, url=parse_obj_as(AnyHttpUrl, "http://mock:8081")
+            enabled=True,
+            url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),
         ),
     )
 
@@ -87,7 +88,7 @@ def test_load_schema_handler(kpops_config_with_sr_enabled: KpopsConfig):
         SchemaHandler,
     )
 
-    config_disable = kpops_config_with_sr_enabled.copy()
+    config_disable = kpops_config_with_sr_enabled.model_copy()
     config_disable.schema_registry = SchemaRegistryConfig(enabled=False)
 
     assert (
