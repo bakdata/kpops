@@ -19,7 +19,7 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.config import ENV_PREFIX, KpopsConfig
-from kpops.pipeline import Pipeline, PipelineParser
+from kpops.pipeline import Pipeline, PipelineGenerator
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 from kpops.utils.pydantic import YamlConfigSettingsSource
 from kpops.utils.yaml import print_yaml
@@ -145,7 +145,7 @@ def setup_pipeline(
     registry.find_components("kpops.components")
 
     handlers = setup_handlers(components_module, kpops_config)
-    parser = PipelineParser(kpops_config, registry, handlers)
+    parser = PipelineGenerator(kpops_config, registry, handlers)
     return parser.load_yaml(pipeline_base_dir, pipeline_path, environment)
 
 

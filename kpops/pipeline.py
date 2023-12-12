@@ -23,7 +23,7 @@ if TYPE_CHECKING:
     from kpops.component_handlers import ComponentHandlers
     from kpops.config import KpopsConfig
 
-log = logging.getLogger("PipelineParser")
+log = logging.getLogger("PipelineGenerator")
 
 
 class ParsingException(Exception):
@@ -105,7 +105,7 @@ def create_env_components_index(
 
 
 @dataclass
-class PipelineParser:
+class PipelineGenerator:
     config: KpopsConfig
     registry: Registry
     handlers: ComponentHandlers
@@ -140,8 +140,8 @@ class PipelineParser:
         :raises TypeError: The env-specific pipeline definition should contain a list of components
         :returns: Initialized pipeline object
         """
-        PipelineParser.set_pipeline_name_env_vars(base_dir, path)
-        PipelineParser.set_environment_name(environment)
+        PipelineGenerator.set_pipeline_name_env_vars(base_dir, path)
+        PipelineGenerator.set_environment_name(environment)
 
         main_content = load_yaml_file(path, substitution=ENV)
         if not isinstance(main_content, list):
@@ -151,7 +151,7 @@ class PipelineParser:
         if (
             environment
             and (
-                env_file := PipelineParser.pipeline_filename_environment(
+                env_file := PipelineGenerator.pipeline_filename_environment(
                     path, environment
                 )
             ).exists()
