@@ -28,7 +28,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     },
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-account-producer-topic',
-                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
+                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
                 },
                 'suspend': True
             },
@@ -79,7 +79,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     },
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-transaction-avro-producer-topic',
-                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
+                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
                 },
                 'suspend': True
             },
@@ -136,7 +136,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     ],
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-transaction-joiner-topic',
-                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
+                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
                 }
             },
             'name': 'transaction-joiner',
@@ -198,7 +198,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     ],
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-fraud-detector-topic',
-                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
+                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
                 }
             },
             'name': 'fraud-detector',
@@ -265,7 +265,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = {
                     ],
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'bakdata-atm-fraud-detection-account-linker-topic',
-                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081'
+                    'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
                 }
             },
             'from': {

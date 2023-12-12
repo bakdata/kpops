@@ -1,8 +1,7 @@
-from collections.abc import Mapping, Set
+from collections.abc import Callable
 from typing import Any
 
-from pydantic import BaseConfig, BaseModel, Extra, Field
-from typing_extensions import override
+from pydantic import ConfigDict, Field, SerializationInfo, model_serializer
 
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
@@ -10,7 +9,12 @@ from kpops.components.base_components.kafka_app import (
     KafkaStreamsConfig,
 )
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import (
+    CamelCaseConfigModel,
+    DescConfigModel,
+    exclude_by_value,
+    exclude_defaults,
+)
 
 
 class StreamsConfig(KafkaStreamsConfig):
@@ -47,7 +51,7 @@ class StreamsConfig(KafkaStreamsConfig):
     error_topic: str | None = Field(
         default=None, description=describe_attr("error_topic", __doc__)
     )
-    config: dict[str, str] = Field(
+    config: dict[str, Any] = Field(
         default={}, description=describe_attr("config", __doc__)
     )
 
@@ -72,40 +76,15 @@ class StreamsConfig(KafkaStreamsConfig):
             self.extra_input_topics.get(role, []) + topics
         )
 
-    @override
-    def dict(
-        self,
-        *,
-        include: None | Set[int | str] | Mapping[int | str, Any] = None,
-        exclude: None | Set[int | str] | Mapping[int | str, Any] = None,
-        by_alias: bool = False,
-        skip_defaults: bool | None = None,
-        exclude_unset: bool = False,
-        **kwargs,
-    ) -> dict:
-        """Generate a dictionary representation of the model.
-
-        Optionally, specify which fields to include or exclude.
-
-        :param include: Fields to include
-        :param include: Fields to exclude
-        :param by_alias: Use the fields' aliases in the dictionary
-        :param skip_defaults: Whether to skip defaults
-        :param exclude_unset: Whether to exclude unset fields
-        """
-        return super().dict(
-            include=include,
-            exclude=exclude,
-            by_alias=by_alias,
-            skip_defaults=skip_defaults,
-            exclude_unset=exclude_unset,
-            # The following lines are required only for the streams configs since we never not want to export defaults here, just fallback to helm default values
-            exclude_defaults=True,
-            exclude_none=True,
-        )
+    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self, handler: Callable, info: SerializationInfo
+    ) -> dict[str, Any]:
+        return exclude_defaults(self, exclude_by_value(handler(self), None))
 
 
-class StreamsAppAutoScaling(BaseModel):
+class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
     """Kubernetes Event-driven Autoscaling config.
 
     :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
@@ -184,9 +163,7 @@ class StreamsAppAutoScaling(BaseModel):
         default=[],
         description=describe_attr("topics", __doc__),
     )
-
-    class Config(CamelCaseConfig, DescConfig):
-        extra = Extra.allow
+    model_config = ConfigDict(extra="allow")
 
 
 class StreamsAppConfig(KafkaAppConfig):
@@ -206,6 +183,4 @@ class StreamsAppConfig(KafkaAppConfig):
         default=None,
         description=describe_attr("autoscaling", __doc__),
     )
-
-    class Config(BaseConfig):
-        extra = Extra.allow
+    model_config = ConfigDict(extra="allow")

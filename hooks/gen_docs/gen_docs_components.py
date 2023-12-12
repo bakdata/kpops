@@ -40,11 +40,12 @@ KPOPS_COMPONENTS_INHERITANCE_REF = {
     ).type
     for component in KPOPS_COMPONENTS
 }
+
 KPOPS_COMPONENTS_SECTIONS = {
     component.type: [
         field_name
-        for field_name, model in component.__fields__.items()
-        if not model.field_info.exclude
+        for field_name, field_info in component.model_fields.items()
+        if not field_info.exclude
     ]
     for component in KPOPS_COMPONENTS
 }

@@ -3,23 +3,23 @@ from dataclasses import dataclass
 from pathlib import Path
 
 import yaml
-from pydantic import BaseConfig, BaseModel, Extra, Field
+from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.exception import ParseError
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfig
+from kpops.utils.pydantic import DescConfigModel
 
 
 class HelmDiffConfig(BaseModel):
     ignore: set[str] = Field(
         default_factory=set,
         description="Set of keys that should not be checked.",
-        example="- name\n- imageTag",
+        examples=["- name\n- imageTag"],
     )
 
 
-class RepoAuthFlags(BaseModel):
+class RepoAuthFlags(DescConfigModel):
     """Authorisation-related flags for `helm repo`.
 
     :param username: Username, defaults to None
@@ -46,9 +46,6 @@ class RepoAuthFlags(BaseModel):
         default=False, description=describe_attr("insecure_skip_tls_verify", __doc__)
     )
 
-    class Config(DescConfig):
-        pass
-
     def to_command(self) -> list[str]:
         command: list[str] = []
         if self.username:
@@ -64,7 +61,7 @@ class RepoAuthFlags(BaseModel):
         return command
 
 
-class HelmRepoConfig(BaseModel):
+class HelmRepoConfig(DescConfigModel):
     """Helm repository configuration.
 
     :param repository_name: Name of the Helm repository
@@ -80,11 +77,8 @@ class HelmRepoConfig(BaseModel):
         default=RepoAuthFlags(), description=describe_attr("repo_auth_flags", __doc__)
     )
 
-    class Config(DescConfig):
-        pass
 
-
-class HelmConfig(BaseModel):
+class HelmConfig(DescConfigModel):
     """Global Helm configuration.
 
     :param context: Name of kubeconfig context (`--kube-context`)
@@ -95,7 +89,7 @@ class HelmConfig(BaseModel):
     context: str | None = Field(
         default=None,
         description=describe_attr("context", __doc__),
-        example="dev-storage",
+        examples=["dev-storage"],
     )
     debug: bool = Field(
         default=False,
@@ -107,9 +101,6 @@ class HelmConfig(BaseModel):
         description=describe_attr("api_version", __doc__),
     )
 
-    class Config(DescConfig):
-        pass
-
 
 class HelmFlags(RepoAuthFlags):
     set_file: dict[str, Path] = Field(default_factory=dict)
@@ -120,8 +111,9 @@ class HelmFlags(RepoAuthFlags):
     wait: bool = True
     wait_for_jobs: bool = False
 
-    class Config(BaseConfig):
-        extra = Extra.allow
+    model_config = ConfigDict(
+        extra="allow",
+    )
 
     @override
     def to_command(self) -> list[str]:

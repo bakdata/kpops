@@ -74,7 +74,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=KafkaConnectorConfig(
-                **{**connector_config.dict(), "topics": topic_name}
+                **{**connector_config.model_dump(), "topics": topic_name}
             ),
             namespace="test-namespace",
         )
@@ -86,7 +86,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=KafkaConnectorConfig(
-                **{**connector_config.dict(), "topics.regex": topic_pattern}
+                **{**connector_config.model_dump(), "topics.regex": topic_pattern}
             ),
             namespace="test-namespace",
         )

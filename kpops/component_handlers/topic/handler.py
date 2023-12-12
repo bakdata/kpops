@@ -131,7 +131,7 @@ class TopicHandler:
             log.debug(f"POST /clusters/{self.proxy_wrapper.cluster_id}/topics HTTP/1.1")
             log.debug(f"Host: {self.proxy_wrapper.url}")
             log.debug(HEADERS)
-            log.debug(topic_spec.dict())
+            log.debug(topic_spec.model_dump())
 
     @staticmethod
     def __check_partition_count(
@@ -203,7 +203,7 @@ class TopicHandler:
         :param topic_config: The topic config
         :return: Topic specification
         """
-        topic_spec_json: dict = topic_config.dict(
+        topic_spec_json: dict = topic_config.model_dump(
             include={
                 "partitions_count": True,
                 "replication_factor": True,

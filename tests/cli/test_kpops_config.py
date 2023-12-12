@@ -1,7 +1,7 @@
 from pathlib import Path
 
 import pytest
-from pydantic import AnyHttpUrl, ValidationError, parse_obj_as
+from pydantic import AnyHttpUrl, TypeAdapter, ValidationError
 
 from kpops.config import (
     KafkaConnectConfig,
@@ -12,9 +12,7 @@ from kpops.config import (
 
 
 def test_kpops_config_with_default_values():
-    default_config = KpopsConfig(
-        environment="development", kafka_brokers="http://broker:9092"
-    )
+    default_config = KpopsConfig(kafka_brokers="http://broker:9092")
 
     assert default_config.defaults_path == Path()
     assert default_config.defaults_filename_prefix == "defaults"
@@ -27,9 +25,9 @@ def test_kpops_config_with_default_values():
         == "${pipeline_name}-${component_name}-error"
     )
     assert default_config.schema_registry.enabled is False
-    assert default_config.schema_registry.url == "http://localhost:8081"
-    assert default_config.kafka_rest.url == "http://localhost:8082"
-    assert default_config.kafka_connect.url == "http://localhost:8083"
+    assert default_config.schema_registry.url == AnyHttpUrl("http://localhost:8081")
+    assert default_config.kafka_rest.url == AnyHttpUrl("http://localhost:8082")
+    assert default_config.kafka_connect.url == AnyHttpUrl("http://localhost:8083")
     assert default_config.timeout == 300
     assert default_config.create_namespace is False
     assert default_config.helm_config.context is None
@@ -42,26 +40,25 @@ def test_kpops_config_with_default_values():
 def test_kpops_config_with_different_invalid_urls():
     with pytest.raises(ValidationError):
         KpopsConfig(
-            environment="development",
             kafka_brokers="http://broker:9092",
             kafka_connect=KafkaConnectConfig(
-                url=parse_obj_as(AnyHttpUrl, "invalid-host")
+                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host")
             ),
         )
 
     with pytest.raises(ValidationError):
         KpopsConfig(
-            environment="development",
             kafka_brokers="http://broker:9092",
-            kafka_rest=KafkaRestConfig(url=parse_obj_as(AnyHttpUrl, "invalid-host")),
+            kafka_rest=KafkaRestConfig(
+                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host")
+            ),
         )
 
     with pytest.raises(ValidationError):
         KpopsConfig(
-            environment="development",
             kafka_brokers="http://broker:9092",
             schema_registry=SchemaRegistryConfig(
                 enabled=True,
-                url=parse_obj_as(AnyHttpUrl, "invalid-host"),
+                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host"),
             ),
         )

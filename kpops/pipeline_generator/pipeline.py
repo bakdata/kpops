@@ -7,7 +7,7 @@ from contextlib import suppress
 from typing import TYPE_CHECKING
 
 import yaml
-from pydantic import BaseModel
+from pydantic import BaseModel, SerializeAsAny
 from rich.console import Console
 from rich.syntax import Syntax
 
@@ -38,7 +38,7 @@ class ValidationError(Exception):
 class PipelineComponents(BaseModel):
     """Stores the pipeline components."""
 
-    components: list[PipelineComponent] = []
+    components: list[SerializeAsAny[PipelineComponent]] = []
 
     @property
     def last(self) -> PipelineComponent:
@@ -119,6 +119,7 @@ class Pipeline:
         cls,
         base_dir: Path,
         path: Path,
+        environment: str | None,
         registry: Registry,
         config: KpopsConfig,
         handlers: ComponentHandlers,
@@ -137,13 +138,19 @@ class Pipeline:
         :returns: Initialized pipeline object
         """
         Pipeline.set_pipeline_name_env_vars(base_dir, path)
+        Pipeline.set_environment_name(environment)
 
         main_content = load_yaml_file(path, substitution=ENV)
         if not isinstance(main_content, list):
             msg = f"The pipeline definition {path} should contain a list of components"
             raise TypeError(msg)
         env_content = []
-        if (env_file := Pipeline.pipeline_filename_environment(path, config)).exists():
+        if (
+            environment
+            and (
+                env_file := Pipeline.pipeline_filename_environment(path, environment)
+            ).exists()
+        ):
             env_content = load_yaml_file(env_file, substitution=ENV)
             if not isinstance(env_content, list):
                 msg = f"The pipeline definition {env_file} should contain a list of components"
@@ -192,7 +199,6 @@ class Pipeline:
             **component_data,
         )
         component = self.enrich_component(component)
-
         # inflate & enrich components
         for inflated_component in component.inflate():  # TODO: recursively
             enriched_component = self.enrich_component(inflated_component)
@@ -230,8 +236,7 @@ class Pipeline:
         component.validate_ = True
         env_component_as_dict = update_nested_pair(
             self.env_components_index.get(component.name, {}),
-            # HACK: Pydantic .dict() doesn't create jsonable dict
-            json.loads(component.json(by_alias=True)),
+            component.model_dump(mode="json", by_alias=True),
         )
         # HACK: make sure component type is set for inflated components, because property is not serialized by Pydantic
         env_component_as_dict["type"] = component.type
@@ -266,9 +271,7 @@ class Pipeline:
 
     def __str__(self) -> str:
         return yaml.dump(
-            json.loads(  # HACK: serialize types on Pydantic model export, which are not serialized by .dict(); e.g. pathlib.Path
-                self.components.json(exclude_none=True, by_alias=True)
-            )
+            self.components.model_dump(mode="json", by_alias=True, exclude_none=True)
         )
 
     def __len__(self) -> int:
@@ -283,7 +286,7 @@ class Pipeline:
         config = self.config
         # Leftover variables that were previously introduced in the component by the substitution
         # functions, still hardcoded, because of their names.
-        # TODO: Get rid of them
+        # TODO(Ivan Yordanov): Get rid of them
         substitution_hardcoded = {
             "error_topic_name": config.topic_name_config.default_error_topic_name,
             "output_topic_name": config.topic_name_config.default_output_topic_name,
@@ -294,7 +297,7 @@ class Pipeline:
             substitution_hardcoded,
         )
         substitution = generate_substitution(
-            json.loads(config.json()), existing_substitution=component_substitution
+            config.model_dump(mode="json"), existing_substitution=component_substitution
         )
 
         return json.loads(
@@ -308,14 +311,14 @@ class Pipeline:
         self.components.validate_unique_names()
 
     @staticmethod
-    def pipeline_filename_environment(path: Path, config: KpopsConfig) -> Path:
+    def pipeline_filename_environment(pipeline_path: Path, environment: str) -> Path:
         """Add the environment name from the KpopsConfig to the pipeline.yaml path.
 
-        :param path: Path to pipeline.yaml file
+        :param pipeline_path: Path to pipeline.yaml file
         :param config: The KpopsConfig
         :returns: An absolute path to the pipeline_<environment>.yaml
         """
-        return path.with_stem(f"{path.stem}_{config.environment}")
+        return pipeline_path.with_stem(f"{pipeline_path.stem}_{environment}")
 
     @staticmethod
     def set_pipeline_name_env_vars(base_dir: Path, path: Path) -> None:
@@ -340,3 +343,15 @@ class Pipeline:
         ENV["pipeline_name"] = pipeline_name
         for level, parent in enumerate(path_without_file):
             ENV[f"pipeline_name_{level}"] = parent
+
+    @staticmethod
+    def set_environment_name(environment: str | None) -> None:
+        """Set the environment name.
+
+        It will be used to find environment-specific pipeline definitions,
+        defaults and configs.
+
+        :param environment: Environment name
+        """
+        if environment is not None:
+            ENV["environment"] = environment

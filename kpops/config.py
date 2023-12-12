@@ -1,15 +1,18 @@
 from __future__ import annotations
 
-from collections.abc import Callable
 from pathlib import Path
-from typing import Any
 
-from pydantic import AnyHttpUrl, BaseConfig, BaseSettings, Field, parse_obj_as
-from pydantic.env_settings import SettingsSourceCallable
+from pydantic import AnyHttpUrl, Field, TypeAdapter
+from pydantic_settings import (
+    BaseSettings,
+    PydanticBaseSettingsSource,
+    SettingsConfigDict,
+)
+from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.docstring import describe_object
-from kpops.utils.yaml_loading import load_yaml_file
+from kpops.utils.pydantic import YamlConfigSettingsSource
 
 ENV_PREFIX = "KPOPS_"
 
@@ -35,10 +38,7 @@ class SchemaRegistryConfig(BaseSettings):
         description="Whether the Schema Registry handler should be initialized.",
     )
     url: AnyHttpUrl = Field(
-        # For validating URLs use parse_obj_as
-        # https://github.com/pydantic/pydantic/issues/1106
-        default=parse_obj_as(AnyHttpUrl, "http://localhost:8081"),
-        env=f"{ENV_PREFIX}SCHEMA_REGISTRY_URL",
+        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8081"),
         description="Address of the Schema Registry.",
     )
 
@@ -47,8 +47,7 @@ class KafkaRestConfig(BaseSettings):
     """Configuration for Kafka REST Proxy."""
 
     url: AnyHttpUrl = Field(
-        default=parse_obj_as(AnyHttpUrl, "http://localhost:8082"),
-        env=f"{ENV_PREFIX}KAFKA_REST_URL",
+        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8082"),
         description="Address of the Kafka REST Proxy.",
     )
 
@@ -57,8 +56,7 @@ class KafkaConnectConfig(BaseSettings):
     """Configuration for Kafka Connect."""
 
     url: AnyHttpUrl = Field(
-        default=parse_obj_as(AnyHttpUrl, "http://localhost:8083"),
-        env=f"{ENV_PREFIX}KAFKA_CONNECT_URL",
+        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8083"),
         description="Address of Kafka Connect.",
     )
 
@@ -68,22 +66,16 @@ class KpopsConfig(BaseSettings):
 
     defaults_path: Path = Field(
         default=Path(),
-        example="defaults",
+        examples=["defaults", "."],
         description="The path to the folder containing the defaults.yaml file and the environment defaults files. "
         "Paths can either be absolute or relative to `config.yaml`",
     )
-    environment: str = Field(
-        default=...,
-        env=f"{ENV_PREFIX}ENVIRONMENT",
-        example="development",
-        description="The environment you want to generate and deploy the pipeline to. "
-        "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
-    )
     kafka_brokers: str = Field(
         default=...,
-        env=f"{ENV_PREFIX}KAFKA_BROKERS",
+        examples=[
+            "broker1:9092,broker2:9092,broker3:9092",
+        ],
         description="The comma separated Kafka brokers address.",
-        example="broker1:9092,broker2:9092,broker3:9092",
     )
     defaults_filename_prefix: str = Field(
         default="defaults",
@@ -107,7 +99,6 @@ class KpopsConfig(BaseSettings):
     )
     timeout: int = Field(
         default=300,
-        env=f"{ENV_PREFIX}TIMEOUT",
         description="The timeout in seconds that specifies when actions like deletion or deploy timeout.",
     )
     create_namespace: bool = Field(
@@ -124,38 +115,25 @@ class KpopsConfig(BaseSettings):
     )
     retain_clean_jobs: bool = Field(
         default=False,
-        env=f"{ENV_PREFIX}RETAIN_CLEAN_JOBS",
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
 
-    class Config(BaseConfig):
-        config_path = Path("config.yaml")
-        env_file = ".env"
-        env_file_encoding = "utf-8"
-        env_prefix = ENV_PREFIX
+    model_config = SettingsConfigDict(env_prefix=ENV_PREFIX, env_nested_delimiter="__")
 
-        @classmethod
-        def customise_sources(
-            cls,
-            init_settings: SettingsSourceCallable,
-            env_settings: SettingsSourceCallable,
-            file_secret_settings: SettingsSourceCallable,
-        ) -> tuple[
-            SettingsSourceCallable | Callable[[KpopsConfig], dict[str, Any]], ...
-        ]:
-            return (
-                env_settings,
-                init_settings,
-                yaml_config_settings_source,
-                file_secret_settings,
-            )
-
-
-def yaml_config_settings_source(settings: KpopsConfig) -> dict[str, Any]:
-    path_to_config = settings.Config.config_path
-    if path_to_config.exists():
-        if isinstance(source := load_yaml_file(path_to_config), dict):
-            return source
-        err_msg = f"{path_to_config} must be a mapping."
-        raise TypeError(err_msg)
-    return {}
+    @override
+    @classmethod
+    def settings_customise_sources(
+        cls,
+        settings_cls: type[BaseSettings],
+        init_settings: PydanticBaseSettingsSource,
+        env_settings: PydanticBaseSettingsSource,
+        dotenv_settings: PydanticBaseSettingsSource,
+        file_secret_settings: PydanticBaseSettingsSource,
+    ):
+        return (
+            env_settings,
+            init_settings,
+            YamlConfigSettingsSource(settings_cls),
+            dotenv_settings,
+            file_secret_settings,
+        )

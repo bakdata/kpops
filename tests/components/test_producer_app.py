@@ -38,7 +38,6 @@ class TestProducerApp:
     def config(self) -> KpopsConfig:
         return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
-            environment="development",
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",

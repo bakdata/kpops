@@ -46,7 +46,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         :return: The Kafka cluster ID.
         """
-        response = httpx.get(url=f"{self._config.url}/v3/clusters")
+        response = httpx.get(url=f"{self._config.url!s}v3/clusters")
         if response.status_code == httpx.codes.OK:
             cluster_information = response.json()
             return cluster_information["data"][0]["cluster_id"]
@@ -67,9 +67,9 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         """
         response = httpx.post(
-            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics",
+            url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
-            json=topic_spec.dict(exclude_none=True),
+            json=topic_spec.model_dump(exclude_none=True),
         )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Topic {topic_spec.topic_name} created.")
@@ -88,7 +88,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         """
         response = httpx.delete(
-            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
+            url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
         if response.status_code == httpx.codes.NO_CONTENT:
@@ -109,7 +109,7 @@ class ProxyWrapper:
         :return: Response of the get topic API.
         """
         response = httpx.get(
-            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics/{topic_name}",
+            url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
         if response.status_code == httpx.codes.OK:
@@ -139,7 +139,7 @@ class ProxyWrapper:
         :return: The topic configuration.
         """
         response = httpx.get(
-            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",
+            url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",
             headers=HEADERS,
         )
 
@@ -169,7 +169,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         """
         response = httpx.post(
-            url=f"{self.url}/v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",
+            url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={"data": json_body},
         )
@@ -189,7 +189,7 @@ class ProxyWrapper:
         :return: The broker configuration.
         """
         response = httpx.get(
-            url=f"{self.url}/v3/clusters/{self.cluster_id}/brokers/-/configs",
+            url=f"{self.url!s}v3/clusters/{self.cluster_id}/brokers/-/configs",
             headers=HEADERS,
         )
 

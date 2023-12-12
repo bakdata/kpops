@@ -71,7 +71,7 @@ class ShouldInflate(StreamsApp):
                                     f"{self.full_name}-" + "${component_name}"
                                 ): TopicConfig(type=OutputTopicTypes.OUTPUT)
                             }
-                        ).dict(),
+                        ).model_dump(),
                     )
                     inflate_steps.append(streams_app)
 

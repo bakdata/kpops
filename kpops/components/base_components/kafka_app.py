@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC
 
-from pydantic import BaseModel, Extra, Field
+from pydantic import ConfigDict, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import (
@@ -15,12 +15,12 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesAppConfig,
 )
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
 log = logging.getLogger("KafkaApp")
 
 
-class KafkaStreamsConfig(BaseModel):
+class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     """Kafka Streams config.
 
     :param brokers: Brokers
@@ -32,8 +32,9 @@ class KafkaStreamsConfig(BaseModel):
         default=None, description=describe_attr("schema_registry_url", __doc__)
     )
 
-    class Config(CamelCaseConfig, DescConfig):
-        extra = Extra.allow
+    model_config = ConfigDict(
+        extra="allow",
+    )
 
 
 class KafkaAppConfig(KubernetesAppConfig):

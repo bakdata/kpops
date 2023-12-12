@@ -40,12 +40,14 @@ $ kpops clean [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
-* `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
+* `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--help`: Show this message and exit.
 
 ## `kpops deploy`
@@ -66,12 +68,14 @@ $ kpops deploy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
-* `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
+* `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--help`: Show this message and exit.
 
 ## `kpops destroy`
@@ -92,12 +96,14 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
-* `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
+* `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--help`: Show this message and exit.
 
 ## `kpops generate`
@@ -118,12 +124,14 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
-* `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
+* `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
 * `--template / --no-template`: Run Helm template  [default: no-template]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--help`: Show this message and exit.
 
 ## `kpops reset`
@@ -144,12 +152,14 @@ $ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
-* `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
+* `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--help`: Show this message and exit.
 
 ## `kpops schema`

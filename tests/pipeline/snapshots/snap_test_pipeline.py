@@ -25,7 +25,7 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
                     'extraOutputTopics': {
                     },
                     'outputTopic': 'resources-custom-config-app1',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'app1',
@@ -67,7 +67,7 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = {
                         'resources-custom-config-app1'
                     ],
                     'outputTopic': 'resources-custom-config-app2',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'app2',
@@ -120,7 +120,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                     'extraOutputTopics': {
                     },
                     'outputTopic': 'resources-pipeline-with-inflate-scheduled-producer',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'scheduled-producer',
@@ -187,7 +187,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                         'resources-pipeline-with-inflate-scheduled-producer'
                     ],
                     'outputTopic': 'resources-pipeline-with-inflate-converter',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'converter',
@@ -262,7 +262,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                         'resources-pipeline-with-inflate-converter'
                     ],
                     'outputTopic': 'resources-pipeline-with-inflate-should-inflate',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'should-inflate',
@@ -359,7 +359,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = {
                         'kafka-sink-connector'
                     ],
                     'outputTopic': 'resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'should-inflate-inflated-streams-app',
@@ -413,7 +413,7 @@ snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'
                         'example-topic'
                     ],
                     'outputTopic': 'example-output',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'from': {
@@ -506,7 +506,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
                     'extraOutputTopics': {
                     },
                     'outputTopic': 'resources-first-pipeline-scheduled-producer',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'scheduled-producer',
@@ -573,7 +573,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
                         'resources-first-pipeline-scheduled-producer'
                     ],
                     'outputTopic': 'resources-first-pipeline-converter',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'converter',
@@ -648,7 +648,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = {
                         'resources-first-pipeline-converter'
                     ],
                     'outputTopic': 'resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name',
@@ -698,7 +698,7 @@ snapshots['TestPipeline.test_model_serialization test-pipeline'] = {
                     'extraOutputTopics': {
                     },
                     'outputTopic': 'out',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'account-producer',
@@ -744,7 +744,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                     'errorTopic': 'resources-no-input-topic-pipeline-app1-error',
                     'inputPattern': '.*',
                     'outputTopic': 'example-output',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'from': {
@@ -804,7 +804,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = {
                     'inputTopics': [
                         'example-output'
                     ],
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'app2',
@@ -863,7 +863,7 @@ snapshots['TestPipeline.test_no_user_defined_components test-pipeline'] = {
                         'example-topic'
                     ],
                     'outputTopic': 'example-output',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'from': {
@@ -926,7 +926,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
                     'extraOutputTopics': {
                     },
                     'outputTopic': 'resources-pipeline-with-envs-input-producer',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'input-producer',
@@ -993,7 +993,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
                         'resources-pipeline-with-envs-input-producer'
                     ],
                     'outputTopic': 'resources-pipeline-with-envs-converter',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'converter',
@@ -1068,7 +1068,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = {
                         'resources-pipeline-with-envs-converter'
                     ],
                     'outputTopic': 'resources-pipeline-with-envs-filter',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'filter',
@@ -1127,7 +1127,7 @@ snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                     'extraOutputTopics': {
                     },
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 },
                 'suspend': True
             },
@@ -1157,7 +1157,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     'extraOutputTopics': {
                     },
                     'outputTopic': 'resources-read-from-component-producer1',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'producer1',
@@ -1192,7 +1192,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     'extraOutputTopics': {
                     },
                     'outputTopic': 'resources-read-from-component-producer2',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'producer2',
@@ -1247,7 +1247,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'resources-read-from-component-producer2'
                     ],
                     'outputTopic': 'resources-read-from-component-inflate-step',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'inflate-step',
@@ -1344,7 +1344,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'kafka-sink-connector'
                     ],
                     'outputTopic': 'resources-read-from-component-inflate-step-inflate-step-inflated-streams-app',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'inflate-step-inflated-streams-app',
@@ -1407,7 +1407,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'resources-read-from-component-inflate-step-inflate-step-inflated-streams-app'
                     ],
                     'outputTopic': 'resources-read-from-component-inflate-step-without-prefix',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'inflate-step-without-prefix',
@@ -1504,7 +1504,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'kafka-sink-connector'
                     ],
                     'outputTopic': 'inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'inflate-step-without-prefix-inflated-streams-app',
@@ -1552,7 +1552,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'resources-read-from-component-producer1'
                     ],
                     'outputTopic': 'resources-read-from-component-consumer1',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'from': {
@@ -1609,7 +1609,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'resources-read-from-component-producer1',
                         'resources-read-from-component-consumer1'
                     ],
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'from': {
@@ -1664,7 +1664,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                         'resources-read-from-component-producer1',
                         'resources-read-from-component-producer2'
                     ],
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'from': {
@@ -1718,7 +1718,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     'inputTopics': [
                         'resources-read-from-component-inflate-step-inflate-step-inflated-streams-app'
                     ],
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'from': {
@@ -1769,7 +1769,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = {
                     'inputTopics': [
                         'inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app'
                     ],
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'from': {
@@ -1832,7 +1832,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
                     'extraOutputTopics': {
                     },
                     'outputTopic': 'resources-component-type-substitution-scheduled-producer',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'scheduled-producer',
@@ -1899,7 +1899,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
                         'resources-component-type-substitution-scheduled-producer'
                     ],
                     'outputTopic': 'resources-component-type-substitution-converter',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'converter',
@@ -1981,7 +1981,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = {
                         'resources-component-type-substitution-converter'
                     ],
                     'outputTopic': 'resources-component-type-substitution-filter-app',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'filter-app',
@@ -2039,7 +2039,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
                     'extraOutputTopics': {
                     },
                     'outputTopic': 'app1-test-topic',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'app1',
@@ -2081,7 +2081,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
                         'app1-test-topic'
                     ],
                     'outputTopic': 'app2-test-topic',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'app2',
@@ -2136,7 +2136,7 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
                     'extraOutputTopics': {
                     },
                     'outputTopic': 'app1-test-topic',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'app1',
@@ -2178,7 +2178,7 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
                         'app1-test-topic'
                     ],
                     'outputTopic': 'app2-test-topic',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'name': 'app2',
@@ -2231,7 +2231,7 @@ snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = {
                         'example-topic'
                     ],
                     'outputTopic': 'example-output',
-                    'schemaRegistryUrl': 'http://localhost:8081'
+                    'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
             'from': {
