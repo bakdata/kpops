@@ -64,7 +64,7 @@ DEFAULT_PATH_OPTION: Optional[Path] = typer.Option(
 
 CONFIG_PATH_OPTION: Path = typer.Option(
     default=Path(),
-    exists=False,
+    exists=True,
     dir_okay=True,
     file_okay=False,
     readable=True,
