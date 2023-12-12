@@ -1,5 +1,5 @@
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, TypeVar
 
 
 def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
@@ -73,12 +73,15 @@ def flatten_mapping(
     return top
 
 
+_V = TypeVar("_V")
+
+
 def generate_substitution(
-    input: dict,
+    input: dict[str, _V],
     prefix: str | None = None,
     existing_substitution: dict | None = None,
     separator: str | None = None,
-) -> dict[Any, Any]:
+) -> dict[str, _V]:
     """Generate a complete substitution dict from a given dict.
 
     Finds all attributes that belong to a model and expands them to create
