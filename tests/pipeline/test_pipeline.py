@@ -274,9 +274,7 @@ class TestPipeline:
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    def test_kafka_connect_sink_weave_from_topics(
-        self, snapshot: SnapshotTest
-    ):  # INTERFERES WITH test_with_env_defaults
+    def test_kafka_connect_sink_weave_from_topics(self, snapshot: SnapshotTest):
         """Parse Connector topics from previous component to section."""
         result = runner.invoke(
             app,
