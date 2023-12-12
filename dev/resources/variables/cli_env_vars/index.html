@@ -703,6 +703,8 @@
       
         
       
+        
+      
     
     
     
@@ -764,6 +766,26 @@
   
   <span class="md-ellipsis">
     KubernetesApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user/core-concepts/components/helm-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HelmApp
   </span>
   
 
@@ -1521,15 +1543,27 @@
 </tr>
 <tr>
 <td>KPOPS_CONFIG_PATH</td>
-<td>config.yaml</td>
+<td>.</td>
 <td>False</td>
-<td>Path to the config.yaml file</td>
+<td>Path to the dir containing config.yaml files</td>
 </tr>
 <tr>
 <td>KPOPS_DEFAULT_PATH</td>
 <td></td>
 <td>False</td>
 <td>Path to defaults folder</td>
+</tr>
+<tr>
+<td>KPOPS_DOTENV_PATH</td>
+<td></td>
+<td>False</td>
+<td>Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.</td>
+</tr>
+<tr>
+<td>KPOPS_ENVIRONMENT</td>
+<td></td>
+<td>False</td>
+<td>The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).</td>
 </tr>
 <tr>
 <td>KPOPS_PIPELINE_PATH</td>
