@@ -1544,13 +1544,6 @@
 <td>defaults_path</td>
 </tr>
 <tr>
-<td>KPOPS_ENVIRONMENT</td>
-<td></td>
-<td>True</td>
-<td>The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).</td>
-<td>environment</td>
-</tr>
-<tr>
 <td>KPOPS_KAFKA_BROKERS</td>
 <td></td>
 <td>True</td>
@@ -1566,14 +1559,14 @@
 </tr>
 <tr>
 <td>KPOPS_TOPIC_NAME_CONFIG__DEFAULT_OUTPUT_TOPIC_NAME</td>
-<td>${pipeline_name}-${component.name}</td>
+<td>${pipeline_name}-${component_name}</td>
 <td>False</td>
 <td>Configures the value for the variable ${output_topic_name}</td>
 <td>topic_name_config.default_output_topic_name</td>
 </tr>
 <tr>
 <td>KPOPS_TOPIC_NAME_CONFIG__DEFAULT_ERROR_TOPIC_NAME</td>
-<td>${pipeline_name}-${component.name}-error</td>
+<td>${pipeline_name}-${component_name}-error</td>
 <td>False</td>
 <td>Configures the value for the variable ${error_topic_name}</td>
 <td>topic_name_config.default_error_topic_name</td>
