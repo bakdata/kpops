@@ -15,3 +15,5 @@ kafka_connect:
   url: "http://localhost:8083"
 
 defaults_path: .
+
+pipeline_base_dir: examples

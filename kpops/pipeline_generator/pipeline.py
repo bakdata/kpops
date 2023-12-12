@@ -117,7 +117,6 @@ class Pipeline:
     @classmethod
     def load_from_yaml(
         cls,
-        base_dir: Path,
         path: Path,
         environment: str | None,
         registry: Registry,
@@ -128,8 +127,8 @@ class Pipeline:
 
         The file is often named ``pipeline.yaml``
 
-        :param base_dir: Base directory to the pipelines (default is current working directory)
         :param path: Path to pipeline definition yaml file
+        :param environment: Environment name
         :param registry: Pipeline components registry
         :param config: KPOps config
         :param handlers: Component handlers
@@ -137,7 +136,7 @@ class Pipeline:
         :raises TypeError: The env-specific pipeline definition should contain a list of components
         :returns: Initialized pipeline object
         """
-        Pipeline.set_pipeline_name_env_vars(base_dir, path)
+        Pipeline.set_pipeline_name_env_vars(config.pipeline_base_dir, path)
         Pipeline.set_environment_name(environment)
 
         main_content = load_yaml_file(path, substitution=ENV)

@@ -11,7 +11,6 @@ from kpops.component_handlers.helm_wrapper.helm import Helm
 runner = CliRunner()
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
-PIPELINE_BASE_DIR = str(RESOURCE_PATH.parent)
 
 
 class TestTemplate:
@@ -26,8 +25,6 @@ class TestTemplate:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                PIPELINE_BASE_DIR,
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
@@ -65,8 +62,6 @@ class TestTemplate:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                PIPELINE_BASE_DIR,
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
