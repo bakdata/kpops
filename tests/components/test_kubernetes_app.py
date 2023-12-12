@@ -21,7 +21,7 @@ class KubernetesTestValue(KubernetesAppConfig):
 class TestKubernetesApp:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
-        return KpopsConfig(defaults_path=DEFAULTS_PATH, environment="development")
+        return KpopsConfig(defaults_path=DEFAULTS_PATH)
 
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:

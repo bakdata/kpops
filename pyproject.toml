@@ -143,7 +143,6 @@ select = [
   "ICN", # flake8-import-conventions
   "INP", # flake8-no-pep420
   "PIE", # flake8-pie
-  "PT", # flake8-pytest-style
   "Q", # flake8-quotes
   "RSE", # flake8-raise
   "RET", # flake8-return

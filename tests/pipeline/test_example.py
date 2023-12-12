@@ -19,7 +19,7 @@ class TestExample:
                 "--pipeline-base-dir",
                 "examples",
                 "--config",
-                "./examples/bakdata/atm-fraud-detection/config.yaml",
+                "./examples/bakdata/atm-fraud-detection",
             ],
             catch_exceptions=False,
         )

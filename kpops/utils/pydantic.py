@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from typing import Any
 
@@ -8,6 +9,7 @@ from pydantic.fields import FieldInfo
 from pydantic_settings import PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
 
+from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.docstring import describe_object
 from kpops.utils.yaml_loading import load_yaml_file
 
@@ -111,7 +113,37 @@ class DescConfigModel(BaseModel):
 class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     """Loads variables from a YAML file at the project's root."""
 
-    path_to_config = Path("config.yaml")
+    log = logging.getLogger()
+
+    config_dir = Path()
+    config_file_base_name = "config"
+    environment: str | None = None
+
+    def __init__(self, settings_cls) -> None:
+        super().__init__(settings_cls)
+        default_config = self.load_config(
+            self.config_dir / f"{self.config_file_base_name}.yaml"
+        )
+        env_config = (
+            self.load_config(
+                self.config_dir
+                / f"{self.config_file_base_name}_{self.environment}.yaml"
+            )
+            if self.environment
+            else {}
+        )
+        self.config = update_nested_pair(env_config, default_config)
+
+    @staticmethod
+    def load_config(file: Path) -> dict:
+        """Load yaml file if it exists.
+
+        :param file: Path to a ``config*.yaml``
+        :return: Dict containing the config or empty dict if file doesn't exist
+        """
+        if file.exists() and isinstance((loaded_file := load_yaml_file(file)), dict):
+            return loaded_file
+        return {}
 
     @override
     def get_field_value(
@@ -119,12 +151,7 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
         field: FieldInfo,
         field_name: str,
     ) -> tuple[Any, str, bool]:
-        if self.path_to_config.exists() and isinstance(
-            (file_content_yaml := load_yaml_file(self.path_to_config)), dict
-        ):
-            field_value = file_content_yaml.get(field_name)
-            return field_value, field_name, False
-        return None, field_name, False
+        return self.config.get(field_name), field_name, False
 
     @override
     def prepare_field_value(
@@ -135,7 +162,6 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
     @override
     def __call__(self) -> dict[str, Any]:
         d: dict[str, Any] = {}
-
         for field_name, field in self.settings_cls.model_fields.items():
             field_value, field_key, value_is_complex = self.get_field_value(
                 field,
@@ -149,5 +175,4 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
             )
             if field_value is not None:
                 d[field_key] = field_value
-
         return d

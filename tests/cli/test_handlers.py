@@ -18,7 +18,6 @@ MODULE = CustomSchemaProvider.__module__
 def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
     config = KpopsConfig(
         defaults_path=Path("fake"),
-        environment="development",
         kafka_brokers="broker:9092",
     )
     connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
@@ -52,7 +51,6 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
 def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     config = KpopsConfig(
         defaults_path=Path("fake"),
-        environment="development",
         schema_registry=SchemaRegistryConfig(enabled=True),
         kafka_brokers="broker:9092",
     )
