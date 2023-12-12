@@ -1274,6 +1274,33 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#change-substitution-variables-separator-to" class="md-nav__link">
+    Change substitution variables separator to .
+  </a>
+  
+    <nav class="md-nav" aria-label="Change substitution variables separator to .">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipelineyaml-and-defaultyaml_1" class="md-nav__link">
+    pipeline.yaml and default.yaml
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configyaml_1" class="md-nav__link">
+    config.yaml
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1639,6 +1666,33 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#change-substitution-variables-separator-to" class="md-nav__link">
+    Change substitution variables separator to .
+  </a>
+  
+    <nav class="md-nav" aria-label="Change substitution variables separator to .">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipelineyaml-and-defaultyaml_1" class="md-nav__link">
+    pipeline.yaml and default.yaml
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configyaml_1" class="md-nav__link">
+    config.yaml
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -1738,6 +1792,40 @@
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w"> </span>   with:
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w"> </span>     command: deploy --execute
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w"> </span>     # ...
+</span></code></pre></div></td></tr></table></div>
+<h2 id="change-substitution-variables-separator-to"><a href="https://github.com/bakdata/kpops/pull/388">Change substitution variables separator to <code>.</code></a><a class="headerlink" href="#change-substitution-variables-separator-to" title="Permanent link">&para;</a></h2>
+<p>The delimiter in the substitution variables is changed to <code>.</code>.</p>
+<h4 id="pipelineyaml-and-defaultyaml_1">pipeline.yaml and default.yaml<a class="headerlink" href="#pipelineyaml-and-defaultyaml_1" title="Permanent link">&para;</a></h4>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-3-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-3-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-3-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-3-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-3-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-3-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-3-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-3-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-3-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>steps:
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w"> </span> - type: scheduled-producer
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="w"> </span>   app:
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="w"> </span>     labels:
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="gd">-       app_type: &quot;${component_type}&quot;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="gd">-       app_name: &quot;${component_name}&quot;</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="gd">-       app_schedule: &quot;${component_app_schedule}&quot;</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="gi">+       app_type: &quot;${component.type}&quot;</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="gi">+       app_name: &quot;${component.name}&quot;</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10"></a><span class="gi">+       app_schedule: &quot;${component.app.schedule}&quot;</span>
+</span></code></pre></div></td></tr></table></div>
+<h4 id="configyaml_1">config.yaml<a class="headerlink" href="#configyaml_1" title="Permanent link">&para;</a></h4>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span>
+<span class="normal"><a href="#__codelineno-4-3">3</a></span>
+<span class="normal"><a href="#__codelineno-4-4">4</a></span>
+<span class="normal"><a href="#__codelineno-4-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>topic_name_config:
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="gd">- default_error_topic_name: &quot;${pipeline_name}-${component_name}-dead-letter-topic&quot;</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="gd">- default_output_topic_name: &quot;${pipeline_name}-${component_name}-topic&quot;</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="gi">+ default_error_topic_name: &quot;${pipeline_name}-${component.name}-dead-letter-topic&quot;</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="gi">+ default_output_topic_name: &quot;${pipeline_name}-${component.name}-topic&quot;</span>
 </span></code></pre></div></td></tr></table></div>
 
 
