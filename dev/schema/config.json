@@ -136,21 +136,8 @@
         }
     },
     "additionalProperties": false,
-    "description": "Global configuration for KPOps project.",
+    "description": "Pipeline configuration unrelated to the components.",
     "properties": {
-        "components_module": {
-            "anyOf": [
-                {
-                    "type": "string"
-                },
-                {
-                    "type": "null"
-                }
-            ],
-            "default": null,
-            "description": "Custom Python module defining project-specific KPOps components",
-            "title": "Components Module"
-        },
         "create_namespace": {
             "default": false,
             "description": "Flag for `helm upgrade --install`. Create the release namespace if not present.",
@@ -227,13 +214,6 @@
                 "url": "http://localhost:8082/"
             },
             "description": "Configuration for Kafka REST Proxy."
-        },
-        "pipeline_base_dir": {
-            "default": ".",
-            "description": "Base directory to the pipelines (default is current working directory)",
-            "format": "path",
-            "title": "Pipeline Base Dir",
-            "type": "string"
         },
         "retain_clean_jobs": {
             "default": false,

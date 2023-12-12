@@ -578,7 +578,7 @@
             "additionalProperties": true,
             "description": "Settings specific to producers.",
             "properties": {
-                "nameOverride": {
+                "fullnameOverride": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -588,8 +588,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "Override name with this value",
-                    "title": "Nameoverride"
+                    "description": "Fully overrides the release and chart name",
+                    "title": "Fullname override"
                 },
                 "streams": {
                     "allOf": [
@@ -863,7 +863,7 @@
                     "default": null,
                     "description": "Kubernetes Event-driven Autoscaling config"
                 },
-                "nameOverride": {
+                "fullnameOverride": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -873,8 +873,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "Override name with this value",
-                    "title": "Nameoverride"
+                    "description": "Fully overrides the release and chart name",
+                    "title": "Fullname override"
                 },
                 "streams": {
                     "allOf": [
