@@ -1,5 +1,3 @@
-environment: development
-
 topic_name_config:
   default_error_topic_name: "${pipeline_name}-${component.name}-dead-letter-topic"
   default_output_topic_name: "${pipeline_name}-${component.name}-topic"

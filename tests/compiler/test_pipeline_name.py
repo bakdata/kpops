@@ -2,7 +2,6 @@ from pathlib import Path
 
 import pytest
 
-from kpops.config import KpopsConfig
 from kpops.pipeline_generator.pipeline import Pipeline
 from kpops.utils.environment import ENV
 
@@ -57,9 +56,7 @@ def test_should_not_set_pipeline_name_with_the_same_base_dir():
 
 
 def test_pipeline_file_name_environment():
-    config = KpopsConfig(
-        defaults_path=DEFAULTS_PATH,
-        environment="some_environment",
+    environment = Pipeline.pipeline_filename_environment(
+        PIPELINE_PATH, "some_environment"
     )
-    environment = Pipeline.pipeline_filename_environment(PIPELINE_PATH, config)
     assert environment.name == "pipeline_some_environment.yaml"

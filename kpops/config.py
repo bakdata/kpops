@@ -70,15 +70,6 @@ class KpopsConfig(BaseSettings):
         description="The path to the folder containing the defaults.yaml file and the environment defaults files. "
         "Paths can either be absolute or relative to `config.yaml`",
     )
-    environment: str = Field(
-        default=...,
-        examples=[
-            "development",
-            "production",
-        ],
-        description="The environment you want to generate and deploy the pipeline to. "
-        "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
-    )
     kafka_brokers: str = Field(
         default=...,
         examples=[
