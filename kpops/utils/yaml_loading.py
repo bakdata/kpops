@@ -8,8 +8,6 @@ from cachetools.keys import hashkey
 
 from kpops.utils.dict_ops import ImprovedTemplate
 
-# from kpops.utils.dict_ops import ImprovedTemplate
-
 
 def generate_hashkey(
     file_path: Path, substitution: Mapping[str, Any] | None = None
