@@ -1524,7 +1524,7 @@
 
   <h1>Config env vars</h1>
 
-<p>These variables are a lower priority alternative to the settings in <code>config.yaml</code>. Variables marked as required can instead be set in the pipeline config.</p>
+<p>These variables are a lower priority alternative to the settings in <code>config.yaml</code>. Variables marked as required can instead be set in the global config.</p>
 <table>
 <thead>
 <tr>
@@ -1544,6 +1544,20 @@
 <td>defaults_path</td>
 </tr>
 <tr>
+<td>KPOPS_COMPONENTS_MODULE</td>
+<td></td>
+<td>False</td>
+<td>Custom Python module defining project-specific KPOps components</td>
+<td>components_module</td>
+</tr>
+<tr>
+<td>KPOPS_PIPELINE_BASE_DIR</td>
+<td>.</td>
+<td>False</td>
+<td>Base directory to the pipelines (default is current working directory)</td>
+<td>pipeline_base_dir</td>
+</tr>
+<tr>
 <td>KPOPS_KAFKA_BROKERS</td>
 <td></td>
 <td>True</td>
@@ -1559,14 +1573,14 @@
 </tr>
 <tr>
 <td>KPOPS_TOPIC_NAME_CONFIG__DEFAULT_OUTPUT_TOPIC_NAME</td>
-<td>${pipeline_name}-${component.name}</td>
+<td>${pipeline_name}-${component_name}</td>
 <td>False</td>
 <td>Configures the value for the variable ${output_topic_name}</td>
 <td>topic_name_config.default_output_topic_name</td>
 </tr>
 <tr>
 <td>KPOPS_TOPIC_NAME_CONFIG__DEFAULT_ERROR_TOPIC_NAME</td>
-<td>${pipeline_name}-${component.name}-error</td>
+<td>${pipeline_name}-${component_name}-error</td>
 <td>False</td>
 <td>Configures the value for the variable ${error_topic_name}</td>
 <td>topic_name_config.default_error_topic_name</td>
