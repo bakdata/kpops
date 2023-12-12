@@ -16,7 +16,7 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 PIPELINE_BASE_DIR_PATH = RESOURCE_PATH.parent
 
 
-@pytest.mark.usefixtures("mock_env")
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class TestPipeline:
     def test_python_api(self):
         pipeline = kpops.generate(
@@ -111,6 +111,8 @@ class TestPipeline:
                 "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -217,7 +219,7 @@ class TestPipeline:
                 "--defaults",
                 str(RESOURCE_PATH),
                 "--config",
-                str(RESOURCE_PATH / "kafka-connect-sink-config/config.yaml"),
+                str(RESOURCE_PATH / "kafka-connect-sink-config"),
             ],
             catch_exceptions=False,
         )
@@ -317,6 +319,8 @@ class TestPipeline:
                 str(RESOURCE_PATH / "kafka-connect-sink/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "pipeline-with-env-defaults"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -360,7 +364,9 @@ class TestPipeline:
                 str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
-                str(RESOURCE_PATH / "custom-config/config.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -391,7 +397,7 @@ class TestPipeline:
         config_dict["defaults_path"] = str(
             (RESOURCE_PATH / "no-topics-defaults").absolute(),
         )
-        temp_config_path = RESOURCE_PATH / "custom-config/temp_config.yaml"
+        temp_config_path = RESOURCE_PATH / "custom-config/config_custom.yaml"
         try:
             with temp_config_path.open("w") as abs_config_yaml:
                 yaml.dump(config_dict, abs_config_yaml)
@@ -403,7 +409,9 @@ class TestPipeline:
                     str(PIPELINE_BASE_DIR_PATH),
                     str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                     "--config",
-                    str(temp_config_path),
+                    str(temp_config_path.parent),
+                    "--environment",
+                    "development",
                 ],
                 catch_exceptions=False,
             )
@@ -435,6 +443,8 @@ class TestPipeline:
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -465,7 +475,9 @@ class TestPipeline:
                 str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
-                str(RESOURCE_PATH / "custom-config/config.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -486,7 +498,9 @@ class TestPipeline:
                 str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
-                str(RESOURCE_PATH / "custom-config/config.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -496,6 +510,88 @@ class TestPipeline:
             enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"]
             == "http://somename:1234/"
         )
+
+    def test_env_specific_config_env_def_in_env_var(
+        self, monkeypatch: pytest.MonkeyPatch
+    ):
+        monkeypatch.setenv(name="KPOPS_ENVIRONMENT", value="production")
+        config_path = str(RESOURCE_PATH / "multi-config")
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                config_path,
+                "--defaults",
+                str(RESOURCE_PATH),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"]
+            == "http://production:8081/"
+        )
+
+    @pytest.mark.parametrize(
+        ("config_dir", "expected_url"),
+        [
+            pytest.param("multi-config", "http://production:8081/", id="multi-config"),
+            pytest.param(
+                "env-specific-config-only",
+                "http://localhost:8081/",
+                id="env-specific-config-only",
+            ),
+        ],
+    )
+    def test_env_specific_config_env_def_in_cli(
+        self, config_dir: str, expected_url: str
+    ):
+        config_path = str(RESOURCE_PATH / config_dir)
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                config_path,
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--environment",
+                "production",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"] == expected_url
+        )
+
+    def test_config_dir_doesnt_exist(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "--pipeline-base-dir",
+                str(PIPELINE_BASE_DIR_PATH),
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                "./non-existent-dir",
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--environment",
+                "production",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code != 0
 
     def test_model_serialization(self, snapshot: SnapshotTest):
         """Test model serialization of component containing pathlib.Path attribute."""
@@ -528,7 +624,7 @@ class TestPipeline:
                 "--defaults",
                 str(RESOURCE_PATH),
                 "--config",
-                str(RESOURCE_PATH / "dotenv/config.yaml"),
+                str(RESOURCE_PATH / "dotenv"),
                 "--dotenv",
                 str(RESOURCE_PATH / "dotenv/.env"),
                 "--dotenv",

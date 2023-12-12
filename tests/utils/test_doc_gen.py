@@ -2,31 +2,17 @@ from pathlib import Path
 from typing import Any
 
 import pytest
-from pydantic_core import PydanticUndefined
 
 from hooks.gen_docs.gen_docs_env_vars import (
     EnvVarAttrs,
     append_csv_to_dotenv_file,
-    collect_fields,
     csv_append_env_var,
     write_csv_to_md_file,
     write_title_to_dotenv_file,
 )
-from tests.utils.resources.nested_base_settings import ParentSettings
 
 
 class TestEnvDocGen:
-    def test_collect_fields(self):
-        expected: list[Any] = [
-            "not_nested_field",
-            PydanticUndefined,
-            PydanticUndefined,
-        ]
-        actual = [
-            field_value.default for _, field_value in collect_fields(ParentSettings)
-        ]
-        assert actual == expected
-
     @pytest.mark.parametrize(
         ("var_name", "default_value", "description", "extra_args", "expected_outcome"),
         [

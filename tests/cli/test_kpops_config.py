@@ -12,9 +12,7 @@ from kpops.config import (
 
 
 def test_kpops_config_with_default_values():
-    default_config = KpopsConfig(
-        environment="development", kafka_brokers="http://broker:9092"
-    )
+    default_config = KpopsConfig(kafka_brokers="http://broker:9092")
 
     assert default_config.defaults_path == Path()
     assert default_config.defaults_filename_prefix == "defaults"
@@ -42,7 +40,6 @@ def test_kpops_config_with_default_values():
 def test_kpops_config_with_different_invalid_urls():
     with pytest.raises(ValidationError):
         KpopsConfig(
-            environment="development",
             kafka_brokers="http://broker:9092",
             kafka_connect=KafkaConnectConfig(
                 url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host")
@@ -51,7 +48,6 @@ def test_kpops_config_with_different_invalid_urls():
 
     with pytest.raises(ValidationError):
         KpopsConfig(
-            environment="development",
             kafka_brokers="http://broker:9092",
             kafka_rest=KafkaRestConfig(
                 url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host")
@@ -60,7 +56,6 @@ def test_kpops_config_with_different_invalid_urls():
 
     with pytest.raises(ValidationError):
         KpopsConfig(
-            environment="development",
             kafka_brokers="http://broker:9092",
             schema_registry=SchemaRegistryConfig(
                 enabled=True,

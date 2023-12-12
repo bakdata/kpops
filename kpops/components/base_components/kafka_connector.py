@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Any, NoReturn
+from typing import NoReturn
 
 from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
 from typing_extensions import override
@@ -78,7 +78,7 @@ class KafkaConnector(PipelineComponent, ABC):
         cls,
         app: KafkaConnectorConfig | dict[str, str],
         info: ValidationInfo,
-    ) -> Any:
+    ) -> KafkaConnectorConfig:
         if isinstance(app, KafkaConnectorConfig):
             app = app.model_dump()
         component_name: str = info.data["prefix"] + info.data["name"]

@@ -32,6 +32,8 @@ class TestTemplate:
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
                 "--template",
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -69,8 +71,10 @@ class TestTemplate:
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
                 "--config",
-                str(RESOURCE_PATH / "custom-config/config.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
                 "--template",
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )

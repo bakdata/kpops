@@ -1,5 +1,5 @@
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, TypeVar
 
 
 def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
@@ -66,18 +66,22 @@ def flatten_mapping(
         if prefix:
             key = prefix + separator + key
         if isinstance(value, Mapping):
-            nested_mapping = flatten_mapping(value, key)
+            nested_mapping = flatten_mapping(value, key, separator)
             top = update_nested_pair(top, nested_mapping)
         else:
             top[key] = value
     return top
 
 
+_V = TypeVar("_V")
+
+
 def generate_substitution(
-    input: dict,
+    input: dict[str, _V],
     prefix: str | None = None,
     existing_substitution: dict | None = None,
-) -> dict:
+    separator: str | None = None,
+) -> dict[str, _V]:
     """Generate a complete substitution dict from a given dict.
 
     Finds all attributes that belong to a model and expands them to create
@@ -88,4 +92,10 @@ def generate_substitution(
     :param substitution: existing substitution to include
     :returns: Substitution dict of all variables related to the model.
     """
-    return update_nested(existing_substitution or {}, flatten_mapping(input, prefix))
+    if separator is None:
+        return update_nested(
+            existing_substitution or {}, flatten_mapping(input, prefix)
+        )
+    return update_nested(
+        existing_substitution or {}, flatten_mapping(input, prefix, separator)
+    )

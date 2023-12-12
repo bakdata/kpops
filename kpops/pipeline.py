@@ -128,9 +128,7 @@ class PipelineParser:
         return self.pipeline
 
     def load_yaml(
-        self,
-        base_dir: Path,
-        path: Path,
+        self, base_dir: Path, path: Path, environment: str | None
     ) -> Pipeline:
         """Load pipeline definition from yaml.
 
@@ -143,6 +141,7 @@ class PipelineParser:
         :returns: Initialized pipeline object
         """
         PipelineParser.set_pipeline_name_env_vars(base_dir, path)
+        PipelineParser.set_environment_name(environment)
 
         main_content = load_yaml_file(path, substitution=ENV)
         if not isinstance(main_content, list):
@@ -150,8 +149,13 @@ class PipelineParser:
             raise TypeError(msg)
         env_content = []
         if (
-            env_file := PipelineParser.pipeline_filename_environment(path, self.config)
-        ).exists():
+            environment
+            and (
+                env_file := PipelineParser.pipeline_filename_environment(
+                    path, environment
+                )
+            ).exists()
+        ):
             env_content = load_yaml_file(env_file, substitution=ENV)
             if not isinstance(env_content, list):
                 msg = f"The pipeline definition {env_file} should contain a list of components"
@@ -283,14 +287,14 @@ class PipelineParser:
         )
 
     @staticmethod
-    def pipeline_filename_environment(path: Path, config: KpopsConfig) -> Path:
+    def pipeline_filename_environment(pipeline_path: Path, environment: str) -> Path:
         """Add the environment name from the KpopsConfig to the pipeline.yaml path.
 
-        :param path: Path to pipeline.yaml file
-        :param config: The KpopsConfig
+        :param pipeline_path: Path to pipeline.yaml file
+        :param environment: Environment name
         :returns: An absolute path to the pipeline_<environment>.yaml
         """
-        return path.with_stem(f"{path.stem}_{config.environment}")
+        return pipeline_path.with_stem(f"{pipeline_path.stem}_{environment}")
 
     @staticmethod
     def set_pipeline_name_env_vars(base_dir: Path, path: Path) -> None:
@@ -315,4 +319,15 @@ class PipelineParser:
         ENV["pipeline_name"] = pipeline_name
         for level, parent in enumerate(path_without_file):
             ENV[f"pipeline_name_{level}"] = parent
-            ENV[f"pipeline_name_{level}"] = parent
+
+    @staticmethod
+    def set_environment_name(environment: str | None) -> None:
+        """Set the environment name.
+
+        It will be used to find environment-specific pipeline definitions,
+        defaults and configs.
+
+        :param environment: Environment name
+        """
+        if environment is not None:
+            ENV["environment"] = environment
