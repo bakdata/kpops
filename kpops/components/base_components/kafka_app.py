@@ -111,24 +111,20 @@ class KafkaApp(HelmApp, ABC):
         :param dry_run: Dry run command
         :param retain_clean_jobs: Whether to retain the cleanup job, defaults to False
         """
-        log.info(f"Uninstall old cleanup job for {self.clean_up_release_name}")
+        log.info(f"Uninstall old cleanup job for {self.clean_release_name}")
 
-        self.__uninstall_clean_up_job(self.clean_up_release_name, dry_run)
+        self.__uninstall_clean_up_job(self.clean_release_name, dry_run)
 
-        log.info(f"Init cleanup job for {self.clean_up_release_name}")
+        log.info(f"Init cleanup job for {self.clean_release_name}")
 
-        stdout = self.__install_clean_up_job(
-            self.clean_up_release_name, values, dry_run
-        )
+        stdout = self.__install_clean_up_job(self.clean_release_name, values, dry_run)
 
         if dry_run:
-            self.dry_run_handler.print_helm_diff(
-                stdout, self.clean_up_release_name, log
-            )
+            self.dry_run_handler.print_helm_diff(stdout, self.clean_release_name, log)
 
         if not retain_clean_jobs:
-            log.info(f"Uninstall cleanup job for {self.clean_up_release_name}")
-            self.__uninstall_clean_up_job(self.clean_up_release_name, dry_run)
+            log.info(f"Uninstall cleanup job for {self.clean_release_name}")
+            self.__uninstall_clean_up_job(self.clean_release_name, dry_run)
 
     def __uninstall_clean_up_job(self, release_name: str, dry_run: bool) -> None:
         """Uninstall clean up job.
