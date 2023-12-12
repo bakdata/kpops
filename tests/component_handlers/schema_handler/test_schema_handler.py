@@ -71,7 +71,6 @@ def to_section(topic_config: TopicConfig) -> ToSection:
 @pytest.fixture()
 def kpops_config_with_sr_enabled() -> KpopsConfig:
     return KpopsConfig(
-        environment="development",
         kafka_brokers="broker:9092",
         schema_registry=SchemaRegistryConfig(
             enabled=True,

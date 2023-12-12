@@ -29,7 +29,6 @@ class TestHelmApp:
     def config(self) -> KpopsConfig:
         return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
-            environment="development",
             helm_diff_config=HelmDiffConfig(),
         )
 
