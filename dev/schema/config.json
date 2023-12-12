@@ -161,6 +161,15 @@
             "title": "Defaults Path",
             "type": "string"
         },
+        "environment": {
+            "description": "The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
+            "examples": [
+                "development",
+                "production"
+            ],
+            "title": "Environment",
+            "type": "string"
+        },
         "helm_config": {
             "allOf": [
                 {
@@ -253,6 +262,7 @@
         }
     },
     "required": [
+        "environment",
         "kafka_brokers"
     ],
     "title": "KpopsConfig",
