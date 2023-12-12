@@ -1,0 +1,3336 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://bakdata.github.io/kpops/dev/user/changelog/">
+      
+      
+        <link rel="prev" href="../what-is-kpops/">
+      
+      
+        <link rel="next" href="../getting-started/setup/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
+    
+    
+      
+        <title>Changelog - KPOps</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.35e1ed30.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=SF+Pro:300,300i,400,400i,700,700i%7CDejaVu+Sans+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"SF Pro";--md-code-font:"DejaVu Sans Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+        html.glightbox-open { overflow: initial; height: 100%; }
+        .gslide-title { margin-top: 0px; user-select: text; }
+        .gslide-desc { color: #666; user-select: text; }
+        .gslide-image img { background: white; }
+        
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
+            </style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
+  
+  
+    <body dir="ltr">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#changelog" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="KPOps" class="md-header__button md-logo" aria-label="KPOps" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            KPOps
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Changelog
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/bakdata/kpops/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    KPOps
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../.." class="md-tabs__link">
+          
+  
+    
+  
+  Home
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../what-is-kpops/" class="md-tabs__link">
+          
+  
+    
+  
+  User Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../developer/getting-started/" class="md-tabs__link">
+          
+  
+    
+  
+  Developer Guide
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="KPOps" class="md-nav__button md-logo" aria-label="KPOps" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
+
+    </a>
+    KPOps
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/bakdata/kpops/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.4.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    KPOps
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../.." class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+            </a>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_1">
+            <span class="md-nav__icon md-icon"></span>
+            Home
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    User Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            User Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../what-is-kpops/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    What is KPOps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Changelog
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#2011-release-date-2023-10-24" class="md-nav__link">
+    2.0.11 - Release Date: [2023-10-24]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.11 - Release Date: [2023-10-24]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2010-release-date-2023-10-12" class="md-nav__link">
+    2.0.10 - Release Date: [2023-10-12]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.10 - Release Date: [2023-10-12]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#209-release-date-2023-09-19" class="md-nav__link">
+    2.0.9 - Release Date: [2023-09-19]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.9 - Release Date: [2023-09-19]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_1" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_1" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#208-release-date-2023-09-06" class="md-nav__link">
+    2.0.8 - Release Date: [2023-09-06]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.8 - Release Date: [2023-09-06]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_2" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#207-release-date-2023-08-31" class="md-nav__link">
+    2.0.7 - Release Date: [2023-08-31]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.7 - Release Date: [2023-08-31]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_3" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_2" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#206-release-date-2023-08-30" class="md-nav__link">
+    2.0.6 - Release Date: [2023-08-30]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.6 - Release Date: [2023-08-30]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refactor_1" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#205-release-date-2023-08-30" class="md-nav__link">
+    2.0.5 - Release Date: [2023-08-30]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.5 - Release Date: [2023-08-30]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_4" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#204-release-date-2023-08-29" class="md-nav__link">
+    2.0.4 - Release Date: [2023-08-29]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.4 - Release Date: [2023-08-29]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_5" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_3" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_1" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#203-release-date-2023-08-24" class="md-nav__link">
+    2.0.3 - Release Date: [2023-08-24]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.3 - Release Date: [2023-08-24]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_6" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_2" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#202-release-date-2023-08-23" class="md-nav__link">
+    2.0.2 - Release Date: [2023-08-23]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.2 - Release Date: [2023-08-23]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#documentation_4" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#201-release-date-2023-08-22" class="md-nav__link">
+    2.0.1 - Release Date: [2023-08-22]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.1 - Release Date: [2023-08-22]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_7" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#200-release-date-2023-08-17" class="md-nav__link">
+    2.0.0 - Release Date: [2023-08-17]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.0 - Release Date: [2023-08-17]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#breaking-changes" class="md-nav__link">
+    🏗️ Breaking changes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features" class="md-nav__link">
+    🚀 Features
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor_2" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_5" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#172-release-date-2023-08-16" class="md-nav__link">
+    1.7.2 - Release Date: [2023-08-16]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.7.2 - Release Date: [2023-08-16]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refactor_3" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_6" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#171-release-date-2023-08-15" class="md-nav__link">
+    1.7.1 - Release Date: [2023-08-15]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.7.1 - Release Date: [2023-08-15]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#documentation_7" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#170-release-date-2023-08-15" class="md-nav__link">
+    1.7.0 - Release Date: [2023-08-15]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.7.0 - Release Date: [2023-08-15]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#features_1" class="md-nav__link">
+    🚀 Features
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#160-release-date-2023-08-10" class="md-nav__link">
+    1.6.0 - Release Date: [2023-08-10]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.6.0 - Release Date: [2023-08-10]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refactor_4" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#150-release-date-2023-08-10" class="md-nav__link">
+    1.5.0 - Release Date: [2023-08-10]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.5.0 - Release Date: [2023-08-10]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#features_2" class="md-nav__link">
+    🚀 Features
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor_5" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_3" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#140-release-date-2023-08-02" class="md-nav__link">
+    1.4.0 - Release Date: [2023-08-02]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.4.0 - Release Date: [2023-08-02]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_8" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor_6" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_4" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#132-release-date-2023-07-13" class="md-nav__link">
+    1.3.2 - Release Date: [2023-07-13]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3.2 - Release Date: [2023-07-13]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_9" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#131-release-date-2023-07-11" class="md-nav__link">
+    1.3.1 - Release Date: [2023-07-11]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3.1 - Release Date: [2023-07-11]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refactor_7" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_5" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#130-release-date-2023-07-07" class="md-nav__link">
+    1.3.0 - Release Date: [2023-07-07]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3.0 - Release Date: [2023-07-07]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refactor_8" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_8" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breaking-changes_1" class="md-nav__link">
+    🏗️ Breaking changes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_6" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#124-release-date-2023-06-27" class="md-nav__link">
+    1.2.4 - Release Date: [2023-06-27]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.4 - Release Date: [2023-06-27]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_7" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#123-release-date-2023-06-22" class="md-nav__link">
+    1.2.3 - Release Date: [2023-06-22]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.3 - Release Date: [2023-06-22]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_10" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor_9" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_8" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#122-release-date-2023-06-21" class="md-nav__link">
+    1.2.2 - Release Date: [2023-06-21]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.2 - Release Date: [2023-06-21]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_9" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#121-release-date-2023-06-21" class="md-nav__link">
+    1.2.1 - Release Date: [2023-06-21]
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#120-release-date-2023-06-21" class="md-nav__link">
+    1.2.0 - Release Date: [2023-06-21]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.0 - Release Date: [2023-06-21]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#features_3" class="md-nav__link">
+    🚀 Features
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_11" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor_10" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Getting Started
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/setup/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quick-start/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Quick start
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/teardown/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Teardown
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_4" id="__nav_2_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Examples
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_4">
+            <span class="md-nav__icon md-icon"></span>
+            Examples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/atm-fraud-pipeline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ATM Fraud detection pipeline
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Core Concepts
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5">
+            <span class="md-nav__icon md-icon"></span>
+            Core Concepts
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_1" id="__nav_2_5_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Components
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_1">
+            <span class="md-nav__icon md-icon"></span>
+            Components
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-concepts/components/overview/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Overview
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-concepts/components/kubernetes-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KubernetesApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-concepts/components/kafka-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KafkaApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-concepts/components/streams-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StreamsApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-concepts/components/producer-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    ProducerApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-concepts/components/kafka-connector/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KafkaConnector
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-concepts/components/kafka-sink-connector/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KafkaSinkConnector
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-concepts/components/kafka-source-connector/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    KafkaSourceConnector
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-concepts/config/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Config
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-concepts/defaults/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Defaults
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_5_4" id="__nav_2_5_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Variables
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_5_4">
+            <span class="md-nav__icon md-icon"></span>
+            Variables
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-concepts/variables/environment_variables/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Environment variables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core-concepts/variables/substitution/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Substitution
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6" id="__nav_2_6_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    References
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6">
+            <span class="md-nav__icon md-icon"></span>
+            References
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_1" id="__nav_2_6_1_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Migration guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_1">
+            <span class="md-nav__icon md-icon"></span>
+            Migration guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration-guide/v1-v2/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v1 to v2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../migration-guide/v2-v3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v2 to v3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references/cli-commands/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CLI usage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references/editor-integration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Editor integration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_6_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_6_4" id="__nav_2_6_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    CI integration
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_6_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_6_4">
+            <span class="md-nav__icon md-icon"></span>
+            CI integration
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../references/ci-integration/github-actions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    GitHub Actions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Developer Guide
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Developer Guide
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer/getting-started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting Started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer/contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    
+    
+      
+        
+      
+    
+    
+    
+    
+      
+      
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Code base
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            Code base
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../developer/auto-generation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Auto generation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#2011-release-date-2023-10-24" class="md-nav__link">
+    2.0.11 - Release Date: [2023-10-24]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.11 - Release Date: [2023-10-24]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#2010-release-date-2023-10-12" class="md-nav__link">
+    2.0.10 - Release Date: [2023-10-12]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.10 - Release Date: [2023-10-12]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#209-release-date-2023-09-19" class="md-nav__link">
+    2.0.9 - Release Date: [2023-09-19]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.9 - Release Date: [2023-09-19]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_1" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_1" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#208-release-date-2023-09-06" class="md-nav__link">
+    2.0.8 - Release Date: [2023-09-06]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.8 - Release Date: [2023-09-06]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_2" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#207-release-date-2023-08-31" class="md-nav__link">
+    2.0.7 - Release Date: [2023-08-31]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.7 - Release Date: [2023-08-31]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_3" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_2" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#206-release-date-2023-08-30" class="md-nav__link">
+    2.0.6 - Release Date: [2023-08-30]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.6 - Release Date: [2023-08-30]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refactor_1" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#205-release-date-2023-08-30" class="md-nav__link">
+    2.0.5 - Release Date: [2023-08-30]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.5 - Release Date: [2023-08-30]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_4" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#204-release-date-2023-08-29" class="md-nav__link">
+    2.0.4 - Release Date: [2023-08-29]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.4 - Release Date: [2023-08-29]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_5" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_3" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_1" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#203-release-date-2023-08-24" class="md-nav__link">
+    2.0.3 - Release Date: [2023-08-24]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.3 - Release Date: [2023-08-24]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_6" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_2" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#202-release-date-2023-08-23" class="md-nav__link">
+    2.0.2 - Release Date: [2023-08-23]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.2 - Release Date: [2023-08-23]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#documentation_4" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#201-release-date-2023-08-22" class="md-nav__link">
+    2.0.1 - Release Date: [2023-08-22]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.1 - Release Date: [2023-08-22]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_7" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#200-release-date-2023-08-17" class="md-nav__link">
+    2.0.0 - Release Date: [2023-08-17]
+  </a>
+  
+    <nav class="md-nav" aria-label="2.0.0 - Release Date: [2023-08-17]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#breaking-changes" class="md-nav__link">
+    🏗️ Breaking changes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#features" class="md-nav__link">
+    🚀 Features
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor_2" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_5" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#172-release-date-2023-08-16" class="md-nav__link">
+    1.7.2 - Release Date: [2023-08-16]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.7.2 - Release Date: [2023-08-16]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refactor_3" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_6" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#171-release-date-2023-08-15" class="md-nav__link">
+    1.7.1 - Release Date: [2023-08-15]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.7.1 - Release Date: [2023-08-15]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#documentation_7" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#170-release-date-2023-08-15" class="md-nav__link">
+    1.7.0 - Release Date: [2023-08-15]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.7.0 - Release Date: [2023-08-15]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#features_1" class="md-nav__link">
+    🚀 Features
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#160-release-date-2023-08-10" class="md-nav__link">
+    1.6.0 - Release Date: [2023-08-10]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.6.0 - Release Date: [2023-08-10]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refactor_4" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#150-release-date-2023-08-10" class="md-nav__link">
+    1.5.0 - Release Date: [2023-08-10]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.5.0 - Release Date: [2023-08-10]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#features_2" class="md-nav__link">
+    🚀 Features
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor_5" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_3" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#140-release-date-2023-08-02" class="md-nav__link">
+    1.4.0 - Release Date: [2023-08-02]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.4.0 - Release Date: [2023-08-02]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_8" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor_6" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_4" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#132-release-date-2023-07-13" class="md-nav__link">
+    1.3.2 - Release Date: [2023-07-13]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3.2 - Release Date: [2023-07-13]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_9" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#131-release-date-2023-07-11" class="md-nav__link">
+    1.3.1 - Release Date: [2023-07-11]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3.1 - Release Date: [2023-07-11]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refactor_7" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_5" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#130-release-date-2023-07-07" class="md-nav__link">
+    1.3.0 - Release Date: [2023-07-07]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.3.0 - Release Date: [2023-07-07]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#refactor_8" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#documentation_8" class="md-nav__link">
+    📝 Documentation
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#breaking-changes_1" class="md-nav__link">
+    🏗️ Breaking changes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_6" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#124-release-date-2023-06-27" class="md-nav__link">
+    1.2.4 - Release Date: [2023-06-27]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.4 - Release Date: [2023-06-27]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_7" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#123-release-date-2023-06-22" class="md-nav__link">
+    1.2.3 - Release Date: [2023-06-22]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.3 - Release Date: [2023-06-22]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#fixes_10" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor_9" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_8" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#122-release-date-2023-06-21" class="md-nav__link">
+    1.2.2 - Release Date: [2023-06-21]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.2 - Release Date: [2023-06-21]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#miscellaneous_9" class="md-nav__link">
+    🌀 Miscellaneous
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#121-release-date-2023-06-21" class="md-nav__link">
+    1.2.1 - Release Date: [2023-06-21]
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#120-release-date-2023-06-21" class="md-nav__link">
+    1.2.0 - Release Date: [2023-06-21]
+  </a>
+  
+    <nav class="md-nav" aria-label="1.2.0 - Release Date: [2023-06-21]">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#features_3" class="md-nav__link">
+    🚀 Features
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#fixes_11" class="md-nav__link">
+    🐛 Fixes
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#refactor_10" class="md-nav__link">
+    🏭 Refactor
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="2011-release-date-2023-10-24"><a href="https://github.com/bakdata/kpops/releases/tag/2.0.11">2.0.11</a> - Release Date: [2023-10-24]<a class="headerlink" href="#2011-release-date-2023-10-24" title="Permanent link">&para;</a></h2>
+<h3 id="fixes">🐛 Fixes<a class="headerlink" href="#fixes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Fix early exit upon Helm exit code 1 - <a href="https://github.com/bakdata/kpops/pull/376">#376</a></p>
+</li>
+<li>
+<p>Fix docs setup page list indentation - <a href="https://github.com/bakdata/kpops/pull/377">#377</a></p>
+</li>
+</ul>
+<h3 id="documentation">📝 Documentation<a class="headerlink" href="#documentation" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Migrate deprecated mkdocs-material-extensions - <a href="https://github.com/bakdata/kpops/pull/378">#378</a></p>
+</li>
+<li>
+<p>Fix docs setup page list indentation - <a href="https://github.com/bakdata/kpops/pull/377">#377</a></p>
+</li>
+<li>
+<p>Exclude resources from docs search - <a href="https://github.com/bakdata/kpops/pull/371">#371</a></p>
+</li>
+</ul>
+<h2 id="2010-release-date-2023-10-12"><a href="https://github.com/bakdata/kpops/releases/tag/2.0.10">2.0.10</a> - Release Date: [2023-10-12]<a class="headerlink" href="#2010-release-date-2023-10-12" title="Permanent link">&para;</a></h2>
+<h3 id="miscellaneous">🌀 Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Fix environment variables documentation generation - <a href="https://github.com/bakdata/kpops/pull/362">#362</a></p>
+</li>
+<li>
+<p>Introduce ruff - <a href="https://github.com/bakdata/kpops/pull/363">#363</a></p>
+</li>
+<li>
+<p>Print details on connector name mismatch error - <a href="https://github.com/bakdata/kpops/pull/369">#369</a></p>
+</li>
+<li>
+<p>Enable transparent OS environment lookups from internal environment - <a href="https://github.com/bakdata/kpops/pull/368">#368</a></p>
+</li>
+</ul>
+<h2 id="209-release-date-2023-09-19"><a href="https://github.com/bakdata/kpops/releases/tag/2.0.9">2.0.9</a> - Release Date: [2023-09-19]<a class="headerlink" href="#209-release-date-2023-09-19" title="Permanent link">&para;</a></h2>
+<h3 id="fixes_1">🐛 Fixes<a class="headerlink" href="#fixes_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fix Kafka connect config name for deletion - <a href="https://github.com/bakdata/kpops/pull/361">#361</a></li>
+</ul>
+<h3 id="documentation_1">📝 Documentation<a class="headerlink" href="#documentation_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fix link to kpops-examples - <a href="https://github.com/bakdata/kpops/pull/357">#357</a></li>
+</ul>
+<h2 id="208-release-date-2023-09-06"><a href="https://github.com/bakdata/kpops/releases/tag/2.0.8">2.0.8</a> - Release Date: [2023-09-06]<a class="headerlink" href="#208-release-date-2023-09-06" title="Permanent link">&para;</a></h2>
+<h3 id="fixes_2">🐛 Fixes<a class="headerlink" href="#fixes_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fix config.yaml overriding environment variables - <a href="https://github.com/bakdata/kpops/pull/353">#353</a></li>
+</ul>
+<h3 id="refactor">🏭 Refactor<a class="headerlink" href="#refactor" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Refactor component prefix &amp; name - <a href="https://github.com/bakdata/kpops/pull/326">#326</a></p>
+</li>
+<li>
+<p>Remove unnecessary condition during inflate - <a href="https://github.com/bakdata/kpops/pull/328">#328</a></p>
+</li>
+</ul>
+<h2 id="207-release-date-2023-08-31"><a href="https://github.com/bakdata/kpops/releases/tag/2.0.7">2.0.7</a> - Release Date: [2023-08-31]<a class="headerlink" href="#207-release-date-2023-08-31" title="Permanent link">&para;</a></h2>
+<h3 id="fixes_3">🐛 Fixes<a class="headerlink" href="#fixes_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Print only rendered templates when <code>--template</code> flag is set - <a href="https://github.com/bakdata/kpops/pull/350">#350</a></li>
+</ul>
+<h3 id="documentation_2">📝 Documentation<a class="headerlink" href="#documentation_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Add migration guide - <a href="https://github.com/bakdata/kpops/pull/352">#352</a></li>
+</ul>
+<h2 id="206-release-date-2023-08-30"><a href="https://github.com/bakdata/kpops/releases/tag/2.0.6">2.0.6</a> - Release Date: [2023-08-30]<a class="headerlink" href="#206-release-date-2023-08-30" title="Permanent link">&para;</a></h2>
+<h3 id="refactor_1">🏭 Refactor<a class="headerlink" href="#refactor_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Simplify deployment with local Helm charts - <a href="https://github.com/bakdata/kpops/pull/349">#349</a></li>
+</ul>
+<h2 id="205-release-date-2023-08-30"><a href="https://github.com/bakdata/kpops/releases/tag/2.0.5">2.0.5</a> - Release Date: [2023-08-30]<a class="headerlink" href="#205-release-date-2023-08-30" title="Permanent link">&para;</a></h2>
+<h3 id="fixes_4">🐛 Fixes<a class="headerlink" href="#fixes_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fix versioning of docs when releasing - <a href="https://github.com/bakdata/kpops/pull/346">#346</a></li>
+</ul>
+<h2 id="204-release-date-2023-08-29"><a href="https://github.com/bakdata/kpops/releases/tag/2.0.4">2.0.4</a> - Release Date: [2023-08-29]<a class="headerlink" href="#204-release-date-2023-08-29" title="Permanent link">&para;</a></h2>
+<h3 id="fixes_5">🐛 Fixes<a class="headerlink" href="#fixes_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fix GitHub ref variable for pushing docs to main branch - <a href="https://github.com/bakdata/kpops/pull/343">#343</a></li>
+</ul>
+<h3 id="documentation_3">📝 Documentation<a class="headerlink" href="#documentation_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Add <code>dprint</code> as the markdown formatter - <a href="https://github.com/bakdata/kpops/pull/337">#337</a></p>
+</li>
+<li>
+<p>Publish pre-release docs for PRs &amp; main branch - <a href="https://github.com/bakdata/kpops/pull/339">#339</a></p>
+</li>
+<li>
+<p>Align docs colours - <a href="https://github.com/bakdata/kpops/pull/345">#345</a></p>
+</li>
+</ul>
+<h3 id="miscellaneous_1">🌀 Miscellaneous<a class="headerlink" href="#miscellaneous_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Exclude abstract components from pipeline schema - <a href="https://github.com/bakdata/kpops/pull/332">#332</a></li>
+</ul>
+<h2 id="203-release-date-2023-08-24"><a href="https://github.com/bakdata/kpops/releases/tag/2.0.3">2.0.3</a> - Release Date: [2023-08-24]<a class="headerlink" href="#203-release-date-2023-08-24" title="Permanent link">&para;</a></h2>
+<h3 id="fixes_6">🐛 Fixes<a class="headerlink" href="#fixes_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fix GitHub action error in non-Python projects - <a href="https://github.com/bakdata/kpops/pull/340">#340</a></li>
+</ul>
+<h3 id="miscellaneous_2">🌀 Miscellaneous<a class="headerlink" href="#miscellaneous_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Lint GitHub action - <a href="https://github.com/bakdata/kpops/pull/342">#342</a></li>
+</ul>
+<h2 id="202-release-date-2023-08-23"><a href="https://github.com/bakdata/kpops/releases/tag/2.0.2">2.0.2</a> - Release Date: [2023-08-23]<a class="headerlink" href="#202-release-date-2023-08-23" title="Permanent link">&para;</a></h2>
+<h3 id="documentation_4">📝 Documentation<a class="headerlink" href="#documentation_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Add version dropdown to the documentation - <a href="https://github.com/bakdata/kpops/pull/336">#336</a></p>
+</li>
+<li>
+<p>Break the documentation down into smaller subsection - <a href="https://github.com/bakdata/kpops/pull/329">#329</a></p>
+</li>
+</ul>
+<h2 id="201-release-date-2023-08-22"><a href="https://github.com/bakdata/kpops/releases/tag/2.0.1">2.0.1</a> - Release Date: [2023-08-22]<a class="headerlink" href="#201-release-date-2023-08-22" title="Permanent link">&para;</a></h2>
+<h3 id="fixes_7">🐛 Fixes<a class="headerlink" href="#fixes_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fix optional flags in GitHub action - <a href="https://github.com/bakdata/kpops/pull/334">#334</a></li>
+</ul>
+<h2 id="200-release-date-2023-08-17"><a href="https://github.com/bakdata/kpops/releases/tag/2.0.0">2.0.0</a> - Release Date: [2023-08-17]<a class="headerlink" href="#200-release-date-2023-08-17" title="Permanent link">&para;</a></h2>
+<h3 id="breaking-changes">🏗️ Breaking changes<a class="headerlink" href="#breaking-changes" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Remove camel case conversion of internal models - <a href="https://github.com/bakdata/kpops/pull/308">#308</a></p>
+</li>
+<li>
+<p>Derive component type automatically from class name - <a href="https://github.com/bakdata/kpops/pull/309">#309</a></p>
+</li>
+<li>
+<p>Refactor input/output types - <a href="https://github.com/bakdata/kpops/pull/232">#232</a></p>
+</li>
+<li>
+<p>v2 - <a href="https://github.com/bakdata/kpops/pull/321">#321</a></p>
+</li>
+</ul>
+<h3 id="features">🚀 Features<a class="headerlink" href="#features" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Automatically support schema generation for custom components - <a href="https://github.com/bakdata/kpops/pull/307">#307</a></p>
+</li>
+<li>
+<p>Derive component type automatically from class name - <a href="https://github.com/bakdata/kpops/pull/309">#309</a></p>
+</li>
+</ul>
+<h3 id="refactor_2">🏭 Refactor<a class="headerlink" href="#refactor_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Refactor input/output types - <a href="https://github.com/bakdata/kpops/pull/232">#232</a></li>
+</ul>
+<h3 id="documentation_5">📝 Documentation<a class="headerlink" href="#documentation_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Fix editor integration example in docs - <a href="https://github.com/bakdata/kpops/pull/273">#273</a></li>
+</ul>
+<h2 id="172-release-date-2023-08-16"><a href="https://github.com/bakdata/kpops/releases/tag/1.7.2">1.7.2</a> - Release Date: [2023-08-16]<a class="headerlink" href="#172-release-date-2023-08-16" title="Permanent link">&para;</a></h2>
+<h3 id="refactor_3">🏭 Refactor<a class="headerlink" href="#refactor_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Refactor Kafka Connect handler - <a href="https://github.com/bakdata/kpops/pull/322">#322</a></li>
+</ul>
+<h3 id="documentation_6">📝 Documentation<a class="headerlink" href="#documentation_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Add KPOps Runner GitHub Action to the documentation - <a href="https://github.com/bakdata/kpops/pull/325">#325</a></p>
+</li>
+<li>
+<p>Remove <code>:type</code> and <code>:rtype</code> from docstrings - <a href="https://github.com/bakdata/kpops/pull/324">#324</a></p>
+</li>
+</ul>
+<h2 id="171-release-date-2023-08-15"><a href="https://github.com/bakdata/kpops/releases/tag/1.7.1">1.7.1</a> - Release Date: [2023-08-15]<a class="headerlink" href="#171-release-date-2023-08-15" title="Permanent link">&para;</a></h2>
+<h3 id="documentation_7">📝 Documentation<a class="headerlink" href="#documentation_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Modularize and autogenerate examples for the documentation - <a href="https://github.com/bakdata/kpops/pull/267">#267</a></p>
+</li>
+<li>
+<p>Update the variable documentation - <a href="https://github.com/bakdata/kpops/pull/266">#266</a></p>
+</li>
+</ul>
+<h2 id="170-release-date-2023-08-15"><a href="https://github.com/bakdata/kpops/releases/tag/1.7.0">1.7.0</a> - Release Date: [2023-08-15]<a class="headerlink" href="#170-release-date-2023-08-15" title="Permanent link">&para;</a></h2>
+<h3 id="features_1">🚀 Features<a class="headerlink" href="#features_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Add flag to exclude pipeline steps - <a href="https://github.com/bakdata/kpops/pull/300">#300</a></li>
+</ul>
+<h2 id="160-release-date-2023-08-10"><a href="https://github.com/bakdata/kpops/releases/tag/1.6.0">1.6.0</a> - Release Date: [2023-08-10]<a class="headerlink" href="#160-release-date-2023-08-10" title="Permanent link">&para;</a></h2>
+<h3 id="refactor_4">🏭 Refactor<a class="headerlink" href="#refactor_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Refactor handling of Helm flags - <a href="https://github.com/bakdata/kpops/pull/319">#319</a></li>
+</ul>
+<h2 id="150-release-date-2023-08-10"><a href="https://github.com/bakdata/kpops/releases/tag/1.5.0">1.5.0</a> - Release Date: [2023-08-10]<a class="headerlink" href="#150-release-date-2023-08-10" title="Permanent link">&para;</a></h2>
+<h3 id="features_2">🚀 Features<a class="headerlink" href="#features_2" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Refactor Helm wrapper and add <code>--set-file</code> flag - <a href="https://github.com/bakdata/kpops/pull/311">#311</a></li>
+</ul>
+<h3 id="refactor_5">🏭 Refactor<a class="headerlink" href="#refactor_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Refactor Helm wrapper and add <code>--set-file</code> flag - <a href="https://github.com/bakdata/kpops/pull/311">#311</a></p>
+</li>
+<li>
+<p>Set default for ToSection topics - <a href="https://github.com/bakdata/kpops/pull/313">#313</a></p>
+</li>
+<li>
+<p>Annotate types for ToSection models mapping - <a href="https://github.com/bakdata/kpops/pull/315">#315</a></p>
+</li>
+</ul>
+<h3 id="miscellaneous_3">🌀 Miscellaneous<a class="headerlink" href="#miscellaneous_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Check Poetry lock file consistency - <a href="https://github.com/bakdata/kpops/pull/316">#316</a></li>
+</ul>
+<h2 id="140-release-date-2023-08-02"><a href="https://github.com/bakdata/kpops/releases/tag/1.4.0">1.4.0</a> - Release Date: [2023-08-02]<a class="headerlink" href="#140-release-date-2023-08-02" title="Permanent link">&para;</a></h2>
+<h3 id="fixes_8">🐛 Fixes<a class="headerlink" href="#fixes_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Validate unique step names - <a href="https://github.com/bakdata/kpops/pull/292">#292</a></li>
+</ul>
+<h3 id="refactor_6">🏭 Refactor<a class="headerlink" href="#refactor_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Order PipelineComponent fields - <a href="https://github.com/bakdata/kpops/pull/290">#290</a></p>
+</li>
+<li>
+<p>Migrate requests to httpx - <a href="https://github.com/bakdata/kpops/pull/302">#302</a></p>
+</li>
+<li>
+<p>Refactor CLI using dtyper - <a href="https://github.com/bakdata/kpops/pull/306">#306</a></p>
+</li>
+</ul>
+<h3 id="miscellaneous_4">🌀 Miscellaneous<a class="headerlink" href="#miscellaneous_4" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Update Black - <a href="https://github.com/bakdata/kpops/pull/294">#294</a></p>
+</li>
+<li>
+<p>Fix vulnerability in mkdocs-material - <a href="https://github.com/bakdata/kpops/pull/295">#295</a></p>
+</li>
+<li>
+<p>Move breaking changes section upper in the change log config - <a href="https://github.com/bakdata/kpops/pull/287">#287</a></p>
+</li>
+</ul>
+<h2 id="132-release-date-2023-07-13"><a href="https://github.com/bakdata/kpops/releases/tag/1.3.2">1.3.2</a> - Release Date: [2023-07-13]<a class="headerlink" href="#132-release-date-2023-07-13" title="Permanent link">&para;</a></h2>
+<h3 id="fixes_9">🐛 Fixes<a class="headerlink" href="#fixes_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Exclude Helm tests from dry-run diff - <a href="https://github.com/bakdata/kpops/pull/293">#293</a></li>
+</ul>
+<h2 id="131-release-date-2023-07-11"><a href="https://github.com/bakdata/kpops/releases/tag/1.3.1">1.3.1</a> - Release Date: [2023-07-11]<a class="headerlink" href="#131-release-date-2023-07-11" title="Permanent link">&para;</a></h2>
+<h3 id="refactor_7">🏭 Refactor<a class="headerlink" href="#refactor_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Remove workaround for pipeline steps - <a href="https://github.com/bakdata/kpops/pull/276">#276</a></li>
+</ul>
+<h3 id="miscellaneous_5">🌀 Miscellaneous<a class="headerlink" href="#miscellaneous_5" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Update codeowners - <a href="https://github.com/bakdata/kpops/pull/281">#281</a></p>
+</li>
+<li>
+<p>Reactivate Windows CI - <a href="https://github.com/bakdata/kpops/pull/255">#255</a></p>
+</li>
+<li>
+<p>Downgrade Poetry version on the Windows CI pipeline - <a href="https://github.com/bakdata/kpops/pull/286">#286</a></p>
+</li>
+<li>
+<p>Set ANSI theme for output of <code>kpops generate</code> - <a href="https://github.com/bakdata/kpops/pull/289">#289</a></p>
+</li>
+</ul>
+<h2 id="130-release-date-2023-07-07"><a href="https://github.com/bakdata/kpops/releases/tag/1.3.0">1.3.0</a> - Release Date: [2023-07-07]<a class="headerlink" href="#130-release-date-2023-07-07" title="Permanent link">&para;</a></h2>
+<h3 id="refactor_8">🏭 Refactor<a class="headerlink" href="#refactor_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Plural broker field in pipeline config - <a href="https://github.com/bakdata/kpops/pull/278">#278</a></li>
+</ul>
+<h3 id="documentation_8">📝 Documentation<a class="headerlink" href="#documentation_8" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Update KPOps runner readme for dev versions - <a href="https://github.com/bakdata/kpops/pull/279">#279</a></li>
+</ul>
+<h3 id="breaking-changes_1">🏗️ Breaking changes<a class="headerlink" href="#breaking-changes_1" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Plural broker field in pipeline config - <a href="https://github.com/bakdata/kpops/pull/278">#278</a></li>
+</ul>
+<h3 id="miscellaneous_6">🌀 Miscellaneous<a class="headerlink" href="#miscellaneous_6" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Add breaking changes section to change log config - <a href="https://github.com/bakdata/kpops/pull/280">#280</a></li>
+</ul>
+<h2 id="124-release-date-2023-06-27"><a href="https://github.com/bakdata/kpops/releases/tag/1.2.4">1.2.4</a> - Release Date: [2023-06-27]<a class="headerlink" href="#124-release-date-2023-06-27" title="Permanent link">&para;</a></h2>
+<h3 id="miscellaneous_7">🌀 Miscellaneous<a class="headerlink" href="#miscellaneous_7" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Update changelog action to contain miscellaneous PRs - <a href="https://github.com/bakdata/kpops/pull/269">#269</a></li>
+</ul>
+<h2 id="123-release-date-2023-06-22"><a href="https://github.com/bakdata/kpops/releases/tag/1.2.3">1.2.3</a> - Release Date: [2023-06-22]<a class="headerlink" href="#123-release-date-2023-06-22" title="Permanent link">&para;</a></h2>
+<h3 id="fixes_10">🐛 Fixes<a class="headerlink" href="#fixes_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Refactor custom component validation &amp; hide field from kpops output - <a href="https://github.com/bakdata/kpops/pull/265">#265</a></li>
+</ul>
+<h3 id="refactor_9">🏭 Refactor<a class="headerlink" href="#refactor_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Refactor custom component validation &amp; hide field from kpops output - <a href="https://github.com/bakdata/kpops/pull/265">#265</a></li>
+</ul>
+<h3 id="miscellaneous_8">🌀 Miscellaneous<a class="headerlink" href="#miscellaneous_8" title="Permanent link">&para;</a></h3>
+<h2 id="122-release-date-2023-06-21"><a href="https://github.com/bakdata/kpops/releases/tag/1.2.2">1.2.2</a> - Release Date: [2023-06-21]<a class="headerlink" href="#122-release-date-2023-06-21" title="Permanent link">&para;</a></h2>
+<h3 id="miscellaneous_9">🌀 Miscellaneous<a class="headerlink" href="#miscellaneous_9" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Create workflow to lint CI - <a href="https://github.com/bakdata/kpops/pull/260">#260</a></p>
+</li>
+<li>
+<p>Fix update docs when releasing - <a href="https://github.com/bakdata/kpops/pull/261">#261</a></p>
+</li>
+<li>
+<p>Rename change log message for uncategorized issues - <a href="https://github.com/bakdata/kpops/pull/262">#262</a></p>
+</li>
+</ul>
+<h2 id="121-release-date-2023-06-21"><a href="https://github.com/bakdata/kpops/releases/tag/1.2.1">1.2.1</a> - Release Date: [2023-06-21]<a class="headerlink" href="#121-release-date-2023-06-21" title="Permanent link">&para;</a></h2>
+<summary>Uncategorized</summary>
+
+<ul>
+<li>Fix update docs in release workflow - <a href="https://github.com/bakdata/kpops/pull/258">#258</a></li>
+</ul>
+<h2 id="120-release-date-2023-06-21"><a href="https://github.com/bakdata/kpops/releases/tag/1.2.0">1.2.0</a> - Release Date: [2023-06-21]<a class="headerlink" href="#120-release-date-2023-06-21" title="Permanent link">&para;</a></h2>
+<h3 id="features_3">🚀 Features<a class="headerlink" href="#features_3" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Add <code>helm repo update &lt;repo-name&gt;</code> for Helm &gt;3.7 - <a href="https://github.com/bakdata/kpops/pull/239">#239</a></li>
+</ul>
+<h3 id="fixes_11">🐛 Fixes<a class="headerlink" href="#fixes_11" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>add --namespace option to Helm template command - <a href="https://github.com/bakdata/kpops/pull/237">#237</a></p>
+</li>
+<li>
+<p>Add missing type annotation for Pydantic attributes - <a href="https://github.com/bakdata/kpops/pull/238">#238</a></p>
+</li>
+<li>
+<p>Fix helm version check - <a href="https://github.com/bakdata/kpops/pull/242">#242</a></p>
+</li>
+<li>
+<p>Fix Helm Version Check - <a href="https://github.com/bakdata/kpops/pull/244">#244</a></p>
+</li>
+<li>
+<p>Fix import from external module - <a href="https://github.com/bakdata/kpops/pull/256">#256</a></p>
+</li>
+</ul>
+<h3 id="refactor_10">🏭 Refactor<a class="headerlink" href="#refactor_10" title="Permanent link">&para;</a></h3>
+<ul>
+<li>
+<p>Remove enable option from helm diff - <a href="https://github.com/bakdata/kpops/pull/235">#235</a></p>
+</li>
+<li>
+<p>Refactor variable substitution - <a href="https://github.com/bakdata/kpops/pull/198">#198</a></p>
+</li>
+</ul>
+<summary>Uncategorized</summary>
+
+<ul>
+<li>
+<p>Add background to docs home page - <a href="https://github.com/bakdata/kpops/pull/236">#236</a></p>
+</li>
+<li>
+<p>Update Poetry version in CI - <a href="https://github.com/bakdata/kpops/pull/247">#247</a></p>
+</li>
+<li>
+<p>Add pip cache in KPOps runner action - <a href="https://github.com/bakdata/kpops/pull/249">#249</a></p>
+</li>
+<li>
+<p>Check types using Pyright - <a href="https://github.com/bakdata/kpops/pull/251">#251</a></p>
+</li>
+<li>
+<p>Remove MyPy - <a href="https://github.com/bakdata/kpops/pull/252">#252</a></p>
+</li>
+<li>
+<p>Disable broken Windows CI temporarily - <a href="https://github.com/bakdata/kpops/pull/253">#253</a></p>
+</li>
+<li>
+<p>Update release and publish workflows - <a href="https://github.com/bakdata/kpops/pull/254">#254</a></p>
+</li>
+<li>
+<p>Fix release &amp; publish workflows - <a href="https://github.com/bakdata/kpops/pull/257">#257</a></p>
+</li>
+</ul>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 bakdata
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.share", "search.suggest", "content.tooltips", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
+      
+    
+  <script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>
+</html>

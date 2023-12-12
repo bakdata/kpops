@@ -8,19 +8,25 @@
       
       
       
+        <link rel="canonical" href="https://bakdata.github.io/kpops/dev/developer/getting-started/">
       
       
+        <link rel="prev" href="../../user/references/ci-integration/github-actions/">
       
-      <link rel="icon" href="/kpops/dev/assets/images/favicon.png">
+      
+        <link rel="next" href="../contributing/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
     
     
       
-        <title>KPOps</title>
+        <title>Getting Started - KPOps</title>
       
     
     
-      <link rel="stylesheet" href="/kpops/dev/assets/stylesheets/main.35e1ed30.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.35e1ed30.min.css">
       
       
 
@@ -39,16 +45,27 @@
       
     
     
-      <link rel="stylesheet" href="/kpops/dev/stylesheets/extra.css">
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL("/kpops/dev",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
     
     
     
-  </head>
+   <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+        html.glightbox-open { overflow: initial; height: 100%; }
+        .gslide-title { margin-top: 0px; user-select: text; }
+        .gslide-desc { color: #666; user-select: text; }
+        .gslide-image img { background: white; }
+        
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
+            </style> <script src="../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     <body dir="ltr">
@@ -61,6 +78,11 @@
     <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
+      
+        
+        <a href="#getting-started" class="md-skip">
+          Skip to content
+        </a>
       
     </div>
     <div data-md-component="announce">
@@ -76,7 +98,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="/kpops/dev/." title="KPOps" class="md-header__button md-logo" aria-label="KPOps" data-md-component="logo">
+    <a href="../.." title="KPOps" class="md-header__button md-logo" aria-label="KPOps" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -96,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              
+              Getting Started
             
           </span>
         </div>
@@ -183,7 +205,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/kpops/dev/." class="md-tabs__link">
+        <a href="../.." class="md-tabs__link">
           
   
     
@@ -203,7 +225,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="/kpops/dev/user/what-is-kpops/" class="md-tabs__link">
+        <a href="../../user/what-is-kpops/" class="md-tabs__link">
           
   
     
@@ -219,11 +241,13 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="/kpops/dev/developer/getting-started/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
           
   
     
@@ -258,7 +282,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="/kpops/dev/." title="KPOps" class="md-nav__button md-logo" aria-label="KPOps" data-md-component="logo">
+    <a href="../.." title="KPOps" class="md-nav__button md-logo" aria-label="KPOps" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -310,7 +334,7 @@
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="/kpops/dev/." class="md-nav__link ">
+            <a href="../.." class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -397,7 +421,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/what-is-kpops/" class="md-nav__link">
+      <a href="../../user/what-is-kpops/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -417,7 +441,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/changelog/" class="md-nav__link">
+      <a href="../../user/changelog/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -484,7 +508,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/getting-started/setup/" class="md-nav__link">
+      <a href="../../user/getting-started/setup/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -504,7 +528,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/getting-started/quick-start/" class="md-nav__link">
+      <a href="../../user/getting-started/quick-start/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -524,7 +548,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/getting-started/teardown/" class="md-nav__link">
+      <a href="../../user/getting-started/teardown/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -595,7 +619,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/examples/atm-fraud-pipeline/" class="md-nav__link">
+      <a href="../../user/examples/atm-fraud-pipeline/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -726,7 +750,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/core-concepts/components/overview/" class="md-nav__link">
+      <a href="../../user/core-concepts/components/overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -746,7 +770,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/core-concepts/components/kubernetes-app/" class="md-nav__link">
+      <a href="../../user/core-concepts/components/kubernetes-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -766,7 +790,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/core-concepts/components/kafka-app/" class="md-nav__link">
+      <a href="../../user/core-concepts/components/kafka-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -786,7 +810,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/core-concepts/components/streams-app/" class="md-nav__link">
+      <a href="../../user/core-concepts/components/streams-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -806,7 +830,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/core-concepts/components/producer-app/" class="md-nav__link">
+      <a href="../../user/core-concepts/components/producer-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -826,7 +850,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/core-concepts/components/kafka-connector/" class="md-nav__link">
+      <a href="../../user/core-concepts/components/kafka-connector/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -846,7 +870,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/core-concepts/components/kafka-sink-connector/" class="md-nav__link">
+      <a href="../../user/core-concepts/components/kafka-sink-connector/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -866,7 +890,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/core-concepts/components/kafka-source-connector/" class="md-nav__link">
+      <a href="../../user/core-concepts/components/kafka-source-connector/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -894,7 +918,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/core-concepts/config/" class="md-nav__link">
+      <a href="../../user/core-concepts/config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -914,7 +938,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/core-concepts/defaults/" class="md-nav__link">
+      <a href="../../user/core-concepts/defaults/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -976,7 +1000,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/core-concepts/variables/environment_variables/" class="md-nav__link">
+      <a href="../../user/core-concepts/variables/environment_variables/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -996,7 +1020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/core-concepts/variables/substitution/" class="md-nav__link">
+      <a href="../../user/core-concepts/variables/substitution/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1123,7 +1147,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/migration-guide/v1-v2/" class="md-nav__link">
+      <a href="../../user/migration-guide/v1-v2/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1143,7 +1167,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/migration-guide/v2-v3/" class="md-nav__link">
+      <a href="../../user/migration-guide/v2-v3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1171,7 +1195,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/references/cli-commands/" class="md-nav__link">
+      <a href="../../user/references/cli-commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1191,7 +1215,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/references/editor-integration/" class="md-nav__link">
+      <a href="../../user/references/editor-integration/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1251,7 +1275,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/user/references/ci-integration/github-actions/" class="md-nav__link">
+      <a href="../../user/references/ci-integration/github-actions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1292,6 +1316,8 @@
       
   
   
+    
+  
   
     
     
@@ -1309,12 +1335,12 @@
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
         
           
           <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
@@ -1328,7 +1354,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3">
             <span class="md-nav__icon md-icon"></span>
             Developer Guide
@@ -1339,9 +1365,18 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="/kpops/dev/developer/getting-started/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -1350,6 +1385,7 @@
   
 
       </a>
+      
     </li>
   
 
@@ -1361,7 +1397,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/developer/contributing/" class="md-nav__link">
+      <a href="../contributing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1424,7 +1460,7 @@
   
   
     <li class="md-nav__item">
-      <a href="/kpops/dev/developer/auto-generation/" class="md-nav__link">
+      <a href="../auto-generation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1470,6 +1506,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -1481,8 +1519,28 @@
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
                 
-  <h1>404 - Not found</h1>
+                  
 
+  
+  
+
+
+<h1 id="getting-started">Getting started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
+<p><strong>Welcome!</strong> We are glad to have you visit our developer guide! If you find any bugs or have suggestions for improvements, please open an <a href="https://github.com/bakdata/kpops/issues/new">issue</a> and optionally a <a href="https://github.com/bakdata/kpops/compare">pull request (PR)</a>. In the case of a PR, we would appreciate it if you preface it with an issue outlining your goal and means of achieving it.</p>
+<p>Find more about our code-style or insights into KPOps' code base here in our developer guide.</p>
+<!-- dprint-ignore-start -->
+
+<div class="admonition wip">
+<p class="admonition-title">Work in progress</p>
+<p>The developer guide is still under construction. If you have a question left unanswered here, feel free to ask it by opening an issue.</p>
+</div>
+<!-- dprint-ignore-end -->
+
+
+
+
+
+                
               </article>
             </div>
           
@@ -1525,11 +1583,11 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "/kpops/dev", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.share", "search.suggest", "content.tooltips", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "/kpops/dev/assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.share", "search.suggest", "content.tooltips", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="/kpops/dev/assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../../assets/javascripts/bundle.aecac24b.min.js"></script>
       
     
-  </body>
+  <script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>
 </html>
