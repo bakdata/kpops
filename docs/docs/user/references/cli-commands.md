@@ -40,7 +40,7 @@ $ kpops clean [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--dotenv FILE`: Path to dotenvfile. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
@@ -67,7 +67,7 @@ $ kpops deploy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--dotenv FILE`: Path to dotenvfile. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
@@ -94,7 +94,7 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--dotenv FILE`: Path to dotenvfile. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
@@ -121,7 +121,7 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--dotenv FILE`: Path to dotenvfile. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--template / --no-template`: Run Helm template  [default: no-template]
@@ -148,7 +148,7 @@ $ kpops reset [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 **Options**:
 
 * `--pipeline-base-dir DIRECTORY`: Base directory to the pipelines (default is current working directory)  [env var: KPOPS_PIPELINE_BASE_DIR; default: .]
-* `--dotenv FILE`: Path to dotenvfile. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config FILE`: Path to the config.yaml file  [env var: KPOPS_CONFIG_PATH; default: config.yaml]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]

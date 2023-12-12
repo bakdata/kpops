@@ -10,9 +10,11 @@ from pydantic_settings import (
 )
 from typing_extensions import override
 
-from kpops.cli.settings_sources import YamlConfigSettingsSource
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.docstring import describe_object
+from kpops.utils.pydantic import YamlConfigSettingsSource
+
+ENV_PREFIX = "KPOPS_"
 
 
 class TopicNameConfig(BaseSettings):
@@ -78,7 +80,7 @@ class KpopsConfig(BaseSettings):
         "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).",
     )
     components_module: str | None = Field(
-        default=...,
+        default=None,
         description="Custom Python module defining project-specific KPOps components",
     )
     pipeline_base_dir: Path = Field(
@@ -133,7 +135,7 @@ class KpopsConfig(BaseSettings):
         description="Whether to retain clean up jobs in the cluster or uninstall the, after completion.",
     )
 
-    model_config = SettingsConfigDict(env_prefix="KPOPS_", env_nested_delimiter="__")
+    model_config = SettingsConfigDict(env_prefix=ENV_PREFIX, env_nested_delimiter="__")
 
     @override
     @classmethod

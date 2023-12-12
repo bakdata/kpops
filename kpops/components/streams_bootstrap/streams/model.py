@@ -51,7 +51,7 @@ class StreamsConfig(KafkaStreamsConfig):
     error_topic: str | None = Field(
         default=None, description=describe_attr("error_topic", __doc__)
     )
-    config: dict[str, str] = Field(
+    config: dict[str, Any] = Field(
         default={}, description=describe_attr("config", __doc__)
     )
 
@@ -81,7 +81,7 @@ class StreamsConfig(KafkaStreamsConfig):
     def serialize_model(
         self, handler: Callable, info: SerializationInfo
     ) -> dict[str, Any]:
-        return exclude_defaults(self, exclude_by_value(handler(self)))
+        return exclude_defaults(self, exclude_by_value(handler(self), None))
 
 
 class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):

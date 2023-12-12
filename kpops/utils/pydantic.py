@@ -1,10 +1,15 @@
+from pathlib import Path
 from typing import Any
 
 import humps
 from pydantic import BaseModel, ConfigDict, Field
 from pydantic.alias_generators import to_snake
+from pydantic.fields import FieldInfo
+from pydantic_settings import PydanticBaseSettingsSource
+from typing_extensions import TypeVar, override
 
 from kpops.utils.docstring import describe_object
+from kpops.utils.yaml_loading import load_yaml_file
 
 
 def to_camel(s: str) -> str:
@@ -22,7 +27,7 @@ def to_dot(s: str) -> str:
     return s.replace("_", ".")
 
 
-def by_alias(field_name: str, model: BaseModel) -> str:
+def by_alias(model: BaseModel, field_name: str) -> str:
     """Return field alias if exists else field name.
 
     :param field_name: Name of the field to get alias of
@@ -31,9 +36,12 @@ def by_alias(field_name: str, model: BaseModel) -> str:
     return model.model_fields.get(field_name, Field()).alias or field_name
 
 
+_V = TypeVar("_V")
+
+
 def exclude_by_value(
-    dumped_model: dict[str, Any], *excluded_values: Any
-) -> dict[str, Any]:
+    dumped_model: dict[str, _V], *excluded_values: Any
+) -> dict[str, _V]:
     """Strip all key-value pairs with certain values.
 
     :param dumped_model: Dumped model
@@ -48,8 +56,8 @@ def exclude_by_value(
 
 
 def exclude_by_name(
-    dumped_model: dict[str, Any], *excluded_fields: str
-) -> dict[str, Any]:
+    dumped_model: dict[str, _V], *excluded_fields: str
+) -> dict[str, _V]:
     """Strip all key-value pairs with certain field names.
 
     :param dumped_model: Dumped model
@@ -63,7 +71,7 @@ def exclude_by_name(
     }
 
 
-def exclude_defaults(model: BaseModel, dumped_model: dict[str, Any]) -> dict[str, str]:
+def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str, _V]:
     """Strip all key-value pairs with default values.
 
     :param model: Model
@@ -98,3 +106,48 @@ class DescConfigModel(BaseModel):
         schema["description"] = describe_object(model.__doc__)
 
     model_config = ConfigDict(json_schema_extra=json_schema_extra)
+
+
+class YamlConfigSettingsSource(PydanticBaseSettingsSource):
+    """Loads variables from a YAML file at the project's root."""
+
+    path_to_config = Path("config.yaml")
+
+    @override
+    def get_field_value(
+        self,
+        field: FieldInfo,
+        field_name: str,
+    ) -> tuple[Any, str, bool]:
+        if self.path_to_config.exists() and isinstance(
+            (file_content_yaml := load_yaml_file(self.path_to_config)), dict
+        ):
+            field_value = file_content_yaml.get(field_name)
+            return field_value, field_name, False
+        return None, field_name, False
+
+    @override
+    def prepare_field_value(
+        self, field_name: str, field: FieldInfo, value: Any, value_is_complex: bool
+    ) -> Any:
+        return value
+
+    @override
+    def __call__(self) -> dict[str, Any]:
+        d: dict[str, Any] = {}
+
+        for field_name, field in self.settings_cls.model_fields.items():
+            field_value, field_key, value_is_complex = self.get_field_value(
+                field,
+                field_name,
+            )
+            field_value = self.prepare_field_value(
+                field_name,
+                field,
+                field_value,
+                value_is_complex,
+            )
+            if field_value is not None:
+                d[field_key] = field_value
+
+        return d

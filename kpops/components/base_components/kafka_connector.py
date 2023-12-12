@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Any, NoReturn
+from typing import NoReturn
 
 from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
 from typing_extensions import override
@@ -72,16 +72,16 @@ class KafkaConnector(PipelineComponent, ABC):
     )
     _connector_type: KafkaConnectorType = PrivateAttr()
 
-    @field_validator("app")
+    @field_validator("app", mode="before")
     @classmethod
     def connector_config_should_have_component_name(
         cls,
         app: KafkaConnectorConfig | dict[str, str],
         info: ValidationInfo,
-    ) -> Any:
+    ) -> KafkaConnectorConfig:
         if isinstance(app, KafkaConnectorConfig):
             app = app.model_dump()
-        component_name = info.data["prefix"] + info.data["name"]
+        component_name: str = info.data["prefix"] + info.data["name"]
         connector_name: str | None = app.get("name")
         if connector_name is not None and connector_name != component_name:
             msg = f"Connector name '{connector_name}' should be the same as component name '{component_name}'"

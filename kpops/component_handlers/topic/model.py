@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Any
 
 from pydantic import BaseModel, ConfigDict
 
@@ -7,7 +8,7 @@ class TopicSpec(BaseModel):
     topic_name: str
     partitions_count: int | None = None
     replication_factor: int | None = None
-    configs: list[dict[str, str]] | None = None
+    configs: list[dict[str, Any]] | None = None
 
 
 class TopicResponse(BaseModel):
