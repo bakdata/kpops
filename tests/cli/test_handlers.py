@@ -10,7 +10,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.config import KpopsConfig, SchemaRegistryConfig
-from tests.cli.resources.module import CustomSchemaProvider
+from tests.cli.resources.custom_module import CustomSchemaProvider
 
 MODULE = CustomSchemaProvider.__module__
 
