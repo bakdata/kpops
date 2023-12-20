@@ -22,7 +22,7 @@ class TestExample:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "atm-fraud-pipeline")

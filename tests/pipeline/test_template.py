@@ -53,7 +53,7 @@ class TestTemplate:
             ],
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
     def test_template_config_with_flags(self, run_command: MagicMock):
         run_command.return_value = "v3.12.0+gc9f554d"
@@ -94,4 +94,4 @@ class TestTemplate:
             ],
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout

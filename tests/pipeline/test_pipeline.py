@@ -36,7 +36,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
@@ -67,7 +67,7 @@ class TestPipeline:
             )
         ]
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
     def test_name_equal_prefix_name_concatenation(self):
         result = runner.invoke(
@@ -81,7 +81,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
@@ -102,7 +102,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -119,7 +119,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -136,7 +136,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
@@ -221,7 +221,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -238,7 +238,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -256,7 +256,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -273,7 +273,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -292,7 +292,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -312,7 +312,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -334,7 +334,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline["components"][0]
@@ -377,7 +377,7 @@ class TestPipeline:
                 catch_exceptions=False,
             )
 
-            assert result.exit_code == 0
+            assert result.exit_code == 0, result.stdout
 
             enriched_pipeline: dict = yaml.safe_load(result.stdout)
             producer_details = enriched_pipeline["components"][0]
@@ -408,7 +408,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline["components"][0]
@@ -438,7 +438,7 @@ class TestPipeline:
             ],
             catch_exceptions=False,
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline["components"][0]["app"]["streams"]["brokers"]
@@ -462,7 +462,7 @@ class TestPipeline:
             ],
             catch_exceptions=False,
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
@@ -486,7 +486,7 @@ class TestPipeline:
             ],
             catch_exceptions=False,
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
@@ -522,7 +522,7 @@ class TestPipeline:
             ],
             catch_exceptions=False,
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline["components"][0]["app"]["streams"]["schemaRegistryUrl"]
@@ -559,7 +559,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -581,7 +581,7 @@ class TestPipeline:
             ],
             catch_exceptions=False,
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
@@ -601,7 +601,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
@@ -676,7 +676,7 @@ class TestPipeline:
             ],
             catch_exceptions=False,
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline["components"][0]["name"]
