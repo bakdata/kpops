@@ -5,6 +5,8 @@ from typing import Any
 import yaml
 from cachetools import cached
 from cachetools.keys import hashkey
+from rich.console import Console
+from rich.syntax import Syntax
 
 from kpops.utils.dict_ops import ImprovedTemplate
 
@@ -79,3 +81,20 @@ def substitute_nested(input: str, **kwargs) -> str:
         msg = "An infinite loop condition detected. Check substitution variables."
         raise ValueError(msg)
     return old_str
+
+
+def print_yaml(input: str, *, substitution: dict | None = None) -> None:
+    """Print YAML to console with syntax highlighting.
+
+    :param s: YAML content
+    :param substitution: Substitution dictionary, defaults to None
+    """
+    syntax = Syntax(
+        substitute(input, substitution),
+        "yaml",
+        background_color="default",
+        theme="ansi_dark",
+    )
+    Console(
+        width=1000  # HACK: overwrite console width to avoid truncating output
+    ).print(syntax)

@@ -4,7 +4,7 @@ from unittest import mock
 
 import pytest
 
-from kpops.utils.yaml_loading import load_yaml_file
+from kpops.utils.yaml import load_yaml_file
 
 
 @pytest.fixture()

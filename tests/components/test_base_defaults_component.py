@@ -137,11 +137,11 @@ class TestBaseDefaultsComponent:
         component = Child(
             config=config,
             handlers=handlers,
-            name="name-defined-in-pipeline_generator",
+            name="name-defined-in-pipeline_parser",
         )
 
         assert (
-            component.name == "name-defined-in-pipeline_generator"
+            component.name == "name-defined-in-pipeline_parser"
         ), "Kwargs should should overwrite all other values"
         assert component.nice == {
             "fake-value": "fake"
