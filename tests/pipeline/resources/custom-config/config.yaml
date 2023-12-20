@@ -12,3 +12,4 @@ schema_registry:
   url: "http://localhost:8081"
 helm_config:
   api_version: "2.1.1"
+pipeline_base_dir: tests/pipeline
