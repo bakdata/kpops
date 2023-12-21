@@ -16,7 +16,7 @@ runner = CliRunner()
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
-class TestRender:
+class TestManifest:
     @pytest.fixture()
     def mock_execute(self, mocker: MockerFixture) -> MagicMock:
         mock_execute = mocker.patch.object(Helm, "_Helm__execute")
@@ -33,11 +33,11 @@ class TestRender:
     def helm(self, mock_get_version: MagicMock) -> Helm:
         return Helm(helm_config=HelmConfig())
 
-    def test_render_default_config(self, mock_execute: MagicMock):
+    def test_default_config(self, mock_execute: MagicMock):
         result = runner.invoke(
             app,
             [
-                "render",
+                "manifest",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
@@ -65,11 +65,11 @@ class TestRender:
         )
         assert result.exit_code == 0, result.stdout
 
-    def test_render_custom_config(self, mock_execute: MagicMock):
+    def test_custom_config(self, mock_execute: MagicMock):
         result = runner.invoke(
             app,
             [
-                "render",
+                "manifest",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
@@ -102,7 +102,7 @@ class TestRender:
         assert result.exit_code == 0, result.stdout
 
     def test_python_api(self):
-        steps = kpops.render(
+        steps = kpops.manifest(
             RESOURCE_PATH / "custom-config/pipeline.yaml",
             defaults=RESOURCE_PATH / "no-topics-defaults",
             output=False,

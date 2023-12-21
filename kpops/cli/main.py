@@ -281,7 +281,7 @@ def generate(
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
     help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests."
 )
-def render(
+def manifest(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
@@ -304,7 +304,7 @@ def render(
     steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
     resources: list[Resource] = []
     for component in steps_to_apply:
-        resource = component.render()
+        resource = component.manifest()
         resources.append(resource)
         if output:
             for manifest in resource:

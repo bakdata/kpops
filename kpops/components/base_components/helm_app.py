@@ -99,7 +99,7 @@ class HelmApp(KubernetesApp):
         )
 
     @override
-    def render(self) -> Resource:
+    def manifest(self) -> Resource:
         return self.helm.template(
             self.helm_release_name,
             self.helm_chart,
