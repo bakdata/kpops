@@ -14,7 +14,6 @@ from kpops.component_handlers.kubernetes.model import KubernetesManifest
 runner = CliRunner()
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
-PIPELINE_BASE_DIR_PATH = RESOURCE_PATH.parent
 
 
 class TestRender:
@@ -39,11 +38,11 @@ class TestRender:
             app,
             [
                 "render",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -64,20 +63,20 @@ class TestRender:
                 "--wait",
             ],
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
     def test_render_custom_config(self, mock_execute: MagicMock):
         result = runner.invoke(
             app,
             [
                 "render",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
                 "--config",
-                str(RESOURCE_PATH / "custom-config/config.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -100,14 +99,14 @@ class TestRender:
                 "2.1.1",
             ],
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
     def test_python_api(self):
         steps = kpops.render(
             RESOURCE_PATH / "custom-config/pipeline.yaml",
-            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
             defaults=RESOURCE_PATH / "no-topics-defaults",
             output=False,
+            environment="development",
         )
         assert len(steps) == 2
         manifests = steps[0]
@@ -145,7 +144,7 @@ class TestRender:
                                     },
                                     {
                                         "name": "APP_SCHEMA_REGISTRY_URL",
-                                        "value": "http://localhost:8081",
+                                        "value": "http://localhost:8081/",
                                     },
                                     {"name": "APP_DEBUG", "value": "false"},
                                     {
@@ -269,7 +268,7 @@ class TestRender:
                                     },
                                     {
                                         "name": "APP_SCHEMA_REGISTRY_URL",
-                                        "value": "http://localhost:8081",
+                                        "value": "http://localhost:8081/",
                                     },
                                     {"name": "APP_DEBUG", "value": "false"},
                                     {

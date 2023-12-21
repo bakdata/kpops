@@ -27,10 +27,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 class TestConnectorApiWrapper:
     @pytest.fixture(autouse=True)
     def _setup(self):
-        config = KpopsConfig(
-            defaults_path=DEFAULTS_PATH,
-            environment="development",
-        )
+        config = KpopsConfig(defaults_path=DEFAULTS_PATH)
         self.connect_wrapper = ConnectWrapper(config.kafka_connect)
 
     @pytest.fixture()
@@ -65,7 +62,7 @@ class TestConnectorApiWrapper:
             headers=HEADERS,
             json={
                 "name": "test-connector",
-                "config": KafkaConnectorConfig(**configs).dict(),
+                "config": KafkaConnectorConfig(**configs).model_dump(),
             },
         )
 
@@ -235,7 +232,7 @@ class TestConnectorApiWrapper:
         mock_put.assert_called_with(
             url=f"{DEFAULT_HOST}/connectors/{connector_name}/config",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectorConfig(**configs).dict(),
+            json=KafkaConnectorConfig(**configs).model_dump(),
         )
 
     @patch("kpops.component_handlers.kafka_connect.connect_wrapper.log.info")
@@ -455,7 +452,7 @@ class TestConnectorApiWrapper:
         mock_put.assert_called_with(
             url=f"{DEFAULT_HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=connector_config.dict(),
+            json=connector_config.model_dump(),
         )
 
     @patch("httpx.put")
@@ -477,7 +474,9 @@ class TestConnectorApiWrapper:
         mock_put.assert_called_with(
             url=f"{DEFAULT_HOST}/connector-plugins/{connector_name}/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectorConfig(**{"name": connector_name, **configs}).dict(),
+            json=KafkaConnectorConfig(
+                **{"name": connector_name, **configs}
+            ).model_dump(),
         )
 
     def test_should_parse_validate_connector_config(self, httpx_mock: HTTPXMock):
