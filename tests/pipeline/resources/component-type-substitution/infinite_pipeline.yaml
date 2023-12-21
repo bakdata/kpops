@@ -1,6 +1,6 @@
 - type: converter
   app:
     labels:
-      l_1: ${component_app_labels_l_2}
-      l_2: ${component_app_labels_l_1}
-      infinite_nesting: ${component_app_labels}
+      l_1: ${component.app.labels.l_2}
+      l_2: ${component.app.labels.l_1}
+      infinite_nesting: ${component.app.labels}

@@ -1,10 +1,23 @@
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseConfig, BaseModel, Extra, Field, validator
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    SerializationInfo,
+    field_validator,
+    model_serializer,
+)
+from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig, to_dot
+from kpops.utils.pydantic import (
+    CamelCaseConfigModel,
+    DescConfigModel,
+    by_alias,
+    exclude_by_value,
+    to_dot,
+)
 
 
 class KafkaConnectorType(str, Enum):
@@ -12,23 +25,27 @@ class KafkaConnectorType(str, Enum):
     SOURCE = "source"
 
 
-class KafkaConnectorConfig(BaseModel):
+class KafkaConnectorConfig(DescConfigModel):
     """Settings specific to Kafka Connectors."""
 
     connector_class: str
-    name: str = Field(default=..., hidden_from_schema=True)
+    name: SkipJsonSchema[str]
 
-    class Config(DescConfig):
-        extra = Extra.allow
-        alias_generator = to_dot
+    @override
+    @staticmethod
+    def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
+        super(KafkaConnectorConfig, KafkaConnectorConfig).json_schema_extra(
+            schema, model
+        )
+        schema["additional_properties"] = {"type": "string"}
 
-        @override
-        @classmethod
-        def schema_extra(cls, schema: dict[str, Any], model: type[BaseModel]) -> None:
-            super().schema_extra(schema, model)
-            schema["additionalProperties"] = {"type": "string"}
+    model_config = ConfigDict(
+        extra="allow",
+        alias_generator=to_dot,
+        json_schema_extra=json_schema_extra,
+    )
 
-    @validator("connector_class")
+    @field_validator("connector_class")
     def connector_class_must_contain_dot(cls, connector_class: str) -> str:
         if "." not in connector_class:
             msg = f"Invalid connector class {connector_class}"
@@ -39,9 +56,11 @@ class KafkaConnectorConfig(BaseModel):
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
 
-    @override
-    def dict(self, **_) -> dict[str, Any]:
-        return super().dict(by_alias=True, exclude_none=True)
+    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
+        result = exclude_by_value(handler(self), None)
+        return {by_alias(self, name): value for name, value in result.items()}
 
 
 class ConnectorTask(BaseModel):
@@ -53,10 +72,9 @@ class KafkaConnectResponse(BaseModel):
     name: str
     config: dict[str, str]
     tasks: list[ConnectorTask]
-    type: str | None
+    type: str | None = None
 
-    class Config(BaseConfig):
-        extra = Extra.forbid
+    model_config = ConfigDict(extra="forbid")
 
 
 class KafkaConnectConfigError(BaseModel):
@@ -74,24 +92,21 @@ class KafkaConnectConfigErrorResponse(BaseModel):
     configs: list[KafkaConnectConfigDescription]
 
 
-class KafkaConnectResetterConfig(BaseModel):
+class KafkaConnectResetterConfig(CamelCaseConfigModel):
     brokers: str
     connector: str
     delete_consumer_group: bool | None = None
     offset_topic: str | None = None
 
-    class Config(CamelCaseConfig):
-        pass
 
-
-class KafkaConnectResetterValues(BaseModel):
+class KafkaConnectResetterValues(CamelCaseConfigModel):
     connector_type: Literal["source", "sink"]
     config: KafkaConnectResetterConfig
     name_override: str
 
-    class Config(CamelCaseConfig):
-        pass
-
+    # TODO(Ivan Yordanov): Replace with a function decorated with `@model_serializer`
+    # BEWARE! All default values are enforced, hard to replicate without
+    # access to ``model_dump``
     @override
-    def dict(self, **_) -> dict[str, Any]:
-        return super().dict(by_alias=True, exclude_none=True)
+    def model_dump(self, **_) -> dict[str, Any]:
+        return super().model_dump(by_alias=True, exclude_none=True)

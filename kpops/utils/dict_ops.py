@@ -1,5 +1,10 @@
+import re
+from collections import ChainMap as _ChainMap
 from collections.abc import Mapping
-from typing import Any
+from string import Template
+from typing import Any, TypeVar
+
+from typing_extensions import override
 
 
 def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
@@ -66,18 +71,22 @@ def flatten_mapping(
         if prefix:
             key = prefix + separator + key
         if isinstance(value, Mapping):
-            nested_mapping = flatten_mapping(value, key)
+            nested_mapping = flatten_mapping(value, key, separator)
             top = update_nested_pair(top, nested_mapping)
         else:
             top[key] = value
     return top
 
 
+_V = TypeVar("_V")
+
+
 def generate_substitution(
-    input: dict,
+    input: dict[str, _V],
     prefix: str | None = None,
     existing_substitution: dict | None = None,
-) -> dict:
+    separator: str | None = None,
+) -> dict[str, _V]:
     """Generate a complete substitution dict from a given dict.
 
     Finds all attributes that belong to a model and expands them to create
@@ -88,4 +97,45 @@ def generate_substitution(
     :param substitution: existing substitution to include
     :returns: Substitution dict of all variables related to the model.
     """
-    return update_nested(existing_substitution or {}, flatten_mapping(input, prefix))
+    if separator is None:
+        return update_nested(
+            existing_substitution or {}, flatten_mapping(input, prefix)
+        )
+    return update_nested(
+        existing_substitution or {}, flatten_mapping(input, prefix, separator)
+    )
+
+
+_sentinel_dict = {}
+
+
+class ImprovedTemplate(Template):
+    """Introduces the dot as an allowed character in placeholders."""
+
+    idpattern = r"(?a:[_a-z][_.a-z0-9]*)"
+
+    @override
+    def safe_substitute(self, mapping=_sentinel_dict, /, **kws) -> str:
+        if mapping is _sentinel_dict:
+            mapping = kws
+        elif kws:
+            mapping = _ChainMap(kws, mapping)
+
+        # Helper function for .sub()
+        def convert(mo: re.Match):
+            named = mo.group("named") or mo.group("braced")
+            if named is not None:
+                try:
+                    if "." not in named:
+                        return str(mapping[named])
+                    return str(mapping[named.replace(".", "__")])
+                except KeyError:
+                    return mo.group()
+            if mo.group("escaped") is not None:
+                return self.delimiter
+            if mo.group("invalid") is not None:
+                return mo.group()
+            msg = "Unrecognized named group in pattern"
+            raise ValueError(msg, self.pattern)
+
+        return self.pattern.sub(convert, self.template)

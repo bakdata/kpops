@@ -11,7 +11,6 @@ import typer
 from hooks.gen_docs.gen_docs_env_vars import collect_fields
 from kpops import __version__
 from kpops.cli.custom_formatter import CustomFormatter
-from kpops.cli.pipeline_config import ENV_PREFIX, PipelineConfig
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
@@ -20,8 +19,11 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
-from kpops.pipeline_generator.pipeline import Pipeline
+from kpops.config import ENV_PREFIX, KpopsConfig
+from kpops.pipeline import Pipeline, PipelineGenerator
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
+from kpops.utils.pydantic import YamlConfigSettingsSource
+from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -31,6 +33,18 @@ if TYPE_CHECKING:
 LOG_DIVIDER = "#" * 100
 
 app = dtyper.Typer(pretty_exceptions_enable=False)
+
+DOTENV_PATH_OPTION: Optional[list[Path]] = typer.Option(
+    default=None,
+    exists=True,
+    dir_okay=False,
+    file_okay=True,
+    envvar=f"{ENV_PREFIX}DOTENV_PATH",
+    help=(
+        "Path to dotenv file. Multiple files can be provided. "
+        "The files will be loaded in order, with each file overriding the previous one."
+    ),
+)
 
 BASE_DIR_PATH_OPTION: Path = typer.Option(
     default=Path(),
@@ -51,13 +65,13 @@ DEFAULT_PATH_OPTION: Optional[Path] = typer.Option(
 )
 
 CONFIG_PATH_OPTION: Path = typer.Option(
-    default=Path("config.yaml"),
-    exists=False,
-    dir_okay=False,
-    file_okay=True,
+    default=Path(),
+    exists=True,
+    dir_okay=True,
+    file_okay=False,
     readable=True,
     envvar=f"{ENV_PREFIX}CONFIG_PATH",
-    help="Path to the config.yaml file",
+    help="Path to the dir containing config.yaml files",
 )
 
 PIPELINE_PATH_ARG: Path = typer.Argument(
@@ -116,6 +130,15 @@ COMPONENTS_MODULES: str | None = typer.Argument(
     help="Custom Python module containing your project-specific components",
 )
 
+ENVIRONMENT: str | None = typer.Option(
+    default=None,
+    envvar=f"{ENV_PREFIX}ENVIRONMENT",
+    help=(
+        "The environment you want to generate and deploy the pipeline to. "
+        "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). "
+    ),
+)
+
 logger = logging.getLogger()
 logging.getLogger("httpx").setLevel(logging.WARNING)
 stream_handler = logging.StreamHandler()
@@ -129,25 +152,25 @@ def setup_pipeline(
     pipeline_base_dir: Path,
     pipeline_path: Path,
     components_module: str | None,
-    pipeline_config: PipelineConfig,
+    kpops_config: KpopsConfig,
+    environment: str | None,
 ) -> Pipeline:
     registry = Registry()
     if components_module:
         registry.find_components(components_module)
     registry.find_components("kpops.components")
 
-    handlers = setup_handlers(components_module, pipeline_config)
-    return Pipeline.load_from_yaml(
-        pipeline_base_dir, pipeline_path, registry, pipeline_config, handlers
-    )
+    handlers = setup_handlers(components_module, kpops_config)
+    parser = PipelineGenerator(kpops_config, registry, handlers)
+    return parser.load_yaml(pipeline_base_dir, pipeline_path, environment)
 
 
 def setup_handlers(
-    components_module: str | None, config: PipelineConfig
+    components_module: str | None, config: KpopsConfig
 ) -> ComponentHandlers:
     schema_handler = SchemaHandler.load_schema_handler(components_module, config)
-    connector_handler = KafkaConnectHandler.from_pipeline_config(config)
-    proxy_wrapper = ProxyWrapper(config)
+    connector_handler = KafkaConnectHandler.from_kpops_config(config)
+    proxy_wrapper = ProxyWrapper(config.kafka_rest)
     topic_handler = TopicHandler(proxy_wrapper)
 
     return ComponentHandlers(schema_handler, connector_handler, topic_handler)
@@ -209,17 +232,24 @@ def log_action(action: str, pipeline_component: PipelineComponent):
     log.info("\n")
 
 
-def create_pipeline_config(
-    config: Path, defaults: Optional[Path], verbose: bool
-) -> PipelineConfig:
+def create_kpops_config(
+    config: Path,
+    defaults: Optional[Path],
+    verbose: bool,
+    dotenv: Optional[list[Path]],
+    environment: Optional[str],
+) -> KpopsConfig:
     setup_logging_level(verbose)
-    PipelineConfig.Config.config_path = config
+    YamlConfigSettingsSource.config_dir = config
+    YamlConfigSettingsSource.environment = environment
+    kpops_config = KpopsConfig(
+        _env_file=dotenv  # pyright: ignore[reportGeneralTypeIssues]
+    )
     if defaults:
-        pipeline_config = PipelineConfig(defaults_path=defaults)
+        kpops_config.defaults_path = defaults
     else:
-        pipeline_config = PipelineConfig()
-        pipeline_config.defaults_path = config.parent / pipeline_config.defaults_path
-    return pipeline_config
+        kpops_config.defaults_path = config / kpops_config.defaults_path
+    return kpops_config
 
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
@@ -229,19 +259,20 @@ def init(
     path: Path = PROJECT_PATH,
     name: Optional[str] = PROJECT_NAME,
 ):
-    if name:
-        path = path / name
-    elif next(path.iterdir(), False):
-        log.warning("Please provide a path to an empty directory.")
-        return
-    config_fields = collect_fields(PipelineConfig)
-    path.mkdir(exist_ok=True)
-    pipeline_name = "pipeline"
-    defaults_name = "defaults"
-    config_name = "config"
-    for file_name in [pipeline_name, defaults_name, config_name]:
-        file_name = file_name + ".yaml"
-        Path(path / file_name).touch(exist_ok=False)
+    ...
+    # if name:
+    #     path = path / name
+    # elif next(path.iterdir(), False):
+    #     log.warning("Please provide a path to an empty directory.")
+    #     return
+    # config_fields = collect_fields(PipelineConfig)
+    # path.mkdir(exist_ok=True)
+    # pipeline_name = "pipeline"
+    # defaults_name = "defaults"
+    # config_name = "config"
+    # for file_name in [pipeline_name, defaults_name, config_name]:
+    #     file_name = file_name + ".yaml"
+    #     Path(path / file_name).touch(exist_ok=False)
 
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
@@ -260,7 +291,7 @@ def schema(
         \n\n\n
         pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide [COMPONENTS_MODULES].
         \n\n\n
-        config: Schema of PipelineConfig.""",
+        config: Schema of KpopsConfig.""",
     ),
     components_module: Optional[str] = COMPONENTS_MODULES,
     include_stock_components: bool = typer.Option(
@@ -281,20 +312,23 @@ def generate(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     template: bool = typer.Option(False, help="Run Helm template"),
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     verbose: bool = VERBOSE_OPTION,
+    environment: Optional[str] = ENVIRONMENT,
 ) -> Pipeline:
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
+    kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
+        pipeline_base_dir, pipeline_path, components_module, kpops_config, environment
     )
 
     if not template:
-        pipeline.print_yaml()
+        print_yaml(pipeline.to_yaml())
+
     if template:
         steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
         for component in steps_to_apply:
@@ -312,16 +346,18 @@ def deploy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-):
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
+    environment: Optional[str] = ENVIRONMENT,
+) -> None:
+    kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
+        pipeline_base_dir, pipeline_path, components_module, kpops_config, environment
     )
 
     steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
@@ -335,16 +371,18 @@ def destroy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-):
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
+    environment: Optional[str] = ENVIRONMENT,
+) -> None:
+    kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
+        pipeline_base_dir, pipeline_path, components_module, kpops_config, environment
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
     for component in pipeline_steps:
@@ -357,16 +395,18 @@ def reset(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-):
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
+    environment: Optional[str] = ENVIRONMENT,
+) -> None:
+    kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
+        pipeline_base_dir, pipeline_path, components_module, kpops_config, environment
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
     for component in pipeline_steps:
@@ -380,16 +420,18 @@ def clean(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     components_module: Optional[str] = COMPONENTS_MODULES,
     pipeline_base_dir: Path = BASE_DIR_PATH_OPTION,
+    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
-):
-    pipeline_config = create_pipeline_config(config, defaults, verbose)
+    environment: Optional[str] = ENVIRONMENT,
+) -> None:
+    kpops_config = create_kpops_config(config, defaults, verbose, dotenv, environment)
     pipeline = setup_pipeline(
-        pipeline_base_dir, pipeline_path, components_module, pipeline_config
+        pipeline_base_dir, pipeline_path, components_module, kpops_config, environment
     )
     pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
     for component in pipeline_steps:
