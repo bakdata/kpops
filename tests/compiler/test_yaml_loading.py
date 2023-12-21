@@ -4,7 +4,7 @@ from unittest.mock import patch
 import pytest
 import yaml
 
-from kpops.utils.yaml_loading import load_yaml_file
+from kpops.utils.yaml import load_yaml_file
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 

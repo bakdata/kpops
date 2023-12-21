@@ -19,9 +19,10 @@ from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.config import ENV_PREFIX, KpopsConfig
-from kpops.pipeline_generator.pipeline import Pipeline
+from kpops.pipeline import Pipeline, PipelineGenerator
 from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
 from kpops.utils.pydantic import YamlConfigSettingsSource
+from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -144,9 +145,8 @@ def setup_pipeline(
     registry.find_components("kpops.components")
 
     handlers = setup_handlers(components_module, kpops_config)
-    return Pipeline.load_from_yaml(
-        pipeline_base_dir, pipeline_path, environment, registry, kpops_config, handlers
-    )
+    parser = PipelineGenerator(kpops_config, registry, handlers)
+    return parser.load_yaml(pipeline_base_dir, pipeline_path, environment)
 
 
 def setup_handlers(
@@ -288,7 +288,7 @@ def generate(
     )
 
     if not template:
-        pipeline.print_yaml()
+        print_yaml(pipeline.to_yaml())
 
     if template:
         steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)

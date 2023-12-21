@@ -11,7 +11,7 @@ from hooks import ROOT
 from kpops.cli.registry import _find_classes
 from kpops.components import KafkaConnector, PipelineComponent
 from kpops.utils.colorify import redify, yellowify
-from kpops.utils.yaml_loading import load_yaml_file
+from kpops.utils.yaml import load_yaml_file
 
 PATH_KPOPS_MAIN = ROOT / "kpops/cli/main.py"
 PATH_CLI_COMMANDS_DOC = ROOT / "docs/docs/user/references/cli-commands.md"

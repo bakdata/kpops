@@ -6,7 +6,8 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.cli.main import FilterType, get_steps_to_apply
-from kpops.pipeline_generator.pipeline import Pipeline
+from kpops.components import PipelineComponent
+from kpops.pipeline import Pipeline
 
 PREFIX = "example-prefix-"
 
@@ -25,17 +26,11 @@ test_component_3 = TestComponent("example3")
 
 @pytest.fixture(autouse=True)
 def pipeline() -> Pipeline:
-    class TestPipeline:
-        components = [
-            test_component_1,
-            test_component_2,
-            test_component_3,
-        ]
-
-        def __iter__(self):
-            return iter(self.components)
-
-    return cast(Pipeline, TestPipeline())
+    pipeline = Pipeline()
+    pipeline.add(cast(PipelineComponent, test_component_1))
+    pipeline.add(cast(PipelineComponent, test_component_2))
+    pipeline.add(cast(PipelineComponent, test_component_3))
+    return pipeline
 
 
 @pytest.fixture(autouse=True)
