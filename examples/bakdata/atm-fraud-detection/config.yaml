@@ -1,6 +1,6 @@
 topic_name_config:
-  default_error_topic_name: "${pipeline_name}-${component_name}-dead-letter-topic"
-  default_output_topic_name: "${pipeline_name}-${component_name}-topic"
+  default_error_topic_name: "${pipeline_name}-${component.name}-dead-letter-topic"
+  default_output_topic_name: "${pipeline_name}-${component.name}-topic"
 
 kafka_brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
 

@@ -6,7 +6,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
-from pydantic import Field
+from pydantic import ConfigDict, Field
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
@@ -24,8 +24,7 @@ runner = CliRunner()
 
 # type is inherited from PipelineComponent
 class EmptyPipelineComponent(PipelineComponent):
-    class Config:
-        str_strip_whitespace = True
+    model_config = ConfigDict(str_strip_whitespace=True)
 
 
 # abstract component inheriting from ABC should be excluded

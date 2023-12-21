@@ -6,7 +6,7 @@ KPOps supports the usage of placeholders and environment variables in [pipeline 
 
 These variables can be used in a component's definition to refer to any of its attributes, including ones that the user has defined in the defaults.
 
-All of them are prefixed with `component_` and follow the following form: `component_{attribute_name}`. If the attribute itself contains attributes, they can be referred to like this: `component_{attribute_name}_{subattribute_name}`.
+All of them are prefixed with `component.` and follow the following form: `component.{attribute_name}`. If the attribute itself contains attributes, they can be referred to like this: `component.{attribute_name}.{subattribute_name}`.
 
 <!-- dprint-ignore-start -->
 
@@ -26,8 +26,8 @@ These variables include all fields in the [config](../config.md) and refer to th
 <!-- dprint-ignore-start -->
 
 !!! info Aliases
-    `error_topic_name` is an alias for `topic_name_config_default_error_topic_name`  
-    `output_topic_name` is an alias for `topic_name_config_default_output_topic_name`
+    `error_topic_name` is an alias for `topic_name_config.default_error_topic_name`  
+    `output_topic_name` is an alias for `topic_name_config.default_output_topic_name`
 
 <!-- dprint-ignore-end -->
 

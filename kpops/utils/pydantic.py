@@ -11,7 +11,7 @@ from typing_extensions import TypeVar, override
 
 from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.docstring import describe_object
-from kpops.utils.yaml_loading import load_yaml_file
+from kpops.utils.yaml import load_yaml_file
 
 
 def to_camel(s: str) -> str:

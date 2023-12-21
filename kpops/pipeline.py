@@ -4,17 +4,16 @@ import json
 import logging
 from collections import Counter
 from contextlib import suppress
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
 import yaml
-from pydantic import BaseModel, SerializeAsAny
-from rich.console import Console
-from rich.syntax import Syntax
+from pydantic import Field, RootModel, SerializeAsAny
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
-from kpops.utils.yaml_loading import load_yaml_file, substitute, substitute_nested
+from kpops.utils.yaml import load_yaml_file, substitute_nested
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -35,17 +34,19 @@ class ValidationError(Exception):
     pass
 
 
-class PipelineComponents(BaseModel):
-    """Stores the pipeline components."""
+class Pipeline(RootModel):
+    """Pipeline representation."""
 
-    components: list[SerializeAsAny[PipelineComponent]] = []
+    root: list[SerializeAsAny[PipelineComponent]] = Field(
+        default=[], title="Components"
+    )
 
     @property
     def last(self) -> PipelineComponent:
-        return self.components[-1]
+        return self.root[-1]
 
     def find(self, component_name: str) -> PipelineComponent:
-        for component in self.components:
+        for component in self.root:
             if component_name == component.name:
                 return component
         msg = f"Component {component_name} not found"
@@ -53,19 +54,25 @@ class PipelineComponents(BaseModel):
 
     def add(self, component: PipelineComponent) -> None:
         self._populate_component_name(component)
-        self.components.append(component)
+        self.root.append(component)
 
     def __bool__(self) -> bool:
-        return bool(self.components)
+        return bool(self.root)
 
     def __iter__(self) -> Iterator[PipelineComponent]:
-        return iter(self.components)
+        return iter(self.root)
 
     def __len__(self) -> int:
-        return len(self.components)
+        return len(self.root)
+
+    def to_yaml(self) -> str:
+        return yaml.dump(self.model_dump(mode="json", by_alias=True, exclude_none=True))
+
+    def validate(self) -> None:
+        self.validate_unique_names()
 
     def validate_unique_names(self) -> None:
-        step_names = [component.full_name for component in self.components]
+        step_names = [component.full_name for component in self.root]
         duplicates = [name for name, count in Counter(step_names).items() if count > 1]
         if duplicates:
             msg = f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
@@ -97,47 +104,44 @@ def create_env_components_index(
     return index
 
 
-class Pipeline:
-    def __init__(
-        self,
-        component_list: list[dict],
-        environment_components: list[dict],
-        registry: Registry,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ) -> None:
-        self.components: PipelineComponents = PipelineComponents()
-        self.handlers = handlers
-        self.config = config
-        self.registry = registry
-        self.env_components_index = create_env_components_index(environment_components)
-        self.parse_components(component_list)
-        self.validate()
+@dataclass
+class PipelineGenerator:
+    config: KpopsConfig
+    registry: Registry
+    handlers: ComponentHandlers
+    pipeline: Pipeline = field(init=False, default_factory=Pipeline)
 
-    @classmethod
-    def load_from_yaml(
-        cls,
-        path: Path,
-        environment: str | None,
-        registry: Registry,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
+    def parse(
+        self,
+        components: list[dict],
+        environment_components: list[dict],
     ) -> Pipeline:
+        """Parse pipeline from sequence of component dictionaries.
+
+        :param components: List of components
+        :param environment_components: List of environment-specific components
+        :returns: Initialized pipeline object
+        """
+        self.env_components_index = create_env_components_index(environment_components)
+        self.parse_components(components)
+        self.pipeline.validate()
+        return self.pipeline
+
+    def load_yaml(self, path: Path, environment: str | None) -> Pipeline:
         """Load pipeline definition from yaml.
 
         The file is often named ``pipeline.yaml``
 
         :param path: Path to pipeline definition yaml file
         :param environment: Environment name
-        :param registry: Pipeline components registry
-        :param config: KPOps config
-        :param handlers: Component handlers
         :raises TypeError: The pipeline definition should contain a list of components
         :raises TypeError: The env-specific pipeline definition should contain a list of components
         :returns: Initialized pipeline object
         """
-        Pipeline.set_pipeline_name_env_vars(config.pipeline_base_dir, path)
-        Pipeline.set_environment_name(environment)
+        PipelineGenerator.set_pipeline_name_env_vars(
+            self.config.pipeline_base_dir, path
+        )
+        PipelineGenerator.set_environment_name(environment)
 
         main_content = load_yaml_file(path, substitution=ENV)
         if not isinstance(main_content, list):
@@ -147,7 +151,9 @@ class Pipeline:
         if (
             environment
             and (
-                env_file := Pipeline.pipeline_filename_environment(path, environment)
+                env_file := PipelineGenerator.pipeline_filename_environment(
+                    path, environment
+                )
             ).exists()
         ):
             env_content = load_yaml_file(env_file, substitution=ENV)
@@ -155,17 +161,17 @@ class Pipeline:
                 msg = f"The pipeline definition {env_file} should contain a list of components"
                 raise TypeError(msg)
 
-        return cls(main_content, env_content, registry, config, handlers)
+        return self.parse(main_content, env_content)
 
-    def parse_components(self, component_list: list[dict]) -> None:
+    def parse_components(self, components: list[dict]) -> None:
         """Instantiate, enrich and inflate a list of components.
 
-        :param component_list: List of components
+        :param components: List of components
         :raises ValueError: Every component must have a type defined
         :raises ParsingException: Error enriching component
         :raises ParsingException: All undefined exceptions
         """
-        for component_data in component_list:
+        for component_data in components:
             try:
                 try:
                     component_type: str = component_data["type"]
@@ -207,21 +213,21 @@ class Pipeline:
                     original_from_component_name,
                     from_topic,
                 ) in enriched_component.from_.components.items():
-                    original_from_component = self.components.find(
+                    original_from_component = self.pipeline.find(
                         original_from_component_name
                     )
                     inflated_from_component = original_from_component.inflate()[-1]
-                    resolved_from_component = self.components.find(
+                    resolved_from_component = self.pipeline.find(
                         inflated_from_component.name
                     )
                     enriched_component.weave_from_topics(
                         resolved_from_component.to, from_topic
                     )
-            elif self.components:
+            elif self.pipeline:
                 # read from previous component
-                prev_component = self.components.last
+                prev_component = self.pipeline.last
                 enriched_component.weave_from_topics(prev_component.to)
-            self.components.add(enriched_component)
+            self.pipeline.add(enriched_component)
 
     def enrich_component(
         self,
@@ -250,32 +256,6 @@ class Pipeline:
             **component_data,
         )
 
-    def print_yaml(self, substitution: dict | None = None) -> None:
-        """Print the generated pipeline definition.
-
-        :param substitution: Substitution dictionary, defaults to None
-        """
-        syntax = Syntax(
-            substitute(str(self), substitution),
-            "yaml",
-            background_color="default",
-            theme="ansi_dark",
-        )
-        Console(
-            width=1000  # HACK: overwrite console width to avoid truncating output
-        ).print(syntax)
-
-    def __iter__(self) -> Iterator[PipelineComponent]:
-        return iter(self.components)
-
-    def __str__(self) -> str:
-        return yaml.dump(
-            self.components.model_dump(mode="json", by_alias=True, exclude_none=True)
-        )
-
-    def __len__(self) -> int:
-        return len(self.components)
-
     def substitute_in_component(self, component_as_dict: dict) -> dict:
         """Substitute all $-placeholders in a component in dict representation.
 
@@ -294,9 +274,12 @@ class Pipeline:
             component_as_dict,
             "component",
             substitution_hardcoded,
+            separator=".",
         )
         substitution = generate_substitution(
-            config.model_dump(mode="json"), existing_substitution=component_substitution
+            config.model_dump(mode="json"),
+            existing_substitution=component_substitution,
+            separator=".",
         )
 
         return json.loads(
@@ -306,15 +289,12 @@ class Pipeline:
             )
         )
 
-    def validate(self) -> None:
-        self.components.validate_unique_names()
-
     @staticmethod
     def pipeline_filename_environment(pipeline_path: Path, environment: str) -> Path:
         """Add the environment name from the KpopsConfig to the pipeline.yaml path.
 
         :param pipeline_path: Path to pipeline.yaml file
-        :param config: The KpopsConfig
+        :param environment: Environment name
         :returns: An absolute path to the pipeline_<environment>.yaml
         """
         return pipeline_path.with_stem(f"{pipeline_path.stem}_{environment}")
