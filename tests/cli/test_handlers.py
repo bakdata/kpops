@@ -10,7 +10,7 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.config import KpopsConfig, SchemaRegistryConfig
-from tests.cli.resources.module import CustomSchemaProvider
+from tests.cli.resources.custom_module import CustomSchemaProvider
 
 MODULE = CustomSchemaProvider.__module__
 
@@ -19,6 +19,7 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
     config = KpopsConfig(
         defaults_path=Path("fake"),
         kafka_brokers="broker:9092",
+        components_module=MODULE,
     )
     connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
     connector_handler = KafkaConnectHandler.from_kpops_config(config)
@@ -35,7 +36,7 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
         topic_handler=topic_handler,
     )
 
-    actual_handlers = setup_handlers(MODULE, config)
+    actual_handlers = setup_handlers(config)
 
     connector_handler_mock.from_kpops_config.assert_called_once_with(config)
 
@@ -55,7 +56,7 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
         kafka_brokers="broker:9092",
     )
     schema_handler_mock = mocker.patch("kpops.cli.main.SchemaHandler")
-    schema_handler = SchemaHandler.load_schema_handler(MODULE, config)
+    schema_handler = SchemaHandler.load_schema_handler(config)
     schema_handler_mock.load_schema_handler.return_value = schema_handler
 
     connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
@@ -73,9 +74,9 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
         topic_handler=topic_handler,
     )
 
-    actual_handlers = setup_handlers(MODULE, config)
+    actual_handlers = setup_handlers(config)
 
-    schema_handler_mock.load_schema_handler.assert_called_once_with(MODULE, config)
+    schema_handler_mock.load_schema_handler.assert_called_once_with(config)
 
     connector_handler_mock.from_kpops_config.assert_called_once_with(config)
 

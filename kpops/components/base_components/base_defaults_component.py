@@ -36,7 +36,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     correctly to the component.
 
     :param enrich: Whether to enrich component with defaults, defaults to False
-    :param config: Pipeline configuration to be accessed by this component
+    :param config: KPOps configuration to be accessed by this component
     :param handlers: Component handlers to be accessed by this component
     :param validate: Whether to run custom validation on the component, defaults to True
     """
@@ -184,7 +184,7 @@ def get_defaults_file_paths(
     `config.defaults_path` exists and return paths to the defaults files
     calculated from it. It is up to the caller to handle any false paths.
 
-    :param config: Pipeline configuration
+    :param config: KPOps configuration
     :param environment: Environment
     :returns: The defaults files paths
     """

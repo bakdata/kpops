@@ -24,15 +24,11 @@ log = logging.getLogger("SchemaHandler")
 
 
 class SchemaHandler:
-    def __init__(
-        self,
-        kpops_config: KpopsConfig,
-        components_module: str | None,
-    ) -> None:
+    def __init__(self, kpops_config: KpopsConfig) -> None:
         self.schema_registry_client = SchemaRegistryClient(
             str(kpops_config.schema_registry.url)
         )
-        self.components_module = components_module
+        self.components_module = kpops_config.components_module
 
     @cached_property
     def schema_provider(self) -> SchemaProvider:
@@ -47,11 +43,9 @@ class SchemaHandler:
             raise ValueError(msg) from e
 
     @classmethod
-    def load_schema_handler(
-        cls, components_module: str | None, config: KpopsConfig
-    ) -> SchemaHandler | None:
+    def load_schema_handler(cls, config: KpopsConfig) -> SchemaHandler | None:
         if config.schema_registry.enabled:
-            return cls(config, components_module)
+            return cls(config)
         return None
 
     def submit_schemas(self, to_section: ToSection, dry_run: bool = True) -> None:

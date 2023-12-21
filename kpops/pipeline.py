@@ -127,20 +127,20 @@ class PipelineGenerator:
         self.pipeline.validate()
         return self.pipeline
 
-    def load_yaml(
-        self, base_dir: Path, path: Path, environment: str | None
-    ) -> Pipeline:
+    def load_yaml(self, path: Path, environment: str | None) -> Pipeline:
         """Load pipeline definition from yaml.
 
         The file is often named ``pipeline.yaml``
 
-        :param base_dir: Base directory to the pipelines (default is current working directory)
         :param path: Path to pipeline definition yaml file
+        :param environment: Environment name
         :raises TypeError: The pipeline definition should contain a list of components
         :raises TypeError: The env-specific pipeline definition should contain a list of components
         :returns: Initialized pipeline object
         """
-        PipelineGenerator.set_pipeline_name_env_vars(base_dir, path)
+        PipelineGenerator.set_pipeline_name_env_vars(
+            self.config.pipeline_base_dir, path
+        )
         PipelineGenerator.set_environment_name(environment)
 
         main_content = load_yaml_file(path, substitution=ENV)
