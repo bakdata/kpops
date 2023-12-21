@@ -10,7 +10,7 @@ We provided a GitHub composite action `bakdata/kpops` that installs and executes
 | pipeline          |    ✅    |       -       | string | Pipeline to run by KPOps                                                                                                                      |
 | working-directory |    ❌    |       .       | string | root directory used by KPOps to run pipelines                                                                                                 |
 | defaults          |    ❌    |       -       | string | defaults folder path                                                                                                                          |
-| config            |    ❌    |       -       | string | Directory containing the config*.yaml file path                                                                                               |
+| config            |    ❌    |       -       | string | Directory containing the config*.yaml file(s)                                                                                                 |
 | environment       |    ❌    |       -       | string | Environment to run KPOps in                                                                                                                   |
 | components        |    ❌    |       -       | string | components package path                                                                                                                       |
 | filter-type       |    ❌    |       -       | string | Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS                                                                          |

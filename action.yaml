@@ -15,7 +15,7 @@ inputs:
     description: "Defaults folder path"
     required: false
   config:
-    description: "Directory containing the config*.yaml file"
+    description: "Directory containing the config*.yaml file(s)"
     required: false
   environment:
     description: "Environment to run KPOps in"
