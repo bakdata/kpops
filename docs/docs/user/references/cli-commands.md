@@ -19,6 +19,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `deploy`: Deploy pipeline steps
 * `destroy`: Destroy pipeline steps
 * `generate`: Enriches pipelines steps with defaults.
+* `init`: Create a new a KPOps project.
 * `reset`: Reset pipeline steps
 * `schema`: Generate json schema.
 
@@ -132,6 +133,25 @@ $ kpops generate [OPTIONS] PIPELINE_PATH [COMPONENTS_MODULE]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
 * `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
+* `--help`: Show this message and exit.
+
+## `kpops init`
+
+Create a new a KPOps project.
+
+**Usage**:
+
+```console
+$ kpops init [OPTIONS] PATH
+```
+
+**Arguments**:
+
+* `PATH`: Path for a new KPOps project.  [required]
+
+**Options**:
+
+* `--name TEXT`: Name of the new KPOps project. A new directory with the provided name will be created. Leave empty to use the existing dir provided via `--path`.
 * `--help`: Show this message and exit.
 
 ## `kpops reset`

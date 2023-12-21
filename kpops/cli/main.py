@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING, Optional
 import dtyper
 import typer
 
-from hooks.gen_docs.gen_docs_env_vars import collect_fields
 from kpops import __version__
 from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.registry import Registry
@@ -259,20 +258,15 @@ def init(
     path: Path = PROJECT_PATH,
     name: Optional[str] = PROJECT_NAME,
 ):
-    ...
-    # if name:
-    #     path = path / name
-    # elif next(path.iterdir(), False):
-    #     log.warning("Please provide a path to an empty directory.")
-    #     return
-    # config_fields = collect_fields(PipelineConfig)
-    # path.mkdir(exist_ok=True)
-    # pipeline_name = "pipeline"
-    # defaults_name = "defaults"
-    # config_name = "config"
-    # for file_name in [pipeline_name, defaults_name, config_name]:
-    #     file_name = file_name + ".yaml"
-    #     Path(path / file_name).touch(exist_ok=False)
+    if name:
+        path = path / name
+    elif next(path.iterdir(), False):
+        log.warning("Please provide a path to an empty directory.")
+        return
+    path.mkdir(exist_ok=True)
+    pipeline_name = "pipeline"
+    defaults_name = "defaults"
+    config_name = "config"
 
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
