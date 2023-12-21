@@ -1268,6 +1268,26 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#define-custom-components-module-pipeline-base-dir-globally" class="md-nav__link">
+    Define custom components module &amp; pipeline base dir globally
+  </a>
+  
+    <nav class="md-nav" aria-label="Define custom components module & pipeline base dir globally">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configyaml_1" class="md-nav__link">
+    config.yaml
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#move-github-action-to-repsitory-root" class="md-nav__link">
     Move GitHub action to repsitory root
   </a>
@@ -1283,7 +1303,34 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#configyaml_1" class="md-nav__link">
+  <a href="#configyaml_2" class="md-nav__link">
+    config.yaml
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#change-substitution-variables-separator-to" class="md-nav__link">
+    Change substitution variables separator to .
+  </a>
+  
+    <nav class="md-nav" aria-label="Change substitution variables separator to .">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipelineyaml-and-defaultyaml_1" class="md-nav__link">
+    pipeline.yaml and default.yaml
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configyaml_3" class="md-nav__link">
     config.yaml
   </a>
   
@@ -1653,6 +1700,26 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#define-custom-components-module-pipeline-base-dir-globally" class="md-nav__link">
+    Define custom components module &amp; pipeline base dir globally
+  </a>
+  
+    <nav class="md-nav" aria-label="Define custom components module & pipeline base dir globally">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#configyaml_1" class="md-nav__link">
+    config.yaml
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#move-github-action-to-repsitory-root" class="md-nav__link">
     Move GitHub action to repsitory root
   </a>
@@ -1668,7 +1735,34 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#configyaml_1" class="md-nav__link">
+  <a href="#configyaml_2" class="md-nav__link">
+    config.yaml
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#change-substitution-variables-separator-to" class="md-nav__link">
+    Change substitution variables separator to .
+  </a>
+  
+    <nav class="md-nav" aria-label="Change substitution variables separator to .">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#pipelineyaml-and-defaultyaml_1" class="md-nav__link">
+    pipeline.yaml and default.yaml
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#configyaml_3" class="md-nav__link">
     config.yaml
   </a>
   
@@ -1762,37 +1856,82 @@
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="w"> </span>   imageTag: &quot;1.0.0&quot;
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9"></a>...
 </span></code></pre></div></td></tr></table></div>
-<h2 id="move-github-action-to-repsitory-root"><a href="https://github.com/bakdata/kpops/pull/356">Move GitHub action to repsitory root</a><a class="headerlink" href="#move-github-action-to-repsitory-root" title="Permanent link">&para;</a></h2>
-<p>The location of the GitHub action has changed, and it's now available directly as <code>bakdata/kpops</code>.</p>
-<p>You'll need to change it in your GitHub CI workflows.</p>
+<h2 id="define-custom-components-module-pipeline-base-dir-globally"><a href="https://github.com/bakdata/kpops/pull/387">Define custom components module &amp; pipeline base dir globally</a><a class="headerlink" href="#define-custom-components-module-pipeline-base-dir-globally" title="Permanent link">&para;</a></h2>
+<p>The options for a custom <code>components_module</code> and <code>pipeline_base_dir</code> are now global settings, defined in <code>config.yaml</code>. The previous CLI parameters have been removed.</p>
+<h4 id="configyaml_1">config.yaml<a class="headerlink" href="#configyaml_1" title="Permanent link">&para;</a></h4>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span>
 <span class="normal"><a href="#__codelineno-2-2">2</a></span>
 <span class="normal"><a href="#__codelineno-2-3">3</a></span>
-<span class="normal"><a href="#__codelineno-2-4">4</a></span>
-<span class="normal"><a href="#__codelineno-2-5">5</a></span>
-<span class="normal"><a href="#__codelineno-2-6">6</a></span>
-<span class="normal"><a href="#__codelineno-2-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a>steps:
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w"> </span> - name: kpops deploy
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="gd">-   uses: bakdata/kpops/actions/kpops-runner@main</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="gi">+   uses: bakdata/kpops@main</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w"> </span>   with:
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6"></a><span class="w"> </span>     command: deploy --execute
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7"></a><span class="w"> </span>     # ...
+<span class="normal"><a href="#__codelineno-2-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="w"> </span> kafka_brokers: &quot;http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092&quot;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w"> </span> environment: development
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="gi">+ components_module: components</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="gi">+ pipeline_base_dir: pipelines</span>
+</span></code></pre></div></td></tr></table></div>
+<h2 id="move-github-action-to-repsitory-root"><a href="https://github.com/bakdata/kpops/pull/356">Move GitHub action to repsitory root</a><a class="headerlink" href="#move-github-action-to-repsitory-root" title="Permanent link">&para;</a></h2>
+<p>The location of the GitHub action has changed, and it's now available directly as <code>bakdata/kpops</code>.</p>
+<p>You'll need to change it in your GitHub CI workflows.</p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span>
+<span class="normal"><a href="#__codelineno-3-3">3</a></span>
+<span class="normal"><a href="#__codelineno-3-4">4</a></span>
+<span class="normal"><a href="#__codelineno-3-5">5</a></span>
+<span class="normal"><a href="#__codelineno-3-6">6</a></span>
+<span class="normal"><a href="#__codelineno-3-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a>steps:
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w"> </span> - name: kpops deploy
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="gd">-   uses: bakdata/kpops/actions/kpops-runner@main</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="gi">+   uses: bakdata/kpops@main</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w"> </span>   with:
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="w"> </span>     command: deploy --execute
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="w"> </span>     # ...
 </span></code></pre></div></td></tr></table></div>
 <h2 id="allow-overriding-config-files"><a href="https://github.com/bakdata/kpops/pull/391">Allow overriding config files</a><a class="headerlink" href="#allow-overriding-config-files" title="Permanent link">&para;</a></h2>
 <p>Specifying the environment is no longer mandatory. If not defined, only the global files will be used.</p>
 <p><code>environment</code> is no longer specified in <code>config.yaml</code>. Instead, it can be either set via the CLI flag <code>--environment</code> or with the environment variable <code>KPOPS_ENVIRONMENT</code>.</p>
 <p>The <code>--config</code> flag in the CLI now points to the directory that contains <code>config*.yaml</code> files. The files to be used are resolved based on the provided (or not) <code>environment</code>.</p>
-<h4 id="configyaml_1">config.yaml<a class="headerlink" href="#configyaml_1" title="Permanent link">&para;</a></h4>
-<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
-<span class="normal"><a href="#__codelineno-3-2">2</a></span>
-<span class="normal"><a href="#__codelineno-3-3">3</a></span>
-<span class="normal"><a href="#__codelineno-3-4">4</a></span>
-<span class="normal"><a href="#__codelineno-3-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="gd">- environment: development</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="w"> </span> kafka_brokers: &quot;http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092&quot;
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3"></a><span class="w"> </span> schema_registry:
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4"></a><span class="w"> </span>   enabled: true
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5"></a><span class="w"> </span>   url: &quot;http://my-custom-sr.url:8081&quot;
+<h4 id="configyaml_2">config.yaml<a class="headerlink" href="#configyaml_2" title="Permanent link">&para;</a></h4>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span>
+<span class="normal"><a href="#__codelineno-4-3">3</a></span>
+<span class="normal"><a href="#__codelineno-4-4">4</a></span>
+<span class="normal"><a href="#__codelineno-4-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="gd">- environment: development</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="w"> </span> kafka_brokers: &quot;http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092&quot;
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="w"> </span> schema_registry:
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w"> </span>   enabled: true
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w"> </span>   url: &quot;http://my-custom-sr.url:8081&quot;
+</span></code></pre></div></td></tr></table></div>
+<h2 id="change-substitution-variables-separator-to"><a href="https://github.com/bakdata/kpops/pull/388">Change substitution variables separator to <code>.</code></a><a class="headerlink" href="#change-substitution-variables-separator-to" title="Permanent link">&para;</a></h2>
+<p>The delimiter in the substitution variables is changed to <code>.</code>.</p>
+<h4 id="pipelineyaml-and-defaultyaml_1">pipeline.yaml and default.yaml<a class="headerlink" href="#pipelineyaml-and-defaultyaml_1" title="Permanent link">&para;</a></h4>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-5-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-5-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-5-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-5-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-5-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-5-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-5-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-5-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-5-10">10</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a>steps:
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="w"> </span> - type: scheduled-producer
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="w"> </span>   app:
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="w"> </span>     labels:
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="gd">-       app_type: &quot;${component_type}&quot;</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="gd">-       app_name: &quot;${component_name}&quot;</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7"></a><span class="gd">-       app_schedule: &quot;${component_app_schedule}&quot;</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="gi">+       app_type: &quot;${component.type}&quot;</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9"></a><span class="gi">+       app_name: &quot;${component.name}&quot;</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10"></a><span class="gi">+       app_schedule: &quot;${component.app.schedule}&quot;</span>
+</span></code></pre></div></td></tr></table></div>
+<h4 id="configyaml_3">config.yaml<a class="headerlink" href="#configyaml_3" title="Permanent link">&para;</a></h4>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
+<span class="normal"><a href="#__codelineno-6-2">2</a></span>
+<span class="normal"><a href="#__codelineno-6-3">3</a></span>
+<span class="normal"><a href="#__codelineno-6-4">4</a></span>
+<span class="normal"><a href="#__codelineno-6-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a>topic_name_config:
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2"></a><span class="gd">- default_error_topic_name: &quot;${pipeline_name}-${component_name}-dead-letter-topic&quot;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3"></a><span class="gd">- default_output_topic_name: &quot;${pipeline_name}-${component_name}-topic&quot;</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4"></a><span class="gi">+ default_error_topic_name: &quot;${pipeline_name}-${component.name}-dead-letter-topic&quot;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5"></a><span class="gi">+ default_output_topic_name: &quot;${pipeline_name}-${component.name}-topic&quot;</span>
 </span></code></pre></div></td></tr></table></div>
 
 
