@@ -14,7 +14,6 @@ HELM_RELEASE_NAME = create_helm_release_name("resources-custom-config-app2")
 runner = CliRunner()
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
-PIPELINE_BASE_DIR = str(RESOURCE_PATH.parent)
 
 
 class TestTemplate:
@@ -29,8 +28,6 @@ class TestTemplate:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                PIPELINE_BASE_DIR,
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
@@ -59,7 +56,7 @@ class TestTemplate:
             ],
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
     def test_template_config_with_flags(self, run_command: MagicMock):
         run_command.return_value = "v3.12.0+gc9f554d"
@@ -68,8 +65,6 @@ class TestTemplate:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                PIPELINE_BASE_DIR,
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
@@ -102,4 +97,4 @@ class TestTemplate:
             ],
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
