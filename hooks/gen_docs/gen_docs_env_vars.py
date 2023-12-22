@@ -25,6 +25,7 @@ from hooks import ROOT
 from hooks.gen_docs import IterableStrEnum
 from kpops.cli import main
 from kpops.config import KpopsConfig
+from kpops.utils.pydantic import patched_issubclass_of_basemodel
 
 PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
 PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
@@ -230,7 +231,6 @@ def write_csv_to_md_file(
     :param source: path to csv file to read from
     :param target: path to md file to overwrite or create
     :param title: Title for the table, optional
-
     """
     if heading:
         heading += " "
@@ -284,24 +284,6 @@ def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
     :param model: settings class
     :return: ``dict`` of all fields in a settings class
     """
-
-    def patched_issubclass_of_basemodel(cls):
-        """Pydantic breaks issubclass.
-
-        ``issubclass(set[str], set)  # True``
-        ``issubclass(BaseSettings, BaseModel)  # True``
-        ``issubclass(set[str], BaseModel)  # raises exception``
-
-        :param cls: class to check
-        :return: Whether cls is subclass of ``BaseModel``
-        """
-        try:
-            return issubclass(cls, BaseModel)
-        except TypeError as e:
-            if str(e) == "issubclass() arg 1 must be a class":
-                return False
-            raise
-
     seen_fields = {}
     for field_name, field_value in model.model_fields.items():
         if field_value.annotation and patched_issubclass_of_basemodel(
