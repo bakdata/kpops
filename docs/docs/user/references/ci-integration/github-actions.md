@@ -33,25 +33,13 @@ steps:
       pipeline: pipelines/my-pipeline-file.yaml
       kpops-version: 1.2.3
 
+  # It is possible to use a pre-release KPOps version from TestPyPI https://test.pypi.org/project/kpops/#history
   - name: Deploy Kafka pipeline
     uses: bakdata/kpops@main
     with:
       command: deploy --execute
       working-directory: home/my-kpops-root-dir
       pipeline: pipelines/my-pipeline-file.yaml
-      kpops-version: 1.2.3
+      kpops-version:  1.2.5.dev20230707132709
   # ...
-```
-
-It is possible to use a pre-release KPOps version from [TestPyPI](https://test.pypi.org/project/kpops/#history).
-
-```yaml
-steps:
-  - name: Deploy Kafka pipeline
-    uses: bakdata/kpops@main
-    with:
-      command: deploy --execute
-      working-directory: home/my-kpops-root-dir
-      pipeline: pipelines/my-pipeline-file.yaml
-      kpops-version: 1.2.5.dev20230707132709 -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/
 ```

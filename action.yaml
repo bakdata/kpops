@@ -70,7 +70,12 @@ runs:
       shell: bash
       run: |
         echo "::group::install kpops package"
-        pip install -r "${{ steps.requirements.outputs.path }}"
+        # Check if kpops-version contains ".dev"
+        if [[ "${{ inputs.kpops-version }}" == *".dev"* ]]; then
+          pip install -r "${{ steps.requirements.outputs.path }}" -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/
+        else
+          pip install -r "${{ steps.requirements.outputs.path }}"
+        fi
         echo "::endgroup::"
 
     - name: ${{ inputs.command }} ${{ inputs.pipeline }} pipeline
