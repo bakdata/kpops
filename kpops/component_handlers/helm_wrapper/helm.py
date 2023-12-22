@@ -151,8 +151,9 @@ class Helm:
         """
         if flags is None:
             flags = HelmTemplateFlags()
-        tempfile.mktemp
-        with tempfile.NamedTemporaryFile("w", delete_on_close=False) as values_file:
+        with tempfile.NamedTemporaryFile(  # pyright: ignore[reportGeneralTypeIssues]
+            mode="w", delete_on_close=False
+        ) as values_file:
             yaml.safe_dump(values, values_file)
             command = [
                 "helm",
