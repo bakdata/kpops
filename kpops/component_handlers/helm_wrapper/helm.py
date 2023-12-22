@@ -151,7 +151,8 @@ class Helm:
         """
         if flags is None:
             flags = HelmTemplateFlags()
-        with tempfile.NamedTemporaryFile("w") as values_file:
+        tempfile.mktemp
+        with tempfile.NamedTemporaryFile("w", delete_on_close=False) as values_file:
             yaml.safe_dump(values, values_file)
             command = [
                 "helm",
