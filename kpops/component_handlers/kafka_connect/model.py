@@ -93,13 +93,13 @@ class KafkaConnectConfigErrorResponse(BaseModel):
     configs: list[KafkaConnectConfigDescription]
 
 
-class KafkaConnectResetterConfig(CamelCaseConfigModel):
+class KafkaConnectorResetterConfig(CamelCaseConfigModel):
     brokers: str
     connector: str
     delete_consumer_group: bool | None = None
     offset_topic: str | None = None
 
 
-class KafkaConnectResetterValues(HelmAppValues):
+class KafkaConnectorResetterValues(HelmAppValues):
     connector_type: Literal["source", "sink"]
-    config: KafkaConnectResetterConfig
+    config: KafkaConnectorResetterConfig
