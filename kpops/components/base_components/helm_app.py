@@ -16,12 +16,19 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
-from kpops.components.base_components.kubernetes_app import KubernetesApp
+from kpops.components.base_components.kubernetes_app import (
+    KubernetesApp,
+    KubernetesAppConfig,
+)
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import exclude_by_name
 
 log = logging.getLogger("HelmApp")
+
+
+class HelmAppConfig(KubernetesAppConfig):  # TODO: rename HelmAppValues
+    name_override: str | None = None
 
 
 class HelmApp(KubernetesApp):
@@ -31,6 +38,7 @@ class HelmApp(KubernetesApp):
         deploying the component, defaults to None this means that the command "helm repo add" is not called and Helm
         expects a path to local Helm chart.
     :param version: Helm chart version, defaults to None
+    :param app: Helm app values
     """
 
     repo_config: HelmRepoConfig | None = Field(
@@ -40,6 +48,10 @@ class HelmApp(KubernetesApp):
     version: str | None = Field(
         default=None,
         description=describe_attr("version", __doc__),
+    )
+    app: HelmAppConfig = Field(
+        default=...,
+        description=describe_attr("app", __doc__),
     )
 
     @cached_property
@@ -142,6 +154,8 @@ class HelmApp(KubernetesApp):
 
         :returns: Thte values to be used by Helm
         """
+        if self.app.name_override is None:
+            self.app.name_override = self.full_name
         return self.app.model_dump(
             by_alias=True, exclude_none=True, exclude_defaults=True
         )

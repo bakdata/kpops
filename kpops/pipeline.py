@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import logging
 from collections import Counter
-from contextlib import suppress
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -53,7 +52,6 @@ class Pipeline(RootModel):
         raise ValueError(msg)
 
     def add(self, component: PipelineComponent) -> None:
-        self._populate_component_name(component)
         self.root.append(component)
 
     def __bool__(self) -> bool:
@@ -77,14 +75,6 @@ class Pipeline(RootModel):
         if duplicates:
             msg = f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
             raise ValidationError(msg)
-
-    @staticmethod
-    def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove
-        with suppress(
-            AttributeError  # Some components like Kafka Connect do not have a name_override attribute
-        ):
-            if (app := getattr(component, "app")) and app.name_override is None:
-                app.name_override = component.full_name
 
 
 def create_env_components_index(

@@ -12,16 +12,11 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.components.base_components.helm_app import HelmApp
-from kpops.components.base_components.kubernetes_app import KubernetesAppConfig
+from kpops.components.base_components.helm_app import HelmApp, HelmAppConfig
 from kpops.config import KpopsConfig
 from kpops.utils.colorify import magentaify
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
-
-
-class HelmTestValue(KubernetesAppConfig):
-    name_override: str
 
 
 class TestHelmApp:
@@ -51,8 +46,8 @@ class TestHelmApp:
         return mocker.patch("kpops.components.base_components.helm_app.log.info")
 
     @pytest.fixture()
-    def app_value(self) -> HelmTestValue:
-        return HelmTestValue(name_override="test-value")
+    def app_value(self) -> HelmAppConfig:
+        return HelmAppConfig(**{"foo": "test-value"})
 
     @pytest.fixture()
     def repo_config(self) -> HelmRepoConfig:
@@ -63,7 +58,7 @@ class TestHelmApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        app_value: HelmTestValue,
+        app_value: HelmAppConfig,
         repo_config: HelmRepoConfig,
     ) -> HelmApp:
         return HelmApp(
@@ -97,7 +92,10 @@ class TestHelmApp:
             "test/test-chart",
             False,
             "test-namespace",
-            {"nameOverride": "test-value"},
+            {
+                "nameOverride": "${pipeline_name}-test-helm-app",
+                "foo": "test-value",
+            },
             HelmUpgradeInstallFlags(),
         )
 
@@ -107,7 +105,7 @@ class TestHelmApp:
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         mocker: MockerFixture,
-        app_value: HelmTestValue,
+        app_value: HelmAppConfig,
     ):
         repo_config = HelmRepoConfig(
             repository_name="test-repo", url="https://test.com/charts/"
@@ -142,7 +140,10 @@ class TestHelmApp:
                 "test/test-chart",
                 False,
                 "test-namespace",
-                {"nameOverride": "test-value"},
+                {
+                    "nameOverride": "${pipeline_name}-test-helm-app",
+                    "foo": "test-value",
+                },
                 HelmUpgradeInstallFlags(version="3.4.5"),
             ),
         ]
@@ -152,7 +153,7 @@ class TestHelmApp:
         config: KpopsConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
-        app_value: HelmTestValue,
+        app_value: HelmAppConfig,
     ):
         class AppWithLocalChart(HelmApp):
             repo_config: None = None
@@ -179,7 +180,10 @@ class TestHelmApp:
             "path/to/helm/charts/",
             False,
             "test-namespace",
-            {"nameOverride": "test-value"},
+            {
+                "nameOverride": "${pipeline_name}-test-app-with-local-chart",
+                "foo": "test-value",
+            },
             HelmUpgradeInstallFlags(),
         )
 
