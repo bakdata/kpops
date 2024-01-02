@@ -10,9 +10,10 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import trim_release_name
 from kpops.components.base_components.helm_app import HelmApp
-from kpops.components.base_components.kubernetes_app import KubernetesAppConfig
+from kpops.components.base_components.kubernetes_app import (
+    KubernetesAppConfig,
+)
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
@@ -40,14 +41,16 @@ class KafkaAppConfig(KubernetesAppConfig):
     """Settings specific to Kafka Apps.
 
     :param streams: Kafka streams config
-    :param name_override: Override name with this value, defaults to None
+    :param name_override: Override name with this value
     """
 
     streams: KafkaStreamsConfig = Field(
         default=..., description=describe_attr("streams", __doc__)
     )
     name_override: str | None = Field(
-        default=None, description=describe_attr("name_override", __doc__)
+        default=None,
+        title="Nameoverride",
+        description=describe_attr("name_override", __doc__),
     )
 
 
@@ -108,28 +111,21 @@ class KafkaApp(HelmApp, ABC):
         :param values: The value YAML for the chart
         :param dry_run: Dry run command
         :param retain_clean_jobs: Whether to retain the cleanup job, defaults to False
-        :return:
         """
-        suffix = "-clean"
-        clean_up_release_name = trim_release_name(
-            self.helm_release_name + suffix, suffix
-        )
-        log.info(f"Uninstall old cleanup job for {clean_up_release_name}")
+        log.info(f"Uninstall old cleanup job for {self.clean_release_name}")
 
-        self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
+        self.__uninstall_clean_up_job(self.clean_release_name, dry_run)
 
-        log.info(f"Init cleanup job for {clean_up_release_name}")
+        log.info(f"Init cleanup job for {self.clean_release_name}")
 
-        stdout = self.__install_clean_up_job(
-            clean_up_release_name, suffix, values, dry_run
-        )
+        stdout = self.__install_clean_up_job(self.clean_release_name, values, dry_run)
 
         if dry_run:
-            self.dry_run_handler.print_helm_diff(stdout, clean_up_release_name, log)
+            self.dry_run_handler.print_helm_diff(stdout, self.clean_release_name, log)
 
         if not retain_clean_jobs:
-            log.info(f"Uninstall cleanup job for {clean_up_release_name}")
-            self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
+            log.info(f"Uninstall cleanup job for {self.clean_release_name}")
+            self.__uninstall_clean_up_job(self.clean_release_name, dry_run)
 
     def __uninstall_clean_up_job(self, release_name: str, dry_run: bool) -> None:
         """Uninstall clean up job.
@@ -142,7 +138,6 @@ class KafkaApp(HelmApp, ABC):
     def __install_clean_up_job(
         self,
         release_name: str,
-        suffix: str,
         values: dict,
         dry_run: bool,
     ) -> str:
@@ -152,11 +147,10 @@ class KafkaApp(HelmApp, ABC):
         :param suffix: Suffix to add to the release name, e.g. "-clean"
         :param values: The Helm values for the chart
         :param dry_run: Whether to do a dry run of the command
-        :return: Install clean up job with helm, return the output of the installation
+        :return: Return the output of the installation
         """
-        clean_up_release_name = trim_release_name(release_name, suffix)
         return self.helm.upgrade_install(
-            clean_up_release_name,
+            release_name,
             self.clean_up_helm_chart,
             dry_run,
             self.namespace,

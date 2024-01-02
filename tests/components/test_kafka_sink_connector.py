@@ -28,6 +28,7 @@ from kpops.config import KpopsConfig
 from kpops.utils.colorify import magentaify
 from tests.components.test_kafka_connector import (
     CONNECTOR_CLEAN_FULL_NAME,
+    CONNECTOR_CLEAN_RELEASE_NAME,
     CONNECTOR_FULL_NAME,
     CONNECTOR_NAME,
     TestKafkaConnector,
@@ -211,11 +212,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run=dry_run,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=dry_run,
@@ -231,12 +232,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": False,
                     },
-                    "nameOverride": CONNECTOR_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run=dry_run,
             ),
         ]
@@ -301,11 +302,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run=dry_run,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=dry_run,
@@ -321,12 +322,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": True,
                     },
-                    "nameOverride": CONNECTOR_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run=dry_run,
             ),
         ]
@@ -395,11 +396,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run=dry_run,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=dry_run,
@@ -415,12 +416,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": True,
                     },
-                    "nameOverride": CONNECTOR_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run=dry_run,
             ),
         ]

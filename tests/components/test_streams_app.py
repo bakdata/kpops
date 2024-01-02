@@ -9,6 +9,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
     HelmUpgradeInstallFlags,
 )
+from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components import StreamsApp
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
@@ -20,11 +21,15 @@ from kpops.config import KpopsConfig, TopicNameConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
+STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
+STREAMS_APP_FULL_NAME = "${pipeline_name}-" + STREAMS_APP_NAME
+STREAMS_APP_RELEASE_NAME = create_helm_release_name(STREAMS_APP_FULL_NAME)
+STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
+    STREAMS_APP_RELEASE_NAME, "-clean"
+)
+
 
 class TestStreamsApp:
-    STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
-    STREAMS_APP_CLEAN_NAME = "test-streams-app-with-long-na-clean"
-
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
@@ -49,7 +54,7 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
-            name=self.STREAMS_APP_NAME,
+            name=STREAMS_APP_NAME,
             config=config,
             handlers=handlers,
             **{
@@ -69,7 +74,7 @@ class TestStreamsApp:
 
     def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         streams_app = StreamsApp(
-            name=self.STREAMS_APP_NAME,
+            name=STREAMS_APP_NAME,
             config=config,
             handlers=handlers,
             **{
@@ -115,7 +120,7 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            name=self.STREAMS_APP_NAME,
+            name=STREAMS_APP_NAME,
             config=config,
             handlers=handlers,
             **{
@@ -148,7 +153,7 @@ class TestStreamsApp:
             ValueError, match="Define role only if `type` is `pattern` or `None`"
         ):
             StreamsApp(
-                name=self.STREAMS_APP_NAME,
+                name=STREAMS_APP_NAME,
                 config=config,
                 handlers=handlers,
                 **{
@@ -172,7 +177,7 @@ class TestStreamsApp:
             ValueError, match="Define `role` only if `type` is undefined"
         ):
             StreamsApp(
-                name=self.STREAMS_APP_NAME,
+                name=STREAMS_APP_NAME,
                 config=config,
                 handlers=handlers,
                 **{
@@ -195,7 +200,7 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            name=self.STREAMS_APP_NAME,
+            name=STREAMS_APP_NAME,
             config=config,
             handlers=handlers,
             **{
@@ -234,7 +239,7 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            name=self.STREAMS_APP_NAME,
+            name=STREAMS_APP_NAME,
             config=config,
             handlers=handlers,
             **{
@@ -273,7 +278,7 @@ class TestStreamsApp:
         mocker: MockerFixture,
     ):
         streams_app = StreamsApp(
-            name=self.STREAMS_APP_NAME,
+            name=STREAMS_APP_NAME,
             config=config,
             handlers=handlers,
             **{
@@ -318,7 +323,7 @@ class TestStreamsApp:
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=dry_run),
             mocker.call.mock_helm_upgrade_install(
-                "${pipeline_name}-" + self.STREAMS_APP_NAME,
+                STREAMS_APP_RELEASE_NAME,
                 "bakdata-streams-bootstrap/streams-app",
                 dry_run,
                 "test-namespace",
@@ -354,7 +359,7 @@ class TestStreamsApp:
         streams_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
-            "test-namespace", "${pipeline_name}-" + self.STREAMS_APP_NAME, True
+            "test-namespace", STREAMS_APP_RELEASE_NAME, True
         )
 
     def test_reset_when_dry_run_is_false(
@@ -375,11 +380,11 @@ class TestStreamsApp:
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
                 "test-namespace",
-                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                STREAMS_APP_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
             mocker.call.helm_upgrade_install(
-                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                STREAMS_APP_CLEAN_RELEASE_NAME,
                 "bakdata-streams-bootstrap/streams-app-cleanup-job",
                 dry_run,
                 "test-namespace",
@@ -394,7 +399,7 @@ class TestStreamsApp:
             ),
             mocker.call.helm_uninstall(
                 "test-namespace",
-                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                STREAMS_APP_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
         ]
@@ -419,11 +424,11 @@ class TestStreamsApp:
         assert mock.mock_calls == [
             mocker.call.helm_uninstall(
                 "test-namespace",
-                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                STREAMS_APP_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
             mocker.call.helm_upgrade_install(
-                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                STREAMS_APP_CLEAN_RELEASE_NAME,
                 "bakdata-streams-bootstrap/streams-app-cleanup-job",
                 dry_run,
                 "test-namespace",
@@ -438,7 +443,7 @@ class TestStreamsApp:
             ),
             mocker.call.helm_uninstall(
                 "test-namespace",
-                "${pipeline_name}-" + self.STREAMS_APP_CLEAN_NAME,
+                STREAMS_APP_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
         ]
