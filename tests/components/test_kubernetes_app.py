@@ -7,14 +7,14 @@ from pytest_mock import MockerFixture
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
-    KubernetesAppConfig,
+    KubernetesAppValues,
 )
 from kpops.config import KpopsConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
-class KubernetesTestValue(KubernetesAppConfig):
+class KubernetesTestValue(KubernetesAppValues):
     foo: str
 
 

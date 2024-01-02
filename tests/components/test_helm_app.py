@@ -12,7 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.components.base_components.helm_app import HelmApp, HelmAppConfig
+from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.config import KpopsConfig
 from kpops.utils.colorify import magentaify
 
@@ -46,8 +46,8 @@ class TestHelmApp:
         return mocker.patch("kpops.components.base_components.helm_app.log.info")
 
     @pytest.fixture()
-    def app_value(self) -> HelmAppConfig:
-        return HelmAppConfig(**{"foo": "test-value"})
+    def app_value(self) -> HelmAppValues:
+        return HelmAppValues(**{"foo": "test-value"})
 
     @pytest.fixture()
     def repo_config(self) -> HelmRepoConfig:
@@ -58,7 +58,7 @@ class TestHelmApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        app_value: HelmAppConfig,
+        app_value: HelmAppValues,
         repo_config: HelmRepoConfig,
     ) -> HelmApp:
         return HelmApp(
@@ -105,7 +105,7 @@ class TestHelmApp:
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         mocker: MockerFixture,
-        app_value: HelmAppConfig,
+        app_value: HelmAppValues,
     ):
         repo_config = HelmRepoConfig(
             repository_name="test-repo", url="https://test.com/charts/"
@@ -153,7 +153,7 @@ class TestHelmApp:
         config: KpopsConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
-        app_value: HelmAppConfig,
+        app_value: HelmAppValues,
     ):
         class AppWithLocalChart(HelmApp):
             repo_config: None = None

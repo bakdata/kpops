@@ -18,7 +18,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
-    KubernetesAppConfig,
+    KubernetesAppValues,
 )
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
@@ -27,7 +27,7 @@ from kpops.utils.pydantic import exclude_by_name
 log = logging.getLogger("HelmApp")
 
 
-class HelmAppConfig(KubernetesAppConfig):  # TODO: rename HelmAppValues
+class HelmAppValues(KubernetesAppValues):
     name_override: str | None = None
 
 
@@ -49,7 +49,7 @@ class HelmApp(KubernetesApp):
         default=None,
         description=describe_attr("version", __doc__),
     )
-    app: HelmAppConfig = Field(
+    app: HelmAppValues = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )

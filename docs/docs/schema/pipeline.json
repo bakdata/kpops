@@ -66,7 +66,7 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/HelmAppConfig"
+                            "$ref": "#/$defs/HelmAppValues"
                         }
                     ],
                     "description": "Helm app values"
@@ -146,7 +146,7 @@
             "title": "HelmApp",
             "type": "object"
         },
-        "HelmAppConfig": {
+        "HelmAppValues": {
             "additionalProperties": true,
             "description": "",
             "properties": {
@@ -163,7 +163,7 @@
                     "title": "Nameoverride"
                 }
             },
-            "title": "HelmAppConfig",
+            "title": "HelmAppValues",
             "type": "object"
         },
         "HelmRepoConfig": {
@@ -456,7 +456,7 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ProducerValues"
+                            "$ref": "#/$defs/ProducerAppValues"
                         }
                     ],
                     "description": "Application-specific settings"
@@ -536,6 +536,37 @@
             "title": "ProducerApp",
             "type": "object"
         },
+        "ProducerAppValues": {
+            "additionalProperties": true,
+            "description": "Settings specific to producers.",
+            "properties": {
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Nameoverride"
+                },
+                "streams": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ProducerStreamsConfig"
+                        }
+                    ],
+                    "description": "Kafka Streams settings"
+                }
+            },
+            "required": [
+                "streams"
+            ],
+            "title": "ProducerAppValues",
+            "type": "object"
+        },
         "ProducerStreamsConfig": {
             "additionalProperties": true,
             "description": "Kafka Streams settings specific to Producer.",
@@ -585,37 +616,6 @@
                 "brokers"
             ],
             "title": "ProducerStreamsConfig",
-            "type": "object"
-        },
-        "ProducerValues": {
-            "additionalProperties": true,
-            "description": "Settings specific to producers.",
-            "properties": {
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Nameoverride"
-                },
-                "streams": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProducerStreamsConfig"
-                        }
-                    ],
-                    "description": "Kafka Streams settings"
-                }
-            },
-            "required": [
-                "streams"
-            ],
-            "title": "ProducerValues",
             "type": "object"
         },
         "RepoAuthFlags": {
@@ -692,7 +692,7 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/StreamsAppConfig"
+                            "$ref": "#/$defs/StreamsAppValues"
                         }
                     ],
                     "description": "Application-specific settings"
@@ -859,7 +859,7 @@
             "title": "StreamsAppAutoScaling",
             "type": "object"
         },
-        "StreamsAppConfig": {
+        "StreamsAppValues": {
             "additionalProperties": true,
             "description": "StreamsBoostrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
             "properties": {
@@ -899,7 +899,7 @@
             "required": [
                 "streams"
             ],
-            "title": "StreamsAppConfig",
+            "title": "StreamsAppValues",
             "type": "object"
         },
         "StreamsConfig": {

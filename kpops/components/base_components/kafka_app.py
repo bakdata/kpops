@@ -11,7 +11,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import trim_release_name
-from kpops.components.base_components.helm_app import HelmApp, HelmAppConfig
+from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
@@ -35,7 +35,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     )
 
 
-class KafkaAppConfig(HelmAppConfig):
+class KafkaAppValues(HelmAppValues):
     """Settings specific to Kafka Apps.
 
     :param streams: Kafka streams config
@@ -58,7 +58,7 @@ class KafkaApp(HelmApp, ABC):
     :param version: Helm chart version, defaults to "2.9.0"
     """
 
-    app: KafkaAppConfig = Field(
+    app: KafkaAppValues = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )
