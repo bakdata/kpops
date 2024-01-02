@@ -148,7 +148,7 @@
         },
         "HelmAppValues": {
             "additionalProperties": true,
-            "description": "",
+            "description": "Helm app values.",
             "properties": {
                 "nameOverride": {
                     "anyOf": [
@@ -160,6 +160,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override name with this value",
                     "title": "Nameoverride"
                 }
             },
@@ -550,6 +551,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override name with this value",
                     "title": "Nameoverride"
                 },
                 "streams": {
@@ -885,6 +887,7 @@
                         }
                     ],
                     "default": null,
+                    "description": "Override name with this value",
                     "title": "Nameoverride"
                 },
                 "streams": {
