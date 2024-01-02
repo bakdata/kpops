@@ -371,7 +371,7 @@ class TestStreamsApp:
         self, streams_app: StreamsApp, mocker: MockerFixture
     ):
         mock_helm_upgrade_install = mocker.patch.object(
-            streams_app.helm, "upgrade_install"
+            streams_app._cleaner.helm, "upgrade_install"
         )
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 

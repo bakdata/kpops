@@ -1,10 +1,19 @@
 from pydantic import Field
 from typing_extensions import override
 
-from kpops.components.base_components.kafka_app import KafkaApp
+from kpops.components.base_components.kafka_app import KafkaApp, KafkaAppCleaner
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import StreamsAppValues
 from kpops.utils.docstring import describe_attr
+
+
+class StreamsAppCleaner(KafkaAppCleaner):
+    app: StreamsAppValues
+
+    @property
+    @override
+    def helm_chart(self) -> str:
+        return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
 
 class StreamsApp(KafkaApp):
@@ -17,6 +26,16 @@ class StreamsApp(KafkaApp):
         default=...,
         description=describe_attr("app", __doc__),
     )
+
+    @property
+    def _cleaner(self) -> StreamsAppCleaner:
+        return StreamsAppCleaner(
+            config=self.config,
+            handlers=self.handlers,
+            name=self.name,
+            namespace=self.namespace,
+            app=self.app,
+        )
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
@@ -51,29 +70,12 @@ class StreamsApp(KafkaApp):
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.STREAMS_APP.value}"
 
-    @property
-    @override
-    def clean_up_helm_chart(self) -> str:
-        return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
-
     @override
     def reset(self, dry_run: bool) -> None:
-        self.__run_streams_clean_up_job(dry_run, delete_output=False)
+        self._cleaner.app.streams.delete_output = False
+        self._cleaner.run(dry_run)
 
     @override
     def clean(self, dry_run: bool) -> None:
-        self.__run_streams_clean_up_job(dry_run, delete_output=True)
-
-    def __run_streams_clean_up_job(self, dry_run: bool, delete_output: bool) -> None:
-        """Run clean job for this Streams app.
-
-        :param dry_run: Whether to do a dry run of the command
-        :param delete_output: Whether to delete the output of the app that is being cleaned
-        """
-        values = self.to_helm_values()
-        values["streams"]["deleteOutput"] = delete_output
-        self._run_clean_up_job(
-            values=values,
-            dry_run=dry_run,
-            retain_clean_jobs=self.config.retain_clean_jobs,
-        )
+        self._cleaner.app.streams.delete_output = True
+        self._cleaner.run(dry_run)

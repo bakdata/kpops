@@ -1,9 +1,7 @@
-# from __future__ import annotations
-
 from pydantic import Field
 from typing_extensions import override
 
-from kpops.components.base_components.kafka_app import KafkaApp
+from kpops.components.base_components.kafka_app import KafkaApp, KafkaAppCleaner
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -11,6 +9,17 @@ from kpops.components.base_components.models.to_section import (
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
+
+
+class ProducerAppCleaner(KafkaAppCleaner):
+    app: ProducerAppValues
+
+    @property
+    @override
+    def helm_chart(self) -> str:
+        return (
+            f"{self.repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
+        )
 
 
 class ProducerApp(KafkaApp):
@@ -36,6 +45,16 @@ class ProducerApp(KafkaApp):
         description=describe_attr("from_", __doc__),
     )
 
+    @property
+    def _cleaner(self) -> ProducerAppCleaner:
+        return ProducerAppCleaner(
+            config=self.config,
+            handlers=self.handlers,
+            name=self.name,
+            namespace=self.namespace,
+            app=self.app,
+        )
+
     @override
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:
         match topic.type:
@@ -58,17 +77,7 @@ class ProducerApp(KafkaApp):
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
-    @property
-    @override
-    def clean_up_helm_chart(self) -> str:
-        return (
-            f"{self.repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
-        )
-
     @override
     def clean(self, dry_run: bool) -> None:
-        self._run_clean_up_job(
-            values=self.to_helm_values(),
-            dry_run=dry_run,
-            retain_clean_jobs=self.config.retain_clean_jobs,
-        )
+        self._cleaner.app.streams.delete_output = True  # TODO: sensible?
+        self._cleaner.run(dry_run)
