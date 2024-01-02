@@ -46,7 +46,7 @@ class TestHelmApp:
         return mocker.patch("kpops.components.base_components.helm_app.log.info")
 
     @pytest.fixture()
-    def app_value(self) -> HelmAppValues:
+    def app_values(self) -> HelmAppValues:
         return HelmAppValues(**{"foo": "test-value"})
 
     @pytest.fixture()
@@ -58,14 +58,14 @@ class TestHelmApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        app_value: HelmAppValues,
+        app_values: HelmAppValues,
         repo_config: HelmRepoConfig,
     ) -> HelmApp:
         return HelmApp(
             name="test-helm-app",
             config=config,
             handlers=handlers,
-            app=app_value,
+            app=app_values,
             namespace="test-namespace",
             repo_config=repo_config,
         )
@@ -105,7 +105,7 @@ class TestHelmApp:
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         mocker: MockerFixture,
-        app_value: HelmAppValues,
+        app_values: HelmAppValues,
     ):
         repo_config = HelmRepoConfig(
             repository_name="test-repo", url="https://test.com/charts/"
@@ -114,7 +114,7 @@ class TestHelmApp:
             name="test-helm-app",
             config=config,
             handlers=handlers,
-            app=app_value,
+            app=app_values,
             namespace="test-namespace",
             repo_config=repo_config,
             version="3.4.5",
@@ -153,7 +153,7 @@ class TestHelmApp:
         config: KpopsConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
-        app_value: HelmAppValues,
+        app_values: HelmAppValues,
     ):
         class AppWithLocalChart(HelmApp):
             repo_config: None = None
@@ -167,7 +167,7 @@ class TestHelmApp:
             name="test-app-with-local-chart",
             config=config,
             handlers=handlers,
-            app=app_value,
+            app=app_values,
             namespace="test-namespace",
         )
 

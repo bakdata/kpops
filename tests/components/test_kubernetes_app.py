@@ -36,7 +36,7 @@ class TestKubernetesApp:
         return mocker.patch("kpops.components.base_components.kubernetes_app.log.info")
 
     @pytest.fixture()
-    def app_value(self) -> KubernetesTestValue:
+    def app_values(self) -> KubernetesTestValue:
         return KubernetesTestValue(foo="foo")
 
     @pytest.fixture()
@@ -44,13 +44,13 @@ class TestKubernetesApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        app_value: KubernetesTestValue,
+        app_values: KubernetesTestValue,
     ) -> KubernetesApp:
         return KubernetesApp(
             name="test-kubernetes-app",
             config=config,
             handlers=handlers,
-            app=app_value,
+            app=app_values,
             namespace="test-namespace",
         )
 
@@ -58,7 +58,7 @@ class TestKubernetesApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        app_value: KubernetesTestValue,
+        app_values: KubernetesTestValue,
     ):
         with pytest.raises(
             ValueError, match=r"The component name .* is invalid for Kubernetes."
@@ -67,7 +67,7 @@ class TestKubernetesApp:
                 name="Not-Compatible*",
                 config=config,
                 handlers=handlers,
-                app=app_value,
+                app=app_values,
                 namespace="test-namespace",
             )
 
@@ -78,7 +78,7 @@ class TestKubernetesApp:
                 name="snake_case*",
                 config=config,
                 handlers=handlers,
-                app=app_value,
+                app=app_values,
                 namespace="test-namespace",
             )
 
@@ -86,6 +86,6 @@ class TestKubernetesApp:
             name="valid-name",
             config=config,
             handlers=handlers,
-            app=app_value,
+            app=app_values,
             namespace="test-namespace",
         )
