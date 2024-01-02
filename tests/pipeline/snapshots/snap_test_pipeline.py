@@ -10,7 +10,7 @@ snapshots = Snapshot()
 snapshots['TestPipeline.test_default_config test-pipeline'] = [
     {
         'app': {
-            'fullnameOverride': 'resources-custom-config-app1',
+            'nameOverride': 'resources-custom-config-app1',
             'resources': {
                 'limits': {
                     'memory': '2G'
@@ -54,11 +54,11 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = [
     },
     {
         'app': {
-            'fullnameOverride': 'resources-custom-config-app2',
             'image': 'some-image',
             'labels': {
                 'pipeline': 'resources-custom-config'
             },
+            'nameOverride': 'resources-custom-config-app2',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'errorTopic': 'resources-custom-config-app2-error',
@@ -108,9 +108,9 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = [
             'commandLine': {
                 'FAKE_ARG': 'fake-arg-value'
             },
-            'fullnameOverride': 'resources-pipeline-with-inflate-scheduled-producer',
             'image': 'example-registry/fake-image',
             'imageTag': '0.0.1',
+            'nameOverride': 'resources-pipeline-with-inflate-scheduled-producer',
             'schedule': '30 3/8 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
@@ -165,7 +165,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = [
             'commandLine': {
                 'CONVERT_XML': True
             },
-            'fullnameOverride': 'resources-pipeline-with-inflate-converter',
+            'nameOverride': 'resources-pipeline-with-inflate-converter',
             'resources': {
                 'limits': {
                     'memory': '2G'
@@ -240,9 +240,9 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = [
             'commandLine': {
                 'TYPE': 'nothing'
             },
-            'fullnameOverride': 'resources-pipeline-with-inflate-should-inflate',
             'image': 'fake-registry/filter',
             'imageTag': '2.4.1',
+            'nameOverride': 'resources-pipeline-with-inflate-should-inflate',
             'replicaCount': 4,
             'resources': {
                 'requests': {
@@ -345,7 +345,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = [
     },
     {
         'app': {
-            'fullnameOverride': 'resources-pipeline-with-inflate-should-inflate-inflated-streams-app',
+            'nameOverride': 'resources-pipeline-with-inflate-should-inflate-inflated-streams-app',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -396,8 +396,8 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = [
 snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'] = [
     {
         'app': {
-            'fullnameOverride': 'resources-kafka-connect-sink-streams-app',
             'image': 'fake-image',
+            'nameOverride': 'resources-kafka-connect-sink-streams-app',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -490,9 +490,9 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = [
             'commandLine': {
                 'FAKE_ARG': 'fake-arg-value'
             },
-            'fullnameOverride': 'resources-first-pipeline-scheduled-producer',
             'image': 'example-registry/fake-image',
             'imageTag': '0.0.1',
+            'nameOverride': 'resources-first-pipeline-scheduled-producer',
             'schedule': '30 3/8 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
@@ -547,7 +547,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = [
             'commandLine': {
                 'CONVERT_XML': True
             },
-            'fullnameOverride': 'resources-first-pipeline-converter',
+            'nameOverride': 'resources-first-pipeline-converter',
             'resources': {
                 'limits': {
                     'memory': '2G'
@@ -622,9 +622,9 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = [
             'commandLine': {
                 'TYPE': 'nothing'
             },
-            'fullnameOverride': 'resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name',
             'image': 'fake-registry/filter',
             'imageTag': '2.4.1',
+            'nameOverride': 'resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name',
             'replicaCount': 4,
             'resources': {
                 'requests': {
@@ -683,7 +683,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = [
 snapshots['TestPipeline.test_model_serialization test-pipeline'] = [
     {
         'app': {
-            'fullnameOverride': 'resources-pipeline-with-paths-account-producer',
+            'nameOverride': 'resources-pipeline-with-paths-account-producer',
             'streams': {
                 'brokers': 'test',
                 'extraOutputTopics': {
@@ -716,7 +716,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = [
             'commandLine': {
                 'CONVERT_XML': True
             },
-            'fullnameOverride': 'resources-no-input-topic-pipeline-app1',
+            'nameOverride': 'resources-no-input-topic-pipeline-app1',
             'resources': {
                 'limits': {
                     'memory': '2G'
@@ -779,7 +779,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = [
     },
     {
         'app': {
-            'fullnameOverride': 'resources-no-input-topic-pipeline-app2',
+            'nameOverride': 'resources-no-input-topic-pipeline-app2',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -838,8 +838,8 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = [
 snapshots['TestPipeline.test_no_user_defined_components test-pipeline'] = [
     {
         'app': {
-            'fullnameOverride': 'resources-no-user-defined-components-streams-app',
             'image': 'fake-image',
+            'nameOverride': 'resources-no-user-defined-components-streams-app',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -902,9 +902,9 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = [
             'commandLine': {
                 'FAKE_ARG': 'override-arg'
             },
-            'fullnameOverride': 'resources-pipeline-with-envs-input-producer',
             'image': 'example-registry/fake-image',
             'imageTag': '0.0.1',
+            'nameOverride': 'resources-pipeline-with-envs-input-producer',
             'schedule': '20 3/8 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
@@ -959,7 +959,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = [
             'commandLine': {
                 'CONVERT_XML': True
             },
-            'fullnameOverride': 'resources-pipeline-with-envs-converter',
+            'nameOverride': 'resources-pipeline-with-envs-converter',
             'resources': {
                 'limits': {
                     'memory': '2G'
@@ -1034,9 +1034,9 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = [
             'commandLine': {
                 'TYPE': 'nothing'
             },
-            'fullnameOverride': 'resources-pipeline-with-envs-filter',
             'image': 'fake-registry/filter',
             'imageTag': '2.4.1',
+            'nameOverride': 'resources-pipeline-with-envs-filter',
             'replicaCount': 4,
             'resources': {
                 'requests': {
@@ -1096,9 +1096,9 @@ snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = [
     {
         'app': {
             'debug': True,
-            'fullnameOverride': 'from-pipeline-component-account-producer',
             'image': '${DOCKER_REGISTRY}/atm-demo-accountproducer',
             'imageTag': '1.0.0',
+            'nameOverride': 'from-pipeline-component-account-producer',
             'prometheus': {
                 'jmx': {
                     'enabled': False
@@ -1132,7 +1132,7 @@ snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = [
 snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
     {
         'app': {
-            'fullnameOverride': 'resources-read-from-component-producer1',
+            'nameOverride': 'resources-read-from-component-producer1',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'extraOutputTopics': {
@@ -1167,7 +1167,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
     },
     {
         'app': {
-            'fullnameOverride': 'producer2',
+            'nameOverride': 'producer2',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'extraOutputTopics': {
@@ -1215,9 +1215,9 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
                     'resources-read-from-component-inflate-step'
                 ]
             },
-            'fullnameOverride': 'resources-read-from-component-inflate-step',
             'image': 'fake-registry/filter',
             'imageTag': '2.4.1',
+            'nameOverride': 'resources-read-from-component-inflate-step',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -1314,7 +1314,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
     },
     {
         'app': {
-            'fullnameOverride': 'resources-read-from-component-inflate-step-inflated-streams-app',
+            'nameOverride': 'resources-read-from-component-inflate-step-inflated-streams-app',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -1375,9 +1375,9 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
                     'resources-read-from-component-inflate-step-without-prefix'
                 ]
             },
-            'fullnameOverride': 'inflate-step-without-prefix',
             'image': 'fake-registry/filter',
             'imageTag': '2.4.1',
+            'nameOverride': 'inflate-step-without-prefix',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -1474,7 +1474,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
     },
     {
         'app': {
-            'fullnameOverride': 'resources-read-from-component-inflate-step-without-prefix-inflated-streams-app',
+            'nameOverride': 'resources-read-from-component-inflate-step-without-prefix-inflated-streams-app',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -1522,7 +1522,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
     },
     {
         'app': {
-            'fullnameOverride': 'resources-read-from-component-consumer1',
+            'nameOverride': 'resources-read-from-component-consumer1',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -1579,7 +1579,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
     },
     {
         'app': {
-            'fullnameOverride': 'resources-read-from-component-consumer2',
+            'nameOverride': 'resources-read-from-component-consumer2',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -1634,7 +1634,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
     },
     {
         'app': {
-            'fullnameOverride': 'resources-read-from-component-consumer3',
+            'nameOverride': 'resources-read-from-component-consumer3',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -1689,7 +1689,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
     },
     {
         'app': {
-            'fullnameOverride': 'resources-read-from-component-consumer4',
+            'nameOverride': 'resources-read-from-component-consumer4',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -1740,7 +1740,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
     },
     {
         'app': {
-            'fullnameOverride': 'resources-read-from-component-consumer5',
+            'nameOverride': 'resources-read-from-component-consumer5',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {
@@ -1797,7 +1797,6 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = [
             'commandLine': {
                 'FAKE_ARG': 'fake-arg-value'
             },
-            'fullnameOverride': 'resources-component-type-substitution-scheduled-producer',
             'image': 'example-registry/fake-image',
             'imageTag': '0.0.1',
             'labels': {
@@ -1805,6 +1804,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = [
                 'app_schedule': '30 3/8 * * *',
                 'app_type': 'scheduled-producer'
             },
+            'nameOverride': 'resources-component-type-substitution-scheduled-producer',
             'schedule': '30 3/8 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
@@ -1859,7 +1859,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = [
             'commandLine': {
                 'CONVERT_XML': True
             },
-            'fullnameOverride': 'resources-component-type-substitution-converter',
+            'nameOverride': 'resources-component-type-substitution-converter',
             'resources': {
                 'limits': {
                     'memory': '2G'
@@ -1934,7 +1934,6 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = [
             'commandLine': {
                 'TYPE': 'nothing'
             },
-            'fullnameOverride': 'resources-component-type-substitution-filter-app',
             'image': 'fake-registry/filter',
             'imageTag': '2.4.1',
             'labels': {
@@ -1944,6 +1943,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = [
                 'filter': 'filter-app-filter',
                 'test_placeholder_in_placeholder': 'filter-app-filter'
             },
+            'nameOverride': 'resources-component-type-substitution-filter-app',
             'replicaCount': 4,
             'resources': {
                 'requests': {
@@ -2002,7 +2002,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = [
 snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test-pipeline'] = [
     {
         'app': {
-            'fullnameOverride': 'resources-custom-config-app1',
+            'nameOverride': 'resources-custom-config-app1',
             'resources': {
                 'limits': {
                     'memory': '2G'
@@ -2046,11 +2046,11 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
     },
     {
         'app': {
-            'fullnameOverride': 'resources-custom-config-app2',
             'image': 'some-image',
             'labels': {
                 'pipeline': 'resources-custom-config'
             },
+            'nameOverride': 'resources-custom-config-app2',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'errorTopic': 'app2-dead-letter-topic',
@@ -2097,7 +2097,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
 snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test-pipeline'] = [
     {
         'app': {
-            'fullnameOverride': 'resources-custom-config-app1',
+            'nameOverride': 'resources-custom-config-app1',
             'resources': {
                 'limits': {
                     'memory': '2G'
@@ -2141,11 +2141,11 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
     },
     {
         'app': {
-            'fullnameOverride': 'resources-custom-config-app2',
             'image': 'some-image',
             'labels': {
                 'pipeline': 'resources-custom-config'
             },
+            'nameOverride': 'resources-custom-config-app2',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'errorTopic': 'app2-dead-letter-topic',
@@ -2192,8 +2192,8 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
 snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = [
     {
         'app': {
-            'fullnameOverride': 'resources-kafka-connect-sink-streams-app-development',
             'image': 'fake-image',
+            'nameOverride': 'resources-kafka-connect-sink-streams-app-development',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
                 'config': {

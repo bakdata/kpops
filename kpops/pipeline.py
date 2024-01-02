@@ -83,8 +83,8 @@ class Pipeline(RootModel):
         with suppress(
             AttributeError  # Some components like Kafka Connect do not have a fullname_override attribute
         ):
-            if (app := getattr(component, "app")) and app.fullname_override is None:
-                app.fullname_override = component.full_name
+            if (app := getattr(component, "app")) and app.name_override is None:
+                app.name_override = component.full_name
 
 
 def create_env_components_index(
