@@ -52,8 +52,7 @@ class StreamsBootstrapHelmApp(HelmApp, ABC):
         default=HelmRepoConfig(
             repository_name="bakdata-streams-bootstrap",
             url="https://bakdata.github.io/streams-bootstrap/",
-        ),
-        description=describe_attr("repo_config", __doc__),
+        )
     )
 
 

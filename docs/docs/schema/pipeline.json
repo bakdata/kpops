@@ -500,8 +500,7 @@
                         },
                         "repository_name": "bakdata-streams-bootstrap",
                         "url": "https://bakdata.github.io/streams-bootstrap/"
-                    },
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                    }
                 },
                 "to": {
                     "anyOf": [
@@ -744,8 +743,7 @@
                         },
                         "repository_name": "bakdata-streams-bootstrap",
                         "url": "https://bakdata.github.io/streams-bootstrap/"
-                    },
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                    }
                 },
                 "to": {
                     "anyOf": [
