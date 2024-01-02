@@ -72,7 +72,7 @@ mike = "^1.1.2"
 
 [tool.ruff]
 ignore = [
-# Rules in conflict with `ruff-format` -- START
+  # Rules in conflict with `ruff-format` -- START
   "W191", # Checks for indentation that uses tabs. Spaces are preferred.
   # "E111", # Checks for indentation with a non-multiple of 4 spaces, add when out of nursery
   # "E114", # Checks for indentation of comments with a non-multiple of 4 spaces, add when out of nursery
@@ -88,11 +88,11 @@ ignore = [
   "COM819", # Checks for the presence of prohibited trailing commas.
   "ISC001", # Checks for implicitly concatenated strings on a single line.
   "ISC002", # Checks for implicitly concatenated strings that span multiple lines.
-# Rules in conflict with `ruff-format` -- END
+  # Rules in conflict with `ruff-format` -- END
   "D1", # Missing docstring for {} -- Inconvenient to enforce
-# The following "D" rules do not correspond to our coding style. We use the pep257 convention, but
-# "D212" should not be ignored. In ruff (0.0.291) we cannot select a rule that is excluded by specifying
-# a convention, hence our only option is to manually replicate it.
+  # The following "D" rules do not correspond to our coding style. We use the pep257 convention, but
+  # "D212" should not be ignored. In ruff (0.0.291) we cannot select a rule that is excluded by specifying
+  # a convention, hence our only option is to manually replicate it.
   "D203", # 1 blank line required before class docstring
   "D213", # Multi-line docstring summary should start at the second line
   "D214", # Section is over-indented ("{name}")
