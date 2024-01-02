@@ -253,7 +253,7 @@ class TestProducerApp:
         handlers: ComponentHandlers,
     ):
         producer_app = ProducerApp(
-            name=self.PRODUCER_APP_NAME,
+            name="my-producer",
             config=config,
             handlers=handlers,
             **{

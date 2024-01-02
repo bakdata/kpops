@@ -452,7 +452,7 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            name=self.STREAMS_APP_NAME,
+            name="my-app",
             config=config,
             handlers=handlers,
             **{
