@@ -82,4 +82,4 @@ class ProducerApp(KafkaApp):
 
     @override
     def clean(self, dry_run: bool) -> None:
-        self._cleaner.run(dry_run)
+        self._cleaner.clean(dry_run)

@@ -76,8 +76,9 @@ class KafkaAppCleaner(HelmApp):
             wait_for_jobs=True,
         )
 
-    def run(self, dry_run: bool) -> None:
-        """Clean an app using the respective cleanup job.
+    @override
+    def clean(self, dry_run: bool) -> None:
+        """Clean an app using a cleanup job.
 
         :param dry_run: Dry run command
         """

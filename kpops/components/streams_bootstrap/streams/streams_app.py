@@ -76,9 +76,9 @@ class StreamsApp(KafkaApp):
     @override
     def reset(self, dry_run: bool) -> None:
         self._cleaner.app.streams.delete_output = False
-        self._cleaner.run(dry_run)
+        self._cleaner.clean(dry_run)
 
     @override
     def clean(self, dry_run: bool) -> None:
         self._cleaner.app.streams.delete_output = True
-        self._cleaner.run(dry_run)
+        self._cleaner.clean(dry_run)
