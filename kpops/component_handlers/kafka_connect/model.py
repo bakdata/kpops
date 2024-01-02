@@ -102,7 +102,7 @@ class KafkaConnectResetterConfig(CamelCaseConfigModel):
 class KafkaConnectResetterValues(CamelCaseConfigModel):
     connector_type: Literal["source", "sink"]
     config: KafkaConnectResetterConfig
-    fullname_override: str
+    name_override: str
 
     # TODO(Ivan Yordanov): Replace with a function decorated with `@model_serializer`
     # BEWARE! All default values are enforced, hard to replicate without

@@ -21,7 +21,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 class KubernetesTestValue(KubernetesAppConfig):
-    fullname_override: str
+    name_override: str
 
 
 class TestKubernetesApp:
@@ -43,7 +43,7 @@ class TestKubernetesApp:
 
     @pytest.fixture()
     def app_value(self) -> KubernetesTestValue:
-        return KubernetesTestValue(**{"fullname_override": "test-value"})
+        return KubernetesTestValue(**{"name_override": "test-value"})
 
     @pytest.fixture()
     def repo_config(self) -> HelmRepoConfig:

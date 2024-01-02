@@ -243,7 +243,7 @@ class KafkaConnector(PipelineComponent, ABC):
                     **kwargs,
                 ),
                 connector_type=self._connector_type.value,
-                fullname_override=self.full_name + "-clean",
+                name_override=self.full_name + "-clean",
             ).model_dump(),
             **self.resetter_values,
         }

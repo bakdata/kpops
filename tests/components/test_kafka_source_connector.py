@@ -180,7 +180,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "fullnameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
@@ -255,7 +255,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "fullnameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
@@ -330,7 +330,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "fullnameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(

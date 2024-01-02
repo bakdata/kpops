@@ -232,7 +232,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": False,
                     },
-                    "fullnameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
@@ -322,7 +322,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": True,
                     },
-                    "fullnameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
@@ -416,7 +416,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": True,
                     },
-                    "fullnameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
