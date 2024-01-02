@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from pydantic import Field
 from typing_extensions import override
 
@@ -27,14 +29,12 @@ class StreamsApp(KafkaApp):
         description=describe_attr("app", __doc__),
     )
 
-    @property
+    @cached_property
     def _cleaner(self) -> StreamsAppCleaner:
         return StreamsAppCleaner(
             config=self.config,
             handlers=self.handlers,
-            name=self.name,
-            namespace=self.namespace,
-            app=self.app,
+            **self.model_dump(),
         )
 
     @override

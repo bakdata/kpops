@@ -28,6 +28,7 @@ class StreamsConfig(KafkaStreamsConfig):
     :param output_topic: Output topic, defaults to None
     :param error_topic: Error topic, defaults to None
     :param config: Configuration, defaults to {}
+    :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to False
     """
 
     input_topics: list[str] = Field(
@@ -53,6 +54,9 @@ class StreamsConfig(KafkaStreamsConfig):
     )
     config: dict[str, Any] = Field(
         default={}, description=describe_attr("config", __doc__)
+    )
+    delete_output: bool | None = Field(
+        default=None, description=describe_attr("delete_output", __doc__)
     )
 
     def add_input_topics(self, topics: list[str]) -> None:

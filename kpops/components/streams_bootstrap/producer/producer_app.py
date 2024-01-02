@@ -1,3 +1,5 @@
+from functools import cached_property
+
 from pydantic import Field
 from typing_extensions import override
 
@@ -45,14 +47,12 @@ class ProducerApp(KafkaApp):
         description=describe_attr("from_", __doc__),
     )
 
-    @property
+    @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
         return ProducerAppCleaner(
             config=self.config,
             handlers=self.handlers,
-            name=self.name,
-            namespace=self.namespace,
-            app=self.app,
+            **self.model_dump(),
         )
 
     @override
@@ -79,5 +79,4 @@ class ProducerApp(KafkaApp):
 
     @override
     def clean(self, dry_run: bool) -> None:
-        self._cleaner.app.streams.delete_output = True  # TODO: sensible?
         self._cleaner.run(dry_run)

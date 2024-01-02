@@ -920,6 +920,19 @@
                     "title": "Config",
                     "type": "object"
                 },
+                "deleteOutput": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup",
+                    "title": "Deleteoutput"
+                },
                 "errorTopic": {
                     "anyOf": [
                         {

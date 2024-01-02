@@ -94,6 +94,8 @@ class KafkaAppCleaner(StreamsBootstrapHelmApp):
             log.info(f"Uninstall cleanup job for {self.helm_release_name}")
             self.destroy(dry_run=dry_run)
 
+    # def factory  # TODO?
+
 
 class KafkaApp(HelmApp, ABC):
     """Base component for Kafka-based components.
@@ -125,13 +127,7 @@ class KafkaApp(HelmApp, ABC):
 
     @property
     def _cleaner(self) -> KafkaAppCleaner:
-        return KafkaAppCleaner(
-            config=self.config,
-            handlers=self.handlers,
-            name=self.name,
-            namespace=self.namespace,
-            app=self.app,
-        )
+        raise NotImplementedError
 
     @override
     def deploy(self, dry_run: bool) -> None:
