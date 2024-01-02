@@ -40,7 +40,6 @@ python-schema-registry-client = "^2.4.1"
 httpx = "^0.24.1"
 networkx = "^3.1"
 
-
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.2"
 pytest-mock = "^3.10.0"
@@ -55,7 +54,6 @@ pytest-asyncio = "^0.21.1"
 pytest-httpx = "^0.22.0"
 pytablewriter = { extras = ["from"], version = "^1.0.0" }
 
-
 [tool.poetry.group.docs]
 optional = true
 
@@ -66,7 +64,6 @@ mkdocs-material = "^9.0.0"
 mkdocs-glightbox = "^0.3.1"
 mkdocs-exclude-search = "^0.6.5"
 mike = "^1.1.2"
-
 
 [tool.poetry_bumpversion.file."kpops/__init__.py"]
 
