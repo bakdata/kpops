@@ -53,7 +53,7 @@ class KafkaAppValues(HelmAppValues):
 
 
 class KafkaAppCleaner(HelmApp):
-    repo_config: HelmRepoConfig = Field(default=STREAMS_BOOTSTRAP_HELM_REPO)
+    repo_config: HelmRepoConfig = STREAMS_BOOTSTRAP_HELM_REPO
 
     @property
     @override
