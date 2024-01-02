@@ -678,9 +678,7 @@ class TestPipeline:
         assert len(pipeline.graph.nodes) == 3
         assert len(pipeline.graph.edges) == 2
         node_components = list(
-            filter(
-                lambda node_id: "component" in node_id, pipeline.graph.nodes
-            )
+            filter(lambda node_id: "component" in node_id, pipeline.graph.nodes)
         )
         assert len(pipeline.components) == len(node_components)
 
@@ -696,6 +694,7 @@ class TestPipeline:
         edges = list(pipeline.graph.edges)
         assert component == f"component-{topic}"
         assert (component, topic) in edges
+
     def test_temp_trim_release_name(self):
         result = runner.invoke(
             app,

@@ -31,7 +31,6 @@ class TestProxyWrapper:
     def log_debug_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.component_handlers.topic.proxy_wrapper.log.debug")
 
-
     @pytest_asyncio.fixture(autouse=True)
     async def _setup(self, httpx_mock: HTTPXMock):
         config = KpopsConfig(defaults_path=DEFAULTS_PATH)
@@ -49,7 +48,6 @@ class TestProxyWrapper:
         )
         assert self.proxy_wrapper.url == AnyHttpUrl(DEFAULT_HOST)
         assert self.proxy_wrapper.cluster_id == "cluster-1"
-
 
     @pytest.mark.asyncio()
     @patch("httpx.AsyncClient.post")

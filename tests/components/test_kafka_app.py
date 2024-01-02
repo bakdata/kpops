@@ -62,7 +62,6 @@ class TestKafkaApp:
         config: KpopsConfig,
         handlers: ComponentHandlers,
         mocker: MockerFixture,
-
     ):
         kafka_app = KafkaApp(
             name="example-name",

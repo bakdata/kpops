@@ -148,6 +148,7 @@ class TestHelmApp:
                 HelmUpgradeInstallFlags(version="3.4.5"),
             ),
         ]
+
     @pytest.mark.asyncio()
     async def test_should_deploy_app_with_local_helm_chart(
         self,
@@ -198,6 +199,7 @@ class TestHelmApp:
             str(error.value)
             == "Please implement the helm_chart property of the kpops.components.base_components.helm_app module."
         )
+
     @pytest.mark.asyncio()
     async def test_should_call_helm_uninstall_when_destroying_helm_app(
         self,
