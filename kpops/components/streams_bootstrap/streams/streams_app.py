@@ -3,7 +3,10 @@ from functools import cached_property
 from pydantic import Field
 from typing_extensions import override
 
-from kpops.components.base_components.kafka_app import KafkaApp, KafkaAppCleaner
+from kpops.components.base_components.kafka_app import (
+    KafkaApp,
+    KafkaAppCleaner,
+)
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import StreamsAppValues
 from kpops.utils.docstring import describe_attr

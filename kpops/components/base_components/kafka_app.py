@@ -47,7 +47,7 @@ class KafkaAppValues(HelmAppValues):
     )
 
 
-class StreamsBootstrapHelmApp(HelmApp):
+class StreamsBootstrapHelmApp(HelmApp, ABC):
     repo_config: HelmRepoConfig = Field(
         default=HelmRepoConfig(
             repository_name="bakdata-streams-bootstrap",
@@ -94,18 +94,13 @@ class KafkaAppCleaner(StreamsBootstrapHelmApp):
             log.info(f"Uninstall cleanup job for {self.helm_release_name}")
             self.destroy(dry_run=dry_run)
 
-    # def factory  # TODO?
 
-
-class KafkaApp(HelmApp, ABC):
+class KafkaApp(StreamsBootstrapHelmApp, ABC):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.
 
     :param app: Application-specific settings
-    :param repo_config: Configuration of the Helm chart repo to be used for
-        deploying the component,
-        defaults to HelmRepoConfig(repository_name="bakdata-streams-bootstrap", url="https://bakdata.github.io/streams-bootstrap/")
     :param version: Helm chart version, defaults to "2.9.0"
     """
 
@@ -113,21 +108,10 @@ class KafkaApp(HelmApp, ABC):
         default=...,
         description=describe_attr("app", __doc__),
     )
-    repo_config: HelmRepoConfig = Field(
-        default=HelmRepoConfig(
-            repository_name="bakdata-streams-bootstrap",
-            url="https://bakdata.github.io/streams-bootstrap/",
-        ),
-        description=describe_attr("repo_config", __doc__),
-    )
     version: str | None = Field(
         default="2.9.0",
         description=describe_attr("version", __doc__),
     )
-
-    @property
-    def _cleaner(self) -> KafkaAppCleaner:
-        raise NotImplementedError
 
     @override
     def deploy(self, dry_run: bool) -> None:
