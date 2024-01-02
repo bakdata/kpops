@@ -82,14 +82,14 @@ class KafkaAppCleaner(HelmApp):
         :param dry_run: Dry run command
         """
         log.info(f"Uninstall old cleanup job for {self.helm_release_name}")
-        self.destroy(dry_run=dry_run)
+        self.destroy(dry_run)
 
         log.info(f"Init cleanup job for {self.helm_release_name}")
-        self.deploy(dry_run=dry_run)
+        self.deploy(dry_run)
 
         if not self.config.retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {self.helm_release_name}")
-            self.destroy(dry_run=dry_run)
+            self.destroy(dry_run)
 
 
 class KafkaApp(HelmApp, ABC):
