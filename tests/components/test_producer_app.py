@@ -120,6 +120,7 @@ class TestProducerApp:
                 False,
                 "test-namespace",
                 {
+                    "nameOverride": "${pipeline_name}-" + self.PRODUCER_APP_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "${output_topic_name}",
@@ -184,6 +185,7 @@ class TestProducerApp:
                 True,
                 "test-namespace",
                 {
+                    "nameOverride": "${pipeline_name}-" + self.PRODUCER_APP_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "${output_topic_name}",
@@ -229,6 +231,7 @@ class TestProducerApp:
                 False,
                 "test-namespace",
                 {
+                    "nameOverride": "${pipeline_name}-" + self.PRODUCER_APP_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "${output_topic_name}",

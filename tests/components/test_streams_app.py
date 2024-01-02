@@ -323,6 +323,7 @@ class TestStreamsApp:
                 dry_run,
                 "test-namespace",
                 {
+                    "nameOverride": "${pipeline_name}-" + self.STREAMS_APP_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "extraOutputTopics": {
@@ -331,7 +332,7 @@ class TestStreamsApp:
                         },
                         "outputTopic": "${output_topic_name}",
                         "errorTopic": "${error_topic_name}",
-                    }
+                    },
                 },
                 HelmUpgradeInstallFlags(
                     create_namespace=False,
@@ -384,6 +385,7 @@ class TestStreamsApp:
                 dry_run,
                 "test-namespace",
                 {
+                    "nameOverride": "${pipeline_name}-" + self.STREAMS_APP_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "${output_topic_name}",
@@ -428,6 +430,7 @@ class TestStreamsApp:
                 dry_run,
                 "test-namespace",
                 {
+                    "nameOverride": "${pipeline_name}-" + self.STREAMS_APP_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "${output_topic_name}",

@@ -13,7 +13,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'debug': True,
             'image': '${DOCKER_REGISTRY}/atm-demo-accountproducer',
             'imageTag': '1.0.0',
-            'nameOverride': 'account-producer',
             'prometheus': {
                 'jmx': {
                     'enabled': False
@@ -64,7 +63,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'debug': True,
             'image': '${DOCKER_REGISTRY}/atm-demo-transactionavroproducer',
             'imageTag': '1.0.0',
-            'nameOverride': 'transaction-avro-producer',
             'prometheus': {
                 'jmx': {
                     'enabled': False
@@ -120,7 +118,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'labels': {
                 'pipeline': 'bakdata-atm-fraud-detection'
             },
-            'nameOverride': 'transaction-joiner',
             'prometheus': {
                 'jmx': {
                     'enabled': False
@@ -182,7 +179,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'labels': {
                 'pipeline': 'bakdata-atm-fraud-detection'
             },
-            'nameOverride': 'fraud-detector',
             'prometheus': {
                 'jmx': {
                     'enabled': False
@@ -244,7 +240,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'labels': {
                 'pipeline': 'bakdata-atm-fraud-detection'
             },
-            'nameOverride': 'account-linker',
             'prometheus': {
                 'jmx': {
                     'enabled': False
