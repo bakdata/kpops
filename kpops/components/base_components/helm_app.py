@@ -16,6 +16,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
+from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,
@@ -28,7 +29,16 @@ log = logging.getLogger("HelmApp")
 
 
 class HelmAppValues(KubernetesAppValues):
-    name_override: str | None = None
+    """Helm app values.
+
+    :param name_override: Override name with this value
+    """
+
+    name_override: str | None = Field(
+        default=None,
+        title="Nameoverride",
+        description=describe_attr("name_override", __doc__),
+    )
 
     # TODO(Ivan Yordanov): Replace with a function decorated with `@model_serializer`
     # BEWARE! All default values are enforced, hard to replicate without
@@ -88,7 +98,13 @@ class HelmApp(KubernetesApp):
     @property
     def helm_release_name(self) -> str:
         """The name for the Helm release. Can be overridden."""
-        return self.full_name
+        return create_helm_release_name(self.full_name)
+
+    @property
+    def clean_release_name(self) -> str:
+        """The name for the Helm release for cleanup jobs. Can be overridden."""
+        suffix = "-clean"
+        return create_helm_release_name(self.full_name + suffix, suffix)
 
     @property
     def helm_chart(self) -> str:

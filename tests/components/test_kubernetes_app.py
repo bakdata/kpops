@@ -5,16 +5,22 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmRepoConfig,
+)
+from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,
 )
 from kpops.config import KpopsConfig
 
+HELM_RELEASE_NAME = create_helm_release_name("${pipeline_name}-test-kubernetes-app")
+
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
-class KubernetesTestValue(KubernetesAppValues):
+class KubernetesTestValues(KubernetesAppValues):
     foo: str
 
 
@@ -36,15 +42,19 @@ class TestKubernetesApp:
         return mocker.patch("kpops.components.base_components.kubernetes_app.log.info")
 
     @pytest.fixture()
-    def app_values(self) -> KubernetesTestValue:
-        return KubernetesTestValue(foo="foo")
+    def app_values(self) -> KubernetesTestValues:
+        return KubernetesTestValues(foo="foo")
+
+    @pytest.fixture()
+    def repo_config(self) -> HelmRepoConfig:
+        return HelmRepoConfig(repository_name="test", url="https://bakdata.com")
 
     @pytest.fixture()
     def kubernetes_app(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        app_values: KubernetesTestValue,
+        app_values: KubernetesTestValues,
     ) -> KubernetesApp:
         return KubernetesApp(
             name="test-kubernetes-app",
@@ -58,7 +68,7 @@ class TestKubernetesApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        app_values: KubernetesTestValue,
+        app_values: KubernetesTestValues,
     ):
         with pytest.raises(
             ValueError, match=r"The component name .* is invalid for Kubernetes."
