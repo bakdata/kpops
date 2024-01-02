@@ -41,7 +41,7 @@ class KafkaAppConfig(KubernetesAppConfig):
     """Settings specific to Kafka Apps.
 
     :param streams: Kafka streams config
-    :param name_override: Overrides the release and chart name, defaults to None
+    :param name_override: Override name with this value
     """
 
     streams: KafkaStreamsConfig = Field(
@@ -49,7 +49,7 @@ class KafkaAppConfig(KubernetesAppConfig):
     )
     name_override: str | None = Field(
         default=None,
-        title="Name override",
+        title="Nameoverride",
         description=describe_attr("name_override", __doc__),
     )
 
