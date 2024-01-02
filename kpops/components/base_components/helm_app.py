@@ -30,6 +30,15 @@ log = logging.getLogger("HelmApp")
 class HelmAppValues(KubernetesAppValues):
     name_override: str | None = None
 
+    # TODO(Ivan Yordanov): Replace with a function decorated with `@model_serializer`
+    # BEWARE! All default values are enforced, hard to replicate without
+    # access to ``model_dump``
+    @override
+    def model_dump(self, **_) -> dict[str, Any]:
+        return super().model_dump(
+            by_alias=True, exclude_none=True, exclude_defaults=True
+        )
+
 
 class HelmApp(KubernetesApp):
     """Kubernetes app managed through Helm with an associated Helm chart.
@@ -156,9 +165,7 @@ class HelmApp(KubernetesApp):
         """
         if self.app.name_override is None:
             self.app.name_override = self.full_name
-        return self.app.model_dump(
-            by_alias=True, exclude_none=True, exclude_defaults=True
-        )
+        return self.app.model_dump()
 
     def print_helm_diff(self, stdout: str) -> None:
         """Print the diff of the last and current release of this component.
