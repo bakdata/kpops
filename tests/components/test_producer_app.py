@@ -20,12 +20,16 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
 PRODUCER_APP_FULL_NAME = "${pipeline_name}-" + PRODUCER_APP_NAME
 PRODUCER_APP_RELEASE_NAME = create_helm_release_name(PRODUCER_APP_FULL_NAME)
+PRODUCER_APP_CLEAN_FULL_NAME = PRODUCER_APP_FULL_NAME + "-clean"
 PRODUCER_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
-    PRODUCER_APP_RELEASE_NAME, "-clean"
+    PRODUCER_APP_CLEAN_FULL_NAME, "-clean"
 )
 
 
 class TestProducerApp:
+    def test_release_name(self):
+        assert PRODUCER_APP_CLEAN_RELEASE_NAME.endswith("-clean")
+
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
@@ -125,6 +129,7 @@ class TestProducerApp:
                 False,
                 "test-namespace",
                 {
+                    "nameOverride": PRODUCER_APP_FULL_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "${output_topic_name}",
@@ -189,6 +194,7 @@ class TestProducerApp:
                 True,
                 "test-namespace",
                 {
+                    "nameOverride": PRODUCER_APP_FULL_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "${output_topic_name}",
@@ -234,6 +240,7 @@ class TestProducerApp:
                 False,
                 "test-namespace",
                 {
+                    "nameOverride": PRODUCER_APP_FULL_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "${output_topic_name}",

@@ -5,7 +5,7 @@ from pydantic import ConfigDict, Field, SerializationInfo, model_serializer
 
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
-    KafkaAppConfig,
+    KafkaAppValues,
     KafkaStreamsConfig,
 )
 from kpops.utils.docstring import describe_attr
@@ -166,7 +166,7 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
     model_config = ConfigDict(extra="allow")
 
 
-class StreamsAppConfig(KafkaAppConfig):
+class StreamsAppValues(KafkaAppValues):
     """StreamsBoostrap app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.

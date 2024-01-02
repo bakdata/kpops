@@ -20,9 +20,9 @@ from kpops.component_handlers.helm_wrapper.model import (
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
+    KafkaConnectorResetterConfig,
+    KafkaConnectorResetterValues,
     KafkaConnectorType,
-    KafkaConnectResetterConfig,
-    KafkaConnectResetterValues,
 )
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
@@ -175,7 +175,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
         :param dry_run: If the cleanup should be run in dry run mode or not
         :param retain_clean_jobs: If the cleanup job should be kept
-        :param kwargs: Other values for the KafkaConnectResetter
+        :param kwargs: Other values for the KafkaConnectorResetter
         """
         log.info(
             magentaify(
@@ -236,8 +236,8 @@ class KafkaConnector(PipelineComponent, ABC):
         :return: The Helm chart values of the connector resetter
         """
         return {
-            **KafkaConnectResetterValues(
-                config=KafkaConnectResetterConfig(
+            **KafkaConnectorResetterValues(
+                config=KafkaConnectorResetterConfig(
                     connector=self.full_name,
                     brokers=self.config.kafka_brokers,
                     **kwargs,

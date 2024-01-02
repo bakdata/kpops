@@ -17,12 +17,37 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.base_components.kubernetes_app import KubernetesApp
+from kpops.components.base_components.kubernetes_app import (
+    KubernetesApp,
+    KubernetesAppValues,
+)
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import exclude_by_name
 
 log = logging.getLogger("HelmApp")
+
+
+class HelmAppValues(KubernetesAppValues):
+    """Helm app values.
+
+    :param name_override: Override name with this value
+    """
+
+    name_override: str | None = Field(
+        default=None,
+        title="Nameoverride",
+        description=describe_attr("name_override", __doc__),
+    )
+
+    # TODO(Ivan Yordanov): Replace with a function decorated with `@model_serializer`
+    # BEWARE! All default values are enforced, hard to replicate without
+    # access to ``model_dump``
+    @override
+    def model_dump(self, **_) -> dict[str, Any]:
+        return super().model_dump(
+            by_alias=True, exclude_none=True, exclude_defaults=True
+        )
 
 
 class HelmApp(KubernetesApp):
@@ -32,6 +57,7 @@ class HelmApp(KubernetesApp):
         deploying the component, defaults to None this means that the command "helm repo add" is not called and Helm
         expects a path to local Helm chart.
     :param version: Helm chart version, defaults to None
+    :param app: Helm app values
     """
 
     repo_config: HelmRepoConfig | None = Field(
@@ -41,6 +67,10 @@ class HelmApp(KubernetesApp):
     version: str | None = Field(
         default=None,
         description=describe_attr("version", __doc__),
+    )
+    app: HelmAppValues = Field(
+        default=...,
+        description=describe_attr("app", __doc__),
     )
 
     @cached_property
@@ -74,7 +104,7 @@ class HelmApp(KubernetesApp):
     def clean_release_name(self) -> str:
         """The name for the Helm release for cleanup jobs. Can be overridden."""
         suffix = "-clean"
-        return create_helm_release_name(self.helm_release_name, suffix)
+        return create_helm_release_name(self.full_name + suffix, suffix)
 
     @property
     def helm_chart(self) -> str:
@@ -149,9 +179,9 @@ class HelmApp(KubernetesApp):
 
         :returns: Thte values to be used by Helm
         """
-        return self.app.model_dump(
-            by_alias=True, exclude_none=True, exclude_defaults=True
-        )
+        if self.app.name_override is None:
+            self.app.name_override = self.full_name
+        return self.app.model_dump()
 
     def print_helm_diff(self, stdout: str) -> None:
         """Print the diff of the last and current release of this component.

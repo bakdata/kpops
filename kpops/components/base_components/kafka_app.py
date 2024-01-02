@@ -10,10 +10,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
 )
-from kpops.components.base_components.helm_app import HelmApp
-from kpops.components.base_components.kubernetes_app import (
-    KubernetesAppConfig,
-)
+from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
@@ -37,20 +34,14 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     )
 
 
-class KafkaAppConfig(KubernetesAppConfig):
+class KafkaAppValues(HelmAppValues):
     """Settings specific to Kafka Apps.
 
     :param streams: Kafka streams config
-    :param name_override: Override name with this value
     """
 
     streams: KafkaStreamsConfig = Field(
         default=..., description=describe_attr("streams", __doc__)
-    )
-    name_override: str | None = Field(
-        default=None,
-        title="Nameoverride",
-        description=describe_attr("name_override", __doc__),
     )
 
 
@@ -66,7 +57,7 @@ class KafkaApp(HelmApp, ABC):
     :param version: Helm chart version, defaults to "2.9.0"
     """
 
-    app: KafkaAppConfig = Field(
+    app: KafkaAppValues = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )
