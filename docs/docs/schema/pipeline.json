@@ -588,7 +588,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Fully overrides the release and chart name",
+                    "description": "Overrides the release and chart name",
                     "title": "Name override"
                 },
                 "streams": {
@@ -873,7 +873,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Fully overrides the release and chart name",
+                    "description": "Overrides the release and chart name",
                     "title": "Name override"
                 },
                 "streams": {
