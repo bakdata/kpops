@@ -18,6 +18,11 @@ from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
 log = logging.getLogger("KafkaApp")
 
+STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
+    repository_name="bakdata-streams-bootstrap",
+    url="https://bakdata.github.io/streams-bootstrap/",
+)
+
 
 class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     """Kafka Streams config.
@@ -47,16 +52,9 @@ class KafkaAppValues(HelmAppValues):
     )
 
 
-class StreamsBootstrapHelmApp(HelmApp, ABC):
-    repo_config: HelmRepoConfig = Field(
-        default=HelmRepoConfig(
-            repository_name="bakdata-streams-bootstrap",
-            url="https://bakdata.github.io/streams-bootstrap/",
-        )
-    )
+class KafkaAppCleaner(HelmApp):
+    repo_config: HelmRepoConfig = Field(default=STREAMS_BOOTSTRAP_HELM_REPO)
 
-
-class KafkaAppCleaner(StreamsBootstrapHelmApp):
     @property
     @override
     def helm_chart(self) -> str:
@@ -94,18 +92,24 @@ class KafkaAppCleaner(StreamsBootstrapHelmApp):
             self.destroy(dry_run=dry_run)
 
 
-class KafkaApp(StreamsBootstrapHelmApp, ABC):
+class KafkaApp(HelmApp, ABC):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.
 
     :param app: Application-specific settings
+    :param repo_config: Configuration of the Helm chart repo to be used for
+        deploying the component, defaults to streams-bootstrap Helm repo
     :param version: Helm chart version, defaults to "2.9.0"
     """
 
     app: KafkaAppValues = Field(
         default=...,
         description=describe_attr("app", __doc__),
+    )
+    repo_config: HelmRepoConfig = Field(
+        default=STREAMS_BOOTSTRAP_HELM_REPO,
+        description=describe_attr("repo_config", __doc__),
     )
     version: str | None = Field(
         default="2.9.0",
