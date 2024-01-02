@@ -5,7 +5,7 @@ import pytest
 from kpops.cli.registry import ClassNotFoundError, Registry, _find_classes, find_class
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from tests.cli.resources.module import CustomSchemaProvider
+from tests.cli.resources.custom_module import CustomSchemaProvider
 
 
 class SubComponent(PipelineComponent):
@@ -36,8 +36,9 @@ def test_find_builtin_classes():
         class_.__name__
         for class_ in _find_classes("kpops.components", PipelineComponent)
     ]
-    assert len(components) == 8
+    assert len(components) == 9
     assert components == [
+        "HelmApp",
         "KafkaApp",
         "KafkaConnector",
         "KafkaSinkConnector",

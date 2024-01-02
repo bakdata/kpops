@@ -8,21 +8,18 @@ from typer.testing import CliRunner
 
 import kpops
 from kpops.cli.main import app
-from kpops.pipeline_generator.pipeline import ParsingException, ValidationError
+from kpops.pipeline import ParsingException, ValidationError
 
 runner = CliRunner()
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
-PIPELINE_BASE_DIR_PATH = RESOURCE_PATH.parent
 
 
-@pytest.mark.usefixtures("mock_env")
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class TestPipeline:
     def test_python_api(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            "tests.pipeline.test_components",
-            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
             defaults=RESOURCE_PATH,
         )
         assert len(pipeline) == 3
@@ -32,17 +29,14 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "first-pipeline/pipeline.yaml"),
-                "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
@@ -55,10 +49,7 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "first-pipeline/pipeline.yaml"),
-                "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
                 "--steps",
@@ -76,46 +67,42 @@ class TestPipeline:
             )
         ]
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
     def test_name_equal_prefix_name_concatenation(self):
         result = runner.invoke(
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "name_prefix_concatenation/pipeline.yaml"),
-                "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
-        assert enriched_pipeline["components"][0]["prefix"] == "my-fake-prefix-"
-        assert enriched_pipeline["components"][0]["name"] == "my-streams-app"
+        assert enriched_pipeline[0]["prefix"] == "my-fake-prefix-"
+        assert enriched_pipeline[0]["name"] == "my-streams-app"
 
     def test_pipelines_with_env_values(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "pipeline-with-envs/pipeline.yaml"),
-                "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -125,17 +112,14 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "pipeline-with-inflate/pipeline.yaml"),
-                "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -145,47 +129,39 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "component-type-substitution/pipeline.yaml"),
-                "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline["components"][0]["prefix"]
-            == "resources-component-type-substitution-"
+            enriched_pipeline[0]["prefix"] == "resources-component-type-substitution-"
         )
-        assert enriched_pipeline["components"][0]["name"] == "scheduled-producer"
+        assert enriched_pipeline[0]["name"] == "scheduled-producer"
 
-        labels = enriched_pipeline["components"][0]["app"]["labels"]
+        labels = enriched_pipeline[0]["app"]["labels"]
         assert labels["app_name"] == "scheduled-producer"
         assert labels["app_type"] == "scheduled-producer"
         assert labels["app_schedule"] == "30 3/8 * * *"
         assert (
-            enriched_pipeline["components"][2]["app"]["labels"][
-                "app_resources_requests_memory"
-            ]
+            enriched_pipeline[2]["app"]["labels"]["app_resources_requests_memory"]
             == "3G"
         )
         assert (
             "resources-component-type-substitution-scheduled-producer"
-            in enriched_pipeline["components"][0]["to"]["topics"]
+            in enriched_pipeline[0]["to"]["topics"]
         )
         assert (
             "resources-component-type-substitution-converter-error"
-            in enriched_pipeline["components"][1]["to"]["topics"]
+            in enriched_pipeline[1]["to"]["topics"]
         )
         assert (
-            enriched_pipeline["components"][2]["app"]["labels"][
-                "test_placeholder_in_placeholder"
-            ]
+            enriched_pipeline[2]["app"]["labels"]["test_placeholder_in_placeholder"]
             == "filter-app-filter"
         )
 
@@ -198,13 +174,10 @@ class TestPipeline:
                 app,
                 [
                     "generate",
-                    "--pipeline-base-dir",
-                    str(PIPELINE_BASE_DIR_PATH),
                     str(
                         RESOURCE_PATH
                         / "component-type-substitution/infinite_pipeline.yaml",
                     ),
-                    "tests.pipeline.test_components",
                     "--defaults",
                     str(RESOURCE_PATH),
                 ],
@@ -216,18 +189,16 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "kafka-connect-sink-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH),
                 "--config",
-                str(RESOURCE_PATH / "kafka-connect-sink-config/config.yaml"),
+                str(RESOURCE_PATH / "kafka-connect-sink-config"),
             ],
             catch_exceptions=False,
         )
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
-        sink_connector = enriched_pipeline["components"][0]
+        sink_connector = enriched_pipeline[0]
         assert (
             sink_connector["app"]["errors.deadletterqueue.topic.name"]
             == "kafka-sink-connector-error-topic"
@@ -238,17 +209,14 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "no-input-topic-pipeline/pipeline.yaml"),
-                "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -258,8 +226,6 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "no-user-defined-components/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH),
@@ -267,7 +233,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -278,8 +244,6 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "kafka-connect-sink/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH),
@@ -287,7 +251,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -297,17 +261,14 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "read-from-component/pipeline.yaml"),
-                "tests.pipeline.test_components",
                 "--defaults",
                 str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -317,16 +278,16 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "kafka-connect-sink/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "pipeline-with-env-defaults"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -336,8 +297,6 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(
                     RESOURCE_PATH
                     / "pipeline-component-should-have-prefix/pipeline.yaml",
@@ -348,7 +307,7 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
@@ -361,23 +320,23 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
-                str(RESOURCE_PATH / "custom-config/config.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
-        producer_details = enriched_pipeline["components"][0]
+        producer_details = enriched_pipeline[0]
         output_topic = producer_details["app"]["streams"]["outputTopic"]
         assert output_topic == "app1-test-topic"
 
-        streams_app_details = enriched_pipeline["components"][1]
+        streams_app_details = enriched_pipeline[1]
         output_topic = streams_app_details["app"]["streams"]["outputTopic"]
         assert output_topic == "app2-test-topic"
         error_topic = streams_app_details["app"]["streams"]["errorTopic"]
@@ -396,7 +355,7 @@ class TestPipeline:
         config_dict["defaults_path"] = str(
             (RESOURCE_PATH / "no-topics-defaults").absolute(),
         )
-        temp_config_path = RESOURCE_PATH / "custom-config/temp_config.yaml"
+        temp_config_path = RESOURCE_PATH / "custom-config/config_custom.yaml"
         try:
             with temp_config_path.open("w") as abs_config_yaml:
                 yaml.dump(config_dict, abs_config_yaml)
@@ -404,23 +363,23 @@ class TestPipeline:
                 app,
                 [
                     "generate",
-                    "--pipeline-base-dir",
-                    str(PIPELINE_BASE_DIR_PATH),
                     str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                     "--config",
-                    str(temp_config_path),
+                    str(temp_config_path.parent),
+                    "--environment",
+                    "development",
                 ],
                 catch_exceptions=False,
             )
 
-            assert result.exit_code == 0
+            assert result.exit_code == 0, result.stdout
 
             enriched_pipeline: dict = yaml.safe_load(result.stdout)
-            producer_details = enriched_pipeline["components"][0]
+            producer_details = enriched_pipeline[0]
             output_topic = producer_details["app"]["streams"]["outputTopic"]
             assert output_topic == "app1-test-topic"
 
-            streams_app_details = enriched_pipeline["components"][1]
+            streams_app_details = enriched_pipeline[1]
             output_topic = streams_app_details["app"]["streams"]["outputTopic"]
             assert output_topic == "app2-test-topic"
             error_topic = streams_app_details["app"]["streams"]["errorTopic"]
@@ -435,23 +394,23 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
-        producer_details = enriched_pipeline["components"][0]
+        producer_details = enriched_pipeline[0]
         output_topic = producer_details["app"]["streams"]["outputTopic"]
         assert output_topic == "resources-custom-config-app1"
 
-        streams_app_details = enriched_pipeline["components"][1]
+        streams_app_details = enriched_pipeline[1]
         output_topic = streams_app_details["app"]["streams"]["outputTopic"]
         assert output_topic == "resources-custom-config-app2"
         error_topic = streams_app_details["app"]["streams"]["errorTopic"]
@@ -459,31 +418,124 @@ class TestPipeline:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    def test_env_vars_precedence_over_config(
-        self,
-        monkeypatch: pytest.MonkeyPatch,
-        snapshot: SnapshotTest,
-    ):
+    def test_env_vars_precedence_over_config(self, monkeypatch: pytest.MonkeyPatch):
         monkeypatch.setenv(name="KPOPS_KAFKA_BROKERS", value="env_broker")
 
         result = runner.invoke(
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
-                str(RESOURCE_PATH / "custom-config/config.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert enriched_pipeline[0]["app"]["streams"]["brokers"] == "env_broker"
+
+    def test_nested_config_env_vars(self, monkeypatch: pytest.MonkeyPatch):
+        monkeypatch.setenv(
+            name="KPOPS_SCHEMA_REGISTRY__URL", value="http://somename:1234"
+        )
+
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                str(RESOURCE_PATH / "custom-config"),
+                "--environment",
+                "development",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline["components"][0]["app"]["streams"]["brokers"]
-            == "env_broker"
+            enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"]
+            == "http://somename:1234/"
         )
+
+    def test_env_specific_config_env_def_in_env_var(
+        self, monkeypatch: pytest.MonkeyPatch
+    ):
+        monkeypatch.setenv(name="KPOPS_ENVIRONMENT", value="production")
+        config_path = str(RESOURCE_PATH / "multi-config")
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                config_path,
+                "--defaults",
+                str(RESOURCE_PATH),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"]
+            == "http://production:8081/"
+        )
+
+    @pytest.mark.parametrize(
+        ("config_dir", "expected_url"),
+        [
+            pytest.param("multi-config", "http://production:8081/", id="multi-config"),
+            pytest.param(
+                "env-specific-config-only",
+                "http://localhost:8081/",
+                id="env-specific-config-only",
+            ),
+        ],
+    )
+    def test_env_specific_config_env_def_in_cli(
+        self, config_dir: str, expected_url: str
+    ):
+        config_path = str(RESOURCE_PATH / config_dir)
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                config_path,
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--environment",
+                "production",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"] == expected_url
+        )
+
+    def test_config_dir_doesnt_exist(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--config",
+                "./non-existent-dir",
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--environment",
+                "production",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code != 0
 
     def test_model_serialization(self, snapshot: SnapshotTest):
         """Test model serialization of component containing pathlib.Path attribute."""
@@ -491,8 +543,6 @@ class TestPipeline:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "pipeline-with-paths/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH),
@@ -500,18 +550,41 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_dotenv_support(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH),
+                "--config",
+                str(RESOURCE_PATH / "dotenv"),
+                "--dotenv",
+                str(RESOURCE_PATH / "dotenv/.env"),
+                "--dotenv",
+                str(RESOURCE_PATH / "dotenv/custom.env"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline[1]["app"]["streams"]["schemaRegistryUrl"]
+            == "http://notlocalhost:8081/"
+        )
 
     def test_short_topic_definition(self):
         result = runner.invoke(
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                str(PIPELINE_BASE_DIR_PATH),
                 str(RESOURCE_PATH / "pipeline-with-short-topics/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "pipeline-with-short-topics"),
@@ -519,13 +592,13 @@ class TestPipeline:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
-        output_topics = enriched_pipeline["components"][4]["to"]["topics"]
-        input_topics = enriched_pipeline["components"][4]["from"]["topics"]
-        input_components = enriched_pipeline["components"][4]["from"]["components"]
+        output_topics = enriched_pipeline[4]["to"]["topics"]
+        input_topics = enriched_pipeline[4]["from"]["topics"]
+        input_components = enriched_pipeline[4]["from"]["components"]
         assert "type" not in output_topics["output-topic"]
         assert output_topics["error-topic"]["type"] == "error"
         assert "type" not in output_topics["extra-topic-output"]
@@ -557,13 +630,10 @@ class TestPipeline:
                 app,
                 [
                     "generate",
-                    "--pipeline-base-dir",
-                    str(PIPELINE_BASE_DIR_PATH),
                     str(
                         RESOURCE_PATH
                         / "pipeline-with-illegal-kubernetes-name/pipeline.yaml",
                     ),
-                    "tests.pipeline.test_components",
                     "--defaults",
                     str(RESOURCE_PATH),
                 ],
@@ -579,8 +649,6 @@ class TestPipeline:
                 app,
                 [
                     "generate",
-                    "--pipeline-base-dir",
-                    str(PIPELINE_BASE_DIR_PATH),
                     str(RESOURCE_PATH / "pipeline-duplicate-step-names/pipeline.yaml"),
                     "--defaults",
                     str(RESOURCE_PATH),
@@ -594,8 +662,6 @@ class TestPipeline:
                 app,
                 [
                     "generate",
-                    "--pipeline-base-dir",
-                    str(PIPELINE_BASE_DIR_PATH),
                     str(RESOURCE_PATH / "pipeline-with-loop/pipeline.yaml"),
                     "--defaults",
                     str(RESOURCE_PATH / "pipeline-with-loop"),
@@ -606,15 +672,14 @@ class TestPipeline:
     def test_validate_simple_graph(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "pipelines-with-graphs/simple-pipeline/pipeline.yaml",
-            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
             defaults=RESOURCE_PATH / "pipelines-with-graphs" / "simple-pipeline",
         )
         assert len(pipeline.components) == 2
-        assert len(pipeline.components.graph.nodes) == 3
-        assert len(pipeline.components.graph.edges) == 2
+        assert len(pipeline.graph.nodes) == 3
+        assert len(pipeline.graph.edges) == 2
         node_components = list(
             filter(
-                lambda node_id: "component" in node_id, pipeline.components.graph.nodes
+                lambda node_id: "component" in node_id, pipeline.graph.nodes
             )
         )
         assert len(pipeline.components) == len(node_components)
@@ -623,12 +688,28 @@ class TestPipeline:
         pipeline = kpops.generate(
             RESOURCE_PATH
             / "pipelines-with-graphs/same-topic-and-component-name/pipeline.yaml",
-            pipeline_base_dir=PIPELINE_BASE_DIR_PATH,
             defaults=RESOURCE_PATH
             / "pipelines-with-graphs"
             / "same-topic-and-component-name",
         )
-        component, topic = list(pipeline.components.graph.nodes)
-        edges = list(pipeline.components.graph.edges)
+        component, topic = list(pipeline.graph.nodes)
+        edges = list(pipeline.graph.edges)
         assert component == f"component-{topic}"
         assert (component, topic) in edges
+    def test_temp_trim_release_name(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "temp-trim-release-name/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH / "temp-trim-release-name"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline[0]["name"]
+            == "in-order-to-have-len-fifty-two-name-should-end--here"
+        )

@@ -51,10 +51,10 @@ class ShouldInflate(StreamsApp):
                         },
                         to=ToSection(
                             topics={
-                                TopicName("${component_type}"): TopicConfig(
+                                TopicName("${component.type}"): TopicConfig(
                                     type=OutputTopicTypes.OUTPUT
                                 ),
-                                TopicName("${component_name}"): TopicConfig(
+                                TopicName("${component.name}"): TopicConfig(
                                     type=None, role="test"
                                 ),
                             }
@@ -68,10 +68,10 @@ class ShouldInflate(StreamsApp):
                         to=ToSection(  # type: ignore[reportGeneralTypeIssues]
                             topics={
                                 TopicName(
-                                    f"{self.full_name}-" + "${component_name}"
+                                    f"{self.full_name}-" + "${component.name}"
                                 ): TopicConfig(type=OutputTopicTypes.OUTPUT)
                             }
-                        ).dict(),
+                        ).model_dump(),
                     )
                     inflate_steps.append(streams_app)
 

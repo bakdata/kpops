@@ -1,11 +1,11 @@
 from enum import Enum
 from typing import Any
 
-from pydantic import BaseModel, Extra, Field, root_validator
+from pydantic import ConfigDict, Field, model_validator
 
 from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfig
+from kpops.utils.pydantic import DescConfigModel
 
 
 class OutputTopicTypes(str, Enum):
@@ -18,7 +18,7 @@ class OutputTopicTypes(str, Enum):
     ERROR = "error"
 
 
-class TopicConfig(BaseModel):
+class TopicConfig(DescConfigModel):
     """Configure an output topic.
 
     :param type: Topic type
@@ -58,21 +58,22 @@ class TopicConfig(BaseModel):
     )
     role: str | None = Field(default=None, description=describe_attr("role", __doc__))
 
-    class Config(DescConfig):
-        extra = Extra.forbid
-        allow_population_by_field_name = True
-        use_enum_values = True
+    model_config = ConfigDict(
+        extra="forbid",
+        use_enum_values=True,
+        populate_by_name=True,
+    )
 
-    @root_validator
-    def extra_topic_role(cls, values: dict[str, Any]) -> dict[str, Any]:
+    @model_validator(mode="after")
+    def extra_topic_role(self) -> Any:
         """Ensure that cls.role is used correctly, assign type if needed."""
-        if values["type"] and values["role"]:
+        if self.type and self.role:
             msg = "Define `role` only if `type` is undefined"
             raise ValueError(msg)
-        return values
+        return self
 
 
-class ToSection(BaseModel):
+class ToSection(DescConfigModel):
     """Holds multiple output topics.
 
     :param topics: Output topics
@@ -86,5 +87,6 @@ class ToSection(BaseModel):
         default={}, description=describe_attr("models", __doc__)
     )
 
-    class Config(DescConfig):
-        extra = Extra.allow
+    model_config = ConfigDict(
+        extra="forbid",
+    )

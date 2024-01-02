@@ -17,16 +17,18 @@ from kpops.component_handlers.schema_handler.schema_provider import (
 from kpops.utils.colorify import greenify, magentaify
 
 if TYPE_CHECKING:
-    from kpops.cli.pipeline_config import PipelineConfig
     from kpops.components.base_components.models.to_section import ToSection
+    from kpops.config import KpopsConfig
 
 log = logging.getLogger("SchemaHandler")
 
 
 class SchemaHandler:
-    def __init__(self, url: str, components_module: str | None):
-        self.schema_registry_client = AsyncSchemaRegistryClient(url)
-        self.components_module = components_module
+    def __init__(self, kpops_config: KpopsConfig) -> None:
+        self.schema_registry_client = AsyncSchemaRegistryClient(
+            str(kpops_config.schema_registry.url)
+        )
+        self.components_module = kpops_config.components_module
 
     @cached_property
     def schema_provider(self) -> SchemaProvider:
@@ -41,16 +43,10 @@ class SchemaHandler:
             raise ValueError(msg) from e
 
     @classmethod
-    def load_schema_handler(
-        cls, components_module: str | None, config: PipelineConfig
-    ) -> SchemaHandler | None:
-        if not config.schema_registry_url:
-            return None
-
-        return cls(
-            url=config.schema_registry_url,
-            components_module=components_module,
-        )
+    def load_schema_handler(cls, config: KpopsConfig) -> SchemaHandler | None:
+        if config.schema_registry.enabled:
+            return cls(config)
+        return None
 
     async def submit_schemas(self, to_section: ToSection, dry_run: bool = True) -> None:
         for topic_name, config in to_section.topics.items():

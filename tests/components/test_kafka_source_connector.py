@@ -3,7 +3,6 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
@@ -22,6 +21,7 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
+from kpops.config import KpopsConfig
 from kpops.utils.environment import ENV
 from tests.components.test_kafka_connector import (
     CONNECTOR_CLEAN_FULL_NAME,
@@ -35,7 +35,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     @pytest.fixture()
     def connector(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ) -> KafkaSourceConnector:
@@ -57,7 +57,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
     def test_from_section_raises_exception(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ):
@@ -273,7 +273,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_false(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         dry_run_handler: MagicMock,
@@ -350,7 +350,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_true(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         dry_run_handler: MagicMock,
         connector_config: KafkaConnectorConfig,

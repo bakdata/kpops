@@ -11,7 +11,6 @@ from kpops.component_handlers.helm_wrapper.helm import Helm
 runner = CliRunner()
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
-PIPELINE_BASE_DIR = str(RESOURCE_PATH.parent)
 
 
 class TestTemplate:
@@ -26,12 +25,12 @@ class TestTemplate:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                PIPELINE_BASE_DIR,
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
                 "--template",
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -54,7 +53,7 @@ class TestTemplate:
             ],
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
     def test_template_config_with_flags(self, run_command: MagicMock):
         run_command.return_value = "v3.12.0+gc9f554d"
@@ -63,14 +62,14 @@ class TestTemplate:
             app,
             [
                 "generate",
-                "--pipeline-base-dir",
-                PIPELINE_BASE_DIR,
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
                 "--config",
-                str(RESOURCE_PATH / "custom-config/config.yaml"),
+                str(RESOURCE_PATH / "custom-config"),
                 "--template",
+                "--environment",
+                "development",
             ],
             catch_exceptions=False,
         )
@@ -95,4 +94,4 @@ class TestTemplate:
             ],
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout

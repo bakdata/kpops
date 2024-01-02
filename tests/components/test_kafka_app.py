@@ -4,7 +4,6 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
@@ -12,16 +11,16 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.components.base_components import KafkaApp
+from kpops.config import KpopsConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 class TestKafkaApp:
     @pytest.fixture()
-    def config(self) -> PipelineConfig:
-        return PipelineConfig(
+    def config(self) -> KpopsConfig:
+        return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
-            environment="development",
             helm_diff_config=HelmDiffConfig(),
         )
 
@@ -33,7 +32,7 @@ class TestKafkaApp:
             topic_handler=MagicMock(),
         )
 
-    def test_default_configs(self, config: PipelineConfig, handlers: ComponentHandlers):
+    def test_default_configs(self, config: KpopsConfig, handlers: ComponentHandlers):
         kafka_app = KafkaApp(
             name="example-name",
             config=config,
@@ -59,7 +58,11 @@ class TestKafkaApp:
 
     @pytest.mark.asyncio()
     async def test_should_deploy_kafka_app(
-        self, config: PipelineConfig, handlers: ComponentHandlers, mocker: MockerFixture
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+
     ):
         kafka_app = KafkaApp(
             name="example-name",

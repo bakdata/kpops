@@ -131,9 +131,9 @@ class TopicHandler:
                 )
             )
             log.debug(f"POST /clusters/{self.proxy_wrapper.cluster_id}/topics HTTP/1.1")
-            log.debug(f"Host: {self.proxy_wrapper.host}")
+            log.debug(f"Host: {self.proxy_wrapper.url}")
             log.debug(HEADERS)
-            log.debug(topic_spec.dict())
+            log.debug(topic_spec.model_dump())
 
     @staticmethod
     def __check_partition_count(
@@ -187,7 +187,7 @@ class TopicHandler:
             log.warning(
                 f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping."
             )
-            log.debug(f"Host: {self.proxy_wrapper.host}")
+            log.debug(f"Host: {self.proxy_wrapper.url}")
             log.debug(HEADERS)
             log.debug("HTTP/1.1 404 Not Found")
             log.debug(HEADERS)
@@ -205,7 +205,7 @@ class TopicHandler:
         :param topic_config: The topic config
         :return: Topic specification
         """
-        topic_spec_json: dict = topic_config.dict(
+        topic_spec_json: dict = topic_config.model_dump(
             include={
                 "partitions_count": True,
                 "replication_factor": True,

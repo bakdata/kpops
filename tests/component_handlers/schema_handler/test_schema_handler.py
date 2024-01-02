@@ -1,15 +1,13 @@
 import json
-from pathlib import Path
 from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-from pydantic import BaseModel
+from pydantic import AnyHttpUrl, BaseModel, TypeAdapter
 from pytest_mock import MockerFixture
 from schema_registry.client.schema import AvroSchema
 from schema_registry.client.utils import SchemaVersion
 
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
 from kpops.components.base_components.models import TopicName
@@ -18,6 +16,7 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
+from kpops.config import KpopsConfig, SchemaRegistryConfig
 from kpops.utils.colorify import greenify, magentaify
 from tests.pipeline.test_components import TestSchemaProvider
 
@@ -70,35 +69,34 @@ def to_section(topic_config: TopicConfig) -> ToSection:
     return ToSection(topics={TopicName("topic-X"): topic_config})
 
 
-def test_load_schema_handler():
-    config_enable = PipelineConfig(
-        defaults_path=Path("fake"),
-        environment="development",
-        schema_registry_url="http://localhost:8081",
+@pytest.fixture()
+def kpops_config() -> KpopsConfig:
+    return KpopsConfig(
+        kafka_brokers="broker:9092",
+        schema_registry=SchemaRegistryConfig(
+            enabled=True,
+            url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),
+        ),
+        components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
 
-    config_disable = config_enable.copy()
-    config_disable.schema_registry_url = None
-    assert (
-        SchemaHandler.load_schema_handler(TEST_SCHEMA_PROVIDER_MODULE, config_disable)
-        is None
-    )
 
+def test_load_schema_handler(kpops_config: KpopsConfig):
     assert isinstance(
-        SchemaHandler.load_schema_handler(TEST_SCHEMA_PROVIDER_MODULE, config_enable),
+        SchemaHandler.load_schema_handler(kpops_config),
         SchemaHandler,
     )
 
+    config_disable = kpops_config.model_copy()
+    config_disable.schema_registry = SchemaRegistryConfig(enabled=False)
 
-def test_should_lazy_load_schema_provider(find_class_mock: MagicMock):
-    config_enable = PipelineConfig(
-        defaults_path=Path("fake"),
-        environment="development",
-        schema_registry_url="http://localhost:8081",
-    )
-    schema_handler = SchemaHandler.load_schema_handler(
-        TEST_SCHEMA_PROVIDER_MODULE, config_enable
-    )
+    assert SchemaHandler.load_schema_handler(config_disable) is None
+
+
+def test_should_lazy_load_schema_provider(
+    find_class_mock: MagicMock, kpops_config: KpopsConfig
+):
+    schema_handler = SchemaHandler.load_schema_handler(kpops_config)
 
     assert schema_handler is not None
 
@@ -112,10 +110,11 @@ def test_should_lazy_load_schema_provider(find_class_mock: MagicMock):
     find_class_mock.assert_called_once_with(TEST_SCHEMA_PROVIDER_MODULE, SchemaProvider)
 
 
-def test_should_raise_value_error_if_schema_provider_class_not_found():
-    schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=NON_EXISTING_PROVIDER_MODULE
-    )
+def test_should_raise_value_error_if_schema_provider_class_not_found(
+    kpops_config: KpopsConfig,
+):
+    kpops_config.components_module = NON_EXISTING_PROVIDER_MODULE
+    schema_handler = SchemaHandler(kpops_config)
 
     with pytest.raises(
         ValueError,
@@ -142,14 +141,10 @@ def test_should_raise_value_error_if_schema_provider_class_not_found():
     ],
 )
 def test_should_raise_value_error_when_schema_provider_is_called_and_components_module_is_empty(
-    components_module: str,
+    kpops_config: KpopsConfig, components_module: str | None
 ):
-    config_enable = PipelineConfig(
-        defaults_path=Path("fake"),
-        environment="development",
-        schema_registry_url="http://localhost:8081",
-    )
-    schema_handler = SchemaHandler.load_schema_handler(components_module, config_enable)
+    kpops_config.components_module = components_module
+    schema_handler = SchemaHandler.load_schema_handler(kpops_config)
     assert schema_handler is not None
     with pytest.raises(
         ValueError,
@@ -162,11 +157,12 @@ def test_should_raise_value_error_when_schema_provider_is_called_and_components_
 
 @pytest.mark.asyncio()
 async def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
-    to_section: ToSection, log_info_mock: MagicMock, schema_registry_mock: AsyncMock
+    to_section: ToSection,
+    log_info_mock: MagicMock,
+    schema_registry_mock: AsyncMock,
+    kpops_config: KpopsConfig,
 ):
-    schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
-    )
+    schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = []
 
@@ -184,10 +180,9 @@ async def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     to_section: ToSection,
     log_info_mock: MagicMock,
     schema_registry_mock: AsyncMock,
+    kpops_config: KpopsConfig,
 ):
-    schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
-    )
+    schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = [1, 2, 3]
     schema_registry_mock.check_version.return_value = None
@@ -206,11 +201,10 @@ async def test_should_raise_exception_when_submit_schema_that_exists_and_not_com
     topic_config: TopicConfig,
     to_section: ToSection,
     schema_registry_mock: AsyncMock,
+    kpops_config: KpopsConfig,
 ):
     schema_provider = TestSchemaProvider()
-    schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
-    )
+    schema_handler = SchemaHandler(kpops_config)
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
 
     schema_registry_mock.get_versions.return_value = [1, 2, 3]
@@ -246,11 +240,10 @@ async def test_should_log_debug_when_submit_schema_that_exists_and_registered_un
     log_info_mock: MagicMock,
     log_debug_mock: MagicMock,
     schema_registry_mock: AsyncMock,
+    kpops_config: KpopsConfig,
 ):
     schema_provider = TestSchemaProvider()
-    schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
-    )
+    schema_handler = SchemaHandler(kpops_config)
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
     schema = schema_provider.provide_schema(schema_class, {})
     registered_version = SchemaVersion(topic_config.value_schema, 1, schema, 1)
@@ -281,13 +274,12 @@ async def test_should_submit_non_existing_schema_when_not_dry(
     to_section: ToSection,
     log_info_mock: MagicMock,
     schema_registry_mock: AsyncMock,
+    kpops_config: KpopsConfig,
 ):
     schema_provider = TestSchemaProvider()
     schema_class = "com.bakdata.kpops.test.SchemaHandlerTest"
     schema = schema_provider.provide_schema(schema_class, {})
-    schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
-    )
+    schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = []
 
@@ -309,10 +301,9 @@ async def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
     to_section: ToSection,
     log_info_mock: MagicMock,
     schema_registry_mock: AsyncMock,
+    kpops_config: KpopsConfig,
 ):
-    schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
-    )
+    schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = []
 
@@ -327,11 +318,11 @@ async def test_should_log_correct_message_when_delete_schemas_and_in_dry_run(
 
 @pytest.mark.asyncio()
 async def test_should_delete_schemas_when_not_in_dry_run(
-    to_section: ToSection, schema_registry_mock: MagicMock
+    to_section: ToSection,
+    schema_registry_mock: AsyncMock,
+    kpops_config: KpopsConfig,
 ):
-    schema_handler = SchemaHandler(
-        url="http://mock:8081", components_module=TEST_SCHEMA_PROVIDER_MODULE
-    )
+    schema_handler = SchemaHandler(kpops_config)
 
     schema_registry_mock.get_versions.return_value = []
 
