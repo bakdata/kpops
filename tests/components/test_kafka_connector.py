@@ -3,11 +3,15 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
+from pytest_mock import MockerFixture
 
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig
 from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
-from kpops.components.base_components.kafka_connector import KafkaConnector
+from kpops.components.base_components.kafka_connector import (
+    KafkaConnector,
+    KafkaConnectorResetter,
+)
 from kpops.config import KpopsConfig, TopicNameConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
@@ -39,6 +43,18 @@ class TestKafkaConnector:
             topic_handler=MagicMock(),
         )
 
+    @pytest.fixture(autouse=True)
+    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch(
+            "kpops.components.base_components.helm_app.Helm"
+        ).return_value
+
+    @pytest.fixture()
+    def dry_run_handler_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch(
+            "kpops.components.base_components.helm_app.DryRunHandler"
+        ).return_value
+
     @pytest.fixture()
     def connector_config(self) -> KafkaConnectorConfig:
         return KafkaConnectorConfig(
@@ -59,6 +75,7 @@ class TestKafkaConnector:
             config=config,
             handlers=handlers,
             app=connector_config,
+            resetter_namespace="test-namespace",
         )
         assert connector.app.name == CONNECTOR_FULL_NAME
 
@@ -67,6 +84,7 @@ class TestKafkaConnector:
             config=config,
             handlers=handlers,
             app={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues]
+            resetter_namespace="test-namespace",
         )
         assert connector.app.name == CONNECTOR_FULL_NAME
 
@@ -107,6 +125,9 @@ class TestKafkaConnector:
             config=config,
             handlers=handlers,
             app=connector_config,
+            resetter_namespace="test-namespace",
         )
         assert connector.app.name == CONNECTOR_FULL_NAME
+        resetter = connector._resetter  # FIXME
+        assert isinstance(resetter, KafkaConnectorResetter)
         assert connector._resetter.helm_release_name == CONNECTOR_CLEAN_RELEASE_NAME

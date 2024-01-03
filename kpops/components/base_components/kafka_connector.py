@@ -86,14 +86,14 @@ class KafkaConnectorResetter(HelmApp):
         """
         log.info(
             magentaify(
-                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {self.full_name}"
+                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {self.app.config.connector}"
             )
         )
         self.destroy(dry_run)
 
         log.info(
             magentaify(
-                f"Connector Cleanup: deploy Connect {self.app.connector_type} resetter for {self.full_name}"
+                f"Connector Cleanup: deploy Connect {self.app.connector_type} resetter for {self.app.config.connector}"
             )
         )
         self.deploy(dry_run)
@@ -131,23 +131,6 @@ class KafkaConnector(PipelineComponent, ABC):
     )
     _connector_type: KafkaConnectorType = PrivateAttr()
 
-    @cached_property
-    def _resetter(self) -> KafkaConnectorResetter:
-        return KafkaConnectorResetter(
-            config=self.config,
-            handlers=self.handlers,
-            namespace=self.resetter_namespace,
-            **self.model_dump(exclude={"app"}),
-            app=KafkaConnectorResetterValues(
-                connector_type=self._connector_type.value,
-                config=KafkaConnectorResetterConfig(
-                    connector=self.full_name,
-                    brokers=self.config.kafka_brokers,
-                ),
-                **self.resetter_values.model_dump(),
-            ),
-        )
-
     @field_validator("app", mode="before")
     @classmethod
     def connector_config_should_have_component_name(
@@ -164,6 +147,23 @@ class KafkaConnector(PipelineComponent, ABC):
             raise ValueError(msg)
         app["name"] = component_name
         return KafkaConnectorConfig(**app)
+
+    @cached_property
+    def _resetter(self) -> KafkaConnectorResetter:
+        return KafkaConnectorResetter(
+            config=self.config,
+            handlers=self.handlers,
+            namespace=self.resetter_namespace,
+            **self.model_dump(exclude={"app"}),
+            app=KafkaConnectorResetterValues(
+                connector_type=self._connector_type.value,
+                config=KafkaConnectorResetterConfig(
+                    connector=self.full_name,
+                    brokers=self.config.kafka_brokers,
+                ),
+                **self.resetter_values.model_dump(),
+            ),
+        )
 
     @override
     def deploy(self, dry_run: bool) -> None:

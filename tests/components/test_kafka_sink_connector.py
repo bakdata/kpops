@@ -89,6 +89,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             app=KafkaConnectorConfig(
                 **{**connector_config.model_dump(), "topics.regex": topic_pattern}
             ),
+            resetter_namespace="test-namespace",
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern
 
@@ -177,12 +178,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
     def test_reset_when_dry_run_is_true(
         self,
         connector: KafkaSinkConnector,
-        dry_run_handler: MagicMock,
+        dry_run_handler_mock: MagicMock,
     ):
         dry_run = True
         connector.reset(dry_run=dry_run)
 
-        dry_run_handler.print_helm_diff.assert_called_once()
+        dry_run_handler_mock.print_helm_diff.assert_called_once()
 
     def test_reset_when_dry_run_is_false(
         self,
@@ -268,18 +269,18 @@ class TestKafkaSinkConnector(TestKafkaConnector):
     def test_clean_when_dry_run_is_true(
         self,
         connector: KafkaSinkConnector,
-        dry_run_handler: MagicMock,
+        dry_run_handler_mock: MagicMock,
     ):
         dry_run = True
         connector.clean(dry_run=dry_run)
-        dry_run_handler.print_helm_diff.assert_called_once()
+        dry_run_handler_mock.print_helm_diff.assert_called_once()
 
     def test_clean_when_dry_run_is_false(
         self,
         connector: KafkaSinkConnector,
         helm_mock: MagicMock,
         log_info_mock: MagicMock,
-        dry_run_handler: MagicMock,
+        dry_run_handler_mock: MagicMock,
         mocker: MockerFixture,
     ):
         mock_delete_topics = mocker.patch.object(
@@ -319,43 +320,47 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 RepoAuthFlags(),
             ),
             mocker.call.helm.uninstall(
-                namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
-                dry_run=dry_run,
+                "test-namespace",
+                CONNECTOR_CLEAN_RELEASE_NAME,
+                dry_run,
             ),
+            ANY,  # __bool__
+            ANY,  # __str__
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
-                namespace="test-namespace",
-                chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
-                dry_run=dry_run,
-                flags=HelmUpgradeInstallFlags(
-                    version="1.0.4",
-                    wait=True,
-                    wait_for_jobs=True,
-                ),
-                values={
+                CONNECTOR_CLEAN_RELEASE_NAME,
+                "bakdata-kafka-connect-resetter/kafka-connect-resetter",
+                dry_run,
+                "test-namespace",
+                {
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                     "connectorType": "sink",
                     "config": {
                         "brokers": "broker:9092",
                         "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": True,
                     },
-                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
+                HelmUpgradeInstallFlags(
+                    version="1.0.4",
+                    wait=True,
+                    wait_for_jobs=True,
+                ),
             ),
             mocker.call.helm.uninstall(
-                namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
-                dry_run=dry_run,
+                "test-namespace",
+                CONNECTOR_CLEAN_RELEASE_NAME,
+                dry_run,
             ),
+            ANY,  # __bool__
+            ANY,  # __str__
         ]
-        dry_run_handler.print_helm_diff.assert_not_called()
+        dry_run_handler_mock.print_helm_diff.assert_not_called()
 
     def test_clean_without_to_when_dry_run_is_true(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        dry_run_handler: MagicMock,
+        dry_run_handler_mock: MagicMock,
         connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSinkConnector(
@@ -368,14 +373,14 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
         dry_run = True
         connector.clean(dry_run)
-        dry_run_handler.print_helm_diff.assert_called_once()
+        dry_run_handler_mock.print_helm_diff.assert_called_once()
 
     def test_clean_without_to_when_dry_run_is_false(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
-        dry_run_handler: MagicMock,
+        dry_run_handler_mock: MagicMock,
         mocker: MockerFixture,
         connector_config: KafkaConnectorConfig,
     ):
@@ -413,36 +418,40 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 ),
             ),
             mocker.call.helm.uninstall(
-                namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
-                dry_run=dry_run,
+                "test-namespace",
+                CONNECTOR_CLEAN_RELEASE_NAME,
+                dry_run,
             ),
+            ANY,  # __bool__
+            ANY,  # __str__
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
-                namespace="test-namespace",
-                chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
-                dry_run=dry_run,
-                flags=HelmUpgradeInstallFlags(
-                    version="1.0.4",
-                    wait=True,
-                    wait_for_jobs=True,
-                ),
-                values={
+                CONNECTOR_CLEAN_RELEASE_NAME,
+                "bakdata-kafka-connect-resetter/kafka-connect-resetter",
+                dry_run,
+                "test-namespace",
+                {
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                     "connectorType": "sink",
                     "config": {
                         "brokers": "broker:9092",
                         "connector": CONNECTOR_FULL_NAME,
                         "deleteConsumerGroup": True,
                     },
-                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
+                HelmUpgradeInstallFlags(
+                    version="1.0.4",
+                    wait=True,
+                    wait_for_jobs=True,
+                ),
             ),
             mocker.call.helm.uninstall(
-                namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
-                dry_run=dry_run,
+                "test-namespace",
+                CONNECTOR_CLEAN_RELEASE_NAME,
+                dry_run,
             ),
+            ANY,  # __bool__
+            ANY,  # __str__
         ]
 
-        dry_run_handler.print_helm_diff.assert_not_called()
+        dry_run_handler_mock.print_helm_diff.assert_not_called()
         mock_delete_topics.assert_not_called()
