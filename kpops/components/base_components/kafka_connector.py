@@ -47,6 +47,12 @@ class KafkaConnectorResetter(HelmApp):
     version: str | None = Field(
         default="1.0.4", description=describe_attr("version", __doc__)
     )
+    suffix: str = "-clean"
+
+    @property
+    @override
+    def full_name(self) -> str:
+        return super().full_name + self.suffix
 
     @property
     @override
@@ -56,8 +62,7 @@ class KafkaConnectorResetter(HelmApp):
     @property
     @override
     def helm_release_name(self) -> str:
-        suffix = "-clean"
-        return create_helm_release_name(self.full_name + suffix, suffix)
+        return create_helm_release_name(self.full_name, self.suffix)
 
     @property
     @override
@@ -70,8 +75,8 @@ class KafkaConnectorResetter(HelmApp):
         )
 
     @override
-    def clean(self, dry_run: bool) -> None:
-        """Clean the connector from the cluster.
+    def reset(self, dry_run: bool) -> None:
+        """Reset connector.
 
         At first, it deletes the previous cleanup job (connector resetter)
         to make sure that there is no running clean job in the cluster. Then it releases a cleanup job.
@@ -96,6 +101,10 @@ class KafkaConnectorResetter(HelmApp):
         if not self.config.retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
             self.destroy(dry_run)
+
+    @override
+    def clean(self, dry_run: bool) -> None:
+        self.reset(dry_run)
 
 
 class KafkaConnector(PipelineComponent, ABC):

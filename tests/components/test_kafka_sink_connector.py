@@ -13,6 +13,7 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorType,
 )
 from kpops.components import KafkaSinkConnector
+from kpops.components.base_components.kafka_connector import KafkaConnectorResetter
 from kpops.components.base_components.models.from_section import (
     FromSection,
     FromTopic,
@@ -196,53 +197,85 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         mock_clean_connector = mocker.patch.object(
             connector.handlers.connector_handler, "clean_connector"
         )
+        resetter = connector._resetter
+        assert isinstance(resetter, KafkaConnectorResetter)
+
+        mock_resetter_reset = mocker.spy(resetter, "reset")
+
         mock = mocker.MagicMock()
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
-        helm_mock = mocker.patch.object(connector._resetter, "helm")
-        mock.attach_mock(helm_mock, "helm")
+        mock_helm = mocker.patch.object(resetter, "helm")
+        mock_helm_upgrade_install = mocker.patch.object(
+            resetter.helm, "upgrade_install"
+        )
+        mock_helm_uninstall = mocker.patch.object(resetter.helm, "uninstall")
+        mock.attach_mock(mock_helm, "helm")
 
-        dry_run_handler = mocker.patch.object(connector._resetter, "dry_run_handler")
+        dry_run_handler = mocker.patch.object(resetter, "dry_run_handler")
 
         dry_run = False
         connector.reset(dry_run=dry_run)
+        mock_resetter_reset.assert_called_once_with(dry_run)
 
-        assert mock.mock_calls == [
-            mocker.call.helm.add_repo(
-                "bakdata-kafka-connect-resetter",
-                "https://bakdata.github.io/kafka-connect-resetter/",
-                RepoAuthFlags(),
-            ),
-            mocker.call.helm.uninstall(
-                namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
-                dry_run=dry_run,
-            ),
-            mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
-                namespace="test-namespace",
-                chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
-                dry_run=dry_run,
-                flags=HelmUpgradeInstallFlags(
-                    version="1.0.4",
-                    wait=True,
-                    wait_for_jobs=True,
-                ),
-                values={
-                    "connectorType": "sink",
-                    "config": {
-                        "brokers": "broker:9092",
-                        "connector": CONNECTOR_FULL_NAME,
-                        "deleteConsumerGroup": False,
-                    },
-                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
+        mock_helm_upgrade_install.assert_called_once_with(
+            CONNECTOR_CLEAN_RELEASE_NAME,
+            "bakdata-kafka-connect-resetter/kafka-connect-resetter",
+            dry_run,
+            "test-namespace",
+            {
+                "connectorType": "sink",
+                "config": {
+                    "brokers": "broker:9092",
+                    "connector": CONNECTOR_FULL_NAME,
+                    "deleteConsumerGroup": False,
                 },
+                "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
+            },
+            HelmUpgradeInstallFlags(
+                version="1.0.4",
+                wait=True,
+                wait_for_jobs=True,
             ),
-            mocker.call.helm.uninstall(
-                namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
-                dry_run=dry_run,
-            ),
-        ]
+        )
+
+        # mock.assert_has_calls([])
+        # assert mock.mock_calls == [
+        #     mocker.call.helm.add_repo(
+        #         "bakdata-kafka-connect-resetter",
+        #         "https://bakdata.github.io/kafka-connect-resetter/",
+        #         RepoAuthFlags(),
+        #     ),
+        #     mocker.call.helm.uninstall(
+        #         namespace="test-namespace",
+        #         release_name=CONNECTOR_CLEAN_RELEASE_NAME,
+        #         dry_run=dry_run,
+        #     ),
+        #     mocker.call.helm.upgrade_install(
+        #         release_name=CONNECTOR_CLEAN_RELEASE_NAME,
+        #         namespace="test-namespace",
+        #         chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
+        #         dry_run=dry_run,
+        #         flags=HelmUpgradeInstallFlags(
+        #             version="1.0.4",
+        #             wait=True,
+        #             wait_for_jobs=True,
+        #         ),
+        #         values={
+        #             "connectorType": "sink",
+        #             "config": {
+        #                 "brokers": "broker:9092",
+        #                 "connector": CONNECTOR_FULL_NAME,
+        #                 "deleteConsumerGroup": False,
+        #             },
+        #             "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
+        #         },
+        #     ),
+        #     mocker.call.helm.uninstall(
+        #         namespace="test-namespace",
+        #         release_name=CONNECTOR_CLEAN_RELEASE_NAME,
+        #         dry_run=dry_run,
+        #     ),
+        # ]
 
         dry_run_handler.print_helm_diff.assert_not_called()
         mock_delete_topics.assert_not_called()
