@@ -22,7 +22,7 @@ class StreamsAppCleaner(KafkaAppCleaner):
         return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
 
-class StreamsApp(StreamsBootstrap, KafkaApp):
+class StreamsApp(KafkaApp, StreamsBootstrap):
     """StreamsApp component that configures a streams-bootstrap app.
 
     :param app: Application-specific settings

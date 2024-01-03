@@ -531,8 +531,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "ProducerApp",
             "type": "object"
@@ -775,8 +775,8 @@
             },
             "required": [
                 "name",
-                "app",
-                "namespace"
+                "namespace",
+                "app"
             ],
             "title": "StreamsApp",
             "type": "object"

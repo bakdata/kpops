@@ -62,8 +62,8 @@ kpops_components_fields:
   - prefix
   - from_
   - to
-  - app
   - namespace
+  - app
   - repo_config
   - version
   streams-app:
@@ -71,8 +71,8 @@ kpops_components_fields:
   - prefix
   - from_
   - to
-  - app
   - namespace
+  - app
   - repo_config
   - version
   streams-bootstrap:
@@ -92,6 +92,6 @@ kpops_components_inheritance_ref:
   kafka-source-connector: kafka-connector
   kubernetes-app: pipeline-component
   pipeline-component: base-defaults-component
-  producer-app: streams-bootstrap
-  streams-app: streams-bootstrap
+  producer-app: kafka-app
+  streams-app: kafka-app
   streams-bootstrap: helm-app

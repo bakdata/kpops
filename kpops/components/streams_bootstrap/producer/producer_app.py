@@ -28,7 +28,7 @@ class ProducerAppCleaner(KafkaAppCleaner):
         )
 
 
-class ProducerApp(StreamsBootstrap, KafkaApp):
+class ProducerApp(KafkaApp, StreamsBootstrap):
     """Producer component.
 
     This producer holds configuration to use as values for the streams-bootstrap
