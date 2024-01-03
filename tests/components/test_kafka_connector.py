@@ -64,19 +64,27 @@ class TestKafkaConnector:
             }
         )
 
-    def test_connector_config_name_override(
+    @pytest.fixture()
+    def connector(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
-    ):
-        connector = KafkaConnector(
+    ) -> KafkaConnector:
+        return KafkaConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
             app=connector_config,
             resetter_namespace="test-namespace",
         )
+
+    def test_connector_config_name_override(
+        self,
+        connector: KafkaConnector,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+    ):
         assert connector.app.name == CONNECTOR_FULL_NAME
 
         connector = KafkaConnector(
@@ -114,19 +122,7 @@ class TestKafkaConnector:
                 app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues]
             )
 
-    def test_resetter_release_name(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        connector_config: KafkaConnectorConfig,
-    ):
-        connector = KafkaConnector(
-            name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app=connector_config,
-            resetter_namespace="test-namespace",
-        )
+    def test_resetter_release_name(self, connector: KafkaConnector):
         assert connector.app.name == CONNECTOR_FULL_NAME
         resetter = connector._resetter  # FIXME
         assert isinstance(resetter, KafkaConnectorResetter)
