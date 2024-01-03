@@ -52,7 +52,10 @@ class KafkaAppValues(HelmAppValues):
 
 
 class KafkaAppCleaner(HelmApp):
+    """Helm app for resetting and cleaning a streams-bootstrap app."""
+
     repo_config: HelmRepoConfig = STREAMS_BOOTSTRAP_HELM_REPO
+    # TODO: streams-bootstrap version?
 
     @property
     @override
