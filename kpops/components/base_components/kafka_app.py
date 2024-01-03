@@ -9,7 +9,6 @@ from typing_extensions import override
 from kpops.component_handlers.helm_wrapper.model import (
     HelmFlags,
     HelmRepoConfig,
-    HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
@@ -69,7 +68,7 @@ class KafkaAppCleaner(HelmApp):
     @property
     @override
     def helm_flags(self) -> HelmFlags:
-        return HelmUpgradeInstallFlags(
+        return HelmFlags(
             create_namespace=self.config.create_namespace,
             version=self.version,
             wait=True,
