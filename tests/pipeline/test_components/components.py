@@ -5,8 +5,12 @@ from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,
 )
-from kpops.components import KafkaSinkConnector, ProducerApp, StreamsApp
-from kpops.components.base_components import PipelineComponent
+from kpops.components import (
+    KafkaSinkConnector,
+    PipelineComponent,
+    ProducerApp,
+    StreamsApp,
+)
 from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
