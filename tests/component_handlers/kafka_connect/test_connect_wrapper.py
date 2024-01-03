@@ -7,7 +7,6 @@ import pytest
 import pytest_asyncio
 from pytest_httpx import HTTPXMock
 
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
 from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
@@ -18,22 +17,19 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectResponse,
 )
 from kpops.component_handlers.kafka_connect.timeout import timeout
+from kpops.config import KpopsConfig
 
 HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 
-HOST = "http://localhost:8083"
+DEFAULT_HOST = "http://localhost:8083"
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 class TestConnectorApiWrapper:
     @pytest_asyncio.fixture(autouse=True)
     def _setup(self):
-        config = PipelineConfig(
-            defaults_path=DEFAULTS_PATH,
-            environment="development",
-            kafka_connect_host=HOST,
-        )
-        self.connect_wrapper = ConnectWrapper(host=config.kafka_connect_host)
+        config = KpopsConfig(defaults_path=DEFAULTS_PATH)
+        self.connect_wrapper = ConnectWrapper(config.kafka_connect)
 
     @pytest.fixture()
     def connector_config(self) -> KafkaConnectorConfig:
@@ -42,19 +38,6 @@ class TestConnectorApiWrapper:
                 "connector.class": "com.bakdata.connect.TestConnector",
                 "name": "test-connector",
             }
-        )
-
-    def test_should_through_exception_when_host_is_not_set(self):
-        config = PipelineConfig(
-            defaults_path=DEFAULTS_PATH,
-            environment="development",
-            kafka_connect_host=None,
-        )
-        with pytest.raises(RuntimeError) as run_time_error:
-            ConnectWrapper(host=config.kafka_connect_host)
-        assert (
-            str(run_time_error.value)
-            == "The Kafka Connect host is not set. Please set the host in the config."
         )
 
     @pytest.mark.asyncio()
@@ -77,11 +60,11 @@ class TestConnectorApiWrapper:
             await self.connect_wrapper.create_connector(KafkaConnectorConfig(**configs))
 
         mock_post.assert_called_with(
-            url="/connectors",
+            url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
             json={
                 "name": "test-connector",
-                "config": KafkaConnectorConfig(**configs).dict(),
+                "config": KafkaConnectorConfig(**configs).model_dump(),
             },
         )
 
@@ -110,7 +93,7 @@ class TestConnectorApiWrapper:
         }
         httpx_mock.add_response(
             method="POST",
-            url=f"{HOST}/connectors",
+            url=f"{DEFAULT_HOST}/connectors",
             headers=HEADERS,
             json=actual_response,
             status_code=201,
@@ -132,7 +115,7 @@ class TestConnectorApiWrapper:
     ):
         httpx_mock.add_response(
             method="POST",
-            url=f"{HOST}/connectors",
+            url=f"{DEFAULT_HOST}/connectors",
             json={},
             status_code=409,
         )
@@ -159,7 +142,7 @@ class TestConnectorApiWrapper:
             await self.connect_wrapper.get_connector(connector_name)
 
         mock_get.assert_called_with(
-            url=f"/connectors/{connector_name}",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
         )
 
@@ -191,7 +174,7 @@ class TestConnectorApiWrapper:
         }
         httpx_mock.add_response(
             method="GET",
-            url=f"{HOST}/connectors/{connector_name}",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json=actual_response,
             status_code=200,
@@ -209,7 +192,7 @@ class TestConnectorApiWrapper:
 
         httpx_mock.add_response(
             method="GET",
-            url=f"{HOST}/connectors/{connector_name}",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
             status_code=404,
@@ -230,7 +213,7 @@ class TestConnectorApiWrapper:
 
         httpx_mock.add_response(
             method="GET",
-            url=f"{HOST}/connectors/{connector_name}",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
             status_code=409,
@@ -270,9 +253,9 @@ class TestConnectorApiWrapper:
             )
 
         mock_put.assert_called_with(
-            url=f"/connectors/{connector_name}/config",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}/config",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectorConfig(**configs).dict(),
+            json=KafkaConnectorConfig(**configs).model_dump(),
         )
 
     @pytest.mark.asyncio()
@@ -305,7 +288,7 @@ class TestConnectorApiWrapper:
         }
         httpx_mock.add_response(
             method="PUT",
-            url=f"{HOST}/connectors/{connector_name}/config",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}/config",
             headers=HEADERS,
             json=actual_response,
             status_code=200,
@@ -349,7 +332,7 @@ class TestConnectorApiWrapper:
         }
         httpx_mock.add_response(
             method="PUT",
-            url=f"{HOST}/connectors/{connector_name}/config",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}/config",
             headers=HEADERS,
             json=actual_response,
             status_code=201,
@@ -372,7 +355,7 @@ class TestConnectorApiWrapper:
 
         httpx_mock.add_response(
             method="PUT",
-            url=f"{HOST}/connectors/{connector_name}/config",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}/config",
             headers=HEADERS,
             json={},
             status_code=409,
@@ -400,7 +383,7 @@ class TestConnectorApiWrapper:
             await self.connect_wrapper.delete_connector(connector_name)
 
         mock_delete.assert_called_with(
-            url=f"/connectors/{connector_name}",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
         )
 
@@ -431,7 +414,7 @@ class TestConnectorApiWrapper:
         }
         httpx_mock.add_response(
             method="DELETE",
-            url=f"{HOST}/connectors/{connector_name}",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json=actual_response,
             status_code=204,
@@ -449,7 +432,7 @@ class TestConnectorApiWrapper:
 
         httpx_mock.add_response(
             method="DELETE",
-            url=f"{HOST}/connectors/{connector_name}",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
             status_code=404,
@@ -470,7 +453,7 @@ class TestConnectorApiWrapper:
 
         httpx_mock.add_response(
             method="DELETE",
-            url=f"{HOST}/connectors/{connector_name}",
+            url=f"{DEFAULT_HOST}/connectors/{connector_name}",
             headers=HEADERS,
             json={},
             status_code=409,
@@ -505,9 +488,9 @@ class TestConnectorApiWrapper:
             await self.connect_wrapper.validate_connector_config(connector_config)
 
         mock_put.assert_called_with(
-            url=f"{HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
+            url=f"{DEFAULT_HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=connector_config.dict(),
+            json=connector_config.model_dump(),
         )
 
     @pytest.mark.asyncio()
@@ -528,9 +511,11 @@ class TestConnectorApiWrapper:
             )
 
         mock_put.assert_called_with(
-            url=f"{HOST}/connector-plugins/{connector_name}/config/validate",
+            url=f"{DEFAULT_HOST}/connector-plugins/{connector_name}/config/validate",
             headers={"Accept": "application/json", "Content-Type": "application/json"},
-            json=KafkaConnectorConfig(**{"name": connector_name, **configs}).dict(),
+            json=KafkaConnectorConfig(
+                **{"name": connector_name, **configs}
+            ).model_dump(),
         )
 
     @pytest.mark.asyncio()
@@ -542,7 +527,7 @@ class TestConnectorApiWrapper:
 
         httpx_mock.add_response(
             method="PUT",
-            url=f"{HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
+            url=f"{DEFAULT_HOST}/connector-plugins/FileStreamSinkConnector/config/validate",
             headers=HEADERS,
             json=actual_response,
             status_code=200,

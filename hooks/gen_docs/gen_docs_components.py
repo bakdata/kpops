@@ -11,7 +11,7 @@ from hooks import ROOT
 from kpops.cli.registry import _find_classes
 from kpops.components import KafkaConnector, PipelineComponent
 from kpops.utils.colorify import redify, yellowify
-from kpops.utils.yaml_loading import load_yaml_file
+from kpops.utils.yaml import load_yaml_file
 
 PATH_KPOPS_MAIN = ROOT / "kpops/cli/main.py"
 PATH_CLI_COMMANDS_DOC = ROOT / "docs/docs/user/references/cli-commands.md"
@@ -40,11 +40,12 @@ KPOPS_COMPONENTS_INHERITANCE_REF = {
     ).type
     for component in KPOPS_COMPONENTS
 }
+
 KPOPS_COMPONENTS_SECTIONS = {
     component.type: [
         field_name
-        for field_name, model in component.__fields__.items()
-        if not model.field_info.exclude
+        for field_name, field_info in component.model_fields.items()
+        if not field_info.exclude
     ]
     for component in KPOPS_COMPONENTS
 }

@@ -28,7 +28,8 @@ kpops = "kpops.cli.main:app"
 
 [tool.poetry.dependencies]
 python = "^3.10"
-pydantic = { extras = ["dotenv"], version = "^1.10.8" }
+pydantic = { extras = ["dotenv"], version = "^2.5.2" }
+pydantic-settings = "^2.0.3"
 rich = "^12.4.4"
 PyYAML = "^6.0"
 typer = { extras = ["all"], version = "^0.6.1" }
@@ -40,21 +41,19 @@ python-schema-registry-client = "^2.4.1"
 httpx = "^0.24.1"
 networkx = "^3.1"
 
-
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.2"
 pytest-mock = "^3.10.0"
 pytest-timeout = "^2.1.0"
 snapshottest = "^0.6.0"
 pre-commit = "^2.19.0"
-ruff = "^0.1.3"
+ruff = "^0.1.7"
 typer-cli = "^0.0.13"
 pyright = "^1.1.314"
 pytest-rerunfailures = "^11.1.2"
 pytest-asyncio = "^0.21.1"
 pytest-httpx = "^0.22.0"
 pytablewriter = { extras = ["from"], version = "^1.0.0" }
-
 
 [tool.poetry.group.docs]
 optional = true
@@ -67,12 +66,11 @@ mkdocs-glightbox = "^0.3.1"
 mkdocs-exclude-search = "^0.6.5"
 mike = "^1.1.2"
 
-
 [tool.poetry_bumpversion.file."kpops/__init__.py"]
 
 [tool.ruff]
 ignore = [
-# Rules in conflict with `ruff-format` -- START
+  # Rules in conflict with `ruff-format` -- START
   "W191", # Checks for indentation that uses tabs. Spaces are preferred.
   # "E111", # Checks for indentation with a non-multiple of 4 spaces, add when out of nursery
   # "E114", # Checks for indentation of comments with a non-multiple of 4 spaces, add when out of nursery
@@ -88,11 +86,11 @@ ignore = [
   "COM819", # Checks for the presence of prohibited trailing commas.
   "ISC001", # Checks for implicitly concatenated strings on a single line.
   "ISC002", # Checks for implicitly concatenated strings that span multiple lines.
-# Rules in conflict with `ruff-format` -- END
+  # Rules in conflict with `ruff-format` -- END
   "D1", # Missing docstring for {} -- Inconvenient to enforce
-# The following "D" rules do not correspond to our coding style. We use the pep257 convention, but
-# "D212" should not be ignored. In ruff (0.0.291) we cannot select a rule that is excluded by specifying
-# a convention, hence our only option is to manually replicate it.
+  # The following "D" rules do not correspond to our coding style. We use the pep257 convention, but
+  # "D212" should not be ignored. In ruff (0.0.291) we cannot select a rule that is excluded by specifying
+  # a convention, hence our only option is to manually replicate it.
   "D203", # 1 blank line required before class docstring
   "D213", # Multi-line docstring summary should start at the second line
   "D214", # Section is over-indented ("{name}")
@@ -147,7 +145,6 @@ select = [
   "ICN", # flake8-import-conventions
   "INP", # flake8-no-pep420
   "PIE", # flake8-pie
-  "PT", # flake8-pytest-style
   "Q", # flake8-quotes
   "RSE", # flake8-raise
   "RET", # flake8-return

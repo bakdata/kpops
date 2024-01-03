@@ -6,10 +6,7 @@ Environment variables can be set by using the [export](https://www.unix.com/man-
 
 !!! tip "dotenv files"
 
-    Support for `.env` files is on the [roadmap](https://github.com/bakdata/kpops/issues/20), 
-    but not implemented in KPOps yet. One of the possible ways to still 
-    use one and export the contents manually is with the following command: `#!sh export $(xargs < .env)`.
-    This would work in `bash` suppose there are no spaces inside the values.
+    KPOps currently supports `.env` files only for variables related to the [config](../config.md). Full support for `.env` files is on the [roadmap](https://github.com/bakdata/kpops/issues/20). One of the possible ways to use one and export the contents manually is with the following command: `#!sh export $(xargs < .env)`. This would work in `bash` suppose there are no spaces inside the values.
 
 <!-- dprint-ignore-end -->
 

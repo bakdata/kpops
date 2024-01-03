@@ -3,9 +3,9 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Any, NoReturn
+from typing import NoReturn
 
-from pydantic import Field, validator
+from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -46,7 +46,6 @@ class KafkaConnector(PipelineComponent, ABC):
     :param version: Helm chart version, defaults to "1.0.4"
     :param resetter_values: Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.,
         defaults to dict
-    :param _connector_type: Defines the type of the connector (Source or Sink)
     """
 
     namespace: str = Field(
@@ -71,24 +70,24 @@ class KafkaConnector(PipelineComponent, ABC):
         default_factory=dict,
         description=describe_attr("resetter_values", __doc__),
     )
+    _connector_type: KafkaConnectorType = PrivateAttr()
 
-    _connector_type: KafkaConnectorType = Field(default=..., hidden_from_schema=True)
-
-    @validator("app", pre=True)
+    @field_validator("app", mode="before")
+    @classmethod
     def connector_config_should_have_component_name(
         cls,
         app: KafkaConnectorConfig | dict[str, str],
-        values: dict[str, Any],
-    ) -> dict[str, str]:
+        info: ValidationInfo,
+    ) -> KafkaConnectorConfig:
         if isinstance(app, KafkaConnectorConfig):
-            app = app.dict()
-        component_name = values["prefix"] + values["name"]
+            app = app.model_dump()
+        component_name: str = info.data["prefix"] + info.data["name"]
         connector_name: str | None = app.get("name")
         if connector_name is not None and connector_name != component_name:
             msg = f"Connector name '{connector_name}' should be the same as component name '{component_name}'"
             raise ValueError(msg)
         app["name"] = component_name
-        return app
+        return KafkaConnectorConfig(**app)
 
     @cached_property
     def helm(self) -> Helm:
@@ -121,7 +120,7 @@ class KafkaConnector(PipelineComponent, ABC):
     def helm_flags(self) -> HelmFlags:
         """Return shared flags for Helm commands."""
         return HelmFlags(
-            **self.repo_config.repo_auth_flags.dict(),
+            **self.repo_config.repo_auth_flags.model_dump(),
             version=self.version,
             create_namespace=self.config.create_namespace,
         )
@@ -130,7 +129,7 @@ class KafkaConnector(PipelineComponent, ABC):
     def template_flags(self) -> HelmTemplateFlags:
         """Return flags for Helm template command."""
         return HelmTemplateFlags(
-            **self.helm_flags.dict(),
+            **self.helm_flags.model_dump(),
             api_version=self.config.helm_config.api_version,
         )
 
@@ -245,12 +244,12 @@ class KafkaConnector(PipelineComponent, ABC):
             **KafkaConnectResetterValues(
                 config=KafkaConnectResetterConfig(
                     connector=self.full_name,
-                    brokers=self.config.brokers,
+                    brokers=self.config.kafka_brokers,
                     **kwargs,
                 ),
                 connector_type=self._connector_type.value,
                 name_override=self.full_name,
-            ).dict(),
+            ).model_dump(),
             **self.resetter_values,
         }
 
@@ -282,7 +281,7 @@ class KafkaSourceConnector(KafkaConnector):
         description=describe_attr("offset_topic", __doc__),
     )
 
-    _connector_type = KafkaConnectorType.SOURCE
+    _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
@@ -327,7 +326,7 @@ class KafkaSourceConnector(KafkaConnector):
 class KafkaSinkConnector(KafkaConnector):
     """Kafka sink connector model."""
 
-    _connector_type = KafkaConnectorType.SINK
+    _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SINK)
 
     @override
     def get_input_topics(self) -> list[str]:

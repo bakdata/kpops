@@ -3,7 +3,7 @@ from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING
 
-from pydantic import Extra, Field
+from pydantic import AliasChoices, ConfigDict, Field
 
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
@@ -19,7 +19,6 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import DescConfig
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -45,7 +44,8 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     )
     from_: FromSection | None = Field(
         default=None,
-        alias="from",
+        serialization_alias="from",
+        validation_alias=AliasChoices("from", "from_"),
         title="From",
         description=describe_attr("from_", __doc__),
     )
@@ -54,8 +54,9 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         description=describe_attr("to", __doc__),
     )
 
-    class Config(DescConfig):
-        extra = Extra.allow
+    model_config = ConfigDict(
+        extra="allow",
+    )
 
     def __init__(self, **kwargs) -> None:
         super().__init__(**kwargs)

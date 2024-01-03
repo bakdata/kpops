@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 import logging
 from functools import cached_property
+from typing import TYPE_CHECKING
 
 import httpx
 
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers.topic.exception import (
     KafkaRestProxyError,
     TopicNotFoundException,
@@ -15,6 +17,11 @@ from kpops.component_handlers.topic.model import (
     TopicSpec,
 )
 
+if TYPE_CHECKING:
+    from pydantic import AnyHttpUrl
+
+    from kpops.config import KafkaRestConfig
+
 log = logging.getLogger("KafkaRestProxy")
 
 HEADERS = {"Content-Type": "application/json"}
@@ -23,17 +30,10 @@ HEADERS = {"Content-Type": "application/json"}
 class ProxyWrapper:
     """Wraps Kafka REST Proxy APIs."""
 
-    def __init__(self, pipeline_config: PipelineConfig) -> None:
-        if not pipeline_config.kafka_rest_host:
-            msg = "The Kafka REST Proxy host is not set. Please set the host in the config.yaml using the kafka_rest_host property or set the environemt variable KPOPS_REST_PROXY_HOST."
-            raise ValueError(msg)
-        self._client = httpx.AsyncClient(
-            base_url=f"{pipeline_config.kafka_rest_host}/v3/clusters"
-        )
-        self._sync_client = httpx.Client(
-            base_url=f"{pipeline_config.kafka_rest_host}/v3/clusters"
-        )
-        self._host = pipeline_config.kafka_rest_host
+    def __init__(self, config: KafkaRestConfig) -> None:
+        self._config: KafkaRestConfig = config
+        self._client = httpx.AsyncClient()
+        self._sync_client = httpx.Client()
 
     @cached_property
     def cluster_id(self) -> str:
@@ -48,7 +48,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         :return: The Kafka cluster ID.
         """
-        response = self._sync_client.get("")
+        response = self._sync_client.get(url=f"{self._config.url!s}v3/clusters")
 
         if response.status_code == httpx.codes.OK:
             cluster_information = response.json()
@@ -57,8 +57,8 @@ class ProxyWrapper:
         raise KafkaRestProxyError(response)
 
     @property
-    def host(self) -> str:
-        return self._host
+    def url(self) -> AnyHttpUrl:
+        return self._config.url
 
     async def create_topic(self, topic_spec: TopicSpec) -> None:
         """Create a topic.
@@ -70,9 +70,9 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         """
         response = await self._client.post(
-            url=f"/{self.cluster_id}/topics",
+            url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
-            json=topic_spec.dict(exclude_none=True),
+            json=topic_spec.model_dump(exclude_none=True),
         )
 
         if response.status_code == httpx.codes.CREATED:
@@ -92,7 +92,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         """
         response = await self._client.delete(
-            url=f"/{self.cluster_id}/topics/{topic_name}",
+            url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
 
@@ -113,7 +113,7 @@ class ProxyWrapper:
         :return: Response of the get topic API.
         """
         response = await self._client.get(
-            url=f"/{self.cluster_id}/topics/{topic_name}",
+            url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
 
@@ -143,7 +143,7 @@ class ProxyWrapper:
         :return: The topic configuration.
         """
         response = await self._client.get(
-            url=f"/{self.cluster_id}/topics/{topic_name}/configs",
+            url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",
             headers=HEADERS,
         )
 
@@ -175,7 +175,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         """
         response = await self._client.post(
-            url=f"/{self.cluster_id}/topics/{topic_name}/configs:alter",
+            url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={"data": json_body},
         )
@@ -196,7 +196,7 @@ class ProxyWrapper:
         :return: The broker configuration.
         """
         response = await self._client.get(
-            url=f"/{self.cluster_id}/brokers/-/configs",
+            url=f"{self.url!s}v3/clusters/{self.cluster_id}/brokers/-/configs",
             headers=HEADERS,
         )
 

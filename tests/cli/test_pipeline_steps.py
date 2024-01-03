@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import cast
 from unittest.mock import MagicMock
 
@@ -6,7 +6,8 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.cli.main import FilterType, get_steps_to_apply
-from kpops.pipeline_generator.pipeline import Pipeline
+from kpops.components import PipelineComponent
+from kpops.pipeline import Pipeline
 
 PREFIX = "example-prefix-"
 
@@ -15,27 +16,24 @@ PREFIX = "example-prefix-"
 class TestComponent:
     __test__ = False
     name: str
+    id: str
+    inputs: list[str] = field(default_factory=list)
+    outputs: list[str] = field(default_factory=list)
     prefix: str = PREFIX
 
 
-test_component_1 = TestComponent("example1")
-test_component_2 = TestComponent("example2")
-test_component_3 = TestComponent("example3")
+test_component_1 = TestComponent("example1", "example1")
+test_component_2 = TestComponent("example2", "example2")
+test_component_3 = TestComponent("example3", "example3")
 
 
 @pytest.fixture(autouse=True)
 def pipeline() -> Pipeline:
-    class TestPipeline:
-        components = [
-            test_component_1,
-            test_component_2,
-            test_component_3,
-        ]
-
-        def __iter__(self):
-            return iter(self.components)
-
-    return cast(Pipeline, TestPipeline())
+    pipeline = Pipeline()
+    pipeline.add(cast(PipelineComponent, test_component_1))
+    pipeline.add(cast(PipelineComponent, test_component_2))
+    pipeline.add(cast(PipelineComponent, test_component_3))
+    return pipeline
 
 
 @pytest.fixture(autouse=True)

@@ -1,5 +1,6 @@
 import inspect
 import logging
+from abc import ABC
 from collections import deque
 from collections.abc import Sequence
 from functools import cached_property
@@ -7,16 +8,17 @@ from pathlib import Path
 from typing import TypeVar
 
 import typer
-from pydantic import BaseModel, Field
+from pydantic import AliasChoices, ConfigDict, Field
+from pydantic.json_schema import SkipJsonSchema
 
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
+from kpops.config import KpopsConfig
 from kpops.utils import cached_classproperty
 from kpops.utils.dict_ops import update_nested
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
-from kpops.utils.pydantic import DescConfig, to_dash
-from kpops.utils.yaml_loading import load_yaml_file
+from kpops.utils.pydantic import DescConfigModel, to_dash
+from kpops.utils.yaml import load_yaml_file
 
 try:
     from typing import Self
@@ -26,7 +28,7 @@ except ImportError:
 log = logging.getLogger("BaseDefaultsComponent")
 
 
-class BaseDefaultsComponent(BaseModel):
+class BaseDefaultsComponent(DescConfigModel, ABC):
     """Base for all components, handles defaults.
 
     Component defaults are usually provided in a yaml file called
@@ -34,40 +36,37 @@ class BaseDefaultsComponent(BaseModel):
     correctly to the component.
 
     :param enrich: Whether to enrich component with defaults, defaults to False
-    :param config: Pipeline configuration to be accessed by this component
+    :param config: KPOps configuration to be accessed by this component
     :param handlers: Component handlers to be accessed by this component
     :param validate: Whether to run custom validation on the component, defaults to True
     """
 
-    enrich: bool = Field(
+    model_config = ConfigDict(
+        arbitrary_types_allowed=True,
+        ignored_types=(cached_property, cached_classproperty),
+    )
+
+    enrich: SkipJsonSchema[bool] = Field(
         default=False,
         description=describe_attr("enrich", __doc__),
         exclude=True,
-        hidden_from_schema=True,
     )
-    config: PipelineConfig = Field(
+    config: SkipJsonSchema[KpopsConfig] = Field(
         default=...,
         description=describe_attr("config", __doc__),
         exclude=True,
-        hidden_from_schema=True,
     )
-    handlers: ComponentHandlers = Field(
+    handlers: SkipJsonSchema[ComponentHandlers] = Field(
         default=...,
         description=describe_attr("handlers", __doc__),
         exclude=True,
-        hidden_from_schema=True,
     )
-    validate_: bool = Field(
-        alias="validate",
+    validate_: SkipJsonSchema[bool] = Field(
+        validation_alias=AliasChoices("validate", "validate_"),
         default=True,
         description=describe_attr("validate", __doc__),
         exclude=True,
-        hidden_from_schema=True,
     )
-
-    class Config(DescConfig):
-        arbitrary_types_allowed = True
-        keep_untouched = (cached_property, cached_classproperty)
 
     def __init__(self, **kwargs) -> None:
         if kwargs.get("enrich", True):
@@ -90,7 +89,7 @@ class BaseDefaultsComponent(BaseModel):
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inheritted defaults
         """
-        config: PipelineConfig = kwargs["config"]
+        config: KpopsConfig = kwargs["config"]
         log.debug(
             typer.style(
                 "Enriching component of type ", fg=typer.colors.GREEN, bold=False
@@ -100,7 +99,7 @@ class BaseDefaultsComponent(BaseModel):
             )
         )
         main_default_file_path, environment_default_file_path = get_defaults_file_paths(
-            config
+            config, ENV.get("environment")
         )
         defaults = load_defaults(
             self.__class__, main_default_file_path, environment_default_file_path
@@ -176,14 +175,17 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
     return value
 
 
-def get_defaults_file_paths(config: PipelineConfig) -> tuple[Path, Path]:
+def get_defaults_file_paths(
+    config: KpopsConfig, environment: str | None
+) -> tuple[Path, Path]:
     """Return the paths to the main and the environment defaults-files.
 
     The files need not exist, this function will only check if the dir set in
     `config.defaults_path` exists and return paths to the defaults files
     calculated from it. It is up to the caller to handle any false paths.
 
-    :param config: Pipeline configuration
+    :param config: KPOps configuration
+    :param environment: Environment
     :returns: The defaults files paths
     """
     defaults_dir = Path(config.defaults_path).resolve()
@@ -191,17 +193,20 @@ def get_defaults_file_paths(config: PipelineConfig) -> tuple[Path, Path]:
         config.defaults_filename_prefix
     ).with_suffix(".yaml")
 
-    environment_default_file_path = defaults_dir / Path(
-        f"{config.defaults_filename_prefix}_{config.environment}"
-    ).with_suffix(".yaml")
+    environment_default_file_path = (
+        defaults_dir
+        / Path(f"{config.defaults_filename_prefix}_{environment}").with_suffix(".yaml")
+        if environment is not None
+        else main_default_file_path
+    )
 
     return main_default_file_path, environment_default_file_path
 
 
-T = TypeVar("T")
+_T = TypeVar("_T")
 
 
-def deduplicate(seq: Sequence[T]) -> list[T]:
+def deduplicate(seq: Sequence[_T]) -> list[_T]:
     """Deduplicate items of a sequence while preserving its order.
 
     :param seq: Sequence to be 'cleaned'

@@ -4,7 +4,6 @@ from unittest.mock import AsyncMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
@@ -17,6 +16,7 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
+from kpops.config import KpopsConfig, TopicNameConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
@@ -34,10 +34,9 @@ class TestStreamsApp:
         )
 
     @pytest.fixture()
-    def config(self) -> PipelineConfig:
-        return PipelineConfig(
+    def config(self) -> KpopsConfig:
+        return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
-            environment="development",
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
@@ -47,7 +46,7 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def streams_app(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
             name=self.STREAMS_APP_NAME,
@@ -68,7 +67,7 @@ class TestStreamsApp:
             },
         )
 
-    def test_set_topics(self, config: PipelineConfig, handlers: ComponentHandlers):
+    def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         streams_app = StreamsApp(
             name=self.STREAMS_APP_NAME,
             config=config,
@@ -113,7 +112,7 @@ class TestStreamsApp:
         assert "extraInputPatterns" in streams_config
 
     def test_no_empty_input_topic(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
             name=self.STREAMS_APP_NAME,
@@ -143,7 +142,7 @@ class TestStreamsApp:
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" not in streams_config
 
-    def test_should_validate(self, config: PipelineConfig, handlers: ComponentHandlers):
+    def test_should_validate(self, config: KpopsConfig, handlers: ComponentHandlers):
         # An exception should be raised when both role and type are defined and type is input
         with pytest.raises(
             ValueError, match="Define role only if `type` is `pattern` or `None`"
@@ -193,7 +192,7 @@ class TestStreamsApp:
             )
 
     def test_set_streams_output_from_to(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
             name=self.STREAMS_APP_NAME,
@@ -232,7 +231,7 @@ class TestStreamsApp:
         assert streams_app.app.streams.error_topic == "${error_topic_name}"
 
     def test_weave_inputs_from_prev_component(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
             name=self.STREAMS_APP_NAME,
@@ -270,7 +269,7 @@ class TestStreamsApp:
     @pytest.mark.asyncio()
     async def test_deploy_order_when_dry_run_is_false(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
@@ -450,10 +449,10 @@ class TestStreamsApp:
 
     @pytest.mark.asyncio()
     async def test_get_input_output_topics(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            name=self.STREAMS_APP_NAME,
+            name="my-app",
             config=config,
             handlers=handlers,
             **{
