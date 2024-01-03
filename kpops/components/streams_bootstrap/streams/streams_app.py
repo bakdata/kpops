@@ -7,6 +7,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaApp,
     KafkaAppCleaner,
 )
+from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import StreamsAppValues
 from kpops.utils.docstring import describe_attr
@@ -21,8 +22,8 @@ class StreamsAppCleaner(KafkaAppCleaner):
         return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
 
-class StreamsApp(KafkaApp):
-    """StreamsApp component that configures a streams bootstrap app.
+class StreamsApp(StreamsBootstrap, KafkaApp):
+    """StreamsApp component that configures a streams-bootstrap app.
 
     :param app: Application-specific settings
     """

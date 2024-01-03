@@ -452,7 +452,7 @@
         },
         "ProducerApp": {
             "additionalProperties": true,
-            "description": "Producer component.\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
+            "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -531,8 +531,8 @@
             },
             "required": [
                 "name",
-                "namespace",
-                "app"
+                "app",
+                "namespace"
             ],
             "title": "ProducerApp",
             "type": "object"
@@ -689,7 +689,7 @@
         },
         "StreamsApp": {
             "additionalProperties": true,
-            "description": "StreamsApp component that configures a streams bootstrap app.",
+            "description": "StreamsApp component that configures a streams-bootstrap app.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -775,8 +775,8 @@
             },
             "required": [
                 "name",
-                "namespace",
-                "app"
+                "app",
+                "namespace"
             ],
             "title": "StreamsApp",
             "type": "object"
@@ -863,7 +863,7 @@
         },
         "StreamsAppValues": {
             "additionalProperties": true,
-            "description": "StreamsBoostrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
             "properties": {
                 "autoscaling": {
                     "anyOf": [
@@ -875,7 +875,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Kubernetes Event-driven Autoscaling config"
+                    "description": "Kubernetes event-driven autoscaling config"
                 },
                 "nameOverride": {
                     "anyOf": [
@@ -896,7 +896,7 @@
                             "$ref": "#/$defs/StreamsConfig"
                         }
                     ],
-                    "description": "Streams Bootstrap streams section"
+                    "description": "streams-bootstrap streams section"
                 }
             },
             "required": [

@@ -11,6 +11,7 @@ from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
 )
+from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
@@ -27,11 +28,11 @@ class ProducerAppCleaner(KafkaAppCleaner):
         )
 
 
-class ProducerApp(KafkaApp):
+class ProducerApp(StreamsBootstrap, KafkaApp):
     """Producer component.
 
-    This producer holds configuration to use as values for the streams bootstrap
-    producer helm chart.
+    This producer holds configuration to use as values for the streams-bootstrap
+    producer Helm chart.
 
     Note that the producer does not support error topics.
 
