@@ -52,7 +52,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            namespace="test-namespace",
             to=ToSection(
                 topics={
                     TopicName("${output_topic_name}"): TopicConfig(
@@ -76,7 +75,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             app=KafkaConnectorConfig(
                 **{**connector_config.model_dump(), "topics": topic_name}
             ),
-            namespace="test-namespace",
         )
         assert getattr(connector.app, "topics") == topic_name
 
@@ -88,7 +86,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             app=KafkaConnectorConfig(
                 **{**connector_config.model_dump(), "topics.regex": topic_pattern}
             ),
-            namespace="test-namespace",
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern
 
@@ -105,7 +102,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            namespace="test-namespace",
             from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                 topics={
                     topic1: FromTopic(type=InputTopicTypes.INPUT),
@@ -131,7 +127,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            namespace="test-namespace",
             from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                 topics={topic_pattern: FromTopic(type=InputTopicTypes.PATTERN)}
             ),
@@ -257,8 +252,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
     def test_clean_when_dry_run_is_false(
         self,
         connector: KafkaSinkConnector,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
         helm_mock: MagicMock,
         log_info_mock: MagicMock,
         dry_run_handler: MagicMock,
@@ -345,7 +338,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            namespace="test-namespace",
         )
 
         dry_run = True
@@ -366,7 +358,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            namespace="test-namespace",
         )
 
         mock_delete_topics = mocker.patch.object(

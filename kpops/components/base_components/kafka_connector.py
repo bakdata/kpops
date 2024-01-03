@@ -130,7 +130,6 @@ class KafkaConnector(PipelineComponent, ABC):
                 config=KafkaConnectorResetterConfig(
                     connector=self.full_name,
                     brokers=self.config.kafka_brokers,
-                    # **kwargs,  # TODO
                 ),
                 **self.resetter_values.model_dump(),
             ),

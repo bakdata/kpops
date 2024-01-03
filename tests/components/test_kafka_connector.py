@@ -3,7 +3,6 @@ from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
-from pytest_mock import MockerFixture
 
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig
@@ -40,18 +39,6 @@ class TestKafkaConnector:
             topic_handler=MagicMock(),
         )
 
-    @pytest.fixture(autouse=True)
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.Helm"
-        ).return_value
-
-    @pytest.fixture()
-    def dry_run_handler(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.DryRunHandler"
-        ).return_value
-
     @pytest.fixture()
     def connector_config(self) -> KafkaConnectorConfig:
         return KafkaConnectorConfig(
@@ -72,7 +59,6 @@ class TestKafkaConnector:
             config=config,
             handlers=handlers,
             app=connector_config,
-            namespace="test-namespace",
         )
         assert connector.app.name == CONNECTOR_FULL_NAME
 
@@ -81,7 +67,6 @@ class TestKafkaConnector:
             config=config,
             handlers=handlers,
             app={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues]
-            namespace="test-namespace",
         )
         assert connector.app.name == CONNECTOR_FULL_NAME
 
@@ -96,7 +81,6 @@ class TestKafkaConnector:
                 config=config,
                 handlers=handlers,
                 app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore[reportGeneralTypeIssues]
-                namespace="test-namespace",
             )
 
         with pytest.raises(
@@ -110,7 +94,6 @@ class TestKafkaConnector:
                 config=config,
                 handlers=handlers,
                 app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues]
-                namespace="test-namespace",
             )
 
     def test_resetter_release_name(
@@ -124,7 +107,6 @@ class TestKafkaConnector:
             config=config,
             handlers=handlers,
             app=connector_config,
-            namespace="test-namespace",
         )
         assert connector.app.name == CONNECTOR_FULL_NAME
-        assert connector._resetter_release_name == CONNECTOR_CLEAN_RELEASE_NAME
+        assert connector._resetter.helm_release_name == CONNECTOR_CLEAN_RELEASE_NAME

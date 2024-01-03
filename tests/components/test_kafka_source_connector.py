@@ -47,7 +47,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            namespace="test-namespace",
             to=ToSection(
                 topics={
                     TopicName("${output_topic_name}"): TopicConfig(
@@ -70,7 +69,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 config=config,
                 handlers=handlers,
                 app=connector_config,
-                namespace="test-namespace",
                 from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                     topics={
                         TopicName("connector-topic"): FromTopic(
@@ -281,7 +279,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            namespace="test-namespace",
             offset_topic="kafka-connect-offsets",
         )
         assert connector.to is None
@@ -355,7 +352,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            namespace="test-namespace",
             offset_topic="kafka-connect-offsets",
         )
         assert connector.to is None
