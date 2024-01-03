@@ -260,40 +260,19 @@
                     "title": "Name",
                     "type": "string"
                 },
-                "namespace": {
-                    "description": "Namespace in which the component shall be deployed",
-                    "title": "Namespace",
-                    "type": "string"
-                },
                 "prefix": {
                     "default": "${pipeline_name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
                 },
-                "repo_config": {
+                "resetter_values": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/HelmRepoConfig"
+                            "$ref": "#/$defs/HelmAppValues"
                         }
                     ],
-                    "default": {
-                        "repo_auth_flags": {
-                            "ca_file": null,
-                            "cert_file": null,
-                            "insecure_skip_tls_verify": false,
-                            "password": null,
-                            "username": null
-                        },
-                        "repository_name": "bakdata-kafka-connect-resetter",
-                        "url": "https://bakdata.github.io/kafka-connect-resetter/"
-                    },
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
-                },
-                "resetter_values": {
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
-                    "title": "Resetter Values",
-                    "type": "object"
+                    "description": "Overriding Kafka Connect Resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
                     "anyOf": [
@@ -306,24 +285,10 @@
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
-                },
-                "version": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": "1.0.4",
-                    "description": "Helm chart version",
-                    "title": "Version"
                 }
             },
             "required": [
                 "name",
-                "namespace",
                 "app"
             ],
             "title": "KafkaSinkConnector",
@@ -359,11 +324,6 @@
                     "title": "Name",
                     "type": "string"
                 },
-                "namespace": {
-                    "description": "Namespace in which the component shall be deployed",
-                    "title": "Namespace",
-                    "type": "string"
-                },
                 "offset_topic": {
                     "anyOf": [
                         {
@@ -383,29 +343,13 @@
                     "title": "Prefix",
                     "type": "string"
                 },
-                "repo_config": {
+                "resetter_values": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/HelmRepoConfig"
+                            "$ref": "#/$defs/HelmAppValues"
                         }
                     ],
-                    "default": {
-                        "repo_auth_flags": {
-                            "ca_file": null,
-                            "cert_file": null,
-                            "insecure_skip_tls_verify": false,
-                            "password": null,
-                            "username": null
-                        },
-                        "repository_name": "bakdata-kafka-connect-resetter",
-                        "url": "https://bakdata.github.io/kafka-connect-resetter/"
-                    },
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
-                },
-                "resetter_values": {
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
-                    "title": "Resetter Values",
-                    "type": "object"
+                    "description": "Overriding Kafka Connect Resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
                     "anyOf": [
@@ -418,24 +362,10 @@
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
-                },
-                "version": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": "1.0.4",
-                    "description": "Helm chart version",
-                    "title": "Version"
                 }
             },
             "required": [
                 "name",
-                "namespace",
                 "app"
             ],
             "title": "KafkaSourceConnector",
