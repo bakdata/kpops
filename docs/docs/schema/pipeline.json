@@ -266,13 +266,18 @@
                     "title": "Prefix",
                     "type": "string"
                 },
+                "resetter_namespace": {
+                    "description": "Namespace for the Kafka Connect resetter",
+                    "title": "Resetter Namespace",
+                    "type": "string"
+                },
                 "resetter_values": {
                     "allOf": [
                         {
                             "$ref": "#/$defs/HelmAppValues"
                         }
                     ],
-                    "description": "Overriding Kafka Connect Resetter Helm values, e.g. to override the image tag etc."
+                    "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
                     "anyOf": [
@@ -289,7 +294,8 @@
             },
             "required": [
                 "name",
-                "app"
+                "app",
+                "resetter_namespace"
             ],
             "title": "KafkaSinkConnector",
             "type": "object"
@@ -343,13 +349,18 @@
                     "title": "Prefix",
                     "type": "string"
                 },
+                "resetter_namespace": {
+                    "description": "Namespace for the Kafka Connect resetter",
+                    "title": "Resetter Namespace",
+                    "type": "string"
+                },
                 "resetter_values": {
                     "allOf": [
                         {
                             "$ref": "#/$defs/HelmAppValues"
                         }
                     ],
-                    "description": "Overriding Kafka Connect Resetter Helm values, e.g. to override the image tag etc."
+                    "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
                     "anyOf": [
@@ -366,7 +377,8 @@
             },
             "required": [
                 "name",
-                "app"
+                "app",
+                "resetter_namespace"
             ],
             "title": "KafkaSourceConnector",
             "type": "object"

@@ -52,6 +52,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
+            resetter_namespace="test-namespace",
             to=ToSection(
                 topics={
                     TopicName("${output_topic_name}"): TopicConfig(
@@ -75,6 +76,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             app=KafkaConnectorConfig(
                 **{**connector_config.model_dump(), "topics": topic_name}
             ),
+            resetter_namespace="test-namespace",
         )
         assert getattr(connector.app, "topics") == topic_name
 
@@ -102,6 +104,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
+            resetter_namespace="test-namespace",
             from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                 topics={
                     topic1: FromTopic(type=InputTopicTypes.INPUT),
@@ -127,6 +130,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
+            resetter_namespace="test-namespace",
             from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                 topics={topic_pattern: FromTopic(type=InputTopicTypes.PATTERN)}
             ),
@@ -182,8 +186,8 @@ class TestKafkaSinkConnector(TestKafkaConnector):
     def test_reset_when_dry_run_is_false(
         self,
         connector: KafkaSinkConnector,
-        helm_mock: MagicMock,
-        dry_run_handler: MagicMock,
+        # helm_mock: MagicMock,
+        # dry_run_handler: MagicMock,
         mocker: MockerFixture,
     ):
         mock_delete_topics = mocker.patch.object(
@@ -194,7 +198,10 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         )
         mock = mocker.MagicMock()
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
+        helm_mock = mocker.patch.object(connector._resetter, "helm")
         mock.attach_mock(helm_mock, "helm")
+
+        dry_run_handler = mocker.patch.object(connector._resetter, "dry_run_handler")
 
         dry_run = False
         connector.reset(dry_run=dry_run)
@@ -338,6 +345,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
+            resetter_namespace="test-namespace",
         )
 
         dry_run = True
@@ -358,6 +366,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
+            resetter_namespace="test-namespace",
         )
 
         mock_delete_topics = mocker.patch.object(

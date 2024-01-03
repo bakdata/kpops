@@ -104,14 +104,17 @@ class KafkaConnector(PipelineComponent, ABC):
     Should only be used to set defaults
 
     :param app: Application-specific settings
-    :param namespace: Namespace in which the component shall be deployed
-    :param resetter_values: Overriding Kafka Connect Resetter Helm values, e.g. to override the image tag etc.,
+    :param resetter_namespace: Namespace for the Kafka Connect resetter
+    :param resetter_values: Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc.,
         defaults to empty HelmAppValues
     """
 
     app: KafkaConnectorConfig = Field(
         default=...,
         description=describe_attr("app", __doc__),
+    )
+    resetter_namespace: str = Field(
+        default=..., description=describe_attr("resetter_namespace", __doc__)
     )
     resetter_values: HelmAppValues = Field(
         default_factory=HelmAppValues,
@@ -124,7 +127,8 @@ class KafkaConnector(PipelineComponent, ABC):
         return KafkaConnectorResetter(
             config=self.config,
             handlers=self.handlers,
-            **self.model_dump(),
+            namespace=self.resetter_namespace,
+            **self.model_dump(exclude={"app"}),
             app=KafkaConnectorResetterValues(
                 connector_type=self._connector_type.value,
                 config=KafkaConnectorResetterConfig(
