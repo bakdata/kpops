@@ -4,6 +4,7 @@ flowchart BT
     KafkaApp --> PipelineComponent
     HelmApp --> KubernetesApp
     StreamsBootstrap --> HelmApp
+    RcloneCopy --> StreamsBootstrap
     StreamsApp --> KafkaApp
     StreamsApp --> StreamsBootstrap
     ProducerApp --> KafkaApp
@@ -16,6 +17,7 @@ flowchart BT
     click HelmApp "/kpops/user/core-concepts/components/helm-app"
     click KafkaApp "/kpops/user/core-concepts/components/kafka-app"
     click StreamsBootstrap "/kpops/user/core-concepts/components/streams-bootstrap"
+    click RcloneCopy "/kpops/user/core-concepts/components/rclone-copy"
     click StreamsApp "/kpops/user/core-concepts/components/streams-app"
     click ProducerApp "/kpops/user/core-concepts/components/producer-app"
     click KafkaConnector "/kpops/user/core-concepts/components/kafka-connector"
