@@ -8,7 +8,7 @@ from typing import Annotated, Literal, Union
 
 from pydantic import Field, RootModel
 from pydantic.fields import FieldInfo
-from pydantic.json_schema import GenerateJsonSchema, SkipJsonSchema, model_json_schema
+from pydantic.json_schema import GenerateJsonSchema, model_json_schema
 from pydantic_core.core_schema import (
     DefinitionsSchema,
     LiteralSchema,
@@ -108,7 +108,6 @@ def gen_pipeline_schema(
         component.model_fields["type"] = FieldInfo(
             annotation=Literal[component.type],  # type:ignore[valid-type]
             default=component.type,
-            exclude=True,
         )
         core_schema: DefinitionsSchema = component.__pydantic_core_schema__  # pyright:ignore[reportGeneralTypeIssues]
         model_schema: ModelFieldsSchema = core_schema["schema"]["schema"]  # pyright:ignore[reportGeneralTypeIssues,reportTypedDictNotRequiredAccess]
@@ -117,12 +116,6 @@ def gen_pipeline_schema(
             schema=LiteralSchema(
                 type="literal",
                 expected=[component.type],
-                metadata={
-                    "pydantic.internal.needs_apply_discriminated_union": False,
-                    "pydantic_js_annotation_functions": [
-                        SkipJsonSchema().__get_pydantic_json_schema__  # pyright:ignore[reportGeneralTypeIssues]
-                    ],
-                },
             ),
         )
 
