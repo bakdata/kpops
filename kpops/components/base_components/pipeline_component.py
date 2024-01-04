@@ -189,7 +189,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         return [self]
 
     def manifest(self) -> Resource:
-        """Render final component resources, e.g. Kubernetes manifest."""
+        """Render final component resources, e.g. Kubernetes manifests."""
         return []
 
     def deploy(self, dry_run: bool) -> None:
