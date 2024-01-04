@@ -620,6 +620,106 @@
             "title": "ProducerStreamsConfig",
             "type": "object"
         },
+        "RcloneCopy": {
+            "additionalProperties": true,
+            "description": "",
+            "properties": {
+                "app": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/HelmAppValues"
+                        }
+                    ],
+                    "description": "Helm app values"
+                },
+                "from": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/FromSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline_name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "rclone_conf_path": {
+                    "format": "path",
+                    "title": "Rclone Conf Path",
+                    "type": "string"
+                },
+                "repo_config": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/HelmRepoConfig"
+                        }
+                    ],
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "cert_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-streams-bootstrap",
+                        "url": "https://bakdata.github.io/streams-bootstrap/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "to": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
+                },
+                "version": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": "2.9.0",
+                    "description": "Helm chart version",
+                    "title": "Version"
+                }
+            },
+            "required": [
+                "name",
+                "namespace",
+                "app",
+                "rclone_conf_path"
+            ],
+            "title": "RcloneCopy",
+            "type": "object"
+        },
         "RepoAuthFlags": {
             "description": "Authorisation-related flags for `helm repo`.",
             "properties": {
@@ -1167,6 +1267,7 @@
                 "kafka-sink-connector": "#/$defs/KafkaSinkConnector",
                 "kafka-source-connector": "#/$defs/KafkaSourceConnector",
                 "producer-app": "#/$defs/ProducerApp",
+                "rclone-copy": "#/$defs/RcloneCopy",
                 "streams-app": "#/$defs/StreamsApp"
             },
             "propertyName": "type"
@@ -1183,6 +1284,9 @@
             },
             {
                 "$ref": "#/$defs/ProducerApp"
+            },
+            {
+                "$ref": "#/$defs/RcloneCopy"
             },
             {
                 "$ref": "#/$defs/StreamsApp"

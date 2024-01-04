@@ -66,6 +66,16 @@ kpops_components_fields:
   - app
   - repo_config
   - version
+  rclone-copy:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - app
+  - repo_config
+  - version
+  - rclone_conf_path
   streams-app:
   - name
   - prefix
@@ -93,5 +103,6 @@ kpops_components_inheritance_ref:
   kubernetes-app: pipeline-component
   pipeline-component: base-defaults-component
   producer-app: kafka-app
+  rclone-copy: streams-bootstrap
   streams-app: kafka-app
   streams-bootstrap: helm-app
