@@ -8,19 +8,15 @@ from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import (
     HelmFlags,
-    HelmRepoConfig,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
+from kpops.components.base_components.helm_app import HelmAppValues
+from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
 log = logging.getLogger("KafkaApp")
-
-STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
-    repository_name="bakdata-streams-bootstrap",
-    url="https://bakdata.github.io/streams-bootstrap/",
-)
 
 
 class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
@@ -51,8 +47,8 @@ class KafkaAppValues(HelmAppValues):
     )
 
 
-class KafkaAppCleaner(HelmApp):
-    repo_config: HelmRepoConfig = STREAMS_BOOTSTRAP_HELM_REPO
+class KafkaAppCleaner(StreamsBootstrap):
+    """Helm app for resetting and cleaning a streams-bootstrap app."""
 
     @property
     @override
@@ -92,28 +88,17 @@ class KafkaAppCleaner(HelmApp):
             self.destroy(dry_run)
 
 
-class KafkaApp(HelmApp, ABC):
+class KafkaApp(PipelineComponent, ABC):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.
 
     :param app: Application-specific settings
-    :param repo_config: Configuration of the Helm chart repo to be used for
-        deploying the component, defaults to streams-bootstrap Helm repo
-    :param version: Helm chart version, defaults to "2.9.0"
     """
 
     app: KafkaAppValues = Field(
         default=...,
         description=describe_attr("app", __doc__),
-    )
-    repo_config: HelmRepoConfig = Field(
-        default=STREAMS_BOOTSTRAP_HELM_REPO,
-        description=describe_attr("repo_config", __doc__),
-    )
-    version: str | None = Field(
-        default="2.9.0",
-        description=describe_attr("version", __doc__),
     )
 
     @override
