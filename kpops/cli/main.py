@@ -20,7 +20,12 @@ from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline import Pipeline, PipelineGenerator
-from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
+from kpops.utils.gen_schema import (
+    SchemaScope,
+    gen_config_schema,
+    gen_defaults_schema,
+    gen_pipeline_schema,
+)
 from kpops.utils.pydantic import YamlConfigSettingsSource
 from kpops.utils.yaml import print_yaml
 
@@ -246,6 +251,11 @@ def schema(
         case SchemaScope.PIPELINE:
             kpops_config = create_kpops_config(config)
             gen_pipeline_schema(
+                kpops_config.components_module, include_stock_components
+            )
+        case SchemaScope.DEFAULTS:
+            kpops_config = create_kpops_config(config)
+            gen_defaults_schema(
                 kpops_config.components_module, include_stock_components
             )
         case SchemaScope.CONFIG:
