@@ -28,7 +28,7 @@ class StreamsConfig(KafkaStreamsConfig):
     :param output_topic: Output topic, defaults to None
     :param error_topic: Error topic, defaults to None
     :param config: Configuration, defaults to {}
-    :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to False
+    :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
     """
 
     input_topics: list[str] = Field(
