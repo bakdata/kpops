@@ -1800,11 +1800,11 @@
 <p>Generate json schema.</p>
 <p>The schemas can be used to enable support for kpops files in a text editor.</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SCOPE:<span class="o">{</span>pipeline<span class="p">|</span>config<span class="o">}</span>
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SCOPE:<span class="o">{</span>pipeline<span class="p">|</span>defaults<span class="p">|</span>config<span class="o">}</span>
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>SCOPE:{pipeline|config}</code>: 
+<li><code>SCOPE:{pipeline|defaults|config}</code>: 
         Scope of the generated schema<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide components module in config.
