@@ -5,16 +5,22 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmRepoConfig,
+)
+from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
-    KubernetesAppConfig,
+    KubernetesAppValues,
 )
 from kpops.config import KpopsConfig
+
+HELM_RELEASE_NAME = create_helm_release_name("${pipeline_name}-test-kubernetes-app")
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
-class KubernetesTestValue(KubernetesAppConfig):
+class KubernetesTestValues(KubernetesAppValues):
     foo: str
 
 
@@ -36,21 +42,25 @@ class TestKubernetesApp:
         return mocker.patch("kpops.components.base_components.kubernetes_app.log.info")
 
     @pytest.fixture()
-    def app_value(self) -> KubernetesTestValue:
-        return KubernetesTestValue(foo="foo")
+    def app_values(self) -> KubernetesTestValues:
+        return KubernetesTestValues(foo="foo")
+
+    @pytest.fixture()
+    def repo_config(self) -> HelmRepoConfig:
+        return HelmRepoConfig(repository_name="test", url="https://bakdata.com")
 
     @pytest.fixture()
     def kubernetes_app(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        app_value: KubernetesTestValue,
+        app_values: KubernetesTestValues,
     ) -> KubernetesApp:
         return KubernetesApp(
             name="test-kubernetes-app",
             config=config,
             handlers=handlers,
-            app=app_value,
+            app=app_values,
             namespace="test-namespace",
         )
 
@@ -58,7 +68,7 @@ class TestKubernetesApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        app_value: KubernetesTestValue,
+        app_values: KubernetesTestValues,
     ):
         with pytest.raises(
             ValueError, match=r"The component name .* is invalid for Kubernetes."
@@ -67,7 +77,7 @@ class TestKubernetesApp:
                 name="Not-Compatible*",
                 config=config,
                 handlers=handlers,
-                app=app_value,
+                app=app_values,
                 namespace="test-namespace",
             )
 
@@ -78,7 +88,7 @@ class TestKubernetesApp:
                 name="snake_case*",
                 config=config,
                 handlers=handlers,
-                app=app_value,
+                app=app_values,
                 namespace="test-namespace",
             )
 
@@ -86,6 +96,6 @@ class TestKubernetesApp:
             name="valid-name",
             config=config,
             handlers=handlers,
-            app=app_value,
+            app=app_values,
             namespace="test-namespace",
         )
