@@ -85,7 +85,7 @@ def _add_components(
     :return: Extended tuple
     """
     if components is None:
-        components = tuple()  # noqa: C408
+        components = ()
     # Set of existing types, against which to check the new ones
     defined_component_types = {component.type for component in components}
     custom_components = (
