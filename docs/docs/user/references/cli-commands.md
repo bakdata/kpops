@@ -186,12 +186,12 @@ The schemas can be used to enable support for KPOps files in a text editor.
 **Usage**:
 
 ```console
-$ kpops schema [OPTIONS] SCOPE:{pipeline|config}
+$ kpops schema [OPTIONS] SCOPE:{pipeline|defaults|config}
 ```
 
 **Arguments**:
 
-* `SCOPE:{pipeline|config}`: 
+* `SCOPE:{pipeline|defaults|config}`: 
         Scope of the generated schema
         
 
