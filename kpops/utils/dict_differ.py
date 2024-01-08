@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from difflib import Differ
 from enum import Enum
@@ -78,12 +79,12 @@ class Diff(Generic[T]):
         return f"{key_1}.{key_2}"
 
 
-def render_diff(d1: dict, d2: dict, ignore: set[str] | None = None) -> str | None:
+def render_diff(d1: Mapping, d2: Mapping, ignore: set[str] | None = None) -> str | None:
     differences = list(diff(d1, d2, ignore=ignore))
     if not differences:
         return None
 
-    d2_filtered: dict = patch(differences, d1)
+    d2_filtered: Mapping = patch(differences, d1)
     return "".join(
         colorize_diff(
             differ.compare(
@@ -109,5 +110,5 @@ def colorize_line(line: str) -> str:
     return line
 
 
-def to_yaml(data: dict) -> Sequence[str]:
+def to_yaml(data: Mapping) -> Sequence[str]:
     return yaml.dump(data, sort_keys=True).splitlines(keepends=True)

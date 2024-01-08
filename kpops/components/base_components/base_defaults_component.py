@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import TypeVar
 
 import typer
-from pydantic import AliasChoices, ConfigDict, Field
+from pydantic import AliasChoices, ConfigDict, Field, computed_field
 from pydantic.json_schema import SkipJsonSchema
 
 from kpops.component_handlers import ComponentHandlers
@@ -75,6 +75,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         if kwargs.get("validate", True):
             self._validate_custom(**kwargs)
 
+    @computed_field
     @cached_classproperty
     def type(cls: type[Self]) -> str:  # pyright: ignore[reportGeneralTypeIssues]
         """Return calling component's type.
