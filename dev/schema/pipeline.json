@@ -66,10 +66,10 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/HelmAppValues"
+                            "$ref": "#/$defs/KubernetesAppConfig"
                         }
                     ],
-                    "description": "Helm app values"
+                    "description": "Application-specific settings"
                 },
                 "from": {
                     "anyOf": [
@@ -144,27 +144,6 @@
                 "app"
             ],
             "title": "HelmApp",
-            "type": "object"
-        },
-        "HelmAppValues": {
-            "additionalProperties": true,
-            "description": "Helm app values.",
-            "properties": {
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Override name with this value",
-                    "title": "Nameoverride"
-                }
-            },
-            "title": "HelmAppValues",
             "type": "object"
         },
         "HelmRepoConfig": {
@@ -441,6 +420,13 @@
             "title": "KafkaSourceConnector",
             "type": "object"
         },
+        "KubernetesAppConfig": {
+            "additionalProperties": true,
+            "description": "Settings specific to Kubernetes apps.",
+            "properties": {},
+            "title": "KubernetesAppConfig",
+            "type": "object"
+        },
         "OutputTopicTypes": {
             "description": "Types of output topic.\n\nOUTPUT (output topic), ERROR (error topic)",
             "enum": [
@@ -457,7 +443,7 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/ProducerAppValues"
+                            "$ref": "#/$defs/ProducerValues"
                         }
                     ],
                     "description": "Application-specific settings"
@@ -537,38 +523,6 @@
             "title": "ProducerApp",
             "type": "object"
         },
-        "ProducerAppValues": {
-            "additionalProperties": true,
-            "description": "Settings specific to producers.",
-            "properties": {
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Override name with this value",
-                    "title": "Nameoverride"
-                },
-                "streams": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProducerStreamsConfig"
-                        }
-                    ],
-                    "description": "Kafka Streams settings"
-                }
-            },
-            "required": [
-                "streams"
-            ],
-            "title": "ProducerAppValues",
-            "type": "object"
-        },
         "ProducerStreamsConfig": {
             "additionalProperties": true,
             "description": "Kafka Streams settings specific to Producer.",
@@ -618,6 +572,38 @@
                 "brokers"
             ],
             "title": "ProducerStreamsConfig",
+            "type": "object"
+        },
+        "ProducerValues": {
+            "additionalProperties": true,
+            "description": "Settings specific to producers.",
+            "properties": {
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Override name with this value",
+                    "title": "Nameoverride"
+                },
+                "streams": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ProducerStreamsConfig"
+                        }
+                    ],
+                    "description": "Kafka Streams settings"
+                }
+            },
+            "required": [
+                "streams"
+            ],
+            "title": "ProducerValues",
             "type": "object"
         },
         "RepoAuthFlags": {
@@ -694,7 +680,7 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/StreamsAppValues"
+                            "$ref": "#/$defs/StreamsAppConfig"
                         }
                     ],
                     "description": "Application-specific settings"
@@ -861,7 +847,7 @@
             "title": "StreamsAppAutoScaling",
             "type": "object"
         },
-        "StreamsAppValues": {
+        "StreamsAppConfig": {
             "additionalProperties": true,
             "description": "StreamsBoostrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
             "properties": {
@@ -902,7 +888,7 @@
             "required": [
                 "streams"
             ],
-            "title": "StreamsAppValues",
+            "title": "StreamsAppConfig",
             "type": "object"
         },
         "StreamsConfig": {
