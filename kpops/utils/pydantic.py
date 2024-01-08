@@ -96,7 +96,7 @@ def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str,
 
 
 def patched_issubclass_of_basemodel(cls):
-    """Pydantic breaks issubclass.
+    """Pydantic breaks ``issubclass``.
 
     ``issubclass(set[str], set)  # True``
     ``issubclass(BaseSettings, BaseModel)  # True``

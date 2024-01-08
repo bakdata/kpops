@@ -82,7 +82,7 @@ class KpopsConfig(BaseSettings):
         description="The name of the defaults file and the prefix of the defaults environment file.",
     )
     topic_name_config: TopicNameConfig = Field(
-        default=...,
+        default=TopicNameConfig(),
         description=describe_object(TopicNameConfig.__doc__),
     )
     schema_registry: SchemaRegistryConfig = Field(
