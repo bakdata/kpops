@@ -1,12 +1,12 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
-import asyncio
 from collections import Counter
 from contextlib import suppress
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import networkx as nx
 import yaml
@@ -19,7 +19,6 @@ from kpops.utils.yaml import load_yaml_file, substitute_nested
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Coroutine, Iterator
-    from collections.abc import Iterator
     from pathlib import Path
 
     from kpops.cli.registry import Registry
@@ -39,7 +38,7 @@ class ValidationError(Exception):
 
 class InternalNodeRepresentation(BaseModel):
     name: str
-    component: PipelineComponent | None
+    component: PipelineComponent | None | Any
     is_topic: bool
 
 
@@ -51,7 +50,6 @@ class Pipeline(BaseModel):
     )
     graph: nx.DiGraph = Field(default_factory=lambda: nx.DiGraph(), exclude=True)
     _component_index: dict[str, InternalNodeRepresentation] = {}
-
 
     class Config:
         arbitrary_types_allowed = True
@@ -68,7 +66,6 @@ class Pipeline(BaseModel):
         raise ValueError(msg)
 
     def __add_to_graph(self, component: PipelineComponent):
-
         node_component = InternalNodeRepresentation(
             name=component.id, component=component, is_topic=False
         )

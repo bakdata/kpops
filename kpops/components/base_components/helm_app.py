@@ -115,7 +115,7 @@ class HelmApp(KubernetesApp):
 
     @override
     async def deploy(self, dry_run: bool) -> None:
-        stdout = self.helm.upgrade_install(
+        stdout = await self.helm.upgrade_install(
             self.helm_release_name,
             self.helm_chart,
             dry_run,
@@ -128,7 +128,7 @@ class HelmApp(KubernetesApp):
 
     @override
     async def destroy(self, dry_run: bool) -> None:
-        stdout = self.helm.uninstall(
+        stdout = await self.helm.uninstall(
             self.namespace,
             self.helm_release_name,
             dry_run,

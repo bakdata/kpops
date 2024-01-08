@@ -42,8 +42,9 @@ class TestHelmApp:
 
     @pytest.fixture()
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+        async_mock = AsyncMock()
         return mocker.patch(
-            "kpops.components.base_components.helm_app.Helm"
+            "kpops.components.base_components.helm_app.Helm", return_value=async_mock
         ).return_value
 
     @pytest.fixture()
