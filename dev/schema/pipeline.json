@@ -124,10 +124,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "type": {
-                    "const": "helm-app",
-                    "title": "Type"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -145,8 +141,7 @@
             "required": [
                 "name",
                 "namespace",
-                "app",
-                "type"
+                "app"
             ],
             "title": "HelmApp",
             "type": "object"
@@ -312,10 +307,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "type": {
-                    "const": "kafka-sink-connector",
-                    "title": "Type"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -333,8 +324,7 @@
             "required": [
                 "name",
                 "namespace",
-                "app",
-                "type"
+                "app"
             ],
             "title": "KafkaSinkConnector",
             "type": "object"
@@ -429,10 +419,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "type": {
-                    "const": "kafka-source-connector",
-                    "title": "Type"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -450,8 +436,7 @@
             "required": [
                 "name",
                 "namespace",
-                "app",
-                "type"
+                "app"
             ],
             "title": "KafkaSourceConnector",
             "type": "object"
@@ -530,10 +515,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "type": {
-                    "const": "producer-app",
-                    "title": "Type"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -551,8 +532,7 @@
             "required": [
                 "name",
                 "namespace",
-                "app",
-                "type"
+                "app"
             ],
             "title": "ProducerApp",
             "type": "object"
@@ -779,10 +759,6 @@
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
                 },
-                "type": {
-                    "const": "streams-app",
-                    "title": "Type"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -800,8 +776,7 @@
             "required": [
                 "name",
                 "namespace",
-                "app",
-                "type"
+                "app"
             ],
             "title": "StreamsApp",
             "type": "object"
