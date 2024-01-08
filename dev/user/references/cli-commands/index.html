@@ -1710,7 +1710,6 @@
 <li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
-<li><code>--parallel / --no-parallel</code>: Run the kpops command in parallel  [default: no-parallel]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h2 id="kpops-deploy"><code>kpops deploy</code><a class="headerlink" href="#kpops-deploy" title="Permanent link">&para;</a></h2>
@@ -1732,7 +1731,6 @@
 <li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
-<li><code>--parallel / --no-parallel</code>: Run the kpops command in parallel  [default: no-parallel]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h2 id="kpops-destroy"><code>kpops destroy</code><a class="headerlink" href="#kpops-destroy" title="Permanent link">&para;</a></h2>
@@ -1754,7 +1752,6 @@
 <li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
-<li><code>--parallel / --no-parallel</code>: Run the kpops command in parallel  [default: no-parallel]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h2 id="kpops-generate"><code>kpops generate</code><a class="headerlink" href="#kpops-generate" title="Permanent link">&para;</a></h2>
@@ -1797,18 +1794,17 @@
 <li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
-<li><code>--parallel / --no-parallel</code>: Run the kpops command in parallel  [default: no-parallel]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 <h2 id="kpops-schema"><code>kpops schema</code><a class="headerlink" href="#kpops-schema" title="Permanent link">&para;</a></h2>
 <p>Generate json schema.</p>
 <p>The schemas can be used to enable support for kpops files in a text editor.</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SCOPE:<span class="o">{</span>pipeline<span class="p">|</span>config<span class="o">}</span>
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SCOPE:<span class="o">{</span>pipeline<span class="p">|</span>defaults<span class="p">|</span>config<span class="o">}</span>
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>SCOPE:{pipeline|config}</code>: 
+<li><code>SCOPE:{pipeline|defaults|config}</code>: 
         Scope of the generated schema<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide components module in config.
