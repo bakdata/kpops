@@ -107,7 +107,6 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  namespace: namespace # required
   # `app` can contain application-specific settings, hence  the user is free to
   # add the key-value pairs they need.
   app: # required
@@ -116,17 +115,6 @@
       schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
     imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repo_config:
-    repository_name: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
-  version: "2.12.0" # Helm chart version
 # Kafka sink connector
 - type: kafka-sink-connector
   name: kafka-sink-connector # required
@@ -334,16 +322,6 @@
         output_role1: output_topic1
         output_role2: output_topic2
     nameOverride: override-with-this-name # kafka-app-specific
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repo_config:
-    repository_name: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
   version: "2.12.0" # Helm chart version
 # StreamsApp component that configures a streams bootstrap app.
 # More documentation on StreamsApp: https://github.com/bakdata/streams-bootstrap
@@ -448,14 +426,4 @@
       topics: # List of auto-generated Kafka Streams topics used by the streams app.
         - topic1
         - topic2
-  # Helm repository configuration (optional)
-  # If not set the helm repo add will not be called. Useful when using local Helm charts
-  repo_config:
-    repository_name: bakdata-streams-bootstrap # required
-    url: https://bakdata.github.io/streams-bootstrap/ # required
-    repo_auth_flags:
-      username: user
-      password: pass
-      ca_file: /home/user/path/to/ca-file
-      insecure_skip_tls_verify: false
   version: "2.12.0" # Helm chart version

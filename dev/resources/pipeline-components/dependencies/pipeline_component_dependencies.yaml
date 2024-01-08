@@ -10,10 +10,7 @@ kafka-app.yaml:
 - prefix.yaml
 - from_.yaml
 - to.yaml
-- namespace.yaml
 - app-kafka-app.yaml
-- repo_config-helm-app.yaml
-- version-kafka-app.yaml
 kafka-connector.yaml:
 - prefix.yaml
 - from_.yaml
@@ -54,7 +51,6 @@ producer-app.yaml:
 - to.yaml
 - namespace.yaml
 - app-producer-app.yaml
-- repo_config-helm-app.yaml
 - version-kafka-app.yaml
 streams-app.yaml:
 - prefix.yaml
@@ -62,5 +58,4 @@ streams-app.yaml:
 - to.yaml
 - namespace.yaml
 - app-streams-app.yaml
-- repo_config-helm-app.yaml
 - version-kafka-app.yaml
