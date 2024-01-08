@@ -7,6 +7,7 @@ from enum import Enum
 from typing import Annotated, Any, Literal, Union
 
 from pydantic import (
+    BaseModel,
     Field,
     RootModel,
     create_model,
@@ -38,6 +39,11 @@ class MultiComponentGenerateJsonSchema(GenerateJsonSchema):
 
 
 log = logging.getLogger("")
+
+
+def print_schema(model: type[BaseModel]) -> None:
+    schema = model_json_schema(model, by_alias=True)
+    print(json.dumps(schema, indent=4, sort_keys=True))
 
 
 def _is_valid_component(
@@ -142,8 +148,7 @@ def gen_pipeline_schema(
             AnnotatedPipelineComponents  # pyright:ignore[reportGeneralTypeIssues]
         ]
 
-    schema = PipelineSchema.model_json_schema(by_alias=True)
-    print(json.dumps(schema, indent=4, sort_keys=True))
+    print_schema(PipelineSchema)
 
 
 def gen_defaults_schema(
@@ -167,12 +172,9 @@ def gen_defaults_schema(
         component.type: (component, ...) for component in components
     }
     DefaultsSchema = create_model("DefaultsSchema", **components_mapping)
-
-    schema = DefaultsSchema.model_json_schema(by_alias=True)
-    print(json.dumps(schema, indent=4, sort_keys=True))
+    print_schema(DefaultsSchema)
 
 
 def gen_config_schema() -> None:
     """Generate JSON schema from the model."""
-    schema = model_json_schema(KpopsConfig)
-    print(json.dumps(schema, indent=4, sort_keys=True))
+    print_schema(KpopsConfig)
