@@ -279,7 +279,8 @@ def generate(
 
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
-    help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests."
+    help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.",
+    short_help="Render final resource representation",
 )
 def manifest(
     pipeline_path: Path = PIPELINE_PATH_ARG,

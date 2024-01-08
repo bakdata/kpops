@@ -19,7 +19,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `deploy`: Deploy pipeline steps
 * `destroy`: Destroy pipeline steps
 * `generate`: Enrich pipeline steps with defaults.
-* `manifest`: In addition to generate, render final...
+* `manifest`: Render final resource representation
 * `reset`: Reset pipeline steps
 * `schema`: Generate JSON schema.
 
