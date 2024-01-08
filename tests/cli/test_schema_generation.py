@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import TYPE_CHECKING
@@ -84,26 +83,21 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
     "ignore:handlers", "ignore:config", "ignore:enrich", "ignore:validate"
 )
 class TestGenSchema:
-    def test_gen_pipeline_schema_no_modules(self, caplog: pytest.LogCaptureFixture):
-        result = runner.invoke(
-            app,
-            [
-                "schema",
-                "pipeline",
-                "--no-include-stock-components",
-                "--config",
-                str(RESOURCE_PATH / "no_module"),
-            ],
-            catch_exceptions=False,
-        )
-        assert caplog.record_tuples == [
-            (
-                "root",
-                logging.WARNING,
-                "No components are provided, no schema is generated.",
+    def test_gen_pipeline_schema_no_modules(self):
+        with pytest.raises(
+            RuntimeError, match="^No components are provided, no schema is generated.$"
+        ):
+            runner.invoke(
+                app,
+                [
+                    "schema",
+                    "pipeline",
+                    "--no-include-stock-components",
+                    "--config",
+                    str(RESOURCE_PATH / "no_module"),
+                ],
+                catch_exceptions=False,
             )
-        ]
-        assert result.exit_code == 0, result.stdout
 
     def test_gen_pipeline_schema_no_components(self):
         with pytest.raises(RuntimeError, match="^No valid components found.$"):
