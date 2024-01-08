@@ -1,4 +1,7 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 from kpops.component_handlers.topic.exception import (
     TopicNotFoundException,
@@ -15,67 +18,64 @@ from kpops.component_handlers.topic.utils import (
     parse_and_compare_topic_configs,
     parse_rest_proxy_topic_config,
 )
-from kpops.components.base_components.models.to_section import TopicConfig, ToSection
 from kpops.utils.colorify import greenify, magentaify
 from kpops.utils.dict_differ import Diff, DiffType, render_diff
+
+if TYPE_CHECKING:
+    from kpops.components.base_components.kafka_topic import KafkaTopic, TopicConfig
 
 log = logging.getLogger("KafkaTopic")
 
 
 class TopicHandler:
-    def __init__(self, proxy_wrapper: ProxyWrapper):
+    def __init__(self, proxy_wrapper: ProxyWrapper) -> None:
         self.proxy_wrapper = proxy_wrapper
 
-    def create_topics(self, to_section: ToSection, dry_run: bool) -> None:
-        for topic_name, topic_config in to_section.topics.items():
-            topic_spec = self.__prepare_body(topic_name, topic_config)
-            if dry_run:
-                self.__dry_run_topic_creation(topic_name, topic_spec, topic_config)
-            else:
-                try:
-                    self.proxy_wrapper.get_topic(topic_name=topic_name)
-                    topic_config_in_cluster = self.proxy_wrapper.get_topic_config(
-                        topic_name=topic_name
-                    )
-                    differences = self.__get_topic_config_diff(
-                        topic_config_in_cluster, topic_config.configs
-                    )
+    def create_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
+        topic_spec = self.__prepare_body(topic.name, topic.config)
+        if dry_run:
+            self.__dry_run_topic_creation(topic.name, topic_spec, topic.config)
+        else:
+            try:
+                self.proxy_wrapper.get_topic(topic.name)
+                topic_config_in_cluster = self.proxy_wrapper.get_topic_config(
+                    topic.name
+                )
+                differences = self.__get_topic_config_diff(
+                    topic_config_in_cluster, topic.config.configs
+                )
 
-                    if differences:
-                        json_body = []
-                        for difference in differences:
-                            if difference.diff_type is DiffType.REMOVE:
-                                json_body.append(
-                                    {"name": difference.key, "operation": "DELETE"}
-                                )
-                            elif config_value := difference.change.new_value:
-                                json_body.append(
-                                    {"name": difference.key, "value": config_value}
-                                )
-                        self.proxy_wrapper.batch_alter_topic_config(
-                            topic_name=topic_name,
-                            json_body=json_body,
-                        )
+                if differences:
+                    json_body = []
+                    for difference in differences:
+                        if difference.diff_type is DiffType.REMOVE:
+                            json_body.append(
+                                {"name": difference.key, "operation": "DELETE"}
+                            )
+                        elif config_value := difference.change.new_value:
+                            json_body.append(
+                                {"name": difference.key, "value": config_value}
+                            )
+                    self.proxy_wrapper.batch_alter_topic_config(topic.name, json_body)
 
-                    else:
-                        log.info(
-                            f"Topic Creation: config of topic {topic_name} didn't change. Skipping update."
-                        )
-                except TopicNotFoundException:
-                    self.proxy_wrapper.create_topic(topic_spec=topic_spec)
-
-    def delete_topics(self, to_section: ToSection, dry_run: bool) -> None:
-        for topic_name in to_section.topics:
-            if dry_run:
-                self.__dry_run_topic_deletion(topic_name=topic_name)
-            else:
-                try:
-                    self.proxy_wrapper.get_topic(topic_name=topic_name)
-                    self.proxy_wrapper.delete_topic(topic_name=topic_name)
-                except TopicNotFoundException:
-                    log.warning(
-                        f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping."
+                else:
+                    log.info(
+                        f"Topic Creation: config of topic {topic.name} didn't change. Skipping update."
                     )
+            except TopicNotFoundException:
+                self.proxy_wrapper.create_topic(topic_spec)
+
+    def delete_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
+        if dry_run:
+            self.__dry_run_topic_deletion(topic.name)
+        else:
+            try:
+                self.proxy_wrapper.get_topic(topic.name)
+                self.proxy_wrapper.delete_topic(topic.name)
+            except TopicNotFoundException:
+                log.warning(
+                    f"Topic Deletion: topic {topic.name} does not exist in the cluster and cannot be deleted. Skipping."
+                )
 
     @staticmethod
     def __get_topic_config_diff(

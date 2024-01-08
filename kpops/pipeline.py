@@ -210,13 +210,15 @@ class PipelineGenerator:
                     resolved_from_component = self.pipeline.find(
                         inflated_from_component.name
                     )
-                    enriched_component.weave_from_topics(
-                        resolved_from_component.to, from_topic
-                    )
+                    # TODO
+                    # enriched_component.weave_from_topics(
+                    #     resolved_from_component.to, from_topic
+                    # )
             elif self.pipeline:
                 # read from previous component
                 prev_component = self.pipeline.last
-                enriched_component.weave_from_topics(prev_component.to)
+                # TODO
+                # enriched_component.weave_from_topics(prev_component.to)
             self.pipeline.add(enriched_component)
 
     def enrich_component(

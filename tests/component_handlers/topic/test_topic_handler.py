@@ -20,8 +20,6 @@ from kpops.component_handlers.topic.model import (
 )
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
-    OutputTopicTypes,
-    TopicConfig,
     ToSection,
 )
 from kpops.utils.colorify import greenify, magentaify

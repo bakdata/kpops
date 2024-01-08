@@ -17,8 +17,6 @@ from kpops.components.base_components.models.from_section import (
     TopicName,
 )
 from kpops.components.base_components.models.to_section import (
-    OutputTopicTypes,
-    TopicConfig,
     ToSection,
 )
 from kpops.config import KpopsConfig
