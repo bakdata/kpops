@@ -18,7 +18,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `clean`: Clean pipeline steps
 * `deploy`: Deploy pipeline steps
 * `destroy`: Destroy pipeline steps
-* `generate`: Enrich pipeline steps with defaults.
+* `generate`: Generate enriched pipeline representation
 * `manifest`: Render final resource representation
 * `reset`: Reset pipeline steps
 * `schema`: Generate JSON schema.

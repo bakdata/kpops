@@ -254,7 +254,8 @@ def schema(
 
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
-    help="Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...)."
+    short_help="Generate enriched pipeline representation",
+    help="Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).",
 )
 def generate(
     pipeline_path: Path = PIPELINE_PATH_ARG,
@@ -279,8 +280,8 @@ def generate(
 
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
-    help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.",
     short_help="Render final resource representation",
+    help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.",
 )
 def manifest(
     pipeline_path: Path = PIPELINE_PATH_ARG,
