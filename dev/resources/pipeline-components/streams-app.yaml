@@ -101,4 +101,14 @@
       topics: # List of auto-generated Kafka Streams topics used by the streams app.
         - topic1
         - topic2
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
   version: "2.12.0" # Helm chart version
