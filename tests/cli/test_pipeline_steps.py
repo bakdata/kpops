@@ -3,6 +3,7 @@ from typing import cast
 from unittest.mock import MagicMock
 
 import pytest
+from polyfactory.factories.pydantic_factory import ModelFactory
 from pytest_mock import MockerFixture
 
 from kpops.cli.main import FilterType, get_steps_to_apply
@@ -13,8 +14,6 @@ from kpops.components import PipelineComponent
 from kpops.components.base_components.models.from_section import FromSection
 from kpops.components.base_components.models.to_section import ToSection
 from kpops.pipeline import Pipeline
-from polyfactory.factories.pydantic_factory import ModelFactory
-
 
 PREFIX = "example-prefix-"
 

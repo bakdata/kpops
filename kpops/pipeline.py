@@ -6,7 +6,7 @@ import logging
 from collections import Counter
 from contextlib import suppress
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import networkx as nx
 import yaml
