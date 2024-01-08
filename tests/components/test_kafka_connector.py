@@ -14,7 +14,8 @@ from kpops.config import KpopsConfig, TopicNameConfig
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_FULL_NAME = "${pipeline_name}-" + CONNECTOR_NAME
-CONNECTOR_CLEAN_FULL_NAME = "${pipeline_name}-test-connector-with-long-name-clean"
+CONNECTOR_CLEAN_FULL_NAME = CONNECTOR_FULL_NAME + "-clean"
+CONNECTOR_CLEAN_RELEASE_NAME = "${pipeline_name}-test-connector-with-lon-449ec-clean"
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 
 
@@ -111,3 +112,19 @@ class TestKafkaConnector:
                 app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues]
                 namespace="test-namespace",
             )
+
+    def test_resetter_release_name(
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        connector_config: KafkaConnectorConfig,
+    ):
+        connector = KafkaConnector(
+            name=CONNECTOR_NAME,
+            config=config,
+            handlers=handlers,
+            app=connector_config,
+            namespace="test-namespace",
+        )
+        assert connector.app.name == CONNECTOR_FULL_NAME
+        assert connector._resetter_release_name == CONNECTOR_CLEAN_RELEASE_NAME

@@ -25,10 +25,13 @@ from kpops.config import KpopsConfig
 from kpops.utils.environment import ENV
 from tests.components.test_kafka_connector import (
     CONNECTOR_CLEAN_FULL_NAME,
+    CONNECTOR_CLEAN_RELEASE_NAME,
     CONNECTOR_FULL_NAME,
     CONNECTOR_NAME,
     TestKafkaConnector,
 )
+
+CLEAN_SUFFIX = "-clean"
 
 
 class TestKafkaSourceConnector(TestKafkaConnector):
@@ -169,11 +172,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run=False,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=False,
@@ -189,12 +192,12 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "nameOverride": CONNECTOR_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run=False,
             ),
         ]
@@ -246,11 +249,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run=False,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=False,
@@ -266,12 +269,12 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "nameOverride": CONNECTOR_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run=False,
             ),
         ]
@@ -322,11 +325,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run=False,
             ),
             mocker.call.helm.upgrade_install(
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 namespace="test-namespace",
                 chart="bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run=False,
@@ -342,12 +345,12 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": "kafka-connect-offsets",
                     },
-                    "nameOverride": CONNECTOR_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
             ),
             mocker.call.helm.uninstall(
                 namespace="test-namespace",
-                release_name=CONNECTOR_CLEAN_FULL_NAME,
+                release_name=CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run=False,
             ),
         ]

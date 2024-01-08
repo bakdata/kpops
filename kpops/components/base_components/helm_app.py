@@ -16,6 +16,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
+from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
@@ -67,7 +68,13 @@ class HelmApp(KubernetesApp):
     @property
     def helm_release_name(self) -> str:
         """The name for the Helm release. Can be overridden."""
-        return self.full_name
+        return create_helm_release_name(self.full_name)
+
+    @property
+    def clean_release_name(self) -> str:
+        """The name for the Helm release for cleanup jobs. Can be overridden."""
+        suffix = "-clean"
+        return create_helm_release_name(self.helm_release_name, suffix)
 
     @property
     def helm_chart(self) -> str:
