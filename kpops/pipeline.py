@@ -38,7 +38,7 @@ class ValidationError(Exception):
 
 class InternalNodeRepresentation(BaseModel):
     name: str
-    component: PipelineComponent | None | Any
+    component: PipelineComponent | None
     is_topic: bool
 
 

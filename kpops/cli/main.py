@@ -92,7 +92,7 @@ DRY_RUN: bool = typer.Option(
 PARALLEL: bool = typer.Option(
     False,
     "--parallel/--no-parallel",
-    help="Run the kpops command in parallel",
+    help="Run the command in parallel",
 )
 
 

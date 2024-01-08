@@ -6,8 +6,15 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.cli.main import FilterType, get_steps_to_apply
+from kpops.component_handlers import (
+    ComponentHandlers,
+)
 from kpops.components import PipelineComponent
+from kpops.components.base_components.models.from_section import FromSection
+from kpops.components.base_components.models.to_section import ToSection
 from kpops.pipeline import Pipeline
+from polyfactory.factories.pydantic_factory import ModelFactory
+
 
 PREFIX = "example-prefix-"
 
@@ -22,9 +29,21 @@ class TestComponent:
     prefix: str = PREFIX
 
 
-test_component_1 = TestComponent("example1", "example1")
-test_component_2 = TestComponent("example2", "example2")
-test_component_3 = TestComponent("example3", "example3")
+class TestComponentFactory(ModelFactory[PipelineComponent]):
+    to = ToSection()
+    from_ = FromSection()
+    enrich = False
+    validate = False
+    handlers = ComponentHandlers(None, MagicMock(), MagicMock())
+
+
+test_component_1 = TestComponentFactory.build(False)
+test_component_2 = TestComponentFactory.build(False)
+test_component_3 = TestComponentFactory.build(False)
+
+test_component_1.name = "example1"
+test_component_2.name = "example2"
+test_component_3.name = "example3"
 
 
 @pytest.fixture(autouse=True)
