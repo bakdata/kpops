@@ -71,8 +71,8 @@ def _is_valid_component(
 
 def _add_components(
     components_module: str,
+    allow_abstract: bool,
     components: tuple[type[PipelineComponent], ...] | None = None,
-    allow_abstract: bool = False,
 ) -> tuple[type[PipelineComponent], ...]:
     """Add components to a components tuple.
 
@@ -97,6 +97,27 @@ def _add_components(
     return components
 
 
+def find_components(
+    components_module: str | None,
+    include_stock_components: bool,
+    include_abstract: bool = False,
+) -> tuple[type[PipelineComponent], ...]:
+    if not (include_stock_components or components_module):
+        msg = "No components are provided, no schema is generated."
+        raise RuntimeError(msg)
+    # Add stock components if enabled
+    components: tuple[type[PipelineComponent], ...] = ()
+    if include_stock_components:
+        components = _add_components("kpops.components", include_abstract)
+    # Add custom components if provided
+    if components_module:
+        components = _add_components(components_module, include_abstract, components)
+    if not components:
+        msg = "No valid components found."
+        raise RuntimeError(msg)
+    return components
+
+
 def gen_pipeline_schema(
     components_module: str | None = None, include_stock_components: bool = True
 ) -> None:
@@ -107,19 +128,7 @@ def gen_pipeline_schema(
     :param include_stock_components: Whether to include the stock components,
         defaults to True
     """
-    if not (include_stock_components or components_module):
-        log.warning("No components are provided, no schema is generated.")
-        return
-    # Add stock components if enabled
-    components: tuple[type[PipelineComponent], ...] = ()
-    if include_stock_components:
-        components = _add_components("kpops.components")
-    # Add custom components if provided
-    if components_module:
-        components = _add_components(components_module, components)
-    if not components:
-        msg = "No valid components found."
-        raise RuntimeError(msg)
+    components = find_components(components_module, include_stock_components)
 
     # re-assign component type as Literal to work as discriminator
     for component in components:
@@ -154,20 +163,7 @@ def gen_pipeline_schema(
 def gen_defaults_schema(
     components_module: str | None = None, include_stock_components: bool = True
 ) -> None:
-    if not (include_stock_components or components_module):
-        log.warning("No components are provided, no schema is generated.")
-        return
-    # Add stock components if enabled
-    components: tuple[type[PipelineComponent], ...] = ()
-    if include_stock_components:
-        components = _add_components("kpops.components", allow_abstract=True)
-    # Add custom components if provided
-    if components_module:
-        components = _add_components(components_module, components, allow_abstract=True)
-    if not components:
-        msg = "No valid components found."
-        raise RuntimeError(msg)
-
+    components = find_components(components_module, include_stock_components, True)
     components_mapping: dict[str, Any] = {
         component.type: (component, ...) for component in components
     }
