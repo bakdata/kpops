@@ -3,46 +3,54 @@ from unittest.mock import ANY, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
+from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
+import kpops
 from kpops.cli.main import app
 from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-
-HELM_RELEASE_NAME = create_helm_release_name("resources-custom-config-app2")
+from kpops.component_handlers.helm_wrapper.model import HelmConfig, Version
 
 runner = CliRunner()
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
-class TestTemplate:
+class TestManifest:
     @pytest.fixture()
-    def run_command(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch.object(Helm, "_Helm__execute")
+    def mock_execute(self, mocker: MockerFixture) -> MagicMock:
+        mock_execute = mocker.patch.object(Helm, "_Helm__execute")
+        mock_execute.return_value = ""  # Helm Template
+        return mock_execute
 
-    def test_default_template_config(self, run_command: MagicMock):
-        run_command.return_value = "v3.12.0+gc9f554d"
+    @pytest.fixture()
+    def mock_get_version(self, mocker: MockerFixture) -> MagicMock:
+        mock_get_version = mocker.patch.object(Helm, "get_version")
+        mock_get_version.return_value = Version(major=3, minor=12, patch=0)
+        return mock_get_version
 
+    @pytest.fixture(autouse=True)
+    def helm(self, mock_get_version: MagicMock) -> Helm:
+        return Helm(helm_config=HelmConfig())
+
+    def test_default_config(self, mock_execute: MagicMock):
         result = runner.invoke(
             app,
             [
-                "generate",
+                "manifest",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
-                "--template",
                 "--environment",
                 "development",
             ],
             catch_exceptions=False,
         )
-
-        run_command.assert_called_with(
+        mock_execute.assert_called_with(
             [
                 "helm",
                 "template",
-                HELM_RELEASE_NAME,
+                "resources-custom-config-app2",
                 "bakdata-streams-bootstrap/streams-app",
                 "--namespace",
                 "development-namespace",
@@ -55,33 +63,28 @@ class TestTemplate:
                 "--wait",
             ],
         )
-
         assert result.exit_code == 0, result.stdout
 
-    def test_template_config_with_flags(self, run_command: MagicMock):
-        run_command.return_value = "v3.12.0+gc9f554d"
-
+    def test_custom_config(self, mock_execute: MagicMock):
         result = runner.invoke(
             app,
             [
-                "generate",
+                "manifest",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "no-topics-defaults"),
                 "--config",
                 str(RESOURCE_PATH / "custom-config"),
-                "--template",
                 "--environment",
                 "development",
             ],
             catch_exceptions=False,
         )
-
-        run_command.assert_called_with(
+        mock_execute.assert_called_with(
             [
                 "helm",
                 "template",
-                HELM_RELEASE_NAME,
+                "resources-custom-config-app2",
                 "bakdata-streams-bootstrap/streams-app",
                 "--namespace",
                 "development-namespace",
@@ -96,5 +99,16 @@ class TestTemplate:
                 "2.1.1",
             ],
         )
-
         assert result.exit_code == 0, result.stdout
+
+    def test_python_api(self, snapshot: SnapshotTest):
+        resources = kpops.manifest(
+            RESOURCE_PATH / "custom-config/pipeline.yaml",
+            defaults=RESOURCE_PATH / "no-topics-defaults",
+            output=False,
+            environment="development",
+        )
+        assert isinstance(resources, list)
+        assert len(resources) == 2
+        for i, resource in enumerate(resources):
+            snapshot.assert_match(resource, f"resource {i}")
