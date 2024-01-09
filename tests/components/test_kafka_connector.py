@@ -42,8 +42,10 @@ class TestKafkaConnector:
 
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+        async_mock = AsyncMock()
         return mocker.patch(
-            "kpops.components.base_components.kafka_connector.Helm"
+            "kpops.components.base_components.kafka_connector.Helm",
+            return_value=async_mock,
         ).return_value
 
     @pytest.fixture()

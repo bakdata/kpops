@@ -37,9 +37,8 @@ class ValidationError(Exception):
 
 
 class InternalNodeRepresentation(BaseModel):
-    name: str
+    id: str
     component: PipelineComponent | None
-    is_topic: bool
 
 
 class Pipeline(BaseModel):
@@ -67,9 +66,9 @@ class Pipeline(BaseModel):
 
     def __add_to_graph(self, component: PipelineComponent):
         node_component = InternalNodeRepresentation(
-            name=component.id, component=component, is_topic=False
+            id=component.id, component=component
         )
-        self._component_index[node_component.name] = node_component
+        self._component_index[node_component.id] = node_component
 
         self.graph.add_node(component.id)
 
@@ -106,7 +105,7 @@ class Pipeline(BaseModel):
     ) -> Awaitable:
         sub_graph_nodes = self.__get_graph_nodes(components)
 
-        async def run_parallel_tasks(tasks):
+        async def run_parallel_tasks(tasks) -> None:
             asyncio_tasks = []
             for coroutine in tasks:
                 asyncio_tasks.append(asyncio.create_task(coroutine))
@@ -141,7 +140,7 @@ class Pipeline(BaseModel):
 
         return run_graph_tasks(sorted_tasks)
 
-    def __get_graph_nodes(self, components):
+    def __get_graph_nodes(self, components) -> list[str]:
         sub_graph_nodes = []
         for component in components:
             sub_graph_nodes.append(component.id)
@@ -149,12 +148,12 @@ class Pipeline(BaseModel):
             sub_graph_nodes.extend(list(component.outputs))
         return sub_graph_nodes
 
-    def __get_parallel_task_from(self, layer, runner):
+    def __get_parallel_task_from(self, layer, runner) -> list[Awaitable]:
         parallel_tasks = []
 
         for node_in_layer in layer:
             component_node = self._component_index[node_in_layer]
-            if component_node.component is not None and not component_node.is_topic:
+            if component_node.component is not None:
                 parallel_tasks.append(runner(component_node.component))
 
         return parallel_tasks
@@ -169,18 +168,17 @@ class Pipeline(BaseModel):
         self.__validate_graph()
 
     def __add_output(self, output_topic: str, source: str) -> None:
-        output_node = InternalNodeRepresentation(
-            name=output_topic, component=None, is_topic=True
-        )
-        self._component_index[output_node.name] = output_node
+        output_node = InternalNodeRepresentation(id=output_topic, component=None)
+        self._component_index[output_node.id] = output_node
         self.graph.add_node(output_topic)
         self.graph.add_edge(source, output_topic)
 
     def __add_input(self, input_topic: str, component_node_name: str) -> None:
         input_node = InternalNodeRepresentation(
-            name=input_topic, component=None, is_topic=True
+            id=input_topic,
+            component=None,
         )
-        self._component_index[input_node.name] = input_node
+        self._component_index[input_node.id] = input_node
         self.graph.add_node(input_topic)
         self.graph.add_edge(input_topic, component_node_name)
 

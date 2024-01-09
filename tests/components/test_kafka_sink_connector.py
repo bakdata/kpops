@@ -1,4 +1,4 @@
-from unittest.mock import AsyncMock, MagicMock, call
+from unittest.mock import MagicMock, call
 
 import pytest
 from pytest_mock import MockerFixture
@@ -39,14 +39,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
     @pytest.fixture()
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kafka_connector.log.info")
-
-    @pytest.fixture(autouse=True)
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        async_mock = AsyncMock()
-        return mocker.patch(
-            "kpops.components.base_components.kafka_connector.Helm",
-            return_value=async_mock,
-        ).return_value
 
     @pytest.fixture()
     def connector(
