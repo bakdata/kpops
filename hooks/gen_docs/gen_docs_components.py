@@ -78,6 +78,10 @@ class KpopsComponent(NamedTuple):
     specific_attrs: list[str]
 
 
+# TODO(Ivan Yordanov): Evaluate whether it makes sense to instead use `__mro__`
+# The problem is that we need an object for that. Note that `__mro__` differs
+# from the output of this function sometimes and `__mro__` probably is the more
+# accurate way.
 def collect_parents(component_name: str) -> list[str]:
     """Return a list of a component's parents.
 
