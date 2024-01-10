@@ -6,7 +6,7 @@ from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 import kpops
-from kpops.cli.main import app
+from kpops.cli.main import FilterType, app
 from kpops.pipeline import ParsingException, ValidationError
 
 runner = CliRunner()
@@ -23,6 +23,33 @@ class TestGenerate:
             output=False,
         )
         assert len(pipeline) == 3
+        assert [component.type for component in pipeline.root] == [
+            "scheduled-producer",
+            "converter",
+            "filter",
+        ]
+
+    def test_python_api_filter_include(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
+            defaults=RESOURCE_PATH,
+            output=False,
+            steps="converter",
+            filter_type=FilterType.INCLUDE,
+        )
+        assert len(pipeline) == 1
+        assert pipeline.root[0].type == "converter"
+
+    def test_python_api_filter_exclude(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
+            defaults=RESOURCE_PATH,
+            output=False,
+            steps="converter,scheduled-producer",
+            filter_type=FilterType.EXCLUDE,
+        )
+        assert len(pipeline) == 1
+        assert pipeline.root[0].type == "filter"
 
     def test_load_pipeline(self, snapshot: SnapshotTest):
         result = runner.invoke(
