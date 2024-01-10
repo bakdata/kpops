@@ -29,7 +29,7 @@ class TestGenerate:
             output=False,
         )
         assert len(pipeline) == 3
-        assert [component.type for component in pipeline.root] == [
+        assert [component.type for component in pipeline.components] == [
             "scheduled-producer",
             "converter",
             "filter",
@@ -44,7 +44,7 @@ class TestGenerate:
             filter_type=FilterType.INCLUDE,
         )
         assert len(pipeline) == 1
-        assert pipeline.root[0].type == "converter"
+        assert pipeline.components[0].type == "converter"
         assert log_info.call_count == 1
         log_info.assert_any_call("Filtered pipeline:\n['converter']")
 
@@ -57,7 +57,7 @@ class TestGenerate:
             filter_type=FilterType.EXCLUDE,
         )
         assert len(pipeline) == 1
-        assert pipeline.root[0].type == "filter"
+        assert pipeline.components[0].type == "filter"
         assert log_info.call_count == 1
         log_info.assert_any_call(
             "Filtered pipeline:\n['a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name']"
