@@ -1,9 +1,9 @@
-from collections.abc import Callable
 from dataclasses import dataclass
 from typing import cast
 
 import pytest
 
+from kpops.cli.main import get_default_step_names_filter
 from kpops.cli.options import FilterType
 from kpops.components import PipelineComponent
 from kpops.pipeline import Pipeline
@@ -23,23 +23,6 @@ test_component_2 = TestComponent("example2")
 test_component_3 = TestComponent("example3")
 
 
-def is_in_steps(component: PipelineComponent, component_names: set[str]) -> bool:
-    return component.name in component_names
-
-
-def predicate(
-    component_names: set[str], filter_type: FilterType
-) -> Callable[[PipelineComponent], bool]:
-    def inner(component: PipelineComponent) -> bool:
-        match filter_type, is_in_steps(component, component_names):
-            case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
-                return False
-            case _:
-                return True
-
-    return inner
-
-
 class TestPipeline:
     @pytest.fixture(autouse=True)
     def pipeline(self) -> Pipeline:
@@ -50,20 +33,28 @@ class TestPipeline:
         return pipeline
 
     def test_filter_include(self, pipeline: Pipeline):
-        pipeline.filter(predicate({"example2", "example3"}, FilterType.INCLUDE))
+        predicate = get_default_step_names_filter(
+            {"example2", "example3"}, FilterType.INCLUDE
+        )
+        pipeline.filter(predicate)
         assert len(pipeline.components) == 2
         assert test_component_2 in pipeline.components
         assert test_component_3 in pipeline.components
 
     def test_filter_include_empty(self, pipeline: Pipeline):
-        pipeline.filter(predicate(set(), FilterType.INCLUDE))
+        predicate = get_default_step_names_filter(set(), FilterType.INCLUDE)
+        pipeline.filter(predicate)
         assert len(pipeline.components) == 0
 
     def test_filter_exclude(self, pipeline: Pipeline):
-        pipeline.filter(predicate({"example2", "example3"}, FilterType.EXCLUDE))
+        predicate = get_default_step_names_filter(
+            {"example2", "example3"}, FilterType.EXCLUDE
+        )
+        pipeline.filter(predicate)
         assert len(pipeline.components) == 1
         assert test_component_1 in pipeline.components
 
     def test_filter_exclude_empty(self, pipeline: Pipeline):
-        pipeline.filter(predicate(set(), FilterType.EXCLUDE))
+        predicate = get_default_step_names_filter(set(), FilterType.EXCLUDE)
+        pipeline.filter(predicate)
         assert len(pipeline.components) == 3

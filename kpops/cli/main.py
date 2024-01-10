@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
@@ -151,6 +152,23 @@ def parse_steps(steps: str) -> set[str]:
     return set(steps.split(","))
 
 
+def is_in_steps(component: PipelineComponent, component_names: set[str]) -> bool:
+    return component.name in component_names
+
+
+def get_default_step_names_filter(
+    component_names: set[str], filter_type: FilterType
+) -> Callable[[PipelineComponent], bool]:
+    def predicate(component: PipelineComponent) -> bool:
+        match filter_type, is_in_steps(component, component_names):
+            case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
+                return False
+            case _:
+                return True
+
+    return predicate
+
+
 def log_action(action: str, pipeline_component: PipelineComponent):
     log.info("\n")
     log.info(LOG_DIVIDER)
@@ -247,16 +265,7 @@ def generate(
             f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
         )
 
-        def is_in_steps(component: PipelineComponent) -> bool:
-            return component.name in component_names
-
-        def predicate(component: PipelineComponent) -> bool:
-            match filter_type, is_in_steps(component):
-                case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
-                    return False
-                case _:
-                    return True
-
+        predicate = get_default_step_names_filter(component_names, filter_type)
         pipeline.filter(predicate)
 
         def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
