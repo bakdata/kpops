@@ -121,6 +121,8 @@ $ kpops generate [OPTIONS] PIPELINE_PATH
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
 * `--output / --no-output`: Enable output printing  [default: output]
+* `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
+* `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
 * `--help`: Show this message and exit.

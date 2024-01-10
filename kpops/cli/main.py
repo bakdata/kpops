@@ -273,6 +273,8 @@ def generate(
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     output: bool = OUTPUT_OPTION,
+    steps: Optional[str] = PIPELINE_STEPS,
+    filter_type: FilterType = FILTER_TYPE,
     environment: Optional[str] = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
 ) -> Pipeline:
@@ -284,6 +286,8 @@ def generate(
         verbose,
     )
     pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
+    steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
+    pipeline.root = steps_to_apply
     if output:
         print_yaml(pipeline.to_yaml())
     return pipeline
