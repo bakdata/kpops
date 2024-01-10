@@ -2,7 +2,6 @@
 
 import logging
 import sys
-from contextlib import suppress
 from pathlib import Path
 from typing import NamedTuple, cast
 
@@ -43,6 +42,21 @@ KPOPS_COMPONENTS_SECTIONS = {
     ]
     for component in KPOPS_COMPONENTS
 }
+KPOPS_COMPONENTS_INHERITANCE_REF = {
+    component.type: {
+        "bases": [
+            cast(
+                type[PipelineComponent],
+                base,
+            ).type
+            for base in component.__bases__
+            if issubclass_patched(base, PipelineComponent)
+        ],
+        "parents": component.get_parents(PipelineComponent),
+    }
+    for component in KPOPS_COMPONENTS
+}
+
 # Dependency files should not be changed manually
 DANGEROUS_FILES_TO_CHANGE = {
     PATH_DOCS_COMPONENTS_DEPENDENCIES,
@@ -54,37 +68,6 @@ DANGEROUS_FILES_TO_CHANGE = {
 SCRIPT_ARGUMENTS = set(sys.argv)
 
 log = logging.getLogger("DocumentationGenerator")
-
-
-def collect_parents_mro(component: type[PipelineComponent]) -> list[str]:
-    """Return a list of a component's parents.
-
-    :param component: Component name in kebab-case
-    :return: List ordered from closest to furthest ancestor,
-        i.e. ``result[0] == component_name``.
-    """
-    bases = []
-    for base in component.mro():
-        if issubclass_patched(base):
-            with suppress(AttributeError):
-                bases.append(base.type)  # pyright: ignore[reportGeneralTypeIssues]
-    return bases
-
-
-KPOPS_COMPONENTS_INHERITANCE_REF = {
-    component.type: {
-        "bases": [
-            cast(
-                type[PipelineComponent],
-                base,
-            ).type
-            for base in component.__bases__
-            if issubclass_patched(base)
-        ],
-        "mro": collect_parents_mro(component),
-    }
-    for component in KPOPS_COMPONENTS
-}
 
 
 class KpopsComponent(NamedTuple):
@@ -117,7 +100,9 @@ def filter_sections(
         if section := filter_section(component_name, sections, target_section):
             component_sections.append(section)
         elif include_inherited:
-            for component in KPOPS_COMPONENTS_INHERITANCE_REF[component_name]["mro"]:
+            for component in KPOPS_COMPONENTS_INHERITANCE_REF[component_name][
+                "parents"
+            ]:
                 if component == PipelineComponent.type:
                     break
                 if section := filter_section(

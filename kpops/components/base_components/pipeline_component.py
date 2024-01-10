@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 from abc import ABC
+from contextlib import suppress
+from typing import Self
 
 from pydantic import AliasChoices, ConfigDict, Field
 
@@ -19,6 +21,7 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import issubclass_patched
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
@@ -63,6 +66,25 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     @property
     def full_name(self) -> str:
         return self.prefix + self.name
+
+    @classmethod
+    def get_parents(
+        cls: type[Self], __class_or_tuple: type = BaseDefaultsComponent
+    ) -> list[str]:
+        """Get kebab-cased superclasses' names.
+
+        Can only return subclasses of ``BaseDefaultsComponent``.
+
+        :param __class_or_tuple: "Furthest" ancestors to look for,
+            defaults to BaseDefaultsComponent
+        :return: All ancestors that match the requirements
+        """
+        bases = []
+        for base in cls.mro():
+            if issubclass_patched(base, __class_or_tuple):
+                with suppress(AttributeError):
+                    bases.append(base.type)  # pyright: ignore[reportGeneralTypeIssues]
+        return bases
 
     def add_input_topics(self, topics: list[str]) -> None:
         """Add given topics to the list of input topics.

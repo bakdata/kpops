@@ -88,84 +88,73 @@ kpops_components_inheritance_ref:
   helm-app:
     bases:
     - kubernetes-app
-    mro:
+    parents:
     - helm-app
     - kubernetes-app
     - pipeline-component
-    - base-defaults-component
   kafka-app:
     bases:
     - pipeline-component
-    mro:
+    parents:
     - kafka-app
     - pipeline-component
-    - base-defaults-component
   kafka-connector:
     bases:
     - pipeline-component
-    mro:
+    parents:
     - kafka-connector
     - pipeline-component
-    - base-defaults-component
   kafka-sink-connector:
     bases:
     - kafka-connector
-    mro:
+    parents:
     - kafka-sink-connector
     - kafka-connector
     - pipeline-component
-    - base-defaults-component
   kafka-source-connector:
     bases:
     - kafka-connector
-    mro:
+    parents:
     - kafka-source-connector
     - kafka-connector
     - pipeline-component
-    - base-defaults-component
   kubernetes-app:
     bases:
     - pipeline-component
-    mro:
+    parents:
     - kubernetes-app
     - pipeline-component
-    - base-defaults-component
   pipeline-component:
-    bases:
-    - base-defaults-component
-    mro:
+    bases: []
+    parents:
     - pipeline-component
-    - base-defaults-component
   producer-app:
     bases:
     - kafka-app
     - streams-bootstrap
-    mro:
+    parents:
     - producer-app
     - kafka-app
     - streams-bootstrap
     - helm-app
     - kubernetes-app
     - pipeline-component
-    - base-defaults-component
   streams-app:
     bases:
     - kafka-app
     - streams-bootstrap
-    mro:
+    parents:
     - streams-app
     - kafka-app
     - streams-bootstrap
     - helm-app
     - kubernetes-app
     - pipeline-component
-    - base-defaults-component
   streams-bootstrap:
     bases:
     - helm-app
-    mro:
+    parents:
     - streams-bootstrap
     - helm-app
     - kubernetes-app
     - pipeline-component
-    - base-defaults-component
