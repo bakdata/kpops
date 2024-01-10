@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from abc import ABC
 from contextlib import suppress
-from typing import Self
 
 from pydantic import AliasChoices, ConfigDict, Field
 
@@ -22,6 +21,11 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import issubclass_patched
+
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
