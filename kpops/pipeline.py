@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import logging
 from collections import Counter
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -71,15 +72,11 @@ class Pipeline(RootModel):
     def __len__(self) -> int:
         return len(self.root)
 
-    def filter(self, component_names: set[str], filter_type: FilterType) -> None:
-        def is_in_steps(component: PipelineComponent) -> bool:
-            return component.name in component_names
-
-        log.debug(
-            f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
-        )
+    def filter(
+        self, predicate: Callable[[PipelineComponent], bool], filter_type: FilterType
+    ) -> None:  # TODO: pydocs
         for component in self.components.copy():
-            match filter_type, is_in_steps(component):
+            match filter_type, predicate(component):
                 case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
                     self.remove(component)
 

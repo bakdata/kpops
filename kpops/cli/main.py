@@ -240,8 +240,17 @@ def generate(
         verbose,
     )
     pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
+
     if steps:
-        pipeline.filter(parse_steps(steps), filter_type)
+        component_names = parse_steps(steps)
+        log.debug(
+            f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
+        )
+
+        def is_in_steps(component: PipelineComponent) -> bool:
+            return component.name in component_names
+
+        pipeline.filter(is_in_steps, filter_type)
     if output:
         print_yaml(pipeline.to_yaml())
     return pipeline
@@ -268,11 +277,11 @@ def manifest(
         defaults=defaults,
         config=config,
         output=False,
+        steps=steps,
+        filter_type=filter_type,
         environment=environment,
         verbose=verbose,
     )
-    if steps:
-        pipeline.filter(parse_steps(steps), filter_type)
     resources: list[Resource] = []
     for component in pipeline.components:
         resource = component.manifest()
@@ -295,17 +304,17 @@ def deploy(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
-    kpops_config = create_kpops_config(
-        config,
-        defaults,
-        dotenv,
-        environment,
-        verbose,
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        defaults=defaults,
+        config=config,
+        output=False,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
     )
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-
-    if steps:
-        pipeline.filter(parse_steps(steps), filter_type)
     for component in pipeline.components:
         log_action("Deploy", component)
         component.deploy(dry_run)
@@ -323,16 +332,17 @@ def destroy(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
-    kpops_config = create_kpops_config(
-        config,
-        defaults,
-        dotenv,
-        environment,
-        verbose,
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        defaults=defaults,
+        config=config,
+        output=False,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
     )
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    if steps:
-        pipeline.filter(parse_steps(steps), filter_type)
     for component in pipeline.components:
         log_action("Destroy", component)
         component.destroy(dry_run)
@@ -350,16 +360,17 @@ def reset(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
-    kpops_config = create_kpops_config(
-        config,
-        defaults,
-        dotenv,
-        environment,
-        verbose,
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        defaults=defaults,
+        config=config,
+        output=False,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
     )
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    if steps:
-        pipeline.filter(parse_steps(steps), filter_type)
     for component in pipeline.components:
         log_action("Reset", component)
         component.destroy(dry_run)
@@ -378,16 +389,17 @@ def clean(
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
 ):
-    kpops_config = create_kpops_config(
-        config,
-        defaults,
-        dotenv,
-        environment,
-        verbose,
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        defaults=defaults,
+        config=config,
+        output=False,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
     )
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    if steps:
-        pipeline.filter(parse_steps(steps), filter_type)
     for component in pipeline.components:
         log_action("Clean", component)
         component.destroy(dry_run)
