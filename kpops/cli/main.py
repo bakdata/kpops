@@ -348,7 +348,7 @@ def destroy(
         environment=environment,
         verbose=verbose,
     )
-    for component in pipeline.components:
+    for component in reversed(pipeline.components):
         log_action("Destroy", component)
         component.destroy(dry_run)
 
@@ -376,7 +376,7 @@ def reset(
         environment=environment,
         verbose=verbose,
     )
-    for component in pipeline.components:
+    for component in reversed(pipeline.components):
         log_action("Reset", component)
         component.destroy(dry_run)
         component.reset(dry_run)
@@ -405,7 +405,7 @@ def clean(
         environment=environment,
         verbose=verbose,
     )
-    for component in pipeline.components:
+    for component in reversed(pipeline.components):
         log_action("Clean", component)
         component.destroy(dry_run)
         component.clean(dry_run)

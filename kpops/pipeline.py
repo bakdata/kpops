@@ -80,9 +80,6 @@ class Pipeline(RootModel):
                 case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
                     self.remove(component)
 
-    def reverse(self) -> None:
-        self.root.reverse()
-
     def to_yaml(self) -> str:
         return yaml.dump(self.model_dump(mode="json", by_alias=True, exclude_none=True))
 
