@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Iterator
-from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
@@ -11,6 +9,7 @@ import typer
 
 from kpops import __version__
 from kpops.cli.custom_formatter import CustomFormatter
+from kpops.cli.options import FilterType
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
@@ -93,11 +92,6 @@ DRY_RUN: bool = typer.Option(
 )
 
 
-class FilterType(str, Enum):
-    INCLUDE = "include"
-    EXCLUDE = "exclude"
-
-
 FILTER_TYPE: FilterType = typer.Option(
     default=FilterType.INCLUDE,
     case_sensitive=False,
@@ -155,46 +149,6 @@ def setup_logging_level(verbose: bool):
 
 def parse_steps(steps: str) -> set[str]:
     return set(steps.split(","))
-
-
-def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
-    return [step.name for step in steps_to_apply]
-
-
-def filter_steps_to_apply(
-    pipeline: Pipeline, steps: set[str], filter_type: FilterType
-) -> list[PipelineComponent]:
-    def is_in_steps(component: PipelineComponent) -> bool:
-        return component.name in steps
-
-    log.debug(
-        f"KPOPS_PIPELINE_STEPS is defined with values: {steps} and filter type of {filter_type.value}"
-    )
-    filtered_steps = [
-        component
-        for component in pipeline
-        if (
-            is_in_steps(component)
-            if filter_type is FilterType.INCLUDE
-            else not is_in_steps(component)
-        )
-    ]
-    log.info(f"The following steps are included:\n{get_step_names(filtered_steps)}")
-    return filtered_steps
-
-
-def get_steps_to_apply(
-    pipeline: Pipeline, steps: str | None, filter_type: FilterType
-) -> list[PipelineComponent]:
-    if steps:
-        return filter_steps_to_apply(pipeline, parse_steps(steps), filter_type)
-    return list(pipeline)
-
-
-def reverse_pipeline_steps(
-    pipeline: Pipeline, steps: str | None, filter_type: FilterType
-) -> Iterator[PipelineComponent]:
-    return reversed(get_steps_to_apply(pipeline, steps, filter_type))
 
 
 def log_action(action: str, pipeline_component: PipelineComponent):
@@ -286,8 +240,8 @@ def generate(
         verbose,
     )
     pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
-    pipeline.root = steps_to_apply
+    if steps:
+        pipeline.filter(parse_steps(steps), filter_type)
     if output:
         print_yaml(pipeline.to_yaml())
     return pipeline
@@ -317,9 +271,10 @@ def manifest(
         environment=environment,
         verbose=verbose,
     )
-    steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
+    if steps:
+        pipeline.filter(parse_steps(steps), filter_type)
     resources: list[Resource] = []
-    for component in steps_to_apply:
+    for component in pipeline.components:
         resource = component.manifest()
         resources.append(resource)
         if output:
@@ -349,8 +304,9 @@ def deploy(
     )
     pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
 
-    steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
-    for component in steps_to_apply:
+    if steps:
+        pipeline.filter(parse_steps(steps), filter_type)
+    for component in pipeline.components:
         log_action("Deploy", component)
         component.deploy(dry_run)
 
@@ -375,8 +331,9 @@ def destroy(
         verbose,
     )
     pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
-    for component in pipeline_steps:
+    if steps:
+        pipeline.filter(parse_steps(steps), filter_type)
+    for component in pipeline.components:
         log_action("Destroy", component)
         component.destroy(dry_run)
 
@@ -401,8 +358,9 @@ def reset(
         verbose,
     )
     pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
-    for component in pipeline_steps:
+    if steps:
+        pipeline.filter(parse_steps(steps), filter_type)
+    for component in pipeline.components:
         log_action("Reset", component)
         component.destroy(dry_run)
         component.reset(dry_run)
@@ -428,8 +386,9 @@ def clean(
         verbose,
     )
     pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
-    for component in pipeline_steps:
+    if steps:
+        pipeline.filter(parse_steps(steps), filter_type)
+    for component in pipeline.components:
         log_action("Clean", component)
         component.destroy(dry_run)
         component.clean(dry_run)

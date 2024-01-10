@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 import yaml
 from pydantic import Field, RootModel, SerializeAsAny
 
+from kpops.cli.options import FilterType
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
@@ -41,6 +42,10 @@ class Pipeline(RootModel):
     )
 
     @property
+    def components(self) -> list[PipelineComponent]:
+        return self.root
+
+    @property
     def last(self) -> PipelineComponent:
         return self.root[-1]
 
@@ -62,6 +67,32 @@ class Pipeline(RootModel):
 
     def __len__(self) -> int:
         return len(self.root)
+
+    def filter(self, component_names: set[str], filter_type: FilterType) -> None:
+        def is_in_steps(component: PipelineComponent) -> bool:
+            return component.name in component_names
+
+        log.debug(
+            f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
+        )
+        filtered_steps = [
+            component
+            for component in self.root
+            if (
+                is_in_steps(component)
+                if filter_type is FilterType.INCLUDE
+                else not is_in_steps(component)
+            )
+        ]
+
+        def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
+            return [step.name for step in steps_to_apply]
+
+        log.info(f"Filtered pipeline:\n{get_step_names(filtered_steps)}")
+        self.root = filtered_steps
+
+    def reverse(self) -> None:
+        self.root.reverse()
 
     def to_yaml(self) -> str:
         return yaml.dump(self.model_dump(mode="json", by_alias=True, exclude_none=True))
