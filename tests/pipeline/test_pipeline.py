@@ -39,11 +39,9 @@ class TestPipeline:
 
     def test_filter_include(self, log_info: MagicMock, pipeline: Pipeline):
         pipeline.filter({"example2", "example3"}, FilterType.INCLUDE)
-
         assert len(pipeline.components) == 2
         assert test_component_2 in pipeline.components
         assert test_component_3 in pipeline.components
-
         assert log_info.call_count == 1
         log_info.assert_any_call("Filtered pipeline:\n['example2', 'example3']")
 
@@ -53,7 +51,6 @@ class TestPipeline:
 
     def test_filter_exclude(self, log_info: MagicMock, pipeline: Pipeline):
         pipeline.filter({"example2", "example3"}, FilterType.EXCLUDE)
-
         assert len(pipeline.components) == 1
         assert test_component_1 in pipeline.components
 

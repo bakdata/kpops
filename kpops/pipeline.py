@@ -59,6 +59,9 @@ class Pipeline(RootModel):
     def add(self, component: PipelineComponent) -> None:
         self.root.append(component)
 
+    def remove(self, component: PipelineComponent) -> None:
+        self.root.remove(component)
+
     def __bool__(self) -> bool:
         return bool(self.root)
 
@@ -75,21 +78,15 @@ class Pipeline(RootModel):
         log.debug(
             f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
         )
-        filtered_steps = [
-            component
-            for component in self.root
-            if (
-                is_in_steps(component)
-                if filter_type is FilterType.INCLUDE
-                else not is_in_steps(component)
-            )
-        ]
+        for component in self.components.copy():
+            match filter_type, is_in_steps(component):
+                case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
+                    self.remove(component)
 
         def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
             return [step.name for step in steps_to_apply]
 
-        log.info(f"Filtered pipeline:\n{get_step_names(filtered_steps)}")
-        self.root = filtered_steps
+        log.info(f"Filtered pipeline:\n{get_step_names(self.components)}")
 
     def reverse(self) -> None:
         self.root.reverse()
