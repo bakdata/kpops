@@ -86,24 +86,86 @@ kpops_components_fields:
   - version
 kpops_components_inheritance_ref:
   helm-app:
-  - kubernetes-app
+    bases:
+    - kubernetes-app
+    mro:
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
   kafka-app:
-  - pipeline-component
+    bases:
+    - pipeline-component
+    mro:
+    - kafka-app
+    - pipeline-component
+    - base-defaults-component
   kafka-connector:
-  - pipeline-component
+    bases:
+    - pipeline-component
+    mro:
+    - kafka-connector
+    - pipeline-component
+    - base-defaults-component
   kafka-sink-connector:
-  - kafka-connector
+    bases:
+    - kafka-connector
+    mro:
+    - kafka-sink-connector
+    - kafka-connector
+    - pipeline-component
+    - base-defaults-component
   kafka-source-connector:
-  - kafka-connector
+    bases:
+    - kafka-connector
+    mro:
+    - kafka-source-connector
+    - kafka-connector
+    - pipeline-component
+    - base-defaults-component
   kubernetes-app:
-  - pipeline-component
+    bases:
+    - pipeline-component
+    mro:
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
   pipeline-component:
-  - base-defaults-component
+    bases:
+    - base-defaults-component
+    mro:
+    - pipeline-component
+    - base-defaults-component
   producer-app:
-  - kafka-app
-  - streams-bootstrap
+    bases:
+    - kafka-app
+    - streams-bootstrap
+    mro:
+    - producer-app
+    - kafka-app
+    - streams-bootstrap
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
   streams-app:
-  - kafka-app
-  - streams-bootstrap
+    bases:
+    - kafka-app
+    - streams-bootstrap
+    mro:
+    - streams-app
+    - kafka-app
+    - streams-bootstrap
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
   streams-bootstrap:
-  - helm-app
+    bases:
+    - helm-app
+    mro:
+    - streams-bootstrap
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component

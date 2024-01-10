@@ -2,6 +2,7 @@
 
 import logging
 import sys
+from contextlib import suppress
 from pathlib import Path
 from typing import NamedTuple, cast
 
@@ -34,18 +35,6 @@ PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
 )
 
 KPOPS_COMPONENTS = tuple(_find_classes("kpops.components", PipelineComponent))
-KPOPS_COMPONENTS_INHERITANCE_REF = {
-    component.type: [
-        cast(
-            type[PipelineComponent],
-            base,
-        ).type
-        for base in component.__bases__
-        if patched_issubclass_of_basemodel(base)
-    ]
-    for component in KPOPS_COMPONENTS
-}
-
 KPOPS_COMPONENTS_SECTIONS = {
     component.type: [
         field_name
@@ -78,27 +67,35 @@ class KpopsComponent(NamedTuple):
     specific_attrs: list[str]
 
 
-# TODO(Ivan Yordanov): Evaluate whether it makes sense to instead use `__mro__`
-# The problem is that we need an object for that. Note that `__mro__` differs
-# from the output of this function sometimes and `__mro__` probably is the more
-# accurate way.
-def collect_parents(component_name: str) -> list[str]:
+def collect_parents_mro(component: type[PipelineComponent]) -> list[str]:
     """Return a list of a component's parents.
 
-    :param component_name: Component name in kebap-case
+    :param component_name: Component name in kebab-case
     :return: List ordered from closest to furthest ancestor,
         i.e. ``result[0] == component_name``.
     """
-    collected_components = []
-    queue = [component_name]
-    while queue:
-        component = queue.pop(0)
-        collected_components.append(component)
-        for parent in KPOPS_COMPONENTS_INHERITANCE_REF.get(component, []):
-            if parent not in collected_components:
-                collected_components.append(parent)
-                queue.append(parent)
-    return list(dict.fromkeys(collected_components))
+    comps = []
+    for c in component.mro():
+        if patched_issubclass_of_basemodel(c):
+            with suppress(AttributeError):
+                comps.append(c.type)  # pyright: ignore[reportGeneralTypeIssues]
+    return comps
+
+
+KPOPS_COMPONENTS_INHERITANCE_REF = {
+    component.type: {
+        "bases": [
+            cast(
+                type[PipelineComponent],
+                base,
+            ).type
+            for base in component.__bases__
+            if patched_issubclass_of_basemodel(base)
+        ],
+        "mro": collect_parents_mro(component),
+    }
+    for component in KPOPS_COMPONENTS
+}
 
 
 def filter_sections(
@@ -120,7 +117,7 @@ def filter_sections(
         if section := filter_section(component_name, sections, target_section):
             component_sections.append(section)
         elif include_inherited:
-            for component in collect_parents(component_name):
+            for component in KPOPS_COMPONENTS_INHERITANCE_REF[component_name]["mro"]:
                 if component == PipelineComponent.type:
                     break
                 if section := filter_section(
@@ -148,7 +145,7 @@ def filter_section(
     section = target_section + "-" + component_name + ".yaml"
     if section in sections:
         return section
-    for parent in KPOPS_COMPONENTS_INHERITANCE_REF[component_name]:
+    for parent in KPOPS_COMPONENTS_INHERITANCE_REF[component_name]["bases"]:
         if parent == PipelineComponent.type:
             section = target_section + ".yaml"
             if section in sections:
