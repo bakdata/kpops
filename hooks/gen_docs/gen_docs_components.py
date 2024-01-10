@@ -56,30 +56,19 @@ SCRIPT_ARGUMENTS = set(sys.argv)
 log = logging.getLogger("DocumentationGenerator")
 
 
-class KpopsComponent(NamedTuple):
-    """Stores the names of components fields.
-
-    :param attrs: All fields
-    :param specific_attrs: Fields that are NOT inherited
-    """
-
-    attrs: list[str]
-    specific_attrs: list[str]
-
-
 def collect_parents_mro(component: type[PipelineComponent]) -> list[str]:
     """Return a list of a component's parents.
 
-    :param component_name: Component name in kebab-case
+    :param component: Component name in kebab-case
     :return: List ordered from closest to furthest ancestor,
         i.e. ``result[0] == component_name``.
     """
-    comps = []
-    for c in component.mro():
-        if patched_issubclass_of_basemodel(c):
+    bases = []
+    for base in component.mro():
+        if patched_issubclass_of_basemodel(base):
             with suppress(AttributeError):
-                comps.append(c.type)  # pyright: ignore[reportGeneralTypeIssues]
-    return comps
+                bases.append(base.type)  # pyright: ignore[reportGeneralTypeIssues]
+    return bases
 
 
 KPOPS_COMPONENTS_INHERITANCE_REF = {
@@ -96,6 +85,17 @@ KPOPS_COMPONENTS_INHERITANCE_REF = {
     }
     for component in KPOPS_COMPONENTS
 }
+
+
+class KpopsComponent(NamedTuple):
+    """Stores the names of components fields.
+
+    :param attrs: All fields
+    :param specific_attrs: Fields that are NOT inherited
+    """
+
+    attrs: list[str]
+    specific_attrs: list[str]
 
 
 def filter_sections(
