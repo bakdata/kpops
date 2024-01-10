@@ -12,7 +12,7 @@ from hooks import ROOT
 from kpops.cli.registry import _find_classes
 from kpops.components import KafkaConnector, PipelineComponent
 from kpops.utils.colorify import redify, yellowify
-from kpops.utils.pydantic import patched_issubclass_of_basemodel
+from kpops.utils.pydantic import issubclass_patched
 from kpops.utils.yaml import load_yaml_file
 
 PATH_KPOPS_MAIN = ROOT / "kpops/cli/main.py"
@@ -65,7 +65,7 @@ def collect_parents_mro(component: type[PipelineComponent]) -> list[str]:
     """
     bases = []
     for base in component.mro():
-        if patched_issubclass_of_basemodel(base):
+        if issubclass_patched(base):
             with suppress(AttributeError):
                 bases.append(base.type)  # pyright: ignore[reportGeneralTypeIssues]
     return bases
@@ -79,7 +79,7 @@ KPOPS_COMPONENTS_INHERITANCE_REF = {
                 base,
             ).type
             for base in component.__bases__
-            if patched_issubclass_of_basemodel(base)
+            if issubclass_patched(base)
         ],
         "mro": collect_parents_mro(component),
     }
@@ -145,11 +145,12 @@ def filter_section(
     section = target_section + "-" + component_name + ".yaml"
     if section in sections:
         return section
-    for parent in KPOPS_COMPONENTS_INHERITANCE_REF[component_name]["bases"]:
-        if parent == PipelineComponent.type:
-            section = target_section + ".yaml"
-            if section in sections:
-                return section
+    if KPOPS_COMPONENTS_INHERITANCE_REF[component_name]["bases"] == [
+        PipelineComponent.type
+    ]:
+        section = target_section + ".yaml"
+        if section in sections:
+            return section
     return None
 
 
