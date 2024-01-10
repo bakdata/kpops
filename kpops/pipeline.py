@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING
 import yaml
 from pydantic import Field, RootModel, SerializeAsAny
 
-from kpops.cli.options import FilterType
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
@@ -73,12 +72,12 @@ class Pipeline(RootModel):
         return len(self.root)
 
     def filter(
-        self, predicate: Callable[[PipelineComponent], bool], filter_type: FilterType
+        self, predicate: Callable[[PipelineComponent], bool]
     ) -> None:  # TODO: pydocs
         for component in self.components.copy():
-            match filter_type, predicate(component):
-                case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
-                    self.remove(component)
+            # filter out components not matching the predicate
+            if not predicate(component):
+                self.remove(component)
 
     def to_yaml(self) -> str:
         return yaml.dump(self.model_dump(mode="json", by_alias=True, exclude_none=True))

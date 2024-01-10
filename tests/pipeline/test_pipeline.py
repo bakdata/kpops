@@ -27,9 +27,15 @@ def is_in_steps(component: PipelineComponent, component_names: set[str]) -> bool
     return component.name in component_names
 
 
-def predicate(component_names: set[str]) -> Callable[[PipelineComponent], bool]:
+def predicate(
+    component_names: set[str], filter_type: FilterType
+) -> Callable[[PipelineComponent], bool]:
     def inner(component: PipelineComponent) -> bool:
-        return is_in_steps(component, component_names)
+        match filter_type, is_in_steps(component, component_names):
+            case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
+                return False
+            case _:
+                return True
 
     return inner
 
@@ -44,20 +50,20 @@ class TestPipeline:
         return pipeline
 
     def test_filter_include(self, pipeline: Pipeline):
-        pipeline.filter(predicate({"example2", "example3"}), FilterType.INCLUDE)
+        pipeline.filter(predicate({"example2", "example3"}, FilterType.INCLUDE))
         assert len(pipeline.components) == 2
         assert test_component_2 in pipeline.components
         assert test_component_3 in pipeline.components
 
     def test_filter_include_empty(self, pipeline: Pipeline):
-        pipeline.filter(predicate(set()), FilterType.INCLUDE)
+        pipeline.filter(predicate(set(), FilterType.INCLUDE))
         assert len(pipeline.components) == 0
 
     def test_filter_exclude(self, pipeline: Pipeline):
-        pipeline.filter(predicate({"example2", "example3"}), FilterType.EXCLUDE)
+        pipeline.filter(predicate({"example2", "example3"}, FilterType.EXCLUDE))
         assert len(pipeline.components) == 1
         assert test_component_1 in pipeline.components
 
     def test_filter_exclude_empty(self, pipeline: Pipeline):
-        pipeline.filter(predicate(set()), FilterType.EXCLUDE)
+        pipeline.filter(predicate(set(), FilterType.EXCLUDE))
         assert len(pipeline.components) == 3

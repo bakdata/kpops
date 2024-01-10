@@ -250,7 +250,14 @@ def generate(
         def is_in_steps(component: PipelineComponent) -> bool:
             return component.name in component_names
 
-        pipeline.filter(is_in_steps, filter_type)
+        def predicate(component: PipelineComponent) -> bool:
+            match filter_type, is_in_steps(component):
+                case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
+                    return False
+                case _:
+                    return True
+
+        pipeline.filter(predicate)
 
         def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
             return [step.name for step in steps_to_apply]
