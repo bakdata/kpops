@@ -251,6 +251,11 @@ def generate(
             return component.name in component_names
 
         pipeline.filter(is_in_steps, filter_type)
+
+        def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
+            return [step.name for step in steps_to_apply]
+
+        log.info(f"Filtered pipeline:\n{get_step_names(pipeline.components)}")
     if output:
         print_yaml(pipeline.to_yaml())
     return pipeline

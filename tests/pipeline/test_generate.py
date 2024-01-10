@@ -1,7 +1,9 @@
 from pathlib import Path
+from unittest.mock import MagicMock
 
 import pytest
 import yaml
+from pytest_mock import MockerFixture
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
@@ -16,6 +18,10 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class TestGenerate:
+    @pytest.fixture(autouse=True)
+    def log_info(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch("kpops.cli.main.log.info")
+
     def test_python_api(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
@@ -29,7 +35,7 @@ class TestGenerate:
             "filter",
         ]
 
-    def test_python_api_filter_include(self):
+    def test_python_api_filter_include(self, log_info: MagicMock):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
             defaults=RESOURCE_PATH,
@@ -39,8 +45,10 @@ class TestGenerate:
         )
         assert len(pipeline) == 1
         assert pipeline.root[0].type == "converter"
+        assert log_info.call_count == 1
+        log_info.assert_any_call("Filtered pipeline:\n['converter']")
 
-    def test_python_api_filter_exclude(self):
+    def test_python_api_filter_exclude(self, log_info: MagicMock):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
             defaults=RESOURCE_PATH,
@@ -50,6 +58,10 @@ class TestGenerate:
         )
         assert len(pipeline) == 1
         assert pipeline.root[0].type == "filter"
+        assert log_info.call_count == 1
+        log_info.assert_any_call(
+            "Filtered pipeline:\n['a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name']"
+        )
 
     def test_load_pipeline(self, snapshot: SnapshotTest):
         result = runner.invoke(

@@ -80,11 +80,6 @@ class Pipeline(RootModel):
                 case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
                     self.remove(component)
 
-        def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
-            return [step.name for step in steps_to_apply]
-
-        log.info(f"Filtered pipeline:\n{get_step_names(self.components)}")
-
     def reverse(self) -> None:
         self.root.reverse()
 
