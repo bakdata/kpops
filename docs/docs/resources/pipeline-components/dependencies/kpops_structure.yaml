@@ -85,13 +85,25 @@ kpops_components_fields:
   - repo_config
   - version
 kpops_components_inheritance_ref:
-  helm-app: kubernetes-app
-  kafka-app: pipeline-component
-  kafka-connector: pipeline-component
-  kafka-sink-connector: kafka-connector
-  kafka-source-connector: kafka-connector
-  kubernetes-app: pipeline-component
-  pipeline-component: base-defaults-component
-  producer-app: kafka-app
-  streams-app: kafka-app
-  streams-bootstrap: helm-app
+  helm-app:
+  - kubernetes-app
+  kafka-app:
+  - pipeline-component
+  kafka-connector:
+  - pipeline-component
+  kafka-sink-connector:
+  - kafka-connector
+  kafka-source-connector:
+  - kafka-connector
+  kubernetes-app:
+  - pipeline-component
+  pipeline-component:
+  - base-defaults-component
+  producer-app:
+  - kafka-app
+  - streams-bootstrap
+  streams-app:
+  - kafka-app
+  - streams-bootstrap
+  streams-bootstrap:
+  - helm-app
