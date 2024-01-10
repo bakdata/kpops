@@ -99,7 +99,7 @@ class FilterType(str, Enum):
 
 
 FILTER_TYPE: FilterType = typer.Option(
-    default=FilterType.INCLUDE.value,
+    default=FilterType.INCLUDE,
     case_sensitive=False,
     help="Whether the --steps option should include/exclude the steps",
 )
