@@ -1,12 +1,15 @@
 topic_name_config:
-  default_error_topic_name: "${component.name}-dead-letter-topic"
-  default_output_topic_name: "${component.name}-test-topic"
+  default_error_topic_name: ${component.name}-dead-letter-topic
+  default_output_topic_name: ${component.name}-test-topic
 
-schema_registry_url: "http://localhost:8081"
+schema_registry:
+  enabled: true
+  url: "http://localhost:8081"
 
-kafka_rest_host: "http://localhost:8082"
-
-kafka_connect_host: "http://localhost:8083"
+kafka_connect:
+  url: "http://kafka_connect_url:8083"
+kafka_rest:
+  url: "http://kafka_rest_url:8082"
 
 defaults_path: ..
 kafka_brokers: "broker:9092"

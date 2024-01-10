@@ -99,6 +99,7 @@ class TestKafkaApp:
             True,
             "test-namespace",
             {
+                "nameOverride": "${pipeline_name}-example-name",
                 "streams": {"brokers": "fake-broker:9092", "outputTopic": "test"},
             },
             HelmUpgradeInstallFlags(version="1.2.3"),

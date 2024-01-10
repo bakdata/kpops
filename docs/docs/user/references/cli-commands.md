@@ -18,9 +18,10 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `clean`: Clean pipeline steps
 * `deploy`: Deploy pipeline steps
 * `destroy`: Destroy pipeline steps
-* `generate`: Enriches pipelines steps with defaults.
+* `generate`: Generate enriched pipeline representation
+* `manifest`: Render final resource representation
 * `reset`: Reset pipeline steps
-* `schema`: Generate json schema.
+* `schema`: Generate JSON schema.
 
 ## `kpops clean`
 
@@ -105,7 +106,7 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH
 
 ## `kpops generate`
 
-Enriches pipelines steps with defaults. The output is used as input for the deploy/destroy/... commands.
+Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).
 
 **Usage**:
 
@@ -122,7 +123,31 @@ $ kpops generate [OPTIONS] PIPELINE_PATH
 * `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
-* `--template / --no-template`: Run Helm template  [default: no-template]
+* `--output / --no-output`: Enable output printing  [default: output]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
+* `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--help`: Show this message and exit.
+
+## `kpops manifest`
+
+In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.
+
+**Usage**:
+
+```console
+$ kpops manifest [OPTIONS] PIPELINE_PATH
+```
+
+**Arguments**:
+
+* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+
+**Options**:
+
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
+* `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
+* `--output / --no-output`: Enable output printing  [default: output]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
 * `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
@@ -158,25 +183,25 @@ $ kpops reset [OPTIONS] PIPELINE_PATH
 
 ## `kpops schema`
 
-Generate json schema.
+Generate JSON schema.
 
-The schemas can be used to enable support for kpops files in a text editor.
+The schemas can be used to enable support for KPOps files in a text editor.
 
 **Usage**:
 
 ```console
-$ kpops schema [OPTIONS] SCOPE:{pipeline|config}
+$ kpops schema [OPTIONS] SCOPE:{pipeline|defaults|config}
 ```
 
 **Arguments**:
 
-* `SCOPE:{pipeline|config}`: 
+* `SCOPE:{pipeline|defaults|config}`: 
         Scope of the generated schema
         
 
 
 
-        pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide components module in config.
+        pipeline: Schema of PipelineComponents. Includes the built-in KPOps components by default. To include custom components, provide components module in config.
         
 
 

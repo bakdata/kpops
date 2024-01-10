@@ -9,7 +9,7 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
 )
 from kpops.components.streams_bootstrap.app_type import AppType
-from kpops.components.streams_bootstrap.producer.model import ProducerValues
+from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
 
 
@@ -25,7 +25,7 @@ class ProducerApp(KafkaApp):
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    app: ProducerValues = Field(
+    app: ProducerAppValues = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )
