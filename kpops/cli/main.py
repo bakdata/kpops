@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from collections.abc import Iterator
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
