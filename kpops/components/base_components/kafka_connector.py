@@ -20,12 +20,13 @@ from kpops.component_handlers.helm_wrapper.model import (
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
+    KafkaConnectorResetterConfig,
+    KafkaConnectorResetterValues,
     KafkaConnectorType,
-    KafkaConnectResetterConfig,
-    KafkaConnectResetterValues,
 )
 from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.models.from_section import FromTopic
+from kpops.components.base_components.models.resource import Resource
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
@@ -177,7 +178,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
         :param dry_run: If the cleanup should be run in dry run mode or not
         :param retain_clean_jobs: If the cleanup job should be kept
-        :param kwargs: Other values for the KafkaConnectResetter
+        :param kwargs: Other values for the KafkaConnectorResetter
         """
         log.info(
             magentaify(
@@ -238,8 +239,8 @@ class KafkaConnector(PipelineComponent, ABC):
         :return: The Helm chart values of the connector resetter
         """
         return {
-            **KafkaConnectResetterValues(
-                config=KafkaConnectResetterConfig(
+            **KafkaConnectorResetterValues(
+                config=KafkaConnectorResetterConfig(
                     connector=self.full_name,
                     brokers=self.config.kafka_brokers,
                     **kwargs,
@@ -284,18 +285,17 @@ class KafkaSourceConnector(KafkaConnector):
         raise NotImplementedError(msg)
 
     @override
-    def template(self) -> None:
+    def manifest(self) -> Resource:
         values = self._get_kafka_connect_resetter_values(
             offset_topic=self.offset_topic,
         )
-        stdout = self.helm.template(
+        return self.helm.template(
             self._resetter_release_name,
             self._resetter_helm_chart,
             self.namespace,
             values,
             self.template_flags,
         )
-        print(stdout)
 
     @override
     async def reset(self, dry_run: bool) -> None:
@@ -336,16 +336,15 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "topics", ",".join(topics))
 
     @override
-    def template(self) -> None:
+    def manifest(self) -> Resource:
         values = self._get_kafka_connect_resetter_values()
-        stdout = self.helm.template(
+        return self.helm.template(
             self._resetter_release_name,
             self._resetter_helm_chart,
             self.namespace,
             values,
             self.template_flags,
         )
-        print(stdout)
 
     @override
     def set_input_pattern(self, name: str) -> None:

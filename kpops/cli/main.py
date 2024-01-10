@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from collections.abc import Iterator
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -19,15 +20,19 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
+from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline import Pipeline, PipelineGenerator
-from kpops.utils.gen_schema import SchemaScope, gen_config_schema, gen_pipeline_schema
+from kpops.utils.gen_schema import (
+    SchemaScope,
+    gen_config_schema,
+    gen_defaults_schema,
+    gen_pipeline_schema,
+)
 from kpops.utils.pydantic import YamlConfigSettingsSource
 from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
-
     from kpops.components.base_components import PipelineComponent
 
 
@@ -100,6 +105,7 @@ FILTER_TYPE: FilterType = typer.Option(
     help="Whether the --steps option should include/exclude the steps",
 )
 
+OUTPUT_OPTION = typer.Option(True, help="Enable output printing")
 VERBOSE_OPTION = typer.Option(False, help="Enable verbose printing")
 
 ENVIRONMENT: str | None = typer.Option(
@@ -222,9 +228,9 @@ def create_kpops_config(
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
     help="""
-    Generate json schema.
+    Generate JSON schema.
 
-    The schemas can be used to enable support for kpops files in a text editor.
+    The schemas can be used to enable support for KPOps files in a text editor.
     """
 )
 def schema(
@@ -234,7 +240,7 @@ def schema(
         help="""
         Scope of the generated schema
         \n\n\n
-        pipeline: Schema of PipelineComponents. Includes the built-in kpops components by default. To include custom components, provide components module in config.
+        pipeline: Schema of PipelineComponents. Includes the built-in KPOps components by default. To include custom components, provide components module in config.
         \n\n\n
         config: Schema of KpopsConfig.""",
     ),
@@ -249,21 +255,25 @@ def schema(
             gen_pipeline_schema(
                 kpops_config.components_module, include_stock_components
             )
+        case SchemaScope.DEFAULTS:
+            kpops_config = create_kpops_config(config)
+            gen_defaults_schema(
+                kpops_config.components_module, include_stock_components
+            )
         case SchemaScope.CONFIG:
             gen_config_schema()
 
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
-    help="Enriches pipelines steps with defaults. The output is used as input for the deploy/destroy/... commands."
+    short_help="Generate enriched pipeline representation",
+    help="Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).",
 )
 def generate(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    template: bool = typer.Option(False, help="Run Helm template"),
-    steps: Optional[str] = PIPELINE_STEPS,
-    filter_type: FilterType = FILTER_TYPE,
+    output: bool = OUTPUT_OPTION,
     environment: Optional[str] = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
 ) -> Pipeline:
@@ -275,21 +285,44 @@ def generate(
         verbose,
     )
     pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-
-    if not template:
+    if output:
         print_yaml(pipeline.to_yaml())
-
-    if template:
-        steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
-        for component in steps_to_apply:
-            component.template()
-    elif steps:
-        log.warning(
-            "The following flags are considered only when `--template` is set: \n \
-                '--steps'"
-        )
-
     return pipeline
+
+
+@app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+    short_help="Render final resource representation",
+    help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.",
+)
+def manifest(
+    pipeline_path: Path = PIPELINE_PATH_ARG,
+    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
+    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
+    config: Path = CONFIG_PATH_OPTION,
+    output: bool = OUTPUT_OPTION,
+    steps: Optional[str] = PIPELINE_STEPS,
+    filter_type: FilterType = FILTER_TYPE,
+    environment: Optional[str] = ENVIRONMENT,
+    verbose: bool = VERBOSE_OPTION,
+) -> list[Resource]:
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        defaults=defaults,
+        config=config,
+        output=False,
+        environment=environment,
+        verbose=verbose,
+    )
+    steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
+    resources: list[Resource] = []
+    for component in steps_to_apply:
+        resource = component.manifest()
+        resources.append(resource)
+        if output:
+            for manifest in resource:
+                print_yaml(manifest)
+    return resources
 
 
 @app.command(help="Deploy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8

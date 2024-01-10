@@ -24,12 +24,16 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
 STREAMS_APP_FULL_NAME = "${pipeline_name}-" + STREAMS_APP_NAME
 STREAMS_APP_RELEASE_NAME = create_helm_release_name(STREAMS_APP_FULL_NAME)
+STREAMS_APP_CLEAN_FULL_NAME = STREAMS_APP_FULL_NAME + "-clean"
 STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
-    STREAMS_APP_RELEASE_NAME, "-clean"
+    STREAMS_APP_CLEAN_FULL_NAME, "-clean"
 )
 
 
 class TestStreamsApp:
+    def test_release_name(self):
+        assert STREAMS_APP_CLEAN_RELEASE_NAME.endswith("-clean")
+
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
@@ -329,6 +333,7 @@ class TestStreamsApp:
                 dry_run,
                 "test-namespace",
                 {
+                    "nameOverride": STREAMS_APP_FULL_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "extraOutputTopics": {
@@ -337,7 +342,7 @@ class TestStreamsApp:
                         },
                         "outputTopic": "${output_topic_name}",
                         "errorTopic": "${error_topic_name}",
-                    }
+                    },
                 },
                 HelmUpgradeInstallFlags(
                     create_namespace=False,
@@ -392,6 +397,7 @@ class TestStreamsApp:
                 dry_run,
                 "test-namespace",
                 {
+                    "nameOverride": STREAMS_APP_FULL_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "${output_topic_name}",
@@ -437,6 +443,7 @@ class TestStreamsApp:
                 dry_run,
                 "test-namespace",
                 {
+                    "nameOverride": STREAMS_APP_FULL_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "${output_topic_name}",

@@ -1,4 +1,5 @@
 from logging import Logger
+from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -7,6 +8,7 @@ from pytest_mock import MockerFixture
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
 from kpops.component_handlers.helm_wrapper.model import HelmTemplate
+from kpops.component_handlers.kubernetes.model import KubernetesManifest
 
 log = Logger("TestLogger")
 
@@ -34,7 +36,9 @@ class TestDryRunHandler:
         helm_mock.get_manifest.return_value = iter(())
         mock_load_manifest = mocker.patch(
             "kpops.component_handlers.helm_wrapper.dry_run_handler.Helm.load_manifest",
-            return_value=iter([HelmTemplate("path.yaml", {"a": 1})]),
+            return_value=iter(
+                [HelmTemplate(Path("path.yaml"), KubernetesManifest({"a": 1}))]
+            ),
         )
         log.addHandler(caplog.handler)
 
@@ -55,11 +59,13 @@ class TestDryRunHandler:
         caplog: LogCaptureFixture,
     ):
         helm_mock.get_manifest.return_value = iter(
-            [HelmTemplate("path.yaml", {"a": 1})]
+            [HelmTemplate(Path("path.yaml"), KubernetesManifest({"a": 1}))]
         )
         mock_load_manifest = mocker.patch(
             "kpops.component_handlers.helm_wrapper.dry_run_handler.Helm.load_manifest",
-            return_value=iter([HelmTemplate("path.yaml", {"a": 1})]),
+            return_value=iter(
+                [HelmTemplate(Path("path.yaml"), KubernetesManifest({"a": 1}))]
+            ),
         )
         log.addHandler(caplog.handler)
 

@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 
 import pytest
@@ -16,11 +15,12 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
-class TestPipeline:
+class TestGenerate:
     def test_python_api(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
             defaults=RESOURCE_PATH,
+            output=False,
         )
         assert len(pipeline) == 3
 
@@ -41,33 +41,6 @@ class TestPipeline:
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
-
-    def test_generate_with_steps_flag_should_write_log_warning(
-        self, caplog: pytest.LogCaptureFixture
-    ):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                str(RESOURCE_PATH / "first-pipeline/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
-                "--steps",
-                "a",
-            ],
-            catch_exceptions=False,
-        )
-
-        assert caplog.record_tuples == [
-            (
-                "root",
-                logging.WARNING,
-                "The following flags are considered only when `--template` is set: \n \
-                '--steps'",
-            )
-        ]
-
-        assert result.exit_code == 0, result.stdout
 
     def test_name_equal_prefix_name_concatenation(self):
         result = runner.invoke(

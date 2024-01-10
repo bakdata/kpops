@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import logging
 from collections import Counter
-from contextlib import suppress
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -67,7 +66,6 @@ class Pipeline(BaseModel):
             self.__add_output(output_topic, component.id)
 
     def add(self, component: PipelineComponent) -> None:
-        self._populate_component_name(component)
         self.components.append(component)
         self.__add_to_graph(component)
 
@@ -108,14 +106,6 @@ class Pipeline(BaseModel):
         if duplicates:
             msg = f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
             raise ValidationError(msg)
-
-    @staticmethod
-    def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove
-        with suppress(
-            AttributeError  # Some components like Kafka Connect do not have a name_override attribute
-        ):
-            if (app := getattr(component, "app")) and app.name_override is None:
-                app.name_override = component.full_name
 
 
 def create_env_components_index(
@@ -274,8 +264,6 @@ class PipelineGenerator:
             self.env_components_index.get(component.name, {}),
             component.model_dump(mode="json", by_alias=True),
         )
-        # HACK: make sure component type is set for inflated components, because property is not serialized by Pydantic
-        env_component_as_dict["type"] = component.type
 
         component_data = self.substitute_in_component(env_component_as_dict)
 

@@ -83,14 +83,16 @@ def substitute_nested(input: str, **kwargs) -> str:
     return old_str
 
 
-def print_yaml(input: str, *, substitution: dict | None = None) -> None:
-    """Print YAML to console with syntax highlighting.
+def print_yaml(data: Mapping | str, *, substitution: dict | None = None) -> None:
+    """Print YAML object with syntax highlighting.
 
-    :param s: YAML content
+    :param data: YAML document
     :param substitution: Substitution dictionary, defaults to None
     """
+    if not isinstance(data, str):
+        data = yaml.safe_dump(dict(data))
     syntax = Syntax(
-        substitute(input, substitution),
+        substitute(data, substitution),
         "yaml",
         background_color="default",
         theme="ansi_dark",

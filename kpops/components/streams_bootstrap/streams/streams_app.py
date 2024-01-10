@@ -3,7 +3,7 @@ from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.streams_bootstrap.app_type import AppType
-from kpops.components.streams_bootstrap.streams.model import StreamsAppConfig
+from kpops.components.streams_bootstrap.streams.model import StreamsAppValues
 from kpops.utils.docstring import describe_attr
 
 
@@ -13,7 +13,7 @@ class StreamsApp(KafkaApp):
     :param app: Application-specific settings
     """
 
-    app: StreamsAppConfig = Field(
+    app: StreamsAppValues = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )

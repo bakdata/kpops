@@ -7,7 +7,7 @@ from snapshottest import Snapshot
 
 snapshots = Snapshot()
 
-snapshots['TestPipeline.test_default_config test-pipeline'] = [
+snapshots['TestGenerate.test_default_config test-pipeline'] = [
     {
         'app': {
             'resources': {
@@ -100,7 +100,7 @@ snapshots['TestPipeline.test_default_config test-pipeline'] = [
     }
 ]
 
-snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = [
+snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
     {
         'app': {
             'commandLine': {
@@ -387,7 +387,7 @@ snapshots['TestPipeline.test_inflate_pipeline test-pipeline'] = [
     }
 ]
 
-snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'] = [
+snapshots['TestGenerate.test_kafka_connect_sink_weave_from_topics test-pipeline'] = [
     {
         'app': {
             'image': 'fake-image',
@@ -477,7 +477,7 @@ snapshots['TestPipeline.test_kafka_connect_sink_weave_from_topics test-pipeline'
     }
 ]
 
-snapshots['TestPipeline.test_load_pipeline test-pipeline'] = [
+snapshots['TestGenerate.test_load_pipeline test-pipeline'] = [
     {
         'app': {
             'commandLine': {
@@ -670,7 +670,7 @@ snapshots['TestPipeline.test_load_pipeline test-pipeline'] = [
     }
 ]
 
-snapshots['TestPipeline.test_model_serialization test-pipeline'] = [
+snapshots['TestGenerate.test_model_serialization test-pipeline'] = [
     {
         'app': {
             'streams': {
@@ -699,7 +699,7 @@ snapshots['TestPipeline.test_model_serialization test-pipeline'] = [
     }
 ]
 
-snapshots['TestPipeline.test_no_input_topic test-pipeline'] = [
+snapshots['TestGenerate.test_no_input_topic test-pipeline'] = [
     {
         'app': {
             'commandLine': {
@@ -822,7 +822,7 @@ snapshots['TestPipeline.test_no_input_topic test-pipeline'] = [
     }
 ]
 
-snapshots['TestPipeline.test_no_user_defined_components test-pipeline'] = [
+snapshots['TestGenerate.test_no_user_defined_components test-pipeline'] = [
     {
         'app': {
             'image': 'fake-image',
@@ -882,7 +882,7 @@ snapshots['TestPipeline.test_no_user_defined_components test-pipeline'] = [
     }
 ]
 
-snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = [
+snapshots['TestGenerate.test_pipelines_with_env_values test-pipeline'] = [
     {
         'app': {
             'commandLine': {
@@ -1075,7 +1075,7 @@ snapshots['TestPipeline.test_pipelines_with_env_values test-pipeline'] = [
     }
 ]
 
-snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = [
+snapshots['TestGenerate.test_prefix_pipeline_component test-pipeline'] = [
     {
         'app': {
             'debug': True,
@@ -1111,7 +1111,7 @@ snapshots['TestPipeline.test_prefix_pipeline_component test-pipeline'] = [
     }
 ]
 
-snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
+snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
     {
         'app': {
             'streams': {
@@ -1762,7 +1762,7 @@ snapshots['TestPipeline.test_read_from_component test-pipeline'] = [
     }
 ]
 
-snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = [
+snapshots['TestGenerate.test_substitute_in_component test-pipeline'] = [
     {
         'app': {
             'commandLine': {
@@ -1967,7 +1967,7 @@ snapshots['TestPipeline.test_substitute_in_component test-pipeline'] = [
     }
 ]
 
-snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test-pipeline'] = [
+snapshots['TestGenerate.test_with_custom_config_with_absolute_defaults_path test-pipeline'] = [
     {
         'app': {
             'resources': {
@@ -2060,7 +2060,7 @@ snapshots['TestPipeline.test_with_custom_config_with_absolute_defaults_path test
     }
 ]
 
-snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test-pipeline'] = [
+snapshots['TestGenerate.test_with_custom_config_with_relative_defaults_path test-pipeline'] = [
     {
         'app': {
             'resources': {
@@ -2153,7 +2153,7 @@ snapshots['TestPipeline.test_with_custom_config_with_relative_defaults_path test
     }
 ]
 
-snapshots['TestPipeline.test_with_env_defaults test-pipeline'] = [
+snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
     {
         'app': {
             'image': 'fake-image',

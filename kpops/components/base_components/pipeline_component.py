@@ -13,6 +13,7 @@ from kpops.components.base_components.models.from_section import (
     FromTopic,
     InputTopicTypes,
 )
+from kpops.components.base_components.models.resource import Resource
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -213,7 +214,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
             self.apply_from_inputs(input_topic, from_topic)
 
     def inflate(self) -> list[PipelineComponent]:
-        """Inflate a component.
+        """Inflate component.
 
         This is helpful if one component should result in multiple components.
         To support this, override this method and return a list of components
@@ -222,35 +223,30 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
         return [self]
 
-    def template(self) -> None:
-        """Run `helm template`.
-
-        From HELM: Render chart templates locally and display the output.
-        Any values that would normally be looked up or retrieved in-cluster will
-        be faked locally. Additionally, none of the server-side testing of chart
-        validity (e.g. whether an API is supported) is done.
-        """
+    def manifest(self) -> Resource:
+        """Render final component resources, e.g. Kubernetes manifests."""
+        return []
 
     async def deploy(self, dry_run: bool) -> None:
-        """Deploy the component (self) to the k8s cluster.
+        """Deploy component, e.g. to Kubernetes cluster.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
     async def destroy(self, dry_run: bool) -> None:
-        """Uninstall the component (self) from the k8s cluster.
+        """Uninstall component, e.g. from Kubernetes cluster.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
     async def reset(self, dry_run: bool) -> None:
-        """Reset component (self) state.
+        """Reset component state.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
     async def clean(self, dry_run: bool) -> None:
-        """Remove component (self) and any trace of it.
+        """Destroy component including related states.
 
         :param dry_run: Whether to do a dry run of the command
         """
