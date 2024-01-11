@@ -119,13 +119,13 @@
             "description": "Configure the topic name variables you can use in the pipeline definition.",
             "properties": {
                 "default_error_topic_name": {
-                    "default": "${pipeline.name}-${component.name}-error",
+                    "default": "${pipeline_name}-${component.name}-error",
                     "description": "Configures the value for the variable ${error_topic_name}",
                     "title": "Default Error Topic Name",
                     "type": "string"
                 },
                 "default_output_topic_name": {
-                    "default": "${pipeline.name}-${component.name}",
+                    "default": "${pipeline_name}-${component.name}",
                     "description": "Configures the value for the variable ${output_topic_name}",
                     "title": "Default Output Topic Name",
                     "type": "string"
@@ -266,8 +266,8 @@
                 }
             ],
             "default": {
-                "default_error_topic_name": "${pipeline.name}-${component.name}-error",
-                "default_output_topic_name": "${pipeline.name}-${component.name}"
+                "default_error_topic_name": "${pipeline_name}-${component.name}-error",
+                "default_output_topic_name": "${pipeline_name}-${component.name}"
             },
             "description": "Configure the topic name variables you can use in the pipeline definition."
         }

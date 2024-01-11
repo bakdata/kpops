@@ -2,8 +2,8 @@
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
     streams: # required, producer-app-specific
-      brokers: ${config.kafka_brokers} # required
-      schemaRegistryUrl: ${schema_registry_url}
+      brokers: ${kafka_brokers} # required
+      schemaRegistryUrl: ${schema_registry.url}
       outputTopic: output_topic
       extraOutputTopics:
         output_role1: output_topic1
