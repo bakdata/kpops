@@ -93,12 +93,12 @@ class TestKafkaApp:
 
         print_helm_diff.assert_called_once()
         helm_upgrade_install.assert_called_once_with(
-            create_helm_release_name("${pipeline_name}-example-name"),
+            create_helm_release_name("${pipeline.name}-example-name"),
             "test/test-chart",
             True,
             "test-namespace",
             {
-                "nameOverride": "${pipeline_name}-example-name",
+                "nameOverride": "${pipeline.name}-example-name",
                 "streams": {"brokers": "fake-broker:9092", "outputTopic": "test"},
             },
             HelmUpgradeInstallFlags(version="1.2.3"),
