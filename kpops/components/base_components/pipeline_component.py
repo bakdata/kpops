@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from abc import ABC
-from contextlib import suppress
 
 from pydantic import AliasChoices, ConfigDict, Field
 
@@ -77,8 +76,6 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     ) -> list[str]:
         """Get kebab-cased superclasses' names.
 
-        Can only return subclasses of ``BaseDefaultsComponent``.
-
         :param __class_or_tuple: "Furthest" ancestors to look for,
             defaults to BaseDefaultsComponent
         :return: All ancestors that match the requirements
@@ -86,8 +83,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         bases = []
         for base in cls.mro():
             if issubclass_patched(base, __class_or_tuple):
-                with suppress(AttributeError):
-                    bases.append(base.type)  # pyright: ignore[reportGeneralTypeIssues]
+                bases.append(base)
         return bases
 
     def add_input_topics(self, topics: list[str]) -> None:

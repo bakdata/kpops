@@ -52,7 +52,13 @@ KPOPS_COMPONENTS_INHERITANCE_REF = {
             for base in component.__bases__
             if issubclass_patched(base, PipelineComponent)
         ],
-        "parents": component.get_parents(PipelineComponent),
+        "parents": [
+            cast(
+                type[PipelineComponent],
+                parent,
+            ).type
+            for parent in component.get_parents(PipelineComponent)
+        ],
     }
     for component in KPOPS_COMPONENTS
 }
