@@ -31,7 +31,6 @@ class ShouldInflate(StreamsApp):
                         name="sink-connector",
                         config=self.config,
                         handlers=self.handlers,
-                        resetter_namespace="example-namespace",
                         app=KafkaConnectorConfig(
                             **{
                                 "topics": topic_name,

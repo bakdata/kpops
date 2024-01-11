@@ -49,7 +49,7 @@ converter:
       enabled: true
       consumerGroup: converter-${output_topic_name}
       maxReplicas: 1
-      lagThreshold: "10000"
+      lagThreshold: 10000
   to:
     topics:
       ${output_topic_name}:
@@ -72,7 +72,7 @@ filter:
     autoscaling:
       enabled: true
       maxReplicas: 1
-      lagThreshold: "10000"
+      lagThreshold: 10000
       consumerGroup: filter-${output_topic_name}
       topics:
         - "${output_topic_name}"
@@ -91,7 +91,7 @@ should-inflate:
     autoscaling:
       enabled: true
       maxReplicas: 1
-      lagThreshold: "10000"
+      lagThreshold: 10000
       consumerGroup: filter-${output_topic_name}
       topics:
         - "${output_topic_name}"
@@ -104,8 +104,7 @@ should-inflate:
           retention.ms: "-1"
 
 kafka-connector:
-  name: "sink-connector"
-  namespace: "example-namespace"
+  name: sink-connector
   app:
     batch.size: "2000"
     behavior.on.malformed.documents: "warn"
