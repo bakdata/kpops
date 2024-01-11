@@ -34,7 +34,7 @@ class TestStreamsBootstrap:
         )
 
     def test_default_configs(self, config: KpopsConfig, handlers: ComponentHandlers):
-        streams_bootstrap_helm_app = StreamsBootstrap(
+        streams_bootstrap = StreamsBootstrap(
             name="example-name",
             config=config,
             handlers=handlers,
@@ -43,20 +43,20 @@ class TestStreamsBootstrap:
                 "app": {},
             },
         )
-        assert streams_bootstrap_helm_app.repo_config == HelmRepoConfig(
+        assert streams_bootstrap.repo_config == HelmRepoConfig(
             repository_name="bakdata-streams-bootstrap",
             url="https://bakdata.github.io/streams-bootstrap/",
         )
-        assert streams_bootstrap_helm_app.version == "2.9.0"
-        assert streams_bootstrap_helm_app.namespace == "test-namespace"
+        assert streams_bootstrap.version == "2.9.0"
+        assert streams_bootstrap.namespace == "test-namespace"
 
-    def test_should_deploy_streams_bootstrap_helm_app(
+    def test_should_deploy_streams_bootstrap_app(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
-        streams_bootstrap_helm_app = StreamsBootstrap(
+        streams_bootstrap = StreamsBootstrap(
             name="example-name",
             config=config,
             handlers=handlers,
@@ -72,10 +72,10 @@ class TestStreamsBootstrap:
             },
         )
         helm_upgrade_install = mocker.patch.object(
-            streams_bootstrap_helm_app.helm, "upgrade_install"
+            streams_bootstrap.helm, "upgrade_install"
         )
         print_helm_diff = mocker.patch.object(
-            streams_bootstrap_helm_app.dry_run_handler, "print_helm_diff"
+            streams_bootstrap.dry_run_handler, "print_helm_diff"
         )
         mocker.patch.object(
             StreamsBootstrap,
@@ -84,7 +84,7 @@ class TestStreamsBootstrap:
             new_callable=mocker.PropertyMock,
         )
 
-        streams_bootstrap_helm_app.deploy(dry_run=True)
+        streams_bootstrap.deploy(dry_run=True)
 
         print_helm_diff.assert_called_once()
         helm_upgrade_install.assert_called_once_with(
