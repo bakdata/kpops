@@ -52,7 +52,7 @@
     # Streams Bootstrap streams section
     streams: # required, streams-app-specific
       brokers: ${kafka_brokers} # required
-      schemaRegistryUrl: ${schema_registry_url}
+      schemaRegistryUrl: ${schema_registry.url}
       inputTopics:
         - topic1
         - topic2
