@@ -2,10 +2,8 @@ helm-app.yaml:
 - app-helm-app.yaml
 - repo_config-helm-app.yaml
 kafka-app.yaml:
-- prefix.yaml
-- from_.yaml
-- to.yaml
 - app-kafka-app.yaml
+- version-kafka-app.yaml
 kafka-connector.yaml:
 - prefix.yaml
 - from_.yaml
