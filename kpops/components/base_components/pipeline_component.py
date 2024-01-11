@@ -18,6 +18,7 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
+from kpops.utils import cached_classproperty
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import issubclass_patched
 
@@ -70,21 +71,21 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     def full_name(self) -> str:
         return self.prefix + self.name
 
-    @classmethod
-    def get_parents(
-        cls: type[Self], __class_or_tuple: type = BaseDefaultsComponent
-    ) -> list[str]:
-        """Get kebab-cased superclasses' names.
+    @cached_classproperty
+    def parents(cls: type[Self]) -> tuple[type[PipelineComponent], ...]:  # pyright: ignore[reportGeneralTypeIssues]
+        """Get parent components.
 
-        :param __class_or_tuple: "Furthest" ancestors to look for,
-            defaults to BaseDefaultsComponent
-        :return: All ancestors that match the requirements
+        :return: All ancestor KPOps components
         """
-        bases = []
-        for base in cls.mro():
-            if issubclass_patched(base, __class_or_tuple):
-                bases.append(base)
-        return bases
+
+        def gen_parents():
+            for base in cls.mro():
+                # skip class itself and non-component ancestors
+                if base is cls or not issubclass_patched(base, PipelineComponent):
+                    continue
+                yield base
+
+        return tuple(gen_parents())
 
     def add_input_topics(self, topics: list[str]) -> None:
         """Add given topics to the list of input topics.
