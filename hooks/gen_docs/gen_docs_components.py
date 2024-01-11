@@ -11,6 +11,7 @@ from hooks import ROOT
 from kpops.cli.registry import _find_classes
 from kpops.components import KafkaConnector, PipelineComponent
 from kpops.utils.colorify import redify, yellowify
+from kpops.utils.pydantic import issubclass_patched
 from kpops.utils.yaml import load_yaml_file
 
 PATH_KPOPS_MAIN = ROOT / "kpops/cli/main.py"
@@ -33,14 +34,6 @@ PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
 )
 
 KPOPS_COMPONENTS = tuple(_find_classes("kpops.components", PipelineComponent))
-KPOPS_COMPONENTS_INHERITANCE_REF = {
-    component.type: cast(
-        type[PipelineComponent],
-        component.__base__,
-    ).type
-    for component in KPOPS_COMPONENTS
-}
-
 KPOPS_COMPONENTS_SECTIONS = {
     component.type: [
         field_name
@@ -49,6 +42,27 @@ KPOPS_COMPONENTS_SECTIONS = {
     ]
     for component in KPOPS_COMPONENTS
 }
+KPOPS_COMPONENTS_INHERITANCE_REF = {
+    component.type: {
+        "bases": [
+            cast(
+                type[PipelineComponent],
+                base,
+            ).type
+            for base in component.__bases__
+            if issubclass_patched(base, PipelineComponent)
+        ],
+        "parents": [
+            cast(
+                type[PipelineComponent],
+                parent,
+            ).type
+            for parent in component.parents
+        ],
+    }
+    for component in KPOPS_COMPONENTS
+}
+
 # Dependency files should not be changed manually
 DANGEROUS_FILES_TO_CHANGE = {
     PATH_DOCS_COMPONENTS_DEPENDENCIES,
@@ -92,14 +106,13 @@ def filter_sections(
         if section := filter_section(component_name, sections, target_section):
             component_sections.append(section)
         elif include_inherited:
-            temp_component_name = component_name
-            while (
-                temp_component_name := KPOPS_COMPONENTS_INHERITANCE_REF[
-                    temp_component_name
-                ]
-            ) != PipelineComponent.type:
+            for component in KPOPS_COMPONENTS_INHERITANCE_REF[component_name][
+                "parents"
+            ]:
+                if component == PipelineComponent.type:
+                    break
                 if section := filter_section(
-                    temp_component_name,
+                    component,
                     sections,
                     target_section,
                 ):
@@ -123,11 +136,12 @@ def filter_section(
     section = target_section + "-" + component_name + ".yaml"
     if section in sections:
         return section
-    if KPOPS_COMPONENTS_INHERITANCE_REF[component_name] == PipelineComponent.type:
+    if KPOPS_COMPONENTS_INHERITANCE_REF[component_name]["bases"] == [
+        PipelineComponent.type
+    ]:
         section = target_section + ".yaml"
         if section in sections:
             return section
-        return None
     return None
 
 
