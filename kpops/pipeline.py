@@ -233,8 +233,6 @@ class PipelineGenerator:
             self.env_components_index.get(component.name, {}),
             component.model_dump(mode="json", by_alias=True),
         )
-        # HACK: make sure component type is set for inflated components, because property is not serialized by Pydantic
-        env_component_as_dict["type"] = component.type
 
         component_data = self.substitute_in_component(env_component_as_dict)
 
@@ -268,6 +266,7 @@ class PipelineGenerator:
         )
         substitution = generate_substitution(
             config.model_dump(mode="json"),
+            "config",
             existing_substitution=component_substitution,
             separator=".",
         )
@@ -297,9 +296,9 @@ class PipelineGenerator:
         For example, for a given path ./data/v1/dev/pipeline.yaml the pipeline_name would be
         set to data-v1-dev. Then the sub environment variables are set:
 
-        pipeline_name_0 = data
-        pipeline_name_1 = v1
-        pipeline_name_2 = dev
+        pipeline.name_0 = data
+        pipeline.name_1 = v1
+        pipeline.name_2 = dev
 
         :param base_dir: Base directory to the pipeline files
         :param path: Path to pipeline.yaml file
@@ -309,9 +308,9 @@ class PipelineGenerator:
             msg = "The pipeline-base-dir should not equal the pipeline-path"
             raise ValueError(msg)
         pipeline_name = "-".join(path_without_file)
-        ENV["pipeline_name"] = pipeline_name
+        ENV["pipeline.name"] = pipeline_name
         for level, parent in enumerate(path_without_file):
-            ENV[f"pipeline_name_{level}"] = parent
+            ENV[f"pipeline.name_{level}"] = parent
 
     @staticmethod
     def set_environment_name(environment: str | None) -> None:

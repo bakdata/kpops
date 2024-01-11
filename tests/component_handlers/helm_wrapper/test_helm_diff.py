@@ -1,11 +1,14 @@
+from pathlib import Path
+
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
+from kpops.component_handlers.kubernetes.model import KubernetesManifest
 from kpops.utils.dict_differ import Change
 
 
 def test_diff():
     helm_diff = HelmDiff(HelmDiffConfig())
-    templates = [HelmTemplate("a.yaml", {})]
+    templates = [HelmTemplate(Path("a.yaml"), KubernetesManifest())]
     assert list(helm_diff.calculate_changes(templates, templates)) == [
         Change(
             old_value={},
@@ -17,12 +20,12 @@ def test_diff():
     assert list(
         helm_diff.calculate_changes(
             [
-                HelmTemplate("a.yaml", {"a": 1}),
-                HelmTemplate("b.yaml", {"b": 1}),
+                HelmTemplate(Path("a.yaml"), KubernetesManifest({"a": 1})),
+                HelmTemplate(Path("b.yaml"), KubernetesManifest({"b": 1})),
             ],
             [
-                HelmTemplate("a.yaml", {"a": 2}),
-                HelmTemplate("c.yaml", {"c": 1}),
+                HelmTemplate(Path("a.yaml"), KubernetesManifest({"a": 2})),
+                HelmTemplate(Path("c.yaml"), KubernetesManifest({"c": 1})),
             ],
         )
     ) == [
@@ -42,7 +45,9 @@ def test_diff():
 
     # test no current release
     assert list(
-        helm_diff.calculate_changes((), [HelmTemplate("a.yaml", {"a": 1})])
+        helm_diff.calculate_changes(
+            (), [HelmTemplate(Path("a.yaml"), KubernetesManifest({"a": 1}))]
+        )
     ) == [
         Change(
             old_value={},

@@ -4,16 +4,16 @@
   name: streams-app # required
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
+  prefix: ${pipeline.name}-
   from: # Must not be null
     topics: # read from topic
-      ${pipeline_name}-input-topic:
+      ${pipeline.name}-input-topic:
         type: input # Implied when role is NOT specified
-      ${pipeline_name}-extra-topic:
+      ${pipeline.name}-extra-topic:
         role: topic-role # Implies `type` to be extra
-      ${pipeline_name}-input-pattern-topic:
+      ${pipeline.name}-input-pattern-topic:
         type: pattern # Implied to be an input pattern if `role` is undefined
-      ${pipeline_name}-extra-pattern-topic:
+      ${pipeline.name}-extra-pattern-topic:
         type: pattern # Implied to be an extra pattern if `role` is defined
         role: some-role
     components: # read from specific component
@@ -29,11 +29,11 @@
   # Topic(s) into which the component will write output
   to:
     topics:
-      ${pipeline_name}-output-topic:
+      ${pipeline.name}-output-topic:
         type: output # Implied when role is NOT specified
-      ${pipeline_name}-extra-topic:
+      ${pipeline.name}-extra-topic:
         role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
-      ${pipeline_name}-error-topic:
+      ${pipeline.name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.
         key_schema: key-schema # must implement SchemaProvider to use
@@ -51,8 +51,8 @@
   app: # required
     # Streams Bootstrap streams section
     streams: # required, streams-app-specific
-      brokers: ${kafka_brokers} # required
-      schemaRegistryUrl: ${schema_registry_url}
+      brokers: ${config.kafka_brokers} # required
+      schemaRegistryUrl: ${config.schema_registry.url}
       inputTopics:
         - topic1
         - topic2
@@ -101,4 +101,14 @@
       topics: # List of auto-generated Kafka Streams topics used by the streams app.
         - topic1
         - topic2
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
   version: "2.12.0" # Helm chart version

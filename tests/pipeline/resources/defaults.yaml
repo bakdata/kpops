@@ -5,8 +5,8 @@ kubernetes-app:
 kafka-app:
   app:
     streams:
-      brokers: "${kafka_brokers}"
-      schema_registry_url: "${schema_registry.url}"
+      brokers: "${config.kafka_brokers}"
+      schema_registry_url: "${config.schema_registry.url}"
   version: "2.4.2"
 
 producer-app: {} # inherits from kafka-app

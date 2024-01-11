@@ -10,8 +10,8 @@ kafka-connector:
 kafka-app:
   app:
     streams:
-      brokers: ${kafka_brokers}
-      schemaRegistryUrl: ${schema_registry.url}
+      brokers: ${config.kafka_brokers}
+      schemaRegistryUrl: ${config.schema_registry.url}
       optimizeLeaveGroupBehavior: false
 
 producer-app:
@@ -23,7 +23,7 @@ producer-app:
 streams-app:
   app:
     labels:
-      pipeline: ${pipeline_name}
+      pipeline: ${pipeline.name}
     streams:
       optimizeLeaveGroupBehavior: false
   to:

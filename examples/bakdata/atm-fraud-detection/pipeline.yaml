@@ -83,7 +83,7 @@
   app:
     connector.class: io.confluent.connect.jdbc.JdbcSinkConnector
     tasks.max: 1
-    topics: ${pipeline_name}-account-linker-topic
+    topics: ${pipeline.name}-account-linker-topic
     connection.url: jdbc:postgresql://postgresql-dev.${NAMESPACE}.svc.cluster.local:5432/app_db
     connection.user: app1
     connection.password: AppPassword

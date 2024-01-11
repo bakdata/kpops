@@ -23,7 +23,7 @@ from kpops.config import KpopsConfig, TopicNameConfig
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
-STREAMS_APP_FULL_NAME = "${pipeline_name}-" + STREAMS_APP_NAME
+STREAMS_APP_FULL_NAME = "${pipeline.name}-" + STREAMS_APP_NAME
 STREAMS_APP_RELEASE_NAME = create_helm_release_name(STREAMS_APP_FULL_NAME)
 STREAMS_APP_CLEAN_FULL_NAME = STREAMS_APP_FULL_NAME + "-clean"
 STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(

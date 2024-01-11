@@ -1,10 +1,11 @@
 # Editor integration
 
-KPOps provides JSON schemas that enable autocompletion and validation for some of the files that the user must work with.
+KPOps provides JSON schemas that enable autocompletion and validation for all YAML files that the user must work with.
 
 ## Supported files
 
 - [`pipeline.yaml`](../../resources/pipeline-components/pipeline.md)
+- [`defaults.yaml`](../core-concepts/defaults.md)
 - [`config.yaml`](../core-concepts/config.md)
 
 ## Usage
@@ -23,6 +24,6 @@ KPOps provides JSON schemas that enable autocompletion and validation for some o
     ```
 
 !!! tip "Advanced usage"
-    It is possible to generate schemas with the [`kpops schema`](./cli-commands.md#kpops-schema) command. Useful when using custom components or when using a pre-release version of KPOps.
+    It is possible to generate schemas with the [`kpops schema`](./cli-commands.md#kpops-schema) command. Useful for including custom components or when using a pre-release version of KPOps.
 
 <!-- dprint-ignore-end -->
