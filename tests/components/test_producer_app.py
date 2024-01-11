@@ -18,7 +18,7 @@ from kpops.config import KpopsConfig, TopicNameConfig
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
-PRODUCER_APP_FULL_NAME = "${pipeline_name}-" + PRODUCER_APP_NAME
+PRODUCER_APP_FULL_NAME = "${pipeline.name}-" + PRODUCER_APP_NAME
 PRODUCER_APP_RELEASE_NAME = create_helm_release_name(PRODUCER_APP_FULL_NAME)
 PRODUCER_APP_CLEAN_FULL_NAME = PRODUCER_APP_FULL_NAME + "-clean"
 PRODUCER_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
@@ -168,13 +168,11 @@ class TestProducerApp:
         mocker: MockerFixture,
     ):
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app._cleaner.helm, "upgrade_install"
+            producer_app.helm, "upgrade_install"
         )
-        mock_helm_uninstall = mocker.patch.object(
-            producer_app._cleaner.helm, "uninstall"
-        )
+        mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
         mock_helm_print_helm_diff = mocker.patch.object(
-            producer_app._cleaner.dry_run_handler, "print_helm_diff"
+            producer_app.dry_run_handler, "print_helm_diff"
         )
 
         mock = mocker.MagicMock()
@@ -184,55 +182,45 @@ class TestProducerApp:
 
         producer_app.clean(dry_run=True)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    PRODUCER_APP_CLEAN_RELEASE_NAME,
-                    True,
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_upgrade_install(
-                    PRODUCER_APP_CLEAN_RELEASE_NAME,
-                    "bakdata-streams-bootstrap/producer-app-cleanup-job",
-                    True,
-                    "test-namespace",
-                    {
-                        "nameOverride": PRODUCER_APP_FULL_NAME,
-                        "streams": {
-                            "brokers": "fake-broker:9092",
-                            "outputTopic": "${output_topic_name}",
-                        },
+        assert mock.mock_calls == [
+            mocker.call.helm_uninstall(
+                "test-namespace",
+                PRODUCER_APP_CLEAN_RELEASE_NAME,
+                True,
+            ),
+            mocker.call.helm_upgrade_install(
+                PRODUCER_APP_CLEAN_RELEASE_NAME,
+                "bakdata-streams-bootstrap/producer-app-cleanup-job",
+                True,
+                "test-namespace",
+                {
+                    "nameOverride": PRODUCER_APP_FULL_NAME,
+                    "streams": {
+                        "brokers": "fake-broker:9092",
+                        "outputTopic": "${output_topic_name}",
                     },
-                    HelmUpgradeInstallFlags(
-                        version="2.4.2", wait=True, wait_for_jobs=True
-                    ),
-                ),
-                mocker.call.print_helm_diff(
-                    ANY,
-                    PRODUCER_APP_CLEAN_RELEASE_NAME,
-                    logging.getLogger("HelmApp"),
-                ),
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    PRODUCER_APP_CLEAN_RELEASE_NAME,
-                    True,
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-            ]
-        )
+                },
+                HelmUpgradeInstallFlags(version="2.4.2", wait=True, wait_for_jobs=True),
+            ),
+            mocker.call.print_helm_diff(
+                ANY,
+                PRODUCER_APP_CLEAN_RELEASE_NAME,
+                logging.getLogger("KafkaApp"),
+            ),
+            mocker.call.helm_uninstall(
+                "test-namespace",
+                PRODUCER_APP_CLEAN_RELEASE_NAME,
+                True,
+            ),
+        ]
 
     def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
         self, mocker: MockerFixture, producer_app: ProducerApp
     ):
         mock_helm_upgrade_install = mocker.patch.object(
-            producer_app._cleaner.helm, "upgrade_install"
+            producer_app.helm, "upgrade_install"
         )
-        mock_helm_uninstall = mocker.patch.object(
-            producer_app._cleaner.helm, "uninstall"
-        )
+        mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
@@ -240,37 +228,29 @@ class TestProducerApp:
 
         producer_app.clean(dry_run=False)
 
-        mock.assert_has_calls(
-            [
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    PRODUCER_APP_CLEAN_RELEASE_NAME,
-                    False,
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_upgrade_install(
-                    PRODUCER_APP_CLEAN_RELEASE_NAME,
-                    "bakdata-streams-bootstrap/producer-app-cleanup-job",
-                    False,
-                    "test-namespace",
-                    {
-                        "nameOverride": PRODUCER_APP_FULL_NAME,
-                        "streams": {
-                            "brokers": "fake-broker:9092",
-                            "outputTopic": "${output_topic_name}",
-                        },
+        assert mock.mock_calls == [
+            mocker.call.helm_uninstall(
+                "test-namespace",
+                PRODUCER_APP_CLEAN_RELEASE_NAME,
+                False,
+            ),
+            mocker.call.helm_upgrade_install(
+                PRODUCER_APP_CLEAN_RELEASE_NAME,
+                "bakdata-streams-bootstrap/producer-app-cleanup-job",
+                False,
+                "test-namespace",
+                {
+                    "nameOverride": PRODUCER_APP_FULL_NAME,
+                    "streams": {
+                        "brokers": "fake-broker:9092",
+                        "outputTopic": "${output_topic_name}",
                     },
-                    HelmUpgradeInstallFlags(
-                        version="2.4.2", wait=True, wait_for_jobs=True
-                    ),
-                ),
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    PRODUCER_APP_CLEAN_RELEASE_NAME,
-                    False,
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-            ]
-        )
+                },
+                HelmUpgradeInstallFlags(version="2.4.2", wait=True, wait_for_jobs=True),
+            ),
+            mocker.call.helm_uninstall(
+                "test-namespace",
+                PRODUCER_APP_CLEAN_RELEASE_NAME,
+                False,
+            ),
+        ]

@@ -1,38 +1,23 @@
-from functools import cached_property
+# from __future__ import annotations
 
 from pydantic import Field
 from typing_extensions import override
 
-from kpops.components.base_components.kafka_app import (
-    KafkaApp,
-    KafkaAppCleaner,
-)
+from kpops.components.base_components.kafka_app import KafkaApp
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
 
 
-class ProducerAppCleaner(KafkaAppCleaner):
-    app: ProducerAppValues
-
-    @property
-    @override
-    def helm_chart(self) -> str:
-        return (
-            f"{self.repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
-        )
-
-
-class ProducerApp(KafkaApp, StreamsBootstrap):
+class ProducerApp(KafkaApp):
     """Producer component.
 
-    This producer holds configuration to use as values for the streams-bootstrap
-    producer Helm chart.
+    This producer holds configuration to use as values for the streams bootstrap
+    producer helm chart.
 
     Note that the producer does not support error topics.
 
@@ -50,14 +35,6 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
         title="From",
         description=describe_attr("from_", __doc__),
     )
-
-    @cached_property
-    def _cleaner(self) -> ProducerAppCleaner:
-        return ProducerAppCleaner(
-            config=self.config,
-            handlers=self.handlers,
-            **self.model_dump(),
-        )
 
     @override
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:
@@ -81,6 +58,17 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
+    @property
+    @override
+    def clean_up_helm_chart(self) -> str:
+        return (
+            f"{self.repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
+        )
+
     @override
     def clean(self, dry_run: bool) -> None:
-        self._cleaner.clean(dry_run)
+        self._run_clean_up_job(
+            values=self.to_helm_values(),
+            dry_run=dry_run,
+            retain_clean_jobs=self.config.retain_clean_jobs,
+        )

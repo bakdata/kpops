@@ -13,7 +13,10 @@ kpops_components_fields:
   - prefix
   - from_
   - to
+  - namespace
   - app
+  - repo_config
+  - version
   kafka-connector:
   - name
   - prefix
@@ -67,15 +70,6 @@ kpops_components_fields:
   - repo_config
   - version
   streams-app:
-  - name
-  - prefix
-  - from_
-  - to
-  - namespace
-  - app
-  - repo_config
-  - version
-  streams-bootstrap:
   - name
   - prefix
   - from_

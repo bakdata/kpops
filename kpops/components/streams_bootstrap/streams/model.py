@@ -28,7 +28,6 @@ class StreamsConfig(KafkaStreamsConfig):
     :param output_topic: Output topic, defaults to None
     :param error_topic: Error topic, defaults to None
     :param config: Configuration, defaults to {}
-    :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
     """
 
     input_topics: list[str] = Field(
@@ -54,9 +53,6 @@ class StreamsConfig(KafkaStreamsConfig):
     )
     config: dict[str, Any] = Field(
         default={}, description=describe_attr("config", __doc__)
-    )
-    delete_output: bool | None = Field(
-        default=None, description=describe_attr("delete_output", __doc__)
     )
 
     def add_input_topics(self, topics: list[str]) -> None:
@@ -171,12 +167,12 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
 
 
 class StreamsAppValues(KafkaAppValues):
-    """streams-bootstrap app configurations.
+    """StreamsBoostrap app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.
 
-    :param streams: streams-bootstrap streams section
-    :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
+    :param streams: Streams Bootstrap streams section
+    :param autoscaling: Kubernetes Event-driven Autoscaling config, defaults to None
     """
 
     streams: StreamsConfig = Field(

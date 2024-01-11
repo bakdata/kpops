@@ -7,12 +7,10 @@ from pydantic import ConfigDict, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import (
-    HelmFlags,
+    HelmRepoConfig,
+    HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.base_components.helm_app import HelmAppValues
-from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.components.streams_bootstrap import StreamsBootstrap
+from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
 
@@ -47,59 +45,38 @@ class KafkaAppValues(HelmAppValues):
     )
 
 
-class KafkaAppCleaner(StreamsBootstrap):
-    """Helm app for resetting and cleaning a streams-bootstrap app."""
-
-    @property
-    @override
-    def helm_chart(self) -> str:
-        raise NotImplementedError
-
-    @property
-    @override
-    def helm_release_name(self) -> str:
-        suffix = "-clean"
-        return create_helm_release_name(self.full_name + suffix, suffix)
-
-    @property
-    @override
-    def helm_flags(self) -> HelmFlags:
-        return HelmFlags(
-            create_namespace=self.config.create_namespace,
-            version=self.version,
-            wait=True,
-            wait_for_jobs=True,
-        )
-
-    @override
-    def clean(self, dry_run: bool) -> None:
-        """Clean an app using a cleanup job.
-
-        :param dry_run: Dry run command
-        """
-        log.info(f"Uninstall old cleanup job for {self.helm_release_name}")
-        self.destroy(dry_run)
-
-        log.info(f"Init cleanup job for {self.helm_release_name}")
-        self.deploy(dry_run)
-
-        if not self.config.retain_clean_jobs:
-            log.info(f"Uninstall cleanup job for {self.helm_release_name}")
-            self.destroy(dry_run)
-
-
-class KafkaApp(PipelineComponent, ABC):
+class KafkaApp(HelmApp, ABC):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.
 
     :param app: Application-specific settings
+    :param repo_config: Configuration of the Helm chart repo to be used for
+        deploying the component,
+        defaults to HelmRepoConfig(repository_name="bakdata-streams-bootstrap", url="https://bakdata.github.io/streams-bootstrap/")
+    :param version: Helm chart version, defaults to "2.9.0"
     """
 
     app: KafkaAppValues = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )
+    repo_config: HelmRepoConfig = Field(
+        default=HelmRepoConfig(
+            repository_name="bakdata-streams-bootstrap",
+            url="https://bakdata.github.io/streams-bootstrap/",
+        ),
+        description=describe_attr("repo_config", __doc__),
+    )
+    version: str | None = Field(
+        default="2.9.0",
+        description=describe_attr("version", __doc__),
+    )
+
+    @property
+    def clean_up_helm_chart(self) -> str:
+        """Helm chart used to destroy and clean this component."""
+        raise NotImplementedError
 
     @override
     def deploy(self, dry_run: bool) -> None:
@@ -113,3 +90,66 @@ class KafkaApp(PipelineComponent, ABC):
                     to_section=self.to, dry_run=dry_run
                 )
         super().deploy(dry_run)
+
+    def _run_clean_up_job(
+        self,
+        values: dict,
+        dry_run: bool,
+        retain_clean_jobs: bool = False,
+    ) -> None:
+        """Clean an app using the respective cleanup job.
+
+        :param values: The value YAML for the chart
+        :param dry_run: Dry run command
+        :param retain_clean_jobs: Whether to retain the cleanup job, defaults to False
+        """
+        log.info(f"Uninstall old cleanup job for {self.clean_release_name}")
+
+        self.__uninstall_clean_up_job(self.clean_release_name, dry_run)
+
+        log.info(f"Init cleanup job for {self.clean_release_name}")
+
+        stdout = self.__install_clean_up_job(self.clean_release_name, values, dry_run)
+
+        if dry_run:
+            self.dry_run_handler.print_helm_diff(stdout, self.clean_release_name, log)
+
+        if not retain_clean_jobs:
+            log.info(f"Uninstall cleanup job for {self.clean_release_name}")
+            self.__uninstall_clean_up_job(self.clean_release_name, dry_run)
+
+    def __uninstall_clean_up_job(self, release_name: str, dry_run: bool) -> None:
+        """Uninstall clean up job.
+
+        :param release_name: Name of the Helm release
+        :param dry_run: Whether to do a dry run of the command
+        """
+        self.helm.uninstall(self.namespace, release_name, dry_run)
+
+    def __install_clean_up_job(
+        self,
+        release_name: str,
+        values: dict,
+        dry_run: bool,
+    ) -> str:
+        """Install clean up job.
+
+        :param release_name: Name of the Helm release
+        :param suffix: Suffix to add to the release name, e.g. "-clean"
+        :param values: The Helm values for the chart
+        :param dry_run: Whether to do a dry run of the command
+        :return: Return the output of the installation
+        """
+        return self.helm.upgrade_install(
+            release_name,
+            self.clean_up_helm_chart,
+            dry_run,
+            self.namespace,
+            values,
+            HelmUpgradeInstallFlags(
+                create_namespace=self.config.create_namespace,
+                version=self.version,
+                wait=True,
+                wait_for_jobs=True,
+            ),
+        )

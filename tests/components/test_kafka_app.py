@@ -11,13 +11,13 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.streams_bootstrap import StreamsBootstrap
+from kpops.components.base_components import KafkaApp
 from kpops.config import KpopsConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
-class TestStreamsBootstrap:
+class TestKafkaApp:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
         return KpopsConfig(
@@ -34,29 +34,36 @@ class TestStreamsBootstrap:
         )
 
     def test_default_configs(self, config: KpopsConfig, handlers: ComponentHandlers):
-        streams_bootstrap_helm_app = StreamsBootstrap(
+        kafka_app = KafkaApp(
             name="example-name",
             config=config,
             handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {},
+                "app": {
+                    "streams": {
+                        "outputTopic": "test",
+                        "brokers": "fake-broker:9092",
+                    },
+                },
             },
         )
-        assert streams_bootstrap_helm_app.repo_config == HelmRepoConfig(
+        assert kafka_app.app.streams.brokers == "fake-broker:9092"
+
+        assert kafka_app.repo_config == HelmRepoConfig(
             repository_name="bakdata-streams-bootstrap",
             url="https://bakdata.github.io/streams-bootstrap/",
         )
-        assert streams_bootstrap_helm_app.version == "2.9.0"
-        assert streams_bootstrap_helm_app.namespace == "test-namespace"
+        assert kafka_app.version == "2.9.0"
+        assert kafka_app.namespace == "test-namespace"
 
-    def test_should_deploy_streams_bootstrap_helm_app(
+    def test_should_deploy_kafka_app(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
         mocker: MockerFixture,
     ):
-        streams_bootstrap_helm_app = StreamsBootstrap(
+        kafka_app = KafkaApp(
             name="example-name",
             config=config,
             handlers=handlers,
@@ -71,29 +78,27 @@ class TestStreamsBootstrap:
                 "version": "1.2.3",
             },
         )
-        helm_upgrade_install = mocker.patch.object(
-            streams_bootstrap_helm_app.helm, "upgrade_install"
-        )
+        helm_upgrade_install = mocker.patch.object(kafka_app.helm, "upgrade_install")
         print_helm_diff = mocker.patch.object(
-            streams_bootstrap_helm_app.dry_run_handler, "print_helm_diff"
+            kafka_app.dry_run_handler, "print_helm_diff"
         )
         mocker.patch.object(
-            StreamsBootstrap,
+            KafkaApp,
             "helm_chart",
             return_value="test/test-chart",
             new_callable=mocker.PropertyMock,
         )
 
-        streams_bootstrap_helm_app.deploy(dry_run=True)
+        kafka_app.deploy(dry_run=True)
 
         print_helm_diff.assert_called_once()
         helm_upgrade_install.assert_called_once_with(
-            create_helm_release_name("${pipeline_name}-example-name"),
+            create_helm_release_name("${pipeline.name}-example-name"),
             "test/test-chart",
             True,
             "test-namespace",
             {
-                "nameOverride": "${pipeline_name}-example-name",
+                "nameOverride": "${pipeline.name}-example-name",
                 "streams": {"brokers": "fake-broker:9092", "outputTopic": "test"},
             },
             HelmUpgradeInstallFlags(version="1.2.3"),
