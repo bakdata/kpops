@@ -113,7 +113,7 @@
   app: # required
     streams: # required
       brokers: ${config.kafka_brokers} # required
-      schemaRegistryUrl: ${schema_registry_url}
+      schemaRegistryUrl: ${config.schema_registry.url}
     nameOverride: override-with-this-name # kafka-app-specific
     imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
   # Helm repository configuration (optional)
@@ -328,7 +328,7 @@
   app: # required
     streams: # required, producer-app-specific
       brokers: ${config.kafka_brokers} # required
-      schemaRegistryUrl: ${schema_registry_url}
+      schemaRegistryUrl: ${config.schema_registry.url}
       outputTopic: output_topic
       extraOutputTopics:
         output_role1: output_topic1
@@ -399,7 +399,7 @@
     # Streams Bootstrap streams section
     streams: # required, streams-app-specific
       brokers: ${config.kafka_brokers} # required
-      schemaRegistryUrl: ${schema_registry_url}
+      schemaRegistryUrl: ${config.schema_registry.url}
       inputTopics:
         - topic1
         - topic2
