@@ -28,8 +28,8 @@ kafka-app:
   # add the key-value pairs they need.
   app: # required
     streams: # required
-      brokers: ${kafka_brokers} # required
-      schemaRegistryUrl: ${schema_registry.url}
+      brokers: ${config.kafka_brokers} # required
+      schemaRegistryUrl: ${schema_registry_url}
     nameOverride: override-with-this-name # kafka-app-specific
     imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
   version: "2.12.0" # Helm chart version
@@ -40,16 +40,16 @@ kafka-app:
 kafka-connector:
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
+  prefix: ${pipeline.name}-
   from: # Must not be null
     topics: # read from topic
-      ${pipeline_name}-input-topic:
+      ${pipeline.name}-input-topic:
         type: input # Implied when role is NOT specified
-      ${pipeline_name}-extra-topic:
+      ${pipeline.name}-extra-topic:
         role: topic-role # Implies `type` to be extra
-      ${pipeline_name}-input-pattern-topic:
+      ${pipeline.name}-input-pattern-topic:
         type: pattern # Implied to be an input pattern if `role` is undefined
-      ${pipeline_name}-extra-pattern-topic:
+      ${pipeline.name}-extra-pattern-topic:
         type: pattern # Implied to be an extra pattern if `role` is defined
         role: some-role
     components: # read from specific component
@@ -65,11 +65,11 @@ kafka-connector:
   # Topic(s) into which the component will write output
   to:
     topics:
-      ${pipeline_name}-output-topic:
+      ${pipeline.name}-output-topic:
         type: output # Implied when role is NOT specified
-      ${pipeline_name}-extra-topic:
+      ${pipeline.name}-extra-topic:
         role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
-      ${pipeline_name}-error-topic:
+      ${pipeline.name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.
         key_schema: key-schema # must implement SchemaProvider to use
@@ -121,16 +121,16 @@ kafka-source-connector:
 kubernetes-app:
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
+  prefix: ${pipeline.name}-
   from: # Must not be null
     topics: # read from topic
-      ${pipeline_name}-input-topic:
+      ${pipeline.name}-input-topic:
         type: input # Implied when role is NOT specified
-      ${pipeline_name}-extra-topic:
+      ${pipeline.name}-extra-topic:
         role: topic-role # Implies `type` to be extra
-      ${pipeline_name}-input-pattern-topic:
+      ${pipeline.name}-input-pattern-topic:
         type: pattern # Implied to be an input pattern if `role` is undefined
-      ${pipeline_name}-extra-pattern-topic:
+      ${pipeline.name}-extra-pattern-topic:
         type: pattern # Implied to be an extra pattern if `role` is defined
         role: some-role
     components: # read from specific component
@@ -146,11 +146,11 @@ kubernetes-app:
   # Topic(s) into which the component will write output
   to:
     topics:
-      ${pipeline_name}-output-topic:
+      ${pipeline.name}-output-topic:
         type: output # Implied when role is NOT specified
-      ${pipeline_name}-extra-topic:
+      ${pipeline.name}-extra-topic:
         role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
-      ${pipeline_name}-error-topic:
+      ${pipeline.name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.
         key_schema: key-schema # must implement SchemaProvider to use
@@ -180,8 +180,8 @@ producer-app:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
   app: # required
     streams: # required, producer-app-specific
-      brokers: ${kafka_brokers} # required
-      schemaRegistryUrl: ${schema_registry.url}
+      brokers: ${config.kafka_brokers} # required
+      schemaRegistryUrl: ${schema_registry_url}
       outputTopic: output_topic
       extraOutputTopics:
         output_role1: output_topic1
@@ -198,8 +198,8 @@ streams-app:
   app: # required
     # Streams Bootstrap streams section
     streams: # required, streams-app-specific
-      brokers: ${kafka_brokers} # required
-      schemaRegistryUrl: ${schema_registry.url}
+      brokers: ${config.kafka_brokers} # required
+      schemaRegistryUrl: ${schema_registry_url}
       inputTopics:
         - topic1
         - topic2
