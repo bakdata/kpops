@@ -87,8 +87,10 @@ kpops_components_inheritance_ref:
     - pipeline-component
   kafka-app:
     bases:
-    - pipeline-component
+    - helm-app
     parents:
+    - helm-app
+    - kubernetes-app
     - pipeline-component
   kafka-connector:
     bases:
@@ -118,27 +120,16 @@ kpops_components_inheritance_ref:
   producer-app:
     bases:
     - kafka-app
-    - streams-bootstrap
     parents:
     - kafka-app
-    - streams-bootstrap
     - helm-app
     - kubernetes-app
     - pipeline-component
   streams-app:
     bases:
     - kafka-app
-    - streams-bootstrap
     parents:
     - kafka-app
-    - streams-bootstrap
-    - helm-app
-    - kubernetes-app
-    - pipeline-component
-  streams-bootstrap:
-    bases:
-    - helm-app
-    parents:
     - helm-app
     - kubernetes-app
     - pipeline-component
