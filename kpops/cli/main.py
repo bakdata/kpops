@@ -156,7 +156,7 @@ def is_in_steps(component: PipelineComponent, component_names: set[str]) -> bool
     return component.name in component_names
 
 
-def get_default_step_names_filter(
+def create_default_step_names_filter_predicate(
     component_names: set[str], filter_type: FilterType
 ) -> Callable[[PipelineComponent], bool]:
     def predicate(component: PipelineComponent) -> bool:
@@ -265,7 +265,9 @@ def generate(
             f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
         )
 
-        predicate = get_default_step_names_filter(component_names, filter_type)
+        predicate = create_default_step_names_filter_predicate(
+            component_names, filter_type
+        )
         pipeline.filter(predicate)
 
         def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
