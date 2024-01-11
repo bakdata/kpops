@@ -88,12 +88,12 @@ class TestHelmApp:
         helm_app.deploy(False)
 
         helm_mock.upgrade_install.assert_called_once_with(
-            "${pipeline_name}-test-helm-app",
+            "${pipeline.name}-test-helm-app",
             "test/test-chart",
             False,
             "test-namespace",
             {
-                "nameOverride": "${pipeline_name}-test-helm-app",
+                "nameOverride": "${pipeline.name}-test-helm-app",
                 "foo": "test-value",
             },
             HelmUpgradeInstallFlags(),
@@ -136,12 +136,12 @@ class TestHelmApp:
                 RepoAuthFlags(),
             ),
             mocker.call.upgrade_install(
-                "${pipeline_name}-test-helm-app",
+                "${pipeline.name}-test-helm-app",
                 "test/test-chart",
                 False,
                 "test-namespace",
                 {
-                    "nameOverride": "${pipeline_name}-test-helm-app",
+                    "nameOverride": "${pipeline.name}-test-helm-app",
                     "foo": "test-value",
                 },
                 HelmUpgradeInstallFlags(version="3.4.5"),
@@ -176,12 +176,12 @@ class TestHelmApp:
         helm_mock.add_repo.assert_not_called()
 
         helm_mock.upgrade_install.assert_called_once_with(
-            "${pipeline_name}-test-app-with-local-chart",
+            "${pipeline.name}-test-app-with-local-chart",
             "path/to/helm/charts/",
             False,
             "test-namespace",
             {
-                "nameOverride": "${pipeline_name}-test-app-with-local-chart",
+                "nameOverride": "${pipeline.name}-test-app-with-local-chart",
                 "foo": "test-value",
             },
             HelmUpgradeInstallFlags(),
@@ -212,7 +212,7 @@ class TestHelmApp:
         helm_app.destroy(True)
 
         helm_mock.uninstall.assert_called_once_with(
-            "test-namespace", "${pipeline_name}-test-helm-app", True
+            "test-namespace", "${pipeline.name}-test-helm-app", True
         )
 
         log_info_mock.assert_called_once_with(magentaify(stdout))

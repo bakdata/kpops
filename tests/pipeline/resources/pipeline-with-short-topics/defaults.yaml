@@ -5,7 +5,7 @@ kubernetes-app:
 kafka-app:
   app:
     streams:
-      brokers: "${kafka_brokers}"
+      brokers: "${config.kafka_brokers}"
       schema_registry_url: "${schema_registry_url}"
   version: "2.4.2"
 

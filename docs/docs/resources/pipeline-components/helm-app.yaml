@@ -3,16 +3,16 @@
   name: helm-app # required
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
-  prefix: ${pipeline_name}-
+  prefix: ${pipeline.name}-
   from: # Must not be null
     topics: # read from topic
-      ${pipeline_name}-input-topic:
+      ${pipeline.name}-input-topic:
         type: input # Implied when role is NOT specified
-      ${pipeline_name}-extra-topic:
+      ${pipeline.name}-extra-topic:
         role: topic-role # Implies `type` to be extra
-      ${pipeline_name}-input-pattern-topic:
+      ${pipeline.name}-input-pattern-topic:
         type: pattern # Implied to be an input pattern if `role` is undefined
-      ${pipeline_name}-extra-pattern-topic:
+      ${pipeline.name}-extra-pattern-topic:
         type: pattern # Implied to be an extra pattern if `role` is defined
         role: some-role
     components: # read from specific component
@@ -28,11 +28,11 @@
   # Topic(s) into which the component will write output
   to:
     topics:
-      ${pipeline_name}-output-topic:
+      ${pipeline.name}-output-topic:
         type: output # Implied when role is NOT specified
-      ${pipeline_name}-extra-topic:
+      ${pipeline.name}-extra-topic:
         role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
-      ${pipeline_name}-error-topic:
+      ${pipeline.name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.
         key_schema: key-schema # must implement SchemaProvider to use

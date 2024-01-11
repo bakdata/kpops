@@ -27,7 +27,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     :param name: Component name
     :param prefix: Pipeline prefix that will prefix every component name.
         If you wish to not have any prefix you can specify an empty string.,
-        defaults to "${pipeline_name}-"
+        defaults to "${pipeline.name}-"
     :param from_: Topic(s) and/or components from which the component will read
         input, defaults to None
     :param to: Topic(s) into which the component will write output,
@@ -36,7 +36,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
 
     name: str = Field(default=..., description=describe_attr("name", __doc__))
     prefix: str = Field(
-        default="${pipeline_name}-",
+        default="${pipeline.name}-",
         description=describe_attr("prefix", __doc__),
     )
     from_: FromSection | None = Field(
