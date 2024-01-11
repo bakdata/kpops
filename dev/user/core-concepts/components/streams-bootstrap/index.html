@@ -8,23 +8,25 @@
       
       
       
-        <link rel="canonical" href="https://bakdata.github.io/kpops/dev/">
+        <link rel="canonical" href="https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/">
       
       
+        <link rel="prev" href="../helm-app/">
       
-        <link rel="next" href="user/what-is-kpops/">
+      
+        <link rel="next" href="../kafka-app/">
       
       
-      <link rel="icon" href="assets/images/favicon.png">
+      <link rel="icon" href="../../../../assets/images/favicon.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.4.6">
     
     
       
-        <title>Home - KPOps</title>
+        <title>StreamsBootstrap - KPOps</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.35e1ed30.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.35e1ed30.min.css">
       
       
 
@@ -43,16 +45,16 @@
       
     
     
-      <link rel="stylesheet" href="stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../../stylesheets/extra.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
     
     
     
-   <link href="assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
+   <link href="../../../../assets/stylesheets/glightbox.min.css" rel="stylesheet"/><style>
         html.glightbox-open { overflow: initial; height: 100%; }
         .gslide-title { margin-top: 0px; user-select: text; }
         .gslide-desc { color: #666; user-select: text; }
@@ -63,7 +65,7 @@
             body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color);}
             body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color);}
             body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color);}
-            </style> <script src="assets/javascripts/glightbox.min.js"></script></head>
+            </style> <script src="../../../../assets/javascripts/glightbox.min.js"></script></head>
   
   
     <body dir="ltr">
@@ -77,24 +79,17 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#streamsapp" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
     </div>
     
       <div data-md-color-scheme="default" data-md-component="outdated" hidden>
-        
-          <aside class="md-banner md-banner--warning">
-            <div class="md-banner__inner md-grid md-typeset">
-              
-  You're not viewing the latest version.
-  <a href="../.">
-    <strong>Click here to go to latest.</strong>
-  </a>
-
-            </div>
-            <script>var el=document.querySelector("[data-md-component=outdated]"),outdated=__md_get("__outdated",sessionStorage);!0===outdated&&el&&(el.hidden=!1)</script>
-          </aside>
         
       </div>
     
@@ -103,7 +98,7 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="KPOps" class="md-header__button md-logo" aria-label="KPOps" data-md-component="logo">
+    <a href="../../../.." title="KPOps" class="md-header__button md-logo" aria-label="KPOps" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -123,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              StreamsBootstrap
             
           </span>
         </div>
@@ -196,128 +191,81 @@
     <div class="md-container" data-md-component="container">
       
       
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../.." class="md-tabs__link">
+          
+  
+    
+  
+  Home
 
-<!-- Additional styles for landing page -->
-<style>
+        </a>
+      </li>
+    
+  
 
-    body {
-        background: #a599ff;
-    }
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../../what-is-kpops/" class="md-tabs__link">
+          
+  
+    
+  
+  User Guide
 
-    /* Remove spacing, as we cannot hide it completely */
-    .md-main__inner {
-        margin: 0;
-    }
+        </a>
+      </li>
+    
+  
 
-    /* Hide main content for now */
-    .md-content {
-        display: none;
-    }
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../../../developer/getting-started/" class="md-tabs__link">
+          
+  
+    
+  
+  Developer Guide
 
-    .mdx-container {
-        position: relative;
-        min-height: 100vh;
-        min-width: 100vw;
-    }
+        </a>
+      </li>
+    
+  
 
-    .mdx-hero__content {
-        margin-top: 50px;
-        position: relative;
-        z-index: 5;
-    }
-
-    /* Moves the search results to the front */
-    /* Application header should be static for the landing page */
-    .md-header {
-        background: #0000;
-        z-index: 10;
-        position: initial;
-    }
-
-    .mdx-hero__content h1 {
-        margin-bottom: 20px;
-        color: black;
-        font-weight: 700;
-        font-size: 40px;
-    }
-
-    .mdx-hero__content p {
-        color: black;
-        font-size: 20px;
-    }
-
-    .md-hero__image {
-        position: absolute;
-        bottom: 140px;
-        width: 100vw;
-    }
-
-    /* Hide table of contents */
-    @media screen and (min-width: 60em) {
-        .md-sidebar--secondary {
-            display: none;
-        }
-    }
-
-    /* Hide navigation */
-    @media screen and (min-width: 76.25em) {
-        .md-sidebar--primary {
-            display: none;
-        }
-    }
-
-</style>
-
-<!-- Hero for landing page -->
-<section class="mdx-container">
-    <div class="md-typeset">
-        <div class="mdx-hero">
-
-            <img class="md-hero__image" src="assets/images/kpops-background.svg"
-                 alt="KPOps background image"/>
-            <div class="md-grid mdx-hero__content">
-                <h1>KPOps Documentation</h1>
-
-                
-                
-                
-                
-
-                
-                    
-                
-
-                <a
-                    href="user/what-is-kpops/"
-                    title="User Guide"
-                    class="md-button md-button--primary"
-                >
-                    User Guide
-                </a>
-
-                
-                
-                
-
-                
-                    
-                
-
-                <a
-                    href="developer/getting-started/"
-                    title="Developer Guide"
-                    class="md-button md-button--primary"
-                >
-                    Developer Guide
-                </a>
-
-                
-                
-            </div>
-        </div>
-    </div>
-</section>
-
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
       <main class="md-main" data-md-component="main">
         <div class="md-main__inner md-grid">
           
@@ -334,7 +282,7 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="KPOps" class="md-nav__button md-logo" aria-label="KPOps" data-md-component="logo">
+    <a href="../../../.." title="KPOps" class="md-nav__button md-logo" aria-label="KPOps" data-md-component="logo">
       
   
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54Z"/></svg>
@@ -361,8 +309,6 @@
       
   
   
-    
-  
   
     
     
@@ -378,17 +324,17 @@
       
       
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
         
           
           
           <div class="md-nav__link md-nav__container">
-            <a href="." class="md-nav__link md-nav__link--active">
+            <a href="../../../.." class="md-nav__link ">
               
   
   <span class="md-ellipsis">
@@ -400,7 +346,7 @@
             
           </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_1">
             <span class="md-nav__icon md-icon"></span>
             Home
@@ -420,6 +366,8 @@
       
   
   
+    
+  
   
     
     
@@ -443,12 +391,12 @@
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
         
           
           <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
@@ -462,7 +410,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             User Guide
@@ -475,7 +423,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/what-is-kpops/" class="md-nav__link">
+      <a href="../../../what-is-kpops/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -495,7 +443,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/changelog/" class="md-nav__link">
+      <a href="../../../changelog/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -562,7 +510,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/getting-started/setup/" class="md-nav__link">
+      <a href="../../../getting-started/setup/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -582,7 +530,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/getting-started/quick-start/" class="md-nav__link">
+      <a href="../../../getting-started/quick-start/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -602,7 +550,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/getting-started/teardown/" class="md-nav__link">
+      <a href="../../../getting-started/teardown/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -673,7 +621,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/examples/atm-fraud-pipeline/" class="md-nav__link">
+      <a href="../../../examples/atm-fraud-pipeline/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -699,6 +647,8 @@
                 
   
   
+    
+  
   
     
     
@@ -718,12 +668,12 @@
       
       
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5" checked>
         
           
           <label class="md-nav__link" for="__nav_2_5" id="__nav_2_5_label" tabindex="">
@@ -737,7 +687,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_5">
             <span class="md-nav__icon md-icon"></span>
             Core Concepts
@@ -748,6 +698,8 @@
                 
   
   
+    
+  
   
     
     
@@ -776,12 +728,12 @@
     
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_1" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_5_1" checked>
         
           
           <label class="md-nav__link" for="__nav_2_5_1" id="__nav_2_5_1_label" tabindex="0">
@@ -795,7 +747,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_1_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="3" aria-labelledby="__nav_2_5_1_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_2_5_1">
             <span class="md-nav__icon md-icon"></span>
             Components
@@ -808,7 +760,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/components/overview/" class="md-nav__link">
+      <a href="../overview/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -828,7 +780,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/components/kubernetes-app/" class="md-nav__link">
+      <a href="../kubernetes-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -848,7 +800,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/components/helm-app/" class="md-nav__link">
+      <a href="../helm-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -866,9 +818,29 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="user/core-concepts/components/streams-bootstrap/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    StreamsBootstrap
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -877,6 +849,74 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    Operations
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy" class="md-nav__link">
+    deploy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#destroy" class="md-nav__link">
+    destroy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset" class="md-nav__link">
+    reset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clean" class="md-nav__link">
+    clean
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -888,7 +928,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/components/kafka-app/" class="md-nav__link">
+      <a href="../kafka-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -908,7 +948,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/components/streams-app/" class="md-nav__link">
+      <a href="../streams-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -928,7 +968,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/components/producer-app/" class="md-nav__link">
+      <a href="../producer-app/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -948,7 +988,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/components/kafka-connector/" class="md-nav__link">
+      <a href="../kafka-connector/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -968,7 +1008,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/components/kafka-sink-connector/" class="md-nav__link">
+      <a href="../kafka-sink-connector/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -988,7 +1028,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/components/kafka-source-connector/" class="md-nav__link">
+      <a href="../kafka-source-connector/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1016,7 +1056,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/config/" class="md-nav__link">
+      <a href="../../config/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1036,7 +1076,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/defaults/" class="md-nav__link">
+      <a href="../../defaults/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1098,7 +1138,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/variables/environment_variables/" class="md-nav__link">
+      <a href="../../variables/environment_variables/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1118,7 +1158,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/core-concepts/variables/substitution/" class="md-nav__link">
+      <a href="../../variables/substitution/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1245,7 +1285,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/migration-guide/v1-v2/" class="md-nav__link">
+      <a href="../../../migration-guide/v1-v2/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1265,7 +1305,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/migration-guide/v2-v3/" class="md-nav__link">
+      <a href="../../../migration-guide/v2-v3/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1293,7 +1333,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/references/cli-commands/" class="md-nav__link">
+      <a href="../../../references/cli-commands/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1313,7 +1353,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/references/editor-integration/" class="md-nav__link">
+      <a href="../../../references/editor-integration/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1373,7 +1413,7 @@
   
   
     <li class="md-nav__item">
-      <a href="user/references/ci-integration/github-actions/" class="md-nav__link">
+      <a href="../../../references/ci-integration/github-actions/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1463,7 +1503,7 @@
   
   
     <li class="md-nav__item">
-      <a href="developer/getting-started/" class="md-nav__link">
+      <a href="../../../../developer/getting-started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1483,7 +1523,7 @@
   
   
     <li class="md-nav__item">
-      <a href="developer/contributing/" class="md-nav__link">
+      <a href="../../../../developer/contributing/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1546,7 +1586,7 @@
   
   
     <li class="md-nav__item">
-      <a href="developer/auto-generation/" class="md-nav__link">
+      <a href="../../../../developer/auto-generation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -1592,6 +1632,64 @@
   
   
   
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    Operations
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy" class="md-nav__link">
+    deploy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#destroy" class="md-nav__link">
+    destroy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset" class="md-nav__link">
+    reset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clean" class="md-nav__link">
+    clean
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
   
 </nav>
                   </div>
@@ -1602,6 +1700,31 @@
           
             <div class="md-content" data-md-component="content">
               <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+<h1 id="streamsapp">StreamsApp<a class="headerlink" href="#streamsapp" title="Permanent link">&para;</a></h1>
+<p>Subclass of <a href="../helm-app/"><em>HelmApp</em></a>.</p>
+<h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h3>
+<p>Configures a Helm app with <a href="https://github.com/bakdata/streams-bootstrap" target="_blank">streams-bootstrap Helm charts</a>.</p>
+<h3 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h3>
+<h4 id="deploy">deploy<a class="headerlink" href="#deploy" title="Permanent link">&para;</a></h4>
+<p>Deploy using Helm.</p>
+<h4 id="destroy">destroy<a class="headerlink" href="#destroy" title="Permanent link">&para;</a></h4>
+<p>Uninstall Helm release.</p>
+<h4 id="reset">reset<a class="headerlink" href="#reset" title="Permanent link">&para;</a></h4>
+<p>Do nothing.</p>
+<h4 id="clean">clean<a class="headerlink" href="#clean" title="Permanent link">&para;</a></h4>
+<p>Do nothing.</p>
+
+
+
+
+
                 
               </article>
             </div>
@@ -1617,16 +1740,38 @@
         
       </main>
       
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 bakdata
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
     </div>
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.share", "search.suggest", "content.tooltips", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../../..", "features": ["navigation.sections", "navigation.tabs", "navigation.indexes", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.share", "search.suggest", "content.tooltips", "content.code.copy", "content.code.select", "content.code.annotate"], "search": "../../../../assets/javascripts/workers/search.f886a092.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
-      <script src="assets/javascripts/bundle.aecac24b.min.js"></script>
+      <script src="../../../../assets/javascripts/bundle.aecac24b.min.js"></script>
       
     
   <script>document$.subscribe(() => {const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});})</script></body>

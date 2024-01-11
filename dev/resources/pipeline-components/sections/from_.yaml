@@ -1,12 +1,12 @@
   from: # Must not be null
     topics: # read from topic
-      ${pipeline.name}-input-topic:
+      ${pipeline_name}-input-topic:
         type: input # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
+      ${pipeline_name}-extra-topic:
         role: topic-role # Implies `type` to be extra
-      ${pipeline.name}-input-pattern-topic:
+      ${pipeline_name}-input-pattern-topic:
         type: pattern # Implied to be an input pattern if `role` is undefined
-      ${pipeline.name}-extra-pattern-topic:
+      ${pipeline_name}-extra-pattern-topic:
         type: pattern # Implied to be an extra pattern if `role` is defined
         role: some-role
     components: # read from specific component

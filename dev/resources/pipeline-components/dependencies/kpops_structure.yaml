@@ -13,10 +13,7 @@ kpops_components_fields:
   - prefix
   - from_
   - to
-  - namespace
   - app
-  - repo_config
-  - version
   kafka-connector:
   - name
   - prefix
@@ -78,13 +75,76 @@ kpops_components_fields:
   - app
   - repo_config
   - version
+  streams-bootstrap:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - app
+  - repo_config
+  - version
 kpops_components_inheritance_ref:
-  helm-app: kubernetes-app
-  kafka-app: helm-app
-  kafka-connector: pipeline-component
-  kafka-sink-connector: kafka-connector
-  kafka-source-connector: kafka-connector
-  kubernetes-app: pipeline-component
-  pipeline-component: base-defaults-component
-  producer-app: kafka-app
-  streams-app: kafka-app
+  helm-app:
+    bases:
+    - kubernetes-app
+    parents:
+    - kubernetes-app
+    - pipeline-component
+  kafka-app:
+    bases:
+    - pipeline-component
+    parents:
+    - pipeline-component
+  kafka-connector:
+    bases:
+    - pipeline-component
+    parents:
+    - pipeline-component
+  kafka-sink-connector:
+    bases:
+    - kafka-connector
+    parents:
+    - kafka-connector
+    - pipeline-component
+  kafka-source-connector:
+    bases:
+    - kafka-connector
+    parents:
+    - kafka-connector
+    - pipeline-component
+  kubernetes-app:
+    bases:
+    - pipeline-component
+    parents:
+    - pipeline-component
+  pipeline-component:
+    bases: []
+    parents: []
+  producer-app:
+    bases:
+    - kafka-app
+    - streams-bootstrap
+    parents:
+    - kafka-app
+    - streams-bootstrap
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+  streams-app:
+    bases:
+    - kafka-app
+    - streams-bootstrap
+    parents:
+    - kafka-app
+    - streams-bootstrap
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+  streams-bootstrap:
+    bases:
+    - helm-app
+    parents:
+    - helm-app
+    - kubernetes-app
+    - pipeline-component

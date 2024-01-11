@@ -3,16 +3,16 @@
   name: kafka-sink-connector # required
   # Pipeline prefix that will prefix every component name. If you wish to not
   # have any prefix you can specify an empty string.
-  prefix: ${pipeline.name}-
+  prefix: ${pipeline_name}-
   from: # Must not be null
     topics: # read from topic
-      ${pipeline.name}-input-topic:
+      ${pipeline_name}-input-topic:
         type: input # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
+      ${pipeline_name}-extra-topic:
         role: topic-role # Implies `type` to be extra
-      ${pipeline.name}-input-pattern-topic:
+      ${pipeline_name}-input-pattern-topic:
         type: pattern # Implied to be an input pattern if `role` is undefined
-      ${pipeline.name}-extra-pattern-topic:
+      ${pipeline_name}-extra-pattern-topic:
         type: pattern # Implied to be an extra pattern if `role` is defined
         role: some-role
     components: # read from specific component
@@ -28,11 +28,11 @@
   # Topic(s) into which the component will write output
   to:
     topics:
-      ${pipeline.name}-output-topic:
+      ${pipeline_name}-output-topic:
         type: output # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
+      ${pipeline_name}-extra-topic:
         role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
-      ${pipeline.name}-error-topic:
+      ${pipeline_name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.
         key_schema: key-schema # must implement SchemaProvider to use

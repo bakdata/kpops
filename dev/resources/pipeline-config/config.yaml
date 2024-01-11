@@ -16,9 +16,9 @@ defaults_filename_prefix: defaults
 # Configures topic names.
 topic_name_config: 
   # Configures the value for the variable ${output_topic_name}
-  default_output_topic_name: ${pipeline.name}-${component_name}
+  default_output_topic_name: ${pipeline_name}-${component_name}
   # Configures the value for the variable ${error_topic_name}
-  default_error_topic_name: ${pipeline.name}-${component_name}-error
+  default_error_topic_name: ${pipeline_name}-${component_name}-error
 # Address of the Schema Registry
 schema_registry_url: "http://localhost:8081"
 # Address of the Kafka REST Proxy.

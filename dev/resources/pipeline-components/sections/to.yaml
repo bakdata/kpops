@@ -1,11 +1,11 @@
   # Topic(s) into which the component will write output
   to:
     topics:
-      ${pipeline.name}-output-topic:
+      ${pipeline_name}-output-topic:
         type: output # Implied when role is NOT specified
-      ${pipeline.name}-extra-topic:
+      ${pipeline_name}-extra-topic:
         role: topic-role # Implies `type` to be extra; Will throw an error if `type` is defined
-      ${pipeline.name}-error-topic:
+      ${pipeline_name}-error-topic:
         type: error
         # Currently KPOps supports Avro and JSON schemas.
         key_schema: key-schema # must implement SchemaProvider to use
