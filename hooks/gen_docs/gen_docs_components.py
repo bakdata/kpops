@@ -57,7 +57,7 @@ KPOPS_COMPONENTS_INHERITANCE_REF = {
                 type[PipelineComponent],
                 parent,
             ).type
-            for parent in component.get_parents(PipelineComponent)
+            for parent in component.parents
         ],
     }
     for component in KPOPS_COMPONENTS
