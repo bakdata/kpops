@@ -71,9 +71,12 @@ class Pipeline(RootModel):
     def __len__(self) -> int:
         return len(self.root)
 
-    def filter(
-        self, predicate: Callable[[PipelineComponent], bool]
-    ) -> None:  # TODO: pydocs
+    def filter(self, predicate: Callable[[PipelineComponent], bool]) -> None:
+        """Filter pipeline components using a custom predicate.
+
+        :param predicate: Filter function,
+            returns boolean value whether the component should be kept or removed
+        """
         for component in self.components.copy():
             # filter out components not matching the predicate
             if not predicate(component):
