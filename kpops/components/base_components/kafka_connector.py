@@ -3,9 +3,9 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import NoReturn
+from typing import Any, NoReturn
 
-from pydantic import Field, PrivateAttr, ValidationInfo, field_validator
+from pydantic import Field, PrivateAttr, ValidationInfo, computed_field, field_validator
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import (
@@ -122,8 +122,8 @@ class KafkaConnector(PipelineComponent, ABC):
         default=...,
         description=describe_attr("app", __doc__),
     )
-    resetter_namespace: str = Field(
-        default=..., description=describe_attr("resetter_namespace", __doc__)
+    resetter_namespace: str | None = Field(
+        default=None, description=describe_attr("resetter_namespace", __doc__)
     )
     resetter_values: HelmAppValues = Field(
         default_factory=HelmAppValues,
@@ -148,13 +148,19 @@ class KafkaConnector(PipelineComponent, ABC):
         app["name"] = component_name
         return KafkaConnectorConfig(**app)
 
+    @computed_field
     @cached_property
     def _resetter(self) -> KafkaConnectorResetter:
+        kwargs: dict[str, Any] = {}
+        if self.resetter_namespace:
+            kwargs["namespace"] = self.resetter_namespace
         return KafkaConnectorResetter(
             config=self.config,
             handlers=self.handlers,
-            namespace=self.resetter_namespace,
-            **self.model_dump(exclude={"app"}),
+            **kwargs,
+            **self.model_dump(
+                exclude={"_resetter", "resetter_values", "resetter_namespace", "app"}
+            ),
             app=KafkaConnectorResetterValues(
                 connector_type=self._connector_type.value,
                 config=KafkaConnectorResetterConfig(

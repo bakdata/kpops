@@ -342,9 +342,17 @@
                     "type": "string"
                 },
                 "resetter_namespace": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Namespace for the Kafka Connect resetter",
-                    "title": "Resetter Namespace",
-                    "type": "string"
+                    "title": "Resetter Namespace"
                 },
                 "resetter_values": {
                     "allOf": [
@@ -369,8 +377,7 @@
             },
             "required": [
                 "name",
-                "app",
-                "resetter_namespace"
+                "app"
             ],
             "title": "KafkaConnector",
             "type": "object"
@@ -430,9 +437,17 @@
                     "type": "string"
                 },
                 "resetter_namespace": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Namespace for the Kafka Connect resetter",
-                    "title": "Resetter Namespace",
-                    "type": "string"
+                    "title": "Resetter Namespace"
                 },
                 "resetter_values": {
                     "allOf": [
@@ -462,7 +477,6 @@
             "required": [
                 "name",
                 "app",
-                "resetter_namespace",
                 "type"
             ],
             "title": "KafkaSinkConnector",
@@ -518,9 +532,17 @@
                     "type": "string"
                 },
                 "resetter_namespace": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Namespace for the Kafka Connect resetter",
-                    "title": "Resetter Namespace",
-                    "type": "string"
+                    "title": "Resetter Namespace"
                 },
                 "resetter_values": {
                     "allOf": [
@@ -550,7 +572,6 @@
             "required": [
                 "name",
                 "app",
-                "resetter_namespace",
                 "type"
             ],
             "title": "KafkaSourceConnector",
