@@ -49,7 +49,7 @@ def update_nested(*argv: dict) -> dict:
     if len(argv) == 1:
         return argv[0]
     if len(argv) == 2:
-        return update_nested_pair(argv[0], argv[1])
+        return update_nested_pair(*argv)
     return update_nested(update_nested_pair(argv[0], argv[1]), *argv[2:])
 
 
