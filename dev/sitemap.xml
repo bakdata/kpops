@@ -121,6 +121,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://bakdata.github.io/kpops/dev/user/core-concepts/components/streams-bootstrap/</loc>
+         <lastmod>2024-01-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://bakdata.github.io/kpops/dev/user/core-concepts/variables/environment_variables/</loc>
          <lastmod>2024-01-15</lastmod>
          <changefreq>daily</changefreq>
