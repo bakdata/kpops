@@ -135,12 +135,10 @@ class Pipeline(BaseModel):
 
     @staticmethod
     def __get_graph_nodes(components: list[PipelineComponent]) -> Iterator[str]:
-        sub_graph_nodes = []
         for component in components:
             yield component.id
             yield from component.inputs
             yield from component.outputs
-        return sub_graph_nodes
 
     def __get_parallel_tasks_from(
         self, layer: list[str], runner: Callable[[PipelineComponent], Coroutine]
