@@ -164,7 +164,7 @@ class KafkaConnector(PipelineComponent, ABC):
                 )
             await self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
 
-    def _run_connect_resetter(
+    async def _run_connect_resetter(
         self,
         dry_run: bool,
         retain_clean_jobs: bool,
@@ -185,7 +185,7 @@ class KafkaConnector(PipelineComponent, ABC):
                 f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {self.full_name}"
             )
         )
-        self.__uninstall_connect_resetter(self._resetter_release_name, dry_run)
+        await self.__uninstall_connect_resetter(self._resetter_release_name, dry_run)
 
         log.info(
             magentaify(
@@ -193,7 +193,7 @@ class KafkaConnector(PipelineComponent, ABC):
             )
         )
 
-        stdout = self.__install_connect_resetter(dry_run, **kwargs)
+        stdout = await self.__install_connect_resetter(dry_run, **kwargs)
 
         if dry_run:
             self.dry_run_handler.print_helm_diff(
@@ -202,9 +202,11 @@ class KafkaConnector(PipelineComponent, ABC):
 
         if not retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
-            self.__uninstall_connect_resetter(self._resetter_release_name, dry_run)
+            await self.__uninstall_connect_resetter(
+                self._resetter_release_name, dry_run
+            )
 
-    def __install_connect_resetter(
+    async def __install_connect_resetter(
         self,
         dry_run: bool,
         **kwargs,
@@ -214,7 +216,7 @@ class KafkaConnector(PipelineComponent, ABC):
         :param dry_run: Whether to dry run the command
         :return: The output of `helm upgrade --install`
         """
-        return self.helm.upgrade_install(
+        return await self.helm.upgrade_install(
             release_name=self._resetter_release_name,
             namespace=self.namespace,
             chart=self._resetter_helm_chart,
@@ -251,13 +253,15 @@ class KafkaConnector(PipelineComponent, ABC):
             **self.resetter_values,
         }
 
-    def __uninstall_connect_resetter(self, release_name: str, dry_run: bool) -> None:
+    async def __uninstall_connect_resetter(
+        self, release_name: str, dry_run: bool
+    ) -> None:
         """Uninstall connector resetter.
 
         :param release_name: Name of the release to be uninstalled
         :param dry_run: Whether to do a dry run of the command
         """
-        self.helm.uninstall(
+        await self.helm.uninstall(
             namespace=self.namespace,
             release_name=release_name,
             dry_run=dry_run,
@@ -299,19 +303,19 @@ class KafkaSourceConnector(KafkaConnector):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        self.__run_kafka_connect_resetter(dry_run)
+        await self.__run_kafka_connect_resetter(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
         await super().clean(dry_run)
-        self.__run_kafka_connect_resetter(dry_run)
+        await self.__run_kafka_connect_resetter(dry_run)
 
-    def __run_kafka_connect_resetter(self, dry_run: bool) -> None:
+    async def __run_kafka_connect_resetter(self, dry_run: bool) -> None:
         """Run the connector resetter.
 
         :param dry_run: Whether to do a dry run of the command
         """
-        self._run_connect_resetter(
+        await self._run_connect_resetter(
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
             offset_topic=self.offset_topic,
@@ -356,14 +360,14 @@ class KafkaSinkConnector(KafkaConnector):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        self.__run_kafka_connect_resetter(dry_run, delete_consumer_group=False)
+        await self.__run_kafka_connect_resetter(dry_run, delete_consumer_group=False)
 
     @override
     async def clean(self, dry_run: bool) -> None:
         await super().clean(dry_run)
-        self.__run_kafka_connect_resetter(dry_run, delete_consumer_group=True)
+        await self.__run_kafka_connect_resetter(dry_run, delete_consumer_group=True)
 
-    def __run_kafka_connect_resetter(
+    async def __run_kafka_connect_resetter(
         self, dry_run: bool, delete_consumer_group: bool
     ) -> None:
         """Run the connector resetter.
@@ -371,7 +375,7 @@ class KafkaSinkConnector(KafkaConnector):
         :param dry_run: Whether to do a dry run of the command
         :param delete_consumer_group: Whether the consumer group should be deleted or not
         """
-        self._run_connect_resetter(
+        await self._run_connect_resetter(
             dry_run=dry_run,
             retain_clean_jobs=self.config.retain_clean_jobs,
             delete_consumer_group=delete_consumer_group,
