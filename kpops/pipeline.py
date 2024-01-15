@@ -101,8 +101,8 @@ class Pipeline(BaseModel):
             await asyncio.gather(*asyncio_deployments)
 
         async def run_graph_deployments(pending_deployment: list[Awaitable]):
-            for pending_task in pending_deployment:
-                await pending_task
+            for pending_deployment in pending_deployment:
+                await pending_deployment
 
         sub_graph = self.graph.subgraph(sub_graph_nodes)
         transformed_graph = sub_graph.copy()
@@ -119,17 +119,17 @@ class Pipeline(BaseModel):
             nx.bfs_layers(transformed_graph, root_node)
         )
 
-        sorted_tasks = []
+        sorted_deployment = []
         for layer in layers_graph[1:]:
-            parallel_tasks = self.__get_parallel_deployments_from(layer, runner)
+            parallel_deployment = self.__get_parallel_deployments_from(layer, runner)
 
-            if parallel_tasks:
-                sorted_tasks.append(run_parallel_deployments(parallel_tasks))
+            if parallel_deployment:
+                sorted_deployment.append(run_parallel_deployments(parallel_deployment))
 
         if reverse:
-            sorted_tasks.reverse()
+            sorted_deployment.reverse()
 
-        return run_graph_deployments(sorted_tasks)
+        return run_graph_deployments(sorted_deployment)
 
     @staticmethod
     def __get_graph_nodes(components: list[PipelineComponent]) -> Iterator[str]:
