@@ -107,6 +107,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  namespace: namespace # required
   # `app` can contain application-specific settings, hence  the user is free to
   # add the key-value pairs they need.
   app: # required
@@ -115,6 +116,17 @@
       schemaRegistryUrl: ${config.schema_registry.url}
     nameOverride: override-with-this-name # kafka-app-specific
     imageTag: "1.0.0" # Example values that are shared between streams-app and producer-app
+  # Helm repository configuration (optional)
+  # If not set the helm repo add will not be called. Useful when using local Helm charts
+  repo_config:
+    repository_name: bakdata-streams-bootstrap # required
+    url: https://bakdata.github.io/streams-bootstrap/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "2.12.0" # Helm chart version
 # Kafka sink connector
 - type: kafka-sink-connector
   name: kafka-sink-connector # required
@@ -160,11 +172,22 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  namespace: namespace # required
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example. Extensive documentation on
   # connectors: https://kafka.apache.org/documentation/#connectconfigs
   app: # required
     tasks.max: 1
+  # Helm repository configuration for resetter
+  repo_config:
+    repository_name: my-repo # required
+    url: https://bakdata.github.io/kafka-connect-resetter/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "1.0.6" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
   resetter_values:
@@ -195,11 +218,22 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
+  namespace: namespace # required
   # `app` contains application-specific settings, hence it does not have a rigid
   # structure. The fields below are just an example. Extensive documentation on
   # connectors: https://kafka.apache.org/documentation/#connectconfigs
   app: # required
     tasks.max: 1
+  # Helm repository configuration for resetter
+  repo_config:
+    repository_name: my-repo # required
+    url: https://bakdata.github.io/kafka-connect-resetter/ # required
+    repo_auth_flags:
+      username: user
+      password: pass
+      ca_file: /home/user/path/to/ca-file
+      insecure_skip_tls_verify: false
+  version: "1.0.6" # Helm chart version
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
   resetter_values:
