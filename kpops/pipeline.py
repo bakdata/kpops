@@ -112,7 +112,6 @@ class Pipeline(BaseModel):
         # in that way we make this node the root of the graph, avoiding backtracking
         transformed_graph.add_node(root_node)
 
-
         for node in sub_graph:
             predecessors = list(sub_graph.predecessors(node))
             if not predecessors:
