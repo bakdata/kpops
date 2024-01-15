@@ -1,9 +1,14 @@
 import json
 
+import pydantic
 import pytest
 from pydantic import BaseModel
 
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
+
+
+class Nested(pydantic.BaseModel):
+    foo: int
 
 
 class TestDictOps:
@@ -18,6 +23,12 @@ class TestDictOps:
             # deep update nested dicts
             (
                 {"k1": {"foo": 1}},
+                {"k1": {"bar": ""}},
+                {"k1": {"foo": 1, "bar": ""}},
+            ),
+            # deep update nested pydantic.BaseModel with dict
+            (
+                {"k1": Nested(foo=1)},
                 {"k1": {"bar": ""}},
                 {"k1": {"foo": 1, "bar": ""}},
             ),
