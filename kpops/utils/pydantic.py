@@ -95,6 +95,27 @@ def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str,
     }
 
 
+def issubclass_patched(
+    __cls: type, __class_or_tuple: type | tuple[type, ...] = BaseModel
+) -> bool:
+    """Pydantic breaks ``issubclass``.
+
+    ``issubclass(set[str], set)  # True``
+    ``issubclass(BaseSettings, BaseModel)  # True``
+    ``issubclass(set[str], BaseModel)  # raises exception``
+
+    :param cls: class to check
+    :base: class(es) to check against, defaults to ``BaseModel``
+    :return: Whether 'cls' is derived from another class or is the same class.
+    """
+    try:
+        return issubclass(__cls, __class_or_tuple)
+    except TypeError as e:
+        if str(e) == "issubclass() arg 1 must be a class":
+            return False
+        raise
+
+
 class CamelCaseConfigModel(BaseModel):
     model_config = ConfigDict(
         alias_generator=to_camel,

@@ -32,7 +32,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
@@ -161,7 +161,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
@@ -213,7 +213,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
@@ -270,7 +270,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
@@ -323,7 +323,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
