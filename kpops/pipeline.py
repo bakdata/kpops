@@ -41,7 +41,7 @@ class Pipeline(BaseModel):
     components: list[SerializeAsAny[PipelineComponent]] = Field(
         default=[], title="Components"
     )
-    graph: nx.DiGraph = Field(default_factory=lambda: nx.DiGraph(), exclude=True)
+    graph: nx.DiGraph = Field(default_factory=nx.DiGraph, exclude=True)
     _component_index: dict[str, PipelineComponent | None] = {}
 
     class Config:
@@ -100,8 +100,8 @@ class Pipeline(BaseModel):
                 asyncio_deployments.append(asyncio.create_task(coroutine))
             await asyncio.gather(*asyncio_deployments)
 
-        async def run_graph_deployments(pending_deployment: list[Awaitable]):
-            for pending_deployment in pending_deployment:
+        async def run_graph_deployments(pending_deployments: list[Awaitable]):
+            for pending_deployment in pending_deployments:
                 await pending_deployment
 
         sub_graph = self.graph.subgraph(sub_graph_nodes)
