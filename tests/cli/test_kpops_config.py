@@ -18,11 +18,11 @@ def test_kpops_config_with_default_values():
     assert default_config.defaults_filename_prefix == "defaults"
     assert (
         default_config.topic_name_config.default_output_topic_name
-        == "${pipeline_name}-${component.name}"
+        == "${pipeline.name}-${component.name}"
     )
     assert (
         default_config.topic_name_config.default_error_topic_name
-        == "${pipeline_name}-${component.name}-error"
+        == "${pipeline.name}-${component.name}-error"
     )
     assert default_config.schema_registry.enabled is False
     assert default_config.schema_registry.url == AnyHttpUrl("http://localhost:8081")

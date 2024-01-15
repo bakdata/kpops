@@ -15,7 +15,7 @@ from kpops.components.base_components.kubernetes_app import (
 )
 from kpops.config import KpopsConfig
 
-HELM_RELEASE_NAME = create_helm_release_name("${pipeline_name}-test-kubernetes-app")
+HELM_RELEASE_NAME = create_helm_release_name("${pipeline.name}-test-kubernetes-app")
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
