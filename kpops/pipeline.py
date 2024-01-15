@@ -60,7 +60,6 @@ class Pipeline(BaseModel):
 
     def __add_to_graph(self, component: PipelineComponent):
         self._component_index[component.id] = component
-
         self.graph.add_node(component.id)
 
         for input_topic in component.inputs:
@@ -95,7 +94,7 @@ class Pipeline(BaseModel):
     ) -> Awaitable:
         sub_graph_nodes = self.__get_graph_nodes(components)
 
-        async def run_parallel_tasks(tasks: list[Coroutine]) -> None:
+        async def run_parallel_deployments(tasks: list[Coroutine]) -> None:
             asyncio_tasks = []
             for coroutine in tasks:
                 asyncio_tasks.append(asyncio.create_task(coroutine))
@@ -125,19 +124,20 @@ class Pipeline(BaseModel):
             parallel_tasks = self.__get_parallel_task_from(layer, runner)
 
             if parallel_tasks:
-                sorted_tasks.append(run_parallel_tasks(parallel_tasks))
+                sorted_tasks.append(run_parallel_deployments(parallel_tasks))
 
         if reverse:
             sorted_tasks.reverse()
 
         return run_graph_tasks(sorted_tasks)
 
-    def __get_graph_nodes(self, components: list[PipelineComponent]) -> list[str]:
+    @staticmethod
+    def __get_graph_nodes(components: list[PipelineComponent]) -> Iterator[str]:
         sub_graph_nodes = []
         for component in components:
-            sub_graph_nodes.append(component.id)
-            sub_graph_nodes.extend(list(component.inputs))
-            sub_graph_nodes.extend(list(component.outputs))
+            yield component.id
+            yield from component.inputs
+            yield from component.outputs
         return sub_graph_nodes
 
     def __get_parallel_task_from(
