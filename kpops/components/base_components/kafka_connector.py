@@ -113,7 +113,7 @@ class KafkaConnector(PipelineComponent, ABC):
     Should only be used to set defaults
 
     :param app: Application-specific settings
-    :param resetter_namespace: Namespace for the Kafka Connect resetter
+    :param resetter_namespace: Kubernetes namespace in which the Kafka Connect resetter shall be deployed
     :param resetter_values: Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc.,
         defaults to empty HelmAppValues
     """
