@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pydantic
 import pytest
 
 from kpops.component_handlers import ComponentHandlers
@@ -21,10 +24,15 @@ class Parent(BaseDefaultsComponent):
     hard_coded: str = "hard_coded_value"
 
 
+class Nested(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(extra="allow")
+
+
 class Child(Parent):
     __test__ = False
     nice: dict | None = None
     another_hard_coded: str = "another_hard_coded_value"
+    nested: Nested | None = None
 
 
 class GrandChild(Child):
@@ -187,3 +195,10 @@ class TestBaseDefaultsComponent:
         assert component.name == str(
             DEFAULTS_PATH
         ), "Environment variables should be substituted"
+
+    def test_merge_defaults(self, config: KpopsConfig, handlers: ComponentHandlers):
+        component = GrandChild(
+            config=config, handlers=handlers, nested=Nested(**{"bar": False})
+        )
+        assert isinstance(component.nested, Nested)
+        assert component.nested == Nested(**{"foo": "foo", "bar": False})
