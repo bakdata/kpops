@@ -1,10 +1,13 @@
 ```mermaid
 flowchart BT
     KubernetesApp --> PipelineComponent
+    KafkaApp --> PipelineComponent
     HelmApp --> KubernetesApp
-    KafkaApp --> HelmApp
+    StreamsBootstrap --> HelmApp
     StreamsApp --> KafkaApp
+    StreamsApp --> StreamsBootstrap
     ProducerApp --> KafkaApp
+    ProducerApp --> StreamsBootstrap
     KafkaConnector --> PipelineComponent
     KafkaSourceConnector --> KafkaConnector
     KafkaSinkConnector --> KafkaConnector
@@ -12,6 +15,7 @@ flowchart BT
     click KubernetesApp "/kpops/user/core-concepts/components/kubernetes-app"
     click HelmApp "/kpops/user/core-concepts/components/helm-app"
     click KafkaApp "/kpops/user/core-concepts/components/kafka-app"
+    click StreamsBootstrap "/kpops/user/core-concepts/components/streams-bootstrap"
     click StreamsApp "/kpops/user/core-concepts/components/streams-app"
     click ProducerApp "/kpops/user/core-concepts/components/producer-app"
     click KafkaConnector "/kpops/user/core-concepts/components/kafka-connector"

@@ -1,10 +1,13 @@
 from typing_extensions import override
 
 from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
-from kpops.components import KafkaSinkConnector
-from kpops.components.base_components import PipelineComponent
+from kpops.components import (
+    KafkaSinkConnector,
+    PipelineComponent,
+    ProducerApp,
+    StreamsApp,
+)
 from kpops.components.base_components.models.to_section import OutputTopicTypes
-from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
 class ScheduledProducer(ProducerApp):
