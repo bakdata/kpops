@@ -467,7 +467,7 @@
         },
         "ProducerApp": {
             "additionalProperties": true,
-            "description": "Producer component.\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
+            "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -709,7 +709,7 @@
         },
         "StreamsApp": {
             "additionalProperties": true,
-            "description": "StreamsApp component that configures a streams bootstrap app.",
+            "description": "StreamsApp component that configures a streams-bootstrap app.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -888,7 +888,7 @@
         },
         "StreamsAppValues": {
             "additionalProperties": true,
-            "description": "StreamsBoostrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
             "properties": {
                 "autoscaling": {
                     "anyOf": [
@@ -900,7 +900,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Kubernetes Event-driven Autoscaling config"
+                    "description": "Kubernetes event-driven autoscaling config"
                 },
                 "nameOverride": {
                     "anyOf": [
@@ -921,7 +921,7 @@
                             "$ref": "#/$defs/StreamsConfig"
                         }
                     ],
-                    "description": "Streams Bootstrap streams section"
+                    "description": "streams-bootstrap streams section"
                 }
             },
             "required": [
@@ -944,6 +944,19 @@
                     "description": "Configuration",
                     "title": "Config",
                     "type": "object"
+                },
+                "deleteOutput": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup",
+                    "title": "Deleteoutput"
                 },
                 "errorTopic": {
                     "anyOf": [
