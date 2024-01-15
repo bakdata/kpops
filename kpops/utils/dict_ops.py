@@ -2,13 +2,16 @@ import re
 from collections import ChainMap as _ChainMap
 from collections.abc import Mapping
 from string import Template
-from typing import Any, TypeVar
+from typing import Any
 
-import pydantic
 from typing_extensions import override
 
+from kpops.component_handlers.kubernetes.model import Json
 
-def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
+
+def update_nested_pair(
+    original_dict: dict[str, Json], other_dict: Mapping[str, Json]
+) -> dict[str, Json]:
     """Nested update for 2 dictionaries.
 
     Adds all new fields in ``other_dict`` to ``original_dict``.
@@ -24,8 +27,6 @@ def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
     for key, value in other_dict.items():
         if isinstance(value, Mapping):
             nested_val = original_dict.get(key, {})
-            if isinstance(nested_val, pydantic.BaseModel):
-                nested_val = nested_val.model_dump()
             if isinstance(nested_val, dict):
                 original_dict[key] = update_nested_pair(nested_val, value)
         elif key not in original_dict:
@@ -33,7 +34,7 @@ def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
     return original_dict
 
 
-def update_nested(*argv: dict) -> dict:
+def update_nested(*argv: dict[str, Json]) -> dict[str, Json]:
     """Merge multiple configuration dicts.
 
     The dicts have multiple layers. These layers will be merged recursively.
@@ -54,8 +55,8 @@ def update_nested(*argv: dict) -> dict:
 
 
 def flatten_mapping(
-    nested_mapping: Mapping[str, Any], prefix: str | None = None, separator: str = "_"
-) -> dict[str, Any]:
+    nested_mapping: Mapping[str, Json], prefix: str | None = None, separator: str = "_"
+) -> dict[str, Json]:
     """Flattens a Mapping.
 
     :param nested_mapping: Nested mapping that is to be flattened
@@ -81,15 +82,12 @@ def flatten_mapping(
     return top
 
 
-_V = TypeVar("_V")
-
-
 def generate_substitution(
-    input: dict[str, _V],
+    input: dict[str, Json],
     prefix: str | None = None,
-    existing_substitution: dict | None = None,
+    existing_substitution: dict[str, Json] | None = None,
     separator: str | None = None,
-) -> dict[str, _V]:
+) -> dict[str, Json]:
     """Generate a complete substitution dict from a given dict.
 
     Finds all attributes that belong to a model and expands them to create

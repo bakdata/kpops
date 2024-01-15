@@ -1,14 +1,10 @@
 import json
 
-import pydantic
 import pytest
 from pydantic import BaseModel
 
+from kpops.component_handlers.kubernetes.model import JsonPrimitive
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
-
-
-class Nested(pydantic.BaseModel):
-    foo: int
 
 
 class TestDictOps:
@@ -23,12 +19,6 @@ class TestDictOps:
             # deep update nested dicts
             (
                 {"k1": {"foo": 1}},
-                {"k1": {"bar": ""}},
-                {"k1": {"foo": 1, "bar": ""}},
-            ),
-            # deep update nested Pydantic model with dict
-            (
-                {"k1": Nested(foo=1)},
                 {"k1": {"bar": ""}},
                 {"k1": {"foo": 1, "bar": ""}},
             ),
@@ -58,7 +48,9 @@ class TestDictOps:
             ),
         ],
     )
-    def test_update_nested_pair(self, d1: dict, d2: dict, expected: dict):
+    def test_update_nested_pair(
+        self, d1: dict[str, JsonPrimitive], d2: dict[str, JsonPrimitive], expected: dict
+    ):
         assert update_nested_pair(d1, d2) == expected
 
     def test_substitution_generation(self):

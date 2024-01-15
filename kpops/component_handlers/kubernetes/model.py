@@ -1,7 +1,7 @@
 import json
 from collections import UserDict
 from collections.abc import Iterator
-from typing import TypeAlias
+from typing import TypeAlias, TypeVar
 
 import yaml
 
@@ -12,7 +12,10 @@ except ImportError:
 
 
 # JSON values
-Json: TypeAlias = dict[str, "Json"] | list["Json"] | str | int | float | bool | None
+JsonPrimitive: TypeAlias = (
+    dict[str, "Json"] | list["Json"] | str | int | float | bool | None
+)
+Json = TypeVar("Json", bound=JsonPrimitive)
 
 
 class KubernetesManifest(UserDict[str, Json]):

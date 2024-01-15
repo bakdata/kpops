@@ -3,10 +3,12 @@ import logging
 from abc import ABC
 from collections import deque
 from collections.abc import Sequence
+from dataclasses import asdict, is_dataclass
 from functools import cached_property
 from pathlib import Path
 from typing import Any, TypeVar
 
+import pydantic
 import typer
 from pydantic import (
     AliasChoices,
@@ -98,6 +100,13 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         """
         config = kwargs["config"]
         assert isinstance(config, KpopsConfig)
+
+        for k, v in kwargs.items():
+            if isinstance(v, pydantic.BaseModel):
+                kwargs[k] = v.model_dump(exclude_unset=True)
+            elif is_dataclass(v):
+                kwargs[k] = asdict(v)
+
         log.debug(
             typer.style(
                 "Enriching component of type ", fg=typer.colors.GREEN, bold=False
