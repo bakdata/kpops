@@ -3,7 +3,7 @@ import json
 import pytest
 from pydantic import BaseModel
 
-from kpops.component_handlers.kubernetes.model import JsonPrimitive
+from kpops.component_handlers.kubernetes.model import Json
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 
 
@@ -49,7 +49,7 @@ class TestDictOps:
         ],
     )
     def test_update_nested_pair(
-        self, d1: dict[str, JsonPrimitive], d2: dict[str, JsonPrimitive], expected: dict
+        self, d1: dict[str, Json], d2: dict[str, Json], expected: dict[str, Json]
     ):
         assert update_nested_pair(d1, d2) == expected
 
