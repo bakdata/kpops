@@ -4,6 +4,7 @@ from collections.abc import Mapping
 from string import Template
 from typing import Any, TypeVar
 
+import pydantic
 from typing_extensions import override
 
 
@@ -23,6 +24,8 @@ def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
     for key, value in other_dict.items():
         if isinstance(value, Mapping):
             nested_val = original_dict.get(key, {})
+            if isinstance(nested_val, pydantic.BaseModel):
+                nested_val = nested_val.model_dump()
             if isinstance(nested_val, dict):
                 original_dict[key] = update_nested_pair(nested_val, value)
         elif key not in original_dict:
