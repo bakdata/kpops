@@ -95,9 +95,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             typer.style(
                 "Enriching component of type ", fg=typer.colors.GREEN, bold=False
             )
-            + typer.style(
-                kwargs.get("type"), fg=typer.colors.GREEN, bold=True, underline=True
-            )
+            + typer.style(self.type, fg=typer.colors.GREEN, bold=True, underline=True)
         )
         main_default_file_path, environment_default_file_path = get_defaults_file_paths(
             config, ENV.get("environment")
