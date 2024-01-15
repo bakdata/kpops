@@ -90,7 +90,7 @@
                     "type": "string"
                 },
                 "namespace": {
-                    "description": "Namespace in which the component shall be deployed",
+                    "description": "Kubernetes namespace in which the component shall be deployed",
                     "title": "Namespace",
                     "type": "string"
                 },
@@ -281,7 +281,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Namespace for the Kafka Connect resetter",
+                    "description": "Kubernetes namespace in which the Kafka Connect resetter shall be deployed",
                     "title": "Resetter Namespace"
                 },
                 "resetter_values": {
@@ -376,7 +376,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Namespace for the Kafka Connect resetter",
+                    "description": "Kubernetes namespace in which the Kafka Connect resetter shall be deployed",
                     "title": "Resetter Namespace"
                 },
                 "resetter_values": {
@@ -445,7 +445,7 @@
                     "type": "string"
                 },
                 "namespace": {
-                    "description": "Namespace in which the component shall be deployed",
+                    "description": "Kubernetes namespace in which the component shall be deployed",
                     "title": "Namespace",
                     "type": "string"
                 },
@@ -694,7 +694,7 @@
                     "type": "string"
                 },
                 "namespace": {
-                    "description": "Namespace in which the component shall be deployed",
+                    "description": "Kubernetes namespace in which the component shall be deployed",
                     "title": "Namespace",
                     "type": "string"
                 },
