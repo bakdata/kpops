@@ -26,7 +26,7 @@ class TestDictOps:
                 {"k1": {"bar": ""}},
                 {"k1": {"foo": 1, "bar": ""}},
             ),
-            # deep update nested pydantic.BaseModel with dict
+            # deep update nested Pydantic model with dict
             (
                 {"k1": Nested(foo=1)},
                 {"k1": {"bar": ""}},
