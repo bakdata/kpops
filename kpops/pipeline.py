@@ -94,21 +94,24 @@ class Pipeline(BaseModel):
     ) -> Awaitable:
         sub_graph_nodes = self.__get_graph_nodes(components)
 
-        async def run_parallel_deployments(deployments: list[Coroutine]) -> None:
-            asyncio_deployments = []
-            for coroutine in deployments:
-                asyncio_deployments.append(asyncio.create_task(coroutine))
-            await asyncio.gather(*asyncio_deployments)
+        async def run_parallel_tasks(coroutines: list[Coroutine]) -> None:
+            tasks = []
+            for coro in coroutines:
+                tasks.append(asyncio.create_task(coro))
+            await asyncio.gather(*tasks)
 
-        async def run_graph_deployments(pending_deployments: list[Awaitable]):
-            for pending_deployment in pending_deployments:
-                await pending_deployment
+        async def run_graph_tasks(pending_tasks: list[Awaitable]):
+            for pending_task in pending_tasks:
+                await pending_task
 
         sub_graph = self.graph.subgraph(sub_graph_nodes)
         transformed_graph = sub_graph.copy()
 
         root_node = "root_node_bfs"
+        # We add an extra node to the graph, connecting all the leaf nodes to it
+        # in that way we make this node the root of the graph, avoiding backtracking
         transformed_graph.add_node(root_node)
+
 
         for node in sub_graph:
             predecessors = list(sub_graph.predecessors(node))
@@ -119,17 +122,17 @@ class Pipeline(BaseModel):
             nx.bfs_layers(transformed_graph, root_node)
         )
 
-        sorted_deployment = []
+        sorted_tasks = []
         for layer in layers_graph[1:]:
-            parallel_deployment = self.__get_parallel_deployments_from(layer, runner)
+            parallel_tasks = self.__get_parallel_tasks_from(layer, runner)
 
-            if parallel_deployment:
-                sorted_deployment.append(run_parallel_deployments(parallel_deployment))
+            if parallel_tasks:
+                sorted_tasks.append(run_parallel_tasks(parallel_tasks))
 
         if reverse:
-            sorted_deployment.reverse()
+            sorted_tasks.reverse()
 
-        return run_graph_deployments(sorted_deployment)
+        return run_graph_tasks(sorted_tasks)
 
     @staticmethod
     def __get_graph_nodes(components: list[PipelineComponent]) -> Iterator[str]:
@@ -140,17 +143,17 @@ class Pipeline(BaseModel):
             yield from component.outputs
         return sub_graph_nodes
 
-    def __get_parallel_deployments_from(
+    def __get_parallel_tasks_from(
         self, layer: list[str], runner: Callable[[PipelineComponent], Coroutine]
     ) -> list[Coroutine]:
-        parallel_deployments = []
+        parallel_tasks = []
 
         for node_in_layer in layer:
             component = self._component_index[node_in_layer]
             if component is not None:
-                parallel_deployments.append(runner(component))
+                parallel_tasks.append(runner(component))
 
-        return parallel_deployments
+        return parallel_tasks
 
     def __validate_graph(self) -> None:
         if not nx.is_directed_acyclic_graph(self.graph):
