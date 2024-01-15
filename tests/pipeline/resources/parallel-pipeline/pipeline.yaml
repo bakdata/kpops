@@ -1,9 +1,5 @@
 - type: producer-app
   name: transaction-avro-producer-1
-  app:
-    replicaCount: 1
-    image: ${DOCKER_REGISTRY}/custom-transaction-producer
-    imageTag: 1.0.0
   to:
     topics:
       my-output-topic-with-multiple-producers:
@@ -12,41 +8,25 @@
 
 - type: producer-app
   name: transaction-avro-producer-2
-  app:
-    replicaCount: 1
-    image: ${DOCKER_REGISTRY}/custom-transaction-producer
-    imageTag: 1.0.0
   to:
     topics:
       my-output-topic-with-multiple-producers:
         type: output
         partitions_count: 3
-
 
 - type: producer-app
   name: transaction-avro-producer-3
-  app:
-    image: ${DOCKER_REGISTRY}/custom-transaction-producer
-    imageTag: 1.0.0
   to:
     topics:
       my-output-topic-with-multiple-producers:
         type: output
         partitions_count: 3
 
-
 - type: streams-app
   name: transaction-joiner
-  app:
-    image: ${DOCKER_REGISTRY}/atm-demo-transactionjoiner
-    imageTag: 1.0.0
-
 
 - type: streams-app
   name: fraud-detector
-  app:
-    image: ${DOCKER_REGISTRY}/atm-demo-frauddetector
-    imageTag: 1.0.0
 
 - type: streams-app
   name: account-linker
@@ -54,10 +34,6 @@
     components:
       fraud-detector:
         type: input
-  app:
-    replicaCount: 1
-    image: ${DOCKER_REGISTRY}/atm-demo-accountlinker
-    imageTag: 1.0.0
 
 - type: kafka-sink-connector
   name: s3-connector-1

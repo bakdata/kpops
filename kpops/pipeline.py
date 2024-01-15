@@ -35,11 +35,6 @@ class ValidationError(Exception):
     pass
 
 
-class InternalNodeRepresentation(BaseModel):
-    id: str
-    component: PipelineComponent | None
-
-
 class Pipeline(BaseModel):
     """Pipeline representation."""
 
@@ -47,7 +42,7 @@ class Pipeline(BaseModel):
         default=[], title="Components"
     )
     graph: nx.DiGraph = Field(default_factory=lambda: nx.DiGraph(), exclude=True)
-    _component_index: dict[str, InternalNodeRepresentation] = {}
+    _component_index: dict[str, PipelineComponent | None] = {}
 
     class Config:
         arbitrary_types_allowed = True
@@ -64,10 +59,7 @@ class Pipeline(BaseModel):
         raise ValueError(msg)
 
     def __add_to_graph(self, component: PipelineComponent):
-        node_component = InternalNodeRepresentation(
-            id=component.id, component=component
-        )
-        self._component_index[node_component.id] = node_component
+        self._component_index[component.id] = component
 
         self.graph.add_node(component.id)
 
@@ -103,7 +95,7 @@ class Pipeline(BaseModel):
     ) -> Awaitable:
         sub_graph_nodes = self.__get_graph_nodes(components)
 
-        async def run_parallel_tasks(tasks) -> None:
+        async def run_parallel_tasks(tasks: list[Coroutine]) -> None:
             asyncio_tasks = []
             for coroutine in tasks:
                 asyncio_tasks.append(asyncio.create_task(coroutine))
@@ -124,7 +116,9 @@ class Pipeline(BaseModel):
             if not predecessors:
                 transformed_graph.add_edge(root_node, node)
 
-        layers_graph = list(nx.bfs_layers(transformed_graph, root_node))
+        layers_graph: list[list[str]] = list(
+            nx.bfs_layers(transformed_graph, root_node)
+        )
 
         sorted_tasks = []
         for layer in layers_graph[1:]:
@@ -138,7 +132,7 @@ class Pipeline(BaseModel):
 
         return run_graph_tasks(sorted_tasks)
 
-    def __get_graph_nodes(self, components) -> list[str]:
+    def __get_graph_nodes(self, components: list[PipelineComponent]) -> list[str]:
         sub_graph_nodes = []
         for component in components:
             sub_graph_nodes.append(component.id)
@@ -146,13 +140,15 @@ class Pipeline(BaseModel):
             sub_graph_nodes.extend(list(component.outputs))
         return sub_graph_nodes
 
-    def __get_parallel_task_from(self, layer, runner) -> list[Awaitable]:
+    def __get_parallel_task_from(
+        self, layer: list[str], runner: Callable[[PipelineComponent], Coroutine]
+    ) -> list[Coroutine]:
         parallel_tasks = []
 
         for node_in_layer in layer:
             component_node = self._component_index[node_in_layer]
-            if component_node.component is not None:
-                parallel_tasks.append(runner(component_node.component))
+            if component_node is not None:
+                parallel_tasks.append(runner(component_node))
 
         return parallel_tasks
 
@@ -166,19 +162,14 @@ class Pipeline(BaseModel):
         self.__validate_graph()
 
     def __add_output(self, output_topic: str, source: str) -> None:
-        output_node = InternalNodeRepresentation(id=output_topic, component=None)
-        self._component_index[output_node.id] = output_node
+        self._component_index[output_topic] = None
         self.graph.add_node(output_topic)
         self.graph.add_edge(source, output_topic)
 
-    def __add_input(self, input_topic: str, component_node_name: str) -> None:
-        input_node = InternalNodeRepresentation(
-            id=input_topic,
-            component=None,
-        )
-        self._component_index[input_node.id] = input_node
+    def __add_input(self, input_topic: str, target: str) -> None:
+        self._component_index[input_topic] = None
         self.graph.add_node(input_topic)
-        self.graph.add_edge(input_topic, component_node_name)
+        self.graph.add_edge(input_topic, target)
 
     def validate_unique_names(self) -> None:
         step_names = [component.full_name for component in self.components]
