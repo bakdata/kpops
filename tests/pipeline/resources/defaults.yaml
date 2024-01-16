@@ -1,12 +1,14 @@
+pipeline-component:
+  name: ${component.type}
+
 kubernetes-app:
-  name: "${component.type}"
   namespace: example-namespace
 
 kafka-app:
   app:
     streams:
-      brokers: "${config.kafka_brokers}"
-      schema_registry_url: "${config.schema_registry.url}"
+      brokers: ${config.kafka_brokers}
+      schema_registry_url: ${config.schema_registry.url}
   version: "2.4.2"
 
 producer-app: {} # inherits from kafka-app
@@ -104,7 +106,6 @@ should-inflate:
           retention.ms: "-1"
 
 kafka-sink-connector:
-  name: sink-connector
   app:
     batch.size: "2000"
     behavior.on.malformed.documents: "warn"
