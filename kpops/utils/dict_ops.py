@@ -6,12 +6,12 @@ from typing import Any
 
 from typing_extensions import override
 
-from kpops.component_handlers.kubernetes.model import Json
+from kpops.utils.types import JsonType
 
 
 def update_nested_pair(
-    original_dict: dict[str, Json], other_dict: Mapping[str, Json]
-) -> dict[str, Json]:
+    original_dict: dict[str, JsonType], other_dict: Mapping[str, JsonType]
+) -> dict[str, JsonType]:
     """Nested update for 2 dictionaries.
 
     Adds all new fields in ``other_dict`` to ``original_dict``.
@@ -34,7 +34,7 @@ def update_nested_pair(
     return original_dict
 
 
-def update_nested(*argv: dict[str, Json]) -> dict[str, Json]:
+def update_nested(*argv: dict[str, JsonType]) -> dict[str, JsonType]:
     """Merge multiple configuration dicts.
 
     The dicts have multiple layers. These layers will be merged recursively.
@@ -55,8 +55,10 @@ def update_nested(*argv: dict[str, Json]) -> dict[str, Json]:
 
 
 def flatten_mapping(
-    nested_mapping: Mapping[str, Json], prefix: str | None = None, separator: str = "_"
-) -> dict[str, Json]:
+    nested_mapping: Mapping[str, JsonType],
+    prefix: str | None = None,
+    separator: str = "_",
+) -> dict[str, JsonType]:
     """Flattens a Mapping.
 
     :param nested_mapping: Nested mapping that is to be flattened
@@ -83,11 +85,11 @@ def flatten_mapping(
 
 
 def generate_substitution(
-    input: dict[str, Json],
+    input: dict[str, JsonType],
     prefix: str | None = None,
-    existing_substitution: dict[str, Json] | None = None,
+    existing_substitution: dict[str, JsonType] | None = None,
     separator: str | None = None,
-) -> dict[str, Json]:
+) -> dict[str, JsonType]:
     """Generate a complete substitution dict from a given dict.
 
     Finds all attributes that belong to a model and expands them to create
@@ -99,10 +101,10 @@ def generate_substitution(
     :returns: Substitution dict of all variables related to the model.
     """
     if separator is None:
-        return update_nested(
+        return update_nested_pair(
             existing_substitution or {}, flatten_mapping(input, prefix)
         )
-    return update_nested(
+    return update_nested_pair(
         existing_substitution or {}, flatten_mapping(input, prefix, separator)
     )
 
