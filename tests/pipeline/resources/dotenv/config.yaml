@@ -1,7 +1,4 @@
 defaults_path: ../defaults.yaml
-topic_name_config:
-  default_error_topic_name: "${component.name}-dead-letter-topic"
-  default_output_topic_name: "${component.name}-test-topic"
 kafka_brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
 kafka_connect:
   url: "http://localhost:8083"
