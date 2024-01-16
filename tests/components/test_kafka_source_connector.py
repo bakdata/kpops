@@ -12,7 +12,10 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
-from kpops.components.base_components.kafka_connector import KafkaSourceConnector
+from kpops.components.base_components.kafka_connector import (
+    KafkaConnectorResetter,
+    KafkaSourceConnector,
+)
 from kpops.components.base_components.models.from_section import (
     FromSection,
     FromTopic,
@@ -63,6 +66,12 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ),
             offset_topic=OFFSETS_TOPIC,
         )
+
+    def test_resetter_release_name(self, connector: KafkaSourceConnector):
+        assert connector.app.name == CONNECTOR_FULL_NAME
+        resetter = connector._resetter
+        assert isinstance(resetter, KafkaConnectorResetter)
+        assert connector._resetter.helm_release_name == CONNECTOR_CLEAN_RELEASE_NAME
 
     def test_from_section_raises_exception(
         self,

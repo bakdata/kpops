@@ -66,6 +66,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             ),
         )
 
+    def test_resetter_release_name(self, connector: KafkaSinkConnector):
+        assert connector.app.name == CONNECTOR_FULL_NAME
+        resetter = connector._resetter
+        assert isinstance(resetter, KafkaConnectorResetter)
+        assert connector._resetter.helm_release_name == CONNECTOR_CLEAN_RELEASE_NAME
+
     def test_connector_config_parsing(
         self,
         config: KpopsConfig,

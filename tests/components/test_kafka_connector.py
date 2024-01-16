@@ -121,9 +121,3 @@ class TestKafkaConnector:
                 handlers=handlers,
                 app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues], gets enriched
             )
-
-    def test_resetter_release_name(self, connector: KafkaConnector):
-        assert connector.app.name == CONNECTOR_FULL_NAME
-        # resetter = connector._resetter  # FIXME
-        # assert isinstance(resetter, KafkaConnectorResetter)
-        # assert connector._resetter.helm_release_name == CONNECTOR_CLEAN_RELEASE_NAME
