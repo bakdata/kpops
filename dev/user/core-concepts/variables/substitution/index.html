@@ -1767,12 +1767,13 @@
 
 <h2 id="pipeline-config-specific-variables">Pipeline-config-specific variables<a class="headerlink" href="#pipeline-config-specific-variables" title="Permanent link">&para;</a></h2>
 <p>These variables include all fields in the <a href="../../config/">config</a> and refer to the pipeline configuration that is independent of the components.</p>
+<p>All such variables are prefixed with <code>config.</code> and are of the same form as the <a href="#component-specific-variables">component-specific variables</a>.</p>
 <!-- dprint-ignore-start -->
 
 <div class="admonition info aliases">
 <p class="admonition-title">Info</p>
-<p><code>error_topic_name</code> is an alias for <code>topic_name_config.default_error_topic_name</code><br />
-<code>output_topic_name</code> is an alias for <code>topic_name_config.default_output_topic_name</code></p>
+<p><code>error_topic_name</code> is an alias for <code>config.topic_name_config.default_error_topic_name</code><br />
+<code>output_topic_name</code> is an alias for <code>config.topic_name_config.default_output_topic_name</code></p>
 </div>
 <!-- dprint-ignore-end -->
 
