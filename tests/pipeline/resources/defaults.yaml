@@ -103,7 +103,7 @@ should-inflate:
         configs:
           retention.ms: "-1"
 
-kafka-connector:
+kafka-sink-connector:
   name: sink-connector
   app:
     batch.size: "2000"
