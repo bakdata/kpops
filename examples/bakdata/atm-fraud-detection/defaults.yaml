@@ -4,9 +4,6 @@ pipeline-component:
 kubernetes-app:
   namespace: ${NAMESPACE}
 
-kafka-connector:
-  namespace: ${NAMESPACE}
-
 kafka-app:
   app:
     streams:

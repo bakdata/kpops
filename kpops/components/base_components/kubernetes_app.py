@@ -31,7 +31,7 @@ class KubernetesApp(PipelineComponent, ABC):
 
     All built-in components are Kubernetes apps, except for the Kafka connectors.
 
-    :param namespace: Namespace in which the component shall be deployed
+    :param namespace: Kubernetes namespace in which the component shall be deployed
     :param app: Application-specific settings
     """
 

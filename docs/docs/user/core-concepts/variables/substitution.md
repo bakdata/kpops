@@ -23,11 +23,13 @@ All of them are prefixed with `component.` and follow the following form: `compo
 
 These variables include all fields in the [config](../config.md) and refer to the pipeline configuration that is independent of the components.
 
+All such variables are prefixed with `config.` and are of the same form as the [component-specific variables](#component-specific-variables).
+
 <!-- dprint-ignore-start -->
 
 !!! info Aliases
-    `error_topic_name` is an alias for `topic_name_config.default_error_topic_name`  
-    `output_topic_name` is an alias for `topic_name_config.default_output_topic_name`
+    `error_topic_name` is an alias for `config.topic_name_config.default_error_topic_name`  
+    `output_topic_name` is an alias for `config.topic_name_config.default_output_topic_name`
 
 <!-- dprint-ignore-end -->
 
