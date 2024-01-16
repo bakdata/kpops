@@ -292,6 +292,44 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
         'version': '2.4.2'
     },
     {
+        '_resetter': {
+            'app': {
+                'config': {
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'connector': 'resources-pipeline-with-inflate-should-inflate-inflated-sink-connector'
+                },
+                'connectorType': 'sink'
+            },
+            'name': 'should-inflate-inflated-sink-connector',
+            'namespace': 'example-namespace',
+            'prefix': 'resources-pipeline-with-inflate-',
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
+                },
+                'repository_name': 'bakdata-kafka-connect-resetter',
+                'url': 'https://bakdata.github.io/kafka-connect-resetter/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'kafka-sink-connector': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    },
+                    'should-inflate-inflated-sink-connector': {
+                        'configs': {
+                        },
+                        'role': 'test'
+                    }
+                }
+            },
+            'type': 'kafka-connector-resetter',
+            'version': '1.0.4'
+        },
         'app': {
             'batch.size': '2000',
             'behavior.on.malformed.documents': 'warn',
@@ -308,15 +346,8 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
             'transforms.changeTopic.replacement': 'resources-pipeline-with-inflate-should-inflate-index-v1'
         },
         'name': 'should-inflate-inflated-sink-connector',
-        'namespace': 'example-namespace',
         'prefix': 'resources-pipeline-with-inflate-',
-        'repo_config': {
-            'repo_auth_flags': {
-                'insecure_skip_tls_verify': False
-            },
-            'repository_name': 'bakdata-kafka-connect-resetter',
-            'url': 'https://bakdata.github.io/kafka-connect-resetter/'
-        },
+        'resetter_namespace': 'example-namespace',
         'resetter_values': {
         },
         'to': {
@@ -335,8 +366,7 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
                 }
             }
         },
-        'type': 'kafka-sink-connector',
-        'version': '1.0.4'
+        'type': 'kafka-sink-connector'
     },
     {
         'app': {
@@ -446,6 +476,28 @@ snapshots['TestGenerate.test_kafka_connect_sink_weave_from_topics test-pipeline'
         'version': '2.4.2'
     },
     {
+        '_resetter': {
+            'app': {
+                'config': {
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'connector': 'resources-kafka-connect-sink-es-sink-connector'
+                },
+                'connectorType': 'sink'
+            },
+            'name': 'es-sink-connector',
+            'namespace': 'example-namespace',
+            'prefix': 'resources-kafka-connect-sink-',
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
+                },
+                'repository_name': 'bakdata-kafka-connect-resetter',
+                'url': 'https://bakdata.github.io/kafka-connect-resetter/'
+            },
+            'suffix': '-clean',
+            'type': 'kafka-connector-resetter',
+            'version': '1.0.4'
+        },
         'app': {
             'batch.size': '2000',
             'behavior.on.malformed.documents': 'warn',
@@ -461,19 +513,10 @@ snapshots['TestGenerate.test_kafka_connect_sink_weave_from_topics test-pipeline'
             'topics': 'example-output'
         },
         'name': 'es-sink-connector',
-        'namespace': 'example-namespace',
         'prefix': 'resources-kafka-connect-sink-',
-        'repo_config': {
-            'repo_auth_flags': {
-                'insecure_skip_tls_verify': False
-            },
-            'repository_name': 'bakdata-kafka-connect-resetter',
-            'url': 'https://bakdata.github.io/kafka-connect-resetter/'
-        },
         'resetter_values': {
         },
-        'type': 'kafka-sink-connector',
-        'version': '1.0.4'
+        'type': 'kafka-sink-connector'
     }
 ]
 
@@ -1245,6 +1288,44 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
         'version': '2.4.2'
     },
     {
+        '_resetter': {
+            'app': {
+                'config': {
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'connector': 'resources-read-from-component-inflate-step-inflated-sink-connector'
+                },
+                'connectorType': 'sink'
+            },
+            'name': 'inflate-step-inflated-sink-connector',
+            'namespace': 'example-namespace',
+            'prefix': 'resources-read-from-component-',
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
+                },
+                'repository_name': 'bakdata-kafka-connect-resetter',
+                'url': 'https://bakdata.github.io/kafka-connect-resetter/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'inflate-step-inflated-sink-connector': {
+                        'configs': {
+                        },
+                        'role': 'test'
+                    },
+                    'kafka-sink-connector': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    }
+                }
+            },
+            'type': 'kafka-connector-resetter',
+            'version': '1.0.4'
+        },
         'app': {
             'batch.size': '2000',
             'behavior.on.malformed.documents': 'warn',
@@ -1261,15 +1342,8 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
             'transforms.changeTopic.replacement': 'resources-read-from-component-inflate-step-index-v1'
         },
         'name': 'inflate-step-inflated-sink-connector',
-        'namespace': 'example-namespace',
         'prefix': 'resources-read-from-component-',
-        'repo_config': {
-            'repo_auth_flags': {
-                'insecure_skip_tls_verify': False
-            },
-            'repository_name': 'bakdata-kafka-connect-resetter',
-            'url': 'https://bakdata.github.io/kafka-connect-resetter/'
-        },
+        'resetter_namespace': 'example-namespace',
         'resetter_values': {
         },
         'to': {
@@ -1288,8 +1362,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 }
             }
         },
-        'type': 'kafka-sink-connector',
-        'version': '1.0.4'
+        'type': 'kafka-sink-connector'
     },
     {
         'app': {
@@ -1403,6 +1476,44 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
         'version': '2.4.2'
     },
     {
+        '_resetter': {
+            'app': {
+                'config': {
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'connector': 'resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector'
+                },
+                'connectorType': 'sink'
+            },
+            'name': 'inflate-step-without-prefix-inflated-sink-connector',
+            'namespace': 'example-namespace',
+            'prefix': 'resources-read-from-component-',
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
+                },
+                'repository_name': 'bakdata-kafka-connect-resetter',
+                'url': 'https://bakdata.github.io/kafka-connect-resetter/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'inflate-step-without-prefix-inflated-sink-connector': {
+                        'configs': {
+                        },
+                        'role': 'test'
+                    },
+                    'kafka-sink-connector': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    }
+                }
+            },
+            'type': 'kafka-connector-resetter',
+            'version': '1.0.4'
+        },
         'app': {
             'batch.size': '2000',
             'behavior.on.malformed.documents': 'warn',
@@ -1419,15 +1530,8 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
             'transforms.changeTopic.replacement': 'resources-read-from-component-inflate-step-without-prefix-index-v1'
         },
         'name': 'inflate-step-without-prefix-inflated-sink-connector',
-        'namespace': 'example-namespace',
         'prefix': 'resources-read-from-component-',
-        'repo_config': {
-            'repo_auth_flags': {
-                'insecure_skip_tls_verify': False
-            },
-            'repository_name': 'bakdata-kafka-connect-resetter',
-            'url': 'https://bakdata.github.io/kafka-connect-resetter/'
-        },
+        'resetter_namespace': 'example-namespace',
         'resetter_values': {
         },
         'to': {
@@ -1446,8 +1550,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 }
             }
         },
-        'type': 'kafka-sink-connector',
-        'version': '1.0.4'
+        'type': 'kafka-sink-connector'
     },
     {
         'app': {
@@ -2212,6 +2315,28 @@ snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
         'version': '2.9.0'
     },
     {
+        '_resetter': {
+            'app': {
+                'config': {
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'connector': 'resources-kafka-connect-sink-es-sink-connector'
+                },
+                'connectorType': 'sink'
+            },
+            'name': 'es-sink-connector',
+            'namespace': 'development-namespace',
+            'prefix': 'resources-kafka-connect-sink-',
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
+                },
+                'repository_name': 'bakdata-kafka-connect-resetter',
+                'url': 'https://bakdata.github.io/kafka-connect-resetter/'
+            },
+            'suffix': '-clean',
+            'type': 'kafka-connector-resetter',
+            'version': '1.0.4'
+        },
         'app': {
             'batch.size': '2000',
             'behavior.on.malformed.documents': 'warn',
@@ -2227,18 +2352,9 @@ snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
             'topics': 'example-output'
         },
         'name': 'es-sink-connector',
-        'namespace': 'example-namespace',
         'prefix': 'resources-kafka-connect-sink-',
-        'repo_config': {
-            'repo_auth_flags': {
-                'insecure_skip_tls_verify': False
-            },
-            'repository_name': 'bakdata-kafka-connect-resetter',
-            'url': 'https://bakdata.github.io/kafka-connect-resetter/'
-        },
         'resetter_values': {
         },
-        'type': 'kafka-sink-connector',
-        'version': '1.0.4'
+        'type': 'kafka-sink-connector'
     }
 ]
