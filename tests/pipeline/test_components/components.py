@@ -46,7 +46,7 @@ class ShouldInflate(StreamsApp):
                         name=f"{self.name}-inflated-sink-connector",
                         config=self.config,
                         handlers=self.handlers,
-                        namespace="example-namespace",
+                        resetter_namespace="example-namespace",
                         # FIXME
                         app={  # type: ignore[reportGeneralTypeIssues]
                             "topics": topic_name,

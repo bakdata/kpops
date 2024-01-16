@@ -305,6 +305,28 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
         'version': '2.9.0'
     },
     {
+        '_resetter': {
+            'app': {
+                'config': {
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'connector': 'postgresql-connector'
+                },
+                'connectorType': 'sink'
+            },
+            'name': 'postgresql-connector',
+            'namespace': '${NAMESPACE}',
+            'prefix': '',
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
+                },
+                'repository_name': 'bakdata-kafka-connect-resetter',
+                'url': 'https://bakdata.github.io/kafka-connect-resetter/'
+            },
+            'suffix': '-clean',
+            'type': 'kafka-connector-resetter',
+            'version': '1.0.4'
+        },
         'app': {
             'auto.create': True,
             'connection.ds.pool.size': 5,
@@ -330,18 +352,9 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'value.converter.schema.registry.url': 'http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081'
         },
         'name': 'postgresql-connector',
-        'namespace': '${NAMESPACE}',
         'prefix': '',
-        'repo_config': {
-            'repo_auth_flags': {
-                'insecure_skip_tls_verify': False
-            },
-            'repository_name': 'bakdata-kafka-connect-resetter',
-            'url': 'https://bakdata.github.io/kafka-connect-resetter/'
-        },
         'resetter_values': {
         },
-        'type': 'kafka-sink-connector',
-        'version': '1.0.4'
+        'type': 'kafka-sink-connector'
     }
 ]

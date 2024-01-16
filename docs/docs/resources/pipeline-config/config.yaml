@@ -3,28 +3,35 @@
 # The path to the folder containing the defaults.yaml file and the environment
 # defaults files.
 defaults_path: .
-# The environment you want to generate and deploy the pipeline to. Suffix your
-# environment files with this value (e.g. defaults_development.yaml and
-# pipeline_development.yaml for environment=development).
-# REQUIRED
-environment: development
+# Custom Python module defining project-specific KPOps components
+components_module: null
+# Base directory to the pipelines (default is current working directory)
+pipeline_base_dir: .
 # The Kafka brokers address.
 # REQUIRED
-brokers: "http://broker1:9092,http://broker2:9092"
+kafka_brokers: "http://broker1:9092,http://broker2:9092"
 # The name of the defaults file and the prefix of the defaults environment file.
 defaults_filename_prefix: defaults
-# Configures topic names.
+# Configure the topic name variables you can use in the pipeline definition.
 topic_name_config: 
   # Configures the value for the variable ${output_topic_name}
-  default_output_topic_name: ${pipeline.name}-${component_name}
+  default_output_topic_name: ${pipeline.name}-${component.name}
   # Configures the value for the variable ${error_topic_name}
-  default_error_topic_name: ${pipeline.name}-${component_name}-error
-# Address of the Schema Registry
-schema_registry_url: "http://localhost:8081"
-# Address of the Kafka REST Proxy.
-kafka_rest_host: "http://localhost:8082"
-# Address of Kafka Connect.
-kafka_connect_host: "http://localhost:8083"
+  default_error_topic_name: ${pipeline.name}-${component.name}-error
+# Configuration for Schema Registry.
+schema_registry:
+  # Whether the Schema Registry handler should be initialized.
+  enabled: false
+  # Address of the Schema Registry.
+  url: "http://localhost:8081"
+# Configuration for the Kafka REST Proxy.
+kafka_rest:
+  # Address of the Kafka REST Proxy.
+  url: "http://localhost:8082"
+# Configuration for Kafka Connect.
+kafka_connect:
+  # Address of Kafka Connect.
+  url: "http://localhost:8083"
 # The timeout in seconds that specifies when actions like deletion or deploy
 # timeout.
 timeout: 300
@@ -33,14 +40,16 @@ timeout: 300
 create_namespace: false
 # Global flags for Helm.
 helm_config:
-  # Set the name of the kubeconfig context. (--kube-context)
+  # Name of kubeconfig context (`--kube-context`)
   context: name
   # Run Helm in Debug mode.
   debug: false
+  # Kubernetes API version used for Capabilities.APIVersions
+  api_version: null
 # Configure Helm Diff.
 helm_diff_config: 
   # Set of keys that should not be checked.
-  ignore: 
+  ignore:
     - name
     - imageTag
 # Whether to retain clean up jobs in the cluster or uninstall the, after

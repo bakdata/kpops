@@ -102,12 +102,6 @@ class HelmApp(KubernetesApp):
         return create_helm_release_name(self.full_name)
 
     @property
-    def clean_release_name(self) -> str:
-        """The name for the Helm release for cleanup jobs. Can be overridden."""
-        suffix = "-clean"
-        return create_helm_release_name(self.full_name + suffix, suffix)
-
-    @property
     def helm_chart(self) -> str:
         """Return component's Helm chart."""
         msg = (
