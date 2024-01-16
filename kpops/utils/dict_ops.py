@@ -85,11 +85,11 @@ def flatten_mapping(
 
 
 def generate_substitution(
-    input: dict[str, JsonType],
+    input: dict[str, Any],
     prefix: str | None = None,
     existing_substitution: dict[str, JsonType] | None = None,
     separator: str | None = None,
-) -> dict[str, JsonType]:
+) -> dict[str, Any]:
     """Generate a complete substitution dict from a given dict.
 
     Finds all attributes that belong to a model and expands them to create
