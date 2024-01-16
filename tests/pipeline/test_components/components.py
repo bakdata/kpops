@@ -46,9 +46,7 @@ class ShouldInflate(StreamsApp):
                         name=f"{self.name}-inflated-sink-connector",
                         config=self.config,
                         handlers=self.handlers,
-                        resetter_namespace="example-namespace",
-                        # FIXME
-                        app={  # type: ignore[reportGeneralTypeIssues]
+                        app={  # type: ignore[reportGeneralTypeIssues], required `connector.class` comes from defaults during enrichment
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },

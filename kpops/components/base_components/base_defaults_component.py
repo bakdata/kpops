@@ -3,18 +3,25 @@ import logging
 from abc import ABC
 from collections import deque
 from collections.abc import Sequence
+from dataclasses import asdict, is_dataclass
 from functools import cached_property
 from pathlib import Path
-from typing import TypeVar
+from typing import Any, TypeVar
 
+import pydantic
 import typer
-from pydantic import AliasChoices, ConfigDict, Field, computed_field
+from pydantic import (
+    AliasChoices,
+    ConfigDict,
+    Field,
+    computed_field,
+)
 from pydantic.json_schema import SkipJsonSchema
 
 from kpops.component_handlers import ComponentHandlers
 from kpops.config import KpopsConfig
 from kpops.utils import cached_classproperty
-from kpops.utils.dict_ops import update_nested
+from kpops.utils.dict_ops import update_nested, update_nested_pair
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
 from kpops.utils.pydantic import DescConfigModel, to_dash
@@ -84,26 +91,35 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         """
         return to_dash(cls.__name__)
 
-    def extend_with_defaults(self, **kwargs) -> dict:
+    @classmethod
+    def extend_with_defaults(cls, **kwargs: Any) -> dict[str, Any]:
         """Merge parent components' defaults with own.
 
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inheritted defaults
         """
-        config: KpopsConfig = kwargs["config"]
+        config = kwargs["config"]
+        assert isinstance(config, KpopsConfig)
+
+        for k, v in kwargs.items():
+            if isinstance(v, pydantic.BaseModel):
+                kwargs[k] = v.model_dump(exclude_unset=True)
+            elif is_dataclass(v):
+                kwargs[k] = asdict(v)
+
         log.debug(
             typer.style(
                 "Enriching component of type ", fg=typer.colors.GREEN, bold=False
             )
-            + typer.style(self.type, fg=typer.colors.GREEN, bold=True, underline=True)
+            + typer.style(cls.type, fg=typer.colors.GREEN, bold=True, underline=True)
         )
         main_default_file_path, environment_default_file_path = get_defaults_file_paths(
             config, ENV.get("environment")
         )
         defaults = load_defaults(
-            self.__class__, main_default_file_path, environment_default_file_path
+            cls, main_default_file_path, environment_default_file_path
         )
-        return update_nested(kwargs, defaults)
+        return update_nested_pair(kwargs, defaults)
 
     def _validate_custom(self, **kwargs) -> None:
         """Run custom validation on component.

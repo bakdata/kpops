@@ -6,8 +6,12 @@ from typing import Any, TypeVar
 
 from typing_extensions import override
 
+_V = TypeVar("_V", bound=object)
 
-def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
+
+def update_nested_pair(
+    original_dict: dict[str, _V], other_dict: Mapping[str, _V]
+) -> dict[str, _V]:
     """Nested update for 2 dictionaries.
 
     Adds all new fields in ``other_dict`` to ``original_dict``.
@@ -30,7 +34,7 @@ def update_nested_pair(original_dict: dict, other_dict: Mapping) -> dict:
     return original_dict
 
 
-def update_nested(*argv: dict) -> dict:
+def update_nested(*argv: dict[str, _V]) -> dict[str, _V]:
     """Merge multiple configuration dicts.
 
     The dicts have multiple layers. These layers will be merged recursively.
@@ -46,13 +50,15 @@ def update_nested(*argv: dict) -> dict:
     if len(argv) == 1:
         return argv[0]
     if len(argv) == 2:
-        return update_nested_pair(argv[0], argv[1])
+        return update_nested_pair(*argv)
     return update_nested(update_nested_pair(argv[0], argv[1]), *argv[2:])
 
 
 def flatten_mapping(
-    nested_mapping: Mapping[str, Any], prefix: str | None = None, separator: str = "_"
-) -> dict[str, Any]:
+    nested_mapping: Mapping[str, _V],
+    prefix: str | None = None,
+    separator: str = "_",
+) -> dict[str, _V]:
     """Flattens a Mapping.
 
     :param nested_mapping: Nested mapping that is to be flattened
@@ -78,13 +84,10 @@ def flatten_mapping(
     return top
 
 
-_V = TypeVar("_V")
-
-
 def generate_substitution(
     input: dict[str, _V],
     prefix: str | None = None,
-    existing_substitution: dict | None = None,
+    existing_substitution: dict[str, _V] | None = None,
     separator: str | None = None,
 ) -> dict[str, _V]:
     """Generate a complete substitution dict from a given dict.
@@ -97,11 +100,10 @@ def generate_substitution(
     :param substitution: existing substitution to include
     :returns: Substitution dict of all variables related to the model.
     """
+    existing_substitution = existing_substitution or {}
     if separator is None:
-        return update_nested(
-            existing_substitution or {}, flatten_mapping(input, prefix)
-        )
-    return update_nested(
+        return update_nested_pair(existing_substitution, flatten_mapping(input, prefix))
+    return update_nested_pair(
         existing_substitution or {}, flatten_mapping(input, prefix, separator)
     )
 

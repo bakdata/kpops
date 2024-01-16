@@ -347,7 +347,6 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
         },
         'name': 'should-inflate-inflated-sink-connector',
         'prefix': 'resources-pipeline-with-inflate-',
-        'resetter_namespace': 'example-namespace',
         'resetter_values': {
         },
         'to': {
@@ -1343,7 +1342,6 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
         },
         'name': 'inflate-step-inflated-sink-connector',
         'prefix': 'resources-read-from-component-',
-        'resetter_namespace': 'example-namespace',
         'resetter_values': {
         },
         'to': {
@@ -1531,7 +1529,6 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
         },
         'name': 'inflate-step-without-prefix-inflated-sink-connector',
         'prefix': 'resources-read-from-component-',
-        'resetter_namespace': 'example-namespace',
         'resetter_values': {
         },
         'to': {
