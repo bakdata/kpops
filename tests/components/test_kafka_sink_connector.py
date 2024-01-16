@@ -32,8 +32,11 @@ from tests.components.test_kafka_connector import (
     CONNECTOR_CLEAN_RELEASE_NAME,
     CONNECTOR_FULL_NAME,
     CONNECTOR_NAME,
+    RESETTER_NAMESPACE,
     TestKafkaConnector,
 )
+
+CONNECTOR_TYPE = KafkaConnectorType.SINK.value
 
 
 class TestKafkaSinkConnector(TestKafkaConnector):
@@ -53,7 +56,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            resetter_namespace="test-namespace",
+            resetter_namespace=RESETTER_NAMESPACE,
             to=ToSection(
                 topics={
                     TopicName("${output_topic_name}"): TopicConfig(
@@ -77,7 +80,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             app=KafkaConnectorConfig(
                 **{**connector_config.model_dump(), "topics": topic_name}
             ),
-            resetter_namespace="test-namespace",
+            resetter_namespace=RESETTER_NAMESPACE,
         )
         assert getattr(connector.app, "topics") == topic_name
 
@@ -89,7 +92,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             app=KafkaConnectorConfig(
                 **{**connector_config.model_dump(), "topics.regex": topic_pattern}
             ),
-            resetter_namespace="test-namespace",
+            resetter_namespace=RESETTER_NAMESPACE,
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern
 
@@ -106,7 +109,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            resetter_namespace="test-namespace",
+            resetter_namespace=RESETTER_NAMESPACE,
             from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                 topics={
                     topic1: FromTopic(type=InputTopicTypes.INPUT),
@@ -132,7 +135,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            resetter_namespace="test-namespace",
+            resetter_namespace=RESETTER_NAMESPACE,
             from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                 topics={topic_pattern: FromTopic(type=InputTopicTypes.PATTERN)}
             ),
@@ -219,7 +222,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     RepoAuthFlags(),
                 ),
                 mocker.call.helm.uninstall(
-                    "test-namespace",
+                    RESETTER_NAMESPACE,
                     CONNECTOR_CLEAN_RELEASE_NAME,
                     dry_run,
                 ),
@@ -229,10 +232,10 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     CONNECTOR_CLEAN_RELEASE_NAME,
                     "bakdata-kafka-connect-resetter/kafka-connect-resetter",
                     dry_run,
-                    "test-namespace",
+                    RESETTER_NAMESPACE,
                     {
                         "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
-                        "connectorType": "sink",
+                        "connectorType": CONNECTOR_TYPE,
                         "config": {
                             "brokers": "broker:9092",
                             "connector": CONNECTOR_FULL_NAME,
@@ -246,7 +249,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     ),
                 ),
                 mocker.call.helm.uninstall(
-                    "test-namespace",
+                    RESETTER_NAMESPACE,
                     CONNECTOR_CLEAN_RELEASE_NAME,
                     dry_run,
                 ),
@@ -312,7 +315,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 RepoAuthFlags(),
             ),
             mocker.call.helm.uninstall(
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
@@ -322,10 +325,10 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 "bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run,
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 {
                     "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
-                    "connectorType": "sink",
+                    "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
                         "connector": CONNECTOR_FULL_NAME,
@@ -339,7 +342,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 ),
             ),
             mocker.call.helm.uninstall(
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
@@ -360,7 +363,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            resetter_namespace="test-namespace",
+            resetter_namespace=RESETTER_NAMESPACE,
         )
 
         dry_run = True
@@ -381,7 +384,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            resetter_namespace="test-namespace",
+            resetter_namespace=RESETTER_NAMESPACE,
         )
 
         mock_delete_topics = mocker.patch.object(
@@ -410,7 +413,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 ),
             ),
             mocker.call.helm.uninstall(
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
@@ -420,10 +423,10 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 "bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run,
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 {
                     "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
-                    "connectorType": "sink",
+                    "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
                         "connector": CONNECTOR_FULL_NAME,
@@ -437,7 +440,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 ),
             ),
             mocker.call.helm.uninstall(
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run,
             ),

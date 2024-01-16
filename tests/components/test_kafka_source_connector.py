@@ -8,7 +8,10 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
-from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
+from kpops.component_handlers.kafka_connect.model import (
+    KafkaConnectorConfig,
+    KafkaConnectorType,
+)
 from kpops.components.base_components.kafka_connector import KafkaSourceConnector
 from kpops.components.base_components.models.from_section import (
     FromSection,
@@ -28,10 +31,13 @@ from tests.components.test_kafka_connector import (
     CONNECTOR_CLEAN_RELEASE_NAME,
     CONNECTOR_FULL_NAME,
     CONNECTOR_NAME,
+    RESETTER_NAMESPACE,
     TestKafkaConnector,
 )
 
+CONNECTOR_TYPE = KafkaConnectorType.SOURCE.value
 CLEAN_SUFFIX = "-clean"
+OFFSETS_TOPIC = "kafka-connect-offsets"
 
 
 class TestKafkaSourceConnector(TestKafkaConnector):
@@ -47,7 +53,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            resetter_namespace="test-namespace",
+            resetter_namespace=RESETTER_NAMESPACE,
             to=ToSection(
                 topics={
                     TopicName("${output_topic_name}"): TopicConfig(
@@ -55,7 +61,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                     ),
                 }
             ),
-            offset_topic="kafka-connect-offsets",
+            offset_topic=OFFSETS_TOPIC,
         )
 
     def test_from_section_raises_exception(
@@ -70,7 +76,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 config=config,
                 handlers=handlers,
                 app=connector_config,
-                resetter_namespace="test-namespace",
+                resetter_namespace=RESETTER_NAMESPACE,
                 from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                     topics={
                         TopicName("connector-topic"): FromTopic(
@@ -107,7 +113,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector: KafkaSourceConnector,
         mocker: MockerFixture,
     ):
-        ENV["KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"] = "kafka-connect-offsets"
+        ENV["KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"] = OFFSETS_TOPIC
         assert connector.handlers.connector_handler
 
         mock_destroy_connector = mocker.patch.object(
@@ -159,7 +165,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 RepoAuthFlags(),
             ),
             mocker.call.helm.uninstall(
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 False,
             ),
@@ -169,13 +175,13 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 "bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 False,
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 {
-                    "connectorType": "source",
+                    "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
                         "connector": CONNECTOR_FULL_NAME,
-                        "offsetTopic": "kafka-connect-offsets",
+                        "offsetTopic": OFFSETS_TOPIC,
                     },
                     "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
                 },
@@ -186,7 +192,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 ),
             ),
             mocker.call.helm.uninstall(
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 False,
             ),
@@ -239,7 +245,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 RepoAuthFlags(),
             ),
             mocker.call.helm.uninstall(
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
@@ -249,14 +255,14 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 "bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run,
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 {
                     "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
-                    "connectorType": "source",
+                    "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
                         "connector": CONNECTOR_FULL_NAME,
-                        "offsetTopic": "kafka-connect-offsets",
+                        "offsetTopic": OFFSETS_TOPIC,
                     },
                 },
                 HelmUpgradeInstallFlags(
@@ -266,7 +272,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 ),
             ),
             mocker.call.helm.uninstall(
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
@@ -290,8 +296,8 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            resetter_namespace="test-namespace",
-            offset_topic="kafka-connect-offsets",
+            resetter_namespace=RESETTER_NAMESPACE,
+            offset_topic=OFFSETS_TOPIC,
         )
         assert connector.to is None
 
@@ -319,7 +325,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 RepoAuthFlags(),
             ),
             mocker.call.helm.uninstall(
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
@@ -329,14 +335,14 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 "bakdata-kafka-connect-resetter/kafka-connect-resetter",
                 dry_run,
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 {
                     "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
-                    "connectorType": "source",
+                    "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
                         "connector": CONNECTOR_FULL_NAME,
-                        "offsetTopic": "kafka-connect-offsets",
+                        "offsetTopic": OFFSETS_TOPIC,
                     },
                 },
                 HelmUpgradeInstallFlags(
@@ -346,7 +352,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 ),
             ),
             mocker.call.helm.uninstall(
-                "test-namespace",
+                RESETTER_NAMESPACE,
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 dry_run,
             ),
@@ -369,8 +375,8 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             config=config,
             handlers=handlers,
             app=connector_config,
-            resetter_namespace="test-namespace",
-            offset_topic="kafka-connect-offsets",
+            resetter_namespace=RESETTER_NAMESPACE,
+            offset_topic=OFFSETS_TOPIC,
         )
         assert connector.to is None
 

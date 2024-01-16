@@ -19,6 +19,7 @@ CONNECTOR_FULL_NAME = "${pipeline.name}-" + CONNECTOR_NAME
 CONNECTOR_CLEAN_FULL_NAME = CONNECTOR_FULL_NAME + "-clean"
 CONNECTOR_CLEAN_RELEASE_NAME = "${pipeline.name}-test-connector-with-lon-612f3-clean"
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
+RESETTER_NAMESPACE = "test-namespace"
 
 
 class TestKafkaConnector:
@@ -75,7 +76,7 @@ class TestKafkaConnector:
             config=config,
             handlers=handlers,
             app=connector_config,
-            resetter_namespace="test-namespace",
+            resetter_namespace=RESETTER_NAMESPACE,
         )
 
     def test_connector_config_name_override(
@@ -90,8 +91,8 @@ class TestKafkaConnector:
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues]
-            resetter_namespace="test-namespace",
+            app={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues], gets enriched
+            resetter_namespace=RESETTER_NAMESPACE,
         )
         assert connector.app.name == CONNECTOR_FULL_NAME
 
@@ -105,7 +106,7 @@ class TestKafkaConnector:
                 name=CONNECTOR_NAME,
                 config=config,
                 handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore[reportGeneralTypeIssues]
+                app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore[reportGeneralTypeIssues], gets enriched
             )
 
         with pytest.raises(
@@ -118,7 +119,7 @@ class TestKafkaConnector:
                 name=CONNECTOR_NAME,
                 config=config,
                 handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues]
+                app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues], gets enriched
             )
 
     def test_resetter_release_name(self, connector: KafkaConnector):
