@@ -207,10 +207,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         mock_clean_connector = mocker.patch.object(
             connector.handlers.connector_handler, "clean_connector"
         )
-        resetter = connector._resetter
-        assert isinstance(resetter, KafkaConnectorResetter)
-
-        mock_resetter_reset = mocker.spy(resetter, "reset")
+        mock_resetter_reset = mocker.spy(connector._resetter, "reset")
 
         mock = mocker.MagicMock()
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
