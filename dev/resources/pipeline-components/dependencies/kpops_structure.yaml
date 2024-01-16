@@ -19,30 +19,24 @@ kpops_components_fields:
   - prefix
   - from_
   - to
-  - namespace
   - app
-  - repo_config
-  - version
+  - resetter_namespace
   - resetter_values
   kafka-sink-connector:
   - name
   - prefix
   - from_
   - to
-  - namespace
   - app
-  - repo_config
-  - version
+  - resetter_namespace
   - resetter_values
   kafka-source-connector:
   - name
   - prefix
   - from_
   - to
-  - namespace
   - app
-  - repo_config
-  - version
+  - resetter_namespace
   - resetter_values
   - offset_topic
   kubernetes-app:
