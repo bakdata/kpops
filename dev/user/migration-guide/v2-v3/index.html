@@ -2071,6 +2071,8 @@
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="w"> </span>   version: ...
 </span></code></pre></div></td></tr></table></div>
 <h2 id="refactor-kafka-connector-resetter-as-individual-helmapp"><a href="https://github.com/bakdata/kpops/pull/400">Refactor Kafka Connector resetter as individual HelmApp</a><a class="headerlink" href="#refactor-kafka-connector-resetter-as-individual-helmapp" title="Permanent link">&para;</a></h2>
+<p>Internally, the <a href="bakdata-kafka-connect-resetter/kafka-connect-resetter">Kafka Connector resetter</a> is now its own standard <code>HelmApp</code>, removing a lot of the shared code.
+It is configured using the <code>resetter_namespace</code> (formerly <code>namespace</code>) and <code>resetter_values</code> attributes.</p>
 <h4 id="defaultsyaml_1">defaults.yaml<a class="headerlink" href="#defaultsyaml_1" title="Permanent link">&para;</a></h4>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
 <span class="normal"><a href="#__codelineno-4-2">2</a></span>
