@@ -78,7 +78,7 @@ class TestDictOps:
                 problems=99,
             ).model_dump_json()
         )
-        existing_substitution: dict[str, JsonType] = {
+        existing_substitution = {
             "key1": "Everything",
             "key2": "work",
             "key3": "well",

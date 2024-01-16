@@ -2,16 +2,16 @@ import re
 from collections import ChainMap as _ChainMap
 from collections.abc import Mapping
 from string import Template
-from typing import Any
+from typing import Any, TypeVar
 
 from typing_extensions import override
 
-from kpops.utils.types import JsonType
+_V = TypeVar("_V", bound=object)
 
 
 def update_nested_pair(
-    original_dict: dict[str, JsonType], other_dict: Mapping[str, JsonType]
-) -> dict[str, JsonType]:
+    original_dict: dict[str, _V], other_dict: Mapping[str, _V]
+) -> dict[str, _V]:
     """Nested update for 2 dictionaries.
 
     Adds all new fields in ``other_dict`` to ``original_dict``.
@@ -34,7 +34,7 @@ def update_nested_pair(
     return original_dict
 
 
-def update_nested(*argv: dict[str, JsonType]) -> dict[str, JsonType]:
+def update_nested(*argv: dict[str, _V]) -> dict[str, _V]:
     """Merge multiple configuration dicts.
 
     The dicts have multiple layers. These layers will be merged recursively.
@@ -55,10 +55,10 @@ def update_nested(*argv: dict[str, JsonType]) -> dict[str, JsonType]:
 
 
 def flatten_mapping(
-    nested_mapping: Mapping[str, JsonType],
+    nested_mapping: Mapping[str, _V],
     prefix: str | None = None,
     separator: str = "_",
-) -> dict[str, JsonType]:
+) -> dict[str, _V]:
     """Flattens a Mapping.
 
     :param nested_mapping: Nested mapping that is to be flattened
@@ -85,11 +85,11 @@ def flatten_mapping(
 
 
 def generate_substitution(
-    input: dict[str, Any],
+    input: dict[str, _V],
     prefix: str | None = None,
-    existing_substitution: dict[str, JsonType] | None = None,
+    existing_substitution: dict[str, _V] | None = None,
     separator: str | None = None,
-) -> dict[str, Any]:
+) -> dict[str, _V]:
     """Generate a complete substitution dict from a given dict.
 
     Finds all attributes that belong to a model and expands them to create
@@ -100,10 +100,9 @@ def generate_substitution(
     :param substitution: existing substitution to include
     :returns: Substitution dict of all variables related to the model.
     """
+    existing_substitution = existing_substitution or {}
     if separator is None:
-        return update_nested_pair(
-            existing_substitution or {}, flatten_mapping(input, prefix)
-        )
+        return update_nested_pair(existing_substitution, flatten_mapping(input, prefix))
     return update_nested_pair(
         existing_substitution or {}, flatten_mapping(input, prefix, separator)
     )
