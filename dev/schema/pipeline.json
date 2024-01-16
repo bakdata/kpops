@@ -90,7 +90,7 @@
                     "type": "string"
                 },
                 "namespace": {
-                    "description": "Kubernetes namespace in which the component shall be deployed",
+                    "description": "Namespace in which the component shall be deployed",
                     "title": "Namespace",
                     "type": "string"
                 },
@@ -265,32 +265,40 @@
                     "title": "Name",
                     "type": "string"
                 },
+                "namespace": {
+                    "description": "Namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
                 "prefix": {
                     "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
                 },
-                "resetter_namespace": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Kubernetes namespace in which the Kafka Connect resetter shall be deployed",
-                    "title": "Resetter Namespace"
-                },
-                "resetter_values": {
+                "repo_config": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/HelmAppValues"
+                            "$ref": "#/$defs/HelmRepoConfig"
                         }
                     ],
-                    "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "cert_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-kafka-connect-resetter",
+                        "url": "https://bakdata.github.io/kafka-connect-resetter/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "resetter_values": {
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "title": "Resetter Values",
+                    "type": "object"
                 },
                 "to": {
                     "anyOf": [
@@ -307,10 +315,24 @@
                 "type": {
                     "const": "kafka-sink-connector",
                     "title": "Type"
+                },
+                "version": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": "1.0.4",
+                    "description": "Helm chart version",
+                    "title": "Version"
                 }
             },
             "required": [
                 "name",
+                "namespace",
                 "app",
                 "type"
             ],
@@ -347,6 +369,11 @@
                     "title": "Name",
                     "type": "string"
                 },
+                "namespace": {
+                    "description": "Namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
                 "offset_topic": {
                     "anyOf": [
                         {
@@ -366,26 +393,29 @@
                     "title": "Prefix",
                     "type": "string"
                 },
-                "resetter_namespace": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Kubernetes namespace in which the Kafka Connect resetter shall be deployed",
-                    "title": "Resetter Namespace"
-                },
-                "resetter_values": {
+                "repo_config": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/HelmAppValues"
+                            "$ref": "#/$defs/HelmRepoConfig"
                         }
                     ],
-                    "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "cert_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-kafka-connect-resetter",
+                        "url": "https://bakdata.github.io/kafka-connect-resetter/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "resetter_values": {
+                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
+                    "title": "Resetter Values",
+                    "type": "object"
                 },
                 "to": {
                     "anyOf": [
@@ -402,10 +432,24 @@
                 "type": {
                     "const": "kafka-source-connector",
                     "title": "Type"
+                },
+                "version": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": "1.0.4",
+                    "description": "Helm chart version",
+                    "title": "Version"
                 }
             },
             "required": [
                 "name",
+                "namespace",
                 "app",
                 "type"
             ],
@@ -445,7 +489,7 @@
                     "type": "string"
                 },
                 "namespace": {
-                    "description": "Kubernetes namespace in which the component shall be deployed",
+                    "description": "Namespace in which the component shall be deployed",
                     "title": "Namespace",
                     "type": "string"
                 },
@@ -694,7 +738,7 @@
                     "type": "string"
                 },
                 "namespace": {
-                    "description": "Kubernetes namespace in which the component shall be deployed",
+                    "description": "Namespace in which the component shall be deployed",
                     "title": "Namespace",
                     "type": "string"
                 },
