@@ -703,6 +703,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -764,6 +768,46 @@
   
   <span class="md-ellipsis">
     KubernetesApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user/core-concepts/components/helm-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HelmApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user/core-concepts/components/streams-bootstrap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StreamsBootstrap
   </span>
   
 
@@ -1098,6 +1142,8 @@
       
         
       
+        
+      
     
     
     
@@ -1139,6 +1185,26 @@
   
   <span class="md-ellipsis">
     Migrate from v1 to v2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user/migration-guide/v2-v3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v2 to v3
   </span>
   
 
@@ -1492,22 +1558,28 @@
 </thead>
 <tbody>
 <tr>
-<td>KPOPS_PIPELINE_BASE_DIR</td>
+<td>KPOPS_CONFIG_PATH</td>
 <td>.</td>
 <td>False</td>
-<td>Base directory to the pipelines (default is current working directory)</td>
-</tr>
-<tr>
-<td>KPOPS_CONFIG_PATH</td>
-<td>config.yaml</td>
-<td>False</td>
-<td>Path to the config.yaml file</td>
+<td>Path to the dir containing config.yaml files</td>
 </tr>
 <tr>
 <td>KPOPS_DEFAULT_PATH</td>
 <td></td>
 <td>False</td>
 <td>Path to defaults folder</td>
+</tr>
+<tr>
+<td>KPOPS_DOTENV_PATH</td>
+<td></td>
+<td>False</td>
+<td>Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.</td>
+</tr>
+<tr>
+<td>KPOPS_ENVIRONMENT</td>
+<td></td>
+<td>False</td>
+<td>The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).</td>
 </tr>
 <tr>
 <td>KPOPS_PIPELINE_PATH</td>

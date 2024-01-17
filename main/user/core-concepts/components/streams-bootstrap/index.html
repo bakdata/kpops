@@ -8,13 +8,13 @@
       
       
       
-        <link rel="canonical" href="https://bakdata.github.io/kpops/main/user/core-concepts/components/kafka-connector/">
+        <link rel="canonical" href="https://bakdata.github.io/kpops/main/user/core-concepts/components/streams-bootstrap/">
       
       
-        <link rel="prev" href="../producer-app/">
+        <link rel="prev" href="../helm-app/">
       
       
-        <link rel="next" href="../kafka-sink-connector/">
+        <link rel="next" href="../kafka-app/">
       
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
@@ -22,7 +22,7 @@
     
     
       
-        <title>KafkaConnector - KPOps</title>
+        <title>StreamsBootstrap - KPOps</title>
       
     
     
@@ -80,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#kafkaconnector" class="md-skip">
+        <a href="#streamsapp" class="md-skip">
           Skip to content
         </a>
       
@@ -118,7 +118,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              KafkaConnector
+              StreamsBootstrap
             
           </span>
         </div>
@@ -818,9 +818,29 @@
                 
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../streams-bootstrap/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    StreamsBootstrap
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   <span class="md-ellipsis">
@@ -829,6 +849,74 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    Operations
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy" class="md-nav__link">
+    deploy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#destroy" class="md-nav__link">
+    destroy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset" class="md-nav__link">
+    reset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clean" class="md-nav__link">
+    clean
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -898,18 +986,9 @@
                 
   
   
-    
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../kafka-connector/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -918,7 +997,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -1557,6 +1635,62 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#operations" class="md-nav__link">
+    Operations
+  </a>
+  
+    <nav class="md-nav" aria-label="Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#deploy" class="md-nav__link">
+    deploy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#destroy" class="md-nav__link">
+    destroy
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#reset" class="md-nav__link">
+    reset
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#clean" class="md-nav__link">
+    clean
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1573,8 +1707,19 @@
   
 
 
-<h1 id="kafkaconnector">KafkaConnector<a class="headerlink" href="#kafkaconnector" title="Permanent link">&para;</a></h1>
-<p><code>KafkaConnector</code> is a component that deploys <a href="https://kafka.apache.org/documentation.html#connect_configuring" target="_blank">Kafka Connectors</a>. Since a connector cannot be different from sink or source it is not recommended to use <code>KafkaConnector</code> for deployment in <a href="../../../../resources/pipeline-components/pipeline/"><code>pipeline.yaml</code></a>. Instead, <code>KafkaConnector</code> should be used in <a href="../../defaults/#kafkaconnector"><code>defaults.yaml</code></a> to set defaults for all connectors in the pipeline as they can share some common settings.</p>
+<h1 id="streamsapp">StreamsApp<a class="headerlink" href="#streamsapp" title="Permanent link">&para;</a></h1>
+<p>Subclass of <a href="../helm-app/"><em>HelmApp</em></a>.</p>
+<h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h3>
+<p>Configures a Helm app with <a href="https://github.com/bakdata/streams-bootstrap" target="_blank">streams-bootstrap Helm charts</a>.</p>
+<h3 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h3>
+<h4 id="deploy">deploy<a class="headerlink" href="#deploy" title="Permanent link">&para;</a></h4>
+<p>Deploy using Helm.</p>
+<h4 id="destroy">destroy<a class="headerlink" href="#destroy" title="Permanent link">&para;</a></h4>
+<p>Uninstall Helm release.</p>
+<h4 id="reset">reset<a class="headerlink" href="#reset" title="Permanent link">&para;</a></h4>
+<p>Do nothing.</p>
+<h4 id="clean">clean<a class="headerlink" href="#clean" title="Permanent link">&para;</a></h4>
+<p>Do nothing.</p>
 
 
 

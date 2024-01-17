@@ -703,6 +703,10 @@
       
         
       
+        
+      
+        
+      
     
     
     
@@ -764,6 +768,46 @@
   
   <span class="md-ellipsis">
     KubernetesApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user/core-concepts/components/helm-app/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    HelmApp
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user/core-concepts/components/streams-bootstrap/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    StreamsBootstrap
   </span>
   
 
@@ -1098,6 +1142,8 @@
       
         
       
+        
+      
     
     
     
@@ -1139,6 +1185,26 @@
   
   <span class="md-ellipsis">
     Migrate from v1 to v2
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user/migration-guide/v2-v3/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v2 to v3
   </span>
   
 
@@ -1480,7 +1546,7 @@
 
   <h1>Config env vars</h1>
 
-<p>These variables are a lower priority alternative to the settings in <code>config.yaml</code>. Variables marked as required can instead be set in the pipeline config.</p>
+<p>These variables are a lower priority alternative to the settings in <code>config.yaml</code>. Variables marked as required can instead be set in the global config.</p>
 <table>
 <thead>
 <tr>
@@ -1493,39 +1559,81 @@
 </thead>
 <tbody>
 <tr>
-<td>KPOPS_ENVIRONMENT</td>
+<td>KPOPS_DEFAULTS_PATH</td>
+<td>.</td>
+<td>False</td>
+<td>The path to the folder containing the defaults.yaml file and the environment defaults files. Paths can either be absolute or relative to <code>config.yaml</code></td>
+<td>defaults_path</td>
+</tr>
+<tr>
+<td>KPOPS_COMPONENTS_MODULE</td>
 <td></td>
-<td>True</td>
-<td>The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).</td>
-<td>environment</td>
+<td>False</td>
+<td>Custom Python module defining project-specific KPOps components</td>
+<td>components_module</td>
+</tr>
+<tr>
+<td>KPOPS_PIPELINE_BASE_DIR</td>
+<td>.</td>
+<td>False</td>
+<td>Base directory to the pipelines (default is current working directory)</td>
+<td>pipeline_base_dir</td>
 </tr>
 <tr>
 <td>KPOPS_KAFKA_BROKERS</td>
 <td></td>
 <td>True</td>
 <td>The comma separated Kafka brokers address.</td>
-<td>brokers</td>
+<td>kafka_brokers</td>
 </tr>
 <tr>
-<td>KPOPS_SCHEMA_REGISTRY_URL</td>
-<td></td>
+<td>KPOPS_DEFAULTS_FILENAME_PREFIX</td>
+<td>defaults</td>
+<td>False</td>
+<td>The name of the defaults file and the prefix of the defaults environment file.</td>
+<td>defaults_filename_prefix</td>
+</tr>
+<tr>
+<td>KPOPS_TOPIC_NAME_CONFIG__DEFAULT_OUTPUT_TOPIC_NAME</td>
+<td>${pipeline.name}-${component.name}</td>
+<td>False</td>
+<td>Configures the value for the variable ${output_topic_name}</td>
+<td>topic_name_config.default_output_topic_name</td>
+</tr>
+<tr>
+<td>KPOPS_TOPIC_NAME_CONFIG__DEFAULT_ERROR_TOPIC_NAME</td>
+<td>${pipeline.name}-${component.name}-error</td>
+<td>False</td>
+<td>Configures the value for the variable ${error_topic_name}</td>
+<td>topic_name_config.default_error_topic_name</td>
+</tr>
+<tr>
+<td>KPOPS_SCHEMA_REGISTRY__ENABLED</td>
+<td>False</td>
+<td>False</td>
+<td>Whether the Schema Registry handler should be initialized.</td>
+<td>schema_registry.enabled</td>
+</tr>
+<tr>
+<td>KPOPS_SCHEMA_REGISTRY__URL</td>
+<td>http://localhost:8081/</td>
 <td>False</td>
 <td>Address of the Schema Registry.</td>
-<td>schema_registry_url</td>
+<td>schema_registry.url</td>
 </tr>
 <tr>
-<td>KPOPS_REST_PROXY_HOST</td>
-<td></td>
+<td>KPOPS_KAFKA_REST__URL</td>
+<td>http://localhost:8082/</td>
 <td>False</td>
 <td>Address of the Kafka REST Proxy.</td>
-<td>kafka_rest_host</td>
+<td>kafka_rest.url</td>
 </tr>
 <tr>
-<td>KPOPS_CONNECT_HOST</td>
-<td></td>
+<td>KPOPS_KAFKA_CONNECT__URL</td>
+<td>http://localhost:8083/</td>
 <td>False</td>
 <td>Address of Kafka Connect.</td>
-<td>kafka_connect_host</td>
+<td>kafka_connect.url</td>
 </tr>
 <tr>
 <td>KPOPS_TIMEOUT</td>
@@ -1533,6 +1641,41 @@
 <td>False</td>
 <td>The timeout in seconds that specifies when actions like deletion or deploy timeout.</td>
 <td>timeout</td>
+</tr>
+<tr>
+<td>KPOPS_CREATE_NAMESPACE</td>
+<td>False</td>
+<td>False</td>
+<td>Flag for <code>helm upgrade --install</code>. Create the release namespace if not present.</td>
+<td>create_namespace</td>
+</tr>
+<tr>
+<td>KPOPS_HELM_CONFIG__CONTEXT</td>
+<td></td>
+<td>False</td>
+<td>Name of kubeconfig context (<code>--kube-context</code>)</td>
+<td>helm_config.context</td>
+</tr>
+<tr>
+<td>KPOPS_HELM_CONFIG__DEBUG</td>
+<td>False</td>
+<td>False</td>
+<td>Run Helm in Debug mode</td>
+<td>helm_config.debug</td>
+</tr>
+<tr>
+<td>KPOPS_HELM_CONFIG__API_VERSION</td>
+<td></td>
+<td>False</td>
+<td>Kubernetes API version used for Capabilities.APIVersions</td>
+<td>helm_config.api_version</td>
+</tr>
+<tr>
+<td>KPOPS_HELM_DIFF_CONFIG__IGNORE</td>
+<td></td>
+<td>True</td>
+<td>Set of keys that should not be checked.</td>
+<td>helm_diff_config.ignore</td>
 </tr>
 <tr>
 <td>KPOPS_RETAIN_CLEAN_JOBS</td>
