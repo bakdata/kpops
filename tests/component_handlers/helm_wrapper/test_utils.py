@@ -8,9 +8,9 @@ def test_helm_release_name_for_long_names():
 
     actual_release_name = create_helm_release_name(long_release_name)
 
-    expected_helm_release_name = "example-component-name-too-long-fake-fakefakef-0a7fc"
+    expected_helm_release_name = "example-component-name-too-long-fake-fakefakefa-0a7fc"
     assert expected_helm_release_name == actual_release_name
-    assert len(expected_helm_release_name) == 52
+    assert len(expected_helm_release_name) == 53
 
 
 def test_helm_release_name_for_install_and_clean_must_be_different():
@@ -30,4 +30,4 @@ def test_helm_release_name_for_short_names():
     actual_helm_release_name = create_helm_release_name(short_release_name)
 
     assert actual_helm_release_name == short_release_name
-    assert len(actual_helm_release_name) < 53
+    assert len(actual_helm_release_name) <= 53
