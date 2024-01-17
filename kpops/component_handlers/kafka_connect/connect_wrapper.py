@@ -1,6 +1,9 @@
+from __future__ import annotations
+
 import logging
 import time
 from time import sleep
+from typing import TYPE_CHECKING
 
 import httpx
 
@@ -14,6 +17,11 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectResponse,
 )
 
+if TYPE_CHECKING:
+    from pydantic import AnyHttpUrl
+
+    from kpops.config import KafkaConnectConfig
+
 HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 
 log = logging.getLogger("KafkaConnectAPI")
@@ -22,18 +30,12 @@ log = logging.getLogger("KafkaConnectAPI")
 class ConnectWrapper:
     """Wraps Kafka Connect APIs."""
 
-    def __init__(self, host: str | None):
-        if not host:
-            error_message = (
-                "The Kafka Connect host is not set. Please set the host in the config."
-            )
-            log.error(error_message)
-            raise RuntimeError(error_message)
-        self._host: str = host
+    def __init__(self, config: KafkaConnectConfig) -> None:
+        self._config: KafkaConnectConfig = config
 
     @property
-    def host(self) -> str:
-        return self._host
+    def url(self) -> AnyHttpUrl:
+        return self._config.url
 
     def create_connector(
         self, connector_config: KafkaConnectorConfig
@@ -44,10 +46,10 @@ class ConnectWrapper:
         :param connector_config: The config of the connector
         :return: The current connector info if successful.
         """
-        config_json = connector_config.dict()
+        config_json = connector_config.model_dump()
         connect_data = {"name": connector_config.name, "config": config_json}
         response = httpx.post(
-            url=f"{self._host}/connectors", headers=HEADERS, json=connect_data
+            url=f"{self.url}connectors", headers=HEADERS, json=connect_data
         )
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Connector {connector_config.name} created.")
@@ -61,17 +63,18 @@ class ConnectWrapper:
             self.create_connector(connector_config)
         raise KafkaConnectError(response)
 
-    def get_connector(self, connector_name: str) -> KafkaConnectResponse:
+    def get_connector(self, connector_name: str | None) -> KafkaConnectResponse:
         """Get information about the connector.
 
-        API Reference:
-        https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
-
+        API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
         :param connector_name: Nameof the crated connector
         :return: Information about the connector.
         """
+        if connector_name is None:
+            msg = "Connector name not set"
+            raise Exception(msg)
         response = httpx.get(
-            url=f"{self._host}/connectors/{connector_name}", headers=HEADERS
+            url=f"{self.url}connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.OK:
             log.info(f"Connector {connector_name} exists.")
@@ -100,9 +103,9 @@ class ConnectWrapper:
         :return: Information about the connector after the change has been made.
         """
         connector_name = connector_config.name
-        config_json = connector_config.dict()
+        config_json = connector_config.model_dump()
         response = httpx.put(
-            url=f"{self._host}/connectors/{connector_name}/config",
+            url=f"{self.url}connectors/{connector_name}/config",
             headers=HEADERS,
             json=config_json,
         )
@@ -133,9 +136,9 @@ class ConnectWrapper:
         :return: List of all found errors
         """
         response = httpx.put(
-            url=f"{self._host}/connector-plugins/{connector_config.class_name}/config/validate",
+            url=f"{self.url}connector-plugins/{connector_config.class_name}/config/validate",
             headers=HEADERS,
-            json=connector_config.dict(),
+            json=connector_config.model_dump(),
         )
 
         if response.status_code == httpx.codes.OK:
@@ -163,7 +166,7 @@ class ConnectWrapper:
         :raises ConnectorNotFoundException: Connector not found
         """
         response = httpx.delete(
-            url=f"{self._host}/connectors/{connector_name}", headers=HEADERS
+            url=f"{self.url}connectors/{connector_name}", headers=HEADERS
         )
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Connector {connector_name} deleted.")

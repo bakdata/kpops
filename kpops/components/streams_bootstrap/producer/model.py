@@ -1,7 +1,7 @@
-from pydantic import BaseConfig, Extra, Field
+from pydantic import ConfigDict, Field
 
 from kpops.components.base_components.kafka_app import (
-    KafkaAppConfig,
+    KafkaAppValues,
     KafkaStreamsConfig,
 )
 from kpops.utils.docstring import describe_attr
@@ -22,7 +22,7 @@ class ProducerStreamsConfig(KafkaStreamsConfig):
     )
 
 
-class ProducerValues(KafkaAppConfig):
+class ProducerAppValues(KafkaAppValues):
     """Settings specific to producers.
 
     :param streams: Kafka Streams settings
@@ -32,5 +32,4 @@ class ProducerValues(KafkaAppConfig):
         default=..., description=describe_attr("streams", __doc__)
     )
 
-    class Config(BaseConfig):
-        extra = Extra.allow
+    model_config = ConfigDict(extra="allow")

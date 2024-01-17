@@ -1,11 +1,14 @@
 from collections.abc import Mapping
 from pathlib import Path
-from string import Template
 from typing import Any
 
 import yaml
 from cachetools import cached
 from cachetools.keys import hashkey
+from rich.console import Console
+from rich.syntax import Syntax
+
+from kpops.utils.dict_ops import ImprovedTemplate
 
 
 def generate_hashkey(
@@ -33,7 +36,12 @@ def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str
     """
     if not substitution:
         return input
-    return Template(input).safe_substitute(**substitution)
+
+    def prepare_substitution(substitution: Mapping[str, Any]) -> dict[str, Any]:
+        """Replace dots with underscores in the substitution keys."""
+        return {k.replace(".", "__"): v for k, v in substitution.items()}
+
+    return ImprovedTemplate(input).safe_substitute(**prepare_substitution(substitution))
 
 
 def substitute_nested(input: str, **kwargs) -> str:
@@ -73,3 +81,22 @@ def substitute_nested(input: str, **kwargs) -> str:
         msg = "An infinite loop condition detected. Check substitution variables."
         raise ValueError(msg)
     return old_str
+
+
+def print_yaml(data: Mapping | str, *, substitution: dict | None = None) -> None:
+    """Print YAML object with syntax highlighting.
+
+    :param data: YAML document
+    :param substitution: Substitution dictionary, defaults to None
+    """
+    if not isinstance(data, str):
+        data = yaml.safe_dump(dict(data))
+    syntax = Syntax(
+        substitute(data, substitution),
+        "yaml",
+        background_color="default",
+        theme="ansi_dark",
+    )
+    Console(
+        width=1000  # HACK: overwrite console width to avoid truncating output
+    ).print(syntax)

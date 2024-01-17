@@ -8,16 +8,21 @@ from snapshottest import Snapshot
 snapshots = Snapshot()
 
 snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema-generation'] = '''{
-    "definitions": {
+    "$defs": {
         "EmptyPipelineComponent": {
+            "additionalProperties": true,
             "description": "",
             "properties": {
                 "from": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/definitions/FromSection"
+                            "$ref": "#/$defs/FromSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
                 },
@@ -27,31 +32,31 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
                 },
                 "to": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/definitions/ToSection"
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "Topic(s) into which the component will write output",
-                    "title": "To"
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
                 },
                 "type": {
-                    "default": "empty-pipeline-component",
-                    "enum": [
-                        "empty-pipeline-component"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
+                    "const": "empty-pipeline-component",
+                    "title": "Type"
                 }
             },
             "required": [
-                "name"
+                "name",
+                "type"
             ],
             "title": "EmptyPipelineComponent",
             "type": "object"
@@ -62,7 +67,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "properties": {
                 "components": {
                     "additionalProperties": {
-                        "$ref": "#/definitions/FromTopic"
+                        "$ref": "#/$defs/FromTopic"
                     },
                     "default": {},
                     "description": "Components to read from",
@@ -71,7 +76,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                 },
                 "topics": {
                     "additionalProperties": {
-                        "$ref": "#/definitions/FromTopic"
+                        "$ref": "#/$defs/FromTopic"
                     },
                     "default": {},
                     "description": "Input topics",
@@ -87,16 +92,28 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "description": "Input topic.",
             "properties": {
                 "role": {
-                    "description": "Custom identifier belonging to a topic; define only if `type` is `pattern` or `None`",
-                    "title": "Role",
-                    "type": "string"
-                },
-                "type": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/definitions/InputTopicTypes"
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
+                    "description": "Custom identifier belonging to a topic; define only if `type` is `pattern` or `None`",
+                    "title": "Role"
+                },
+                "type": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/InputTopicTypes"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Topic type"
                 }
             },
@@ -122,14 +139,19 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "string"
         },
         "SubPipelineComponent": {
+            "additionalProperties": true,
             "description": "",
             "properties": {
                 "from": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/definitions/FromSection"
+                            "$ref": "#/$defs/FromSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
                 },
@@ -139,44 +161,49 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
                 },
                 "to": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/definitions/ToSection"
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "Topic(s) into which the component will write output",
-                    "title": "To"
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
                 },
                 "type": {
-                    "default": "sub-pipeline-component",
-                    "enum": [
-                        "sub-pipeline-component"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
+                    "const": "sub-pipeline-component",
+                    "title": "Type"
                 }
             },
             "required": [
-                "name"
+                "name",
+                "type"
             ],
             "title": "SubPipelineComponent",
             "type": "object"
         },
         "SubPipelineComponentCorrect": {
+            "additionalProperties": true,
             "description": "",
             "properties": {
                 "from": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/definitions/FromSection"
+                            "$ref": "#/$defs/FromSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
                 },
@@ -186,36 +213,37 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
                 },
                 "to": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/definitions/ToSection"
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "Topic(s) into which the component will write output",
-                    "title": "To"
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
                 },
                 "type": {
-                    "default": "sub-pipeline-component-correct",
-                    "enum": [
-                        "sub-pipeline-component-correct"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
+                    "const": "sub-pipeline-component-correct",
+                    "title": "Type"
                 }
             },
             "required": [
-                "name"
+                "name",
+                "type"
             ],
             "title": "SubPipelineComponentCorrect",
             "type": "object"
         },
         "SubPipelineComponentCorrectDocstr": {
+            "additionalProperties": true,
             "description": "Newline before title is removed.\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
             "properties": {
                 "example_attr": {
@@ -224,11 +252,15 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "from": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/definitions/FromSection"
+                            "$ref": "#/$defs/FromSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
                 },
@@ -238,46 +270,50 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
                 },
                 "to": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/definitions/ToSection"
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "Topic(s) into which the component will write output",
-                    "title": "To"
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
                 },
                 "type": {
-                    "default": "sub-pipeline-component-correct-docstr",
-                    "description": "Newline before title is removed.\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
-                    "enum": [
-                        "sub-pipeline-component-correct-docstr"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
+                    "const": "sub-pipeline-component-correct-docstr",
+                    "title": "Type"
                 }
             },
             "required": [
                 "name",
-                "example_attr"
+                "example_attr",
+                "type"
             ],
             "title": "SubPipelineComponentCorrectDocstr",
             "type": "object"
         },
         "SubPipelineComponentNoSchemaTypeNoType": {
+            "additionalProperties": true,
             "description": "",
             "properties": {
                 "from": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/definitions/FromSection"
+                            "$ref": "#/$defs/FromSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
                     "description": "Topic(s) and/or components from which the component will read input",
                     "title": "From"
                 },
@@ -287,36 +323,37 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
                 },
                 "to": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/definitions/ToSection"
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "description": "Topic(s) into which the component will write output",
-                    "title": "To"
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
                 },
                 "type": {
-                    "default": "sub-pipeline-component-no-schema-type-no-type",
-                    "enum": [
-                        "sub-pipeline-component-no-schema-type-no-type"
-                    ],
-                    "title": "Component type",
-                    "type": "string"
+                    "const": "sub-pipeline-component-no-schema-type-no-type",
+                    "title": "Type"
                 }
             },
             "required": [
-                "name"
+                "name",
+                "type"
             ],
             "title": "SubPipelineComponentNoSchemaTypeNoType",
             "type": "object"
         },
         "ToSection": {
+            "additionalProperties": false,
             "description": "Holds multiple output topics.",
             "properties": {
                 "models": {
@@ -330,7 +367,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                 },
                 "topics": {
                     "additionalProperties": {
-                        "$ref": "#/definitions/TopicConfig"
+                        "$ref": "#/$defs/TopicConfig"
                     },
                     "default": {},
                     "description": "Output topics",
@@ -362,38 +399,82 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "object"
                 },
                 "key_schema": {
-                    "description": "Key schema class name",
-                    "title": "Key schema",
-                    "type": "string"
-                },
-                "partitions_count": {
-                    "description": "Number of partitions into which the topic is divided",
-                    "title": "Partitions count",
-                    "type": "integer"
-                },
-                "replication_factor": {
-                    "description": "Replication factor of the topic",
-                    "title": "Replication factor",
-                    "type": "integer"
-                },
-                "role": {
-                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
-                    "title": "Role",
-                    "type": "string"
-                },
-                "type": {
-                    "allOf": [
+                    "anyOf": [
                         {
-                            "$ref": "#/definitions/OutputTopicTypes"
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
+                    "default": null,
+                    "description": "Key schema class name",
+                    "title": "Key schema"
+                },
+                "partitions_count": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Number of partitions into which the topic is divided",
+                    "title": "Partitions count"
+                },
+                "replication_factor": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Replication factor of the topic",
+                    "title": "Replication factor"
+                },
+                "role": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+                    "title": "Role"
+                },
+                "type": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/OutputTopicTypes"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Topic type",
                     "title": "Topic type"
                 },
                 "value_schema": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
                     "description": "Value schema class name",
-                    "title": "Value schema",
-                    "type": "string"
+                    "title": "Value schema"
                 }
             },
             "title": "TopicConfig",
@@ -403,33 +484,33 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
     "items": {
         "discriminator": {
             "mapping": {
-                "empty-pipeline-component": "#/definitions/EmptyPipelineComponent",
-                "sub-pipeline-component": "#/definitions/SubPipelineComponent",
-                "sub-pipeline-component-correct": "#/definitions/SubPipelineComponentCorrect",
-                "sub-pipeline-component-correct-docstr": "#/definitions/SubPipelineComponentCorrectDocstr",
-                "sub-pipeline-component-no-schema-type-no-type": "#/definitions/SubPipelineComponentNoSchemaTypeNoType"
+                "empty-pipeline-component": "#/$defs/EmptyPipelineComponent",
+                "sub-pipeline-component": "#/$defs/SubPipelineComponent",
+                "sub-pipeline-component-correct": "#/$defs/SubPipelineComponentCorrect",
+                "sub-pipeline-component-correct-docstr": "#/$defs/SubPipelineComponentCorrectDocstr",
+                "sub-pipeline-component-no-schema-type-no-type": "#/$defs/SubPipelineComponentNoSchemaTypeNoType"
             },
             "propertyName": "type"
         },
         "oneOf": [
             {
-                "$ref": "#/definitions/EmptyPipelineComponent"
+                "$ref": "#/$defs/EmptyPipelineComponent"
             },
             {
-                "$ref": "#/definitions/SubPipelineComponent"
+                "$ref": "#/$defs/SubPipelineComponent"
             },
             {
-                "$ref": "#/definitions/SubPipelineComponentCorrect"
+                "$ref": "#/$defs/SubPipelineComponentCorrect"
             },
             {
-                "$ref": "#/definitions/SubPipelineComponentCorrectDocstr"
+                "$ref": "#/$defs/SubPipelineComponentCorrectDocstr"
             },
             {
-                "$ref": "#/definitions/SubPipelineComponentNoSchemaTypeNoType"
+                "$ref": "#/$defs/SubPipelineComponentNoSchemaTypeNoType"
             }
         ]
     },
-    "title": "KPOps pipeline schema",
+    "title": "PipelineSchema",
     "type": "array"
 }
 '''

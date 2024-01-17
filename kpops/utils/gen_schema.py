@@ -1,44 +1,55 @@
 import inspect
+import json
 import logging
 from abc import ABC
 from collections.abc import Sequence
 from enum import Enum
 from typing import Annotated, Any, Literal, Union
 
-from pydantic import BaseConfig, Field, schema, schema_json_of
-from pydantic.fields import FieldInfo, ModelField
-from pydantic.schema import SkipField
+from pydantic import (
+    BaseModel,
+    Field,
+    RootModel,
+    create_model,
+)
+from pydantic.fields import FieldInfo
+from pydantic.json_schema import GenerateJsonSchema, model_json_schema
+from pydantic_core.core_schema import (
+    DefinitionsSchema,
+    LiteralSchema,
+    ModelField,
+    ModelFieldsSchema,
+)
 
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.cli.registry import _find_classes
-from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.docstring import describe_object
+from kpops.components import (
+    PipelineComponent,
+)
+from kpops.config import KpopsConfig
 
 
 class SchemaScope(str, Enum):
     PIPELINE = "pipeline"
+    DEFAULTS = "defaults"
     CONFIG = "config"
 
 
-original_field_schema = schema.field_schema
+class MultiComponentGenerateJsonSchema(GenerateJsonSchema):
+    ...
 
-
-# adapted from https://github.com/tiangolo/fastapi/issues/1378#issuecomment-764966955
-def field_schema(field: ModelField, **kwargs: Any) -> Any:
-    if field.field_info.extra.get("hidden_from_schema"):
-        msg = f"{field.name} field is being hidden"
-        raise SkipField(msg)
-    else:
-        return original_field_schema(field, **kwargs)
-
-
-schema.field_schema = field_schema
 
 log = logging.getLogger("")
 
 
+def print_schema(model: type[BaseModel]) -> None:
+    schema = model_json_schema(model, by_alias=True)
+    print(json.dumps(schema, indent=4, sort_keys=True))
+
+
 def _is_valid_component(
-    defined_component_types: set[str], component: type[PipelineComponent]
+    defined_component_types: set[str],
+    component: type[PipelineComponent],
+    allow_abstract: bool,
 ) -> bool:
     """Check whether a PipelineComponent subclass has a valid definition for the schema generation.
 
@@ -46,7 +57,9 @@ def _is_valid_component(
     :param component: component type to be validated
     :return: Whether component is valid for schema generation
     """
-    if inspect.isabstract(component) or ABC in component.__bases__:
+    if not allow_abstract and (
+        inspect.isabstract(component) or ABC in component.__bases__
+    ):
         log.warning(f"SKIPPED {component.__name__}, component is abstract.")
         return False
     if component.type in defined_component_types:
@@ -57,8 +70,10 @@ def _is_valid_component(
 
 
 def _add_components(
-    components_module: str, components: tuple[type[PipelineComponent]] | None = None
-) -> tuple[type[PipelineComponent]]:
+    components_module: str,
+    allow_abstract: bool,
+    components: tuple[type[PipelineComponent], ...] | None = None,
+) -> tuple[type[PipelineComponent], ...]:
     """Add components to a components tuple.
 
     If an empty tuple is provided or it is not provided at all, the components
@@ -70,15 +85,36 @@ def _add_components(
     :return: Extended tuple
     """
     if components is None:
-        components = tuple()  # noqa: C408
+        components = ()
     # Set of existing types, against which to check the new ones
     defined_component_types = {component.type for component in components}
     custom_components = (
         component
         for component in _find_classes(components_module, PipelineComponent)
-        if _is_valid_component(defined_component_types, component)
+        if _is_valid_component(defined_component_types, component, allow_abstract)
     )
     components += tuple(custom_components)
+    return components
+
+
+def find_components(
+    components_module: str | None,
+    include_stock_components: bool,
+    include_abstract: bool = False,
+) -> tuple[type[PipelineComponent], ...]:
+    if not (include_stock_components or components_module):
+        msg = "No components are provided, no schema is generated."
+        raise RuntimeError(msg)
+    # Add stock components if enabled
+    components: tuple[type[PipelineComponent], ...] = ()
+    if include_stock_components:
+        components = _add_components("kpops.components", include_abstract)
+    # Add custom components if provided
+    if components_module:
+        components = _add_components(components_module, include_abstract, components)
+    if not components:
+        msg = "No valid components found."
+        raise RuntimeError(msg)
     return components
 
 
@@ -92,55 +128,48 @@ def gen_pipeline_schema(
     :param include_stock_components: Whether to include the stock components,
         defaults to True
     """
-    if not (include_stock_components or components_module):
-        log.warning("No components are provided, no schema is generated.")
-        return
-    # Add stock components if enabled
-    components: tuple[type[PipelineComponent]] = tuple()  # noqa: C408
-    if include_stock_components:
-        components = _add_components("kpops.components")
-    # Add custom components if provided
-    if components_module:
-        components = _add_components(components_module, components)
-    if not components:
-        msg = "No valid components found."
-        raise RuntimeError(msg)
-    # Create a type union that will hold the union of all component types
-    PipelineComponents = Union[components]  # type: ignore[valid-type]
+    components = find_components(components_module, include_stock_components)
 
     # re-assign component type as Literal to work as discriminator
     for component in components:
-        component.__fields__["type"] = ModelField(
-            name="type",
-            type_=Literal[component.type],  # type: ignore[reportGeneralTypeIssues]
-            required=False,
+        component.model_fields["type"] = FieldInfo(
+            annotation=Literal[component.type],  # type:ignore[valid-type]
             default=component.type,
-            final=True,
-            field_info=FieldInfo(
-                title="Component type",
-                description=describe_object(component.__doc__),
+        )
+        core_schema: DefinitionsSchema = component.__pydantic_core_schema__  # pyright:ignore[reportGeneralTypeIssues]
+        model_schema: ModelFieldsSchema = core_schema["schema"]["schema"]  # pyright:ignore[reportGeneralTypeIssues,reportTypedDictNotRequiredAccess]
+        model_schema["fields"]["type"] = ModelField(
+            type="model-field",
+            schema=LiteralSchema(
+                type="literal",
+                expected=[component.type],
             ),
-            model_config=BaseConfig,
-            class_validators=None,
         )
 
+    PipelineComponents = Union[components]  # type: ignore[valid-type]
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="type")
     ]
 
-    schema = schema_json_of(
-        Sequence[AnnotatedPipelineComponents],
-        title="KPOps pipeline schema",
-        by_alias=True,
-        indent=4,
-        sort_keys=True,
-    )
-    print(schema)
+    class PipelineSchema(RootModel):
+        root: Sequence[
+            AnnotatedPipelineComponents  # pyright:ignore[reportGeneralTypeIssues]
+        ]
+
+    print_schema(PipelineSchema)
+
+
+def gen_defaults_schema(
+    components_module: str | None = None, include_stock_components: bool = True
+) -> None:
+    components = find_components(components_module, include_stock_components, True)
+    components_mapping: dict[str, Any] = {
+        component.type: (component, ...) for component in components
+    }
+    DefaultsSchema = create_model("DefaultsSchema", **components_mapping)
+    print_schema(DefaultsSchema)
 
 
 def gen_config_schema() -> None:
-    """Generate a json schema from the model of pipeline config."""
-    schema = schema_json_of(
-        PipelineConfig, title="KPOps config schema", indent=4, sort_keys=True
-    )
-    print(schema)
+    """Generate JSON schema from the model."""
+    print_schema(KpopsConfig)

@@ -6,7 +6,7 @@ KPOps supports the usage of placeholders and environment variables in [pipeline 
 
 These variables can be used in a component's definition to refer to any of its attributes, including ones that the user has defined in the defaults.
 
-All of them are prefixed with `component_` and follow the following form: `component_{attribute_name}`. If the attribute itself contains attributes, they can be referred to like this: `component_{attribute_name}_{subattribute_name}`.
+All of them are prefixed with `component.` and follow the following form: `component.{attribute_name}`. If the attribute itself contains attributes, they can be referred to like this: `component.{attribute_name}.{subattribute_name}`.
 
 <!-- dprint-ignore-start -->
 
@@ -23,11 +23,13 @@ All of them are prefixed with `component_` and follow the following form: `compo
 
 These variables include all fields in the [config](../config.md) and refer to the pipeline configuration that is independent of the components.
 
+All such variables are prefixed with `config.` and are of the same form as the [component-specific variables](#component-specific-variables).
+
 <!-- dprint-ignore-start -->
 
 !!! info Aliases
-    `error_topic_name` is an alias for `topic_name_config_default_error_topic_name`  
-    `output_topic_name` is an alias for `topic_name_config_default_output_topic_name`
+    `error_topic_name` is an alias for `config.topic_name_config.default_error_topic_name`  
+    `output_topic_name` is an alias for `config.topic_name_config.default_output_topic_name`
 
 <!-- dprint-ignore-end -->
 
@@ -41,7 +43,7 @@ Environment variables such as `$PATH` can be used in the pipeline definition and
 
 These are special variables that refer to the name and path of a pipeline.
 
-- `${pipeline_name}`: Concatenated path of the parent directory where pipeline.yaml is defined in.
+- `${pipeline.name}`: Concatenated path of the parent directory where pipeline.yaml is defined in.
   For instance, `./data/pipelines/v1/pipeline.yaml`, here the value for the variable would be `data-pipelines-v1`.
 
 - `${pipeline_name_<level>}`: Similar to the previous variable, each `<level>` contains a part of the path to the `pipeline.yaml` file.

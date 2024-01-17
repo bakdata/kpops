@@ -1,14 +1,17 @@
+from __future__ import annotations
+
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pydantic
 import pytest
 
-from kpops.cli.pipeline_config import PipelineConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
     load_defaults,
 )
+from kpops.config import KpopsConfig
 from kpops.utils.environment import ENV
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
@@ -21,10 +24,15 @@ class Parent(BaseDefaultsComponent):
     hard_coded: str = "hard_coded_value"
 
 
+class Nested(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(extra="allow")
+
+
 class Child(Parent):
     __test__ = False
     nice: dict | None = None
     another_hard_coded: str = "another_hard_coded_value"
+    nested: Nested | None = None
 
 
 class GrandChild(Child):
@@ -38,11 +46,8 @@ class EnvVarTest(BaseDefaultsComponent):
 
 
 @pytest.fixture()
-def config() -> PipelineConfig:
-    return PipelineConfig(
-        defaults_path=DEFAULTS_PATH,
-        environment="development",
-    )
+def config() -> KpopsConfig:
+    return KpopsConfig(defaults_path=DEFAULTS_PATH)
 
 
 @pytest.fixture()
@@ -72,6 +77,7 @@ class TestBaseDefaultsComponent:
                     "name": "fake-child-name",
                     "nice": {"fake-value": "must-be-overwritten"},
                     "value": 1.0,
+                    "nested": {"foo": "foo"},
                 },
             ),
         ],
@@ -100,6 +106,7 @@ class TestBaseDefaultsComponent:
                     "name": "fake-child-name",
                     "nice": {"fake-value": "fake"},
                     "value": 2.0,
+                    "nested": {"foo": "foo"},
                 },
             ),
         ],
@@ -116,9 +123,8 @@ class TestBaseDefaultsComponent:
             == defaults
         )
 
-    def test_inherit_defaults(
-        self, config: PipelineConfig, handlers: ComponentHandlers
-    ):
+    def test_inherit_defaults(self, config: KpopsConfig, handlers: ComponentHandlers):
+        ENV["environment"] = "development"
         component = Child(config=config, handlers=handlers)
 
         assert (
@@ -137,15 +143,15 @@ class TestBaseDefaultsComponent:
             component.hard_coded == "hard_coded_value"
         ), "Defaults in code should be kept for parents"
 
-    def test_inherit(self, config: PipelineConfig, handlers: ComponentHandlers):
+    def test_inherit(self, config: KpopsConfig, handlers: ComponentHandlers):
         component = Child(
             config=config,
             handlers=handlers,
-            name="name-defined-in-pipeline_generator",
+            name="name-defined-in-pipeline_parser",
         )
 
         assert (
-            component.name == "name-defined-in-pipeline_generator"
+            component.name == "name-defined-in-pipeline_parser"
         ), "Kwargs should should overwrite all other values"
         assert component.nice == {
             "fake-value": "fake"
@@ -161,7 +167,7 @@ class TestBaseDefaultsComponent:
         ), "Defaults in code should be kept for parents"
 
     def test_multiple_generations(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         component = GrandChild(config=config, handlers=handlers)
 
@@ -183,7 +189,7 @@ class TestBaseDefaultsComponent:
         assert component.grand_child == "grand-child-value"
 
     def test_env_var_substitution(
-        self, config: PipelineConfig, handlers: ComponentHandlers
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         ENV["pipeline_name"] = str(DEFAULTS_PATH)
         component = EnvVarTest(config=config, handlers=handlers)
@@ -191,3 +197,10 @@ class TestBaseDefaultsComponent:
         assert component.name == str(
             DEFAULTS_PATH
         ), "Environment variables should be substituted"
+
+    def test_merge_defaults(self, config: KpopsConfig, handlers: ComponentHandlers):
+        component = GrandChild(
+            config=config, handlers=handlers, nested=Nested(**{"bar": False})
+        )
+        assert isinstance(component.nested, Nested)
+        assert component.nested == Nested(**{"foo": "foo", "bar": False})

@@ -4,6 +4,7 @@ import pytest
 from pydantic import BaseModel
 
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
+from kpops.utils.types import JsonType
 
 
 class TestDictOps:
@@ -47,7 +48,12 @@ class TestDictOps:
             ),
         ],
     )
-    def test_update_nested_pair(self, d1: dict, d2: dict, expected: dict):
+    def test_update_nested_pair(
+        self,
+        d1: dict[str, JsonType],
+        d2: dict[str, JsonType],
+        expected: dict[str, JsonType],
+    ):
         assert update_nested_pair(d1, d2) == expected
 
     def test_substitution_generation(self):
@@ -70,7 +76,7 @@ class TestDictOps:
                     },
                 },
                 problems=99,
-            ).json()
+            ).model_dump_json()
         )
         existing_substitution = {
             "key1": "Everything",

@@ -1,18 +1,18 @@
 from __future__ import annotations
 
-import logging
+import json
 from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 import pytest
-from pydantic import Field
+from pydantic import ConfigDict, Field
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
+from kpops.cli.registry import Registry
 from kpops.components.base_components import PipelineComponent
 from kpops.utils.docstring import describe_attr
-from tests.cli.resources import empty_module
 
 if TYPE_CHECKING:
     from snapshottest.module import SnapshotTest
@@ -25,8 +25,7 @@ runner = CliRunner()
 
 # type is inherited from PipelineComponent
 class EmptyPipelineComponent(PipelineComponent):
-    class Config:
-        anystr_strip_whitespace = True
+    model_config = ConfigDict(str_strip_whitespace=True)
 
 
 # abstract component inheriting from ABC should be excluded
@@ -82,31 +81,31 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
     )
 
 
-MODULE = EmptyPipelineComponent.__module__
-
-
 @pytest.mark.filterwarnings(
     "ignore:handlers", "ignore:config", "ignore:enrich", "ignore:validate"
 )
 class TestGenSchema:
-    def test_gen_pipeline_schema_no_modules(self, caplog: pytest.LogCaptureFixture):
-        result = runner.invoke(
-            app,
-            [
-                "schema",
-                "pipeline",
-                "--no-include-stock-components",
-            ],
-            catch_exceptions=False,
-        )
-        assert caplog.record_tuples == [
-            (
-                "root",
-                logging.WARNING,
-                "No components are provided, no schema is generated.",
+    @pytest.fixture
+    def stock_components(self) -> list[type[PipelineComponent]]:
+        registry = Registry()
+        registry.find_components("kpops.components")
+        return list(registry._classes.values())
+
+    def test_gen_pipeline_schema_no_modules(self):
+        with pytest.raises(
+            RuntimeError, match="^No components are provided, no schema is generated.$"
+        ):
+            runner.invoke(
+                app,
+                [
+                    "schema",
+                    "pipeline",
+                    "--no-include-stock-components",
+                    "--config",
+                    str(RESOURCE_PATH / "no_module"),
+                ],
+                catch_exceptions=False,
             )
-        ]
-        assert result.exit_code == 0
 
     def test_gen_pipeline_schema_no_components(self):
         with pytest.raises(RuntimeError, match="^No valid components found.$"):
@@ -116,7 +115,8 @@ class TestGenSchema:
                     "schema",
                     "pipeline",
                     "--no-include-stock-components",
-                    empty_module.__name__,
+                    "--config",
+                    str(RESOURCE_PATH / "empty_module"),
                 ],
                 catch_exceptions=False,
             )
@@ -131,7 +131,7 @@ class TestGenSchema:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
         assert result.stdout
 
         result = runner.invoke(
@@ -144,24 +144,32 @@ class TestGenSchema:
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
         assert result.stdout
 
-    def test_gen_pipeline_schema_only_custom_module(self, snapshot: SnapshotTest):
+    def test_gen_pipeline_schema_only_custom_module(
+        self, snapshot: SnapshotTest, stock_components: list[type[PipelineComponent]]
+    ):
         result = runner.invoke(
             app,
             [
                 "schema",
                 "pipeline",
-                MODULE,
                 "--no-include-stock-components",
+                "--config",
+                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
 
         snapshot.assert_match(result.stdout, "test-schema-generation")
+        schema = json.loads(result.stdout)
+        assert schema["title"] == "PipelineSchema"
+        assert set(schema["items"]["discriminator"]["mapping"].keys()).isdisjoint(
+            {component.type for component in stock_components}
+        )
 
     def test_gen_pipeline_schema_stock_and_custom_module(self):
         result = runner.invoke(
@@ -169,20 +177,40 @@ class TestGenSchema:
             [
                 "schema",
                 "pipeline",
-                MODULE,
             ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
         assert result.stdout
+
+    def test_gen_defaults_schema(self, stock_components: list[type[PipelineComponent]]):
+        result = runner.invoke(
+            app,
+            [
+                "schema",
+                "defaults",
+                "--config",
+                str(RESOURCE_PATH / "no_module"),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0, result.stdout
+        assert result.stdout
+        schema = json.loads(result.stdout)
+        assert schema["title"] == "DefaultsSchema"
+        assert schema["required"] == [component.type for component in stock_components]
 
     def test_gen_config_schema(self):
         result = runner.invoke(
             app,
-            ["schema", "config"],
+            [
+                "schema",
+                "config",
+            ],
             catch_exceptions=False,
         )
 
-        assert result.exit_code == 0
+        assert result.exit_code == 0, result.stdout
         assert result.stdout

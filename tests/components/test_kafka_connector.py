@@ -5,30 +5,33 @@ from unittest.mock import MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.cli.pipeline_config import PipelineConfig, TopicNameConfig
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig
 from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
-from kpops.components.base_components.kafka_connector import KafkaConnector
+from kpops.components.base_components.kafka_connector import (
+    KafkaConnector,
+)
+from kpops.config import KpopsConfig, TopicNameConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
-CONNECTOR_FULL_NAME = "${pipeline_name}-" + CONNECTOR_NAME
-CONNECTOR_CLEAN_FULL_NAME = "${pipeline_name}-test-connector-with-long-name-clean"
+CONNECTOR_FULL_NAME = "${pipeline.name}-" + CONNECTOR_NAME
+CONNECTOR_CLEAN_FULL_NAME = CONNECTOR_FULL_NAME + "-clean"
+CONNECTOR_CLEAN_RELEASE_NAME = "${pipeline.name}-test-connector-with-long-612f3-clean"
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
+RESETTER_NAMESPACE = "test-namespace"
 
 
 class TestKafkaConnector:
     @pytest.fixture()
-    def config(self) -> PipelineConfig:
-        return PipelineConfig(
+    def config(self) -> KpopsConfig:
+        return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
-            environment="development",
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
             ),
-            brokers="broker:9092",
+            kafka_brokers="broker:9092",
             helm_diff_config=HelmDiffConfig(),
         )
 
@@ -43,13 +46,13 @@ class TestKafkaConnector:
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.components.base_components.kafka_connector.Helm"
+            "kpops.components.base_components.helm_app.Helm"
         ).return_value
 
     @pytest.fixture()
-    def dry_run_handler(self, mocker: MockerFixture) -> MagicMock:
+    def dry_run_handler_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.components.base_components.kafka_connector.DryRunHandler"
+            "kpops.components.base_components.helm_app.DryRunHandler"
         ).return_value
 
     @pytest.fixture()
@@ -61,27 +64,35 @@ class TestKafkaConnector:
             }
         )
 
-    def test_connector_config_name_override(
+    @pytest.fixture()
+    def connector(
         self,
-        config: PipelineConfig,
+        config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
-    ):
-        connector = KafkaConnector(
+    ) -> KafkaConnector:
+        return KafkaConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
             app=connector_config,
-            namespace="test-namespace",
+            resetter_namespace=RESETTER_NAMESPACE,
         )
+
+    def test_connector_config_name_override(
+        self,
+        connector: KafkaConnector,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+    ):
         assert connector.app.name == CONNECTOR_FULL_NAME
 
         connector = KafkaConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues]
-            namespace="test-namespace",
+            app={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues], gets enriched
+            resetter_namespace=RESETTER_NAMESPACE,
         )
         assert connector.app.name == CONNECTOR_FULL_NAME
 
@@ -95,8 +106,7 @@ class TestKafkaConnector:
                 name=CONNECTOR_NAME,
                 config=config,
                 handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore[reportGeneralTypeIssues]
-                namespace="test-namespace",
+                app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore[reportGeneralTypeIssues], gets enriched
             )
 
         with pytest.raises(
@@ -109,6 +119,5 @@ class TestKafkaConnector:
                 name=CONNECTOR_NAME,
                 config=config,
                 handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues]
-                namespace="test-namespace",
+                app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues], gets enriched
             )

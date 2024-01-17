@@ -44,7 +44,7 @@
   name: consumer3
   from:
     topics:
-      ${pipeline_name}-producer1:
+      ${pipeline.name}-producer1:
         type: input
     components:
       producer2:

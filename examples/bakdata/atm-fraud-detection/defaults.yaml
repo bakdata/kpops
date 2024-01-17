@@ -4,14 +4,11 @@ pipeline-component:
 kubernetes-app:
   namespace: ${NAMESPACE}
 
-kafka-connector:
-  namespace: ${NAMESPACE}
-
 kafka-app:
   app:
     streams:
-      brokers: ${brokers}
-      schemaRegistryUrl: ${schema_registry_url}
+      brokers: ${config.kafka_brokers}
+      schemaRegistryUrl: ${config.schema_registry.url}
       optimizeLeaveGroupBehavior: false
 
 producer-app:
@@ -23,7 +20,7 @@ producer-app:
 streams-app:
   app:
     labels:
-      pipeline: ${pipeline_name}
+      pipeline: ${pipeline.name}
     streams:
       optimizeLeaveGroupBehavior: false
   to:
