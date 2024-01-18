@@ -13,11 +13,14 @@ runner = CliRunner()
 EXAMPLES_PATH = Path("examples").absolute()
 
 
-@pytest.mark.usefixtures("mock_env")
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class TestExample:
     @pytest.fixture(scope="class", autouse=True)
-    def cd(self) -> None:
+    def cd(self):
+        cwd = Path.cwd().absolute()
         os.chdir(EXAMPLES_PATH)
+        yield
+        os.chdir(cwd)
 
     def test_cwd(self):
         assert Path.cwd() == EXAMPLES_PATH
