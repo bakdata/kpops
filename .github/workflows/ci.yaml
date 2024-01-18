@@ -71,7 +71,7 @@ jobs:
 
       - name: Install docs dependencies
         run: poetry install --with docs
-      
+
       - name: Check markdown, toml, css formatting
         uses: dprint/check@v2.2
         if: runner.os == 'Linux'
@@ -85,21 +85,21 @@ jobs:
     uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@v1.25.0
     secrets:
       pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
-  
+
   publish-docs-from-main:
     runs-on: ubuntu-22.04
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: [test]
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Publish docs from main branch
         uses: ./.github/actions/update-docs
         with:
           username: ${{ secrets.GH_USERNAME }}
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}
-          version: main 
+          version: main
 
   publish-dev-docs-from-pr:
     runs-on: ubuntu-22.04
@@ -120,11 +120,11 @@ jobs:
             docs:
               - added|deleted|modified: 'docs/**'
 
-      - name: Publish dev docs from PR 
+      - name: Publish dev docs from PR
         if: steps.docs-changes.outputs.docs == 'true'
         uses: ./.github/actions/update-docs
         with:
           username: ${{ secrets.GH_USERNAME }}
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}
-          version: dev 
+          version: dev
