@@ -1,3 +1,6 @@
+import os
+from pathlib import Path
+
 import pytest
 import yaml
 from snapshottest.module import SnapshotTest
@@ -7,17 +10,24 @@ from kpops.cli.main import app
 
 runner = CliRunner()
 
+EXAMPLES_PATH = Path("examples").absolute()
+
 
 @pytest.mark.usefixtures("mock_env")
 class TestExample:
+    @pytest.fixture(autouse=True)
+    def cd(self) -> None:
+        os.chdir(EXAMPLES_PATH)
+
+    def test_cwd(self):
+        assert Path.cwd() == EXAMPLES_PATH
+
     def test_atm_fraud(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
                 "generate",
-                "./examples/bakdata/atm-fraud-detection/pipeline.yaml",
-                "--config",
-                "./examples/bakdata/atm-fraud-detection",
+                "atm-fraud/pipeline.yaml",
             ],
             catch_exceptions=False,
         )
