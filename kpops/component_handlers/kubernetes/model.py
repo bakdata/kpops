@@ -1,9 +1,10 @@
 import json
 from collections import UserDict
 from collections.abc import Iterator
-from typing import TypeAlias
 
 import yaml
+
+from kpops.utils.types import JsonType
 
 try:
     from typing import Self
@@ -11,20 +12,16 @@ except ImportError:
     from typing_extensions import Self
 
 
-# JSON values
-Json: TypeAlias = dict[str, "Json"] | list["Json"] | str | int | float | bool | None
-
-
-class KubernetesManifest(UserDict[str, Json]):
+class KubernetesManifest(UserDict[str, JsonType]):
     """Representation of a Kubernetes API object as YAML/JSON mapping."""
 
     @classmethod
     def from_yaml(cls, /, content: str) -> Iterator[Self]:
-        manifests: Iterator[dict[str, Json]] = yaml.load_all(content, yaml.Loader)
+        manifests: Iterator[dict[str, JsonType]] = yaml.load_all(content, yaml.Loader)
         for manifest in manifests:
             yield cls(manifest)
 
     @classmethod
     def from_json(cls, /, content: str) -> Self:
-        manifest: dict[str, Json] = json.loads(content)
+        manifest: dict[str, JsonType] = json.loads(content)
         return cls(manifest)

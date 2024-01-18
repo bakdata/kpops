@@ -90,12 +90,12 @@
                     "type": "string"
                 },
                 "namespace": {
-                    "description": "Namespace in which the component shall be deployed",
+                    "description": "Kubernetes namespace in which the component shall be deployed",
                     "title": "Namespace",
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
@@ -265,40 +265,32 @@
                     "title": "Name",
                     "type": "string"
                 },
-                "namespace": {
-                    "description": "Namespace in which the component shall be deployed",
-                    "title": "Namespace",
-                    "type": "string"
-                },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
                 },
-                "repo_config": {
-                    "allOf": [
+                "resetter_namespace": {
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/HelmRepoConfig"
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": {
-                        "repo_auth_flags": {
-                            "ca_file": null,
-                            "cert_file": null,
-                            "insecure_skip_tls_verify": false,
-                            "password": null,
-                            "username": null
-                        },
-                        "repository_name": "bakdata-kafka-connect-resetter",
-                        "url": "https://bakdata.github.io/kafka-connect-resetter/"
-                    },
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                    "default": null,
+                    "description": "Kubernetes namespace in which the Kafka Connect resetter shall be deployed",
+                    "title": "Resetter Namespace"
                 },
                 "resetter_values": {
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
-                    "title": "Resetter Values",
-                    "type": "object"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/HelmAppValues"
+                        }
+                    ],
+                    "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
                     "anyOf": [
@@ -315,24 +307,10 @@
                 "type": {
                     "const": "kafka-sink-connector",
                     "title": "Type"
-                },
-                "version": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": "1.0.4",
-                    "description": "Helm chart version",
-                    "title": "Version"
                 }
             },
             "required": [
                 "name",
-                "namespace",
                 "app",
                 "type"
             ],
@@ -369,11 +347,6 @@
                     "title": "Name",
                     "type": "string"
                 },
-                "namespace": {
-                    "description": "Namespace in which the component shall be deployed",
-                    "title": "Namespace",
-                    "type": "string"
-                },
                 "offset_topic": {
                     "anyOf": [
                         {
@@ -388,34 +361,31 @@
                     "title": "Offset Topic"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
                 },
-                "repo_config": {
-                    "allOf": [
+                "resetter_namespace": {
+                    "anyOf": [
                         {
-                            "$ref": "#/$defs/HelmRepoConfig"
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
                         }
                     ],
-                    "default": {
-                        "repo_auth_flags": {
-                            "ca_file": null,
-                            "cert_file": null,
-                            "insecure_skip_tls_verify": false,
-                            "password": null,
-                            "username": null
-                        },
-                        "repository_name": "bakdata-kafka-connect-resetter",
-                        "url": "https://bakdata.github.io/kafka-connect-resetter/"
-                    },
-                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                    "default": null,
+                    "description": "Kubernetes namespace in which the Kafka Connect resetter shall be deployed",
+                    "title": "Resetter Namespace"
                 },
                 "resetter_values": {
-                    "description": "Overriding Kafka Connect Resetter Helm values. E.g. to override the Image Tag etc.",
-                    "title": "Resetter Values",
-                    "type": "object"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/HelmAppValues"
+                        }
+                    ],
+                    "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
                     "anyOf": [
@@ -432,24 +402,10 @@
                 "type": {
                     "const": "kafka-source-connector",
                     "title": "Type"
-                },
-                "version": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": "1.0.4",
-                    "description": "Helm chart version",
-                    "title": "Version"
                 }
             },
             "required": [
                 "name",
-                "namespace",
                 "app",
                 "type"
             ],
@@ -467,7 +423,7 @@
         },
         "ProducerApp": {
             "additionalProperties": true,
-            "description": "Producer component.\nThis producer holds configuration to use as values for the streams bootstrap producer helm chart. Note that the producer does not support error topics.",
+            "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -489,12 +445,12 @@
                     "type": "string"
                 },
                 "namespace": {
-                    "description": "Namespace in which the component shall be deployed",
+                    "description": "Kubernetes namespace in which the component shall be deployed",
                     "title": "Namespace",
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
@@ -709,7 +665,7 @@
         },
         "StreamsApp": {
             "additionalProperties": true,
-            "description": "StreamsApp component that configures a streams bootstrap app.",
+            "description": "StreamsApp component that configures a streams-bootstrap app.",
             "properties": {
                 "app": {
                     "allOf": [
@@ -738,12 +694,12 @@
                     "type": "string"
                 },
                 "namespace": {
-                    "description": "Namespace in which the component shall be deployed",
+                    "description": "Kubernetes namespace in which the component shall be deployed",
                     "title": "Namespace",
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
@@ -888,7 +844,7 @@
         },
         "StreamsAppValues": {
             "additionalProperties": true,
-            "description": "StreamsBoostrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
             "properties": {
                 "autoscaling": {
                     "anyOf": [
@@ -900,7 +856,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Kubernetes Event-driven Autoscaling config"
+                    "description": "Kubernetes event-driven autoscaling config"
                 },
                 "nameOverride": {
                     "anyOf": [
@@ -921,7 +877,7 @@
                             "$ref": "#/$defs/StreamsConfig"
                         }
                     ],
-                    "description": "Streams Bootstrap streams section"
+                    "description": "streams-bootstrap streams section"
                 }
             },
             "required": [
@@ -944,6 +900,19 @@
                     "description": "Configuration",
                     "title": "Config",
                     "type": "object"
+                },
+                "deleteOutput": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup",
+                    "title": "Deleteoutput"
                 },
                 "errorTopic": {
                     "anyOf": [

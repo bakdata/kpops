@@ -13,6 +13,7 @@ from pydantic import Field, RootModel, SerializeAsAny
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
+from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
 
 if TYPE_CHECKING:
@@ -273,7 +274,7 @@ class PipelineGenerator:
         # Leftover variables that were previously introduced in the component by the substitution
         # functions, still hardcoded, because of their names.
         # TODO(Ivan Yordanov): Get rid of them
-        substitution_hardcoded = {
+        substitution_hardcoded: dict[str, JsonType] = {
             "error_topic_name": config.topic_name_config.default_error_topic_name,
             "output_topic_name": config.topic_name_config.default_output_topic_name,
         }
@@ -285,6 +286,7 @@ class PipelineGenerator:
         )
         substitution = generate_substitution(
             config.model_dump(mode="json"),
+            "config",
             existing_substitution=component_substitution,
             separator=".",
         )
@@ -314,9 +316,9 @@ class PipelineGenerator:
         For example, for a given path ./data/v1/dev/pipeline.yaml the pipeline_name would be
         set to data-v1-dev. Then the sub environment variables are set:
 
-        pipeline_name_0 = data
-        pipeline_name_1 = v1
-        pipeline_name_2 = dev
+        pipeline.name_0 = data
+        pipeline.name_1 = v1
+        pipeline.name_2 = dev
 
         :param base_dir: Base directory to the pipeline files
         :param path: Path to pipeline.yaml file
@@ -326,9 +328,9 @@ class PipelineGenerator:
             msg = "The pipeline-base-dir should not equal the pipeline-path"
             raise ValueError(msg)
         pipeline_name = "-".join(path_without_file)
-        ENV["pipeline_name"] = pipeline_name
+        ENV["pipeline.name"] = pipeline_name
         for level, parent in enumerate(path_without_file):
-            ENV[f"pipeline_name_{level}"] = parent
+            ENV[f"pipeline.name_{level}"] = parent
 
     @staticmethod
     def set_environment_name(environment: str | None) -> None:

@@ -18,7 +18,14 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
+from kpops.utils import cached_classproperty
 from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import issubclass_patched
+
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
@@ -27,7 +34,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     :param name: Component name
     :param prefix: Pipeline prefix that will prefix every component name.
         If you wish to not have any prefix you can specify an empty string.,
-        defaults to "${pipeline_name}-"
+        defaults to "${pipeline.name}-"
     :param from_: Topic(s) and/or components from which the component will read
         input, defaults to None
     :param to: Topic(s) into which the component will write output,
@@ -36,7 +43,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
 
     name: str = Field(default=..., description=describe_attr("name", __doc__))
     prefix: str = Field(
-        default="${pipeline_name}-",
+        default="${pipeline.name}-",
         description=describe_attr("prefix", __doc__),
     )
     from_: FromSection | None = Field(
@@ -63,6 +70,22 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     @property
     def full_name(self) -> str:
         return self.prefix + self.name
+
+    @cached_classproperty
+    def parents(cls: type[Self]) -> tuple[type[PipelineComponent], ...]:  # pyright: ignore[reportGeneralTypeIssues]
+        """Get parent components.
+
+        :return: All ancestor KPOps components
+        """
+
+        def gen_parents():
+            for base in cls.mro():
+                # skip class itself and non-component ancestors
+                if base is cls or not issubclass_patched(base, PipelineComponent):
+                    continue
+                yield base
+
+        return tuple(gen_parents())
 
     def add_input_topics(self, topics: list[str]) -> None:
         """Add given topics to the list of input topics.
