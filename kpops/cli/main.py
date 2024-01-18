@@ -395,8 +395,8 @@ def reset(
         verbose=verbose,
     )
     for component in reversed(pipeline.components):
-        log_action("Reset", component)
         component.destroy(dry_run)
+        log_action("Reset", component)
         component.reset(dry_run)
 
 
@@ -424,8 +424,8 @@ def clean(
         verbose=verbose,
     )
     for component in reversed(pipeline.components):
-        log_action("Clean", component)
         component.destroy(dry_run)
+        log_action("Clean", component)
         component.clean(dry_run)
 
 
