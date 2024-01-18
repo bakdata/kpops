@@ -1858,7 +1858,7 @@ Add the helm repository:</p>
 <span class="normal"><a href="#__codelineno-2-10">10</a></span>
 <span class="normal"><a href="#__codelineno-2-11">11</a></span>
 <span class="normal"><a href="#__codelineno-2-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="nt">auth</span><span class="p">:</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">  </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app_db</span><span class="w">  </span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="w">  </span><span class="nt">database</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">app_db</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="w">  </span><span class="nt">enablePostgresUser</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="w">  </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AppPassword</span>
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5"></a><span class="w">  </span><span class="nt">postgresPassword</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StrongPassword</span>
@@ -1885,6 +1885,12 @@ Add the helm repository:</p>
 
 <ol>
 <li>
+<p>Clone the <a href="https://github.com/bakdata/kpops-examples" target="_blank">kpops-examples repository</a> and <code>cd</code> into the directory.</p>
+</li>
+<li>
+<p>Install KPOps <code>pip install -r requirements.txt</code>.</p>
+</li>
+<li>
 <p>Export environment variables in your terminal:</p>
 <div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span>
 <span class="normal"><a href="#__codelineno-5-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">DOCKER_REGISTRY</span><span class="o">=</span>bakdata<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="se">\</span>
@@ -1893,13 +1899,7 @@ Add the helm repository:</p>
 </li>
 <li>
 <p>Deploy the pipeline</p>
-<div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span>
-<span class="normal"><a href="#__codelineno-6-2">2</a></span>
-<span class="normal"><a href="#__codelineno-6-3">3</a></span>
-<span class="normal"><a href="#__codelineno-6-4">4</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a>poetry<span class="w"> </span>run<span class="w"> </span>kpops<span class="w"> </span>deploy<span class="w"> </span>./examples/bakdata/atm-fraud-detection/pipeline.yaml<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2"></a>--pipeline-base-dir<span class="w"> </span>./examples<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3"></a>--config<span class="w"> </span>./examples/bakdata/atm-fraud-detection/config.yaml<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4"></a>--execute
+<div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a>kpops<span class="w"> </span>deploy<span class="w"> </span>atm-fraud/pipeline.yaml<span class="w"> </span>--execute
 </span></code></pre></div></td></tr></table></div>
 </li>
 </ol>
@@ -1926,7 +1926,7 @@ You should be able to see pipeline shown in the image below:</p>
 
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
-<p>Kafka Connect needs some time to set up the connector. 
+<p>Kafka Connect needs some time to set up the connector.
 Moreover, Streams Explorer needs a while to scrape the information from Kafka connect.
 Therefore, it might take a bit until you see the whole graph.</p>
 </div>
@@ -1950,15 +1950,7 @@ Therefore, it might take a bit until you see the whole graph.</p>
 </li>
 <li>
 <p>Remove the pipeline</p>
-<div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span>
-<span class="normal"><a href="#__codelineno-10-2">2</a></span>
-<span class="normal"><a href="#__codelineno-10-3">3</a></span>
-<span class="normal"><a href="#__codelineno-10-4">4</a></span>
-<span class="normal"><a href="#__codelineno-10-5">5</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a>poetry<span class="w"> </span>run<span class="w"> </span>kpops<span class="w"> </span>clean<span class="w"> </span>./examples/bakdata/atm-fraud-detection/pipeline.yaml<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2"></a>--pipeline-base-dir<span class="w"> </span>./examples<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3"></a>--config<span class="w"> </span>./examples/bakdata/atm-fraud-detection/config.yaml<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4"></a>--verbose<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5"></a>--execute
+<div class="language-shell highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-10-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1"></a>kpops<span class="w"> </span>clean<span class="w"> </span>atm-fraud/pipeline.yaml<span class="w"> </span>--verbose<span class="w">  </span>--execute
 </span></code></pre></div></td></tr></table></div>
 </li>
 </ol>
@@ -1977,13 +1969,13 @@ destroyed correctly.</p>
 <ul>
 <li><code>deploy</code> fails:</li>
 <li>Read the error message.</li>
-<li>Try to correct the mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.</li>
+<li>Try to correct the mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.</li>
 <li>Run <code>clean</code>.</li>
 <li>Run <code>deploy --dry-run</code> to avoid havig to <code>clean</code> again. If an error is dropped, start over from step 1.</li>
 <li>If the dry-run is succesful, run <code>deploy</code>.</li>
 <li><code>clean</code> fails:</li>
 <li>Read the error message.</li>
-<li>Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.</li>
+<li>Try to correct the indicated mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.</li>
 <li>Run <code>clean</code>.</li>
 <li>If <code>clean</code> fails, follow the steps in <a href="../../getting-started/teardown/">teardown</a>.</li>
 </ul>
