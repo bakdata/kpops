@@ -25,6 +25,21 @@ class TestExample:
     def test_cwd(self):
         assert Path.cwd() == EXAMPLES_PATH
 
+    def test_word_count(self, snapshot: SnapshotTest):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                "word-count/pipeline.yaml",
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0, result.stdout
+
+        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        snapshot.assert_match(enriched_pipeline, "word-count-pipeline")
+
     def test_atm_fraud(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
