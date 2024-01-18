@@ -15,7 +15,7 @@ EXAMPLES_PATH = Path("examples").absolute()
 
 @pytest.mark.usefixtures("mock_env")
 class TestExample:
-    @pytest.fixture(autouse=True)
+    @pytest.fixture(scope="class", autouse=True)
     def cd(self) -> None:
         os.chdir(EXAMPLES_PATH)
 
