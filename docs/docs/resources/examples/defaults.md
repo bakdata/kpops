@@ -1,6 +1,6 @@
 # Example `defaults.yaml` files
 
-## [KPOps examples](https://github.com/bakdata/kpops-examples)
+## [KPOps examples](https://github.com/bakdata/kpops-examples){target=_blank}
 
 Shared defaults for [ATM Fraud Pipeline](https://github.com/bakdata/kpops-examples/tree/main/atm-fraud){target=_blank} and [Word-count Pipeline](https://github.com/bakdata/kpops-examples/tree/main/word-count){target=_blank}
 
