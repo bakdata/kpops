@@ -83,9 +83,7 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 4. Deploy the pipeline
 
     ```shell
-    kpops deploy word-count/pipeline.yaml \
-    --defaults word-count/defaults.yaml \
-    --execute
+    kpops deploy word-count/pipeline.yaml --execute
     ```
 
 !!! Note
@@ -145,10 +143,7 @@ helm --namespace kpops uninstall redis
 2. Remove the pipeline
 
     ```shell
-    kpops clean word-count/pipeline.yaml \
-    --defaults word-count/defaults.yaml \
-    --verbose \
-    --execute
+    kpops clean word-count/pipeline.yaml --verbose --execute
     ```
 
 !!! Note
