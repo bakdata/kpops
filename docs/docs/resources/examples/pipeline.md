@@ -13,14 +13,14 @@
 
 <!-- dprint-ignore-end -->
 
-## [Word-count Pipeline](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops){target=_blank}
+## [Word-count Pipeline](https://github.com/bakdata/kpops-examples/tree/main/word-count){target=_blank}
 
 <!-- dprint-ignore-start -->
 
 ??? example "pipeline.yaml"
     ```yaml
     --8<--
-    https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/deployment/kpops/pipeline.yaml
+    https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/pipeline.yaml
     --8<--
     ```
 

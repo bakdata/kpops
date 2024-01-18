@@ -69,19 +69,7 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 <!-- dprint-ignore-start -->
 
-1. Copy the [configuration](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops){target=_blank} from the [kpops-examples repository](https://github.com/bakdata/kpops-examples/tree/main/word-count){target=_blank} into `kpops>examples>bakdata>word-count` like so:
-
-    ```
-    kpops
-    ├── examples
-    |   ├── bakdata
-    |   |   ├── word-count
-    |   |   |   ├── config.yaml
-    |   |   |   ├── defaults
-    |   |   |   │   └── defaults.yaml
-    |   |   |   └── pipeline.yaml
-    |   |   |
-    ```
+1. Clone the [kpops-examples repository](https://github.com/bakdata/kpops-examples){target=_blank} and `cd` into the directory.
 
 2. Export environment variables in your terminal:
 
@@ -93,9 +81,8 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 3. Deploy the pipeline
 
     ```shell
-    kpops deploy ./examples/bakdata/word-count/pipeline.yaml \
-    --pipeline-base-dir ./examples \
-    --config ./examples/bakdata/word-count/config.yaml \
+    kpops deploy word-count/pipeline.yaml \
+    --defaults word-count/defaults.yaml \
     --execute
     ```
 
@@ -156,9 +143,8 @@ helm --namespace kpops uninstall redis
 2. Remove the pipeline
 
     ```shell
-    kpops clean ./examples/bakdata/word-count/pipeline.yaml \
-    --pipeline-base-dir ./examples \
-    --config ./examples/bakdata/word-count/config.yaml \
+    kpops clean word-count/pipeline.yaml \
+    --defaults word-count/defaults.yaml \
     --verbose \
     --execute
     ```
