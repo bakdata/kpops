@@ -71,14 +71,16 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 1. Clone the [kpops-examples repository](https://github.com/bakdata/kpops-examples){target=_blank} and `cd` into the directory.
 
-2. Export environment variables in your terminal:
+2. Install KPOps `pip install -r requirements.txt`.
+
+3. Export environment variables in your terminal:
 
     ```shell
     export DOCKER_REGISTRY=bakdata && \
     export NAMESPACE=kpops
     ```
 
-3. Deploy the pipeline
+4. Deploy the pipeline
 
     ```shell
     kpops deploy word-count/pipeline.yaml \
