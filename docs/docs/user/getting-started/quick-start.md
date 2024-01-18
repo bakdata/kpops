@@ -2,7 +2,7 @@
 
 ## Word-count
 
-Word-count is a demo pipeline which consists of a producer producing words to Kafka, a Kafka streams app counting the number of times each word occurs and finally a Redis database into which the words are exported.
+Word-count is a demo pipeline consisting of a producer producing words to Kafka, a Kafka streams app counting the number of times each word occurs, and finally a Redis database into which the words are exported.
 
 ## What this will demonstrate
 
@@ -178,13 +178,13 @@ helm --namespace kpops uninstall redis
 
 - `deploy` fails:
     1. Read the error message.
-    2. Try to correct the mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
+    2. Try to correct the mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.
     3. Run `clean`.
     4. Run `deploy --dry-run` to avoid having to `clean` again. If an error is dropped, start over from step 1.
     5. If the dry-run is successful, run `deploy`.
 - `clean` fails:
     1. Read the error message.
-    2. Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
+    2. Try to correct the indicated mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.
     3. Run `clean`.
     4. If `clean` fails, follow the steps in [teardown](../teardown).
 
