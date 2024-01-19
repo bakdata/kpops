@@ -1,6 +1,6 @@
 # Example `pipeline.yaml` files
 
-## [ATM Fraud Pipeline](https://github.com/bakdata/kpops/tree/main/examples/bakdata/atm-fraud-detection){target=_blank}
+## [ATM Fraud Pipeline](https://github.com/bakdata/kpops-examples/tree/main/atm-fraud){target=_blank}
 
 <!-- dprint-ignore-start -->
 
