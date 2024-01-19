@@ -1,13 +1,13 @@
 # Example `pipeline.yaml` files
 
-## [ATM Fraud Pipeline](https://github.com/bakdata/kpops/tree/main/examples/bakdata/atm-fraud-detection){target=_blank}
+## [ATM Fraud Pipeline](https://github.com/bakdata/kpops-examples/tree/main/atm-fraud){target=_blank}
 
 <!-- dprint-ignore-start -->
 
 ??? example "pipeline.yaml"
     ```yaml
      --8<--
-     https://raw.githubusercontent.com/bakdata/kpops/main/examples/bakdata/atm-fraud-detection/pipeline.yaml
+     https://raw.githubusercontent.com/bakdata/kpops-examples/main/atm-fraud/pipeline.yaml
      --8<--
     ```
 
