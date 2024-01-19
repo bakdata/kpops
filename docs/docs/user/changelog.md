@@ -1,4 +1,33 @@
 # Changelog
+## [3.0.1](https://github.com/bakdata/kpops/releases/tag/3.0.1) - Release Date: [2024-01-19]
+
+### 🐛 Fixes
+
+- Fix broken doc link - [#427](https://github.com/bakdata/kpops/pull/427)
+
+- Add warning log if SR handler is disabled but URL is set - [#428](https://github.com/bakdata/kpops/pull/428)
+
+
+### 📝 Documentation
+
+- Update docs of word-count example for v3 & new folder structure - [#423](https://github.com/bakdata/kpops/pull/423)
+
+- Move ATM fraud to examples repo - [#425](https://github.com/bakdata/kpops/pull/425)
+
+- Fix broken doc link - [#427](https://github.com/bakdata/kpops/pull/427)
+
+
+### 🌀 Miscellaneous
+
+- Update pydantic dependency - [#422](https://github.com/bakdata/kpops/pull/422)
+
+- Add git submodule instructions to the contributing.md - [#429](https://github.com/bakdata/kpops/pull/429)
+
+
+
+
+
+
 ## [3.0.0](https://github.com/bakdata/kpops/releases/tag/3.0.0) - Release Date: [2024-01-17]
 
 ### 🏗️ Breaking changes

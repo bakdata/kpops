@@ -1,4 +1,4 @@
-__version__ = "3.0.0"
+__version__ = "3.0.1"
 
 # export public API functions
 from kpops.cli.main import clean, deploy, destroy, generate, manifest, reset
