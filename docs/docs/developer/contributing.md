@@ -4,6 +4,16 @@
 
 If you find any bugs or have suggestions for improvements, please open an [issue](https://github.com/bakdata/kpops/issues/new) and optionally a [pull request (PR)](https://github.com/bakdata/kpops/compare). In the case of a PR, we would appreciate it if you preface it with an issue outlining your goal and means of achieving it.
 
+### git
+
+We are using [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) to import the [KPOps examples](https://github.com/bakdata/kpops-examples) repository. You need to fetch the repository locally on your machine. Todo so use this command:
+
+```bash
+git submodule update --recursive
+```
+
+This will fetch the resources under the `examples` folder.
+
 ## Style
 
 We advise that you stick to our `pre-commit` hooks for code linting, formatting, and auto-generation of documentation. After you install them using `poetry run pre-commit install` they're triggered automatically during `git commit`. Additionally, you can manually invoke them with `poetry run pre-commit run -a`. In order for `dprint` to work, you have to manually [install](#markdown) it locally. It will work in the CI, so it is also possible to manually carry out formatting changes flagged by `dprint` in the CI and skip installing it locally.
