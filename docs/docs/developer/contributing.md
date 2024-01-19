@@ -12,6 +12,8 @@ We are using [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodule
 git submodule update --recursive
 ```
 
+This will fetch the resources under the `examples` folder.
+
 ## Style
 
 We advise that you stick to our `pre-commit` hooks for code linting, formatting, and auto-generation of documentation. After you install them using `poetry run pre-commit install` they're triggered automatically during `git commit`. Additionally, you can manually invoke them with `poetry run pre-commit run -a`. In order for `dprint` to work, you have to manually [install](#markdown) it locally. It will work in the CI, so it is also possible to manually carry out formatting changes flagged by `dprint` in the CI and skip installing it locally.
