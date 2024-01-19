@@ -7,7 +7,7 @@
 ??? example "pipeline.yaml"
     ```yaml
      --8<--
-     https://raw.githubusercontent.com/bakdata/kpops/main/examples/bakdata/atm-fraud-detection/pipeline.yaml
+     https://raw.githubusercontent.com/bakdata/kpops-examples/main/word-count/pipeline.yaml
      --8<--
     ```
 
