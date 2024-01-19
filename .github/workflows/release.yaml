@@ -12,6 +12,8 @@ on:
           - patch
           - minor
           - major
+env:
+  POETRY_REQUESTS_TIMEOUT: 120
 
 jobs:
   create-github-release-push-tag:
