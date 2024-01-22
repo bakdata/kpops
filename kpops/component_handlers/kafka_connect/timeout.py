@@ -9,19 +9,19 @@ log = logging.getLogger("Timeout")
 T = TypeVar("T")
 
 
-async def timeout(func: Coroutine[Any, Any, T], *, secs: int = 0) -> T | None:
+async def timeout(coro: Coroutine[Any, Any, T], *, secs: int = 0) -> T | None:
     """Set a timeout for a given lambda function.
 
-    :param func: The callable function
+    :param coro: The callable function
     :param secs: The timeout in seconds.
     """
     try:
-        task = asyncio.create_task(func)
+        task = asyncio.create_task(coro)
         if secs == 0:
             return await task
         else:
             return await asyncio.wait_for(task, timeout=secs)
     except TimeoutError:
         log.exception(
-            f"Kafka Connect operation {func.__name__} timed out after {secs} seconds. To increase the duration, set the `timeout` option in config.yaml."
+            f"Kafka Connect operation {coro.__name__} timed out after {secs} seconds. To increase the duration, set the `timeout` option in config.yaml."
         )

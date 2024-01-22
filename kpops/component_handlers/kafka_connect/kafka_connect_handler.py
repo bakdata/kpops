@@ -47,34 +47,19 @@ class KafkaConnectHandler:
             await self.__dry_run_connector_creation(connector_config)
         else:
             try:
-
-                async def get_connector_locally():
-                    return await self._connect_wrapper.get_connector(
-                        connector_config.name
-                    )
-
                 await timeout(
-                    get_connector_locally(),
+                    self._connect_wrapper.get_connector(connector_config.name),
                     secs=self._timeout,
                 )
 
-                async def update_connector_locally():
-                    await self._connect_wrapper.update_connector_config(
-                        connector_config
-                    )
-
                 await timeout(
-                    update_connector_locally(),
+                    self._connect_wrapper.update_connector_config(connector_config),
                     secs=self._timeout,
                 )
 
             except ConnectorNotFoundException:
-
-                async def create_connector_locally():
-                    await self._connect_wrapper.create_connector(connector_config)
-
                 await timeout(
-                    create_connector_locally(),
+                    self._connect_wrapper.create_connector(connector_config),
                     secs=self._timeout,
                 )
 
@@ -88,20 +73,13 @@ class KafkaConnectHandler:
             await self.__dry_run_connector_deletion(connector_name)
         else:
             try:
-
-                async def get_connector_locally():
-                    return await self._connect_wrapper.get_connector(connector_name)
-
                 await timeout(
-                    get_connector_locally(),
+                    self._connect_wrapper.get_connector(connector_name),
                     secs=self._timeout,
                 )
 
-                async def delete_connector_locally():
-                    await self._connect_wrapper.delete_connector(connector_name)
-
                 await timeout(
-                    delete_connector_locally(),
+                    self._connect_wrapper.delete_connector(connector_name),
                     secs=self._timeout,
                 )
             except ConnectorNotFoundException:
