@@ -6,7 +6,7 @@ If you find any bugs or have suggestions for improvements, please open an [issue
 
 ### git
 
-We are using [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) to import the [KPOps examples](https://github.com/bakdata/kpops-examples) repository. You need to fetch the repository locally on your machine. Todo so use this command:
+We are using [git submodules](https://git-scm.com/book/en/v2/Git-Tools-Submodules) to import the [KPOps examples](https://github.com/bakdata/kpops-examples) repository. You need to fetch the repository locally on your machine. To do so use this command:
 
 ```bash
 git submodule init
