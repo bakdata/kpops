@@ -25,9 +25,10 @@ class TestExample:
     def test_cwd(self):
         assert Path.cwd() == EXAMPLES_PATH
 
+    @pytest.fixture(scope="session")
     def test_submodule(self):
         assert any(
-            Path().iterdir()
+            EXAMPLES_PATH.iterdir()
         ), "examples directory is empty, please initialize and update the git submodule (see contributing guide)"
 
     @pytest.mark.usefixtures("test_submodule")
