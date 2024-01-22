@@ -25,6 +25,11 @@ class TestExample:
     def test_cwd(self):
         assert Path.cwd() == EXAMPLES_PATH
 
+    def test_submodule(self):
+        assert any(
+            Path().iterdir()
+        ), "examples directory is empty, please initialize and update the git submodule (see contributing guide)"
+
     def test_word_count(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
