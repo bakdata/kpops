@@ -202,6 +202,7 @@ class KafkaConnector(PipelineComponent, ABC):
                 )
             await self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
 
+
 class KafkaSourceConnector(KafkaConnector):
     """Kafka source connector model.
 
