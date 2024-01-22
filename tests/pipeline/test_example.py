@@ -44,7 +44,7 @@ class TestExample:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "word-count-pipeline")
 
     @pytest.mark.usefixtures("test_submodule")
@@ -60,5 +60,5 @@ class TestExample:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "atm-fraud-pipeline")
