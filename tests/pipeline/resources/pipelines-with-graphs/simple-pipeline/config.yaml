@@ -1,7 +1,12 @@
-environment: development
+
+schema_registry:
+  enabled: false
+  url: "http://localhost:8081"
+
+kafka_connect:
+  url: "http://kafka_connect_url:8083"
+kafka_rest:
+  url: "http://kafka_rest_url:8082"
+
 defaults_path: ..
-brokers: "broker:9092"
-helm_diff_config:
-  enable: false
-kafka_connect_host: "kafka_connect_host:8083"
-kafka_rest_host: "kafka_rest_host:8082"
+kafka_brokers: "broker:9092"
