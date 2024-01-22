@@ -25,6 +25,13 @@ class TestExample:
     def test_cwd(self):
         assert Path.cwd() == EXAMPLES_PATH
 
+    @pytest.fixture(scope="session")
+    def test_submodule(self):
+        assert any(
+            EXAMPLES_PATH.iterdir()
+        ), "examples directory is empty, please initialize and update the git submodule (see contributing guide)"
+
+    @pytest.mark.usefixtures("test_submodule")
     def test_word_count(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
@@ -40,6 +47,7 @@ class TestExample:
         enriched_pipeline: dict = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "word-count-pipeline")
 
+    @pytest.mark.usefixtures("test_submodule")
     def test_atm_fraud(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
