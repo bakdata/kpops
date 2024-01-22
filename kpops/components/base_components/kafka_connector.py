@@ -241,6 +241,7 @@ class KafkaSinkConnector(KafkaConnector):
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SINK)
 
     @property
+    @override
     def input_topics(self) -> list[str]:
         topics = getattr(self.app, "topics", None)
         return topics.split(",") if topics is not None else []
