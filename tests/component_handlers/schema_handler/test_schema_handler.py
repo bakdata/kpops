@@ -1,4 +1,5 @@
 import json
+import logging
 from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
@@ -17,11 +18,14 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.config import KpopsConfig, SchemaRegistryConfig
-from kpops.utils.colorify import greenify, magentaify
+from kpops.utils.colorify import greenify, magentaify, yellowify
 from tests.pipeline.test_components import TestSchemaProvider
 
 NON_EXISTING_PROVIDER_MODULE = BaseModel.__module__
 TEST_SCHEMA_PROVIDER_MODULE = TestSchemaProvider.__module__
+
+
+log = logging.getLogger("SchemaHandler")
 
 
 @pytest.fixture(autouse=True)
@@ -35,6 +39,13 @@ def log_info_mock(mocker: MockerFixture) -> MagicMock:
 def log_debug_mock(mocker: MockerFixture) -> MagicMock:
     return mocker.patch(
         "kpops.component_handlers.schema_handler.schema_handler.log.debug"
+    )
+
+
+@pytest.fixture(autouse=True)
+def log_warning_mock(mocker: MockerFixture) -> MagicMock:
+    return mocker.patch(
+        "kpops.component_handlers.schema_handler.schema_handler.log.warning"
     )
 
 
@@ -329,3 +340,18 @@ async def test_should_delete_schemas_when_not_in_dry_run(
     await schema_handler.delete_schemas(to_section, False)
 
     schema_registry_mock.delete_subject.assert_called_once_with("topic-X-value")
+
+
+def test_should_log_warning_if_schema_handler_is_not_enabled_but_url_is_set(
+    log_warning_mock: MagicMock,
+    kpops_config: KpopsConfig,
+):
+    kpops_config.schema_registry.enabled = False
+    SchemaHandler.load_schema_handler(kpops_config)
+
+    log_warning_mock.assert_called_once_with(
+        yellowify(
+            f"The property schema_registry.enabled is set to False but the URL is set to {kpops_config.schema_registry.url}."
+            f"\nIf you want to use the schema handler make sure to enable it."
+        )
+    )

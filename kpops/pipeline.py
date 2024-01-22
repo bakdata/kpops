@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field, SerializeAsAny
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
+from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
 
 if TYPE_CHECKING:
@@ -356,7 +357,7 @@ class PipelineGenerator:
         # Leftover variables that were previously introduced in the component by the substitution
         # functions, still hardcoded, because of their names.
         # TODO(Ivan Yordanov): Get rid of them
-        substitution_hardcoded = {
+        substitution_hardcoded: dict[str, JsonType] = {
             "error_topic_name": config.topic_name_config.default_error_topic_name,
             "output_topic_name": config.topic_name_config.default_output_topic_name,
         }

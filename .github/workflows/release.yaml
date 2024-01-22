@@ -15,7 +15,7 @@ on:
 
 jobs:
   create-github-release-push-tag:
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@1.25.5
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@1.40.1
     name: Release
     with:
       release-type: ${{ inputs.release-type }}
