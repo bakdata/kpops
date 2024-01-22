@@ -42,19 +42,23 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
         )
 
     @override
-    def get_input_topics(self) -> list[str]:
+    @property
+    def input_topics(self) -> list[str]:
         return self.app.streams.input_topics
 
     @override
-    def get_extra_input_topics(self) -> dict[str, list[str]]:
+    @property
+    def extra_input_topics(self) -> dict[str, list[str]]:
         return self.app.streams.extra_input_topics
 
     @override
-    def get_output_topic(self) -> str | None:
+    @property
+    def output_topic(self) -> str | None:
         return self.app.streams.output_topic
 
     @override
-    def get_extra_output_topics(self) -> dict[str, str]:
+    @property
+    def extra_output_topics(self) -> dict[str, str]:
         return self.app.streams.extra_output_topics
 
     @override

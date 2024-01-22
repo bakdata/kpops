@@ -71,18 +71,23 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         self.set_input_topics()
         self.set_output_topics()
 
-    def get_input_topics(self) -> list[str]:
+    @property
+    def input_topics(self) -> list[str]:
         """Get all the input topics from config."""
         return []
 
-    def get_extra_input_topics(self) -> dict[str, list[str]]:
+    @property
+    def extra_input_topics(self) -> dict[str, list[str]]:
         """Get extra input topics list from config."""
         return {}
 
-    def get_output_topic(self) -> str | None:
+    @property
+    def output_topic(self) -> str | None:
         """Get output topic from config."""
+        return None
 
-    def get_extra_output_topics(self) -> dict[str, str]:
+    @property
+    def extra_output_topics(self) -> dict[str, str]:
         """Get extra output topics list from config."""
         return {}
 
@@ -166,15 +171,15 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
 
     @property
     def inputs(self) -> Iterator[str]:
-        yield from self.get_input_topics()
-        for role_topics in self.get_extra_input_topics().values():
+        yield from self.input_topics
+        for role_topics in self.extra_input_topics.values():
             yield from role_topics
 
     @property
     def outputs(self) -> Iterator[str]:
-        if output_topic := self.get_output_topic():
+        if output_topic := self.output_topic:
             yield output_topic
-        yield from self.get_extra_output_topics().values()
+        yield from self.extra_output_topics.values()
 
     def apply_from_inputs(self, name: str, topic: FromTopic) -> None:
         """Add a `from` section input to the component config.

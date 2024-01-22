@@ -307,8 +307,8 @@ class TestProducerApp:
                 },
             },
         )
-        assert producer_app.get_output_topic() == "${output_topic_name}"
-        assert producer_app.get_extra_output_topics() == {
+        assert producer_app.output_topic == "${output_topic_name}"
+        assert producer_app.extra_output_topics == {
             "first-extra-topic": "extra-topic-1"
         }
-        assert producer_app.get_input_topics() == []
+        assert producer_app.input_topics == []

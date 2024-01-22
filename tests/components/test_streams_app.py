@@ -516,10 +516,10 @@ class TestStreamsApp:
             },
         )
 
-        assert streams_app.get_input_topics() == ["example-input", "b", "a"]
-        assert streams_app.get_extra_input_topics() == {
+        assert streams_app.input_topics == ["example-input", "b", "a"]
+        assert streams_app.extra_input_topics == {
             "role1": ["topic-extra"],
             "role2": ["topic-extra2", "topic-extra3"],
         }
-        assert streams_app.get_output_topic() == "example-output"
-        assert streams_app.get_extra_output_topics() == {"fake-role": "extra-topic"}
+        assert streams_app.output_topic == "example-output"
+        assert streams_app.extra_output_topics == {"fake-role": "extra-topic"}
