@@ -42,7 +42,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
@@ -60,7 +60,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
 
         assert enriched_pipeline[0]["prefix"] == "my-fake-prefix-"
         assert enriched_pipeline[0]["name"] == "my-streams-app"
@@ -81,7 +81,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_inflate_pipeline(self, snapshot: SnapshotTest):
@@ -98,7 +98,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_substitute_in_component(self, snapshot: SnapshotTest):
@@ -115,7 +115,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["prefix"] == "resources-component-type-substitution-"
         )
@@ -174,7 +174,7 @@ class TestGenerate:
             ],
             catch_exceptions=False,
         )
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         sink_connector = enriched_pipeline[0]
         assert (
             sink_connector["app"]["errors.deadletterqueue.topic.name"]
@@ -195,7 +195,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_no_user_defined_components(self, snapshot: SnapshotTest):
@@ -212,7 +212,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_kafka_connect_sink_weave_from_topics(self, snapshot: SnapshotTest):
@@ -230,7 +230,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_read_from_component(self, snapshot: SnapshotTest):
@@ -247,7 +247,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_with_env_defaults(self, snapshot: SnapshotTest):
@@ -266,7 +266,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_prefix_pipeline_component(self, snapshot: SnapshotTest):
@@ -286,7 +286,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_with_custom_config_with_relative_defaults_path(
@@ -308,7 +308,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline[0]
         output_topic = producer_details["app"]["streams"]["outputTopic"]
         assert output_topic == "app1-test-topic"
@@ -351,7 +351,7 @@ class TestGenerate:
 
             assert result.exit_code == 0, result.stdout
 
-            enriched_pipeline: dict = yaml.safe_load(result.stdout)
+            enriched_pipeline: list = yaml.safe_load(result.stdout)
             producer_details = enriched_pipeline[0]
             output_topic = producer_details["app"]["streams"]["outputTopic"]
             assert output_topic == "app1-test-topic"
@@ -382,7 +382,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline[0]
         output_topic = producer_details["app"]["streams"]["outputTopic"]
         assert output_topic == "resources-custom-config-app1"
@@ -411,7 +411,7 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert enriched_pipeline[0]["app"]["streams"]["brokers"] == "env_broker"
 
     def test_nested_config_env_vars(self, monkeypatch: pytest.MonkeyPatch):
@@ -432,7 +432,7 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"]
             == "http://somename:1234/"
@@ -456,7 +456,7 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"]
             == "http://production:8081/"
@@ -492,7 +492,7 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"] == expected_url
         )
@@ -529,7 +529,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_dotenv_support(self):
@@ -551,7 +551,7 @@ class TestGenerate:
         )
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[1]["app"]["streams"]["schemaRegistryUrl"]
             == "http://notlocalhost:8081/"
@@ -571,7 +571,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
 
         output_topics = enriched_pipeline[4]["to"]["topics"]
         input_topics = enriched_pipeline[4]["from"]["topics"]
@@ -801,7 +801,7 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["name"]
             == "in-order-to-have-len-fifty-two-name-should-end--here"
