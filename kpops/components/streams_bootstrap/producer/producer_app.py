@@ -7,6 +7,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaApp,
     KafkaAppCleaner,
 )
+from kpops.components.base_components.models import TopicName, TopicRole
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
@@ -69,19 +70,19 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
                 super().apply_to_outputs(name, topic)
 
     @property
-    def output_topic(self) -> str | None:
+    def output_topic(self) -> TopicName | None:
         return self.app.streams.output_topic
 
     @property
-    def extra_output_topics(self) -> dict[str, str]:
+    def extra_output_topics(self) -> dict[TopicRole, TopicName]:
         return self.app.streams.extra_output_topics
 
     @override
-    def set_output_topic(self, topic_name: str) -> None:
+    def set_output_topic(self, topic_name: TopicName) -> None:
         self.app.streams.output_topic = topic_name
 
     @override
-    def add_extra_output_topic(self, topic_name: str, role: str) -> None:
+    def add_extra_output_topic(self, topic_name: TopicName, role: TopicRole) -> None:
         self.app.streams.extra_output_topics[role] = topic_name
 
     @property

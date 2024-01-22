@@ -7,6 +7,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaApp,
     KafkaAppCleaner,
 )
+from kpops.components.base_components.models import TopicName, TopicRole
 from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import StreamsAppValues
@@ -43,50 +44,50 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
 
     @property
     @override
-    def input_topics(self) -> list[str]:
+    def input_topics(self) -> list[TopicName]:
         return self.app.streams.input_topics
 
     @property
     @override
-    def extra_input_topics(self) -> dict[str, list[str]]:
+    def extra_input_topics(self) -> dict[TopicRole, list[TopicName]]:
         return self.app.streams.extra_input_topics
 
     @property
     @override
-    def output_topic(self) -> str | None:
+    def output_topic(self) -> TopicName | None:
         return self.app.streams.output_topic
 
     @property
     @override
-    def extra_output_topics(self) -> dict[str, str]:
+    def extra_output_topics(self) -> dict[TopicRole, TopicName]:
         return self.app.streams.extra_output_topics
 
     @override
-    def add_input_topics(self, topics: list[str]) -> None:
+    def add_input_topics(self, topics: list[TopicName]) -> None:
         self.app.streams.add_input_topics(topics)
 
     @override
-    def add_extra_input_topics(self, role: str, topics: list[str]) -> None:
+    def add_extra_input_topics(self, role: TopicRole, topics: list[TopicName]) -> None:
         self.app.streams.add_extra_input_topics(role, topics)
 
     @override
-    def set_input_pattern(self, name: str) -> None:
+    def set_input_pattern(self, name: TopicName) -> None:
         self.app.streams.input_pattern = name
 
     @override
-    def add_extra_input_pattern(self, role: str, topic: str) -> None:
+    def add_extra_input_pattern(self, role: TopicRole, topic: TopicName) -> None:
         self.app.streams.extra_input_patterns[role] = topic
 
     @override
-    def set_output_topic(self, topic_name: str) -> None:
+    def set_output_topic(self, topic_name: TopicName) -> None:
         self.app.streams.output_topic = topic_name
 
     @override
-    def set_error_topic(self, topic_name: str) -> None:
+    def set_error_topic(self, topic_name: TopicName) -> None:
         self.app.streams.error_topic = topic_name
 
     @override
-    def add_extra_output_topic(self, topic_name: str, role: str) -> None:
+    def add_extra_output_topic(self, topic_name: TopicName, role: TopicRole) -> None:
         self.app.streams.extra_output_topics[role] = topic_name
 
     @property

@@ -4,6 +4,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
     KafkaStreamsConfig,
 )
+from kpops.components.base_components.models import TopicName, TopicRole
 from kpops.utils.docstring import describe_attr
 
 
@@ -14,10 +15,10 @@ class ProducerStreamsConfig(KafkaStreamsConfig):
     :param output_topic: Output topic, defaults to None
     """
 
-    extra_output_topics: dict[str, str] = Field(
+    extra_output_topics: dict[TopicRole, TopicName] = Field(
         default={}, description=describe_attr("extra_output_topics", __doc__)
     )
-    output_topic: str | None = Field(
+    output_topic: TopicName | None = Field(
         default=None, description=describe_attr("output_topic", __doc__)
     )
 

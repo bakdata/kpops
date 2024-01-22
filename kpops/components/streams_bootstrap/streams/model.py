@@ -8,6 +8,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
     KafkaStreamsConfig,
 )
+from kpops.components.base_components.models import TopicName, TopicRole
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
@@ -31,25 +32,25 @@ class StreamsConfig(KafkaStreamsConfig):
     :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
     """
 
-    input_topics: list[str] = Field(
+    input_topics: list[TopicName] = Field(
         default=[], description=describe_attr("input_topics", __doc__)
     )
     input_pattern: str | None = Field(
         default=None, description=describe_attr("input_pattern", __doc__)
     )
-    extra_input_topics: dict[str, list[str]] = Field(
+    extra_input_topics: dict[TopicRole, list[TopicName]] = Field(
         default={}, description=describe_attr("extra_input_topics", __doc__)
     )
     extra_input_patterns: dict[str, str] = Field(
         default={}, description=describe_attr("extra_input_patterns", __doc__)
     )
-    extra_output_topics: dict[str, str] = Field(
+    extra_output_topics: dict[TopicRole, TopicName] = Field(
         default={}, description=describe_attr("extra_output_topics", __doc__)
     )
-    output_topic: str | None = Field(
+    output_topic: TopicName | None = Field(
         default=None, description=describe_attr("output_topic", __doc__)
     )
-    error_topic: str | None = Field(
+    error_topic: TopicName | None = Field(
         default=None, description=describe_attr("error_topic", __doc__)
     )
     config: dict[str, Any] = Field(
@@ -59,7 +60,7 @@ class StreamsConfig(KafkaStreamsConfig):
         default=None, description=describe_attr("delete_output", __doc__)
     )
 
-    def add_input_topics(self, topics: list[str]) -> None:
+    def add_input_topics(self, topics: list[TopicName]) -> None:
         """Add given topics to the list of input topics.
 
         Ensures no duplicate topics in the list.
@@ -68,7 +69,7 @@ class StreamsConfig(KafkaStreamsConfig):
         """
         self.input_topics = deduplicate(self.input_topics + topics)
 
-    def add_extra_input_topics(self, role: str, topics: list[str]) -> None:
+    def add_extra_input_topics(self, role: TopicRole, topics: list[TopicName]) -> None:
         """Add given extra topics that share a role to the list of extra input topics.
 
         Ensures no duplicate topics in the list.

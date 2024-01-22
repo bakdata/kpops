@@ -8,6 +8,7 @@ from pydantic import AliasChoices, ConfigDict, Field
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
 )
+from kpops.components.base_components.models import TopicName, TopicRole
 from kpops.components.base_components.models.from_section import (
     FromSection,
     FromTopic,
@@ -72,22 +73,22 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         self.set_output_topics()
 
     @property
-    def input_topics(self) -> list[str]:
+    def input_topics(self) -> list[TopicName]:
         """Get all the input topics from config."""
         return []
 
     @property
-    def extra_input_topics(self) -> dict[str, list[str]]:
+    def extra_input_topics(self) -> dict[TopicRole, list[TopicName]]:
         """Get extra input topics list from config."""
         return {}
 
     @property
-    def output_topic(self) -> str | None:
+    def output_topic(self) -> TopicName | None:
         """Get output topic from config."""
         return None
 
     @property
-    def extra_output_topics(self) -> dict[str, str]:
+    def extra_output_topics(self) -> dict[TopicRole, TopicName]:
         """Get extra output topics list from config."""
         return {}
 
@@ -170,13 +171,13 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
                 self.apply_from_inputs(name, topic)
 
     @property
-    def inputs(self) -> Iterator[str]:
+    def inputs(self) -> Iterator[TopicName]:
         yield from self.input_topics
         for role_topics in self.extra_input_topics.values():
             yield from role_topics
 
     @property
-    def outputs(self) -> Iterator[str]:
+    def outputs(self) -> Iterator[TopicName]:
         if output_topic := self.output_topic:
             yield output_topic
         yield from self.extra_output_topics.values()
