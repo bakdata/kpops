@@ -41,22 +41,18 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
             **self.model_dump(),
         )
 
-    @override
     @property
     def input_topics(self) -> list[str]:
         return self.app.streams.input_topics
 
-    @override
     @property
     def extra_input_topics(self) -> dict[str, list[str]]:
         return self.app.streams.extra_input_topics
 
-    @override
     @property
     def output_topic(self) -> str | None:
         return self.app.streams.output_topic
 
-    @override
     @property
     def extra_output_topics(self) -> dict[str, str]:
         return self.app.streams.extra_output_topics

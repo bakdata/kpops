@@ -240,7 +240,6 @@ class KafkaSinkConnector(KafkaConnector):
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SINK)
 
-    @override
     @property
     def input_topics(self) -> list[str]:
         topics = getattr(self.app, "topics", None)
