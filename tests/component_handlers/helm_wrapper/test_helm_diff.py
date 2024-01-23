@@ -1,11 +1,15 @@
+import logging
 from pathlib import Path
 
 import pytest
+from pytest import LogCaptureFixture
 
 from kpops.component_handlers.helm_wrapper.helm_diff import HelmDiff
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
 from kpops.component_handlers.kubernetes.model import KubernetesManifest
 from kpops.utils.dict_differ import Change
+
+logger = logging.getLogger("TestHelmDiff")
 
 
 class TestHelmDiff:
@@ -62,3 +66,11 @@ class TestHelmDiff:
                 new_value={"a": 1},
             ),
         ]
+
+    def test_log_helm_diff(self, helm_diff: HelmDiff, caplog: LogCaptureFixture):
+        helm_diff.log_helm_diff(
+            logger,
+            (),
+            [HelmTemplate(Path("a.yaml"), KubernetesManifest({"a": 1}))],
+        )
+        assert caplog.messages == ["\n\x1b[32m+ a: 1\n\x1b[0m"]
