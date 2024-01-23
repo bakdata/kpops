@@ -459,11 +459,8 @@ class TestConnectorApiWrapper:
             status_code=409,
         )
 
-        async def delete_connector_locally():
-            await self.connect_wrapper.delete_connector(connector_name)
-
         await timeout(
-            delete_connector_locally(),
+            self.connect_wrapper.delete_connector(connector_name),
             secs=1,
         )
 

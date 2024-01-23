@@ -26,7 +26,7 @@ from kpops.utils.pydantic import issubclass_patched
 try:
     from typing import Self
 except ImportError:
-    from typing_extensions import Self
+    from typing_extensions import Self, override
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
@@ -71,21 +71,25 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         self.set_input_topics()
         self.set_output_topics()
 
+    @override
     @property
     def input_topics(self) -> list[str]:
         """Get all the input topics from config."""
         return []
 
+    @override
     @property
     def extra_input_topics(self) -> dict[str, list[str]]:
         """Get extra input topics list from config."""
         return {}
 
+    @override
     @property
     def output_topic(self) -> str | None:
         """Get output topic from config."""
         return None
 
+    @override
     @property
     def extra_output_topics(self) -> dict[str, str]:
         """Get extra output topics list from config."""
