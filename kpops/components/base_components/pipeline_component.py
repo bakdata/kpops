@@ -71,26 +71,26 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         self.set_input_topics()
         self.set_output_topics()
 
-    @override
     @property
+    @override
     def input_topics(self) -> list[str]:
         """Get all the input topics from config."""
         return []
 
-    @override
     @property
+    @override
     def extra_input_topics(self) -> dict[str, list[str]]:
         """Get extra input topics list from config."""
         return {}
 
-    @override
     @property
+    @override
     def output_topic(self) -> str | None:
         """Get output topic from config."""
         return None
 
-    @override
     @property
+    @override
     def extra_output_topics(self) -> dict[str, str]:
         """Get extra output topics list from config."""
         return {}
