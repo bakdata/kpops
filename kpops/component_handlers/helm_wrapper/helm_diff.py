@@ -48,8 +48,8 @@ class HelmDiff:
     ) -> None:
         for change in self.calculate_changes(current_release, new_release):
             if diff := render_diff(
-                change.old_value,
-                change.new_value,
+                change.old_value.data,
+                change.new_value.data,
                 ignore=self.config.ignore,
             ):
                 logger.info("\n" + diff)
