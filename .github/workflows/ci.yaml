@@ -8,9 +8,6 @@ on:
       - main
   workflow_dispatch:
 
-env:
-  POETRY_REQUESTS_TIMEOUT: 120
-
 jobs:
   test:
     name: Test
@@ -85,9 +82,7 @@ jobs:
   publish-snapshot-version:
     name: Publish snapshot to TestPyPI
     needs: [test]
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@1.40.2
-    with:
-      poetry-version: "1.7.1"
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@main
     secrets:
       pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
 

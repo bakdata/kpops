@@ -3,14 +3,11 @@ on:
   push:
     tags:
       - '*'
-env:
-  POETRY_REQUESTS_TIMEOUT: 120
 
 jobs:
   publish:
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-pypi.yaml@1.40.2
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-pypi.yaml@main
     with:
       publish-to-test: false
-      poetry-version: "1.7.1"
     secrets:
       pypi-token: "${{ secrets.PYPI_TOKEN }}"
