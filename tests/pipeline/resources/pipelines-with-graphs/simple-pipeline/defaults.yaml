@@ -17,7 +17,7 @@ kafka-app:
 streams-app:
   app:
     labels:
-      pipeline: ${pipeline_name}
+      pipeline: ${pipeline.name}
 
 producer-app:
   to:
