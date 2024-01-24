@@ -94,10 +94,10 @@ DRY_RUN: bool = typer.Option(
     help="Whether to dry run the command or execute it",
 )
 
-
 PARALLEL: bool = typer.Option(
     False,
     "--parallel/--no-parallel",
+    rich_help_panel="Note: This feature is still in beta and may not work as expected.",
     help="Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.",
 )
 
