@@ -140,7 +140,7 @@ def load_defaults(
     :returns: Component defaults
     """
     defaults: dict = {}
-    for base in component_class.mro():
+    for base in component_class.mro():  # TODO: (cls, *component_class.parents)
         if issubclass(base, BaseDefaultsComponent):
             component_type = base.type
             if (
