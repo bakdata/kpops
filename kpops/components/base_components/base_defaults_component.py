@@ -38,7 +38,7 @@ log = logging.getLogger("BaseDefaultsComponent")
 class BaseDefaultsComponent(DescConfigModel, ABC):
     """Base for all components, handles defaults.
 
-    Component defaults are usually provided in a yaml file called
+    Component defaults are usually provided in a YAML file called
     `defaults.yaml`. This class ensures that the defaults are read and assigned
     correctly to the component.
 
@@ -172,8 +172,8 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
     :returns: All defaults set for the given component in the provided yaml
 
     :Example:
-
-    kafka_app_defaults = defaults_from_yaml(Path("/path/to/defaults.yaml"), "kafka-app")
+    .. code-block:: python
+        kafka_app_defaults = defaults_from_yaml(Path("/path/to/defaults.yaml"), "kafka-app")
     """
     content = load_yaml_file(path, substitution=ENV)
     if not isinstance(content, dict):
