@@ -1,7 +1,5 @@
-import inspect
 import logging
 from abc import ABC
-from collections import deque
 from collections.abc import Sequence
 from dataclasses import asdict, is_dataclass
 from functools import cached_property
@@ -141,10 +139,8 @@ def load_defaults(
         defaults to None
     :returns: Component defaults
     """
-    classes = deque(inspect.getmro(component_class))
-    classes.appendleft(component_class)
     defaults: dict = {}
-    for base in deduplicate(classes):
+    for base in component_class.mro():
         if issubclass(base, BaseDefaultsComponent):
             component_type = base.type
             if (
