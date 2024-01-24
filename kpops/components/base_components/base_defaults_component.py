@@ -75,12 +75,20 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         exclude=True,
     )
 
-    def __init__(self, **kwargs) -> None:
-        if kwargs.get("enrich", True):
-            kwargs = self.extend_with_defaults(**kwargs)
-        super().__init__(**kwargs)
-        if kwargs.get("validate", True):
-            self._validate_custom(**kwargs)
+    @pydantic.model_validator(mode="before")
+    @classmethod
+    def do_enrich(cls, values: Any) -> dict[str, Any]:
+        if not isinstance(values, dict):
+            return {}
+        if values.get("enrich", True):
+            values = cls.extend_with_defaults(**values)
+        return values
+
+    @pydantic.model_validator(mode="after")
+    def do_validate(self) -> Self:
+        if self.validate_:
+            self._validate_custom()
+        return self
 
     @computed_field
     @cached_classproperty
@@ -121,7 +129,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         )
         return update_nested_pair(kwargs, defaults)
 
-    def _validate_custom(self, **kwargs) -> None:
+    def _validate_custom(self) -> None:
         """Run custom validation on component.
 
         :param kwargs: The init kwargs for the component
