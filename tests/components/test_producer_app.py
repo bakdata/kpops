@@ -312,3 +312,4 @@ class TestProducerApp:
             "first-extra-topic": "extra-topic-1"
         }
         assert producer_app.input_topics == []
+        assert list(producer_app.outputs) == ["${output_topic_name}", "extra-topic-1"]

@@ -120,11 +120,8 @@ class TestConnectorApiWrapper:
             status_code=409,
         )
 
-        async def create_connector_locally():
-            await self.connect_wrapper.create_connector(connector_config)
-
         await timeout(
-            create_connector_locally(),
+            self.connect_wrapper.create_connector(connector_config),
             secs=10,
         )
 
@@ -219,11 +216,8 @@ class TestConnectorApiWrapper:
             status_code=409,
         )
 
-        async def get_connector_locally():
-            return await self.connect_wrapper.get_connector(connector_name)
-
         await timeout(
-            get_connector_locally(),
+            self.connect_wrapper.get_connector(connector_name),
             secs=1,
         )
 
@@ -361,11 +355,8 @@ class TestConnectorApiWrapper:
             status_code=409,
         )
 
-        async def update_connector_locally():
-            await self.connect_wrapper.update_connector_config(connector_config)
-
         await timeout(
-            update_connector_locally(),
+            self.connect_wrapper.update_connector_config(connector_config),
             secs=1,
         )
 

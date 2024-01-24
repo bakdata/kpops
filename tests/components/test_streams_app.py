@@ -523,3 +523,11 @@ class TestStreamsApp:
         }
         assert streams_app.output_topic == "example-output"
         assert streams_app.extra_output_topics == {"fake-role": "extra-topic"}
+        assert list(streams_app.inputs) == [
+            "example-input",
+            "b",
+            "a",
+            "topic-extra2",
+            "topic-extra3",
+            "topic-extra",
+        ]
