@@ -150,7 +150,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             defaults to None
         :returns: Component defaults
         """
-        defaults: dict = {}
+        defaults: dict[str, Any] = {}
         for base in (cls, *cls.parents):
             component_type = base.type
             if (
