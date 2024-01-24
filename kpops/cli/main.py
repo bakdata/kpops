@@ -98,7 +98,7 @@ DRY_RUN: bool = typer.Option(
 PARALLEL: bool = typer.Option(
     False,
     "--parallel/--no-parallel",
-    help="Run the command in parallel",
+    help="Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.",
 )
 
 
