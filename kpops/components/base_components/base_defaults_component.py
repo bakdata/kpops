@@ -92,15 +92,12 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         return to_dash(cls.__name__)
 
     @classmethod
-    def extend_with_defaults(cls, **kwargs: Any) -> dict[str, Any]:
+    def extend_with_defaults(cls, config: KpopsConfig, **kwargs: Any) -> dict[str, Any]:
         """Merge parent components' defaults with own.
 
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inheritted defaults
         """
-        config = kwargs["config"]
-        assert isinstance(config, KpopsConfig)
-
         for k, v in kwargs.items():
             if isinstance(v, pydantic.BaseModel):
                 kwargs[k] = v.model_dump(exclude_unset=True)
@@ -132,7 +129,7 @@ def load_defaults(
     component_class: type[BaseDefaultsComponent],
     defaults_file_path: Path,
     environment_defaults_file_path: Path | None = None,
-) -> dict:
+) -> dict[str, Any]:
     """Resolve component-specific defaults including environment defaults.
 
     :param component_class: Component class

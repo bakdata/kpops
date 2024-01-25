@@ -83,6 +83,9 @@ class Pipeline(RootModel):
             if not predicate(component):
                 self.remove(component)
 
+    def to_json(self) -> str:
+        return self.model_dump_json(by_alias=True, exclude_none=True)
+
     def to_yaml(self) -> str:
         return yaml.dump(self.model_dump(mode="json", by_alias=True, exclude_none=True))
 

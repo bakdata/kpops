@@ -1,3 +1,4 @@
+import json
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -94,6 +95,25 @@ def print_yaml(data: Mapping | str, *, substitution: dict | None = None) -> None
     syntax = Syntax(
         substitute(data, substitution),
         "yaml",
+        background_color="default",
+        theme="ansi_dark",
+    )
+    Console(
+        width=1000  # HACK: overwrite console width to avoid truncating output
+    ).print(syntax)
+
+
+def print_json(data: Mapping | str, *, substitution: dict | None = None) -> None:
+    """Print JSON object with syntax highlighting.
+
+    :param data: JSON document
+    :param substitution: Substitution dictionary, defaults to None
+    """
+    if not isinstance(data, str):
+        data = json.dumps(dict(data))
+    syntax = Syntax(
+        substitute(data, substitution),
+        "json",
         background_color="default",
         theme="ansi_dark",
     )

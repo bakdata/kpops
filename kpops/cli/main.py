@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
+from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
@@ -19,6 +20,10 @@ from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
+from kpops.components.base_components.base_defaults_component import (
+    get_defaults_file_paths,
+    load_defaults,
+)
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline import Pipeline, PipelineGenerator
@@ -29,7 +34,7 @@ from kpops.utils.gen_schema import (
     gen_pipeline_schema,
 )
 from kpops.utils.pydantic import YamlConfigSettingsSource
-from kpops.utils.yaml import print_yaml
+from kpops.utils.yaml import print_json, print_yaml
 
 if TYPE_CHECKING:
     from kpops.components.base_components import PipelineComponent
@@ -99,8 +104,23 @@ FILTER_TYPE: FilterType = typer.Option(
     help="Whether the --steps option should include/exclude the steps",
 )
 
-OUTPUT_OPTION = typer.Option(True, help="Enable output printing")
-VERBOSE_OPTION = typer.Option(False, help="Enable verbose printing")
+
+class OutputFormat(str, Enum):
+    YAML = "yaml"
+    JSON = "json"
+
+    def print(self, data: Mapping | str) -> None:
+        match self:
+            case self.YAML:
+                print_yaml(data)
+            case self.JSON:
+                print_json(data)
+
+
+OUTPUT_OPTION: OutputFormat | None = typer.Option(
+    OutputFormat.YAML, help="Enable output printing"
+)
+VERBOSE_OPTION: bool = typer.Option(False, help="Enable verbose printing")
 
 ENVIRONMENT: str | None = typer.Option(
     default=None,
@@ -197,6 +217,41 @@ def create_kpops_config(
     return kpops_config
 
 
+@app.command()  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+def enrich(
+    component_name: str,
+    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
+    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
+    config: Path = CONFIG_PATH_OPTION,
+    output: Optional[OutputFormat] = OUTPUT_OPTION,
+    environment: Optional[str] = ENVIRONMENT,
+    verbose: bool = VERBOSE_OPTION,
+) -> dict:
+    kpops_config = create_kpops_config(
+        config,
+        defaults,
+        dotenv,
+        environment,
+        verbose,
+    )
+    registry = Registry()
+    if kpops_config.components_module:
+        registry.find_components(kpops_config.components_module)
+    registry.find_components("kpops.components")
+
+    component_cls = registry[component_name]
+
+    defaults_paths = get_defaults_file_paths(kpops_config, environment)
+    data = load_defaults(component_cls, *defaults_paths)
+
+    # or TODO
+    # data = component_cls.extend_with_defaults(config=kpops_config)
+
+    if output:
+        output.print(data)
+    return data
+
+
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
     help="""
     Generate JSON schema.
@@ -244,7 +299,7 @@ def generate(
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    output: bool = OUTPUT_OPTION,
+    output: Optional[OutputFormat] = OUTPUT_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     environment: Optional[str] = ENVIRONMENT,
@@ -274,8 +329,16 @@ def generate(
             return [step.name for step in steps_to_apply]
 
         log.info(f"Filtered pipeline:\n{get_step_names(pipeline.components)}")
+
     if output:
-        print_yaml(pipeline.to_yaml())
+        match output:
+            case OutputFormat.YAML:
+                data = pipeline.to_yaml()
+            case OutputFormat.JSON:
+                data = pipeline.to_json()
+
+        output.print(data)
+
     return pipeline
 
 
@@ -288,7 +351,7 @@ def manifest(
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    output: bool = OUTPUT_OPTION,
+    output: Optional[OutputFormat] = OUTPUT_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     environment: Optional[str] = ENVIRONMENT,
@@ -299,7 +362,7 @@ def manifest(
         dotenv=dotenv,
         defaults=defaults,
         config=config,
-        output=False,
+        output=None,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
@@ -332,7 +395,7 @@ def deploy(
         dotenv=dotenv,
         defaults=defaults,
         config=config,
-        output=False,
+        output=None,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
@@ -360,7 +423,7 @@ def destroy(
         dotenv=dotenv,
         defaults=defaults,
         config=config,
-        output=False,
+        output=None,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
@@ -388,7 +451,7 @@ def reset(
         dotenv=dotenv,
         defaults=defaults,
         config=config,
-        output=False,
+        output=None,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
@@ -417,7 +480,7 @@ def clean(
         dotenv=dotenv,
         defaults=defaults,
         config=config,
-        output=False,
+        output=None,
         steps=steps,
         filter_type=filter_type,
         environment=environment,

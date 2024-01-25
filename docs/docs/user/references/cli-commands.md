@@ -18,6 +18,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `clean`: Clean pipeline steps
 * `deploy`: Deploy pipeline steps
 * `destroy`: Destroy pipeline steps
+* `enrich`
 * `generate`: Generate enriched pipeline representation
 * `manifest`: Render final resource representation
 * `reset`: Reset pipeline steps
@@ -101,6 +102,28 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
 * `--help`: Show this message and exit.
 
+## `kpops enrich`
+
+**Usage**:
+
+```console
+$ kpops enrich [OPTIONS] COMPONENT_NAME
+```
+
+**Arguments**:
+
+* `COMPONENT_NAME`: [required]
+
+**Options**:
+
+* `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
+* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
+* `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
+* `--output [yaml|json]`: Enable output printing  [default: OutputFormat.YAML]
+* `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
+* `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--help`: Show this message and exit.
+
 ## `kpops generate`
 
 Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).
@@ -120,7 +143,7 @@ $ kpops generate [OPTIONS] PIPELINE_PATH
 * `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
-* `--output / --no-output`: Enable output printing  [default: output]
+* `--output [yaml|json]`: Enable output printing  [default: OutputFormat.YAML]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]
 * `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
@@ -146,7 +169,7 @@ $ kpops manifest [OPTIONS] PIPELINE_PATH
 * `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
 * `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
-* `--output / --no-output`: Enable output printing  [default: output]
+* `--output [yaml|json]`: Enable output printing  [default: OutputFormat.YAML]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]
 * `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
