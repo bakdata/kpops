@@ -114,8 +114,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inheritted defaults
         """
-        config = kwargs["config"]
-        assert isinstance(config, KpopsConfig)
+        config: KpopsConfig = kwargs["config"]
 
         for k, v in kwargs.items():
             if isinstance(v, pydantic.BaseModel):
