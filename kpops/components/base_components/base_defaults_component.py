@@ -145,16 +145,14 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         """
         defaults: dict[str, Any] = {}
         for base in (cls, *cls.parents):
-            component_type = base.type
-            args = []
-            for fp in reversed(defaults_file_path):
-                if not fp.exists():
-                    continue
-
-                args.append(defaults_from_yaml(fp, component_type))
+            component_type: str = base.type
             defaults = update_nested(
                 defaults,
-                *args,
+                *(
+                    defaults_from_yaml(path, component_type)
+                    for path in reversed(defaults_file_path)
+                    if path.exists()
+                ),
             )
         return defaults
 
