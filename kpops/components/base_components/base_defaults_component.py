@@ -108,14 +108,14 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         return tuple(gen_parents())
 
     @classmethod
-    def extend_with_defaults(cls, **kwargs: Any) -> dict[str, Any]:
+    def extend_with_defaults(cls, config: KpopsConfig, **kwargs: Any) -> dict[str, Any]:
         """Merge parent components' defaults with own.
 
+        :param config: KPOps configuration
         :param kwargs: The init kwargs for pydantic
-        :returns: Enriched kwargs with inheritted defaults
+        :returns: Enriched kwargs with inherited defaults
         """
-        config: KpopsConfig = kwargs["config"]
-
+        kwargs["config"] = config
         for k, v in kwargs.items():
             if isinstance(v, pydantic.BaseModel):
                 kwargs[k] = v.model_dump(exclude_unset=True)
