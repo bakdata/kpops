@@ -137,35 +137,25 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         return update_nested_pair(kwargs, defaults)
 
     @classmethod
-    def load_defaults(
-        cls,
-        defaults_file_path: Path,
-        environment_defaults_file_path: Path | None = None,
-    ) -> dict[str, Any]:
+    def load_defaults(cls, *defaults_file_path: Path) -> dict[str, Any]:
         """Resolve component-specific defaults including environment defaults.
 
-        :param defaults_file_path: Path to `defaults.yaml`
-        :param environment_defaults_file_path: Path to `defaults_{environment}.yaml`,
-            defaults to None
+        :param *defaults_file_path: Path to `defaults.yaml`, ordered from lowest to highest priority, i.e. `defaults.yaml`, `defaults_{environment}`.yaml
         :returns: Component defaults
         """
         defaults: dict[str, Any] = {}
         for base in (cls, *cls.parents):
             component_type = base.type
-            if (
-                not environment_defaults_file_path
-                or not environment_defaults_file_path.exists()
-            ):
-                defaults = update_nested(
-                    defaults,
-                    defaults_from_yaml(defaults_file_path, component_type),
-                )
-            else:
-                defaults = update_nested(
-                    defaults,
-                    defaults_from_yaml(environment_defaults_file_path, component_type),
-                    defaults_from_yaml(defaults_file_path, component_type),
-                )
+            args = []
+            for fp in reversed(defaults_file_path):
+                if not fp.exists():
+                    continue
+
+                args.append(defaults_from_yaml(fp, component_type))
+            defaults = update_nested(
+                defaults,
+                *args,
+            )
         return defaults
 
     def _validate_custom(self, **kwargs) -> None:
