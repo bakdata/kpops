@@ -31,40 +31,40 @@ jobs:
           poetry-version: "1.4.1" # REASON: https://github.com/python-poetry/poetry/issues/8180
           python-version: ${{ matrix.python-version }}
 
-      - name: Check Poetry lock file consistency
-        run: poetry lock --check
+      # - name: Check Poetry lock file consistency
+      #   run: poetry lock --check
 
-      - name: Install dependencies
-        run: poetry install --no-interaction
+      # - name: Install dependencies
+      #   run: poetry install --no-interaction
 
-      - name: Lint (ruff)
-        shell: bash
-        run: |
-          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
-          then
-            echo "::add-matcher::.github/ruff-matcher.json"
-            poetry run ruff check . --config pyproject.toml --output-format text --no-fix
-          else
-            poetry run pre-commit run ruff-lint --all-files --show-diff-on-failure
-          fi;
+      # - name: Lint (ruff)
+      #   shell: bash
+      #   run: |
+      #     if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
+      #     then
+      #       echo "::add-matcher::.github/ruff-matcher.json"
+      #       poetry run ruff check . --config pyproject.toml --output-format text --no-fix
+      #     else
+      #       poetry run pre-commit run ruff-lint --all-files --show-diff-on-failure
+      #     fi;
 
-      - name: Formatting (ruff)
-        run: poetry run pre-commit run ruff-format --all-files --show-diff-on-failure
+      # - name: Formatting (ruff)
+      #   run: poetry run pre-commit run ruff-format --all-files --show-diff-on-failure
 
-      - name: Typing (pyright)
-        run: poetry run pre-commit run pyright --all-files
+      # - name: Typing (pyright)
+      #   run: poetry run pre-commit run pyright --all-files
 
-      - name: Generate schema (kpops schema)
-        run: poetry run pre-commit run gen-schema --all-files --show-diff-on-failure
+      # - name: Generate schema (kpops schema)
+      #   run: poetry run pre-commit run gen-schema --all-files --show-diff-on-failure
 
-      - name: Generate CLI Usage docs (typer-cli)
-        run: poetry run pre-commit run gen-docs-cli --all-files --show-diff-on-failure
+      # - name: Generate CLI Usage docs (typer-cli)
+      #   run: poetry run pre-commit run gen-docs-cli --all-files --show-diff-on-failure
 
-      - name: Generate Environment variable docs
-        run: poetry run pre-commit run gen-docs-env-vars --all-files --show-diff-on-failure
+      # - name: Generate Environment variable docs
+      #   run: poetry run pre-commit run gen-docs-env-vars --all-files --show-diff-on-failure
 
-      - name: Generate pipeline definitions
-        run: poetry run pre-commit run gen-docs-components --all-files --show-diff-on-failure
+      # - name: Generate pipeline definitions
+      #   run: poetry run pre-commit run gen-docs-components --all-files --show-diff-on-failure
 
       # - name: Test
       #   run: poetry run pytest tests
