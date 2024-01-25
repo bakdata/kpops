@@ -34,11 +34,12 @@ class TestDryRunHandler:
         caplog: LogCaptureFixture,
     ):
         helm_mock.get_manifest.return_value = iter(())
+        new_release = iter(
+            [HelmTemplate(Path("path.yaml"), KubernetesManifest({"a": 1}))]
+        )
         mock_load_manifest = mocker.patch(
             "kpops.component_handlers.helm_wrapper.dry_run_handler.Helm.load_manifest",
-            return_value=iter(
-                [HelmTemplate(Path("path.yaml"), KubernetesManifest({"a": 1}))]
-            ),
+            return_value=new_release,
         )
         log.addHandler(caplog.handler)
 
@@ -50,6 +51,7 @@ class TestDryRunHandler:
         )
         assert "Helm release a-release-name does not exist" in caplog.text
         mock_load_manifest.assert_called_once_with("A test stdout")
+        helm_diff_mock.log_helm_diff.assert_called_once_with(log, [], new_release)
 
     def test_should_print_helm_diff_when_release_exists(
         self,
@@ -58,14 +60,17 @@ class TestDryRunHandler:
         mocker: MockerFixture,
         caplog: LogCaptureFixture,
     ):
-        helm_mock.get_manifest.return_value = iter(
+        current_release = [
+            HelmTemplate(Path("path.yaml"), KubernetesManifest({"a": 1}))
+        ]
+
+        helm_mock.get_manifest.return_value = iter(current_release)
+        new_release = iter(
             [HelmTemplate(Path("path.yaml"), KubernetesManifest({"a": 1}))]
         )
         mock_load_manifest = mocker.patch(
             "kpops.component_handlers.helm_wrapper.dry_run_handler.Helm.load_manifest",
-            return_value=iter(
-                [HelmTemplate(Path("path.yaml"), KubernetesManifest({"a": 1}))]
-            ),
+            return_value=iter(new_release),
         )
         log.addHandler(caplog.handler)
 
@@ -77,3 +82,6 @@ class TestDryRunHandler:
         )
         assert "Helm release a-release-name already exists" in caplog.text
         mock_load_manifest.assert_called_once_with("A test stdout")
+        helm_diff_mock.log_helm_diff.assert_called_once_with(
+            log, current_release, new_release
+        )
