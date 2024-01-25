@@ -137,10 +137,10 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         return update_nested_pair(kwargs, defaults)
 
     @classmethod
-    def load_defaults(cls, *defaults_file_path: Path) -> dict[str, Any]:
+    def load_defaults(cls, *defaults_file_paths: Path) -> dict[str, Any]:
         """Resolve component-specific defaults including environment defaults.
 
-        :param *defaults_file_path: Path to `defaults.yaml`, ordered from lowest to highest priority, i.e. `defaults.yaml`, `defaults_{environment}`.yaml
+        :param *defaults_file_paths: Path to `defaults.yaml`, ordered from lowest to highest priority, i.e. `defaults.yaml`, `defaults_{environment}`.yaml
         :returns: Component defaults
         """
         defaults: dict[str, Any] = {}
@@ -150,7 +150,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
                 defaults,
                 *(
                     defaults_from_yaml(path, component_type)
-                    for path in reversed(defaults_file_path)
+                    for path in reversed(defaults_file_paths)
                     if path.exists()
                 ),
             )
