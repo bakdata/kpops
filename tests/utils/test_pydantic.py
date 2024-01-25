@@ -28,7 +28,7 @@ def test_to_dash(input: str, expected: str):
         ("ExampleACRONYMComponent", "example_acronym_component"),
         ("ComponentWithACRONYM", "component_with_acronym"),
         ("ComponentWithDIGIT00", "component_with_digit00"),
-        ("S3Test", "s3_test"),
+        ("S3Test", "s3_test"),  # NOTE: this one fails with Pydantic's to_snake util
     ],
 )
 def test_to_snake(input: str, expected: str):
