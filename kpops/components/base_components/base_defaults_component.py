@@ -142,7 +142,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         cls,
         defaults_file_path: Path,
         environment_defaults_file_path: Path | None = None,
-    ) -> dict:
+    ) -> dict[str, Any]:
         """Resolve component-specific defaults including environment defaults.
 
         :param defaults_file_path: Path to `defaults.yaml`
