@@ -82,7 +82,7 @@ jobs:
   publish-snapshot-version:
     name: Publish snapshot to TestPyPI
     needs: [test]
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@main
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@test/python-poetry-snapshot
     secrets:
       pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
 
