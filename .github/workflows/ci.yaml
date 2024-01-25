@@ -128,3 +128,5 @@ jobs:
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}
           version: dev
+
+          
