@@ -28,7 +28,7 @@ jobs:
       - name: Install Python and set up Poetry
         uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.3
         with:
-          poetry-version: "1.4.1" # REASON: https://github.com/python-poetry/poetry/issues/8180
+          poetry-version: "1.7.1" # REASON: https://github.com/python-poetry/poetry/issues/8180
           python-version: ${{ matrix.python-version }}
 
       - name: Check Poetry lock file consistency
@@ -83,6 +83,8 @@ jobs:
     name: Publish snapshot to TestPyPI
     needs: [test]
     uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@1.40.4
+    with:
+      poetry-version: "1.7.1"
     secrets:
       pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
 
