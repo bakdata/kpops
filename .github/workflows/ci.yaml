@@ -82,7 +82,7 @@ jobs:
   publish-snapshot-version:
     name: Publish snapshot to TestPyPI
     needs: [test]
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@test/python-poetry-snapshot
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@1.40.4
     secrets:
       pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
 
@@ -91,7 +91,7 @@ jobs:
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: [test]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Publish docs from main branch
         uses: ./.github/actions/update-docs
@@ -106,7 +106,7 @@ jobs:
     if: ${{ github.event_name == 'pull_request' }}
     needs: [test]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
 
