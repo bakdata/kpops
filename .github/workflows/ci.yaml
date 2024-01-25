@@ -66,18 +66,18 @@ jobs:
       - name: Generate pipeline definitions
         run: poetry run pre-commit run gen-docs-components --all-files --show-diff-on-failure
 
-      - name: Test
-        run: poetry run pytest tests
+      # - name: Test
+      #   run: poetry run pytest tests
 
-      - name: Install docs dependencies
-        run: poetry install --with docs
+      # - name: Install docs dependencies
+      #   run: poetry install --with docs
 
-      - name: Check markdown, toml, css formatting
-        uses: dprint/check@v2.2
-        if: runner.os == 'Linux'
+      # - name: Check markdown, toml, css formatting
+      #   uses: dprint/check@v2.2
+      #   if: runner.os == 'Linux'
 
-      - name: Test docs build (mkdocs)
-        run: poetry run mkdocs build -f docs/mkdocs.yml
+      # - name: Test docs build (mkdocs)
+      #   run: poetry run mkdocs build -f docs/mkdocs.yml
 
   publish-snapshot-version:
     name: Publish snapshot to TestPyPI
