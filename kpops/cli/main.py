@@ -22,6 +22,7 @@ from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline import Pipeline, PipelineGenerator
+from kpops.utils.cli_commands import create_config, create_defaults, create_pipeline
 from kpops.utils.gen_schema import (
     SchemaScope,
     gen_config_schema,
@@ -231,7 +232,7 @@ def create_kpops_config(
     YamlConfigSettingsSource.config_dir = config
     YamlConfigSettingsSource.environment = environment
     kpops_config = KpopsConfig(
-        _env_file=dotenv  # pyright: ignore[reportGeneralTypeIssues]
+        _env_file=dotenv  # type: ignore[reportGeneralTypeIssues]
     )
     if defaults:
         kpops_config.defaults_path = defaults
@@ -240,7 +241,7 @@ def create_kpops_config(
     return kpops_config
 
 
-@app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
     help="Create a new a KPOps project."
 )
 def init(
@@ -256,9 +257,12 @@ def init(
     pipeline_name = "pipeline"
     defaults_name = "defaults"
     config_name = "config"
+    create_pipeline(pipeline_name + ".yaml", path)
+    create_defaults(defaults_name + ".yaml", path)
+    create_config(config_name + ".yaml", path)
 
 
-@app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
     help="""
     Generate JSON schema.
 
@@ -296,7 +300,7 @@ def schema(
             gen_config_schema()
 
 
-@app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
     short_help="Generate enriched pipeline representation",
     help="Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).",
 )
@@ -322,7 +326,7 @@ def generate(
     return pipeline
 
 
-@app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
     short_help="Render final resource representation",
     help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.",
 )
@@ -357,7 +361,7 @@ def manifest(
     return resources
 
 
-@app.command(help="Deploy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Deploy pipeline steps")  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def deploy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
@@ -384,7 +388,7 @@ def deploy(
         component.deploy(dry_run)
 
 
-@app.command(help="Destroy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Destroy pipeline steps")  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def destroy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
@@ -410,7 +414,7 @@ def destroy(
         component.destroy(dry_run)
 
 
-@app.command(help="Reset pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Reset pipeline steps")  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def reset(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
@@ -437,7 +441,7 @@ def reset(
         component.reset(dry_run)
 
 
-@app.command(help="Clean pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Clean pipeline steps")  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
 def clean(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,

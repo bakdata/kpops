@@ -43,16 +43,15 @@ def create_config(file_name: str, dir_path: Path) -> None:
     file_path = touch_yaml_file(file_name, dir_path)
     with file_path.open(mode="w") as conf:
         conf.write("# " + describe_object(KpopsConfig.__doc__))  # Write title
-        conf.write("\n" * 2)
         non_required = extract_config_fields_for_yaml(
             collect_fields(KpopsConfig), False
         )
         required = extract_config_fields_for_yaml(collect_fields(KpopsConfig), True)
         for k in non_required:
             required.pop(k, None)
-        conf.write("# Required fields\n")
+        conf.write("\n\n# Required fields\n")
         conf.write(yaml.dump(required))
-        conf.write("#\n# Non-required fields\n")
+        conf.write("\n# Non-required fields\n")
         conf.write(yaml.dump(non_required))
 
 
