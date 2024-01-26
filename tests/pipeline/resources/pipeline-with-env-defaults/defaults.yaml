@@ -10,6 +10,7 @@ kafka-app:
 producer-app: {} # inherits from kafka-app
 
 streams-app: # inherits from kafka-app
+  version: 2.9.0
   app:
     streams:
       config:

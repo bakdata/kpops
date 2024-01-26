@@ -1,4 +1,3 @@
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -14,18 +13,22 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.config import KpopsConfig
+from kpops.pipeline import PIPELINE_PATH
 from kpops.utils.colorify import magentaify
-
-DEFAULTS_PATH = Path(__file__).parent / "resources"
+from kpops.utils.environment import ENV
+from tests.components.test_base_defaults_component import (
+    PIPELINE_BASE_DIR,
+    RESOURCES_PATH,
+)
 
 
 @pytest.mark.usefixtures("mock_env")
 class TestHelmApp:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
+        ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipeline.yaml")
         return KpopsConfig(
-            defaults_path=DEFAULTS_PATH,
-            helm_diff_config=HelmDiffConfig(),
+            helm_diff_config=HelmDiffConfig(), pipeline_base_dir=PIPELINE_BASE_DIR
         )
 
     @pytest.fixture()

@@ -26,11 +26,10 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.colorify import greenify, magentaify
+from tests.component_handlers.topic import RESOURCES_PATH
 
 log = logging.getLogger()
 log.level = logging.DEBUG
-
-DEFAULTS_PATH = Path(__file__).parent.parent / "resources"
 
 
 class TestTopicHandler:
@@ -53,17 +52,17 @@ class TestTopicHandler:
     @pytest_asyncio.fixture(autouse=True)
     async def get_topic_response_mock(self) -> MagicMock:
         with Path(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses/get_topic_response.json",
+            RESOURCES_PATH / "kafka_rest_proxy_responses/get_topic_response.json",
         ).open() as f:
             response = json.load(f)
 
         with Path(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses/broker_response.json",
+            RESOURCES_PATH / "kafka_rest_proxy_responses/broker_response.json",
         ).open() as f:
             broker_response = json.load(f)
 
         with Path(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses/topic_config_response.json",
+            RESOURCES_PATH / "kafka_rest_proxy_responses/topic_config_response.json",
         ).open() as f:
             response_topic_config = json.load(f)
 
@@ -78,13 +77,13 @@ class TestTopicHandler:
     @pytest_asyncio.fixture(autouse=True)
     async def get_default_topic_response_mock(self) -> MagicMock:
         with Path(
-            DEFAULTS_PATH
+            RESOURCES_PATH
             / "kafka_rest_proxy_responses/get_default_topic_response.json",
         ).open() as f:
             response = json.load(f)
 
         with Path(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses/broker_response.json",
+            RESOURCES_PATH / "kafka_rest_proxy_responses/broker_response.json",
         ).open() as f:
             broker_response = json.load(f)
 

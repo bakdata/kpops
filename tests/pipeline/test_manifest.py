@@ -39,8 +39,6 @@ class TestManifest:
             [
                 "manifest",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH / "no-topics-defaults"),
                 "--environment",
                 "development",
             ],
@@ -71,8 +69,6 @@ class TestManifest:
             [
                 "manifest",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH / "no-topics-defaults"),
                 "--config",
                 str(RESOURCE_PATH / "custom-config"),
                 "--environment",
@@ -104,7 +100,6 @@ class TestManifest:
     def test_python_api(self, snapshot: SnapshotTest):
         resources = kpops.manifest(
             RESOURCE_PATH / "custom-config/pipeline.yaml",
-            defaults=RESOURCE_PATH / "no-topics-defaults",
             output=False,
             environment="development",
         )

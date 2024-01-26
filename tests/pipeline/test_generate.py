@@ -28,7 +28,6 @@ class TestGenerate:
     def test_python_api(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            defaults=RESOURCE_PATH,
             output=False,
         )
         assert len(pipeline) == 3
@@ -72,8 +71,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "first-pipeline/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
@@ -90,8 +87,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "name_prefix_concatenation/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
@@ -103,14 +98,12 @@ class TestGenerate:
         assert enriched_pipeline[0]["prefix"] == "my-fake-prefix-"
         assert enriched_pipeline[0]["name"] == "my-streams-app"
 
-    def test_pipelines_with_env_values(self, snapshot: SnapshotTest):
+    def test_pipelines_with_envs(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
                 "generate",
                 str(RESOURCE_PATH / "pipeline-with-envs/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
                 "--environment",
                 "development",
             ],
@@ -128,8 +121,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "pipeline-with-inflate/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
@@ -145,8 +136,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "component-type-substitution/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
@@ -193,8 +182,6 @@ class TestGenerate:
                         RESOURCE_PATH
                         / "component-type-substitution/infinite_pipeline.yaml",
                     ),
-                    "--defaults",
-                    str(RESOURCE_PATH),
                 ],
                 catch_exceptions=False,
             )
@@ -205,8 +192,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "kafka-connect-sink-config/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
                 "--config",
                 str(RESOURCE_PATH / "kafka-connect-sink-config"),
             ],
@@ -225,8 +210,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "no-input-topic-pipeline/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
@@ -242,8 +225,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "no-user-defined-components/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
@@ -260,8 +241,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "kafka-connect-sink/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
@@ -277,8 +256,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "read-from-component/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
@@ -293,11 +270,31 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "kafka-connect-sink/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH / "pipeline-with-env-defaults"),
+                str(RESOURCE_PATH / "pipeline-with-env-defaults/pipeline.yaml"),
                 "--environment",
                 "development",
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0, result.stdout
+
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+
+    def test_with_env_all_resources(self, snapshot: SnapshotTest):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "pipeline-with-all-env/pipeline/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH / "pipeline-with-all-env/defaults"),
+                "--config",
+                str(RESOURCE_PATH / "pipeline-with-all-env/configs"),
+                "--environment",
+                "development",
+                "--verbose",
             ],
             catch_exceptions=False,
         )
@@ -316,8 +313,6 @@ class TestGenerate:
                     RESOURCE_PATH
                     / "pipeline-component-should-have-prefix/pipeline.yaml",
                 ),
-                "--defaults",
-                str(RESOURCE_PATH / "pipeline-component-should-have-prefix"),
             ],
             catch_exceptions=False,
         )
@@ -410,8 +405,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH / "no-topics-defaults"),
                 "--environment",
                 "development",
             ],
@@ -488,8 +481,6 @@ class TestGenerate:
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
                 config_path,
-                "--defaults",
-                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
@@ -522,8 +513,6 @@ class TestGenerate:
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
                 config_path,
-                "--defaults",
-                str(RESOURCE_PATH),
                 "--environment",
                 "production",
             ],
@@ -543,8 +532,6 @@ class TestGenerate:
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
                 "--config",
                 "./non-existent-dir",
-                "--defaults",
-                str(RESOURCE_PATH),
                 "--environment",
                 "production",
             ],
@@ -559,8 +546,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "pipeline-with-paths/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )
@@ -576,8 +561,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
                 "--config",
                 str(RESOURCE_PATH / "dotenv"),
                 "--dotenv",
@@ -601,8 +584,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "pipeline-with-short-topics/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH / "pipeline-with-short-topics"),
             ],
             catch_exceptions=False,
         )
@@ -655,8 +636,6 @@ class TestGenerate:
                         RESOURCE_PATH
                         / "pipeline-with-illegal-kubernetes-name/pipeline.yaml",
                     ),
-                    "--defaults",
-                    str(RESOURCE_PATH),
                 ],
                 catch_exceptions=False,
             )
@@ -674,8 +653,6 @@ class TestGenerate:
                 [
                     "generate",
                     str(RESOURCE_PATH / "pipeline-duplicate-step-names/pipeline.yaml"),
-                    "--defaults",
-                    str(RESOURCE_PATH),
                 ],
                 catch_exceptions=False,
             )
@@ -838,8 +815,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "temp-trim-release-name/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH / "temp-trim-release-name"),
             ],
             catch_exceptions=False,
         )

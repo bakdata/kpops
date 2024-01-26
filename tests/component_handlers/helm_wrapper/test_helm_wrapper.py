@@ -20,8 +20,6 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.components.streams_bootstrap.app_type import AppType
 
-DEFAULTS_PATH = Path(__file__).parent / "resources"
-
 
 class TestHelmWrapper:
     @pytest.fixture(autouse=True)

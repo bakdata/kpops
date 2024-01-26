@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import importlib
 import inspect
+import logging
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -20,6 +21,7 @@ T = TypeVar("T")
 ClassDict = dict[str, type[T]]  # type -> class
 
 sys.path.append(str(Path.cwd()))
+log = logging.getLogger("Registry")
 
 
 @dataclass
@@ -53,11 +55,20 @@ def find_class(module_name: str, baseclass: type[T]) -> type[T]:
 
 def _find_classes(module_name: str, baseclass: type[T]) -> Iterator[type[T]]:
     module = importlib.import_module(module_name)
+    if module.__file__ and not module_name.startswith(KPOPS_MODULE):
+        file_path = Path(module.__file__)
+        log.debug(
+            f"Picked up: {file_path.resolve().relative_to(file_path.resolve().parents[1])}"
+        )
     for _, _class in inspect.getmembers(module, inspect.isclass):
-        if issubclass(_class, baseclass):
-            # filter out internal kpops classes unless specifically requested
-            if _class.__module__.startswith(
-                KPOPS_MODULE
-            ) and not module_name.startswith(KPOPS_MODULE):
-                continue
+        if not __is_kpops_module(_class.__module__, module_name) and issubclass(
+            _class, baseclass
+        ):
             yield _class
+
+
+def __is_kpops_module(class_module: str, module_name: str) -> bool:
+    # filter out internal kpops classes and components unless specifically requested
+    return class_module.startswith(KPOPS_MODULE) and not module_name.startswith(
+        KPOPS_MODULE
+    )

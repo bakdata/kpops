@@ -20,6 +20,8 @@ from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.environment import ENV
 from kpops.utils.yaml import load_yaml_file
 
+PIPELINE_PATH = "pipeline_path"
+
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Coroutine, Iterator
     from pathlib import Path
@@ -96,7 +98,7 @@ class Pipeline(BaseModel):
             if not predicate(component):
                 self.remove(component.id)
 
-    def validate(self) -> None:
+    def validate(self) -> None:  # pyright: ignore [reportIncompatibleMethodOverride]
         self.__validate_graph()
 
     def to_yaml(self) -> str:
@@ -151,7 +153,7 @@ class Pipeline(BaseModel):
     def __bool__(self) -> bool:
         return bool(self._component_index)
 
-    def __iter__(self) -> Iterator[PipelineComponent]:
+    def __iter__(self) -> Iterator[PipelineComponent]:  # pyright: ignore [reportIncompatibleMethodOverride]
         yield from self._component_index.values()
 
     def __len__(self) -> int:
@@ -246,6 +248,7 @@ class PipelineGenerator:
             self.config.pipeline_base_dir, path
         )
         PipelineGenerator.set_environment_name(environment)
+        PipelineGenerator.set_pipeline_path(path)
 
         main_content = load_yaml_file(path, substitution=ENV)
         if not isinstance(main_content, list):
@@ -384,7 +387,9 @@ class PipelineGenerator:
         return pipeline_path.with_stem(f"{pipeline_path.stem}_{environment}")
 
     @staticmethod
-    def set_pipeline_name_env_vars(base_dir: Path, path: Path) -> None:
+    def set_pipeline_name_env_vars(
+        pipeline_base_dir: Path, pipeline_path: Path
+    ) -> None:
         """Set the environment variable pipeline_name relative to the given base_dir.
 
         Moreover, for each sub-path an environment variable is set.
@@ -396,10 +401,12 @@ class PipelineGenerator:
             pipeline.name_1 = v1
             pipeline.name_2 = dev
 
-        :param base_dir: Base directory to the pipeline files
-        :param path: Path to pipeline.yaml file
+        :param pipeline_base_dir: Base directory to the pipeline files
+        :param pipeline_path: Path to pipeline.yaml file
         """
-        path_without_file = path.resolve().relative_to(base_dir.resolve()).parts[:-1]
+        path_without_file = (
+            pipeline_path.resolve().relative_to(pipeline_base_dir.resolve()).parts[:-1]
+        )
         if not path_without_file:
             msg = "The pipeline-base-dir should not equal the pipeline-path"
             raise ValueError(msg)
@@ -419,3 +426,7 @@ class PipelineGenerator:
         """
         if environment is not None:
             ENV["environment"] = environment
+
+    @staticmethod
+    def set_pipeline_path(path: Path):
+        ENV[PIPELINE_PATH] = str(path.resolve())

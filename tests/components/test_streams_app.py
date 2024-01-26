@@ -20,8 +20,11 @@ from kpops.components.base_components.models.to_section import (
 from kpops.components.streams_bootstrap.streams.model import StreamsAppAutoScaling
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
 from kpops.config import KpopsConfig, TopicNameConfig
+from kpops.pipeline import PIPELINE_PATH
+from kpops.utils.environment import ENV
+from tests.components import PIPELINE_BASE_DIR
 
-DEFAULTS_PATH = Path(__file__).parent / "resources"
+RESOURCES_PATH = Path(__file__).parent / "resources"
 
 STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
 STREAMS_APP_FULL_NAME = "${pipeline.name}-" + STREAMS_APP_NAME
@@ -47,13 +50,14 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def config(self) -> KpopsConfig:
+        ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipeline.yaml")
         return KpopsConfig(
-            defaults_path=DEFAULTS_PATH,
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component.type}-error-topic",
                 default_output_topic_name="${component.type}-output-topic",
             ),
             helm_diff_config=HelmDiffConfig(),
+            pipeline_base_dir=PIPELINE_BASE_DIR,
         )
 
     @pytest.fixture()
@@ -432,8 +436,6 @@ class TestStreamsApp:
                     STREAMS_APP_CLEAN_RELEASE_NAME,
                     dry_run,
                 ),
-                ANY,  # __bool__
-                ANY,  # __str__
             ]
         )
 
@@ -488,8 +490,6 @@ class TestStreamsApp:
                     STREAMS_APP_CLEAN_RELEASE_NAME,
                     dry_run,
                 ),
-                ANY,  # __bool__
-                ANY,  # __str__
             ]
         )
 

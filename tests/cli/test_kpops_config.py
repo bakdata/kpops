@@ -1,5 +1,3 @@
-from pathlib import Path
-
 import pytest
 from pydantic import AnyHttpUrl, TypeAdapter, ValidationError
 
@@ -14,7 +12,6 @@ from kpops.config import (
 def test_kpops_config_with_default_values():
     default_config = KpopsConfig(kafka_brokers="http://broker:9092")
 
-    assert default_config.defaults_path == Path()
     assert default_config.defaults_filename_prefix == "defaults"
     assert (
         default_config.topic_name_config.default_output_topic_name
