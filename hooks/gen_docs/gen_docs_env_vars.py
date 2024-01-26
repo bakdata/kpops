@@ -25,7 +25,7 @@ from hooks import ROOT
 from hooks.gen_docs import IterableStrEnum
 from kpops.cli import main
 from kpops.config import KpopsConfig
-from kpops.utils.pydantic import patched_issubclass_of_basemodel
+from kpops.utils.pydantic import issubclass_patched
 
 PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
 PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
@@ -33,10 +33,10 @@ PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
 PATH_CONFIG_ENV_VARS_DOTENV_FILE = PATH_DOCS_VARIABLES / "config_env_vars.env"
 PATH_CONFIG_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "config_env_vars.md"
 PATH_CONFIG_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_config_env_vars.csv"
-TITLE_CONFIG_ENV_VARS = "Pipeline config environment variables"
+TITLE_CONFIG_ENV_VARS = "Global config environment variables"
 DESCRIPTION_CONFIG_ENV_VARS = (
     "These variables are a lower priority alternative to the settings in `config.yaml`. "
-    "Variables marked as required can instead be set in the pipeline config."
+    "Variables marked as required can instead be set in the global config."
 )
 
 PATH_CLI_ENV_VARS_DOTFILES_FILE = PATH_DOCS_VARIABLES / "cli_env_vars.env"
@@ -286,9 +286,7 @@ def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
     """
     seen_fields = {}
     for field_name, field_value in model.model_fields.items():
-        if field_value.annotation and patched_issubclass_of_basemodel(
-            field_value.annotation
-        ):
+        if field_value.annotation and issubclass_patched(field_value.annotation):
             seen_fields[field_name] = collect_fields(field_value.annotation)
         else:
             seen_fields[field_name] = field_value

@@ -95,7 +95,9 @@ def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str,
     }
 
 
-def patched_issubclass_of_basemodel(cls):
+def issubclass_patched(
+    __cls: type, __class_or_tuple: type | tuple[type, ...] = BaseModel
+) -> bool:
     """Pydantic breaks ``issubclass``.
 
     ``issubclass(set[str], set)  # True``
@@ -103,10 +105,11 @@ def patched_issubclass_of_basemodel(cls):
     ``issubclass(set[str], BaseModel)  # raises exception``
 
     :param cls: class to check
-    :return: Whether cls is subclass of ``BaseModel``
+    :base: class(es) to check against, defaults to ``BaseModel``
+    :return: Whether 'cls' is derived from another class or is the same class.
     """
     try:
-        return issubclass(cls, BaseModel)
+        return issubclass(__cls, __class_or_tuple)
     except TypeError as e:
         if str(e) == "issubclass() arg 1 must be a class":
             return False

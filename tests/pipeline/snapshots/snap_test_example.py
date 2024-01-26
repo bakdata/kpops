@@ -10,10 +10,11 @@ snapshots = Snapshot()
 snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
     {
         'app': {
-            'debug': True,
             'image': '${DOCKER_REGISTRY}/atm-demo-accountproducer',
             'imageTag': '1.0.0',
-            'nameOverride': 'account-producer',
+            'labels': {
+                'pipeline': 'atm-fraud'
+            },
             'prometheus': {
                 'jmx': {
                     'enabled': False
@@ -26,14 +27,15 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'extraOutputTopics': {
                 },
                 'optimizeLeaveGroupBehavior': False,
-                'outputTopic': 'bakdata-atm-fraud-detection-account-producer-topic',
+                'outputTopic': 'atm-fraud-account-producer-topic',
                 'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
             },
             'suspend': True
         },
+        'debug': True,
         'name': 'account-producer',
         'namespace': '${NAMESPACE}',
-        'prefix': '',
+        'prefix': 'atm-fraud-',
         'repo_config': {
             'repo_auth_flags': {
                 'insecure_skip_tls_verify': False
@@ -45,7 +47,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'models': {
             },
             'topics': {
-                'bakdata-atm-fraud-detection-account-producer-topic': {
+                'atm-fraud-account-producer-topic': {
                     'configs': {
                     },
                     'partitions_count': 3
@@ -61,10 +63,11 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'ITERATION': 20,
                 'REAL_TX': 19
             },
-            'debug': True,
             'image': '${DOCKER_REGISTRY}/atm-demo-transactionavroproducer',
             'imageTag': '1.0.0',
-            'nameOverride': 'transaction-avro-producer',
+            'labels': {
+                'pipeline': 'atm-fraud'
+            },
             'prometheus': {
                 'jmx': {
                     'enabled': False
@@ -77,14 +80,15 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'extraOutputTopics': {
                 },
                 'optimizeLeaveGroupBehavior': False,
-                'outputTopic': 'bakdata-atm-fraud-detection-transaction-avro-producer-topic',
+                'outputTopic': 'atm-fraud-transaction-avro-producer-topic',
                 'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
             },
             'suspend': True
         },
+        'debug': True,
         'name': 'transaction-avro-producer',
         'namespace': '${NAMESPACE}',
-        'prefix': '',
+        'prefix': 'atm-fraud-',
         'repo_config': {
             'repo_auth_flags': {
                 'insecure_skip_tls_verify': False
@@ -96,7 +100,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'models': {
             },
             'topics': {
-                'bakdata-atm-fraud-detection-transaction-avro-producer-topic': {
+                'atm-fraud-transaction-avro-producer-topic': {
                     'configs': {
                     },
                     'partitions_count': 3
@@ -114,13 +118,11 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'commandLine': {
                 'PRODUCTIVE': False
             },
-            'debug': True,
             'image': '${DOCKER_REGISTRY}/atm-demo-transactionjoiner',
             'imageTag': '1.0.0',
             'labels': {
-                'pipeline': 'bakdata-atm-fraud-detection'
+                'pipeline': 'atm-fraud'
             },
-            'nameOverride': 'transaction-joiner',
             'prometheus': {
                 'jmx': {
                     'enabled': False
@@ -129,18 +131,19 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'replicaCount': 1,
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'errorTopic': 'bakdata-atm-fraud-detection-transaction-joiner-dead-letter-topic',
+                'errorTopic': 'atm-fraud-transaction-joiner-dead-letter-topic',
                 'inputTopics': [
-                    'bakdata-atm-fraud-detection-transaction-avro-producer-topic'
+                    'atm-fraud-transaction-avro-producer-topic'
                 ],
                 'optimizeLeaveGroupBehavior': False,
-                'outputTopic': 'bakdata-atm-fraud-detection-transaction-joiner-topic',
+                'outputTopic': 'atm-fraud-transaction-joiner-topic',
                 'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
             }
         },
+        'debug': True,
         'name': 'transaction-joiner',
         'namespace': '${NAMESPACE}',
-        'prefix': '',
+        'prefix': 'atm-fraud-',
         'repo_config': {
             'repo_auth_flags': {
                 'insecure_skip_tls_verify': False
@@ -152,13 +155,13 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'models': {
             },
             'topics': {
-                'bakdata-atm-fraud-detection-transaction-joiner-dead-letter-topic': {
+                'atm-fraud-transaction-joiner-dead-letter-topic': {
                     'configs': {
                     },
                     'partitions_count': 1,
                     'type': 'error'
                 },
-                'bakdata-atm-fraud-detection-transaction-joiner-topic': {
+                'atm-fraud-transaction-joiner-topic': {
                     'configs': {
                     },
                     'partitions_count': 3
@@ -176,13 +179,11 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'commandLine': {
                 'PRODUCTIVE': False
             },
-            'debug': True,
             'image': '${DOCKER_REGISTRY}/atm-demo-frauddetector',
             'imageTag': '1.0.0',
             'labels': {
-                'pipeline': 'bakdata-atm-fraud-detection'
+                'pipeline': 'atm-fraud'
             },
-            'nameOverride': 'fraud-detector',
             'prometheus': {
                 'jmx': {
                     'enabled': False
@@ -191,18 +192,19 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'replicaCount': 1,
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'errorTopic': 'bakdata-atm-fraud-detection-fraud-detector-dead-letter-topic',
+                'errorTopic': 'atm-fraud-fraud-detector-dead-letter-topic',
                 'inputTopics': [
-                    'bakdata-atm-fraud-detection-transaction-joiner-topic'
+                    'atm-fraud-transaction-joiner-topic'
                 ],
                 'optimizeLeaveGroupBehavior': False,
-                'outputTopic': 'bakdata-atm-fraud-detection-fraud-detector-topic',
+                'outputTopic': 'atm-fraud-fraud-detector-topic',
                 'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
             }
         },
+        'debug': True,
         'name': 'fraud-detector',
         'namespace': '${NAMESPACE}',
-        'prefix': '',
+        'prefix': 'atm-fraud-',
         'repo_config': {
             'repo_auth_flags': {
                 'insecure_skip_tls_verify': False
@@ -214,13 +216,13 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'models': {
             },
             'topics': {
-                'bakdata-atm-fraud-detection-fraud-detector-dead-letter-topic': {
+                'atm-fraud-fraud-detector-dead-letter-topic': {
                     'configs': {
                     },
                     'partitions_count': 1,
                     'type': 'error'
                 },
-                'bakdata-atm-fraud-detection-fraud-detector-topic': {
+                'atm-fraud-fraud-detector-topic': {
                     'configs': {
                     },
                     'partitions_count': 3
@@ -238,13 +240,11 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'commandLine': {
                 'PRODUCTIVE': False
             },
-            'debug': True,
             'image': '${DOCKER_REGISTRY}/atm-demo-accountlinker',
             'imageTag': '1.0.0',
             'labels': {
-                'pipeline': 'bakdata-atm-fraud-detection'
+                'pipeline': 'atm-fraud'
             },
-            'nameOverride': 'account-linker',
             'prometheus': {
                 'jmx': {
                     'enabled': False
@@ -253,20 +253,21 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'replicaCount': 1,
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'errorTopic': 'bakdata-atm-fraud-detection-account-linker-dead-letter-topic',
+                'errorTopic': 'atm-fraud-account-linker-dead-letter-topic',
                 'extraInputTopics': {
                     'accounts': [
-                        'bakdata-atm-fraud-detection-account-producer-topic'
+                        'atm-fraud-account-producer-topic'
                     ]
                 },
                 'inputTopics': [
-                    'bakdata-atm-fraud-detection-fraud-detector-topic'
+                    'atm-fraud-fraud-detector-topic'
                 ],
                 'optimizeLeaveGroupBehavior': False,
-                'outputTopic': 'bakdata-atm-fraud-detection-account-linker-topic',
+                'outputTopic': 'atm-fraud-account-linker-topic',
                 'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
             }
         },
+        'debug': True,
         'from': {
             'components': {
                 'account-producer': {
@@ -281,7 +282,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
         },
         'name': 'account-linker',
         'namespace': '${NAMESPACE}',
-        'prefix': '',
+        'prefix': 'atm-fraud-',
         'repo_config': {
             'repo_auth_flags': {
                 'insecure_skip_tls_verify': False
@@ -293,13 +294,13 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'models': {
             },
             'topics': {
-                'bakdata-atm-fraud-detection-account-linker-dead-letter-topic': {
+                'atm-fraud-account-linker-dead-letter-topic': {
                     'configs': {
                     },
                     'partitions_count': 1,
                     'type': 'error'
                 },
-                'bakdata-atm-fraud-detection-account-linker-topic': {
+                'atm-fraud-account-linker-topic': {
                     'configs': {
                     },
                     'partitions_count': 3
@@ -310,6 +311,28 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
         'version': '2.9.0'
     },
     {
+        '_resetter': {
+            'app': {
+                'config': {
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'connector': 'atm-fraud-postgresql-connector'
+                },
+                'connectorType': 'sink'
+            },
+            'name': 'postgresql-connector',
+            'namespace': '${NAMESPACE}',
+            'prefix': 'atm-fraud-',
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
+                },
+                'repository_name': 'bakdata-kafka-connect-resetter',
+                'url': 'https://bakdata.github.io/kafka-connect-resetter/'
+            },
+            'suffix': '-clean',
+            'type': 'kafka-connector-resetter',
+            'version': '1.0.4'
+        },
         'app': {
             'auto.create': True,
             'connection.ds.pool.size': 5,
@@ -324,29 +347,169 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'insert.mode': 'insert',
             'insert.mode.databaselevel': True,
             'key.converter': 'org.apache.kafka.connect.storage.StringConverter',
-            'name': 'postgresql-connector',
+            'name': 'atm-fraud-postgresql-connector',
             'pk.mode': 'record_value',
             'table.name.format': 'fraud_transactions',
             'tasks.max': 1,
-            'topics': 'bakdata-atm-fraud-detection-account-linker-topic',
+            'topics': 'atm-fraud-account-linker-topic',
             'transforms': 'flatten',
             'transforms.flatten.type': 'org.apache.kafka.connect.transforms.Flatten$Value',
             'value.converter': 'io.confluent.connect.avro.AvroConverter',
             'value.converter.schema.registry.url': 'http://k8kafka-cp-schema-registry.${NAMESPACE}.svc.cluster.local:8081'
         },
         'name': 'postgresql-connector',
+        'prefix': 'atm-fraud-',
+        'resetter_values': {
+        },
+        'type': 'kafka-sink-connector'
+    }
+]
+
+snapshots['TestExample.test_word_count word-count-pipeline'] = [
+    {
+        'app': {
+            'image': 'bakdata/kpops-demo-sentence-producer',
+            'imageTag': '1.0.0',
+            'labels': {
+                'pipeline': 'word-count'
+            },
+            'prometheus': {
+                'jmx': {
+                    'enabled': False
+                }
+            },
+            'replicaCount': 1,
+            'streams': {
+                'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'extraOutputTopics': {
+                },
+                'optimizeLeaveGroupBehavior': False,
+                'outputTopic': 'word-count-data-producer-topic',
+                'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
+            }
+        },
+        'debug': True,
+        'name': 'data-producer',
         'namespace': '${NAMESPACE}',
-        'prefix': '',
+        'prefix': 'word-count-',
         'repo_config': {
             'repo_auth_flags': {
                 'insecure_skip_tls_verify': False
             },
-            'repository_name': 'bakdata-kafka-connect-resetter',
-            'url': 'https://bakdata.github.io/kafka-connect-resetter/'
+            'repository_name': 'bakdata-streams-bootstrap',
+            'url': 'https://bakdata.github.io/streams-bootstrap/'
         },
+        'to': {
+            'models': {
+            },
+            'topics': {
+                'word-count-data-producer-topic': {
+                    'configs': {
+                    },
+                    'partitions_count': 3
+                }
+            }
+        },
+        'type': 'producer-app',
+        'version': '2.9.0'
+    },
+    {
+        'app': {
+            'commandLine': {
+                'PRODUCTIVE': False
+            },
+            'image': 'bakdata/kpops-demo-word-count-app',
+            'imageTag': '1.0.0',
+            'labels': {
+                'pipeline': 'word-count'
+            },
+            'prometheus': {
+                'jmx': {
+                    'enabled': False
+                }
+            },
+            'replicaCount': 1,
+            'streams': {
+                'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'errorTopic': 'word-count-word-counter-dead-letter-topic',
+                'inputTopics': [
+                    'word-count-data-producer-topic'
+                ],
+                'optimizeLeaveGroupBehavior': False,
+                'outputTopic': 'word-count-word-counter-topic',
+                'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
+            }
+        },
+        'debug': True,
+        'name': 'word-counter',
+        'namespace': '${NAMESPACE}',
+        'prefix': 'word-count-',
+        'repo_config': {
+            'repo_auth_flags': {
+                'insecure_skip_tls_verify': False
+            },
+            'repository_name': 'bakdata-streams-bootstrap',
+            'url': 'https://bakdata.github.io/streams-bootstrap/'
+        },
+        'to': {
+            'models': {
+            },
+            'topics': {
+                'word-count-word-counter-dead-letter-topic': {
+                    'configs': {
+                    },
+                    'partitions_count': 1,
+                    'type': 'error'
+                },
+                'word-count-word-counter-topic': {
+                    'configs': {
+                        'cleanup.policy': 'compact'
+                    },
+                    'partitions_count': 3,
+                    'type': 'output'
+                }
+            }
+        },
+        'type': 'streams-app',
+        'version': '2.9.0'
+    },
+    {
+        '_resetter': {
+            'app': {
+                'config': {
+                    'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'connector': 'word-count-redis-sink-connector'
+                },
+                'connectorType': 'sink'
+            },
+            'name': 'redis-sink-connector',
+            'namespace': '${NAMESPACE}',
+            'prefix': 'word-count-',
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
+                },
+                'repository_name': 'bakdata-kafka-connect-resetter',
+                'url': 'https://bakdata.github.io/kafka-connect-resetter/'
+            },
+            'suffix': '-clean',
+            'type': 'kafka-connector-resetter',
+            'version': '1.0.4'
+        },
+        'app': {
+            'connector.class': 'com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector',
+            'key.converter': 'org.apache.kafka.connect.storage.StringConverter',
+            'name': 'word-count-redis-sink-connector',
+            'redis.database': 0,
+            'redis.hosts': 'redis-headless:6379',
+            'tasks.max': 1,
+            'topics': 'word-count-word-counter-topic',
+            'value.converter': 'org.apache.kafka.connect.storage.StringConverter'
+        },
+        'name': 'redis-sink-connector',
+        'prefix': 'word-count-',
         'resetter_values': {
         },
-        'type': 'kafka-sink-connector',
-        'version': '1.0.4'
+        'type': 'kafka-sink-connector'
     }
 ]

@@ -18,7 +18,7 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 )
 
 
-class KubernetesAppConfig(CamelCaseConfigModel, DescConfigModel):
+class KubernetesAppValues(CamelCaseConfigModel, DescConfigModel):
     """Settings specific to Kubernetes apps."""
 
     model_config = ConfigDict(
@@ -31,7 +31,7 @@ class KubernetesApp(PipelineComponent, ABC):
 
     All built-in components are Kubernetes apps, except for the Kafka connectors.
 
-    :param namespace: Namespace in which the component shall be deployed
+    :param namespace: Kubernetes namespace in which the component shall be deployed
     :param app: Application-specific settings
     """
 
@@ -39,7 +39,7 @@ class KubernetesApp(PipelineComponent, ABC):
         default=...,
         description=describe_attr("namespace", __doc__),
     )
-    app: KubernetesAppConfig = Field(
+    app: KubernetesAppValues = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )

@@ -1,12 +1,14 @@
+from __future__ import annotations
+
 from pathlib import Path
 from unittest.mock import MagicMock
 
+import pydantic
 import pytest
 
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
-    load_defaults,
 )
 from kpops.config import KpopsConfig
 from kpops.utils.environment import ENV
@@ -21,10 +23,15 @@ class Parent(BaseDefaultsComponent):
     hard_coded: str = "hard_coded_value"
 
 
+class Nested(pydantic.BaseModel):
+    model_config = pydantic.ConfigDict(extra="allow")
+
+
 class Child(Parent):
     __test__ = False
     nice: dict | None = None
     another_hard_coded: str = "another_hard_coded_value"
+    nested: Nested | None = None
 
 
 class GrandChild(Child):
@@ -69,6 +76,7 @@ class TestBaseDefaultsComponent:
                     "name": "fake-child-name",
                     "nice": {"fake-value": "must-be-overwritten"},
                     "value": 1.0,
+                    "nested": {"foo": "foo"},
                 },
             ),
         ],
@@ -77,7 +85,7 @@ class TestBaseDefaultsComponent:
         self, component_class: type[BaseDefaultsComponent], defaults: dict
     ):
         assert (
-            load_defaults(component_class, DEFAULTS_PATH / "defaults.yaml") == defaults
+            component_class.load_defaults(DEFAULTS_PATH / "defaults.yaml") == defaults
         )
 
     @pytest.mark.parametrize(
@@ -97,6 +105,7 @@ class TestBaseDefaultsComponent:
                     "name": "fake-child-name",
                     "nice": {"fake-value": "fake"},
                     "value": 2.0,
+                    "nested": {"foo": "foo"},
                 },
             ),
         ],
@@ -105,8 +114,7 @@ class TestBaseDefaultsComponent:
         self, component_class: type[BaseDefaultsComponent], defaults: dict
     ):
         assert (
-            load_defaults(
-                component_class,
+            component_class.load_defaults(
                 DEFAULTS_PATH / "defaults.yaml",
                 DEFAULTS_PATH / "defaults_development.yaml",
             )
@@ -187,3 +195,10 @@ class TestBaseDefaultsComponent:
         assert component.name == str(
             DEFAULTS_PATH
         ), "Environment variables should be substituted"
+
+    def test_merge_defaults(self, config: KpopsConfig, handlers: ComponentHandlers):
+        component = GrandChild(
+            config=config, handlers=handlers, nested=Nested(**{"bar": False})
+        )
+        assert isinstance(component.nested, Nested)
+        assert component.nested == Nested(**{"foo": "foo", "bar": False})

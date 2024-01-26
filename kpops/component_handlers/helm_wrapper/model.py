@@ -2,11 +2,11 @@ from collections.abc import Iterator
 from dataclasses import dataclass
 from pathlib import Path
 
-import yaml
 from pydantic import BaseModel, ConfigDict, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.exception import ParseError
+from kpops.component_handlers.kubernetes.model import KubernetesManifest
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel
 
@@ -160,8 +160,8 @@ HELM_SOURCE_PREFIX = "# Source: "
 
 @dataclass
 class HelmTemplate:
-    filepath: str
-    template: dict
+    filepath: Path
+    manifest: KubernetesManifest
 
     @staticmethod
     def parse_source(source: str) -> str:
@@ -175,11 +175,6 @@ class HelmTemplate:
             msg = "Not a valid Helm template source"
             raise ParseError(msg)
         return source.removeprefix(HELM_SOURCE_PREFIX).strip()
-
-    @classmethod
-    def load(cls, filepath: str, content: str):
-        template = yaml.load(content, yaml.Loader)
-        return cls(filepath, template)
 
 
 # Indicates the beginning of `NOTES:` section in the output of `helm install` or

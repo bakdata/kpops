@@ -1,4 +1,167 @@
 # Changelog
+## [3.0.2](https://github.com/bakdata/kpops/releases/tag/3.0.2) - Release Date: [2024-01-23]
+
+### 🐛 Fixes
+
+- Fix Helm diff output - [#434](https://github.com/bakdata/kpops/pull/434)
+
+
+### 📝 Documentation
+
+- Add step for submodule initialization on the docs - [#431](https://github.com/bakdata/kpops/pull/431)
+
+
+### 🌀 Miscellaneous
+
+- Add message if examples git submodule is not initialized - [#432](https://github.com/bakdata/kpops/pull/432)
+
+- Update type annotation for deserialized pipeline - [#433](https://github.com/bakdata/kpops/pull/433)
+
+
+
+
+
+
+## [3.0.1](https://github.com/bakdata/kpops/releases/tag/3.0.1) - Release Date: [2024-01-19]
+
+### 🐛 Fixes
+
+- Fix broken doc link - [#427](https://github.com/bakdata/kpops/pull/427)
+
+- Add warning log if SR handler is disabled but URL is set - [#428](https://github.com/bakdata/kpops/pull/428)
+
+
+### 📝 Documentation
+
+- Update docs of word-count example for v3 & new folder structure - [#423](https://github.com/bakdata/kpops/pull/423)
+
+- Move ATM fraud to examples repo - [#425](https://github.com/bakdata/kpops/pull/425)
+
+- Fix broken doc link - [#427](https://github.com/bakdata/kpops/pull/427)
+
+
+### 🌀 Miscellaneous
+
+- Update pydantic dependency - [#422](https://github.com/bakdata/kpops/pull/422)
+
+- Add git submodule instructions to the contributing.md - [#429](https://github.com/bakdata/kpops/pull/429)
+
+
+
+
+
+
+## [3.0.0](https://github.com/bakdata/kpops/releases/tag/3.0.0) - Release Date: [2024-01-17]
+
+### 🏗️ Breaking changes
+
+- Move GitHub action to repository root - [#356](https://github.com/bakdata/kpops/pull/356)
+
+- Make Kafka REST Proxy & Kafka Connect hosts default and improve Schema Registry config - [#354](https://github.com/bakdata/kpops/pull/354)
+
+- Create HelmApp component - [#370](https://github.com/bakdata/kpops/pull/370)
+
+- Change substitution variables separator to `.` - [#388](https://github.com/bakdata/kpops/pull/388)
+
+- Refactor pipeline generator & representation - [#392](https://github.com/bakdata/kpops/pull/392)
+
+- Define custom components module & pipeline base dir globally - [#387](https://github.com/bakdata/kpops/pull/387)
+
+- Use hash and trim long Helm release names instead of only trimming - [#390](https://github.com/bakdata/kpops/pull/390)
+
+- Refactor generate template for Python API usage - [#380](https://github.com/bakdata/kpops/pull/380)
+
+- Namespace substitution vars - [#408](https://github.com/bakdata/kpops/pull/408)
+
+- Refactor streams-bootstrap cleanup jobs as individual HelmApp - [#398](https://github.com/bakdata/kpops/pull/398)
+
+- Refactor Kafka Connector resetter as individual HelmApp - [#400](https://github.com/bakdata/kpops/pull/400)
+
+- Fix wrong Helm release name character limit - [#418](https://github.com/bakdata/kpops/pull/418)
+
+
+### 🚀 Features
+
+- Allow overriding config files - [#391](https://github.com/bakdata/kpops/pull/391)
+
+- Generate defaults schema - [#402](https://github.com/bakdata/kpops/pull/402)
+
+
+### 🐛 Fixes
+
+- Fix missing component type in pipeline schema - [#401](https://github.com/bakdata/kpops/pull/401)
+
+- Fix enrichment of nested Pydantic BaseModel - [#415](https://github.com/bakdata/kpops/pull/415)
+
+- Fix wrong Helm release name character limit - [#418](https://github.com/bakdata/kpops/pull/418)
+
+- Update release workflow template to support custom changelog file path - [#421](https://github.com/bakdata/kpops/pull/421)
+
+
+### 🧪 Dependencies
+
+- Migrate to Pydantic v2 - [#347](https://github.com/bakdata/kpops/pull/347)
+
+
+### 🏭 Refactor
+
+- Make Kafka REST Proxy & Kafka Connect hosts default and improve Schema Registry config - [#354](https://github.com/bakdata/kpops/pull/354)
+
+- Migrate to Pydantic v2 - [#347](https://github.com/bakdata/kpops/pull/347)
+
+- Refactor pipeline generator & representation - [#392](https://github.com/bakdata/kpops/pull/392)
+
+- Use hash and trim long Helm release names instead of only trimming - [#390](https://github.com/bakdata/kpops/pull/390)
+
+- Refactor Helm `nameOverride` - [#397](https://github.com/bakdata/kpops/pull/397)
+
+- Mark component type as computed Pydantic field - [#399](https://github.com/bakdata/kpops/pull/399)
+
+- Refactor generate template for Python API usage - [#380](https://github.com/bakdata/kpops/pull/380)
+
+- Support multiple inheritance for doc generation - [#406](https://github.com/bakdata/kpops/pull/406)
+
+- Refactor streams-bootstrap cleanup jobs as individual HelmApp - [#398](https://github.com/bakdata/kpops/pull/398)
+
+- Refactor Kafka Connector resetter as individual HelmApp - [#400](https://github.com/bakdata/kpops/pull/400)
+
+
+### 📝 Documentation
+
+- Move GitHub action to repository root - [#356](https://github.com/bakdata/kpops/pull/356)
+
+- Create HelmApp component - [#370](https://github.com/bakdata/kpops/pull/370)
+
+-  Update docs for substitution variable usage in v3 - [#409](https://github.com/bakdata/kpops/pull/409)
+
+- Support multiple inheritance for doc generation - [#406](https://github.com/bakdata/kpops/pull/406)
+
+- Update docs for v3 - [#416](https://github.com/bakdata/kpops/pull/416)
+
+- Update tests resources - [#417](https://github.com/bakdata/kpops/pull/417)
+
+- Summarize all breaking changes in diffs at the top of the migration guide - [#419](https://github.com/bakdata/kpops/pull/419)
+
+
+### 🌀 Miscellaneous
+
+- Replace black with ruff - [#365](https://github.com/bakdata/kpops/pull/365)
+
+- Add toml formatter to dprint - [#386](https://github.com/bakdata/kpops/pull/386)
+
+- Add malva to dprint - [#385](https://github.com/bakdata/kpops/pull/385)
+
+- Update KPOps runner with the new options - [#395](https://github.com/bakdata/kpops/pull/395)
+
+- Fix KPOps action to get package from testPyPI - [#396](https://github.com/bakdata/kpops/pull/396)
+
+- KPOps 3.0 - [#420](https://github.com/bakdata/kpops/pull/420)
+
+
+
+
+
+
 ## [2.0.11](https://github.com/bakdata/kpops/releases/tag/2.0.11) - Release Date: [2023-10-24]
 
 ### 🐛 Fixes

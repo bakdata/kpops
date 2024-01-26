@@ -14,7 +14,7 @@ from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,
 )
-from kpops.utils.colorify import greenify, magentaify
+from kpops.utils.colorify import greenify, magentaify, yellowify
 
 if TYPE_CHECKING:
     from kpops.components.base_components.models.to_section import ToSection
@@ -24,15 +24,11 @@ log = logging.getLogger("SchemaHandler")
 
 
 class SchemaHandler:
-    def __init__(
-        self,
-        kpops_config: KpopsConfig,
-        components_module: str | None,
-    ) -> None:
+    def __init__(self, kpops_config: KpopsConfig) -> None:
         self.schema_registry_client = SchemaRegistryClient(
             str(kpops_config.schema_registry.url)
         )
-        self.components_module = components_module
+        self.components_module = kpops_config.components_module
 
     @cached_property
     def schema_provider(self) -> SchemaProvider:
@@ -47,11 +43,16 @@ class SchemaHandler:
             raise ValueError(msg) from e
 
     @classmethod
-    def load_schema_handler(
-        cls, components_module: str | None, config: KpopsConfig
-    ) -> SchemaHandler | None:
+    def load_schema_handler(cls, config: KpopsConfig) -> SchemaHandler | None:
         if config.schema_registry.enabled:
-            return cls(config, components_module)
+            return cls(config)
+        if not config.schema_registry.enabled and config.schema_registry.url:
+            log.warning(
+                yellowify(
+                    f"The property schema_registry.enabled is set to False but the URL is set to {config.schema_registry.url}."
+                    f"\nIf you want to use the schema handler make sure to enable it."
+                )
+            )
         return None
 
     def submit_schemas(self, to_section: ToSection, dry_run: bool = True) -> None:

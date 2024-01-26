@@ -21,11 +21,11 @@ class TopicNameConfig(BaseSettings):
     """Configure the topic name variables you can use in the pipeline definition."""
 
     default_output_topic_name: str = Field(
-        default="${pipeline_name}-${component.name}",
+        default="${pipeline.name}-${component.name}",
         description="Configures the value for the variable ${output_topic_name}",
     )
     default_error_topic_name: str = Field(
-        default="${pipeline_name}-${component.name}-error",
+        default="${pipeline.name}-${component.name}-error",
         description="Configures the value for the variable ${error_topic_name}",
     )
 
@@ -62,13 +62,21 @@ class KafkaConnectConfig(BaseSettings):
 
 
 class KpopsConfig(BaseSettings):
-    """Pipeline configuration unrelated to the components."""
+    """Global configuration for KPOps project."""
 
     defaults_path: Path = Field(
         default=Path(),
         examples=["defaults", "."],
         description="The path to the folder containing the defaults.yaml file and the environment defaults files. "
         "Paths can either be absolute or relative to `config.yaml`",
+    )
+    components_module: str | None = Field(
+        default=None,
+        description="Custom Python module defining project-specific KPOps components",
+    )
+    pipeline_base_dir: Path = Field(
+        default=Path(),
+        description="Base directory to the pipelines (default is current working directory)",
     )
     kafka_brokers: str = Field(
         default=...,

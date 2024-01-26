@@ -63,13 +63,16 @@ class ConnectWrapper:
             self.create_connector(connector_config)
         raise KafkaConnectError(response)
 
-    def get_connector(self, connector_name: str) -> KafkaConnectResponse:
+    def get_connector(self, connector_name: str | None) -> KafkaConnectResponse:
         """Get information about the connector.
 
         API Reference: https://docs.confluent.io/platform/current/connect/references/restapi.html#get--connectors-(string-name)
         :param connector_name: Nameof the crated connector
         :return: Information about the connector.
         """
+        if connector_name is None:
+            msg = "Connector name not set"
+            raise Exception(msg)
         response = httpx.get(
             url=f"{self.url}connectors/{connector_name}", headers=HEADERS
         )

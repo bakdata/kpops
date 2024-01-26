@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import logging
 from collections import Counter
-from contextlib import suppress
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -13,6 +12,7 @@ from pydantic import Field, RootModel, SerializeAsAny
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
+from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
 
 if TYPE_CHECKING:
@@ -53,7 +53,6 @@ class Pipeline(RootModel):
         raise ValueError(msg)
 
     def add(self, component: PipelineComponent) -> None:
-        self._populate_component_name(component)
         self.root.append(component)
 
     def __bool__(self) -> bool:
@@ -77,14 +76,6 @@ class Pipeline(RootModel):
         if duplicates:
             msg = f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
             raise ValidationError(msg)
-
-    @staticmethod
-    def _populate_component_name(component: PipelineComponent) -> None:  # TODO: remove
-        with suppress(
-            AttributeError  # Some components like Kafka Connect do not have a name_override attribute
-        ):
-            if (app := getattr(component, "app")) and app.name_override is None:
-                app.name_override = component.full_name
 
 
 def create_env_components_index(
@@ -127,20 +118,20 @@ class PipelineGenerator:
         self.pipeline.validate()
         return self.pipeline
 
-    def load_yaml(
-        self, base_dir: Path, path: Path, environment: str | None
-    ) -> Pipeline:
+    def load_yaml(self, path: Path, environment: str | None) -> Pipeline:
         """Load pipeline definition from yaml.
 
         The file is often named ``pipeline.yaml``
 
-        :param base_dir: Base directory to the pipelines (default is current working directory)
         :param path: Path to pipeline definition yaml file
+        :param environment: Environment name
         :raises TypeError: The pipeline definition should contain a list of components
         :raises TypeError: The env-specific pipeline definition should contain a list of components
         :returns: Initialized pipeline object
         """
-        PipelineGenerator.set_pipeline_name_env_vars(base_dir, path)
+        PipelineGenerator.set_pipeline_name_env_vars(
+            self.config.pipeline_base_dir, path
+        )
         PipelineGenerator.set_environment_name(environment)
 
         main_content = load_yaml_file(path, substitution=ENV)
@@ -243,8 +234,6 @@ class PipelineGenerator:
             self.env_components_index.get(component.name, {}),
             component.model_dump(mode="json", by_alias=True),
         )
-        # HACK: make sure component type is set for inflated components, because property is not serialized by Pydantic
-        env_component_as_dict["type"] = component.type
 
         component_data = self.substitute_in_component(env_component_as_dict)
 
@@ -266,7 +255,7 @@ class PipelineGenerator:
         # Leftover variables that were previously introduced in the component by the substitution
         # functions, still hardcoded, because of their names.
         # TODO(Ivan Yordanov): Get rid of them
-        substitution_hardcoded = {
+        substitution_hardcoded: dict[str, JsonType] = {
             "error_topic_name": config.topic_name_config.default_error_topic_name,
             "output_topic_name": config.topic_name_config.default_output_topic_name,
         }
@@ -278,6 +267,7 @@ class PipelineGenerator:
         )
         substitution = generate_substitution(
             config.model_dump(mode="json"),
+            "config",
             existing_substitution=component_substitution,
             separator=".",
         )
@@ -307,9 +297,9 @@ class PipelineGenerator:
         For example, for a given path ./data/v1/dev/pipeline.yaml the pipeline_name would be
         set to data-v1-dev. Then the sub environment variables are set:
 
-        pipeline_name_0 = data
-        pipeline_name_1 = v1
-        pipeline_name_2 = dev
+        pipeline.name_0 = data
+        pipeline.name_1 = v1
+        pipeline.name_2 = dev
 
         :param base_dir: Base directory to the pipeline files
         :param path: Path to pipeline.yaml file
@@ -319,9 +309,9 @@ class PipelineGenerator:
             msg = "The pipeline-base-dir should not equal the pipeline-path"
             raise ValueError(msg)
         pipeline_name = "-".join(path_without_file)
-        ENV["pipeline_name"] = pipeline_name
+        ENV["pipeline.name"] = pipeline_name
         for level, parent in enumerate(path_without_file):
-            ENV[f"pipeline_name_{level}"] = parent
+            ENV[f"pipeline.name_{level}"] = parent
 
     @staticmethod
     def set_environment_name(environment: str | None) -> None:

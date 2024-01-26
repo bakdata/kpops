@@ -11,6 +11,7 @@ from pydantic import (
 from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
+from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
@@ -92,21 +93,13 @@ class KafkaConnectConfigErrorResponse(BaseModel):
     configs: list[KafkaConnectConfigDescription]
 
 
-class KafkaConnectResetterConfig(CamelCaseConfigModel):
+class KafkaConnectorResetterConfig(CamelCaseConfigModel):
     brokers: str
     connector: str
     delete_consumer_group: bool | None = None
     offset_topic: str | None = None
 
 
-class KafkaConnectResetterValues(CamelCaseConfigModel):
+class KafkaConnectorResetterValues(HelmAppValues):
     connector_type: Literal["source", "sink"]
-    config: KafkaConnectResetterConfig
-    name_override: str
-
-    # TODO(Ivan Yordanov): Replace with a function decorated with `@model_serializer`
-    # BEWARE! All default values are enforced, hard to replicate without
-    # access to ``model_dump``
-    @override
-    def model_dump(self, **_) -> dict[str, Any]:
-        return super().model_dump(by_alias=True, exclude_none=True)
+    config: KafkaConnectorResetterConfig

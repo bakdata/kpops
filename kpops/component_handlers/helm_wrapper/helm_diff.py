@@ -2,6 +2,7 @@ import logging
 from collections.abc import Iterable, Iterator
 
 from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig, HelmTemplate
+from kpops.component_handlers.kubernetes.model import KubernetesManifest
 from kpops.utils.dict_differ import Change, render_diff
 
 log = logging.getLogger("HelmDiff")
@@ -15,7 +16,7 @@ class HelmDiff:
     def calculate_changes(
         current_release: Iterable[HelmTemplate],
         new_release: Iterable[HelmTemplate],
-    ) -> Iterator[Change[dict]]:
+    ) -> Iterator[Change[KubernetesManifest]]:
         """Compare 2 releases and generate a Change object for each difference.
 
         :param current_release: Iterable containing HelmTemplate objects for the current release
@@ -31,13 +32,13 @@ class HelmDiff:
             # get corresponding dry-run release
             new_resource = new_release_index.pop(current_resource.filepath, None)
             yield Change(
-                current_resource.template,
-                new_resource.template if new_resource else {},
+                current_resource.manifest,
+                new_resource.manifest if new_resource else KubernetesManifest(),
             )
 
         # collect added files
         for new_resource in new_release_index.values():
-            yield Change({}, new_resource.template)
+            yield Change(KubernetesManifest(), new_resource.manifest)
 
     def log_helm_diff(
         self,
@@ -47,8 +48,8 @@ class HelmDiff:
     ) -> None:
         for change in self.calculate_changes(current_release, new_release):
             if diff := render_diff(
-                change.old_value,
-                change.new_value,
+                change.old_value.data,
+                change.new_value.data,
                 ignore=self.config.ignore,
             ):
                 logger.info("\n" + diff)
