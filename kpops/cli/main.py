@@ -278,7 +278,7 @@ def generate(
 ) -> Pipeline:
     kpops_config = create_kpops_config(
         config,
-        pipeline_path,
+        defaults,
         dotenv,
         environment,
         verbose,
