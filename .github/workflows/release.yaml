@@ -15,11 +15,11 @@ on:
 
 jobs:
   create-github-release-push-tag:
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@1.40.1
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@1.40.4
     name: Release
     with:
       release-type: ${{ inputs.release-type }}
-      poetry-version: "1.5.1"
+      poetry-version: "1.7.1"
       changelog: true
       changelog-config: "./.github/changelog-config.json"
       changelog-file: "./docs/docs/user/changelog.md"
@@ -33,7 +33,7 @@ jobs:
     needs: create-github-release-push-tag
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all tags; Required for doc versioning
 
