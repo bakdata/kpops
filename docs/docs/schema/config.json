@@ -235,12 +235,6 @@
             "title": "Pipeline Base Dir",
             "type": "string"
         },
-        "pipeline_path": {
-            "default": ".",
-            "format": "path",
-            "title": "Pipeline Path",
-            "type": "string"
-        },
         "retain_clean_jobs": {
             "default": false,
             "description": "Whether to retain clean up jobs in the cluster or uninstall the, after completion.",

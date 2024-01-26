@@ -70,7 +70,6 @@ class KpopsConfig(BaseSettings):
         description="The path to the folder containing the defaults.yaml file and the environment defaults files. "
         "Paths can either be absolute or relative to `config.yaml`",
     )
-    pipeline_path: Path = Field(default=Path())
     components_module: str | None = Field(
         default=None,
         description="Custom Python module defining project-specific KPOps components",

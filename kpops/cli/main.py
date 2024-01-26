@@ -207,7 +207,7 @@ def log_action(action: str, pipeline_component: PipelineComponent):
 
 def create_kpops_config(
     config: Path,
-    pipeline_path: Path | None = None,
+    defaults: Path | None = None,
     dotenv: list[Path] | None = None,
     environment: str | None = None,
     verbose: bool = False,
@@ -218,10 +218,10 @@ def create_kpops_config(
     kpops_config = KpopsConfig(
         _env_file=dotenv  # pyright: ignore[reportGeneralTypeIssues]
     )
-    if pipeline_path:
-        kpops_config.pipeline_path = pipeline_path
+    if defaults:
+        kpops_config.defaults_path = defaults
     else:
-        kpops_config.pipeline_path = config / kpops_config.pipeline_path
+        kpops_config.defaults_path = config / kpops_config.defaults_path
     return kpops_config
 
 
