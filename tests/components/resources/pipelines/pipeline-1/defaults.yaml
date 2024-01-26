@@ -1,7 +1,8 @@
-kubernetes-app:
+helm-app:
   name: ${component.type}
   namespace: example-namespace
-kafka-app:
+
+streams-bootstrap:
   app:
     streams:
       brokers: "${config.kafka_brokers}"
@@ -10,7 +11,6 @@ kafka-app:
 producer-app: {} # inherits from kafka-app
 
 streams-app: # inherits from kafka-app
-  version: 2.9.0
   app:
     streams:
       config:
@@ -23,17 +23,3 @@ streams-app: # inherits from kafka-app
         partitions_count: 1
         configs:
           cleanup.policy: compact,delete
-
-kafka-connector:
-  name: sink-connector
-  app:
-    batch.size: "2000"
-    behavior.on.malformed.documents: "warn"
-    behavior.on.null.values: "delete"
-    connection.compression: "true"
-    connector.class: "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector"
-    key.ignore: "false"
-    linger.ms: "5000"
-    max.buffered.records: "20000"
-    read.timeout.ms: "120000"
-    tasks.max: "1"

@@ -52,7 +52,6 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         arbitrary_types_allowed=True,
         ignored_types=(cached_property, cached_classproperty),
     )
-
     enrich: SkipJsonSchema[bool] = Field(
         default=False,
         description=describe_attr("enrich", __doc__),
@@ -122,17 +121,18 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             elif is_dataclass(v):
                 kwargs[k] = asdict(v)
 
+        # TODO: Maybe there is a better way to pas pipeline_path here
+        env_pipeline_path = ENV.get("pipeline_path")
+        if not env_pipeline_path:
+            env_pipeline_path = Path()
+        pipeline_path = Path(env_pipeline_path)
+        defaults_file_paths_ = get_defaults_file_paths(
+            pipeline_path, config, ENV.get("environment")
+        )
+        defaults = cls.load_defaults(*defaults_file_paths_)
         log.debug(
-            typer.style(
-                "Enriching component of type ", fg=typer.colors.GREEN, bold=False
-            )
-            + typer.style(cls.type, fg=typer.colors.GREEN, bold=True, underline=True)
-        )
-        main_default_file_path, environment_default_file_path = get_defaults_file_paths(
-            config, ENV.get("environment")
-        )
-        defaults = cls.load_defaults(
-            main_default_file_path, environment_default_file_path
+            typer.style("Enriching component of type ", bold=False)
+            + typer.style(cls.type, bold=True, underline=True)
         )
         return update_nested_pair(kwargs, defaults)
 
@@ -150,7 +150,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
                 defaults,
                 *(
                     defaults_from_yaml(path, component_type)
-                    for path in reversed(defaults_file_paths)
+                    for path in defaults_file_paths
                     if path.exists()
                 ),
             )
@@ -190,31 +190,45 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
 
 
 def get_defaults_file_paths(
-    config: KpopsConfig, environment: str | None
-) -> tuple[Path, Path]:
+    pipeline_path: Path, config: KpopsConfig, environment: str | None
+) -> list[Path]:
     """Return the paths to the main and the environment defaults-files.
 
     The files need not exist, this function will only check if the dir set in
     `config.defaults_path` exists and return paths to the defaults files
     calculated from it. It is up to the caller to handle any false paths.
 
+    :param pipeline_path: The path to the pipeline.yaml file
     :param config: KPOps configuration
     :param environment: Environment
     :returns: The defaults files paths
     """
-    defaults_dir = Path(config.defaults_path).resolve()
-    main_default_file_path = defaults_dir / Path(
-        config.defaults_filename_prefix
-    ).with_suffix(".yaml")
+    default_paths = []
 
-    environment_default_file_path = (
-        defaults_dir
-        / Path(f"{config.defaults_filename_prefix}_{environment}").with_suffix(".yaml")
-        if environment is not None
-        else main_default_file_path
-    )
+    path = pipeline_path.resolve()
 
-    return main_default_file_path, environment_default_file_path
+    while path.parent != path:
+        add_environment_defaults(config, default_paths, environment, path)
+        add_defaults(config, default_paths, path)
+
+        path = path.parent
+
+    return default_paths
+
+
+def add_defaults(config, default_paths, path):
+    defaults_yaml_path = path.parent / f"{config.defaults_filename_prefix}.yaml"
+    if defaults_yaml_path.is_file():
+        default_paths.append(defaults_yaml_path)
+
+
+def add_environment_defaults(config, default_paths, environment, path):
+    if environment is not None:
+        environment_default_file_path = (
+            path.parent / f"{config.defaults_filename_prefix}_{environment}.yaml"
+        )
+        if environment_default_file_path.is_file():
+            default_paths.append(environment_default_file_path)
 
 
 _T = TypeVar("_T")

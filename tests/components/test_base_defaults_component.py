@@ -9,11 +9,12 @@ import pytest
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
+    get_defaults_file_paths,
 )
 from kpops.config import KpopsConfig
 from kpops.utils.environment import ENV
 
-DEFAULTS_PATH = Path(__file__).parent / "resources"
+RESOURCES_PATH = Path(__file__).parent / "resources"
 
 
 class Parent(BaseDefaultsComponent):
@@ -46,7 +47,7 @@ class EnvVarTest(BaseDefaultsComponent):
 
 @pytest.fixture()
 def config() -> KpopsConfig:
-    return KpopsConfig(defaults_path=DEFAULTS_PATH)
+    return KpopsConfig(defaults_path=RESOURCES_PATH)
 
 
 @pytest.fixture()
@@ -85,7 +86,7 @@ class TestBaseDefaultsComponent:
         self, component_class: type[BaseDefaultsComponent], defaults: dict
     ):
         assert (
-            component_class.load_defaults(DEFAULTS_PATH / "defaults.yaml") == defaults
+            component_class.load_defaults(RESOURCES_PATH / "defaults.yaml") == defaults
         )
 
     @pytest.mark.parametrize(
@@ -115,8 +116,8 @@ class TestBaseDefaultsComponent:
     ):
         assert (
             component_class.load_defaults(
-                DEFAULTS_PATH / "defaults.yaml",
-                DEFAULTS_PATH / "defaults_development.yaml",
+                RESOURCES_PATH / "defaults.yaml",
+                RESOURCES_PATH / "defaults_development.yaml",
             )
             == defaults
         )
@@ -189,11 +190,11 @@ class TestBaseDefaultsComponent:
     def test_env_var_substitution(
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
-        ENV["pipeline_name"] = str(DEFAULTS_PATH)
+        ENV["pipeline_name"] = str(RESOURCES_PATH)
         component = EnvVarTest(config=config, handlers=handlers)
 
         assert component.name == str(
-            DEFAULTS_PATH
+            RESOURCES_PATH
         ), "Environment variables should be substituted"
 
     def test_merge_defaults(self, config: KpopsConfig, handlers: ComponentHandlers):
@@ -202,3 +203,13 @@ class TestBaseDefaultsComponent:
         )
         assert isinstance(component.nested, Nested)
         assert component.nested == Nested(**{"foo": "foo", "bar": False})
+
+    def test_get_defaults_file_paths_2(
+        self, config: KpopsConfig, handlers: ComponentHandlers
+    ):
+        default_paths = get_defaults_file_paths(
+            RESOURCES_PATH / "pipelines/pipeline-1/pipeline.yaml",
+            config,
+            "development",
+        )
+        assert len(default_paths) == 4

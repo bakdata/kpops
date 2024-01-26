@@ -61,7 +61,7 @@ class TestGenerate:
         assert enriched_pipeline[0]["prefix"] == "my-fake-prefix-"
         assert enriched_pipeline[0]["name"] == "my-streams-app"
 
-    def test_pipelines_with_env_values(self, snapshot: SnapshotTest):
+    def test_pipelines_with_envs(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
             [
@@ -251,7 +251,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "kafka-connect-sink/pipeline.yaml"),
+                str(RESOURCE_PATH / "pipeline-with-env-defaults/pipeline.yaml"),
                 "--defaults",
                 str(RESOURCE_PATH / "pipeline-with-env-defaults"),
                 "--environment",

@@ -1,2 +1,2 @@
-streams-app:
-  namespace: "namespace"
+kubernetes-app:
+  namespace: "global-namespace"

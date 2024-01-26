@@ -58,7 +58,7 @@ class Pipeline(RootModel):
     def __bool__(self) -> bool:
         return bool(self.root)
 
-    def __iter__(self) -> Iterator[PipelineComponent]:
+    def __iter__(self) -> Iterator[PipelineComponent]:  # pyright: ignore [reportIncompatibleMethodOverride]
         return iter(self.root)
 
     def __len__(self) -> int:
@@ -67,7 +67,7 @@ class Pipeline(RootModel):
     def to_yaml(self) -> str:
         return yaml.dump(self.model_dump(mode="json", by_alias=True, exclude_none=True))
 
-    def validate(self) -> None:
+    def validate(self) -> None:  # pyright: ignore [reportIncompatibleMethodOverride]
         self.validate_unique_names()
 
     def validate_unique_names(self) -> None:
@@ -133,6 +133,7 @@ class PipelineGenerator:
             self.config.pipeline_base_dir, path
         )
         PipelineGenerator.set_environment_name(environment)
+        PipelineGenerator.set_pipeline_path(path)
 
         main_content = load_yaml_file(path, substitution=ENV)
         if not isinstance(main_content, list):
@@ -324,3 +325,7 @@ class PipelineGenerator:
         """
         if environment is not None:
             ENV["environment"] = environment
+
+    @staticmethod
+    def set_pipeline_path(path: Path):
+        ENV["pipeline_path"] = str(path.resolve())
