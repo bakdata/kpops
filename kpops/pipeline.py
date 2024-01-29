@@ -4,6 +4,7 @@ import asyncio
 import json
 import logging
 from collections import Counter
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
@@ -75,6 +76,7 @@ class Pipeline(BaseModel):
 
     def remove(self, component: PipelineComponent) -> None:
         self.components.remove(component)
+        self._component_index.pop(component.id)
 
     def __bool__(self) -> bool:
         return bool(self.components)
@@ -101,13 +103,12 @@ class Pipeline(BaseModel):
             self.model_dump(mode="json", by_alias=True, exclude_none=True)["components"]
         )
 
-    def build_execution_graph_from(
-        self,
-        components: list[PipelineComponent],
-        reverse: bool,
-        runner: Callable[[PipelineComponent], Coroutine],
+    def build_execution_graph(
+        self, runner: Callable[[PipelineComponent], Coroutine], /, reverse: bool = False
     ) -> Awaitable:
-        sub_graph_nodes = self.__get_graph_nodes(components)
+        sub_graph_nodes = self.__get_graph_nodes(
+            reversed(self.components) if reverse else self.components
+        )
 
         async def run_parallel_tasks(coroutines: list[Coroutine]) -> None:
             tasks = []
@@ -149,7 +150,7 @@ class Pipeline(BaseModel):
         return run_graph_tasks(sorted_tasks)
 
     @staticmethod
-    def __get_graph_nodes(components: list[PipelineComponent]) -> Iterator[str]:
+    def __get_graph_nodes(components: Iterable[PipelineComponent]) -> Iterator[str]:
         for component in components:
             yield component.id
             yield from component.inputs

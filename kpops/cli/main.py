@@ -32,7 +32,7 @@ from kpops.utils.pydantic import YamlConfigSettingsSource
 from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
-    from collections.abc import Awaitable, Callable, Coroutine
+    from collections.abc import Callable
 
     from kpops.components.base_components import PipelineComponent
 
@@ -176,18 +176,6 @@ def create_default_step_names_filter_predicate(
                 return True
 
     return predicate
-
-
-def get_concurrently_tasks_to_execute(
-    pipeline: Pipeline,
-    runner: Callable[[PipelineComponent], Coroutine],
-    reverse: bool = False,
-) -> Awaitable:
-    return pipeline.build_execution_graph_from(
-        list(reversed(pipeline.components)) if reverse else pipeline.components,
-        reverse,
-        runner,
-    )
 
 
 def log_action(action: str, pipeline_component: PipelineComponent):
@@ -368,7 +356,7 @@ def deploy(
 
     async def async_deploy():
         if parallel:
-            pipeline_tasks = get_concurrently_tasks_to_execute(pipeline, deploy_runner)
+            pipeline_tasks = pipeline.build_execution_graph(deploy_runner)
             await pipeline_tasks
         else:
             for component in pipeline.components:
@@ -408,8 +396,8 @@ def destroy(
 
     async def async_destroy():
         if parallel:
-            pipeline_tasks = get_concurrently_tasks_to_execute(
-                pipeline, destroy_runner, reverse=True
+            pipeline_tasks = pipeline.build_execution_graph(
+                destroy_runner, reverse=True
             )
             await pipeline_tasks
         else:
@@ -451,9 +439,7 @@ def reset(
 
     async def async_reset():
         if parallel:
-            pipeline_tasks = get_concurrently_tasks_to_execute(
-                pipeline, reset_runner, reverse=True
-            )
+            pipeline_tasks = pipeline.build_execution_graph(reset_runner, reverse=True)
             await pipeline_tasks
         else:
             for component in pipeline.components:
@@ -494,10 +480,8 @@ def clean(
 
     async def async_clean():
         if parallel:
-            pipeline_steps = get_concurrently_tasks_to_execute(
-                pipeline, clean_runner, reverse=True
-            )
-            await pipeline_steps
+            pipeline_tasks = pipeline.build_execution_graph(clean_runner, reverse=True)
+            await pipeline_tasks
         else:
             for component in pipeline.components:
                 await clean_runner(component)

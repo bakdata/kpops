@@ -736,9 +736,7 @@ class TestGenerate:
             await asyncio.sleep(sleep_table_components[component.name])
             await called_component(component.name)
 
-        execution_graph = pipeline.build_execution_graph_from(
-            list(pipeline.components), False, name_runner
-        )
+        execution_graph = pipeline.build_execution_graph(name_runner)
 
         await execution_graph
 
@@ -762,18 +760,18 @@ class TestGenerate:
             config=RESOURCE_PATH / "parallel-pipeline",
         )
 
-        list_of_components = list(pipeline.components)
-
         called_component = AsyncMock()
 
         async def name_runner(component: PipelineComponent):
             await called_component(component.name)
 
-        execution_graph = pipeline.build_execution_graph_from(
-            [list_of_components[0], list_of_components[3], list_of_components[6]],
-            False,
-            name_runner,
-        )
+        pipeline.remove(pipeline.components[8])
+        pipeline.remove(pipeline.components[7])
+        pipeline.remove(pipeline.components[5])
+        pipeline.remove(pipeline.components[4])
+        pipeline.remove(pipeline.components[2])
+        pipeline.remove(pipeline.components[1])
+        execution_graph = pipeline.build_execution_graph(name_runner)
 
         await execution_graph
 
@@ -809,9 +807,7 @@ class TestGenerate:
             await asyncio.sleep(sleep_table_components[component.name])
             await called_component(component.name)
 
-        execution_graph = pipeline.build_execution_graph_from(
-            list(pipeline.components), True, name_runner
-        )
+        execution_graph = pipeline.build_execution_graph(name_runner, reverse=True)
 
         await execution_graph
 
