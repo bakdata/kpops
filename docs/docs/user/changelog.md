@@ -1,4 +1,27 @@
 # Changelog
+## [3.0.2](https://github.com/bakdata/kpops/releases/tag/3.0.2) - Release Date: [2024-01-23]
+
+### 🐛 Fixes
+
+- Fix Helm diff output - [#434](https://github.com/bakdata/kpops/pull/434)
+
+
+### 📝 Documentation
+
+- Add step for submodule initialization on the docs - [#431](https://github.com/bakdata/kpops/pull/431)
+
+
+### 🌀 Miscellaneous
+
+- Add message if examples git submodule is not initialized - [#432](https://github.com/bakdata/kpops/pull/432)
+
+- Update type annotation for deserialized pipeline - [#433](https://github.com/bakdata/kpops/pull/433)
+
+
+
+
+
+
 ## [3.0.1](https://github.com/bakdata/kpops/releases/tag/3.0.1) - Release Date: [2024-01-19]
 
 ### 🐛 Fixes
