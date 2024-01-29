@@ -51,15 +51,6 @@ DOTENV_PATH_OPTION: Optional[list[Path]] = typer.Option(
     ),
 )
 
-DEFAULT_PATH_OPTION: Optional[Path] = typer.Option(
-    default=None,
-    exists=True,
-    dir_okay=True,
-    file_okay=False,
-    envvar=f"{ENV_PREFIX}DEFAULT_PATH",
-    help="Path to defaults folder",
-)
-
 CONFIG_PATH_OPTION: Path = typer.Option(
     default=Path(),
     exists=True,
@@ -207,7 +198,6 @@ def log_action(action: str, pipeline_component: PipelineComponent):
 
 def create_kpops_config(
     config: Path,
-    defaults: Path | None = None,
     dotenv: list[Path] | None = None,
     environment: str | None = None,
     verbose: bool = False,
@@ -215,14 +205,9 @@ def create_kpops_config(
     setup_logging_level(verbose)
     YamlConfigSettingsSource.config_dir = config
     YamlConfigSettingsSource.environment = environment
-    kpops_config = KpopsConfig(
+    return KpopsConfig(
         _env_file=dotenv  # pyright: ignore[reportGeneralTypeIssues]
     )
-    if defaults:
-        kpops_config.defaults_path = defaults
-    else:
-        kpops_config.defaults_path = config / kpops_config.defaults_path
-    return kpops_config
 
 
 @app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
@@ -270,7 +255,6 @@ def schema(
 def generate(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
-    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     output: bool = OUTPUT_OPTION,
     environment: Optional[str] = ENVIRONMENT,
@@ -278,7 +262,6 @@ def generate(
 ) -> Pipeline:
     kpops_config = create_kpops_config(
         config,
-        defaults,
         dotenv,
         environment,
         verbose,
@@ -296,7 +279,6 @@ def generate(
 def manifest(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
-    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     output: bool = OUTPUT_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
@@ -307,7 +289,6 @@ def manifest(
     pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
-        defaults=defaults,
         config=config,
         output=False,
         environment=environment,
@@ -328,7 +309,6 @@ def manifest(
 def deploy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
-    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
@@ -338,7 +318,6 @@ def deploy(
 ):
     kpops_config = create_kpops_config(
         config,
-        defaults,
         dotenv,
         environment,
         verbose,
@@ -355,7 +334,6 @@ def deploy(
 def destroy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
-    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
@@ -365,7 +343,6 @@ def destroy(
 ):
     kpops_config = create_kpops_config(
         config,
-        defaults,
         dotenv,
         environment,
         verbose,
@@ -381,7 +358,6 @@ def destroy(
 def reset(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
-    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
@@ -391,7 +367,6 @@ def reset(
 ):
     kpops_config = create_kpops_config(
         config,
-        defaults,
         dotenv,
         environment,
         verbose,
@@ -408,7 +383,6 @@ def reset(
 def clean(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
-    defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
@@ -418,7 +392,6 @@ def clean(
 ):
     kpops_config = create_kpops_config(
         config,
-        defaults,
         dotenv,
         environment,
         verbose,

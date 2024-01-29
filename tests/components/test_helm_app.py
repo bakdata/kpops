@@ -15,15 +15,18 @@ from kpops.component_handlers.helm_wrapper.model import (
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.config import KpopsConfig
 from kpops.utils.colorify import magentaify
+from kpops.utils.environment import ENV
 
-DEFAULTS_PATH = Path(__file__).parent / "resources"
+RESOURCES_PATH = Path(__file__).parent / "resources"
 
 
 class TestHelmApp:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
+        ENV["pipeline_path"] = str(
+            RESOURCES_PATH / "pipelines/pipeline-1/pipeline.yaml"
+        )
         return KpopsConfig(
-            defaults_path=DEFAULTS_PATH,
             helm_diff_config=HelmDiffConfig(),
         )
 
@@ -156,7 +159,7 @@ class TestHelmApp:
         app_values: HelmAppValues,
     ):
         class AppWithLocalChart(HelmApp):
-            repo_config: None = None
+            repo_config: HelmRepoConfig | None = None
 
             @property
             @override

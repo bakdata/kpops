@@ -1,4 +1,3 @@
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -17,8 +16,6 @@ from kpops.config import KpopsConfig
 
 HELM_RELEASE_NAME = create_helm_release_name("${pipeline.name}-test-kubernetes-app")
 
-DEFAULTS_PATH = Path(__file__).parent / "resources"
-
 
 class KubernetesTestValues(KubernetesAppValues):
     foo: str
@@ -27,7 +24,7 @@ class KubernetesTestValues(KubernetesAppValues):
 class TestKubernetesApp:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
-        return KpopsConfig(defaults_path=DEFAULTS_PATH)
+        return KpopsConfig()
 
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:

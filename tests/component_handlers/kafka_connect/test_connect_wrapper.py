@@ -27,7 +27,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 class TestConnectorApiWrapper:
     @pytest.fixture(autouse=True)
     def _setup(self):
-        config = KpopsConfig(defaults_path=DEFAULTS_PATH)
+        config = KpopsConfig()
         self.connect_wrapper = ConnectWrapper(config.kafka_connect)
 
     @pytest.fixture()

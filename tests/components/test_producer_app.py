@@ -14,8 +14,9 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
 )
 from kpops.config import KpopsConfig, TopicNameConfig
+from kpops.utils.environment import ENV
 
-DEFAULTS_PATH = Path(__file__).parent / "resources"
+RESOURCES_PATH = Path(__file__).parent / "resources"
 
 PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
 PRODUCER_APP_FULL_NAME = "${pipeline.name}-" + PRODUCER_APP_NAME
@@ -40,8 +41,10 @@ class TestProducerApp:
 
     @pytest.fixture()
     def config(self) -> KpopsConfig:
+        ENV["pipeline_path"] = str(
+            RESOURCES_PATH / "pipelines/pipeline-1/pipeline.yaml"
+        )
         return KpopsConfig(
-            defaults_path=DEFAULTS_PATH,
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",

@@ -123,6 +123,8 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
         # TODO: Maybe there is a better way to pas pipeline_path here
         env_pipeline_path = ENV.get("pipeline_path")
+        # TODO: One way would be add a field to KPOps Config and skip it from the JSON
+        # env_pipeline_path = config.pipeline_path
         if not env_pipeline_path:
             env_pipeline_path = Path()
         pipeline_path = Path(env_pipeline_path)
@@ -140,7 +142,8 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     def load_defaults(cls, *defaults_file_paths: Path) -> dict[str, Any]:
         """Resolve component-specific defaults including environment defaults.
 
-        :param *defaults_file_paths: Path to `defaults.yaml`, ordered from lowest to highest priority, i.e. `defaults.yaml`, `defaults_{environment}`.yaml
+        :param *defaults_file_paths: Path to `defaults.yaml`, ordered from highest to lowest priority,
+         i.e. `defaults.yaml`, `defaults_{environment}`.yaml
         :returns: Component defaults
         """
         defaults: dict[str, Any] = {}
@@ -204,6 +207,10 @@ def get_defaults_file_paths(
     :returns: The defaults files paths
     """
     default_paths = []
+
+    if not pipeline_path.is_file():
+        message = f"No pipeline.yaml found in directory: {pipeline_path}"
+        raise FileNotFoundError(message)
 
     path = pipeline_path.resolve()
 

@@ -40,7 +40,6 @@ $ kpops clean [OPTIONS] PIPELINE_PATH
 **Options**:
 
 * `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
@@ -66,7 +65,6 @@ $ kpops deploy [OPTIONS] PIPELINE_PATH
 **Options**:
 
 * `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
@@ -92,7 +90,6 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH
 **Options**:
 
 * `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]
@@ -118,7 +115,6 @@ $ kpops generate [OPTIONS] PIPELINE_PATH
 **Options**:
 
 * `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
 * `--output / --no-output`: Enable output printing  [default: output]
 * `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
@@ -142,7 +138,6 @@ $ kpops manifest [OPTIONS] PIPELINE_PATH
 **Options**:
 
 * `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
 * `--output / --no-output`: Enable output printing  [default: output]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
@@ -168,7 +163,6 @@ $ kpops reset [OPTIONS] PIPELINE_PATH
 **Options**:
 
 * `--dotenv FILE`: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]
-* `--defaults DIRECTORY`: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]
 * `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
 * `--steps TEXT`: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: include]

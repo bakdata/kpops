@@ -19,8 +19,9 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
 from kpops.config import KpopsConfig, TopicNameConfig
+from kpops.utils.environment import ENV
 
-DEFAULTS_PATH = Path(__file__).parent / "resources"
+RESOURCES_PATH = Path(__file__).parent / "resources"
 
 STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
 STREAMS_APP_FULL_NAME = "${pipeline.name}-" + STREAMS_APP_NAME
@@ -45,8 +46,10 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def config(self) -> KpopsConfig:
+        ENV["pipeline_path"] = str(
+            RESOURCES_PATH / "pipelines/pipeline-2/pipeline.yaml"
+        )
         return KpopsConfig(
-            defaults_path=DEFAULTS_PATH,
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
@@ -415,8 +418,8 @@ class TestStreamsApp:
                     STREAMS_APP_CLEAN_RELEASE_NAME,
                     dry_run,
                 ),
-                ANY,  # __bool__
-                ANY,  # __str__
+                # ANY,  # __bool__
+                # ANY,  # __str__
             ]
         )
 

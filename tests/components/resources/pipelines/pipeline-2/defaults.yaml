@@ -6,20 +6,7 @@ streams-bootstrap:
   app:
     streams:
       brokers: "${config.kafka_brokers}"
-      schemaRegistryUrl: "${config.schema_registry.url}"
 
 producer-app: {} # inherits from kafka-app
 
-streams-app: # inherits from kafka-app
-  app:
-    streams:
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-  to:
-    topics:
-      ${error_topic_name}:
-        type: error
-        value_schema: com.bakdata.kafka.DeadLetter
-        partitions_count: 1
-        configs:
-          cleanup.policy: compact,delete
+streams-app: {} # inherits from kafka-app

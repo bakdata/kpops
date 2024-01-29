@@ -47,7 +47,8 @@ class EnvVarTest(BaseDefaultsComponent):
 
 @pytest.fixture()
 def config() -> KpopsConfig:
-    return KpopsConfig(defaults_path=RESOURCES_PATH)
+    ENV["pipeline_path"] = str(RESOURCES_PATH / "pipelines/pipeline-1/pipeline.yaml")
+    return KpopsConfig()
 
 
 @pytest.fixture()
@@ -116,8 +117,8 @@ class TestBaseDefaultsComponent:
     ):
         assert (
             component_class.load_defaults(
-                RESOURCES_PATH / "defaults.yaml",
                 RESOURCES_PATH / "defaults_development.yaml",
+                RESOURCES_PATH / "defaults.yaml",
             )
             == defaults
         )
@@ -204,7 +205,7 @@ class TestBaseDefaultsComponent:
         assert isinstance(component.nested, Nested)
         assert component.nested == Nested(**{"foo": "foo", "bar": False})
 
-    def test_get_defaults_file_paths_2(
+    def test_get_defaults_file_paths(
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         default_paths = get_defaults_file_paths(
