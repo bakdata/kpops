@@ -2,7 +2,7 @@
 
 ## Word-count
 
-Word-count is a demo pipeline which consists of a producer producing words to Kafka, a Kafka streams app counting the number of times each word occurs and finally a Redis database into which the words are exported.
+Word-count is a demo pipeline consisting of a producer producing words to Kafka, a Kafka streams app counting the number of times each word occurs, and finally a Redis database into which the words are exported.
 
 ## What this will demonstrate
 
@@ -69,34 +69,21 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 <!-- dprint-ignore-start -->
 
-1. Copy the [configuration](https://github.com/bakdata/kpops-examples/tree/main/word-count/deployment/kpops){target=_blank} from the [kpops-examples repository](https://github.com/bakdata/kpops-examples/tree/main/word-count){target=_blank} into `kpops>examples>bakdata>word-count` like so:
+1. Clone the [kpops-examples repository](https://github.com/bakdata/kpops-examples){target=_blank} and `cd` into the directory.
 
-    ```
-    kpops
-    ├── examples
-    |   ├── bakdata
-    |   |   ├── word-count
-    |   |   |   ├── config.yaml
-    |   |   |   ├── defaults
-    |   |   |   │   └── defaults.yaml
-    |   |   |   └── pipeline.yaml
-    |   |   |
-    ```
+2. Install KPOps `pip install -r requirements.txt`.
 
-2. Export environment variables in your terminal:
+3. Export environment variables in your terminal:
 
     ```shell
     export DOCKER_REGISTRY=bakdata && \
     export NAMESPACE=kpops
     ```
 
-3. Deploy the pipeline
+4. Deploy the pipeline
 
     ```shell
-    kpops deploy ./examples/bakdata/word-count/pipeline.yaml \
-    --pipeline-base-dir ./examples \
-    --config ./examples/bakdata/word-count/config.yaml \
-    --execute
+    kpops deploy word-count/pipeline.yaml --execute
     ```
 
 !!! Note
@@ -156,11 +143,7 @@ helm --namespace kpops uninstall redis
 2. Remove the pipeline
 
     ```shell
-    kpops clean ./examples/bakdata/word-count/pipeline.yaml \
-    --pipeline-base-dir ./examples \
-    --config ./examples/bakdata/word-count/config.yaml \
-    --verbose \
-    --execute
+    kpops clean word-count/pipeline.yaml --verbose --execute
     ```
 
 !!! Note
@@ -178,13 +161,13 @@ helm --namespace kpops uninstall redis
 
 - `deploy` fails:
     1. Read the error message.
-    2. Try to correct the mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
+    2. Try to correct the mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.
     3. Run `clean`.
     4. Run `deploy --dry-run` to avoid having to `clean` again. If an error is dropped, start over from step 1.
     5. If the dry-run is successful, run `deploy`.
 - `clean` fails:
     1. Read the error message.
-    2. Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
+    2. Try to correct the indicated mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.
     3. Run `clean`.
     4. If `clean` fails, follow the steps in [teardown](../teardown).
 

@@ -4,29 +4,24 @@ pipeline-component:
 kubernetes-app:
   namespace: ${NAMESPACE}
 
+kafka-connector:
+  namespace: ${NAMESPACE}
+
 kafka-app:
   app:
     streams:
       brokers: ${config.kafka_brokers}
       schemaRegistryUrl: ${config.schema_registry.url}
-      optimizeLeaveGroupBehavior: false
-
-producer-app:
-  to:
-    topics:
-      ${output_topic_name}:
-        partitions_count: 3
 
 streams-app:
   app:
     labels:
       pipeline: ${pipeline.name}
-    streams:
-      optimizeLeaveGroupBehavior: false
   to:
     topics:
       ${error_topic_name}:
         type: error
         partitions_count: 1
       ${output_topic_name}:
+        type: output
         partitions_count: 3

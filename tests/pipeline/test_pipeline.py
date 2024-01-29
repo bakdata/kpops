@@ -1,35 +1,46 @@
-from dataclasses import dataclass
-from typing import cast
+from unittest.mock import MagicMock
 
 import pytest
+from polyfactory.factories.pydantic_factory import ModelFactory
 
 from kpops.cli.main import create_default_step_names_filter_predicate
 from kpops.cli.options import FilterType
+from kpops.component_handlers import (
+    ComponentHandlers,
+)
 from kpops.components import PipelineComponent
+from kpops.components.base_components.models.from_section import FromSection
+from kpops.components.base_components.models.to_section import ToSection
 from kpops.pipeline import Pipeline
 
 PREFIX = "example-prefix-"
 
 
-@dataclass
-class TestComponent:
-    __test__ = False
-    name: str
-    prefix: str = PREFIX
+class TestComponentFactory(ModelFactory[PipelineComponent]):
+    to = ToSection()
+    from_ = FromSection()
+    enrich = False
+    validate = False
+    handlers = ComponentHandlers(None, MagicMock(), MagicMock())
 
 
-test_component_1 = TestComponent("example1")
-test_component_2 = TestComponent("example2")
-test_component_3 = TestComponent("example3")
+run_validation = False
+test_component_1 = TestComponentFactory.build(run_validation)
+test_component_2 = TestComponentFactory.build(run_validation)
+test_component_3 = TestComponentFactory.build(run_validation)
+
+test_component_1.name = "example1"
+test_component_2.name = "example2"
+test_component_3.name = "example3"
 
 
 class TestPipeline:
     @pytest.fixture(autouse=True)
     def pipeline(self) -> Pipeline:
         pipeline = Pipeline()
-        pipeline.add(cast(PipelineComponent, test_component_1))
-        pipeline.add(cast(PipelineComponent, test_component_2))
-        pipeline.add(cast(PipelineComponent, test_component_3))
+        pipeline.add(test_component_1)
+        pipeline.add(test_component_2)
+        pipeline.add(test_component_3)
         return pipeline
 
     def test_filter_include(self, pipeline: Pipeline):

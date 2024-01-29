@@ -9,7 +9,6 @@ import pytest
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
-    load_defaults,
 )
 from kpops.config import KpopsConfig
 from kpops.utils.environment import ENV
@@ -86,7 +85,7 @@ class TestBaseDefaultsComponent:
         self, component_class: type[BaseDefaultsComponent], defaults: dict
     ):
         assert (
-            load_defaults(component_class, DEFAULTS_PATH / "defaults.yaml") == defaults
+            component_class.load_defaults(DEFAULTS_PATH / "defaults.yaml") == defaults
         )
 
     @pytest.mark.parametrize(
@@ -115,8 +114,7 @@ class TestBaseDefaultsComponent:
         self, component_class: type[BaseDefaultsComponent], defaults: dict
     ):
         assert (
-            load_defaults(
-                component_class,
+            component_class.load_defaults(
                 DEFAULTS_PATH / "defaults.yaml",
                 DEFAULTS_PATH / "defaults_development.yaml",
             )

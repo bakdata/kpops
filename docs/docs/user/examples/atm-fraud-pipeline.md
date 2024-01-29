@@ -41,7 +41,7 @@ postgresql bitnami/postgresql
 ??? example "PostgreSQL Example Helm chart values (`postgresql.yaml`)"
     ```yaml
     auth:
-      database: app_db  
+      database: app_db
       enablePostgresUser: true
       password: AppPassword
       postgresPassword: StrongPassword
@@ -74,20 +74,21 @@ kubectl port-forward --namespace kpops service/k8kafka-cp-kafka-connect 8083:808
 
 <!-- dprint-ignore-start -->
 
-1. Export environment variables in your terminal:
+1. Clone the [kpops-examples repository](https://github.com/bakdata/kpops-examples){target=_blank} and `cd` into the directory.
+
+2. Install KPOps `pip install -r requirements.txt`.
+
+3. Export environment variables in your terminal:
 
     ```shell
     export DOCKER_REGISTRY=bakdata && \
     export NAMESPACE=kpops
     ```
 
-2. Deploy the pipeline
+4. Deploy the pipeline
 
     ```shell
-    poetry run kpops deploy ./examples/bakdata/atm-fraud-detection/pipeline.yaml \
-    --pipeline-base-dir ./examples \
-    --config ./examples/bakdata/atm-fraud-detection/config.yaml \
-    --execute
+    kpops deploy atm-fraud/pipeline.yaml --execute
     ```
 
 !!! Note
@@ -116,7 +117,7 @@ You should be able to see pipeline shown in the image below:
 <!-- dprint-ignore-start -->
 
 !!! Attention
-    Kafka Connect needs some time to set up the connector. 
+    Kafka Connect needs some time to set up the connector.
     Moreover, Streams Explorer needs a while to scrape the information from Kafka connect.
     Therefore, it might take a bit until you see the whole graph.
 
@@ -146,11 +147,7 @@ helm --namespace kpops uninstall postgresql
 2. Remove the pipeline
 
     ```shell
-    poetry run kpops clean ./examples/bakdata/atm-fraud-detection/pipeline.yaml \
-    --pipeline-base-dir ./examples \
-    --config ./examples/bakdata/atm-fraud-detection/config.yaml \
-    --verbose \
-    --execute
+    kpops clean atm-fraud/pipeline.yaml --verbose  --execute
     ```
 
 !!! Note
@@ -166,12 +163,12 @@ helm --namespace kpops uninstall postgresql
 
 - `deploy` fails:
   1. Read the error message.
-  2. Try to correct the mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
+  2. Try to correct the mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.
   3. Run `clean`.
   4. Run `deploy --dry-run` to avoid havig to `clean` again. If an error is dropped, start over from step 1.
   5. If the dry-run is succesful, run `deploy`.
 - `clean` fails:
   1. Read the error message.
-  2. Try to correct the indicated mistakes if there were any. Likely the configuration is not correct or the port-forwarding is not working as intended.
+  2. Try to correct the indicated mistakes if there were any. Likely the configuration is incorrect, or the port-forwarding is not working as intended.
   3. Run `clean`.
   4. If `clean` fails, follow the steps in [teardown](../getting-started/teardown.md).

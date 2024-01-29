@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
+from typing import TYPE_CHECKING
 
 from pydantic import AliasChoices, ConfigDict, Field
 
@@ -18,14 +19,10 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
-from kpops.utils import cached_classproperty
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import issubclass_patched
 
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
@@ -68,24 +65,32 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         self.set_output_topics()
 
     @property
+    def input_topics(self) -> list[str]:
+        """Get all the input topics from config."""
+        return []
+
+    @property
+    def extra_input_topics(self) -> dict[str, list[str]]:
+        """Get extra input topics list from config."""
+        return {}
+
+    @property
+    def output_topic(self) -> str | None:
+        """Get output topic from config."""
+        return None
+
+    @property
+    def extra_output_topics(self) -> dict[str, str]:
+        """Get extra output topics list from config."""
+        return {}
+
+    @property
+    def id(self) -> str:
+        return f"component-{self.full_name}"
+
+    @property
     def full_name(self) -> str:
         return self.prefix + self.name
-
-    @cached_classproperty
-    def parents(cls: type[Self]) -> tuple[type[PipelineComponent], ...]:  # pyright: ignore[reportGeneralTypeIssues]
-        """Get parent components.
-
-        :return: All ancestor KPOps components
-        """
-
-        def gen_parents():
-            for base in cls.mro():
-                # skip class itself and non-component ancestors
-                if base is cls or not issubclass_patched(base, PipelineComponent):
-                    continue
-                yield base
-
-        return tuple(gen_parents())
 
     def add_input_topics(self, topics: list[str]) -> None:
         """Add given topics to the list of input topics.
@@ -140,6 +145,18 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         if self.from_:
             for name, topic in self.from_.topics.items():
                 self.apply_from_inputs(name, topic)
+
+    @property
+    def inputs(self) -> Iterator[str]:
+        yield from self.input_topics
+        for role_topics in self.extra_input_topics.values():
+            yield from role_topics
+
+    @property
+    def outputs(self) -> Iterator[str]:
+        if output_topic := self.output_topic:
+            yield output_topic
+        yield from self.extra_output_topics.values()
 
     def apply_from_inputs(self, name: str, topic: FromTopic) -> None:
         """Add a `from` section input to the component config.
@@ -215,25 +232,25 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """Render final component resources, e.g. Kubernetes manifests."""
         return []
 
-    def deploy(self, dry_run: bool) -> None:
+    async def deploy(self, dry_run: bool) -> None:
         """Deploy component, e.g. to Kubernetes cluster.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
-    def destroy(self, dry_run: bool) -> None:
+    async def destroy(self, dry_run: bool) -> None:
         """Uninstall component, e.g. from Kubernetes cluster.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
-    def reset(self, dry_run: bool) -> None:
+    async def reset(self, dry_run: bool) -> None:
         """Reset component state.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
-    def clean(self, dry_run: bool) -> None:
+    async def clean(self, dry_run: bool) -> None:
         """Destroy component including related states.
 
         :param dry_run: Whether to do a dry run of the command

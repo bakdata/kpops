@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import asyncio
 import logging
-from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
@@ -32,6 +32,8 @@ from kpops.utils.pydantic import YamlConfigSettingsSource
 from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
+    from collections.abc import Awaitable, Callable, Coroutine
+
     from kpops.components.base_components import PipelineComponent
 
 
@@ -90,6 +92,13 @@ DRY_RUN: bool = typer.Option(
     True,
     "--dry-run/--execute",
     help="Whether to dry run the command or execute it",
+)
+
+PARALLEL: bool = typer.Option(
+    False,
+    "--parallel/--no-parallel",
+    rich_help_panel="EXPERIMENTAL: features in preview, not production-ready",
+    help="Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.",
 )
 
 
@@ -167,6 +176,18 @@ def create_default_step_names_filter_predicate(
                 return True
 
     return predicate
+
+
+def get_concurrently_tasks_to_execute(
+    pipeline: Pipeline,
+    runner: Callable[[PipelineComponent], Coroutine],
+    reverse: bool = False,
+) -> Awaitable:
+    return pipeline.build_execution_graph_from(
+        list(reversed(pipeline.components)) if reverse else pipeline.components,
+        reverse,
+        runner,
+    )
 
 
 def log_action(action: str, pipeline_component: PipelineComponent):
@@ -257,6 +278,7 @@ def generate(
         environment,
         verbose,
     )
+
     pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
 
     if steps:
@@ -326,6 +348,7 @@ def deploy(
     environment: Optional[str] = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
     pipeline = generate(
         pipeline_path=pipeline_path,
@@ -338,9 +361,20 @@ def deploy(
         environment=environment,
         verbose=verbose,
     )
-    for component in pipeline.components:
+
+    async def deploy_runner(component: PipelineComponent):
         log_action("Deploy", component)
-        component.deploy(dry_run)
+        await component.deploy(dry_run)
+
+    async def async_deploy():
+        if parallel:
+            pipeline_tasks = get_concurrently_tasks_to_execute(pipeline, deploy_runner)
+            await pipeline_tasks
+        else:
+            for component in pipeline.components:
+                await deploy_runner(component)
+
+    asyncio.run(async_deploy())
 
 
 @app.command(help="Destroy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
@@ -354,6 +388,7 @@ def destroy(
     environment: Optional[str] = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
     pipeline = generate(
         pipeline_path=pipeline_path,
@@ -366,9 +401,22 @@ def destroy(
         environment=environment,
         verbose=verbose,
     )
-    for component in reversed(pipeline.components):
+
+    async def destroy_runner(component: PipelineComponent):
         log_action("Destroy", component)
-        component.destroy(dry_run)
+        await component.destroy(dry_run)
+
+    async def async_destroy():
+        if parallel:
+            pipeline_tasks = get_concurrently_tasks_to_execute(
+                pipeline, destroy_runner, reverse=True
+            )
+            await pipeline_tasks
+        else:
+            for component in reversed(pipeline.components):
+                await destroy_runner(component)
+
+    asyncio.run(async_destroy())
 
 
 @app.command(help="Reset pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
@@ -382,6 +430,7 @@ def reset(
     environment: Optional[str] = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
     pipeline = generate(
         pipeline_path=pipeline_path,
@@ -394,10 +443,23 @@ def reset(
         environment=environment,
         verbose=verbose,
     )
-    for component in reversed(pipeline.components):
-        component.destroy(dry_run)
+
+    async def reset_runner(component: PipelineComponent):
+        await component.destroy(dry_run)
         log_action("Reset", component)
-        component.reset(dry_run)
+        await component.reset(dry_run)
+
+    async def async_reset():
+        if parallel:
+            pipeline_tasks = get_concurrently_tasks_to_execute(
+                pipeline, reset_runner, reverse=True
+            )
+            await pipeline_tasks
+        else:
+            for component in pipeline.components:
+                await reset_runner(component)
+
+    asyncio.run(async_reset())
 
 
 @app.command(help="Clean pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
@@ -411,6 +473,7 @@ def clean(
     environment: Optional[str] = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
     pipeline = generate(
         pipeline_path=pipeline_path,
@@ -423,10 +486,23 @@ def clean(
         environment=environment,
         verbose=verbose,
     )
-    for component in reversed(pipeline.components):
-        component.destroy(dry_run)
+
+    async def clean_runner(component: PipelineComponent):
+        await component.destroy(dry_run)
         log_action("Clean", component)
-        component.clean(dry_run)
+        await component.clean(dry_run)
+
+    async def async_clean():
+        if parallel:
+            pipeline_steps = get_concurrently_tasks_to_execute(
+                pipeline, clean_runner, reverse=True
+            )
+            await pipeline_steps
+        else:
+            for component in pipeline.components:
+                await clean_runner(component)
+
+    asyncio.run(async_clean())
 
 
 def version_callback(show_version: bool) -> None:
