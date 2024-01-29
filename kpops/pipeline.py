@@ -40,7 +40,7 @@ class Pipeline(BaseModel):
     """Pipeline representation."""
 
     graph: nx.DiGraph = Field(default_factory=nx.DiGraph, exclude=True)
-    _component_index: dict[str, PipelineComponent | None] = {}
+    _component_index: dict[str, PipelineComponent] = {}
 
     class Config:
         arbitrary_types_allowed = True
@@ -48,12 +48,7 @@ class Pipeline(BaseModel):
     @computed_field(title="Components")
     @property
     def components(self) -> list[SerializeAsAny[PipelineComponent]]:
-        def gen_components():
-            for component in self._component_index.values():
-                if component is not None:
-                    yield component
-
-        return list(gen_components())
+        return list(self._component_index.values())
 
     @property
     def last(self) -> PipelineComponent:
@@ -168,14 +163,12 @@ class Pipeline(BaseModel):
     def __get_parallel_tasks_from(
         self, layer: list[str], runner: Callable[[PipelineComponent], Coroutine]
     ) -> list[Coroutine]:
-        parallel_tasks = []
+        def gen_parallel_tasks():
+            for node_in_layer in layer:
+                if (component := self._component_index.get(node_in_layer)) is not None:
+                    yield runner(component)
 
-        for node_in_layer in layer:
-            component = self._component_index[node_in_layer]
-            if component is not None:
-                parallel_tasks.append(runner(component))
-
-        return parallel_tasks
+        return list(gen_parallel_tasks())
 
     def __validate_graph(self) -> None:
         if not nx.is_directed_acyclic_graph(self.graph):
@@ -186,12 +179,10 @@ class Pipeline(BaseModel):
         self.__validate_graph()
 
     def __add_output(self, output_topic: str, source: str) -> None:
-        self._component_index[output_topic] = None
         self.graph.add_node(output_topic)
         self.graph.add_edge(source, output_topic)
 
     def __add_input(self, input_topic: str, target: str) -> None:
-        self._component_index[input_topic] = None
         self.graph.add_node(input_topic)
         self.graph.add_edge(input_topic, target)
 
