@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING
 
 import networkx as nx
 import yaml
-from pydantic import BaseModel, Field, SerializeAsAny, computed_field
+from pydantic import BaseModel, ConfigDict, Field, SerializeAsAny, computed_field
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
@@ -42,8 +42,7 @@ class Pipeline(BaseModel):
     graph: nx.DiGraph = Field(default_factory=nx.DiGraph, exclude=True)
     _component_index: dict[str, PipelineComponent] = {}
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @computed_field(title="Components")
     @property
