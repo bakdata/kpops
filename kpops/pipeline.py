@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from collections import Counter
 from collections.abc import Iterable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
@@ -184,7 +183,6 @@ class Pipeline(BaseModel):
             raise ValueError(msg)
 
     def validate(self) -> None:
-        self.validate_unique_names()
         self.__validate_graph()
 
     def __add_output(self, output_topic: str, source: str) -> None:
@@ -196,13 +194,6 @@ class Pipeline(BaseModel):
         self._component_index[input_topic] = None
         self.graph.add_node(input_topic)
         self.graph.add_edge(input_topic, target)
-
-    def validate_unique_names(self) -> None:
-        step_names = [component.full_name for component in self.components]
-        duplicates = [name for name, count in Counter(step_names).items() if count > 1]
-        if duplicates:
-            msg = f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
-            raise ValidationError(msg)
 
 
 def create_env_components_index(
