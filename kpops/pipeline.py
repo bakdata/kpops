@@ -54,7 +54,10 @@ class Pipeline(BaseModel):
     def last(self) -> PipelineComponent:
         return self.components[-1]
 
-    def find(self, component_name: str) -> PipelineComponent:
+    def get(self, component_id: str) -> PipelineComponent | None:
+        self._component_index.get(component_id)
+
+    def find(self, component_name: str) -> PipelineComponent:  # TODO: deprecate
         for component in self.components:
             if component_name == component.name:
                 return component
