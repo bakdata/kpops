@@ -23,6 +23,10 @@ inputs:
   filter-type:
     description: "Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS (default is include)"
     required: false
+  parallel:
+    description: "Whether to run the pipeline in parallel"
+    required: false
+    default: "false"
   python-version:
     description: "Python version to install (Defaults to the latest stable version of Python 3.11)"
     required: false
@@ -38,10 +42,6 @@ inputs:
   token:
     description: "secrets.GITHUB_TOKEN, needed for setup-helm action if helm-version is set to latest"
     required: false
-  parallel:
-    description: "Whether to run the pipeline in parallel"
-    required: false
-    default: "false"
 
 
 runs:
