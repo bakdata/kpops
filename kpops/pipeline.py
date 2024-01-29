@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 import networkx as nx
 import yaml
-from pydantic import BaseModel, Field, SerializeAsAny
+from pydantic import BaseModel, Field, SerializeAsAny, computed_field
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
@@ -40,14 +40,21 @@ class ValidationError(Exception):
 class Pipeline(BaseModel):
     """Pipeline representation."""
 
-    components: list[SerializeAsAny[PipelineComponent]] = Field(
-        default=[], title="Components"
-    )
     graph: nx.DiGraph = Field(default_factory=nx.DiGraph, exclude=True)
     _component_index: dict[str, PipelineComponent | None] = {}
 
     class Config:
         arbitrary_types_allowed = True
+
+    @computed_field(title="Components")
+    @property
+    def components(self) -> list[SerializeAsAny[PipelineComponent]]:
+        def gen_components():
+            for component in self._component_index.values():
+                if component is not None:
+                    yield component
+
+        return list(gen_components())
 
     @property
     def last(self) -> PipelineComponent:
@@ -61,7 +68,6 @@ class Pipeline(BaseModel):
         raise ValueError(msg)
 
     def __add_to_graph(self, component: PipelineComponent):
-        self._component_index[component.id] = component
         self.graph.add_node(component.id)
 
         for input_topic in component.inputs:
@@ -71,12 +77,16 @@ class Pipeline(BaseModel):
             self.__add_output(output_topic, component.id)
 
     def add(self, component: PipelineComponent) -> None:
-        self.components.append(component)
+        if self._component_index.get(component.id) is not None:
+            msg = (
+                f"Pipeline steps must have unique id, '{component.id}' already exists."
+            )
+            raise ValidationError(msg)
+        self._component_index[component.id] = component
         self.__add_to_graph(component)
 
-    def remove(self, component: PipelineComponent) -> None:
-        self.components.remove(component)
-        self._component_index.pop(component.id)
+    def remove(self, component_id: str) -> None:
+        self._component_index.pop(component_id)
 
     def __bool__(self) -> bool:
         return bool(self.components)
@@ -93,10 +103,10 @@ class Pipeline(BaseModel):
         :param predicate: Filter function,
             returns boolean value whether the component should be kept or removed
         """
-        for component in self.components.copy():
+        for component in self.components:
             # filter out components not matching the predicate
             if not predicate(component):
-                self.remove(component)
+                self.remove(component.id)
 
     def to_yaml(self) -> str:
         return yaml.dump(

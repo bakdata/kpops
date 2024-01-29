@@ -640,7 +640,13 @@ class TestGenerate:
         assert input_components["component-extra-pattern"]["role"] == "role"
 
     def test_kubernetes_app_name_validation(self):
-        with pytest.raises((ValueError, ParsingException)):
+        with pytest.raises(
+            ParsingException,
+            match="Error enriching filter component illegal_name",
+        ), pytest.raises(
+            ValueError,
+            match="The component name illegal_name is invalid for Kubernetes.",
+        ):
             runner.invoke(
                 app,
                 [
@@ -657,8 +663,11 @@ class TestGenerate:
 
     def test_validate_unique_step_names(self):
         with pytest.raises(
+            ParsingException,
+            match="Error enriching pipeline-component component component",
+        ), pytest.raises(
             ValidationError,
-            match="step names should be unique. duplicate step names: resources-pipeline-duplicate-step-names-component",
+            match="Pipeline steps must have unique id, 'component-resources-pipeline-duplicate-step-names-component' already exists.",
         ):
             runner.invoke(
                 app,
@@ -765,12 +774,12 @@ class TestGenerate:
         async def name_runner(component: PipelineComponent):
             await called_component(component.name)
 
-        pipeline.remove(pipeline.components[8])
-        pipeline.remove(pipeline.components[7])
-        pipeline.remove(pipeline.components[5])
-        pipeline.remove(pipeline.components[4])
-        pipeline.remove(pipeline.components[2])
-        pipeline.remove(pipeline.components[1])
+        pipeline.remove(pipeline.components[8].id)
+        pipeline.remove(pipeline.components[7].id)
+        pipeline.remove(pipeline.components[5].id)
+        pipeline.remove(pipeline.components[4].id)
+        pipeline.remove(pipeline.components[2].id)
+        pipeline.remove(pipeline.components[1].id)
         execution_graph = pipeline.build_execution_graph(name_runner)
 
         await execution_graph
