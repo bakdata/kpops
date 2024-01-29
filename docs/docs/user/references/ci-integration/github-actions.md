@@ -5,7 +5,7 @@ We provided a GitHub composite action `bakdata/kpops` that installs and executes
 ## Input Parameters
 
 | Name              | Required | Default Value |  Type  | Description                                                                                                                                   |
-| ----------------- | :------: | :-----------: | :----: | --------------------------------------------------------------------------------------------------------------------------------------------- |
+|-------------------| :------: |:-------------:| :----: |-----------------------------------------------------------------------------------------------------------------------------------------------|
 | command           |    ✅    |       -       | string | KPOps command to run. generate, deploy, destroy, reset, clean are possible values. Flags such as --dry-run and --execute need to be specified |
 | pipeline          |    ✅    |       -       | string | Pipeline to run by KPOps                                                                                                                      |
 | working-directory |    ❌    |       .       | string | root directory used by KPOps to run pipelines                                                                                                 |
@@ -14,6 +14,7 @@ We provided a GitHub composite action `bakdata/kpops` that installs and executes
 | environment       |    ❌    |       -       | string | Environment to run KPOps in                                                                                                                   |
 | components        |    ❌    |       -       | string | components package path                                                                                                                       |
 | filter-type       |    ❌    |       -       | string | Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS                                                                          |
+| parallel          |    ❌    |    "false"    | string | Whether to run pipelines in parallel                                                                                                          |
 | python-version    |    ❌    |   "3.11.x"    | string | Python version to install (Defaults to the latest stable version of Python 3.11)                                                              |
 | kpops-version     |    ❌    |    latest     | string | KPOps version to install                                                                                                                      |
 | helm-version      |    ❌    |    latest     | string | Helm version to install                                                                                                                       |
