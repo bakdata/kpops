@@ -1,6 +1,7 @@
 # GitHub Actions integration
 
-We provided a GitHub composite action `bakdata/kpops` that installs and executes KPOps commands with the given parameters.
+We provided a GitHub composite action `bakdata/kpops` that installs and executes KPOps commands with the given
+parameters.
 
 ## Input Parameters
 
@@ -41,6 +42,6 @@ steps:
       command: deploy --execute
       working-directory: home/my-kpops-root-dir
       pipeline: pipelines/my-pipeline-file.yaml
-      kpops-version:  1.2.5.dev20230707132709
+      kpops-version: 1.2.5.dev20230707132709
   # ...
 ```
