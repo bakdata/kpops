@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING
 
 from kpops.component_handlers.topic.exception import (
     TopicNotFoundException,
@@ -18,11 +17,9 @@ from kpops.component_handlers.topic.utils import (
     parse_and_compare_topic_configs,
     parse_rest_proxy_topic_config,
 )
+from kpops.components.base_components.models.to_section import KafkaTopic
 from kpops.utils.colorify import greenify, magentaify
 from kpops.utils.dict_differ import Diff, DiffType, render_diff
-
-if TYPE_CHECKING:
-    from kpops.components.base_components.kafka_topic import KafkaTopic, TopicConfig
 
 log = logging.getLogger("KafkaTopic")
 
@@ -32,11 +29,9 @@ class TopicHandler:
         self.proxy_wrapper = proxy_wrapper
 
     async def create_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
-        topic_spec = self.__prepare_body(topic.name, topic.topic_config)
+        topic_spec = self.__prepare_body(topic)
         if dry_run:
-            await self.__dry_run_topic_creation(
-                topic.name, topic_spec, topic.topic_config
-            )
+            await self.__dry_run_topic_creation(topic, topic_spec)
         else:
             try:
                 await self.proxy_wrapper.get_topic(topic.name)
@@ -44,7 +39,7 @@ class TopicHandler:
                     topic.name
                 )
                 differences = self.__get_topic_config_diff(
-                    topic_config_in_cluster, topic.topic_config.configs
+                    topic_config_in_cluster, topic.config.configs
                 )
 
                 if differences:
@@ -92,19 +87,18 @@ class TopicHandler:
 
     async def __dry_run_topic_creation(
         self,
-        topic_name: str,
-        topic_spec: TopicSpec,
-        topic_config: TopicConfig | None = None,
+        topic: KafkaTopic,
+        topic_spec: TopicSpec,  # TODO: move to KafkaTopic
     ) -> None:
         try:
-            topic_in_cluster = await self.proxy_wrapper.get_topic(topic_name=topic_name)
+            topic_in_cluster = await self.proxy_wrapper.get_topic(topic.name)
             topic_name = topic_in_cluster.topic_name
-            if topic_config:
+            if topic.config:
                 topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
-                    topic_name=topic_name
+                    topic_name
                 )
                 in_cluster_config, new_config = parse_and_compare_topic_configs(
-                    topic_config_in_cluster, topic_config.configs
+                    topic_config_in_cluster, topic.config.configs
                 )
                 if diff := render_diff(in_cluster_config, new_config):
                     log.info(f"Config changes for topic {topic_name}:")
@@ -129,7 +123,7 @@ class TopicHandler:
         except TopicNotFoundException:
             log.info(
                 greenify(
-                    f"Topic Creation: {topic_name} does not exist in the cluster. Creating topic."
+                    f"Topic Creation: {topic.name} does not exist in the cluster. Creating topic."
                 )
             )
             log.debug(f"POST /clusters/{self.proxy_wrapper.cluster_id}/topics HTTP/1.1")
@@ -176,7 +170,7 @@ class TopicHandler:
 
     async def __dry_run_topic_deletion(self, topic_name: str) -> None:
         try:
-            topic_in_cluster = await self.proxy_wrapper.get_topic(topic_name=topic_name)
+            topic_in_cluster = await self.proxy_wrapper.get_topic(topic_name)
             log.info(
                 magentaify(
                     f"Topic Deletion: topic {topic_in_cluster.topic_name} exists in the cluster. Deleting topic."
@@ -199,15 +193,15 @@ class TopicHandler:
             }
             log.debug(error_message)
 
-    @classmethod
-    def __prepare_body(cls, topic_name: str, topic_config: TopicConfig) -> TopicSpec:
+    @classmethod  # TODO: move to KafkaTopic?
+    def __prepare_body(cls, topic: KafkaTopic) -> TopicSpec:
         """Prepare the POST request body needed for the topic creation.
 
         :param topic_name: The name of the topic
         :param topic_config: The topic config
         :return: Topic specification
         """
-        topic_spec_json: dict = topic_config.model_dump(
+        topic_spec_json: dict = topic.config.model_dump(
             include={
                 "partitions_count": True,
                 "replication_factor": True,
@@ -219,5 +213,5 @@ class TopicHandler:
         for config_name, config_value in topic_spec_json["configs"].items():
             configs.append({"name": config_name, "value": config_value})
         topic_spec_json["configs"] = configs
-        topic_spec_json["topic_name"] = topic_name
+        topic_spec_json["topic_name"] = topic.name
         return TopicSpec(**topic_spec_json)

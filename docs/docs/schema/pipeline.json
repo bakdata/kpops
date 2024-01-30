@@ -121,8 +121,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": "Topic(s) into which the component will write output"
+                    "default": null
                 },
                 "type": {
                     "const": "helm-app",
@@ -301,8 +300,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": "Topic(s) into which the component will write output"
+                    "default": null
                 },
                 "type": {
                     "const": "kafka-sink-connector",
@@ -396,8 +394,7 @@
                             "type": "null"
                         }
                     ],
-                    "default": null,
-                    "description": "Topic(s) into which the component will write output"
+                    "default": null
                 },
                 "type": {
                     "const": "kafka-source-connector",

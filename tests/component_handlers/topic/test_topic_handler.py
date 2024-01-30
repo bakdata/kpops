@@ -19,12 +19,10 @@ from kpops.component_handlers.topic.model import (
     TopicResponse,
     TopicSpec,
 )
-from kpops.components.base_components.kafka_topic import KafkaTopic
-from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
+    KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
-    ToSection,
 )
 from kpops.utils.colorify import greenify, magentaify
 
@@ -106,7 +104,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
         await topic_handler.create_topic(topic, dry_run=False)
 
         topic_spec = {
@@ -119,7 +117,7 @@ class TestTopicHandler:
             ],
         }
 
-        wrapper.create_topic.assert_called_once_with(topic_spec=TopicSpec(**topic_spec))
+        wrapper.create_topic.assert_called_once_with(TopicSpec(**topic_spec))
         wrapper.__dry_run_topic_creation.assert_not_called()
 
     @pytest.mark.asyncio()
@@ -135,14 +133,12 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "delete", "delete.retention.ms": "123456789"},
         )
-        to_section = ToSection(topics={TopicName("topic-X"): topic_config})
-
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
         await topic_handler.create_topic(topic, dry_run=False)
 
         wrapper.batch_alter_topic_config.assert_called_once_with(
-            topic_name="topic-X",
-            json_body=[
+            "topic-X",
+            [
                 {"name": "cleanup.policy", "value": "delete"},
                 {"name": "delete.retention.ms", "value": "123456789"},
                 {"name": "compression.type", "operation": "DELETE"},
@@ -164,12 +160,12 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "delete", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
         await topic_handler.create_topic(topic, dry_run=False)
 
         wrapper.batch_alter_topic_config.assert_called_once_with(
-            topic_name="topic-X",
-            json_body=[{"name": "cleanup.policy", "value": "delete"}],
+            "topic-X",
+            [{"name": "cleanup.policy", "value": "delete"}],
         )
 
     @pytest.mark.asyncio()
@@ -186,7 +182,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
         await topic_handler.create_topic(topic, dry_run=False)
 
         wrapper.batch_alter_topic_config.assert_not_called()
@@ -207,7 +203,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"compression.type": "gzip", "cleanup.policy": "compact"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
         await topic_handler.create_topic(topic, dry_run=False)
 
         wrapper.batch_alter_topic_config.assert_not_called()
@@ -229,12 +225,12 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
         await topic_handler.create_topic(topic, dry_run=False)
 
         wrapper.batch_alter_topic_config.assert_called_once_with(
-            topic_name="topic-X",
-            json_body=[{"name": "compression.type", "operation": "DELETE"}],
+            "topic-X",
+            [{"name": "compression.type", "operation": "DELETE"}],
         )
         wrapper.__dry_run_topic_creation.assert_not_called()
 
@@ -252,7 +248,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
         await topic_handler.create_topic(topic, dry_run=True)
 
         wrapper.create_topic.assert_not_called()
@@ -273,7 +269,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
         await topic_handler.create_topic(topic, dry_run=True)
 
         log_info_mock.assert_called_once_with(
@@ -298,7 +294,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
         await topic_handler.create_topic(topic, dry_run=True)
 
         wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
@@ -333,7 +329,7 @@ class TestTopicHandler:
             type=OutputTopicTypes.OUTPUT,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
         await topic_handler.create_topic(topic, dry_run=True)
 
         wrapper.get_topic_config.assert_called_once()  # dry run requests the config to create the diff
@@ -372,7 +368,7 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
 
         with pytest.raises(
             TopicTransactionError,
@@ -395,7 +391,7 @@ class TestTopicHandler:
             replication_factor=300,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
 
         with pytest.raises(
             TopicTransactionError,
@@ -418,10 +414,10 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
-        await topic_handler.create_topic(topic, dry_run=True)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
+        await topic_handler.delete_topic(topic, dry_run=True)
 
-        wrapper.get_topic.assert_called_once_with(topic_name="topic-X")
+        wrapper.get_topic.assert_called_once_with("topic-X")
         log_info_mock.assert_called_once_with(
             magentaify(
                 "Topic Deletion: topic topic-X exists in the cluster. Deleting topic."
@@ -443,10 +439,10 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
-        await topic_handler.create_topic(topic, dry_run=True)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
+        await topic_handler.delete_topic(topic, dry_run=True)
 
-        wrapper.get_topic.assert_called_once_with(topic_name="topic-X")
+        wrapper.get_topic.assert_called_once_with("topic-X")
         log_warning_mock.assert_called_once_with(
             "Topic Deletion: topic topic-X does not exist in the cluster and cannot be deleted. Skipping."
         )
@@ -462,12 +458,12 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
-        await topic_handler.create_topic(topic, dry_run=False)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
+        await topic_handler.delete_topic(topic, dry_run=False)
 
         assert wrapper.mock_calls == [
-            mock.call.get_topic(topic_name="topic-X"),
-            mock.call.delete_topic(topic_name="topic-X"),
+            mock.call.get_topic("topic-X"),
+            mock.call.delete_topic("topic-X"),
         ]
 
     @pytest.mark.asyncio()
@@ -485,10 +481,10 @@ class TestTopicHandler:
             replication_factor=3,
             configs={"cleanup.policy": "compact", "compression.type": "gzip"},
         )
-        topic = KafkaTopic(name="topic-X", topic_config=topic_config)
-        await topic_handler.create_topic(topic, dry_run=False)
+        topic = KafkaTopic(name="topic-X", config=topic_config)
+        await topic_handler.delete_topic(topic, dry_run=False)
 
-        wrapper.get_topic.assert_called_once_with(topic_name="topic-X")
+        wrapper.get_topic.assert_called_once_with("topic-X")
         log_warning_mock.assert_called_once_with(
             "Topic Deletion: topic topic-X does not exist in the cluster and cannot be deleted. Skipping."
         )

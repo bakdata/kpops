@@ -3,9 +3,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import Any
 
-from pydantic import ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from kpops.components.base_components.kafka_topic import KafkaTopic
 from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel
@@ -74,6 +73,11 @@ class TopicConfig(DescConfigModel):
             msg = "Define `role` only if `type` is undefined"
             raise ValueError(msg)
         return self
+
+
+class KafkaTopic(BaseModel):
+    name: str
+    config: TopicConfig
 
 
 class ToSection(DescConfigModel):
