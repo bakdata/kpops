@@ -165,10 +165,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         return defaults
 
     def _validate_custom(self) -> None:
-        """Run custom validation on component.
-
-        :param kwargs: The init kwargs for the component
-        """
+        """Run custom validation on component."""
 
 
 def defaults_from_yaml(path: Path, key: str) -> dict:
