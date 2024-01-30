@@ -11,9 +11,10 @@ from schema_registry.client.utils import SchemaVersion
 
 from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
-from kpops.components.base_components.kafka_topic import OutputTopicTypes, TopicConfig
+from kpops.components.base_components.kafka_topic import TopicConfig
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
+    OutputTopicTypes,
     ToSection,
 )
 from kpops.config import KpopsConfig, SchemaRegistryConfig
