@@ -699,10 +699,10 @@ class TestGenerate:
             defaults=RESOURCE_PATH / "pipelines-with-graphs" / "simple-pipeline",
         )
         assert len(pipeline.components) == 2
-        assert len(pipeline.graph.nodes) == 3
-        assert len(pipeline.graph.edges) == 2
+        assert len(pipeline._graph.nodes) == 3
+        assert len(pipeline._graph.edges) == 2
         node_components = list(
-            filter(lambda node_id: "component" in node_id, pipeline.graph.nodes)
+            filter(lambda node_id: "component" in node_id, pipeline._graph.nodes)
         )
         assert len(pipeline.components) == len(node_components)
 
@@ -714,8 +714,8 @@ class TestGenerate:
             / "pipelines-with-graphs"
             / "same-topic-and-component-name",
         )
-        component, topic = list(pipeline.graph.nodes)
-        edges = list(pipeline.graph.edges)
+        component, topic = list(pipeline._graph.nodes)
+        edges = list(pipeline._graph.edges)
         assert component == f"component-{topic}"
         assert (component, topic) in edges
 

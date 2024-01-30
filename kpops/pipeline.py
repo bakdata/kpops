@@ -42,8 +42,8 @@ ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
 class Pipeline(BaseModel):
     """Pipeline representation."""
 
-    graph: nx.DiGraph = Field(default_factory=nx.DiGraph, exclude=True)
     _component_index: dict[str, PipelineComponent] = {}
+    _graph: nx.DiGraph = Field(default_factory=nx.DiGraph, exclude=True)
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -111,7 +111,7 @@ class Pipeline(BaseModel):
             for pending_task in pending_tasks:
                 await pending_task
 
-        graph: nx.DiGraph = self.graph.copy()  # pyright: ignore
+        graph: nx.DiGraph = self._graph.copy()  # pyright: ignore
 
         # We add an extra node to the graph, connecting all the leaf nodes to it
         # in that way we make this node the root of the graph, avoiding backtracking
@@ -152,7 +152,7 @@ class Pipeline(BaseModel):
         return len(self.components)
 
     def __add_to_graph(self, component: PipelineComponent):
-        self.graph.add_node(component.id)
+        self._graph.add_node(component.id)
 
         for input_topic in component.inputs:
             self.__add_input(input_topic, component.id)
@@ -172,7 +172,7 @@ class Pipeline(BaseModel):
         return list(gen_parallel_tasks())
 
     def __validate_graph(self) -> None:
-        if not nx.is_directed_acyclic_graph(self.graph):
+        if not nx.is_directed_acyclic_graph(self._graph):
             msg = "Pipeline is not a valid DAG."
             raise ValueError(msg)
 
@@ -180,12 +180,12 @@ class Pipeline(BaseModel):
         self.__validate_graph()
 
     def __add_output(self, topic_id: str, source: str) -> None:
-        self.graph.add_node(topic_id)
-        self.graph.add_edge(source, topic_id)
+        self._graph.add_node(topic_id)
+        self._graph.add_edge(source, topic_id)
 
     def __add_input(self, topic_id: str, target: str) -> None:
-        self.graph.add_node(topic_id)
-        self.graph.add_edge(topic_id, target)
+        self._graph.add_node(topic_id)
+        self._graph.add_edge(topic_id, target)
 
 
 def create_env_components_index(
