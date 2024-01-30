@@ -85,10 +85,10 @@ class Pipeline(BaseModel):
         self._component_index.pop(component_id)
 
     def __bool__(self) -> bool:
-        return bool(self.components)
+        return bool(self._component_index)
 
     def __iter__(self) -> Iterator[PipelineComponent]:
-        return iter(self.components)
+        return iter(self._component_index.values())
 
     def __len__(self) -> int:
         return len(self.components)
@@ -112,7 +112,7 @@ class Pipeline(BaseModel):
     def build_execution_graph(
         self, runner: Callable[[PipelineComponent], Coroutine], /, reverse: bool = False
     ) -> Awaitable:
-        sub_graph_nodes = self.__get_graph_nodes(
+        sub_graph_nodes = self.__collect_graph_nodes(
             reversed(self.components) if reverse else self.components
         )
 
@@ -156,7 +156,7 @@ class Pipeline(BaseModel):
         return run_graph_tasks(sorted_tasks)
 
     @staticmethod
-    def __get_graph_nodes(components: Iterable[PipelineComponent]) -> Iterator[str]:
+    def __collect_graph_nodes(components: Iterable[PipelineComponent]) -> Iterator[str]:
         for component in components:
             yield component.id
             yield from component.inputs
@@ -167,6 +167,7 @@ class Pipeline(BaseModel):
     ) -> list[Coroutine]:
         def gen_parallel_tasks():
             for node_in_layer in layer:
+                # check if component, skip topics
                 if (component := self._component_index.get(node_in_layer)) is not None:
                     yield runner(component)
 
@@ -180,13 +181,13 @@ class Pipeline(BaseModel):
     def validate(self) -> None:
         self.__validate_graph()
 
-    def __add_output(self, output_topic: str, source: str) -> None:
-        self.graph.add_node(output_topic)
-        self.graph.add_edge(source, output_topic)
+    def __add_output(self, topic_id: str, source: str) -> None:
+        self.graph.add_node(topic_id)
+        self.graph.add_edge(source, topic_id)
 
-    def __add_input(self, input_topic: str, target: str) -> None:
-        self.graph.add_node(input_topic)
-        self.graph.add_edge(input_topic, target)
+    def __add_input(self, topic_id: str, target: str) -> None:
+        self.graph.add_node(topic_id)
+        self.graph.add_edge(topic_id, target)
 
 
 def create_env_components_index(
