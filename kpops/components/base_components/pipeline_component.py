@@ -86,6 +86,8 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
 
     @property
     def id(self) -> str:
+        # TODO: remove "component-" prefix, prefix topics instead
+        # ideally return just self.name
         return f"component-{self.full_name}"
 
     @property

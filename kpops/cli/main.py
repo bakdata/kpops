@@ -21,7 +21,7 @@ from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
-from kpops.pipeline import Pipeline, PipelineGenerator
+from kpops.pipeline import ComponentFilterPredicate, Pipeline, PipelineGenerator
 from kpops.utils.gen_schema import (
     SchemaScope,
     gen_config_schema,
@@ -32,8 +32,6 @@ from kpops.utils.pydantic import YamlConfigSettingsSource
 from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
-    from collections.abc import Callable
-
     from kpops.components.base_components import PipelineComponent
 
 
@@ -167,7 +165,7 @@ def is_in_steps(component: PipelineComponent, component_names: set[str]) -> bool
 
 def create_default_step_names_filter_predicate(
     component_names: set[str], filter_type: FilterType
-) -> Callable[[PipelineComponent], bool]:
+) -> ComponentFilterPredicate:
     def predicate(component: PipelineComponent) -> bool:
         match filter_type, is_in_steps(component, component_names):
             case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
