@@ -1743,7 +1743,7 @@
 <li><code>--defaults DIRECTORY</code>: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
-<li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: include]</li>
+<li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]</li>
 <li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
@@ -1765,7 +1765,7 @@
 <li><code>--defaults DIRECTORY</code>: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
-<li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: include]</li>
+<li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]</li>
 <li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
@@ -1787,7 +1787,7 @@
 <li><code>--defaults DIRECTORY</code>: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
-<li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: include]</li>
+<li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]</li>
 <li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
@@ -1809,6 +1809,8 @@
 <li><code>--defaults DIRECTORY</code>: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
 <li><code>--output / --no-output</code>: Enable output printing  [default: output]</li>
+<li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
+<li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]</li>
 <li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
 <li><code>--help</code>: Show this message and exit.</li>
@@ -1829,7 +1831,7 @@
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
 <li><code>--output / --no-output</code>: Enable output printing  [default: output]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
-<li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: include]</li>
+<li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]</li>
 <li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
 <li><code>--help</code>: Show this message and exit.</li>
@@ -1849,7 +1851,7 @@
 <li><code>--defaults DIRECTORY</code>: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
-<li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: include]</li>
+<li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]</li>
 <li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
 <li><code>--dry-run / --execute</code>: Whether to dry run the command or execute it  [default: dry-run]</li>
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
