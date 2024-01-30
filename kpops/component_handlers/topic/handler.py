@@ -31,18 +31,20 @@ class TopicHandler:
     def __init__(self, proxy_wrapper: ProxyWrapper) -> None:
         self.proxy_wrapper = proxy_wrapper
 
-    def create_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
-        topic_spec = self.__prepare_body(topic.name, topic.config)
+    async def create_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
+        topic_spec = self.__prepare_body(topic.name, topic.topic_config)
         if dry_run:
-            self.__dry_run_topic_creation(topic.name, topic_spec, topic.config)
+            await self.__dry_run_topic_creation(
+                topic.name, topic_spec, topic.topic_config
+            )
         else:
             try:
-                self.proxy_wrapper.get_topic(topic.name)
-                topic_config_in_cluster = self.proxy_wrapper.get_topic_config(
+                await self.proxy_wrapper.get_topic(topic.name)
+                topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
                     topic.name
                 )
                 differences = self.__get_topic_config_diff(
-                    topic_config_in_cluster, topic.config.configs
+                    topic_config_in_cluster, topic.topic_config.configs
                 )
 
                 if differences:
@@ -56,22 +58,24 @@ class TopicHandler:
                             json_body.append(
                                 {"name": difference.key, "value": config_value}
                             )
-                    self.proxy_wrapper.batch_alter_topic_config(topic.name, json_body)
+                    await self.proxy_wrapper.batch_alter_topic_config(
+                        topic.name, json_body
+                    )
 
                 else:
                     log.info(
                         f"Topic Creation: config of topic {topic.name} didn't change. Skipping update."
                     )
             except TopicNotFoundException:
-                self.proxy_wrapper.create_topic(topic_spec)
+                await self.proxy_wrapper.create_topic(topic_spec)
 
-    def delete_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
+    async def delete_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
         if dry_run:
-            self.__dry_run_topic_deletion(topic.name)
+            await self.__dry_run_topic_deletion(topic.name)
         else:
             try:
-                self.proxy_wrapper.get_topic(topic.name)
-                self.proxy_wrapper.delete_topic(topic.name)
+                await self.proxy_wrapper.get_topic(topic.name)
+                await self.proxy_wrapper.delete_topic(topic.name)
             except TopicNotFoundException:
                 log.warning(
                     f"Topic Deletion: topic {topic.name} does not exist in the cluster and cannot be deleted. Skipping."
@@ -86,17 +90,17 @@ class TopicHandler:
         )
         return list(Diff.from_dicts(comparable_in_cluster_config_dict, current_config))
 
-    def __dry_run_topic_creation(
+    async def __dry_run_topic_creation(
         self,
         topic_name: str,
         topic_spec: TopicSpec,
         topic_config: TopicConfig | None = None,
     ) -> None:
         try:
-            topic_in_cluster = self.proxy_wrapper.get_topic(topic_name=topic_name)
+            topic_in_cluster = await self.proxy_wrapper.get_topic(topic_name=topic_name)
             topic_name = topic_in_cluster.topic_name
             if topic_config:
-                topic_config_in_cluster = self.proxy_wrapper.get_topic_config(
+                topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
                     topic_name=topic_name
                 )
                 in_cluster_config, new_config = parse_and_compare_topic_configs(
@@ -115,7 +119,7 @@ class TopicHandler:
             }
             log.debug(error_message)
 
-            broker_config = self.proxy_wrapper.get_broker_config()
+            broker_config = await self.proxy_wrapper.get_broker_config()
             effective_config = get_effective_config(broker_config)
 
             self.__check_partition_count(topic_in_cluster, topic_spec, effective_config)
@@ -170,9 +174,9 @@ class TopicHandler:
             msg = f"Topic Creation: replication factor of topic {topic_name} changed! Replication factor of topic {topic_name} is {replication_factor}. The given replication count {topic_spec.replication_factor}."
             raise TopicTransactionError(msg)
 
-    def __dry_run_topic_deletion(self, topic_name: str) -> None:
+    async def __dry_run_topic_deletion(self, topic_name: str) -> None:
         try:
-            topic_in_cluster = self.proxy_wrapper.get_topic(topic_name=topic_name)
+            topic_in_cluster = await self.proxy_wrapper.get_topic(topic_name=topic_name)
             log.info(
                 magentaify(
                     f"Topic Deletion: topic {topic_in_cluster.topic_name} exists in the cluster. Deleting topic."

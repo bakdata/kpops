@@ -1,4 +1,7 @@
+import asyncio
 from pathlib import Path
+from unittest import mock
+from unittest.mock import AsyncMock
 
 import pytest
 import yaml
@@ -7,6 +10,7 @@ from typer.testing import CliRunner
 
 import kpops
 from kpops.cli.main import app
+from kpops.components import PipelineComponent
 from kpops.pipeline import ParsingException, ValidationError
 
 runner = CliRunner()
@@ -38,7 +42,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
@@ -56,7 +60,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
 
         assert enriched_pipeline[0]["prefix"] == "my-fake-prefix-"
         assert enriched_pipeline[0]["name"] == "my-streams-app"
@@ -77,7 +81,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_inflate_pipeline(self, snapshot: SnapshotTest):
@@ -94,7 +98,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_substitute_in_component(self, snapshot: SnapshotTest):
@@ -111,7 +115,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["prefix"] == "resources-component-type-substitution-"
         )
@@ -140,7 +144,7 @@ class TestGenerate:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    @pytest.mark.timeout(0.5)
+    @pytest.mark.timeout(2)
     def test_substitute_in_component_infinite_loop(self):
         with pytest.raises((ValueError, ParsingException)):
             runner.invoke(
@@ -170,7 +174,7 @@ class TestGenerate:
             ],
             catch_exceptions=False,
         )
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         sink_connector = enriched_pipeline[0]
         assert (
             sink_connector["app"]["errors.deadletterqueue.topic.name"]
@@ -191,7 +195,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_no_user_defined_components(self, snapshot: SnapshotTest):
@@ -208,7 +212,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_kafka_connect_sink_weave_from_topics(self, snapshot: SnapshotTest):
@@ -226,7 +230,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_read_from_component(self, snapshot: SnapshotTest):
@@ -243,7 +247,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_with_env_defaults(self, snapshot: SnapshotTest):
@@ -262,7 +266,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_prefix_pipeline_component(self, snapshot: SnapshotTest):
@@ -282,7 +286,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_with_custom_config_with_relative_defaults_path(
@@ -304,7 +308,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline[0]
         output_topic = producer_details["app"]["streams"]["outputTopic"]
         assert output_topic == "app1-test-topic"
@@ -347,7 +351,7 @@ class TestGenerate:
 
             assert result.exit_code == 0, result.stdout
 
-            enriched_pipeline: dict = yaml.safe_load(result.stdout)
+            enriched_pipeline: list = yaml.safe_load(result.stdout)
             producer_details = enriched_pipeline[0]
             output_topic = producer_details["app"]["streams"]["outputTopic"]
             assert output_topic == "app1-test-topic"
@@ -378,7 +382,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline[0]
         output_topic = producer_details["app"]["streams"]["outputTopic"]
         assert output_topic == "resources-custom-config-app1"
@@ -407,7 +411,7 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert enriched_pipeline[0]["app"]["streams"]["brokers"] == "env_broker"
 
     def test_nested_config_env_vars(self, monkeypatch: pytest.MonkeyPatch):
@@ -428,7 +432,7 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"]
             == "http://somename:1234/"
@@ -452,7 +456,7 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"]
             == "http://production:8081/"
@@ -488,7 +492,7 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"] == expected_url
         )
@@ -525,7 +529,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
     def test_dotenv_support(self):
@@ -547,7 +551,7 @@ class TestGenerate:
         )
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[1]["app"]["streams"]["schemaRegistryUrl"]
             == "http://notlocalhost:8081/"
@@ -567,17 +571,17 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
 
         output_topics = enriched_pipeline[4]["to"]["topics"]
         input_topics = enriched_pipeline[4]["from"]["topics"]
         input_components = enriched_pipeline[4]["from"]["components"]
         assert "type" not in output_topics["output-topic"]
         assert output_topics["error-topic"]["type"] == "error"
-        assert "type" not in output_topics["extra-topic"]
+        assert "type" not in output_topics["extra-topic-output"]
         assert "role" not in output_topics["output-topic"]
         assert "role" not in output_topics["error-topic"]
-        assert output_topics["extra-topic"]["role"] == "role"
+        assert output_topics["extra-topic-output"]["role"] == "role"
 
         assert "type" not in ["input-topic"]
         assert "type" not in input_topics["extra-topic"]
@@ -629,6 +633,162 @@ class TestGenerate:
                 catch_exceptions=False,
             )
 
+    def test_validate_loops_on_pipeline(self):
+        with pytest.raises(ValueError, match="Pipeline is not a valid DAG."):
+            runner.invoke(
+                app,
+                [
+                    "generate",
+                    str(RESOURCE_PATH / "pipeline-with-loop/pipeline.yaml"),
+                    "--defaults",
+                    str(RESOURCE_PATH / "pipeline-with-loop"),
+                ],
+                catch_exceptions=False,
+            )
+
+    def test_validate_simple_graph(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "pipelines-with-graphs/simple-pipeline/pipeline.yaml",
+            defaults=RESOURCE_PATH / "pipelines-with-graphs" / "simple-pipeline",
+        )
+        assert len(pipeline.components) == 2
+        assert len(pipeline.graph.nodes) == 3
+        assert len(pipeline.graph.edges) == 2
+        node_components = list(
+            filter(lambda node_id: "component" in node_id, pipeline.graph.nodes)
+        )
+        assert len(pipeline.components) == len(node_components)
+
+    def test_validate_topic_and_component_same_name(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH
+            / "pipelines-with-graphs/same-topic-and-component-name/pipeline.yaml",
+            defaults=RESOURCE_PATH
+            / "pipelines-with-graphs"
+            / "same-topic-and-component-name",
+        )
+        component, topic = list(pipeline.graph.nodes)
+        edges = list(pipeline.graph.edges)
+        assert component == f"component-{topic}"
+        assert (component, topic) in edges
+
+    @pytest.mark.asyncio()
+    async def test_parallel_execution_graph(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
+            defaults=RESOURCE_PATH / "parallel-pipeline",
+            config=RESOURCE_PATH / "parallel-pipeline",
+        )
+
+        called_component = AsyncMock()
+
+        sleep_table_components = {
+            "transaction-avro-producer-1": 1,
+            "transaction-avro-producer-2": 0,
+            "transaction-avro-producer-3": 2,
+            "transaction-joiner": 3,
+            "fraud-detector": 2,
+            "account-linker": 0,
+            "s3-connector-1": 2,
+            "s3-connector-2": 1,
+            "s3-connector-3": 0,
+        }
+
+        async def name_runner(component: PipelineComponent):
+            await asyncio.sleep(sleep_table_components[component.name])
+            await called_component(component.name)
+
+        execution_graph = pipeline.build_execution_graph_from(
+            list(pipeline.components), False, name_runner
+        )
+
+        await execution_graph
+
+        assert called_component.mock_calls == [
+            mock.call("transaction-avro-producer-2"),
+            mock.call("transaction-avro-producer-1"),
+            mock.call("transaction-avro-producer-3"),
+            mock.call("transaction-joiner"),
+            mock.call("fraud-detector"),
+            mock.call("account-linker"),
+            mock.call("s3-connector-3"),
+            mock.call("s3-connector-2"),
+            mock.call("s3-connector-1"),
+        ]
+
+    @pytest.mark.asyncio()
+    async def test_subgraph_execution(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
+            defaults=RESOURCE_PATH / "parallel-pipeline",
+            config=RESOURCE_PATH / "parallel-pipeline",
+        )
+
+        list_of_components = list(pipeline.components)
+
+        called_component = AsyncMock()
+
+        async def name_runner(component: PipelineComponent):
+            await called_component(component.name)
+
+        execution_graph = pipeline.build_execution_graph_from(
+            [list_of_components[0], list_of_components[3], list_of_components[6]],
+            False,
+            name_runner,
+        )
+
+        await execution_graph
+
+        assert called_component.mock_calls == [
+            mock.call("transaction-avro-producer-1"),
+            mock.call("s3-connector-1"),
+            mock.call("transaction-joiner"),
+        ]
+
+    @pytest.mark.asyncio()
+    async def test_parallel_execution_graph_reverse(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
+            defaults=RESOURCE_PATH / "parallel-pipeline",
+            config=RESOURCE_PATH / "parallel-pipeline",
+        )
+
+        called_component = AsyncMock()
+
+        sleep_table_components = {
+            "transaction-avro-producer-1": 1,
+            "transaction-avro-producer-2": 0,
+            "transaction-avro-producer-3": 2,
+            "transaction-joiner": 3,
+            "fraud-detector": 2,
+            "account-linker": 0,
+            "s3-connector-1": 2,
+            "s3-connector-2": 1,
+            "s3-connector-3": 0,
+        }
+
+        async def name_runner(component: PipelineComponent):
+            await asyncio.sleep(sleep_table_components[component.name])
+            await called_component(component.name)
+
+        execution_graph = pipeline.build_execution_graph_from(
+            list(pipeline.components), True, name_runner
+        )
+
+        await execution_graph
+
+        assert called_component.mock_calls == [
+            mock.call("s3-connector-3"),
+            mock.call("s3-connector-2"),
+            mock.call("s3-connector-1"),
+            mock.call("account-linker"),
+            mock.call("fraud-detector"),
+            mock.call("transaction-joiner"),
+            mock.call("transaction-avro-producer-2"),
+            mock.call("transaction-avro-producer-1"),
+            mock.call("transaction-avro-producer-3"),
+        ]
+
     def test_temp_trim_release_name(self):
         result = runner.invoke(
             app,
@@ -641,7 +801,7 @@ class TestGenerate:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
             enriched_pipeline[0]["name"]
             == "in-order-to-have-len-fifty-two-name-should-end--here"

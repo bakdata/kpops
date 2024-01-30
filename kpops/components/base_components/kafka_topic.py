@@ -9,9 +9,9 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 class KafkaTopic(PipelineComponent, ABC):
     from_: None
     to: None
-    config: TopicConfig
+    topic_config: TopicConfig
 
     @override
-    def deploy(self, dry_run: bool) -> None:
-        self.handlers.topic_handler.create_topic(self, dry_run)
-        super().deploy(dry_run)
+    async def deploy(self, dry_run: bool) -> None:
+        await self.handlers.topic_handler.create_topic(self, dry_run)
+        await super().deploy(dry_run)

@@ -47,6 +47,7 @@ $ kpops clean [OPTIONS] PIPELINE_PATH
 * `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--parallel / --no-parallel`: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.  [default: no-parallel]
 * `--help`: Show this message and exit.
 
 ## `kpops deploy`
@@ -73,6 +74,7 @@ $ kpops deploy [OPTIONS] PIPELINE_PATH
 * `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--parallel / --no-parallel`: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.  [default: no-parallel]
 * `--help`: Show this message and exit.
 
 ## `kpops destroy`
@@ -99,6 +101,7 @@ $ kpops destroy [OPTIONS] PIPELINE_PATH
 * `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--parallel / --no-parallel`: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.  [default: no-parallel]
 * `--help`: Show this message and exit.
 
 ## `kpops generate`
@@ -175,6 +178,7 @@ $ kpops reset [OPTIONS] PIPELINE_PATH
 * `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--parallel / --no-parallel`: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.  [default: no-parallel]
 * `--help`: Show this message and exit.
 
 ## `kpops schema`
@@ -186,12 +190,12 @@ The schemas can be used to enable support for KPOps files in a text editor.
 **Usage**:
 
 ```console
-$ kpops schema [OPTIONS] SCOPE:{pipeline|config}
+$ kpops schema [OPTIONS] SCOPE:{pipeline|defaults|config}
 ```
 
 **Arguments**:
 
-* `SCOPE:{pipeline|config}`: 
+* `SCOPE:{pipeline|defaults|config}`: 
         Scope of the generated schema
         
 

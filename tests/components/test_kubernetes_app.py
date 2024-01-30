@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -15,7 +15,7 @@ from kpops.components.base_components.kubernetes_app import (
 )
 from kpops.config import KpopsConfig
 
-HELM_RELEASE_NAME = create_helm_release_name("${pipeline_name}-test-kubernetes-app")
+HELM_RELEASE_NAME = create_helm_release_name("${pipeline.name}-test-kubernetes-app")
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
@@ -32,9 +32,9 @@ class TestKubernetesApp:
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
+            schema_handler=AsyncMock(),
+            connector_handler=AsyncMock(),
+            topic_handler=AsyncMock(),
         )
 
     @pytest.fixture()

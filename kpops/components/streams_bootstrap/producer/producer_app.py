@@ -1,21 +1,38 @@
+from functools import cached_property
+
 from pydantic import Field
 from typing_extensions import override
 
-from kpops.components.base_components.kafka_app import KafkaApp
+from kpops.components.base_components.kafka_app import (
+    KafkaApp,
+    KafkaAppCleaner,
+)
 from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
 )
+from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
 
 
-class ProducerApp(KafkaApp):
+class ProducerAppCleaner(KafkaAppCleaner):
+    app: ProducerAppValues
+
+    @property
+    @override
+    def helm_chart(self) -> str:
+        return (
+            f"{self.repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
+        )
+
+
+class ProducerApp(KafkaApp, StreamsBootstrap):
     """Producer component.
 
-    This producer holds configuration to use as values for the streams bootstrap
-    producer helm chart.
+    This producer holds configuration to use as values for the streams-bootstrap
+    producer Helm chart.
 
     Note that the producer does not support error topics.
 
@@ -34,6 +51,14 @@ class ProducerApp(KafkaApp):
         description=describe_attr("from_", __doc__),
     )
 
+    @cached_property
+    def _cleaner(self) -> ProducerAppCleaner:
+        return ProducerAppCleaner(
+            config=self.config,
+            handlers=self.handlers,
+            **self.model_dump(),
+        )
+
     @override
     def apply_to_outputs(self, name: str, topic: TopicConfig) -> None:
         match topic.type:
@@ -42,6 +67,16 @@ class ProducerApp(KafkaApp):
                 raise ValueError(msg)
             case _:
                 super().apply_to_outputs(name, topic)
+
+    @property
+    @override
+    def output_topic(self) -> str | None:
+        return self.app.streams.output_topic
+
+    @property
+    @override
+    def extra_output_topics(self) -> dict[str, str]:
+        return self.app.streams.extra_output_topics
 
     @override
     def set_output_topic(self, topic_name: str) -> None:
@@ -56,17 +91,6 @@ class ProducerApp(KafkaApp):
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
-    @property
     @override
-    def clean_up_helm_chart(self) -> str:
-        return (
-            f"{self.repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
-        )
-
-    @override
-    def clean(self, dry_run: bool) -> None:
-        self._run_clean_up_job(
-            values=self.to_helm_values(),
-            dry_run=dry_run,
-            retain_clean_jobs=self.config.retain_clean_jobs,
-        )
+    async def clean(self, dry_run: bool) -> None:
+        await self._cleaner.clean(dry_run)

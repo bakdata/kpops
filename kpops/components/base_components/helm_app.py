@@ -102,12 +102,6 @@ class HelmApp(KubernetesApp):
         return create_helm_release_name(self.full_name)
 
     @property
-    def clean_release_name(self) -> str:
-        """The name for the Helm release for cleanup jobs. Can be overridden."""
-        suffix = "-clean"
-        return create_helm_release_name(self.full_name + suffix, suffix)
-
-    @property
     def helm_chart(self) -> str:
         """Return component's Helm chart."""
         msg = (
@@ -151,8 +145,8 @@ class HelmApp(KubernetesApp):
         return HelmUpgradeInstallFlags(**self.helm_flags.model_dump())
 
     @override
-    def deploy(self, dry_run: bool) -> None:
-        stdout = self.helm.upgrade_install(
+    async def deploy(self, dry_run: bool) -> None:
+        stdout = await self.helm.upgrade_install(
             self.helm_release_name,
             self.helm_chart,
             dry_run,
@@ -164,8 +158,8 @@ class HelmApp(KubernetesApp):
             self.dry_run_handler.print_helm_diff(stdout, self.helm_release_name, log)
 
     @override
-    def destroy(self, dry_run: bool) -> None:
-        stdout = self.helm.uninstall(
+    async def destroy(self, dry_run: bool) -> None:
+        stdout = await self.helm.uninstall(
             self.namespace,
             self.helm_release_name,
             dry_run,

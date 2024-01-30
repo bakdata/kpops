@@ -32,7 +32,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
@@ -48,10 +48,15 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
+                },
+                "type": {
+                    "const": "empty-pipeline-component",
+                    "title": "Type"
                 }
             },
             "required": [
-                "name"
+                "name",
+                "type"
             ],
             "title": "EmptyPipelineComponent",
             "type": "object"
@@ -156,7 +161,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
@@ -172,10 +177,15 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
+                },
+                "type": {
+                    "const": "sub-pipeline-component",
+                    "title": "Type"
                 }
             },
             "required": [
-                "name"
+                "name",
+                "type"
             ],
             "title": "SubPipelineComponent",
             "type": "object"
@@ -203,7 +213,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
@@ -219,10 +229,15 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
+                },
+                "type": {
+                    "const": "sub-pipeline-component-correct",
+                    "title": "Type"
                 }
             },
             "required": [
-                "name"
+                "name",
+                "type"
             ],
             "title": "SubPipelineComponentCorrect",
             "type": "object"
@@ -255,7 +270,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
@@ -271,11 +286,16 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
+                },
+                "type": {
+                    "const": "sub-pipeline-component-correct-docstr",
+                    "title": "Type"
                 }
             },
             "required": [
                 "name",
-                "example_attr"
+                "example_attr",
+                "type"
             ],
             "title": "SubPipelineComponentCorrectDocstr",
             "type": "object"
@@ -303,7 +323,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     "type": "string"
                 },
                 "prefix": {
-                    "default": "${pipeline_name}-",
+                    "default": "${pipeline.name}-",
                     "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
                     "title": "Prefix",
                     "type": "string"
@@ -319,10 +339,15 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
+                },
+                "type": {
+                    "const": "sub-pipeline-component-no-schema-type-no-type",
+                    "title": "Type"
                 }
             },
             "required": [
-                "name"
+                "name",
+                "type"
             ],
             "title": "SubPipelineComponentNoSchemaTypeNoType",
             "type": "object"

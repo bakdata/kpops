@@ -1,6 +1,7 @@
 # GitHub Actions integration
 
-We provided a GitHub composite action `bakdata/kpops` that installs and executes KPOps commands with the given parameters.
+We provided a GitHub composite action `bakdata/kpops` that installs and executes KPOps commands with the given
+parameters.
 
 ## Input Parameters
 
@@ -14,6 +15,7 @@ We provided a GitHub composite action `bakdata/kpops` that installs and executes
 | environment       |    ❌    |       -       | string | Environment to run KPOps in                                                                                                                   |
 | components        |    ❌    |       -       | string | components package path                                                                                                                       |
 | filter-type       |    ❌    |       -       | string | Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS                                                                          |
+| parallel          |    ❌    |    "false"    | string | Whether to run pipelines in parallel                                                                                                          |
 | python-version    |    ❌    |   "3.11.x"    | string | Python version to install (Defaults to the latest stable version of Python 3.11)                                                              |
 | kpops-version     |    ❌    |    latest     | string | KPOps version to install                                                                                                                      |
 | helm-version      |    ❌    |    latest     | string | Helm version to install                                                                                                                       |
@@ -40,6 +42,6 @@ steps:
       command: deploy --execute
       working-directory: home/my-kpops-root-dir
       pipeline: pipelines/my-pipeline-file.yaml
-      kpops-version:  1.2.5.dev20230707132709
+      kpops-version: 1.2.5.dev20230707132709
   # ...
 ```

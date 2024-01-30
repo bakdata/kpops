@@ -4,7 +4,6 @@ from typing import Any
 
 import humps
 from pydantic import BaseModel, ConfigDict, Field
-from pydantic.alias_generators import to_snake
 from pydantic.fields import FieldInfo
 from pydantic_settings import PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
@@ -22,6 +21,11 @@ def to_camel(s: str) -> str:
 def to_dash(s: str) -> str:
     """Convert PascalCase to dash-case."""
     return humps.depascalize(s).lower().replace("_", "-")
+
+
+def to_snake(s: str) -> str:
+    """Convert PascalCase to snake_case."""
+    return humps.depascalize(s).lower()
 
 
 def to_dot(s: str) -> str:
@@ -93,6 +97,27 @@ def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str,
             default_fields.get(to_snake(field_name)),
         )
     }
+
+
+def issubclass_patched(
+    __cls: type, __class_or_tuple: type | tuple[type, ...] = BaseModel
+) -> bool:
+    """Pydantic breaks ``issubclass``.
+
+    ``issubclass(set[str], set)  # True``
+    ``issubclass(BaseSettings, BaseModel)  # True``
+    ``issubclass(set[str], BaseModel)  # raises exception``
+
+    :param cls: class to check
+    :base: class(es) to check against, defaults to ``BaseModel``
+    :return: Whether 'cls' is derived from another class or is the same class.
+    """
+    try:
+        return issubclass(__cls, __class_or_tuple)
+    except TypeError as e:
+        if str(e) == "issubclass() arg 1 must be a class":
+            return False
+        raise
 
 
 class CamelCaseConfigModel(BaseModel):

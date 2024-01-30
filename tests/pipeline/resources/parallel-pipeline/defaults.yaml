@@ -10,26 +10,18 @@ kafka-connector:
 kafka-app:
   app:
     streams:
-      brokers: ${kafka_brokers}
-      schemaRegistryUrl: ${schema_registry.url}
-      optimizeLeaveGroupBehavior: false
-
-producer-app:
-  to:
-    topics:
-      ${output_topic_name}:
-        partitions_count: 3
+      brokers: ${config.kafka_brokers}
+      schemaRegistryUrl: ${config.schema_registry.url}
 
 streams-app:
   app:
     labels:
-      pipeline: ${pipeline_name}
-    streams:
-      optimizeLeaveGroupBehavior: false
+      pipeline: ${pipeline.name}
   to:
     topics:
       ${error_topic_name}:
         type: error
         partitions_count: 1
       ${output_topic_name}:
+        type: output
         partitions_count: 3

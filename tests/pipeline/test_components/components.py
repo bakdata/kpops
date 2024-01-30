@@ -5,13 +5,16 @@ from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,
 )
-from kpops.components import KafkaSinkConnector
-from kpops.components.base_components import PipelineComponent
+from kpops.components import (
+    KafkaSinkConnector,
+    PipelineComponent,
+    ProducerApp,
+    StreamsApp,
+)
 from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.components.base_components.models.to_section import (
     ToSection,
 )
-from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 
 
 class ScheduledProducer(ProducerApp):
@@ -41,9 +44,7 @@ class ShouldInflate(StreamsApp):
                         name=f"{self.name}-inflated-sink-connector",
                         config=self.config,
                         handlers=self.handlers,
-                        namespace="example-namespace",
-                        # FIXME
-                        app={  # type: ignore[reportGeneralTypeIssues]
+                        app={  # type: ignore[reportGeneralTypeIssues], required `connector.class` comes from defaults during enrichment
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },
