@@ -77,9 +77,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
     @pydantic.model_validator(mode="before")
     @classmethod
-    def enrich_component(cls, values: Any) -> dict[str, Any]:
-        if not isinstance(values, dict):
-            return {}
+    def enrich_component(cls, values: dict[str, Any]) -> dict[str, Any]:
         if values.get("enrich", True):
             values = cls.extend_with_defaults(**values)
         return values
