@@ -606,6 +606,23 @@
             "title": "KafkaStreamsConfig",
             "type": "object"
         },
+        "KafkaTopic": {
+            "properties": {
+                "config": {
+                    "$ref": "#/$defs/TopicConfig"
+                },
+                "name": {
+                    "title": "Name",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "config"
+            ],
+            "title": "KafkaTopic",
+            "type": "object"
+        },
         "KubernetesApp": {
             "additionalProperties": true,
             "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
@@ -1442,6 +1459,42 @@
             "title": "ToSection",
             "type": "object"
         },
+        "TopicComponent": {
+            "additionalProperties": true,
+            "description": "",
+            "properties": {
+                "from_": {
+                    "title": "From ",
+                    "type": "null"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline.name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "to": {
+                    "title": "To",
+                    "type": "null"
+                },
+                "topic": {
+                    "$ref": "#/$defs/KafkaTopic"
+                }
+            },
+            "required": [
+                "name",
+                "from_",
+                "to",
+                "topic"
+            ],
+            "title": "TopicComponent",
+            "type": "object"
+        },
         "TopicConfig": {
             "additionalProperties": false,
             "description": "Configure an output topic.",
@@ -1575,6 +1628,9 @@
         },
         "streams-bootstrap": {
             "$ref": "#/$defs/StreamsBootstrap"
+        },
+        "topic-component": {
+            "$ref": "#/$defs/TopicComponent"
         }
     },
     "required": [
@@ -1587,7 +1643,8 @@
         "pipeline-component",
         "producer-app",
         "streams-app",
-        "streams-bootstrap"
+        "streams-bootstrap",
+        "topic-component"
     ],
     "title": "DefaultsSchema",
     "type": "object"

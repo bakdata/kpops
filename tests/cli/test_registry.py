@@ -36,7 +36,7 @@ def test_find_builtin_classes():
         class_.__name__
         for class_ in _find_classes("kpops.components", PipelineComponent)
     ]
-    assert len(components) == 10
+    assert len(components) == 11
     assert components == [
         "HelmApp",
         "KafkaApp",
@@ -48,6 +48,7 @@ def test_find_builtin_classes():
         "ProducerApp",
         "StreamsApp",
         "StreamsBootstrap",
+        "TopicComponent",
     ]
 
 
