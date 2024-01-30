@@ -3,11 +3,56 @@ import json
 import pytest
 from pydantic import BaseModel
 
-from kpops.utils.dict_ops import generate_substitution, update_nested_pair
+from kpops.utils.dict_ops import (
+    generate_substitution,
+    update_nested,
+    update_nested_pair,
+)
 from kpops.utils.types import JsonType
 
 
 class TestDictOps:
+    @pytest.mark.parametrize(
+        ("list_dic", "expected"),
+        [
+            (
+                [{}, {}, {}, {}],
+                {},
+            ),
+            # deep update nested dicts
+            (
+                [{"k1": {"foo": 1}}, {"k1": {"bar": ""}}, {"k1": {"baz": "2"}}],
+                {"k1": {"foo": 1, "bar": "", "baz": "2"}},
+            ),
+            # do not overwrite different value types, dict in ``original_dict``
+            (
+                [{"k1": {"bar": ""}}, {"k1": 1}],
+                {"k1": {"bar": ""}},
+            ),
+            # do not overwrite different value types, dict in ``other_dict``
+            (
+                [{"k1": 1}, {"k1": {"bar": ""}}, {"k1": {"baz": ""}}],
+                {"k1": 1},
+            ),
+            # do not overwrite None
+            (
+                [{"k1": None}, {"k1": {"foo": "bar"}}, {"k1": {"baz": "bar"}}],
+                {"k1": None},
+            ),
+            # do not overwrite existing values
+            (
+                [{"k1": 1}, {"k1": 2}, {"k1": 3}],
+                {"k1": 1},
+            ),
+        ],
+    )
+    def test_update_nested(
+        self,
+        list_dic: list[dict[str, JsonType]],
+        expected: dict[str, JsonType],
+    ):
+        assert update_nested(*list_dic) == expected
+
     @pytest.mark.parametrize(
         ("d1", "d2", "expected"),
         [
