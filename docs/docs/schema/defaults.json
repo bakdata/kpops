@@ -113,9 +113,15 @@
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
                 "to": {
-                    "default": null,
-                    "title": "To",
-                    "type": "null"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null
                 },
                 "type": {
                     "const": "helm-app",
@@ -356,9 +362,15 @@
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
-                    "default": null,
-                    "title": "To",
-                    "type": "null"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null
                 }
             },
             "required": [
@@ -444,9 +456,15 @@
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
-                    "default": null,
-                    "title": "To",
-                    "type": "null"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null
                 },
                 "type": {
                     "const": "kafka-sink-connector",
@@ -532,9 +550,15 @@
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
-                    "default": null,
-                    "title": "To",
-                    "type": "null"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null
                 },
                 "type": {
                     "const": "kafka-source-connector",
@@ -620,9 +644,15 @@
                     "type": "string"
                 },
                 "to": {
-                    "default": null,
-                    "title": "To",
-                    "type": "null"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null
                 }
             },
             "required": [
@@ -678,9 +708,15 @@
                     "type": "string"
                 },
                 "to": {
-                    "default": null,
-                    "title": "To",
-                    "type": "null"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null
                 }
             },
             "required": [
@@ -1215,9 +1251,15 @@
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
                 "to": {
-                    "default": null,
-                    "title": "To",
-                    "type": "null"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null
                 },
                 "version": {
                     "anyOf": [

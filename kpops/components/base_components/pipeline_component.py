@@ -12,6 +12,7 @@ from kpops.components.base_components.models.from_section import (
     FromSection,
 )
 from kpops.components.base_components.models.resource import Resource
+from kpops.components.base_components.models.to_section import ToSection
 from kpops.utils.docstring import describe_attr
 
 
@@ -38,7 +39,8 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         title="From",
         description=describe_attr("from_", __doc__),
     )
-    to: None = None
+    to: ToSection | None = None
+    # to: None = None  # TODO
 
     model_config = ConfigDict(extra="allow")
 

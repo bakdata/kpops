@@ -199,7 +199,8 @@ class KafkaConnector(PipelineComponent, ABC):
                 await self.handlers.schema_handler.delete_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
-            await self.handlers.topic_handler.delete_topic(self.to, dry_run=dry_run)
+            for topic in self.to.kafka_topics:
+                await self.handlers.topic_handler.delete_topic(topic, dry_run=dry_run)
 
 
 class KafkaSourceConnector(KafkaConnector):
