@@ -1,4 +1,32 @@
 # Changelog
+## [3.1.0](https://github.com/bakdata/kpops/releases/tag/3.1.0) - Release Date: [2024-01-30]
+
+### 🚀 Features
+
+- Add support for pipeline steps parallelization  - [#312](https://github.com/bakdata/kpops/pull/312)
+
+
+### 🐛 Fixes
+
+- Update poetry publish workflow version to latest - [#430](https://github.com/bakdata/kpops/pull/430)
+
+
+### 🏭 Refactor
+
+- Simplify loading of defaults - [#435](https://github.com/bakdata/kpops/pull/435)
+
+
+### 🌀 Miscellaneous
+
+- Add custom PascalCase to snake_case alias generator - [#436](https://github.com/bakdata/kpops/pull/436)
+
+- Add parallel flag support to kpops runner - [#439](https://github.com/bakdata/kpops/pull/439)
+
+
+
+
+
+
 ## [3.0.2](https://github.com/bakdata/kpops/releases/tag/3.0.2) - Release Date: [2024-01-23]
 
 ### 🐛 Fixes
