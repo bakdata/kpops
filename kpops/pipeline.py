@@ -137,6 +137,13 @@ class Pipeline(BaseModel):
 
         return run_graph_tasks(sorted_tasks)
 
+    def __getitem__(self, component_id: str) -> PipelineComponent:
+        try:
+            return self._component_index[component_id]
+        except KeyError:
+            msg = f"Component {component_id} not found"
+            raise ValueError(msg)
+
     def __bool__(self) -> bool:
         return bool(self._component_index)
 
@@ -313,16 +320,12 @@ class PipelineGenerator:
             if enriched_component.from_:
                 # read from specified components
                 for (
-                    original_from_component_name,
+                    original_from_component_id,
                     from_topic,
                 ) in enriched_component.from_.components.items():
-                    original_from_component = self.pipeline.find(
-                        original_from_component_name
-                    )
+                    original_from_component = self.pipeline[original_from_component_id]
                     inflated_from_component = original_from_component.inflate()[-1]
-                    resolved_from_component = self.pipeline.find(
-                        inflated_from_component.name
-                    )
+                    resolved_from_component = self.pipeline[inflated_from_component.id]
                     enriched_component.weave_from_topics(
                         resolved_from_component.to, from_topic
                     )
