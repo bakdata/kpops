@@ -3,9 +3,9 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from collections.abc import Iterable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeAlias
 
 import networkx as nx
 import yaml
@@ -18,7 +18,7 @@ from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
 
 if TYPE_CHECKING:
-    from collections.abc import Awaitable, Callable, Coroutine, Iterator
+    from collections.abc import Awaitable, Coroutine, Iterator
     from pathlib import Path
 
     from kpops.cli.registry import Registry
@@ -34,6 +34,9 @@ class ParsingException(Exception):
 
 class ValidationError(Exception):
     pass
+
+
+ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
 
 
 class Pipeline(BaseModel):
@@ -68,14 +71,17 @@ class Pipeline(BaseModel):
     def get(self, component_id: str) -> PipelineComponent | None:
         self._component_index.get(component_id)
 
-    def find(self, component_name: str) -> PipelineComponent:  # TODO: deprecate
-        for component in self.components:
-            if component_name == component.name:
-                return component
-        msg = f"Component {component_name} not found"
-        raise ValueError(msg)
+    def find(self, predicate: ComponentFilterPredicate) -> Iterator[PipelineComponent]:
+        """Find pipeline components matching a custom predicate.
 
-    def filter(self, predicate: Callable[[PipelineComponent], bool]) -> None:
+        :param predicate: Filter function,
+            returns boolean value whether the component should be kept or removed
+        """
+        for component in self.components:
+            if predicate(component):
+                yield component
+
+    def filter(self, predicate: ComponentFilterPredicate) -> None:
         """Filter pipeline components using a custom predicate.
 
         :param predicate: Filter function,
@@ -140,9 +146,9 @@ class Pipeline(BaseModel):
     def __getitem__(self, component_id: str) -> PipelineComponent:
         try:
             return self._component_index[component_id]
-        except KeyError:
+        except KeyError as exc:
             msg = f"Component {component_id} not found"
-            raise ValueError(msg)
+            raise ValueError(msg) from exc
 
     def __bool__(self) -> bool:
         return bool(self._component_index)
