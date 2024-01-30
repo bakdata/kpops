@@ -53,25 +53,6 @@ class Pipeline(BaseModel):
     def last(self) -> PipelineComponent:
         return self.components[-1]
 
-    def get(self, component_id: str) -> PipelineComponent | None:
-        self._component_index.get(component_id)
-
-    def find(self, component_name: str) -> PipelineComponent:  # TODO: deprecate
-        for component in self.components:
-            if component_name == component.name:
-                return component
-        msg = f"Component {component_name} not found"
-        raise ValueError(msg)
-
-    def __add_to_graph(self, component: PipelineComponent):
-        self.graph.add_node(component.id)
-
-        for input_topic in component.inputs:
-            self.__add_input(input_topic, component.id)
-
-        for output_topic in component.outputs:
-            self.__add_output(output_topic, component.id)
-
     def add(self, component: PipelineComponent) -> None:
         if self._component_index.get(component.id) is not None:
             msg = (
@@ -84,14 +65,15 @@ class Pipeline(BaseModel):
     def remove(self, component_id: str) -> None:
         self._component_index.pop(component_id)
 
-    def __bool__(self) -> bool:
-        return bool(self._component_index)
+    def get(self, component_id: str) -> PipelineComponent | None:
+        self._component_index.get(component_id)
 
-    def __iter__(self) -> Iterator[PipelineComponent]:
-        return iter(self._component_index.values())
-
-    def __len__(self) -> int:
-        return len(self.components)
+    def find(self, component_name: str) -> PipelineComponent:  # TODO: deprecate
+        for component in self.components:
+            if component_name == component.name:
+                return component
+        msg = f"Component {component_name} not found"
+        raise ValueError(msg)
 
     def filter(self, predicate: Callable[[PipelineComponent], bool]) -> None:
         """Filter pipeline components using a custom predicate.
@@ -154,6 +136,24 @@ class Pipeline(BaseModel):
             sorted_tasks.reverse()
 
         return run_graph_tasks(sorted_tasks)
+
+    def __bool__(self) -> bool:
+        return bool(self._component_index)
+
+    def __iter__(self) -> Iterator[PipelineComponent]:
+        return iter(self._component_index.values())
+
+    def __len__(self) -> int:
+        return len(self.components)
+
+    def __add_to_graph(self, component: PipelineComponent):
+        self.graph.add_node(component.id)
+
+        for input_topic in component.inputs:
+            self.__add_input(input_topic, component.id)
+
+        for output_topic in component.outputs:
+            self.__add_output(output_topic, component.id)
 
     @staticmethod
     def __collect_graph_nodes(components: Iterable[PipelineComponent]) -> Iterator[str]:
