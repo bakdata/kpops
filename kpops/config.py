@@ -64,12 +64,6 @@ class KafkaConnectConfig(BaseSettings):
 class KpopsConfig(BaseSettings):
     """Global configuration for KPOps project."""
 
-    # pipeline_path: SkipJsonSchema[Path] = Field(
-    #     default=...,
-    #     description="The path to the folder containing the defaults.yaml file and the environment defaults files. "
-    #     "Paths can either be absolute or relative to `config.yaml`",
-    #     exclude=True
-    # )
     components_module: str | None = Field(
         default=None,
         description="Custom Python module defining project-specific KPOps components",
