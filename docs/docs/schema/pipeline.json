@@ -113,15 +113,9 @@
                     "description": "Configuration of the Helm chart repo to be used for deploying the component"
                 },
                 "to": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/ToSection"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
+                    "default": null,
+                    "title": "To",
+                    "type": "null"
                 },
                 "type": {
                     "const": "helm-app",
@@ -292,15 +286,9 @@
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/ToSection"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
+                    "default": null,
+                    "title": "To",
+                    "type": "null"
                 },
                 "type": {
                     "const": "kafka-sink-connector",
@@ -386,15 +374,9 @@
                     "description": "Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc."
                 },
                 "to": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/ToSection"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
+                    "default": null,
+                    "title": "To",
+                    "type": "null"
                 },
                 "type": {
                     "const": "kafka-source-connector",
