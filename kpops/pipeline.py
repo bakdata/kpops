@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, TypeAlias
 
@@ -112,23 +112,18 @@ class Pipeline(BaseModel):
                 await pending_task
 
         graph: nx.DiGraph = self.graph.copy()  # pyright: ignore
-        if reverse:
-            graph.reverse()
 
         # We add an extra node to the graph, connecting all the leaf nodes to it
         # in that way we make this node the root of the graph, avoiding backtracking
-        transformed_graph = graph.copy()
         root_node = "root_node_bfs"
-        transformed_graph.add_node(root_node)
+        graph.add_node(root_node)
 
         for node in graph:
             predecessors = list(graph.predecessors(node))
             if not predecessors:
-                transformed_graph.add_edge(root_node, node)
+                graph.add_edge(root_node, node)
 
-        layers_graph: list[list[str]] = list(
-            nx.bfs_layers(transformed_graph, root_node)
-        )
+        layers_graph: list[list[str]] = list(nx.bfs_layers(graph, root_node))
 
         sorted_tasks = []
         for layer in layers_graph[1:]:
