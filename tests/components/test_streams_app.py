@@ -13,6 +13,7 @@ from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components import StreamsApp
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
+    KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
     ToSection,
@@ -327,8 +328,38 @@ class TestStreamsApp:
         await streams_app.deploy(dry_run=dry_run)
 
         assert streams_app.to
+        assert streams_app.to.kafka_topics == [
+            KafkaTopic(
+                name="${output_topic_name}",
+                config=TopicConfig(
+                    type=OutputTopicTypes.OUTPUT,
+                    partitions_count=10,
+                ),
+            ),
+            KafkaTopic(
+                name="${error_topic_name}",
+                config=TopicConfig(
+                    type=OutputTopicTypes.ERROR,
+                    partitions_count=10,
+                ),
+            ),
+            KafkaTopic(
+                name="extra-topic-1",
+                config=TopicConfig(
+                    partitions_count=10,
+                    role="first-extra-topic",
+                ),
+            ),
+            KafkaTopic(
+                name="extra-topic-2",
+                config=TopicConfig(
+                    partitions_count=10,
+                    role="second-extra-topic",
+                ),
+            ),
+        ]
         assert mock.mock_calls == [
-            (
+            *(
                 mocker.call.mock_create_topic(topic, dry_run=dry_run)
                 for topic in streams_app.to.kafka_topics
             ),
