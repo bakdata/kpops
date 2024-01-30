@@ -117,6 +117,11 @@ class KafkaApp(PipelineComponent, ABC):
         description=describe_attr("app", __doc__),
     )
 
+    def __init__(self, **kwargs) -> None:
+        super().__init__(**kwargs)
+        self.set_input_topics()
+        self.set_output_topics()
+
     @property
     def input_topics(self) -> list[str]:
         """Get all the input topics from config."""
