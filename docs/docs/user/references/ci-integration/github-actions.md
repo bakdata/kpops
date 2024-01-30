@@ -6,7 +6,7 @@ parameters.
 ## Input Parameters
 
 | Name              | Required | Default Value |  Type  | Description                                                                                                                                   |
-|-------------------| :------: |:-------------:| :----: |-----------------------------------------------------------------------------------------------------------------------------------------------|
+| ----------------- | :------: | :-----------: | :----: | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | command           |    ✅    |       -       | string | KPOps command to run. generate, deploy, destroy, reset, clean are possible values. Flags such as --dry-run and --execute need to be specified |
 | pipeline          |    ✅    |       -       | string | Pipeline to run by KPOps                                                                                                                      |
 | working-directory |    ❌    |       .       | string | root directory used by KPOps to run pipelines                                                                                                 |
