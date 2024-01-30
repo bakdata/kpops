@@ -1640,7 +1640,8 @@
 
 
 <h1 id="github-actions-integration">GitHub Actions integration<a class="headerlink" href="#github-actions-integration" title="Permanent link">&para;</a></h1>
-<p>We provided a GitHub composite action <code>bakdata/kpops</code> that installs and executes KPOps commands with the given parameters.</p>
+<p>We provided a GitHub composite action <code>bakdata/kpops</code> that installs and executes KPOps commands with the given
+parameters.</p>
 <h2 id="input-parameters">Input Parameters<a class="headerlink" href="#input-parameters" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
@@ -1710,6 +1711,13 @@
 <td>Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS</td>
 </tr>
 <tr>
+<td>parallel</td>
+<td align="center">❌</td>
+<td align="center">"false"</td>
+<td align="center">string</td>
+<td>Whether to run pipelines in parallel</td>
+</tr>
+<tr>
 <td>python-version</td>
 <td align="center">❌</td>
 <td align="center">"3.11.x"</td>
@@ -1777,7 +1785,7 @@
 </span><span id="__span-0-16"><a id="__codelineno-0-16" name="__codelineno-0-16"></a><span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deploy --execute</span>
 </span><span id="__span-0-17"><a id="__codelineno-0-17" name="__codelineno-0-17"></a><span class="w">      </span><span class="nt">working-directory</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">home/my-kpops-root-dir</span>
 </span><span id="__span-0-18"><a id="__codelineno-0-18" name="__codelineno-0-18"></a><span class="w">      </span><span class="nt">pipeline</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pipelines/my-pipeline-file.yaml</span>
-</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="w">      </span><span class="nt">kpops-version</span><span class="p">:</span><span class="w">  </span><span class="l l-Scalar l-Scalar-Plain">1.2.5.dev20230707132709</span>
+</span><span id="__span-0-19"><a id="__codelineno-0-19" name="__codelineno-0-19"></a><span class="w">      </span><span class="nt">kpops-version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.2.5.dev20230707132709</span>
 </span><span id="__span-0-20"><a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="w">  </span><span class="c1"># ...</span>
 </span></code></pre></div></td></tr></table></div>
 
