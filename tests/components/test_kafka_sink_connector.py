@@ -164,14 +164,16 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         mock = mocker.AsyncMock()
         mock.attach_mock(mock_create_topic, "mock_create_topic")
         mock.attach_mock(mock_create_connector, "mock_create_connector")
-        await connector.deploy(dry_run=True)
+        dry_run = True
+
+        await connector.deploy(dry_run=dry_run)
         assert connector.to
         assert mock.mock_calls == [
-            (
-                mocker.call.mock_create_topic(topic, dry_run=True)
+            *(
+                mocker.call.mock_create_topic(topic, dry_run=dry_run)
                 for topic in connector.to.kafka_topics
             ),
-            mocker.call.mock_create_connector(connector.app, dry_run=True),
+            mocker.call.mock_create_connector(connector.app, dry_run=dry_run),
         ]
 
     @pytest.mark.asyncio()
@@ -322,8 +324,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             call.log_info(magentaify("Connector Cleanup: uninstall Kafka Resetter.")),
         ]
 
+        assert connector.to
         assert mock.mock_calls == [
-            mocker.call.mock_delete_topic(connector.to, dry_run=dry_run),
+            *(
+                mocker.call.mock_delete_topic(topic, dry_run=dry_run)
+                for topic in connector.to.kafka_topics
+            ),
             mocker.call.helm.add_repo(
                 "bakdata-kafka-connect-resetter",
                 "https://bakdata.github.io/kafka-connect-resetter/",
