@@ -124,7 +124,7 @@ class TestProducerApp:
         await producer_app.deploy(dry_run=False)
         assert producer_app.to
         assert mock.mock_calls == [
-            (
+            *(
                 mocker.call.mock_create_topic(topic, dry_run=False)
                 for topic in producer_app.to.kafka_topics
             ),

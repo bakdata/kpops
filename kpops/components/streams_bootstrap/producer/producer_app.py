@@ -56,7 +56,7 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
         return ProducerAppCleaner(
             config=self.config,
             handlers=self.handlers,
-            **self.model_dump(),
+            **self.model_dump(exclude={"from", "to"}),
         )
 
     @override
