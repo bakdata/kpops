@@ -78,7 +78,7 @@ class Pipeline(BaseModel):
             returns boolean value whether the component should be kept or removed
         :returns: Iterator of components matching the predicate
         """
-        for component in self:
+        for component in self.components:
             if predicate(component):
                 yield component
 
@@ -88,7 +88,7 @@ class Pipeline(BaseModel):
         :param predicate: Filter function,
             returns boolean value whether the component should be kept or removed
         """
-        for component in self:
+        for component in self.components:
             # filter out components not matching the predicate
             if not predicate(component):
                 self.remove(component.id)
