@@ -5,7 +5,7 @@ import logging
 from functools import cached_property
 from typing import TYPE_CHECKING
 
-from schema_registry.client import SchemaRegistryClient
+from schema_registry.client import AsyncSchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
 
 from kpops.cli.exception import ClassNotFoundError
@@ -25,7 +25,7 @@ log = logging.getLogger("SchemaHandler")
 
 class SchemaHandler:
     def __init__(self, kpops_config: KpopsConfig) -> None:
-        self.schema_registry_client = SchemaRegistryClient(
+        self.schema_registry_client = AsyncSchemaRegistryClient(
             str(kpops_config.schema_registry.url)
         )
         self.components_module = kpops_config.components_module
@@ -55,7 +55,7 @@ class SchemaHandler:
             )
         return None
 
-    def submit_schemas(self, to_section: ToSection, dry_run: bool = True) -> None:
+    async def submit_schemas(self, to_section: ToSection, dry_run: bool = True) -> None:
         for topic_name, config in to_section.topics.items():
             value_schema_class = config.value_schema
             key_schema_class = config.key_schema
@@ -63,23 +63,25 @@ class SchemaHandler:
                 schema = self.schema_provider.provide_schema(
                     value_schema_class, to_section.models
                 )
-                self.__submit_value_schema(
+                await self.__submit_value_schema(
                     schema, value_schema_class, dry_run, topic_name
                 )
             if key_schema_class is not None:
                 schema = self.schema_provider.provide_schema(
                     key_schema_class, to_section.models
                 )
-                self.__submit_key_schema(schema, key_schema_class, dry_run, topic_name)
+                await self.__submit_key_schema(
+                    schema, key_schema_class, dry_run, topic_name
+                )
 
-    def delete_schemas(self, to_section: ToSection, dry_run: bool = True) -> None:
+    async def delete_schemas(self, to_section: ToSection, dry_run: bool = True) -> None:
         for topic_name, config in to_section.topics.items():
             if config.value_schema is not None:
-                self.__delete_subject(f"{topic_name}-value", dry_run)
+                await self.__delete_subject(f"{topic_name}-value", dry_run)
             if config.key_schema is not None:
-                self.__delete_subject(f"{topic_name}-key", dry_run)
+                await self.__delete_subject(f"{topic_name}-key", dry_run)
 
-    def __submit_key_schema(
+    async def __submit_key_schema(
         self,
         schema: Schema,
         schema_class: str,
@@ -87,14 +89,14 @@ class SchemaHandler:
         topic_name: str,
     ) -> None:
         subject = f"{topic_name}-key"
-        self.__submit_schema(
+        await self.__submit_schema(
             subject=subject,
             schema=schema,
             schema_class=schema_class,
             dry_run=dry_run,
         )
 
-    def __submit_value_schema(
+    async def __submit_value_schema(
         self,
         schema: Schema,
         schema_class: str,
@@ -102,14 +104,14 @@ class SchemaHandler:
         topic_name: str,
     ) -> None:
         subject = f"{topic_name}-value"
-        self.__submit_schema(
+        await self.__submit_schema(
             subject=subject,
             schema=schema,
             schema_class=schema_class,
             dry_run=dry_run,
         )
 
-    def __submit_schema(
+    async def __submit_schema(
         self,
         subject: str,
         schema: Schema,
@@ -117,8 +119,8 @@ class SchemaHandler:
         dry_run: bool,
     ):
         if dry_run:
-            if self.__subject_exists(subject):
-                self.__check_compatibility(schema, schema_class, subject)
+            if await self.__subject_exists(subject):
+                await self.__check_compatibility(schema, schema_class, subject)
             else:
                 log.info(
                     greenify(
@@ -126,20 +128,22 @@ class SchemaHandler:
                     )
                 )
         else:
-            self.schema_registry_client.register(subject=subject, schema=schema)
+            await self.schema_registry_client.register(subject=subject, schema=schema)
             log.info(
                 f"Schema Submission: schema submitted for {subject} with model {schema_class}."
             )
 
-    def __subject_exists(self, subject: str) -> bool:
-        return len(self.schema_registry_client.get_versions(subject)) > 0
+    async def __subject_exists(self, subject: str) -> bool:
+        return len(await self.schema_registry_client.get_versions(subject)) > 0
 
-    def __check_compatibility(
+    async def __check_compatibility(
         self, schema: Schema, schema_class: str, subject: str
     ) -> None:
-        registered_version = self.schema_registry_client.check_version(subject, schema)
+        registered_version = await self.schema_registry_client.check_version(
+            subject, schema
+        )
         if registered_version is None:
-            if not self.schema_registry_client.test_compatibility(
+            if not await self.schema_registry_client.test_compatibility(
                 subject=subject, schema=schema
             ):
                 schema_str = (
@@ -158,11 +162,11 @@ class SchemaHandler:
             f"Schema Submission: compatible schema for {subject} with model {schema_class}."
         )
 
-    def __delete_subject(self, subject: str, dry_run: bool) -> None:
+    async def __delete_subject(self, subject: str, dry_run: bool) -> None:
         if dry_run:
             log.info(magentaify(f"Schema Deletion: will delete subject {subject}."))
         else:
-            version_list = self.schema_registry_client.delete_subject(subject)
+            version_list = await self.schema_registry_client.delete_subject(subject)
             log.info(
                 f"Schema Deletion: deleted {len(version_list)} versions for subject {subject}."
             )

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import re
 import subprocess
@@ -74,7 +75,7 @@ class Helm:
         else:
             self.__execute(["helm", "repo", "update"])
 
-    def upgrade_install(
+    async def upgrade_install(
         self,
         release_name: str,
         chart: str,
@@ -103,9 +104,9 @@ class Helm:
             command.extend(flags.to_command())
             if dry_run:
                 command.append("--dry-run")
-            return self.__execute(command)
+            return await self.__async_execute(command)
 
-    def uninstall(
+    async def uninstall(
         self,
         namespace: str,
         release_name: str,
@@ -122,7 +123,7 @@ class Helm:
         if dry_run:
             command.append("--dry-run")
         try:
-            return self.__execute(command)
+            return await self.__async_execute(command)
         except ReleaseNotFoundException:
             log.warning(
                 f"Release with name {release_name} not found. Could not uninstall app."
@@ -228,6 +229,20 @@ class Helm:
         Helm.parse_helm_command_stderr_output(process.stderr)
         log.debug(process.stdout)
         return process.stdout
+
+    async def __async_execute(self, command: list[str]):
+        command = self.__set_global_flags(command)
+        log.debug(f"Executing {' '.join(command)}")
+        proc = await asyncio.create_subprocess_exec(
+            *command,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+
+        stdout, stderr = await proc.communicate()
+        Helm.parse_helm_command_stderr_output(stderr.decode())
+        log.debug(stdout)
+        return stdout.decode()
 
     def __set_global_flags(self, command: list[str]) -> list[str]:
         if self._context:

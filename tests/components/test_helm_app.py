@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -30,15 +30,16 @@ class TestHelmApp:
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
+            schema_handler=AsyncMock(),
+            connector_handler=AsyncMock(),
+            topic_handler=AsyncMock(),
         )
 
     @pytest.fixture()
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+        async_mock = AsyncMock()
         return mocker.patch(
-            "kpops.components.base_components.helm_app.Helm"
+            "kpops.components.base_components.helm_app.Helm", return_value=async_mock
         ).return_value
 
     @pytest.fixture()
@@ -70,7 +71,8 @@ class TestHelmApp:
             repo_config=repo_config,
         )
 
-    def test_should_lazy_load_helm_wrapper_and_not_repo_add(
+    @pytest.mark.asyncio()
+    async def test_should_lazy_load_helm_wrapper_and_not_repo_add(
         self,
         helm_app: HelmApp,
         mocker: MockerFixture,
@@ -85,7 +87,7 @@ class TestHelmApp:
             new_callable=mocker.PropertyMock,
         )
 
-        helm_app.deploy(False)
+        await helm_app.deploy(False)
 
         helm_mock.upgrade_install.assert_called_once_with(
             "${pipeline.name}-test-helm-app",
@@ -99,7 +101,8 @@ class TestHelmApp:
             HelmUpgradeInstallFlags(),
         )
 
-    def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
+    @pytest.mark.asyncio()
+    async def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
@@ -127,7 +130,7 @@ class TestHelmApp:
             new_callable=mocker.PropertyMock,
         )
 
-        helm_app.deploy(dry_run=False)
+        await helm_app.deploy(dry_run=False)
 
         assert helm_mock.mock_calls == [
             mocker.call.add_repo(
@@ -148,7 +151,8 @@ class TestHelmApp:
             ),
         ]
 
-    def test_should_deploy_app_with_local_helm_chart(
+    @pytest.mark.asyncio()
+    async def test_should_deploy_app_with_local_helm_chart(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
@@ -171,7 +175,7 @@ class TestHelmApp:
             namespace="test-namespace",
         )
 
-        app_with_local_chart.deploy(dry_run=False)
+        await app_with_local_chart.deploy(dry_run=False)
 
         helm_mock.add_repo.assert_not_called()
 
@@ -187,20 +191,22 @@ class TestHelmApp:
             HelmUpgradeInstallFlags(),
         )
 
-    def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
+    @pytest.mark.asyncio()
+    async def test_should_raise_not_implemented_error_when_helm_chart_is_not_set(
         self,
         helm_app: HelmApp,
         helm_mock: MagicMock,
     ):
         with pytest.raises(NotImplementedError) as error:
-            helm_app.deploy(True)
+            await helm_app.deploy(True)
         helm_mock.add_repo.assert_called()
         assert (
             str(error.value)
             == "Please implement the helm_chart property of the kpops.components.base_components.helm_app module."
         )
 
-    def test_should_call_helm_uninstall_when_destroying_helm_app(
+    @pytest.mark.asyncio()
+    async def test_should_call_helm_uninstall_when_destroying_helm_app(
         self,
         helm_app: HelmApp,
         helm_mock: MagicMock,
@@ -209,7 +215,7 @@ class TestHelmApp:
         stdout = 'HelmApp - release "test-helm-app" uninstalled'
         helm_mock.uninstall.return_value = stdout
 
-        helm_app.destroy(True)
+        await helm_app.destroy(True)
 
         helm_mock.uninstall.assert_called_once_with(
             "test-namespace", "${pipeline.name}-test-helm-app", True

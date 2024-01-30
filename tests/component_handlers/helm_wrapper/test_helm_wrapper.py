@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from textwrap import dedent
 from unittest import mock
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -37,6 +37,10 @@ class TestHelmWrapper:
         return mock_execute
 
     @pytest.fixture()
+    def run_command_async(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch.object(Helm, "_Helm__async_execute")
+
+    @pytest.fixture()
     def log_warning_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.component_handlers.helm_wrapper.helm.log.warning")
 
@@ -50,10 +54,11 @@ class TestHelmWrapper:
     def helm(self, mock_get_version: MagicMock) -> Helm:
         return Helm(helm_config=HelmConfig())
 
-    def test_should_call_run_command_method_when_helm_install_with_defaults(
-        self, helm: Helm, mock_execute: MagicMock
+    @pytest.mark.asyncio()
+    async def test_should_call_run_command_method_when_helm_install_with_defaults(
+        self, helm: Helm, run_command_async: AsyncMock
     ):
-        helm.upgrade_install(
+        await helm.upgrade_install(
             release_name="test-release",
             chart=f"bakdata-streams-bootstrap/{AppType.STREAMS_APP.value}",
             dry_run=False,
@@ -61,7 +66,8 @@ class TestHelmWrapper:
             values={"commandLine": "test"},
             flags=HelmUpgradeInstallFlags(),
         )
-        mock_execute.assert_called_once_with(
+
+        run_command_async.assert_called_once_with(
             [
                 "helm",
                 "upgrade",
@@ -134,10 +140,11 @@ class TestHelmWrapper:
             ),
         ]
 
-    def test_should_include_configured_tls_parameters_on_update(
-        self, helm: Helm, mock_execute: MagicMock
+    @pytest.mark.asyncio()
+    async def test_should_include_configured_tls_parameters_on_update(
+        self, helm: Helm, run_command_async: AsyncMock
     ):
-        helm.upgrade_install(
+        await helm.upgrade_install(
             release_name="test-release",
             chart="test-repository/test-chart",
             dry_run=False,
@@ -149,7 +156,7 @@ class TestHelmWrapper:
             ),
         )
 
-        mock_execute.assert_called_once_with(
+        run_command_async.assert_called_once_with(
             [
                 "helm",
                 "upgrade",
@@ -169,10 +176,11 @@ class TestHelmWrapper:
             ],
         )
 
-    def test_should_call_run_command_method_when_helm_install_with_non_defaults(
-        self, helm: Helm, mock_execute: MagicMock
+    @pytest.mark.asyncio()
+    async def test_should_call_run_command_method_when_helm_install_with_non_defaults(
+        self, helm: Helm, run_command_async: AsyncMock
     ):
-        helm.upgrade_install(
+        await helm.upgrade_install(
             release_name="test-release",
             chart="test-repository/streams-app",
             namespace="test-namespace",
@@ -188,7 +196,7 @@ class TestHelmWrapper:
                 version="2.4.2",
             ),
         )
-        mock_execute.assert_called_once_with(
+        run_command_async.assert_called_once_with(
             [
                 "helm",
                 "upgrade",
@@ -213,26 +221,28 @@ class TestHelmWrapper:
             ],
         )
 
-    def test_should_call_run_command_method_when_uninstalling_streams_app(
-        self, helm: Helm, mock_execute: MagicMock
+    @pytest.mark.asyncio()
+    async def test_should_call_run_command_method_when_uninstalling_streams_app(
+        self, helm: Helm, run_command_async: AsyncMock
     ):
-        helm.uninstall(
+        await helm.uninstall(
             namespace="test-namespace",
             release_name="test-release",
             dry_run=False,
         )
-        mock_execute.assert_called_once_with(
+        run_command_async.assert_called_once_with(
             ["helm", "uninstall", "test-release", "--namespace", "test-namespace"],
         )
 
-    def test_should_log_warning_when_release_not_found(
+    @pytest.mark.asyncio()
+    async def test_should_log_warning_when_release_not_found(
         self,
+        run_command_async: AsyncMock,
         helm: Helm,
-        mock_execute: MagicMock,
         log_warning_mock: MagicMock,
     ):
-        mock_execute.side_effect = ReleaseNotFoundException()
-        helm.uninstall(
+        run_command_async.side_effect = ReleaseNotFoundException()
+        await helm.uninstall(
             namespace="test-namespace",
             release_name="test-release",
             dry_run=False,
@@ -242,15 +252,16 @@ class TestHelmWrapper:
             "Release with name test-release not found. Could not uninstall app."
         )
 
-    def test_should_call_run_command_method_when_installing_streams_app__with_dry_run(
-        self, helm: Helm, mock_execute: MagicMock
+    @pytest.mark.asyncio()
+    async def test_should_call_run_command_method_when_installing_streams_app__with_dry_run(
+        self, helm: Helm, run_command_async: AsyncMock
     ):
-        helm.uninstall(
+        await helm.uninstall(
             namespace="test-namespace",
             release_name="test-release",
             dry_run=True,
         )
-        mock_execute.assert_called_once_with(
+        run_command_async.assert_called_once_with(
             [
                 "helm",
                 "uninstall",
