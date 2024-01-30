@@ -786,8 +786,8 @@ class TestGenerate:
 
         assert called_component.mock_calls == [
             mock.call("transaction-avro-producer-1"),
-            mock.call("s3-connector-1"),
             mock.call("transaction-joiner"),
+            mock.call("s3-connector-1"),
         ]
 
     @pytest.mark.asyncio()
