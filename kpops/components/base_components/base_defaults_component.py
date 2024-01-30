@@ -1,7 +1,7 @@
-import inspect
+from __future__ import annotations
+
 import logging
 from abc import ABC
-from collections import deque
 from collections.abc import Sequence
 from dataclasses import asdict, is_dataclass
 from functools import cached_property
@@ -24,7 +24,7 @@ from kpops.utils import cached_classproperty
 from kpops.utils.dict_ops import update_nested, update_nested_pair
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
-from kpops.utils.pydantic import DescConfigModel, to_dash
+from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
 from kpops.utils.yaml import load_yaml_file
 
 try:
@@ -91,16 +91,31 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         """
         return to_dash(cls.__name__)
 
+    @cached_classproperty
+    def parents(cls: type[Self]) -> tuple[type[BaseDefaultsComponent], ...]:  # pyright: ignore[reportGeneralTypeIssues]
+        """Get parent components.
+
+        :return: All ancestor KPOps components
+        """
+
+        def gen_parents():
+            for base in cls.mro():
+                # skip class itself and non-component ancestors
+                if base is cls or not issubclass_patched(base, BaseDefaultsComponent):
+                    continue
+                yield base
+
+        return tuple(gen_parents())
+
     @classmethod
-    def extend_with_defaults(cls, **kwargs: Any) -> dict[str, Any]:
+    def extend_with_defaults(cls, config: KpopsConfig, **kwargs: Any) -> dict[str, Any]:
         """Merge parent components' defaults with own.
 
+        :param config: KPOps configuration
         :param kwargs: The init kwargs for pydantic
-        :returns: Enriched kwargs with inheritted defaults
+        :returns: Enriched kwargs with inherited defaults
         """
-        config = kwargs["config"]
-        assert isinstance(config, KpopsConfig)
-
+        kwargs["config"] = config
         for k, v in kwargs.items():
             if isinstance(v, pydantic.BaseModel):
                 kwargs[k] = v.model_dump(exclude_unset=True)
@@ -116,52 +131,36 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         main_default_file_path, environment_default_file_path = get_defaults_file_paths(
             config, ENV.get("environment")
         )
-        defaults = load_defaults(
-            cls, main_default_file_path, environment_default_file_path
+        defaults = cls.load_defaults(
+            main_default_file_path, environment_default_file_path
         )
         return update_nested_pair(kwargs, defaults)
+
+    @classmethod
+    def load_defaults(cls, *defaults_file_paths: Path) -> dict[str, Any]:
+        """Resolve component-specific defaults including environment defaults.
+
+        :param *defaults_file_paths: Path to `defaults.yaml`, ordered from lowest to highest priority, i.e. `defaults.yaml`, `defaults_{environment}`.yaml
+        :returns: Component defaults
+        """
+        defaults: dict[str, Any] = {}
+        for base in (cls, *cls.parents):
+            component_type: str = base.type
+            defaults = update_nested(
+                defaults,
+                *(
+                    defaults_from_yaml(path, component_type)
+                    for path in reversed(defaults_file_paths)
+                    if path.exists()
+                ),
+            )
+        return defaults
 
     def _validate_custom(self, **kwargs) -> None:
         """Run custom validation on component.
 
         :param kwargs: The init kwargs for the component
         """
-
-
-def load_defaults(
-    component_class: type[BaseDefaultsComponent],
-    defaults_file_path: Path,
-    environment_defaults_file_path: Path | None = None,
-) -> dict:
-    """Resolve component-specific defaults including environment defaults.
-
-    :param component_class: Component class
-    :param defaults_file_path: Path to `defaults.yaml`
-    :param environment_defaults_file_path: Path to `defaults_{environment}.yaml`,
-        defaults to None
-    :returns: Component defaults
-    """
-    classes = deque(inspect.getmro(component_class))
-    classes.appendleft(component_class)
-    defaults: dict = {}
-    for base in deduplicate(classes):
-        if issubclass(base, BaseDefaultsComponent):
-            component_type = base.type
-            if (
-                not environment_defaults_file_path
-                or not environment_defaults_file_path.exists()
-            ):
-                defaults = update_nested(
-                    defaults,
-                    defaults_from_yaml(defaults_file_path, component_type),
-                )
-            else:
-                defaults = update_nested(
-                    defaults,
-                    defaults_from_yaml(environment_defaults_file_path, component_type),
-                    defaults_from_yaml(defaults_file_path, component_type),
-                )
-    return defaults
 
 
 def defaults_from_yaml(path: Path, key: str) -> dict:

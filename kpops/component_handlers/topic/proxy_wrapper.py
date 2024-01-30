@@ -32,6 +32,8 @@ class ProxyWrapper:
 
     def __init__(self, config: KafkaRestConfig) -> None:
         self._config: KafkaRestConfig = config
+        self._client = httpx.AsyncClient()
+        self._sync_client = httpx.Client()
 
     @cached_property
     def cluster_id(self) -> str:
@@ -46,7 +48,8 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         :return: The Kafka cluster ID.
         """
-        response = httpx.get(url=f"{self._config.url!s}v3/clusters")
+        response = self._sync_client.get(url=f"{self._config.url!s}v3/clusters")
+
         if response.status_code == httpx.codes.OK:
             cluster_information = response.json()
             return cluster_information["data"][0]["cluster_id"]
@@ -57,7 +60,7 @@ class ProxyWrapper:
     def url(self) -> AnyHttpUrl:
         return self._config.url
 
-    def create_topic(self, topic_spec: TopicSpec) -> None:
+    async def create_topic(self, topic_spec: TopicSpec) -> None:
         """Create a topic.
 
         API Reference:
@@ -66,11 +69,12 @@ class ProxyWrapper:
         :param topic_spec: The topic specification.
         :raises KafkaRestProxyError: Kafka REST proxy error
         """
-        response = httpx.post(
+        response = await self._client.post(
             url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics",
             headers=HEADERS,
             json=topic_spec.model_dump(exclude_none=True),
         )
+
         if response.status_code == httpx.codes.CREATED:
             log.info(f"Topic {topic_spec.topic_name} created.")
             log.debug(response.json())
@@ -78,7 +82,7 @@ class ProxyWrapper:
 
         raise KafkaRestProxyError(response)
 
-    def delete_topic(self, topic_name: str) -> None:
+    async def delete_topic(self, topic_name: str) -> None:
         """Delete a topic.
 
         API Reference:
@@ -87,31 +91,32 @@ class ProxyWrapper:
         :param topic_name: Name of the topic.
         :raises KafkaRestProxyError: Kafka REST proxy error
         """
-        response = httpx.delete(
+        response = await self._client.delete(
             url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
+
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Topic {topic_name} deleted.")
             return
 
         raise KafkaRestProxyError(response)
 
-    def get_topic(self, topic_name: str) -> TopicResponse:
+    async def get_topic(self, topic_name: str) -> TopicResponse:
         """Return the topic with the given topic_name.
 
         API Reference:
         https://docs.confluent.io/platform/current/kafka-rest/api.html#get--clusters-cluster_id-topics-topic_name
-
         :param topic_name: The topic name.
         :raises TopicNotFoundException: Topic not found
         :raises KafkaRestProxyError: Kafka REST proxy error
         :return: Response of the get topic API.
         """
-        response = httpx.get(
+        response = await self._client.get(
             url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}",
             headers=HEADERS,
         )
+
         if response.status_code == httpx.codes.OK:
             log.debug(f"Topic {topic_name} found.")
             log.debug(response.json())
@@ -127,18 +132,17 @@ class ProxyWrapper:
 
         raise KafkaRestProxyError(response)
 
-    def get_topic_config(self, topic_name: str) -> TopicConfigResponse:
+    async def get_topic_config(self, topic_name: str) -> TopicConfigResponse:
         """Return the config with the given topic_name.
 
         API Reference:
         https://docs.confluent.io/platform/current/kafka-rest/api.html#acl-v3
-
         :param topic_name: The topic name.
         :raises TopicNotFoundException: Topic not found
         :raises KafkaRestProxyError: Kafka REST proxy error
         :return: The topic configuration.
         """
-        response = httpx.get(
+        response = await self._client.get(
             url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}/configs",
             headers=HEADERS,
         )
@@ -158,7 +162,9 @@ class ProxyWrapper:
 
         raise KafkaRestProxyError(response)
 
-    def batch_alter_topic_config(self, topic_name: str, json_body: list[dict]) -> None:
+    async def batch_alter_topic_config(
+        self, topic_name: str, json_body: list[dict]
+    ) -> None:
         """Reset config of given config_name param to the default value on the Kafka server.
 
         API Reference:
@@ -168,18 +174,19 @@ class ProxyWrapper:
         :param config_name: The configuration parameter name.
         :raises KafkaRestProxyError: Kafka REST proxy error
         """
-        response = httpx.post(
+        response = await self._client.post(
             url=f"{self.url!s}v3/clusters/{self.cluster_id}/topics/{topic_name}/configs:alter",
             headers=HEADERS,
             json={"data": json_body},
         )
+
         if response.status_code == httpx.codes.NO_CONTENT:
             log.info(f"Config of topic {topic_name} was altered.")
             return
 
         raise KafkaRestProxyError(response)
 
-    def get_broker_config(self) -> BrokerConfigResponse:
+    async def get_broker_config(self) -> BrokerConfigResponse:
         """Return the list of configuration parameters for all the brokers in the given Kafka cluster.
 
         API Reference:
@@ -188,7 +195,7 @@ class ProxyWrapper:
         :raises KafkaRestProxyError: Kafka REST proxy error
         :return: The broker configuration.
         """
-        response = httpx.get(
+        response = await self._client.get(
             url=f"{self.url!s}v3/clusters/{self.cluster_id}/brokers/-/configs",
             headers=HEADERS,
         )

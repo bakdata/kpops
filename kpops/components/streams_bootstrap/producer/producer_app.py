@@ -68,6 +68,16 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
             case _:
                 super().apply_to_outputs(name, topic)
 
+    @property
+    @override
+    def output_topic(self) -> str | None:
+        return self.app.streams.output_topic
+
+    @property
+    @override
+    def extra_output_topics(self) -> dict[str, str]:
+        return self.app.streams.extra_output_topics
+
     @override
     def set_output_topic(self, topic_name: str) -> None:
         self.app.streams.output_topic = topic_name
@@ -82,5 +92,5 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
         return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
     @override
-    def clean(self, dry_run: bool) -> None:
-        self._cleaner.clean(dry_run)
+    async def clean(self, dry_run: bool) -> None:
+        await self._cleaner.clean(dry_run)

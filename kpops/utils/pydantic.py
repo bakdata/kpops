@@ -4,7 +4,6 @@ from typing import Any
 
 import humps
 from pydantic import BaseModel, ConfigDict, Field
-from pydantic.alias_generators import to_snake
 from pydantic.fields import FieldInfo
 from pydantic_settings import PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
@@ -22,6 +21,11 @@ def to_camel(s: str) -> str:
 def to_dash(s: str) -> str:
     """Convert PascalCase to dash-case."""
     return humps.depascalize(s).lower().replace("_", "-")
+
+
+def to_snake(s: str) -> str:
+    """Convert PascalCase to snake_case."""
+    return humps.depascalize(s).lower()
 
 
 def to_dot(s: str) -> str:
