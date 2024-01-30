@@ -31,6 +31,8 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         defaults to "${pipeline.name}-"
     :param from_: Topic(s) and/or components from which the component will read
         input, defaults to None
+    :param to: Topic(s) into which the component will write output,
+        defaults to None
     """
 
     name: str = Field(default=..., description=describe_attr("name", __doc__))
@@ -45,7 +47,10 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         title="From",
         description=describe_attr("from_", __doc__),
     )
-    to: ToSection | None = None
+    to: ToSection | None = Field(
+        default=None,
+        description=describe_attr("to", __doc__),
+    )
     # to: None = None  # TODO
 
     model_config = ConfigDict(extra="allow")
