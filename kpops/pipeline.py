@@ -107,7 +107,7 @@ class Pipeline(BaseModel):
                 tasks.append(asyncio.create_task(coro))
             await asyncio.gather(*tasks)
 
-        async def run_graph_tasks(pending_tasks: list[Awaitable]):
+        async def run_graph_tasks(pending_tasks: list[Awaitable]) -> None:
             for pending_task in pending_tasks:
                 await pending_task
 
@@ -127,9 +127,7 @@ class Pipeline(BaseModel):
 
         sorted_tasks = []
         for layer in layers_graph[1:]:
-            parallel_tasks = self.__get_parallel_tasks_from(layer, runner)
-
-            if parallel_tasks:
+            if parallel_tasks := self.__get_parallel_tasks_from(layer, runner):
                 sorted_tasks.append(run_parallel_tasks(parallel_tasks))
 
         if reverse:
