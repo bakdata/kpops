@@ -3,7 +3,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from collections.abc import Callable, Iterable
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, TypeAlias
 
@@ -101,10 +101,6 @@ class Pipeline(BaseModel):
     def build_execution_graph(
         self, runner: Callable[[PipelineComponent], Coroutine], /, reverse: bool = False
     ) -> Awaitable:
-        sub_graph_nodes = self.__collect_graph_nodes(
-            reversed(self.components) if reverse else self.components
-        )
-
         async def run_parallel_tasks(coroutines: list[Coroutine]) -> None:
             tasks = []
             for coro in coroutines:
@@ -115,16 +111,18 @@ class Pipeline(BaseModel):
             for pending_task in pending_tasks:
                 await pending_task
 
-        sub_graph = self.graph.subgraph(sub_graph_nodes)
-        transformed_graph = sub_graph.copy()
+        graph: nx.DiGraph = self.graph.copy()  # pyright: ignore
+        if reverse:
+            graph.reverse()
 
-        root_node = "root_node_bfs"
         # We add an extra node to the graph, connecting all the leaf nodes to it
         # in that way we make this node the root of the graph, avoiding backtracking
+        transformed_graph = graph.copy()
+        root_node = "root_node_bfs"
         transformed_graph.add_node(root_node)
 
-        for node in sub_graph:
-            predecessors = list(sub_graph.predecessors(node))
+        for node in graph:
+            predecessors = list(graph.predecessors(node))
             if not predecessors:
                 transformed_graph.add_edge(root_node, node)
 
@@ -168,13 +166,6 @@ class Pipeline(BaseModel):
 
         for output_topic in component.outputs:
             self.__add_output(output_topic, component.id)
-
-    @staticmethod
-    def __collect_graph_nodes(components: Iterable[PipelineComponent]) -> Iterator[str]:
-        for component in components:
-            yield component.id
-            yield from component.inputs
-            yield from component.outputs
 
     def __get_parallel_tasks_from(
         self, layer: list[str], runner: Callable[[PipelineComponent], Coroutine]
