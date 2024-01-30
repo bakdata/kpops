@@ -165,11 +165,11 @@ def load_defaults(
 
 
 def defaults_from_yaml(path: Path, key: str) -> dict:
-    """Read component-specific settings from a defaults yaml file and return @default if not found.
+    """Read component-specific settings from a ``defaults*.yaml`` file and return @default if not found.
 
-    :param path: Path to defaults yaml file
+    :param path: Path to ``defaults*.yaml`` file
     :param key: Component type
-    :returns: All defaults set for the given component in the provided yaml
+    :returns: All defaults set for the given component in the provided YAML
 
     :Example:
     .. code-block:: python

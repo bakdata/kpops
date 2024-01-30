@@ -11,7 +11,8 @@ from kpops.utils.pydantic import DescConfigModel
 class OutputTopicTypes(str, Enum):
     """Types of output topic.
 
-    OUTPUT (output topic), ERROR (error topic)
+    - OUTPUT: output topic
+    - ERROR: error topic
     """
 
     OUTPUT = "output"
@@ -66,7 +67,7 @@ class TopicConfig(DescConfigModel):
 
     @model_validator(mode="after")
     def extra_topic_role(self) -> Any:
-        """Ensure that cls.role is used correctly, assign type if needed."""
+        """Ensure that `cls.role` is used correctly, assign type if needed."""
         if self.type and self.role:
             msg = "Define `role` only if `type` is undefined"
             raise ValueError(msg)

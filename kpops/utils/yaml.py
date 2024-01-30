@@ -28,9 +28,9 @@ def load_yaml_file(
 
 
 def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str:
-    """Substitute $-placeholders in input using template string.
+    """Substitute `$`-placeholders in input using template string.
 
-    :param input: The raw input containing $-placeholders
+    :param input: The raw input containing `$`-placeholders
     :param substitution: The key-value mapping containing substitutions
     :return: Substituted input string
     """

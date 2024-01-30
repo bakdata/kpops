@@ -100,9 +100,10 @@ def issubclass_patched(
 ) -> bool:
     """Pydantic breaks ``issubclass``.
 
-    ``issubclass(set[str], set)  # True``
-    ``issubclass(BaseSettings, BaseModel)  # True``
-    ``issubclass(set[str], BaseModel)  # raises exception``
+    .. code-block:: python
+        issubclass(set[str], set)  # True
+        issubclass(BaseSettings, BaseModel)  # True
+        issubclass(set[str], BaseModel)  # raises Exception
 
     :param cls: class to check
     :base: class(es) to check against, defaults to ``BaseModel``
@@ -157,7 +158,7 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
 
     @staticmethod
     def load_config(file: Path) -> dict:
-        """Load yaml file if it exists.
+        """Load YAML file if it exists.
 
         :param file: Path to a ``config*.yaml``
         :return: Dict containing the config or empty dict if file doesn't exist

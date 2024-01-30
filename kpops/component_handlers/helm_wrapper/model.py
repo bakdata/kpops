@@ -83,7 +83,7 @@ class HelmConfig(DescConfigModel):
 
     :param context: Name of kubeconfig context (`--kube-context`)
     :param debug: Run Helm in Debug mode
-    :param api_version: Kubernetes API version used for Capabilities.APIVersions
+    :param api_version: Kubernetes API version used for `Capabilities.APIVersions`
     """
 
     context: str | None = Field(
@@ -168,8 +168,8 @@ class HelmTemplate:
         """Parse source path from comment at the beginning of the YAML doc.
 
         :Example:
-
-        # Source: chart/templates/serviceaccount.yaml
+        .. code-block:: yaml
+            # Source: chart/templates/serviceaccount.yaml
         """
         if not source.startswith(HELM_SOURCE_PREFIX):
             msg = "Not a valid Helm template source"

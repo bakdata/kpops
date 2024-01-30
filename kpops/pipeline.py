@@ -119,7 +119,7 @@ class PipelineGenerator:
         return self.pipeline
 
     def load_yaml(self, path: Path, environment: str | None) -> Pipeline:
-        """Load pipeline definition from yaml.
+        """Load pipeline definition from YAML file.
 
         The file is often named ``pipeline.yaml``
 
@@ -297,9 +297,10 @@ class PipelineGenerator:
         For example, for a given path ./data/v1/dev/pipeline.yaml the pipeline_name would be
         set to data-v1-dev. Then the sub environment variables are set:
 
-        pipeline.name_0 = data
-        pipeline.name_1 = v1
-        pipeline.name_2 = dev
+        .. code-block:: python
+            pipeline.name_0 = data
+            pipeline.name_1 = v1
+            pipeline.name_2 = dev
 
         :param base_dir: Base directory to the pipeline files
         :param path: Path to pipeline.yaml file

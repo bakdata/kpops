@@ -111,7 +111,7 @@ class Helm:
         release_name: str,
         dry_run: bool,
     ) -> str | None:
-        """Prepare and execute the helm uninstall command."""
+        """Prepare and execute the `helm uninstall` command."""
         command = [
             "helm",
             "uninstall",

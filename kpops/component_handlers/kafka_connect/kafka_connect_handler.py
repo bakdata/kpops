@@ -41,7 +41,7 @@ class KafkaConnectHandler:
         If the connector exists the config of that connector gets updated.
 
         :param connector_config: The connector config.
-        :param dry_run: If the connector creation should be run in dry run mode.
+        :param dry_run: Whether the connector creation should be run in dry run mode.
         """
         if dry_run:
             self.__dry_run_connector_creation(connector_config)
@@ -69,7 +69,7 @@ class KafkaConnectHandler:
         """Delete a connector resource from the cluster.
 
         :param connector_name: The connector name.
-        :param dry_run: If the connector deletion should be run in dry run mode.
+        :param dry_run: Whether the connector deletion should be run in dry run mode.
         """
         if dry_run:
             self.__dry_run_connector_deletion(connector_name)
