@@ -14,6 +14,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.config import KpopsConfig
+from kpops.pipeline import PIPELINE_PATH
 from kpops.utils.colorify import magentaify
 from kpops.utils.environment import ENV
 
@@ -23,9 +24,7 @@ RESOURCES_PATH = Path(__file__).parent / "resources"
 class TestHelmApp:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
-        ENV["pipeline_path"] = str(
-            RESOURCES_PATH / "pipelines/pipeline-1/pipeline.yaml"
-        )
+        ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipelines/pipeline-1/pipeline.yaml")
         return KpopsConfig(
             helm_diff_config=HelmDiffConfig(),
         )

@@ -13,6 +13,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.config import KpopsConfig
+from kpops.pipeline import PIPELINE_PATH
 from kpops.utils.environment import ENV
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
@@ -21,7 +22,7 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 class TestStreamsBootstrap:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
-        ENV["pipeline_path"] = str(DEFAULTS_PATH / "pipelines/pipeline-1/pipeline.yaml")
+        ENV[PIPELINE_PATH] = str(DEFAULTS_PATH / "pipelines/pipeline-1/pipeline.yaml")
         return KpopsConfig(
             helm_diff_config=HelmDiffConfig(),
         )

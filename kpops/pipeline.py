@@ -17,6 +17,8 @@ from kpops.utils.environment import ENV
 from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
 
+PIPELINE_PATH = "pipeline_path"
+
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Callable, Coroutine, Iterator
     from pathlib import Path
@@ -430,4 +432,4 @@ class PipelineGenerator:
 
     @staticmethod
     def set_pipeline_path(path: Path):
-        ENV["pipeline_path"] = str(path.resolve())
+        ENV[PIPELINE_PATH] = str(path.resolve())
