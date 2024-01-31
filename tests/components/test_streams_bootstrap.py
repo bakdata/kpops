@@ -1,4 +1,3 @@
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -15,16 +14,16 @@ from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.config import KpopsConfig
 from kpops.pipeline import PIPELINE_PATH
 from kpops.utils.environment import ENV
-
-DEFAULTS_PATH = Path(__file__).parent / "resources"
+from tests.components import PIPELINE_BASE_DIR, RESOURCES_PATH
 
 
 class TestStreamsBootstrap:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
-        ENV[PIPELINE_PATH] = str(DEFAULTS_PATH / "pipelines/pipeline-1/pipeline.yaml")
+        ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipeline.yaml")
         return KpopsConfig(
             helm_diff_config=HelmDiffConfig(),
+            pipeline_base_dir=PIPELINE_BASE_DIR,
         )
 
     @pytest.fixture()

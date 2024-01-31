@@ -1,5 +1,4 @@
 import re
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -12,8 +11,10 @@ from kpops.components.base_components.kafka_connector import (
     KafkaConnector,
 )
 from kpops.config import KpopsConfig, TopicNameConfig
+from kpops.pipeline import PIPELINE_PATH
+from kpops.utils.environment import ENV
+from tests.components import PIPELINE_BASE_DIR, RESOURCES_PATH
 
-DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_FULL_NAME = "${pipeline.name}-" + CONNECTOR_NAME
 CONNECTOR_CLEAN_FULL_NAME = CONNECTOR_FULL_NAME + "-clean"
@@ -25,6 +26,7 @@ RESETTER_NAMESPACE = "test-namespace"
 class TestKafkaConnector:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
+        ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipeline.yaml")
         return KpopsConfig(
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component_type}-error-topic",
@@ -32,6 +34,7 @@ class TestKafkaConnector:
             ),
             kafka_brokers="broker:9092",
             helm_diff_config=HelmDiffConfig(),
+            pipeline_base_dir=PIPELINE_BASE_DIR,
         )
 
     @pytest.fixture()

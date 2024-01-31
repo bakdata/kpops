@@ -1,12 +1,3 @@
 helm-app:
   name: ${component.type}
   namespace: example-namespace
-
-streams-bootstrap:
-  app:
-    streams:
-      brokers: "${config.kafka_brokers}"
-
-producer-app: {} # inherits from kafka-app
-
-streams-app: {} # inherits from kafka-app

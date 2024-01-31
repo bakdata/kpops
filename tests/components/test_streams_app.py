@@ -21,6 +21,7 @@ from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCle
 from kpops.config import KpopsConfig, TopicNameConfig
 from kpops.pipeline import PIPELINE_PATH
 from kpops.utils.environment import ENV
+from tests.components import PIPELINE_BASE_DIR
 
 RESOURCES_PATH = Path(__file__).parent / "resources"
 
@@ -47,13 +48,14 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def config(self) -> KpopsConfig:
-        ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipelines/pipeline-2/pipeline.yaml")
+        ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipeline.yaml")
         return KpopsConfig(
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component_type}-error-topic",
                 default_output_topic_name="${component_type}-output-topic",
             ),
             helm_diff_config=HelmDiffConfig(),
+            pipeline_base_dir=PIPELINE_BASE_DIR,
         )
 
     @pytest.fixture()

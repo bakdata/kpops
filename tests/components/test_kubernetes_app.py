@@ -13,6 +13,9 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesAppValues,
 )
 from kpops.config import KpopsConfig
+from kpops.pipeline import PIPELINE_PATH
+from kpops.utils.environment import ENV
+from tests.components import PIPELINE_BASE_DIR, RESOURCES_PATH
 
 HELM_RELEASE_NAME = create_helm_release_name("${pipeline.name}-test-kubernetes-app")
 
@@ -24,7 +27,8 @@ class KubernetesTestValues(KubernetesAppValues):
 class TestKubernetesApp:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
-        return KpopsConfig()
+        ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipeline.yaml")
+        return KpopsConfig(pipeline_base_dir=PIPELINE_BASE_DIR)
 
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:

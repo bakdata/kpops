@@ -14,9 +14,7 @@ from kpops.components.base_components.base_defaults_component import (
 from kpops.config import KpopsConfig
 from kpops.pipeline import PIPELINE_PATH
 from kpops.utils.environment import ENV
-
-PIPELINE_BASE_DIR = Path(__file__).parent
-RESOURCES_PATH = PIPELINE_BASE_DIR / "resources"
+from tests.components import PIPELINE_BASE_DIR, RESOURCES_PATH
 
 
 class Parent(BaseDefaultsComponent):
@@ -49,10 +47,8 @@ class EnvVarTest(BaseDefaultsComponent):
 
 @pytest.fixture()
 def config() -> KpopsConfig:
-    ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipelines/pipeline-1/pipeline.yaml")
-    config = KpopsConfig()
-    config.pipeline_base_dir = PIPELINE_BASE_DIR
-    return config
+    ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipeline.yaml")
+    return KpopsConfig(pipeline_base_dir=PIPELINE_BASE_DIR)
 
 
 @pytest.fixture()
@@ -222,34 +218,34 @@ class TestBaseDefaultsComponent:
                 ],
             ),
             (
-                RESOURCES_PATH / "pipelines/pipeline-3/pipeline-deep/pipeline.yaml",
+                RESOURCES_PATH / "pipelines/pipeline-2/pipeline-deep/pipeline.yaml",
                 "development",
                 [
                     Path(
-                        f"{RESOURCES_PATH}/pipelines/pipeline-3/pipeline-deep/defaults.yaml"
+                        f"{RESOURCES_PATH}/pipelines/pipeline-2/pipeline-deep/defaults.yaml"
                     ),
                     Path(
-                        f"{RESOURCES_PATH}/pipelines/pipeline-3/defaults_development.yaml"
+                        f"{RESOURCES_PATH}/pipelines/pipeline-2/defaults_development.yaml"
                     ),
-                    Path(f"{RESOURCES_PATH}/pipelines/pipeline-3/defaults.yaml"),
+                    Path(f"{RESOURCES_PATH}/pipelines/pipeline-2/defaults.yaml"),
                     Path(f"{RESOURCES_PATH}/defaults_development.yaml"),
                     Path(f"{RESOURCES_PATH}/defaults.yaml"),
                 ],
             ),
             (
-                RESOURCES_PATH / "pipelines/pipeline-3/pipeline-deep/pipeline.yaml",
+                RESOURCES_PATH / "pipelines/pipeline-2/pipeline-deep/pipeline.yaml",
                 "production",
                 [
                     Path(
-                        f"{RESOURCES_PATH}/pipelines/pipeline-3/pipeline-deep/defaults_production.yaml"
+                        f"{RESOURCES_PATH}/pipelines/pipeline-2/pipeline-deep/defaults_production.yaml"
                     ),
                     Path(
-                        f"{RESOURCES_PATH}/pipelines/pipeline-3/pipeline-deep/defaults.yaml"
+                        f"{RESOURCES_PATH}/pipelines/pipeline-2/pipeline-deep/defaults.yaml"
                     ),
                     Path(
-                        f"{RESOURCES_PATH}/pipelines/pipeline-3/defaults_production.yaml"
+                        f"{RESOURCES_PATH}/pipelines/pipeline-2/defaults_production.yaml"
                     ),
-                    Path(f"{RESOURCES_PATH}/pipelines/pipeline-3/defaults.yaml"),
+                    Path(f"{RESOURCES_PATH}/pipelines/pipeline-2/defaults.yaml"),
                     Path(f"{RESOURCES_PATH}/defaults.yaml"),
                 ],
             ),
