@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -37,15 +37,17 @@ class TestKafkaConnector:
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
+            schema_handler=AsyncMock(),
+            connector_handler=AsyncMock(),
+            topic_handler=AsyncMock(),
         )
 
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+        async_mock = AsyncMock()
         return mocker.patch(
-            "kpops.components.base_components.helm_app.Helm"
+            "kpops.components.base_components.helm_app.Helm",
+            return_value=async_mock,
         ).return_value
 
     @pytest.fixture()

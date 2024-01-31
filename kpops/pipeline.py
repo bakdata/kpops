@@ -1,13 +1,15 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 from collections import Counter
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING
 
+import networkx as nx
 import yaml
-from pydantic import Field, RootModel, SerializeAsAny
+from pydantic import BaseModel, Field, SerializeAsAny
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
@@ -16,7 +18,7 @@ from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
 
 if TYPE_CHECKING:
-    from collections.abc import Iterator
+    from collections.abc import Awaitable, Callable, Coroutine, Iterator
     from pathlib import Path
 
     from kpops.cli.registry import Registry
@@ -34,44 +36,144 @@ class ValidationError(Exception):
     pass
 
 
-class Pipeline(RootModel):
+class Pipeline(BaseModel):
     """Pipeline representation."""
 
-    root: list[SerializeAsAny[PipelineComponent]] = Field(
+    components: list[SerializeAsAny[PipelineComponent]] = Field(
         default=[], title="Components"
     )
+    graph: nx.DiGraph = Field(default_factory=nx.DiGraph, exclude=True)
+    _component_index: dict[str, PipelineComponent | None] = {}
+
+    class Config:
+        arbitrary_types_allowed = True
 
     @property
     def last(self) -> PipelineComponent:
-        return self.root[-1]
+        return self.components[-1]
 
     def find(self, component_name: str) -> PipelineComponent:
-        for component in self.root:
+        for component in self.components:
             if component_name == component.name:
                 return component
         msg = f"Component {component_name} not found"
         raise ValueError(msg)
 
+    def __add_to_graph(self, component: PipelineComponent):
+        self._component_index[component.id] = component
+        self.graph.add_node(component.id)
+
+        for input_topic in component.inputs:
+            self.__add_input(input_topic, component.id)
+
+        for output_topic in component.outputs:
+            self.__add_output(output_topic, component.id)
+
     def add(self, component: PipelineComponent) -> None:
-        self.root.append(component)
+        self.components.append(component)
+        self.__add_to_graph(component)
 
     def __bool__(self) -> bool:
-        return bool(self.root)
+        return bool(self.components)
 
     def __iter__(self) -> Iterator[PipelineComponent]:  # pyright: ignore [reportIncompatibleMethodOverride]
-        return iter(self.root)
+        return iter(self.components)
 
     def __len__(self) -> int:
-        return len(self.root)
+        return len(self.components)
 
     def to_yaml(self) -> str:
-        return yaml.dump(self.model_dump(mode="json", by_alias=True, exclude_none=True))
+        return yaml.dump(
+            self.model_dump(mode="json", by_alias=True, exclude_none=True)["components"]
+        )
+
+    def build_execution_graph_from(
+        self,
+        components: list[PipelineComponent],
+        reverse: bool,
+        runner: Callable[[PipelineComponent], Coroutine],
+    ) -> Awaitable:
+        sub_graph_nodes = self.__get_graph_nodes(components)
+
+        async def run_parallel_tasks(coroutines: list[Coroutine]) -> None:
+            tasks = []
+            for coro in coroutines:
+                tasks.append(asyncio.create_task(coro))
+            await asyncio.gather(*tasks)
+
+        async def run_graph_tasks(pending_tasks: list[Awaitable]):
+            for pending_task in pending_tasks:
+                await pending_task
+
+        sub_graph = self.graph.subgraph(sub_graph_nodes)
+        transformed_graph = sub_graph.copy()
+
+        root_node = "root_node_bfs"
+        # We add an extra node to the graph, connecting all the leaf nodes to it
+        # in that way we make this node the root of the graph, avoiding backtracking
+        transformed_graph.add_node(root_node)
+
+        for node in sub_graph:
+            predecessors = list(sub_graph.predecessors(node))
+            if not predecessors:
+                transformed_graph.add_edge(root_node, node)
+
+        layers_graph: list[list[str]] = list(
+            nx.bfs_layers(transformed_graph, root_node)
+        )
+
+        sorted_tasks = []
+        for layer in layers_graph[1:]:
+            parallel_tasks = self.__get_parallel_tasks_from(layer, runner)
+
+            if parallel_tasks:
+                sorted_tasks.append(run_parallel_tasks(parallel_tasks))
+
+        if reverse:
+            sorted_tasks.reverse()
+
+        return run_graph_tasks(sorted_tasks)
+
+    @staticmethod
+    def __get_graph_nodes(components: list[PipelineComponent]) -> Iterator[str]:
+        for component in components:
+            yield component.id
+            yield from component.inputs
+            yield from component.outputs
+
+    def __get_parallel_tasks_from(
+        self, layer: list[str], runner: Callable[[PipelineComponent], Coroutine]
+    ) -> list[Coroutine]:
+        parallel_tasks = []
+
+        for node_in_layer in layer:
+            component = self._component_index[node_in_layer]
+            if component is not None:
+                parallel_tasks.append(runner(component))
+
+        return parallel_tasks
+
+    def __validate_graph(self) -> None:
+        if not nx.is_directed_acyclic_graph(self.graph):
+            msg = "Pipeline is not a valid DAG."
+            raise ValueError(msg)
 
     def validate(self) -> None:  # pyright: ignore [reportIncompatibleMethodOverride]
         self.validate_unique_names()
+        self.__validate_graph()
+
+    def __add_output(self, output_topic: str, source: str) -> None:
+        self._component_index[output_topic] = None
+        self.graph.add_node(output_topic)
+        self.graph.add_edge(source, output_topic)
+
+    def __add_input(self, input_topic: str, target: str) -> None:
+        self._component_index[input_topic] = None
+        self.graph.add_node(input_topic)
+        self.graph.add_edge(input_topic, target)
 
     def validate_unique_names(self) -> None:
-        step_names = [component.full_name for component in self.root]
+        step_names = [component.full_name for component in self.components]
         duplicates = [name for name, count in Counter(step_names).items() if count > 1]
         if duplicates:
             msg = f"step names should be unique. duplicate step names: {', '.join(duplicates)}"

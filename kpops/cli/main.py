@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+import asyncio
 import logging
-from collections.abc import Iterator
 from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -32,6 +32,8 @@ from kpops.utils.pydantic import YamlConfigSettingsSource
 from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
+    from collections.abc import Awaitable, Callable, Coroutine, Iterator
+
     from kpops.components.base_components import PipelineComponent
 
 
@@ -81,6 +83,13 @@ DRY_RUN: bool = typer.Option(
     True,
     "--dry-run/--execute",
     help="Whether to dry run the command or execute it",
+)
+
+PARALLEL: bool = typer.Option(
+    False,
+    "--parallel/--no-parallel",
+    rich_help_panel="EXPERIMENTAL: features in preview, not production-ready",
+    help="Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.",
 )
 
 
@@ -172,6 +181,26 @@ def filter_steps_to_apply(
     ]
     log.info(f"The following steps are included:\n{get_step_names(filtered_steps)}")
     return filtered_steps
+
+
+def get_reverse_concurrently_tasks_to_execute(
+    pipeline: Pipeline,
+    steps: str | None,
+    filter_type: FilterType,
+    runner: Callable[[PipelineComponent], Coroutine],
+) -> Awaitable:
+    steps_to_apply = reverse_pipeline_steps(pipeline, steps, filter_type)
+    return pipeline.build_execution_graph_from(list(steps_to_apply), True, runner)
+
+
+def get_concurrently_tasks_to_execute(
+    pipeline: Pipeline,
+    steps: str | None,
+    filter_type: FilterType,
+    runner: Callable[[PipelineComponent], Coroutine],
+) -> Awaitable:
+    steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
+    return pipeline.build_execution_graph_from(steps_to_apply, False, runner)
 
 
 def get_steps_to_apply(
@@ -266,6 +295,7 @@ def generate(
         environment,
         verbose,
     )
+
     pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
     if output:
         print_yaml(pipeline.to_yaml())
@@ -315,19 +345,32 @@ def deploy(
     environment: Optional[str] = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
-    kpops_config = create_kpops_config(
-        config,
-        dotenv,
-        environment,
-        verbose,
-    )
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-
-    steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
-    for component in steps_to_apply:
+    async def deploy_runner(component: PipelineComponent):
         log_action("Deploy", component)
-        component.deploy(dry_run)
+        await component.deploy(dry_run)
+
+    async def async_deploy():
+        kpops_config = create_kpops_config(
+            config,
+            dotenv,
+            environment,
+            verbose,
+        )
+        pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
+
+        if parallel:
+            pipeline_tasks = get_concurrently_tasks_to_execute(
+                pipeline, steps, filter_type, deploy_runner
+            )
+            await pipeline_tasks
+        else:
+            steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
+            for component in steps_to_apply:
+                await deploy_runner(component)
+
+    asyncio.run(async_deploy())
 
 
 @app.command(help="Destroy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
@@ -340,18 +383,33 @@ def destroy(
     environment: Optional[str] = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
-    kpops_config = create_kpops_config(
-        config,
-        dotenv,
-        environment,
-        verbose,
-    )
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
-    for component in pipeline_steps:
+    async def destroy_runner(component: PipelineComponent):
         log_action("Destroy", component)
-        component.destroy(dry_run)
+        await component.destroy(dry_run)
+
+    async def async_destroy():
+        kpops_config = create_kpops_config(
+            config,
+            dotenv,
+            environment,
+            verbose,
+        )
+
+        pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
+
+        if parallel:
+            pipeline_tasks = get_reverse_concurrently_tasks_to_execute(
+                pipeline, steps, filter_type, destroy_runner
+            )
+            await pipeline_tasks
+        else:
+            pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
+            for component in pipeline_steps:
+                await destroy_runner(component)
+
+    asyncio.run(async_destroy())
 
 
 @app.command(help="Reset pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
@@ -364,19 +422,32 @@ def reset(
     environment: Optional[str] = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
-    kpops_config = create_kpops_config(
-        config,
-        dotenv,
-        environment,
-        verbose,
-    )
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
-    for component in pipeline_steps:
+    async def reset_runner(component: PipelineComponent):
         log_action("Reset", component)
-        component.destroy(dry_run)
-        component.reset(dry_run)
+        await component.destroy(dry_run)
+        await component.reset(dry_run)
+
+    async def async_reset():
+        kpops_config = create_kpops_config(
+            config,
+            dotenv,
+            environment,
+            verbose,
+        )
+        pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
+        if parallel:
+            pipeline_tasks = get_reverse_concurrently_tasks_to_execute(
+                pipeline, steps, filter_type, reset_runner
+            )
+            await pipeline_tasks
+        else:
+            pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
+            for component in pipeline_steps:
+                await reset_runner(component)
+
+    asyncio.run(async_reset())
 
 
 @app.command(help="Clean pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
@@ -389,19 +460,32 @@ def clean(
     environment: Optional[str] = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
-    kpops_config = create_kpops_config(
-        config,
-        dotenv,
-        environment,
-        verbose,
-    )
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
-    for component in pipeline_steps:
+    async def clean_runner(component: PipelineComponent):
         log_action("Clean", component)
-        component.destroy(dry_run)
-        component.clean(dry_run)
+        await component.destroy(dry_run)
+        await component.clean(dry_run)
+
+    async def async_clean():
+        kpops_config = create_kpops_config(
+            config,
+            dotenv,
+            environment,
+            verbose,
+        )
+        pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
+        if parallel:
+            pipeline_steps = get_reverse_concurrently_tasks_to_execute(
+                pipeline, steps, filter_type, clean_runner
+            )
+            await pipeline_steps
+        else:
+            pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
+            for component in pipeline_steps:
+                await clean_runner(component)
+
+    asyncio.run(async_clean())
 
 
 def version_callback(show_version: bool) -> None:

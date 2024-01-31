@@ -1,0 +1,8 @@
+- type: streams-app
+  name: app2-processor
+  app:
+    image: some-image
+  to:
+    topics:
+      app2-processor:
+        type: output
