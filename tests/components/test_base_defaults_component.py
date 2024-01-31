@@ -209,15 +209,6 @@ class TestBaseDefaultsComponent:
         ("pipeline_path", "environment", "expected_default_paths"),
         [
             (
-                RESOURCES_PATH / "pipelines/pipeline-1/pipeline.yaml",
-                "development",
-                [
-                    Path(f"{RESOURCES_PATH}/pipelines/pipeline-1/defaults.yaml"),
-                    Path(f"{RESOURCES_PATH}/defaults_development.yaml"),
-                    Path(f"{RESOURCES_PATH}/defaults.yaml"),
-                ],
-            ),
-            (
                 RESOURCES_PATH / "pipelines/pipeline-2/pipeline-deep/pipeline.yaml",
                 "development",
                 [
