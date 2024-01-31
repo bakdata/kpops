@@ -209,7 +209,7 @@
             "type": "object"
         },
         "InputTopicTypes": {
-            "description": "Input topic types.\n\n- INPUT: input topic\n- PATTERN: extra-topic-pattern or input-topic-pattern",
+            "description": "Input topic types.\n\nINPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)",
             "enum": [
                 "input",
                 "pattern"
@@ -357,7 +357,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "`offset.storage.topic`, more info: https://kafka.apache.org/documentation/#connect_running",
+                    "description": "offset.storage.topic, more info: https://kafka.apache.org/documentation/#connect_running",
                     "title": "Offset Topic"
                 },
                 "prefix": {
@@ -413,7 +413,7 @@
             "type": "object"
         },
         "OutputTopicTypes": {
-            "description": "Types of output topic.\n\n- OUTPUT: output topic\n- ERROR: error topic",
+            "description": "Types of output topic.\n\nOUTPUT (output topic), ERROR (error topic)",
             "enum": [
                 "output",
                 "error"
