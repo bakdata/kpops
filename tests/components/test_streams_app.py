@@ -421,8 +421,6 @@ class TestStreamsApp:
                     STREAMS_APP_CLEAN_RELEASE_NAME,
                     dry_run,
                 ),
-                # ANY,  # __bool__
-                # ANY,  # __str__
             ]
         )
 
@@ -477,8 +475,6 @@ class TestStreamsApp:
                     STREAMS_APP_CLEAN_RELEASE_NAME,
                     dry_run,
                 ),
-                ANY,  # __bool__
-                ANY,  # __str__
             ]
         )
 
