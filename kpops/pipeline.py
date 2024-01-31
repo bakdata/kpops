@@ -64,10 +64,10 @@ class Pipeline(BaseModel):
         self.graph.add_node(component.id)
 
         for input_topic in component.inputs:
-            self.__add_input(input_topic, component.id)
+            self.__add_input(input_topic.id, component.id)
 
         for output_topic in component.outputs:
-            self.__add_output(output_topic, component.id)
+            self.__add_output(output_topic.id, component.id)
 
     def add(self, component: PipelineComponent) -> None:
         self.components.append(component)
@@ -138,8 +138,8 @@ class Pipeline(BaseModel):
     def __get_graph_nodes(components: list[PipelineComponent]) -> Iterator[str]:
         for component in components:
             yield component.id
-            yield from component.inputs
-            yield from component.outputs
+            yield from (topic.id for topic in component.inputs)
+            yield from (topic.id for topic in component.outputs)
 
     def __get_parallel_tasks_from(
         self, layer: list[str], runner: Callable[[PipelineComponent], Coroutine]
