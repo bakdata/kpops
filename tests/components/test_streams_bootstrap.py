@@ -23,7 +23,6 @@ class TestStreamsBootstrap:
     def config(self) -> KpopsConfig:
         ENV["pipeline_path"] = str(DEFAULTS_PATH / "pipelines/pipeline-1/pipeline.yaml")
         return KpopsConfig(
-            # pipeline_path=DEFAULTS_PATH / "pipelines/pipeline-1/pipeline.yaml",
             helm_diff_config=HelmDiffConfig(),
         )
 
