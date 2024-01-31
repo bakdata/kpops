@@ -2,7 +2,10 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
+from collections.abc import Callable
+from typing import Any
 
+import pydantic
 from pydantic import ConfigDict, Field
 from typing_extensions import override
 
@@ -17,7 +20,12 @@ from kpops.components.base_components.models.to_section import (
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfigModel, DescConfigModel
+from kpops.utils.pydantic import (
+    CamelCaseConfigModel,
+    DescConfigModel,
+    exclude_by_value,
+    exclude_defaults,
+)
 
 log = logging.getLogger("KafkaApp")
 
@@ -37,6 +45,13 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     model_config = ConfigDict(
         extra="allow",
     )
+
+    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
+    @pydantic.model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self, handler: Callable, info: pydantic.SerializationInfo
+    ) -> dict[str, Any]:
+        return exclude_defaults(self, exclude_by_value(handler(self), None))
 
 
 class KafkaAppValues(HelmAppValues):

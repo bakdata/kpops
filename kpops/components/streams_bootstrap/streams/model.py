@@ -1,8 +1,8 @@
-from collections.abc import Callable, Iterable
+from collections.abc import Iterable
 from typing import Any
 
 import pydantic
-from pydantic import ConfigDict, Field, SerializationInfo, model_serializer
+from pydantic import ConfigDict, Field
 
 from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
@@ -13,8 +13,6 @@ from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
-    exclude_by_value,
-    exclude_defaults,
 )
 
 
@@ -108,13 +106,6 @@ class StreamsConfig(KafkaStreamsConfig):
         self.extra_input_topics[role] = self.deduplicate_topics(
             self.extra_input_topics.get(role, []) + topics
         )
-
-    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
-    @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(
-        self, handler: Callable, info: SerializationInfo
-    ) -> dict[str, Any]:
-        return exclude_defaults(self, exclude_by_value(handler(self), None))
 
 
 class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
