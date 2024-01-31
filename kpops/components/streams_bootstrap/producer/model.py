@@ -1,9 +1,11 @@
+import pydantic
 from pydantic import ConfigDict, Field
 
 from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
     KafkaStreamsConfig,
 )
+from kpops.components.base_components.models.to_section import KafkaTopic
 from kpops.utils.docstring import describe_attr
 
 
@@ -14,12 +16,24 @@ class ProducerStreamsConfig(KafkaStreamsConfig):
     :param output_topic: Output topic, defaults to None
     """
 
-    extra_output_topics: dict[str, str] = Field(
+    extra_output_topics: dict[str, KafkaTopic] = Field(
         default={}, description=describe_attr("extra_output_topics", __doc__)
     )
-    output_topic: str | None = Field(
+    output_topic: KafkaTopic | None = Field(
         default=None, description=describe_attr("output_topic", __doc__)
     )
+
+    @pydantic.field_serializer("output_topic")
+    def serialize_topic(self, topic: KafkaTopic | None) -> str | None:
+        if not topic:
+            return None
+        return topic.name
+
+    @pydantic.field_serializer("extra_output_topics")
+    def serialize_extra_output_topics(
+        self, extra_topics: dict[str, KafkaTopic]
+    ) -> dict[str, str]:
+        return {role: topic.name for role, topic in extra_topics.items()}
 
 
 class ProducerAppValues(KafkaAppValues):

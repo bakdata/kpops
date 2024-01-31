@@ -10,6 +10,7 @@ from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components import ProducerApp
 from kpops.components.base_components.models.to_section import (
+    KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
 )
@@ -98,9 +99,11 @@ class TestProducerApp:
             },
         )
 
-        assert producer_app.app.streams.output_topic == "${output_topic_name}"
+        assert producer_app.app.streams.output_topic == KafkaTopic(
+            name="${output_topic_name}"
+        )
         assert producer_app.app.streams.extra_output_topics == {
-            "first-extra-topic": "extra-topic-1"
+            "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
 
     @pytest.mark.asyncio()
@@ -311,10 +314,15 @@ class TestProducerApp:
                 },
             },
         )
-        assert producer_app.output_topic == "${output_topic_name}"
-        assert producer_app.extra_output_topics == {
-            "first-extra-topic": "extra-topic-1"
+        assert producer_app.app.streams.output_topic == KafkaTopic(
+            name="${output_topic_name}"
+        )
+        assert producer_app.app.streams.extra_output_topics == {
+            "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
         assert producer_app.input_topics == []
         assert list(producer_app.inputs) == []
-        assert list(producer_app.outputs) == ["${output_topic_name}", "extra-topic-1"]
+        assert list(producer_app.outputs) == [
+            KafkaTopic(name="${output_topic_name}"),
+            KafkaTopic(name="extra-topic-1"),
+        ]

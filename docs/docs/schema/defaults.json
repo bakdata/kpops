@@ -890,7 +890,7 @@
                 },
                 "extraOutputTopics": {
                     "additionalProperties": {
-                        "type": "string"
+                        "$ref": "#/$defs/KafkaTopic"
                     },
                     "default": {},
                     "description": "Extra output topics",
@@ -900,15 +900,14 @@
                 "outputTopic": {
                     "anyOf": [
                         {
-                            "type": "string"
+                            "$ref": "#/$defs/KafkaTopic"
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "Output topic",
-                    "title": "Outputtopic"
+                    "description": "Output topic"
                 },
                 "schemaRegistryUrl": {
                     "anyOf": [
