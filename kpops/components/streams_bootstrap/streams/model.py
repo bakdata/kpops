@@ -1,4 +1,3 @@
-from collections.abc import Iterable
 from typing import Any
 
 import pydantic
@@ -82,10 +81,6 @@ class StreamsConfig(KafkaStreamsConfig):
     ) -> dict[str, str]:
         return {role: topic.name for role, topic in extra_topics.items()}
 
-    @staticmethod  # TODO: move?
-    def deduplicate_topics(topics: Iterable[KafkaTopic]) -> list[KafkaTopic]:
-        return list({topic.name: topic for topic in topics}.values())
-
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:
         """Add given topics to the list of input topics.
 
@@ -93,7 +88,7 @@ class StreamsConfig(KafkaStreamsConfig):
 
         :param topics: Input topics
         """
-        self.input_topics = self.deduplicate_topics(self.input_topics + topics)
+        self.input_topics = KafkaTopic.deduplicate(self.input_topics + topics)
 
     def add_extra_input_topics(self, role: str, topics: list[KafkaTopic]) -> None:
         """Add given extra topics that share a role to the list of extra input topics.
@@ -103,7 +98,7 @@ class StreamsConfig(KafkaStreamsConfig):
         :param topics: Extra input topics
         :param role: Topic role
         """
-        self.extra_input_topics[role] = self.deduplicate_topics(
+        self.extra_input_topics[role] = KafkaTopic.deduplicate(
             self.extra_input_topics.get(role, []) + topics
         )
 

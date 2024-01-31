@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
 from enum import Enum
 from typing import Any
 
@@ -82,6 +83,10 @@ class KafkaTopic(BaseModel):
     @property
     def id(self) -> str:
         return f"topic-{self.name}"
+
+    @staticmethod
+    def deduplicate(topics: Iterable[KafkaTopic]) -> list[KafkaTopic]:
+        return list({topic.name: topic for topic in topics}.values())
 
 
 class ToSection(DescConfigModel):

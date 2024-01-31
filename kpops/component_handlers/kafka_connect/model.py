@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Any, Literal
 
+import pydantic
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -12,6 +13,7 @@ from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
 from kpops.components.base_components.helm_app import HelmAppValues
+from kpops.components.base_components.models.to_section import KafkaTopic
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
@@ -31,6 +33,7 @@ class KafkaConnectorConfig(DescConfigModel):
 
     connector_class: str
     name: SkipJsonSchema[str]
+    topics: SkipJsonSchema[list[KafkaTopic]] = []
 
     @override
     @staticmethod
@@ -56,6 +59,10 @@ class KafkaConnectorConfig(DescConfigModel):
     @property
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
+
+    @pydantic.field_serializer("topics")
+    def serialize_topics(self, topics: list[KafkaTopic]) -> str:
+        return ",".join(topic.name for topic in topics)
 
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")

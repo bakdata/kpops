@@ -19,9 +19,9 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorResetterValues,
     KafkaConnectorType,
 )
-from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.components.base_components.models.from_section import FromTopic
+from kpops.components.base_components.models.to_section import KafkaTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
@@ -135,7 +135,7 @@ class KafkaConnector(PipelineComponent, ABC):
     @classmethod
     def connector_config_should_have_component_name(
         cls,
-        app: KafkaConnectorConfig | dict[str, str],
+        app: KafkaConnectorConfig | dict[str, Any],
         info: ValidationInfo,
     ) -> KafkaConnectorConfig:
         if isinstance(app, KafkaConnectorConfig):
@@ -242,16 +242,12 @@ class KafkaSinkConnector(KafkaConnector):
 
     @property
     @override
-    def input_topics(self) -> list[str]:
-        topics = getattr(self.app, "topics", None)
-        return topics.split(",") if topics is not None else []
+    def input_topics(self) -> list[KafkaTopic]:
+        return self.app.topics
 
     @override
-    def add_input_topics(self, topics: list[str]) -> None:
-        existing_topics: str | None = getattr(self.app, "topics", None)
-        topics = existing_topics.split(",") + topics if existing_topics else topics
-        topics = deduplicate(topics)
-        setattr(self.app, "topics", ",".join(topics))
+    def add_input_topics(self, topics: list[KafkaTopic]) -> None:
+        self.app.topics = KafkaTopic.deduplicate(self.app.topics + topics)
 
     @override
     def set_input_pattern(self, name: str) -> None:
