@@ -212,27 +212,19 @@ def get_defaults_file_paths(
     path = pipeline_path.resolve()
 
     while path.parent != path:
-        add_environment_defaults(config, default_paths, environment, path)
-        add_defaults(config, default_paths, path)
-
-        path = path.parent
-
-    return default_paths
-
-
-def add_defaults(config, default_paths, path):
-    defaults_yaml_path = path.parent / f"{config.defaults_filename_prefix}.yaml"
-    if defaults_yaml_path.is_file():
-        default_paths.append(defaults_yaml_path)
-
-
-def add_environment_defaults(config, default_paths, environment, path):
-    if environment is not None:
         environment_default_file_path = (
             path.parent / f"{config.defaults_filename_prefix}_{environment}.yaml"
         )
         if environment_default_file_path.is_file():
             default_paths.append(environment_default_file_path)
+
+        defaults_yaml_path = path.parent / f"{config.defaults_filename_prefix}.yaml"
+        if defaults_yaml_path.is_file():
+            default_paths.append(defaults_yaml_path)
+
+        path = path.parent
+
+    return default_paths
 
 
 _T = TypeVar("_T")

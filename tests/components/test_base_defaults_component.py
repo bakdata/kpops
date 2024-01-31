@@ -205,12 +205,67 @@ class TestBaseDefaultsComponent:
         assert isinstance(component.nested, Nested)
         assert component.nested == Nested(**{"foo": "foo", "bar": False})
 
+    @pytest.mark.parametrize(
+        ("pipeline_path", "environment", "expected_default_paths"),
+        [
+            (
+                RESOURCES_PATH / "pipelines/pipeline-1/pipeline.yaml",
+                "development",
+                [
+                    Path(f"{RESOURCES_PATH}/pipelines/pipeline-1/defaults.yaml"),
+                    Path(f"{RESOURCES_PATH}/defaults_development.yaml"),
+                    Path(f"{RESOURCES_PATH}/defaults.yaml"),
+                    Path(f"{Path(__file__).parent.parent}/defaults.yaml"),
+                ],
+            ),
+            (
+                RESOURCES_PATH / "pipelines/pipeline-3/pipeline-deep/pipeline.yaml",
+                "development",
+                [
+                    Path(
+                        f"{RESOURCES_PATH}/pipelines/pipeline-3/pipeline-deep/defaults.yaml"
+                    ),
+                    Path(
+                        f"{RESOURCES_PATH}/pipelines/pipeline-3/defaults_development.yaml"
+                    ),
+                    Path(f"{RESOURCES_PATH}/pipelines/pipeline-3/defaults.yaml"),
+                    Path(f"{RESOURCES_PATH}/defaults_development.yaml"),
+                    Path(f"{RESOURCES_PATH}/defaults.yaml"),
+                    Path(f"{Path(__file__).parent.parent}/defaults.yaml"),
+                ],
+            ),
+            (
+                RESOURCES_PATH / "pipelines/pipeline-3/pipeline-deep/pipeline.yaml",
+                "production",
+                [
+                    Path(
+                        f"{RESOURCES_PATH}/pipelines/pipeline-3/pipeline-deep/defaults_production.yaml"
+                    ),
+                    Path(
+                        f"{RESOURCES_PATH}/pipelines/pipeline-3/pipeline-deep/defaults.yaml"
+                    ),
+                    Path(
+                        f"{RESOURCES_PATH}/pipelines/pipeline-3/defaults_production.yaml"
+                    ),
+                    Path(f"{RESOURCES_PATH}/pipelines/pipeline-3/defaults.yaml"),
+                    Path(f"{RESOURCES_PATH}/defaults.yaml"),
+                    Path(f"{Path(__file__).parent.parent}/defaults.yaml"),
+                ],
+            ),
+        ],
+    )
     def test_get_defaults_file_paths(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        pipeline_path: Path,
+        environment: str,
+        expected_default_paths: list[Path],
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
     ):
-        default_paths = get_defaults_file_paths(
-            RESOURCES_PATH / "pipelines/pipeline-1/pipeline.yaml",
+        actual_default_paths = get_defaults_file_paths(
+            pipeline_path,
             config,
-            "development",
+            environment,
         )
-        assert len(default_paths) == 4
+        assert len(actual_default_paths) == len(expected_default_paths)
+        assert actual_default_paths == expected_default_paths
