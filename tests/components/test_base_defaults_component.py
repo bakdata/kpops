@@ -49,7 +49,9 @@ class EnvVarTest(BaseDefaultsComponent):
 @pytest.fixture()
 def config() -> KpopsConfig:
     ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipelines/pipeline-1/pipeline.yaml")
-    return KpopsConfig()
+    config = KpopsConfig()
+    config.pipeline_base_dir = RESOURCES_PATH
+    return config
 
 
 @pytest.fixture()
@@ -216,7 +218,6 @@ class TestBaseDefaultsComponent:
                     Path(f"{RESOURCES_PATH}/pipelines/pipeline-1/defaults.yaml"),
                     Path(f"{RESOURCES_PATH}/defaults_development.yaml"),
                     Path(f"{RESOURCES_PATH}/defaults.yaml"),
-                    Path(f"{Path(__file__).parent.parent}/defaults.yaml"),
                 ],
             ),
             (
@@ -232,7 +233,6 @@ class TestBaseDefaultsComponent:
                     Path(f"{RESOURCES_PATH}/pipelines/pipeline-3/defaults.yaml"),
                     Path(f"{RESOURCES_PATH}/defaults_development.yaml"),
                     Path(f"{RESOURCES_PATH}/defaults.yaml"),
-                    Path(f"{Path(__file__).parent.parent}/defaults.yaml"),
                 ],
             ),
             (
@@ -250,7 +250,6 @@ class TestBaseDefaultsComponent:
                     ),
                     Path(f"{RESOURCES_PATH}/pipelines/pipeline-3/defaults.yaml"),
                     Path(f"{RESOURCES_PATH}/defaults.yaml"),
-                    Path(f"{Path(__file__).parent.parent}/defaults.yaml"),
                 ],
             ),
         ],

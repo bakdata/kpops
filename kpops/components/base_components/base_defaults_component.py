@@ -210,8 +210,11 @@ def get_defaults_file_paths(
         raise FileNotFoundError(message)
 
     path = pipeline_path.resolve()
-
-    while path.parent != path:
+    pipeline_base_dir = config.pipeline_base_dir.resolve()
+    if pipeline_base_dir not in path.parents:
+        message = f"The given pipeline base path {pipeline_base_dir} is not part of the pipeline path {path}"
+        raise RuntimeError(message)
+    while pipeline_base_dir != path:
         environment_default_file_path = (
             path.parent / f"{config.defaults_filename_prefix}_{environment}.yaml"
         )
