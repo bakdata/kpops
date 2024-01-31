@@ -1,13 +1,13 @@
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from typing import Any
 
 from pydantic import ConfigDict, Field, SerializationInfo, model_serializer
 
-from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
     KafkaStreamsConfig,
 )
+from kpops.components.base_components.models.to_section import KafkaTopic
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
@@ -31,25 +31,25 @@ class StreamsConfig(KafkaStreamsConfig):
     :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
     """
 
-    input_topics: list[str] = Field(
+    input_topics: list[KafkaTopic] = Field(
         default=[], description=describe_attr("input_topics", __doc__)
     )
     input_pattern: str | None = Field(
         default=None, description=describe_attr("input_pattern", __doc__)
     )
-    extra_input_topics: dict[str, list[str]] = Field(
+    extra_input_topics: dict[str, list[KafkaTopic]] = Field(
         default={}, description=describe_attr("extra_input_topics", __doc__)
     )
     extra_input_patterns: dict[str, str] = Field(
         default={}, description=describe_attr("extra_input_patterns", __doc__)
     )
-    extra_output_topics: dict[str, str] = Field(
+    extra_output_topics: dict[str, KafkaTopic] = Field(
         default={}, description=describe_attr("extra_output_topics", __doc__)
     )
-    output_topic: str | None = Field(
+    output_topic: KafkaTopic | None = Field(
         default=None, description=describe_attr("output_topic", __doc__)
     )
-    error_topic: str | None = Field(
+    error_topic: KafkaTopic | None = Field(
         default=None, description=describe_attr("error_topic", __doc__)
     )
     config: dict[str, Any] = Field(
@@ -59,16 +59,20 @@ class StreamsConfig(KafkaStreamsConfig):
         default=None, description=describe_attr("delete_output", __doc__)
     )
 
-    def add_input_topics(self, topics: list[str]) -> None:
+    @staticmethod  # TODO: move?
+    def deduplicate_topics(topics: Iterable[KafkaTopic]) -> list[KafkaTopic]:
+        return list({topic.name: topic for topic in topics}.values())
+
+    def add_input_topics(self, topics: list[KafkaTopic]) -> None:
         """Add given topics to the list of input topics.
 
         Ensures no duplicate topics in the list.
 
         :param topics: Input topics
         """
-        self.input_topics = deduplicate(self.input_topics + topics)
+        self.input_topics = self.deduplicate_topics(self.input_topics + topics)
 
-    def add_extra_input_topics(self, role: str, topics: list[str]) -> None:
+    def add_extra_input_topics(self, role: str, topics: list[KafkaTopic]) -> None:
         """Add given extra topics that share a role to the list of extra input topics.
 
         Ensures no duplicate topics in the list.
@@ -76,7 +80,7 @@ class StreamsConfig(KafkaStreamsConfig):
         :param topics: Extra input topics
         :param role: Topic role
         """
-        self.extra_input_topics[role] = deduplicate(
+        self.extra_input_topics[role] = self.deduplicate_topics(
             self.extra_input_topics.get(role, []) + topics
         )
 

@@ -77,7 +77,7 @@ class TopicConfig(DescConfigModel):
 
 class KafkaTopic(BaseModel):
     name: str
-    config: TopicConfig
+    config: TopicConfig | None = None
 
 
 class ToSection(DescConfigModel):

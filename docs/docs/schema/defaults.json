@@ -609,7 +609,15 @@
         "KafkaTopic": {
             "properties": {
                 "config": {
-                    "$ref": "#/$defs/TopicConfig"
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/TopicConfig"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null
                 },
                 "name": {
                     "title": "Name",
@@ -617,8 +625,7 @@
                 }
             },
             "required": [
-                "name",
-                "config"
+                "name"
             ],
             "title": "KafkaTopic",
             "type": "object"
@@ -1338,15 +1345,14 @@
                 "errorTopic": {
                     "anyOf": [
                         {
-                            "type": "string"
+                            "$ref": "#/$defs/KafkaTopic"
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "Error topic",
-                    "title": "Errortopic"
+                    "description": "Error topic"
                 },
                 "extraInputPatterns": {
                     "additionalProperties": {
@@ -1360,7 +1366,7 @@
                 "extraInputTopics": {
                     "additionalProperties": {
                         "items": {
-                            "type": "string"
+                            "$ref": "#/$defs/KafkaTopic"
                         },
                         "type": "array"
                     },
@@ -1371,7 +1377,7 @@
                 },
                 "extraOutputTopics": {
                     "additionalProperties": {
-                        "type": "string"
+                        "$ref": "#/$defs/KafkaTopic"
                     },
                     "default": {},
                     "description": "Extra output topics",
@@ -1395,7 +1401,7 @@
                     "default": [],
                     "description": "Input topics",
                     "items": {
-                        "type": "string"
+                        "$ref": "#/$defs/KafkaTopic"
                     },
                     "title": "Inputtopics",
                     "type": "array"
@@ -1403,15 +1409,14 @@
                 "outputTopic": {
                     "anyOf": [
                         {
-                            "type": "string"
+                            "$ref": "#/$defs/KafkaTopic"
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "Output topic",
-                    "title": "Outputtopic"
+                    "description": "Output topic"
                 },
                 "schemaRegistryUrl": {
                     "anyOf": [

@@ -105,11 +105,15 @@ class TestStreamsApp:
                 },
             },
         )
+        assert streams_app.app.streams.input_topics == [
+            KafkaTopic(name="example-input"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="a"),
+        ]
         assert streams_app.app.streams.extra_input_topics == {
-            "role1": ["topic-extra"],
-            "role2": ["topic-extra2", "topic-extra3"],
+            "role1": [KafkaTopic(name="topic-extra")],
+            "role2": [KafkaTopic(name="topic-extra2"), KafkaTopic(name="topic-extra3")],
         }
-        assert streams_app.app.streams.input_topics == ["example-input", "b", "a"]
         assert streams_app.app.streams.input_pattern == ".*"
         assert streams_app.app.streams.extra_input_patterns == {
             "another-pattern": "example.*"
@@ -223,11 +227,11 @@ class TestStreamsApp:
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            role="first-extra-topic",
+                            role="first-extra-role",
                             partitions_count=10,
                         ),
                         "extra-topic-2": TopicConfig(
-                            role="second-extra-topic",
+                            role="second-extra-role",
                             partitions_count=10,
                         ),
                     }
@@ -235,11 +239,15 @@ class TestStreamsApp:
             },
         )
         assert streams_app.app.streams.extra_output_topics == {
-            "first-extra-topic": "extra-topic-1",
-            "second-extra-topic": "extra-topic-2",
+            "first-extra-role": KafkaTopic(name="extra-topic-1"),
+            "second-extra-role": KafkaTopic(name="extra-topic-2"),
         }
-        assert streams_app.app.streams.output_topic == "${output_topic_name}"
-        assert streams_app.app.streams.error_topic == "${error_topic_name}"
+        assert streams_app.app.streams.output_topic == KafkaTopic(
+            name="${output_topic_name}"
+        )
+        assert streams_app.app.streams.error_topic == KafkaTopic(
+            name="${error_topic_name}"
+        )
 
     def test_weave_inputs_from_prev_component(
         self, config: KpopsConfig, handlers: ComponentHandlers
@@ -275,7 +283,11 @@ class TestStreamsApp:
             )
         )
 
-        assert streams_app.app.streams.input_topics == ["prev-output-topic", "b", "a"]
+        assert streams_app.app.streams.input_topics == [
+            KafkaTopic(name="prev-output-topic"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="a"),
+        ]
 
     @pytest.mark.asyncio()
     async def test_deploy_order_when_dry_run_is_false(
@@ -551,19 +563,28 @@ class TestStreamsApp:
             },
         )
 
-        assert streams_app.input_topics == ["example-input", "b", "a"]
-        assert streams_app.extra_input_topics == {
-            "role1": ["topic-extra"],
-            "role2": ["topic-extra2", "topic-extra3"],
+        assert streams_app.app.streams.input_topics == [
+            KafkaTopic(name="example-input"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="a"),
+        ]
+        assert streams_app.app.streams.extra_input_topics == {
+            "role1": [KafkaTopic(name="topic-extra")],
+            "role2": [KafkaTopic(name="topic-extra2"), KafkaTopic(name="topic-extra3")],
         }
-        assert streams_app.output_topic == "example-output"
-        assert streams_app.extra_output_topics == {"fake-role": "extra-topic"}
-        assert list(streams_app.outputs) == ["example-output", "extra-topic"]
+        assert streams_app.output_topic == KafkaTopic(name="example-output")
+        assert streams_app.extra_output_topics == {
+            "fake-role": KafkaTopic(name="extra-topic")
+        }
+        assert list(streams_app.outputs) == [
+            KafkaTopic(name="example-output"),
+            KafkaTopic(name="extra-topic"),
+        ]
         assert list(streams_app.inputs) == [
-            "example-input",
-            "b",
-            "a",
-            "topic-extra2",
-            "topic-extra3",
-            "topic-extra",
+            KafkaTopic(name="example-input"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="a"),
+            KafkaTopic(name="topic-extra2"),
+            KafkaTopic(name="topic-extra3"),
+            KafkaTopic(name="topic-extra"),
         ]

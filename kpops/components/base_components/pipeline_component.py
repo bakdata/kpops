@@ -15,6 +15,7 @@ from kpops.components.base_components.models.from_section import (
 )
 from kpops.components.base_components.models.resource import Resource
 from kpops.components.base_components.models.to_section import (
+    KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
     ToSection,
@@ -69,44 +70,44 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         return self.prefix + self.name
 
     @property
-    def inputs(self) -> Iterator[str]:
+    def inputs(self) -> Iterator[KafkaTopic]:
         yield from self.input_topics
         for role_topics in self.extra_input_topics.values():
             yield from role_topics
 
     @property
-    def outputs(self) -> Iterator[str]:
+    def outputs(self) -> Iterator[KafkaTopic]:
         if output_topic := self.output_topic:
             yield output_topic
         yield from self.extra_output_topics.values()
 
     @property
-    def input_topics(self) -> list[str]:
+    def input_topics(self) -> list[KafkaTopic]:
         """Get all the input topics from config."""
         return []
 
     @property
-    def extra_input_topics(self) -> dict[str, list[str]]:
+    def extra_input_topics(self) -> dict[str, list[KafkaTopic]]:
         """Get extra input topics list from config."""
         return {}
 
     @property
-    def output_topic(self) -> str | None:
+    def output_topic(self) -> KafkaTopic | None:
         """Get output topic from config."""
         return None
 
     @property
-    def extra_output_topics(self) -> dict[str, str]:
+    def extra_output_topics(self) -> dict[str, KafkaTopic]:
         """Get extra output topics list from config."""
         return {}
 
-    def add_input_topics(self, topics: list[str]) -> None:
+    def add_input_topics(self, topics: list[KafkaTopic]) -> None:
         """Add given topics to the list of input topics.
 
         :param topics: Input topics
         """
 
-    def add_extra_input_topics(self, role: str, topics: list[str]) -> None:
+    def add_extra_input_topics(self, role: str, topics: list[KafkaTopic]) -> None:
         """Add given extra topics that share a role to the list of extra input topics.
 
         :param topics: Extra input topics
@@ -126,22 +127,22 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         :param topic: Topic name
         """
 
-    def set_output_topic(self, topic_name: str) -> None:
+    def set_output_topic(self, topic: KafkaTopic) -> None:
         """Set output topic.
 
-        :param topic_name: Output topic name
+        :param topic: Output topic
         """
 
-    def set_error_topic(self, topic_name: str) -> None:
+    def set_error_topic(self, topic: KafkaTopic) -> None:
         """Set error topic.
 
-        :param topic_name: Error topic name
+        :param topic: Error topic
         """
 
-    def add_extra_output_topic(self, topic_name: str, role: str) -> None:
+    def add_extra_output_topic(self, topic: KafkaTopic, role: str) -> None:
         """Add an output topic of type extra.
 
-        :param topic_name: Output topic name
+        :param topic: Output topic
         :param role: Role that is unique to the extra output topic
         """
 
@@ -160,15 +161,16 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         :param name: Name of the field
         :param topic: Value of the field
         """
+        kafka_topic = KafkaTopic(name=name)
         match topic.type:
             case None if topic.role:
-                self.add_extra_input_topics(topic.role, [name])
+                self.add_extra_input_topics(topic.role, [kafka_topic])
             case InputTopicTypes.PATTERN if topic.role:
                 self.add_extra_input_pattern(topic.role, name)
             case InputTopicTypes.PATTERN:
                 self.set_input_pattern(name)
             case _:
-                self.add_input_topics([name])
+                self.add_input_topics([kafka_topic])
 
     def set_output_topics(self) -> None:
         """Put values of config.to into the producer config section of streams bootstrap.
@@ -185,13 +187,14 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         :param name: Name of the field
         :param topic: Value of the field
         """
+        kafka_topic = KafkaTopic(name=name)
         match topic.type:
             case None if topic.role:
-                self.add_extra_output_topic(name, topic.role)
+                self.add_extra_output_topic(kafka_topic, topic.role)
             case OutputTopicTypes.ERROR:
-                self.set_error_topic(name)
+                self.set_error_topic(kafka_topic)
             case _:
-                self.set_output_topic(name)
+                self.set_output_topic(kafka_topic)
 
     def weave_from_topics(
         self,
