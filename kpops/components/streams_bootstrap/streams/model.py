@@ -1,6 +1,7 @@
 from collections.abc import Callable, Iterable
 from typing import Any
 
+import pydantic
 from pydantic import ConfigDict, Field, SerializationInfo, model_serializer
 
 from kpops.components.base_components.kafka_app import (
@@ -58,6 +59,30 @@ class StreamsConfig(KafkaStreamsConfig):
     delete_output: bool | None = Field(
         default=None, description=describe_attr("delete_output", __doc__)
     )
+
+    @pydantic.field_serializer("input_topics")
+    def serialize_topics(self, topics: list[KafkaTopic]) -> list[str]:
+        return [topic.name for topic in topics]
+
+    @pydantic.field_serializer("extra_input_topics")
+    def serialize_extra_input_topics(
+        self, extra_topics: dict[str, list[KafkaTopic]]
+    ) -> dict[str, list[str]]:
+        return {
+            role: self.serialize_topics(topics) for role, topics in extra_topics.items()
+        }
+
+    @pydantic.field_serializer("output_topic", "error_topic")
+    def serialize_topic(self, topic: KafkaTopic | None) -> str | None:
+        if not topic:
+            return None
+        return topic.name
+
+    @pydantic.field_serializer("extra_output_topics")
+    def serialize_extra_output_topics(
+        self, extra_topics: dict[str, KafkaTopic]
+    ) -> dict[str, str]:
+        return {role: topic.name for role, topic in extra_topics.items()}
 
     @staticmethod  # TODO: move?
     def deduplicate_topics(topics: Iterable[KafkaTopic]) -> list[KafkaTopic]:
