@@ -79,6 +79,10 @@ class KafkaTopic(BaseModel):
     name: str
     config: TopicConfig | None = None
 
+    @property
+    def id(self) -> str:
+        return f"topic-{self.name}"
+
 
 class ToSection(DescConfigModel):
     """Holds multiple output topics.
