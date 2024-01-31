@@ -21,6 +21,7 @@ from kpops.components.base_components.models.from_section import (
     TopicName,
 )
 from kpops.components.base_components.models.to_section import (
+    KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
     ToSection,
@@ -78,17 +79,13 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ):
-        topic_name = "connector-topic"
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
-            app=KafkaConnectorConfig(
-                **{**connector_config.model_dump(), "topics": topic_name}
-            ),
+            app=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
         )
-        assert getattr(connector.app, "topics") == topic_name
 
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
@@ -100,7 +97,8 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             ),
             resetter_namespace=RESETTER_NAMESPACE,
         )
-        assert getattr(connector.app, "topics.regex") == topic_pattern
+        assert connector.app.topics_regex == topic_pattern
+        assert connector.app.model_dump()["topics.regex"] == topic_pattern
 
     def test_from_section_parsing_input_topic(
         self,
@@ -116,18 +114,32 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             handlers=handlers,
             app=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
-            from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
+            from_=FromSection(
                 topics={
                     topic1: FromTopic(type=InputTopicTypes.INPUT),
                     topic2: FromTopic(type=InputTopicTypes.INPUT),
                 }
             ),
         )
-        assert getattr(connector.app, "topics") == f"{topic1},{topic2}"
+        assert connector.app.topics == [
+            KafkaTopic(name=topic1),
+            KafkaTopic(name=topic2),
+        ]
 
         topic3 = "connector-topic3"
-        connector.add_input_topics([topic1, topic3])
-        assert getattr(connector.app, "topics") == f"{topic1},{topic2},{topic3}"
+        connector.add_input_topics(
+            [
+                KafkaTopic(name=topic1),
+                KafkaTopic(name=topic3),
+            ]
+        )
+        assert connector.app.topics == [
+            KafkaTopic(name=topic1),
+            KafkaTopic(name=topic2),
+            KafkaTopic(name=topic3),
+        ]
+
+        assert connector.app.model_dump()["topics"] == f"{topic1},{topic2},{topic3}"
 
     def test_from_section_parsing_input_pattern(
         self,

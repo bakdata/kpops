@@ -34,6 +34,7 @@ class KafkaConnectorConfig(DescConfigModel):
     connector_class: str
     name: SkipJsonSchema[str]
     topics: SkipJsonSchema[list[KafkaTopic]] = []
+    topics_regex: SkipJsonSchema[str | None] = None
 
     @override
     @staticmethod
@@ -47,6 +48,7 @@ class KafkaConnectorConfig(DescConfigModel):
         extra="allow",
         alias_generator=to_dot,
         json_schema_extra=json_schema_extra,
+        populate_by_name=True,
     )
 
     @field_validator("connector_class")
@@ -61,7 +63,9 @@ class KafkaConnectorConfig(DescConfigModel):
         return self.connector_class.split(".")[-1]
 
     @pydantic.field_serializer("topics")
-    def serialize_topics(self, topics: list[KafkaTopic]) -> str:
+    def serialize_topics(self, topics: list[KafkaTopic]) -> str | None:
+        if not topics:
+            return None
         return ",".join(topic.name for topic in topics)
 
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
