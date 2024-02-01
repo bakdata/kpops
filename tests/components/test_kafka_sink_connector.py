@@ -158,7 +158,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 topics={topic_pattern: FromTopic(type=InputTopicTypes.PATTERN)}
             ),
         )
-        assert getattr(connector.app, "topics.regex") == topic_pattern
+        assert connector.app.topics_regex == topic_pattern
 
     @pytest.mark.asyncio()
     async def test_deploy_order(
