@@ -98,7 +98,7 @@ class ConnectWrapper:
     ) -> KafkaConnectResponse:
         """Create or update a connector.
 
-        Create a new connector using the given configuration,or update the
+        Create a new connector using the given configuration, or update the
         configuration for an existing connector.
         :param connector_config: Configuration parameters for the connector.
         :return: Information about the connector after the change has been made.

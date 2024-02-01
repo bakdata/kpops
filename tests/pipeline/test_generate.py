@@ -1,15 +1,16 @@
 import asyncio
 from pathlib import Path
 from unittest import mock
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import yaml
+from pytest_mock import MockerFixture
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 import kpops
-from kpops.cli.main import app
+from kpops.cli.main import FilterType, app
 from kpops.components import PipelineComponent
 from kpops.pipeline import ParsingException, ValidationError
 
@@ -20,6 +21,10 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class TestGenerate:
+    @pytest.fixture(autouse=True)
+    def log_info(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch("kpops.cli.main.log.info")
+
     def test_python_api(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
@@ -27,6 +32,39 @@ class TestGenerate:
             output=False,
         )
         assert len(pipeline) == 3
+        assert [component.type for component in pipeline.components] == [
+            "scheduled-producer",
+            "converter",
+            "filter",
+        ]
+
+    def test_python_api_filter_include(self, log_info: MagicMock):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
+            defaults=RESOURCE_PATH,
+            output=False,
+            steps="converter",
+            filter_type=FilterType.INCLUDE,
+        )
+        assert len(pipeline) == 1
+        assert pipeline.components[0].type == "converter"
+        assert log_info.call_count == 1
+        log_info.assert_any_call("Filtered pipeline:\n['converter']")
+
+    def test_python_api_filter_exclude(self, log_info: MagicMock):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
+            defaults=RESOURCE_PATH,
+            output=False,
+            steps="converter,scheduled-producer",
+            filter_type=FilterType.EXCLUDE,
+        )
+        assert len(pipeline) == 1
+        assert pipeline.components[0].type == "filter"
+        assert log_info.call_count == 1
+        log_info.assert_any_call(
+            "Filtered pipeline:\n['a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name']"
+        )
 
     def test_load_pipeline(self, snapshot: SnapshotTest):
         result = runner.invoke(
@@ -602,7 +640,13 @@ class TestGenerate:
         assert input_components["component-extra-pattern"]["role"] == "role"
 
     def test_kubernetes_app_name_validation(self):
-        with pytest.raises((ValueError, ParsingException)):
+        with pytest.raises(
+            ParsingException,
+            match="Error enriching filter component illegal_name",
+        ), pytest.raises(
+            ValueError,
+            match="The component name illegal_name is invalid for Kubernetes.",
+        ):
             runner.invoke(
                 app,
                 [
@@ -619,8 +663,11 @@ class TestGenerate:
 
     def test_validate_unique_step_names(self):
         with pytest.raises(
+            ParsingException,
+            match="Error enriching pipeline-component component component",
+        ), pytest.raises(
             ValidationError,
-            match="step names should be unique. duplicate step names: resources-pipeline-duplicate-step-names-component",
+            match="Pipeline steps must have unique id, 'component-resources-pipeline-duplicate-step-names-component' already exists.",
         ):
             runner.invoke(
                 app,
@@ -699,9 +746,7 @@ class TestGenerate:
             await asyncio.sleep(sleep_table_components[component.name])
             await called_component(component.name)
 
-        execution_graph = pipeline.build_execution_graph_from(
-            list(pipeline.components), False, name_runner
-        )
+        execution_graph = pipeline.build_execution_graph(name_runner)
 
         await execution_graph
 
@@ -725,18 +770,18 @@ class TestGenerate:
             config=RESOURCE_PATH / "parallel-pipeline",
         )
 
-        list_of_components = list(pipeline.components)
-
         called_component = AsyncMock()
 
         async def name_runner(component: PipelineComponent):
             await called_component(component.name)
 
-        execution_graph = pipeline.build_execution_graph_from(
-            [list_of_components[0], list_of_components[3], list_of_components[6]],
-            False,
-            name_runner,
-        )
+        pipeline.remove(pipeline.components[8].id)
+        pipeline.remove(pipeline.components[7].id)
+        pipeline.remove(pipeline.components[5].id)
+        pipeline.remove(pipeline.components[4].id)
+        pipeline.remove(pipeline.components[2].id)
+        pipeline.remove(pipeline.components[1].id)
+        execution_graph = pipeline.build_execution_graph(name_runner)
 
         await execution_graph
 
@@ -772,9 +817,7 @@ class TestGenerate:
             await asyncio.sleep(sleep_table_components[component.name])
             await called_component(component.name)
 
-        execution_graph = pipeline.build_execution_graph_from(
-            list(pipeline.components), True, name_runner
-        )
+        execution_graph = pipeline.build_execution_graph(name_runner, reverse=True)
 
         await execution_graph
 
