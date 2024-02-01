@@ -12,7 +12,7 @@ def create_helm_release_name(name: str, suffix: str = "") -> str:
 
     Helm has a limit of 53 characters for release names.
     If the name exceeds the character limit:
-    1. trim the string and fetch the first RELEASE_NAME_MAX_LEN - len(suffix) characters.
+    1. trim the string and fetch the first ``RELEASE_NAME_MAX_LEN - len(suffix)`` characters.
     2. replace the last 6 characters with the SHA-1 encoded string (with "-") to avoid collision
     3. append the suffix if given
 

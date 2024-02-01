@@ -121,7 +121,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "object"
         },
         "InputTopicTypes": {
-            "description": "Input topic types.\\n\\nINPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)",
+            "description": "Input topic types.\\n\\n- INPUT: input topic\\n- PATTERN: extra-topic-pattern or input-topic-pattern",
             "enum": [
                 "input",
                 "pattern"
@@ -130,7 +130,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "string"
         },
         "OutputTopicTypes": {
-            "description": "Types of output topic.\\n\\nOUTPUT (output topic), ERROR (error topic)",
+            "description": "Types of output topic.\\n\\n- OUTPUT: output topic\\n- ERROR: error topic",
             "enum": [
                 "output",
                 "error"
