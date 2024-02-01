@@ -79,7 +79,7 @@ class TopicConfig(DescConfigModel):
 
 class KafkaTopic(BaseModel):
     name: str
-    config: TopicConfig | None = None
+    config: TopicConfig = TopicConfig()
 
     @property
     def id(self) -> str:

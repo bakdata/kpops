@@ -630,15 +630,20 @@
         "KafkaTopic": {
             "properties": {
                 "config": {
-                    "anyOf": [
+                    "allOf": [
                         {
                             "$ref": "#/$defs/TopicConfig"
-                        },
-                        {
-                            "type": "null"
                         }
                     ],
-                    "default": null
+                    "default": {
+                        "configs": {},
+                        "key_schema": null,
+                        "partitions_count": null,
+                        "replication_factor": null,
+                        "role": null,
+                        "type": null,
+                        "value_schema": null
+                    }
                 },
                 "name": {
                     "title": "Name",
