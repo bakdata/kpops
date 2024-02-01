@@ -1,14 +1,5 @@
 from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kafka_app import KafkaApp
-
-# from kpops.components.base_components import (
-#     HelmApp,
-#     KafkaApp,
-#     KafkaSinkConnector,
-#     KafkaSourceConnector,
-#     KubernetesApp,
-#     PipelineComponent,
-# )
 from kpops.components.base_components.kafka_connector import (
     KafkaConnector,
     KafkaSinkConnector,
