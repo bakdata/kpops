@@ -35,6 +35,7 @@ class KafkaConnectorConfig(DescConfigModel):
     name: SkipJsonSchema[str]
     topics: SkipJsonSchema[list[KafkaTopic]] = []
     topics_regex: SkipJsonSchema[str | None] = None
+    errors_deadletterqueue_topic_name: SkipJsonSchema[KafkaTopic | None] = None
 
     @override
     @staticmethod
@@ -68,6 +69,13 @@ class KafkaConnectorConfig(DescConfigModel):
             return [KafkaTopic(name=topic_name) for topic_name in topics.split(",")]
         return topics
 
+    @pydantic.field_validator("errors_deadletterqueue_topic_name", mode="before")
+    @classmethod
+    def validate_topic(cls, topic: Any) -> KafkaTopic | Any:
+        if topic and isinstance(topic, str):
+            return KafkaTopic(name=topic)
+        return topic
+
     @property
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
@@ -77,6 +85,12 @@ class KafkaConnectorConfig(DescConfigModel):
         if not topics:
             return None
         return ",".join(topic.name for topic in topics)
+
+    @pydantic.field_serializer("errors_deadletterqueue_topic_name")
+    def serialize_topic(self, topic: KafkaTopic) -> str | None:
+        if not topic:
+            return None
+        return topic.name
 
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")

@@ -37,8 +37,8 @@ class KafkaConnectorResetter(HelmApp):
     :param version: Helm chart version, defaults to "1.0.4"
     """
 
-    app: KafkaConnectorResetterValues
-    repo_config: HelmRepoConfig = Field(
+    app: KafkaConnectorResetterValues  # pyright: ignore[reportIncompatibleVariableOverride]
+    repo_config: HelmRepoConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=HelmRepoConfig(
             repository_name="bakdata-kafka-connect-resetter",
             url="https://bakdata.github.io/kafka-connect-resetter/",
@@ -254,8 +254,8 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "topics.regex", name)
 
     @override
-    def set_error_topic(self, topic_name: str) -> None:
-        setattr(self.app, "errors.deadletterqueue.topic.name", topic_name)
+    def set_error_topic(self, topic: KafkaTopic) -> None:
+        self.app.errors_deadletterqueue_topic_name = topic
 
     @override
     async def reset(self, dry_run: bool) -> None:
