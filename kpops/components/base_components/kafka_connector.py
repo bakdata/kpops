@@ -251,7 +251,7 @@ class KafkaSinkConnector(KafkaConnector):
 
     @override
     def set_input_pattern(self, name: str) -> None:
-        setattr(self.app, "topics.regex", name)
+        self.app.topics_regex = name
 
     @override
     def set_error_topic(self, topic: KafkaTopic) -> None:
