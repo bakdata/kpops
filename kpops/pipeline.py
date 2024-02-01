@@ -395,7 +395,9 @@ class PipelineGenerator:
         return pipeline_path.with_stem(f"{pipeline_path.stem}_{environment}")
 
     @staticmethod
-    def set_pipeline_name_env_vars(base_dir: Path, path: Path) -> None:
+    def set_pipeline_name_env_vars(
+        pipeline_base_dir: Path, pipeline_path: Path
+    ) -> None:
         """Set the environment variable pipeline_name relative to the given base_dir.
 
         Moreover, for each sub-path an environment variable is set.
@@ -407,10 +409,12 @@ class PipelineGenerator:
             pipeline.name_1 = v1
             pipeline.name_2 = dev
 
-        :param base_dir: Base directory to the pipeline files
-        :param path: Path to pipeline.yaml file
+        :param pipeline_base_dir: Base directory to the pipeline files
+        :param pipeline_path: Path to pipeline.yaml file
         """
-        path_without_file = path.resolve().relative_to(base_dir.resolve()).parts[:-1]
+        path_without_file = (
+            pipeline_path.resolve().relative_to(pipeline_base_dir.resolve()).parts[:-1]
+        )
         if not path_without_file:
             msg = "The pipeline-base-dir should not equal the pipeline-path"
             raise ValueError(msg)

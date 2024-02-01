@@ -18,11 +18,11 @@ from kpops.component_handlers.kafka_connect.model import (
 )
 from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.config import KpopsConfig
+from tests.component_handlers.kafka_connect import RESOURCES_PATH
 
 HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 
 DEFAULT_HOST = "http://localhost:8083"
-DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
 class TestConnectorApiWrapper:
@@ -509,7 +509,7 @@ class TestConnectorApiWrapper:
     @pytest.mark.asyncio()
     async def test_should_parse_validate_connector_config(self, httpx_mock: HTTPXMock):
         with Path(
-            DEFAULTS_PATH / "connect_validation_response.json",
+            RESOURCES_PATH / "connect_validation_response.json",
         ).open() as f:
             actual_response = json.load(f)
 
