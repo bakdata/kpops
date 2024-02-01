@@ -13,10 +13,9 @@ from kpops.components import (
 )
 from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
 from kpops.components.base_components.models.to_section import (
-    OutputTopicTypes,
-    TopicConfig,
     ToSection,
 )
+from kpops.components.base_components.models.topic import OutputTopicTypes, TopicConfig
 
 
 class ScheduledProducer(ProducerApp):

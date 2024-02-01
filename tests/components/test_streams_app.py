@@ -13,10 +13,12 @@ from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components import StreamsApp
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
+    ToSection,
+)
+from kpops.components.base_components.models.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
-    ToSection,
 )
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
 from kpops.config import KpopsConfig, TopicNameConfig

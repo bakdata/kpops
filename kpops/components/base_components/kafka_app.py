@@ -15,9 +15,9 @@ from kpops.component_handlers.helm_wrapper.model import (
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.models.to_section import (
-    KafkaTopic,
     ToSection,
 )
+from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.utils.docstring import describe_attr

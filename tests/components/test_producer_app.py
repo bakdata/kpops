@@ -9,7 +9,7 @@ from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components import ProducerApp
-from kpops.components.base_components.models.to_section import (
+from kpops.components.base_components.models.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,

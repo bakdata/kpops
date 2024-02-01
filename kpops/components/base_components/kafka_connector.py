@@ -21,7 +21,7 @@ from kpops.component_handlers.kafka_connect.model import (
 )
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.components.base_components.models.from_section import FromTopic
-from kpops.components.base_components.models.to_section import KafkaTopic
+from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr

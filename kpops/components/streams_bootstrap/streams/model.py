@@ -8,7 +8,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
     KafkaStreamsConfig,
 )
-from kpops.components.base_components.models.to_section import KafkaTopic
+from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,

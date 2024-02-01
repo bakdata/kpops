@@ -7,7 +7,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaApp,
     KafkaAppCleaner,
 )
-from kpops.components.base_components.models.to_section import (
+from kpops.components.base_components.models.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,

@@ -21,10 +21,12 @@ from kpops.components.base_components.models.from_section import (
     TopicName,
 )
 from kpops.components.base_components.models.to_section import (
+    ToSection,
+)
+from kpops.components.base_components.models.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
-    ToSection,
 )
 from kpops.config import KpopsConfig
 from kpops.utils.colorify import magentaify

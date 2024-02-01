@@ -13,7 +13,7 @@ from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
 from kpops.components.base_components.helm_app import HelmAppValues
-from kpops.components.base_components.models.to_section import KafkaTopic
+from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
