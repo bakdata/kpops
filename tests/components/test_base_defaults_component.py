@@ -209,34 +209,40 @@ class TestBaseDefaultsComponent:
         ("pipeline_path", "environment", "expected_default_paths"),
         [
             (
-                RESOURCES_PATH / "pipelines/pipeline-2/pipeline-deep/pipeline.yaml",
+                RESOURCES_PATH
+                / "pipelines/test-distributed-defaults/pipeline-deep/pipeline.yaml",
                 "development",
                 [
                     Path(
-                        f"{RESOURCES_PATH}/pipelines/pipeline-2/pipeline-deep/defaults.yaml"
+                        f"{RESOURCES_PATH}/pipelines/test-distributed-defaults/pipeline-deep/defaults.yaml"
                     ),
                     Path(
-                        f"{RESOURCES_PATH}/pipelines/pipeline-2/defaults_development.yaml"
+                        f"{RESOURCES_PATH}/pipelines/test-distributed-defaults/defaults_development.yaml"
                     ),
-                    Path(f"{RESOURCES_PATH}/pipelines/pipeline-2/defaults.yaml"),
+                    Path(
+                        f"{RESOURCES_PATH}/pipelines/test-distributed-defaults/defaults.yaml"
+                    ),
                     Path(f"{RESOURCES_PATH}/defaults_development.yaml"),
                     Path(f"{RESOURCES_PATH}/defaults.yaml"),
                 ],
             ),
             (
-                RESOURCES_PATH / "pipelines/pipeline-2/pipeline-deep/pipeline.yaml",
+                RESOURCES_PATH
+                / "pipelines/test-distributed-defaults/pipeline-deep/pipeline.yaml",
                 "production",
                 [
                     Path(
-                        f"{RESOURCES_PATH}/pipelines/pipeline-2/pipeline-deep/defaults_production.yaml"
+                        f"{RESOURCES_PATH}/pipelines/test-distributed-defaults/pipeline-deep/defaults_production.yaml"
                     ),
                     Path(
-                        f"{RESOURCES_PATH}/pipelines/pipeline-2/pipeline-deep/defaults.yaml"
+                        f"{RESOURCES_PATH}/pipelines/test-distributed-defaults/pipeline-deep/defaults.yaml"
                     ),
                     Path(
-                        f"{RESOURCES_PATH}/pipelines/pipeline-2/defaults_production.yaml"
+                        f"{RESOURCES_PATH}/pipelines/test-distributed-defaults/defaults_production.yaml"
                     ),
-                    Path(f"{RESOURCES_PATH}/pipelines/pipeline-2/defaults.yaml"),
+                    Path(
+                        f"{RESOURCES_PATH}/pipelines/test-distributed-defaults/defaults.yaml"
+                    ),
                     Path(f"{RESOURCES_PATH}/defaults.yaml"),
                 ],
             ),
