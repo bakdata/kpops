@@ -12,7 +12,6 @@ import yaml
 from pydantic import (
     BaseModel,
     ConfigDict,
-    PrivateAttr,
     SerializeAsAny,
     computed_field,
 )
@@ -49,7 +48,7 @@ class Pipeline(BaseModel):
     """Pipeline representation."""
 
     _component_index: dict[str, PipelineComponent] = {}
-    _graph: nx.DiGraph = PrivateAttr(default_factory=nx.DiGraph)
+    _graph: nx.DiGraph = nx.DiGraph()
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
