@@ -63,8 +63,6 @@ class KafkaConnectorConfig(DescConfigModel):
     @pydantic.field_validator("topics", mode="before")
     @classmethod
     def validate_topics(cls, topics: Any) -> list[KafkaTopic] | None | Any:
-        if not topics:
-            return []
         if isinstance(topics, str):
             return [KafkaTopic(name=topic_name) for topic_name in topics.split(",")]
         return topics
@@ -87,7 +85,7 @@ class KafkaConnectorConfig(DescConfigModel):
         return ",".join(topic.name for topic in topics)
 
     @pydantic.field_serializer("errors_deadletterqueue_topic_name")
-    def serialize_topic(self, topic: KafkaTopic) -> str | None:
+    def serialize_topic(self, topic: KafkaTopic | None) -> str | None:
         if not topic:
             return None
         return topic.name

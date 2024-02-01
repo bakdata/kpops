@@ -53,8 +53,6 @@ class StreamsConfig(KafkaStreamsConfig):
     @pydantic.field_validator("input_topics", mode="before")
     @classmethod
     def validate_input_topics(cls, input_topics: Any) -> list[KafkaTopic] | Any:
-        if not input_topics:
-            return []
         if isinstance(input_topics, list):
             return [KafkaTopic(name=topic_name) for topic_name in input_topics]
         return input_topics
