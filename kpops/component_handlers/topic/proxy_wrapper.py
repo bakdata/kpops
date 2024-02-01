@@ -165,7 +165,7 @@ class ProxyWrapper:
     async def batch_alter_topic_config(
         self, topic_name: str, json_body: list[dict]
     ) -> None:
-        """Reset config of given config_name param to the default value on the kafka server.
+        """Reset config of given config_name param to the default value on the Kafka server.
 
         API Reference:
         https://docs.confluent.io/platform/current/kafka-rest/api.html#post--clusters-cluster_id-topics-topic_name-configs-alter

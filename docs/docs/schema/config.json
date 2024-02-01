@@ -13,7 +13,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Kubernetes API version used for Capabilities.APIVersions",
+                    "description": "Kubernetes API version used for `Capabilities.APIVersions`",
                     "title": "API version"
                 },
                 "context": {
