@@ -1,13 +1,13 @@
 from pydantic import ConfigDict, Field
 
 from kpops.components.base_components.kafka_app import (
-    KafkaAppConfig,
     KafkaAppValues,
+    KafkaStreamsConfig,
 )
 from kpops.utils.docstring import describe_attr
 
 
-class ProducerStreamsConfig(KafkaAppConfig):
+class ProducerStreamsConfig(KafkaStreamsConfig):
     """Kafka Streams settings specific to Producer."""
 
 

@@ -36,38 +36,22 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
 
     :param brokers: Brokers
     :param schema_registry_url: URL of the schema registry, defaults to None
+    :param extra_output_topics: Extra output topics
+    :param output_topic: Output topic, defaults to None
     """
 
     brokers: str = Field(default=..., description=describe_attr("brokers", __doc__))
     schema_registry_url: str | None = Field(
         default=None, description=describe_attr("schema_registry_url", __doc__)
     )
-
-    model_config = ConfigDict(
-        extra="allow",
-    )
-
-    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
-    @pydantic.model_serializer(mode="wrap", when_used="always")
-    def serialize_model(
-        self, handler: Callable, info: pydantic.SerializationInfo
-    ) -> dict[str, Any]:
-        return exclude_defaults(self, exclude_by_value(handler(self), None))
-
-
-class KafkaAppConfig(KafkaStreamsConfig):
-    """Kafka Streams settings for all Kafka apps.
-
-    :param extra_output_topics: Extra output topics
-    :param output_topic: Output topic, defaults to None
-    """
-
     extra_output_topics: dict[str, KafkaTopic] = Field(
         default={}, description=describe_attr("extra_output_topics", __doc__)
     )
     output_topic: KafkaTopic | None = Field(
         default=None, description=describe_attr("output_topic", __doc__)
     )
+
+    model_config = ConfigDict(extra="allow")
 
     @pydantic.field_validator("output_topic", mode="before")
     @classmethod
@@ -87,6 +71,13 @@ class KafkaAppConfig(KafkaStreamsConfig):
         self, extra_topics: dict[str, KafkaTopic]
     ) -> dict[str, str]:
         return {role: topic.name for role, topic in extra_topics.items()}
+
+    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
+    @pydantic.model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self, handler: Callable, info: pydantic.SerializationInfo
+    ) -> dict[str, Any]:
+        return exclude_defaults(self, exclude_by_value(handler(self), None))
 
 
 class KafkaAppValues(HelmAppValues):

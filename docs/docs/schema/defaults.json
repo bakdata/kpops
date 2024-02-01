@@ -586,6 +586,27 @@
                     "title": "Brokers",
                     "type": "string"
                 },
+                "extraOutputTopics": {
+                    "additionalProperties": {
+                        "$ref": "#/$defs/KafkaTopic"
+                    },
+                    "default": {},
+                    "description": "Extra output topics",
+                    "title": "Extraoutputtopics",
+                    "type": "object"
+                },
+                "outputTopic": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/KafkaTopic"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Output topic"
+                },
                 "schemaRegistryUrl": {
                     "anyOf": [
                         {

@@ -5,8 +5,8 @@ from pydantic import ConfigDict, Field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import (
-    KafkaAppConfig,
     KafkaAppValues,
+    KafkaStreamsConfig,
 )
 from kpops.components.base_components.models.to_section import KafkaTopic
 from kpops.utils.docstring import describe_attr
@@ -16,7 +16,7 @@ from kpops.utils.pydantic import (
 )
 
 
-class StreamsConfig(KafkaAppConfig):
+class StreamsConfig(KafkaStreamsConfig):
     """Streams Bootstrap streams section.
 
     :param input_topics: Input topics, defaults to []
