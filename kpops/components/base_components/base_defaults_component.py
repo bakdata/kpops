@@ -75,12 +75,18 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         exclude=True,
     )
 
-    def __init__(self, **kwargs) -> None:
-        if kwargs.get("enrich", True):
-            kwargs = self.extend_with_defaults(**kwargs)
-        super().__init__(**kwargs)
-        if kwargs.get("validate", True):
-            self._validate_custom(**kwargs)
+    @pydantic.model_validator(mode="before")
+    @classmethod
+    def enrich_component(cls, values: dict[str, Any]) -> dict[str, Any]:
+        if values.get("enrich", True):
+            values = cls.extend_with_defaults(**values)
+        return values
+
+    @pydantic.model_validator(mode="after")
+    def validate_component(self) -> Self:
+        if self.validate_:
+            self._validate_custom()
+        return self
 
     @computed_field
     @cached_classproperty
@@ -156,11 +162,8 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             )
         return defaults
 
-    def _validate_custom(self, **kwargs) -> None:
-        """Run custom validation on component.
-
-        :param kwargs: The init kwargs for the component
-        """
+    def _validate_custom(self) -> None:
+        """Run custom validation on component."""
 
 
 def defaults_from_yaml(path: Path, key: str) -> dict:
