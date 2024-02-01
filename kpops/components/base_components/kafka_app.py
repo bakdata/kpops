@@ -55,10 +55,24 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
 
     @pydantic.field_validator("output_topic", mode="before")
     @classmethod
-    def validate_output_topic(cls, output_topic: Any) -> KafkaTopic | None:
-        if output_topic and isinstance(output_topic, str):
+    def validate_output_topic(cls, output_topic: Any) -> KafkaTopic | Any:
+        if not output_topic:
+            return None
+        if isinstance(output_topic, str):
             return KafkaTopic(name=output_topic)
-        return None
+        return output_topic
+
+    @pydantic.field_validator("extra_output_topics", mode="before")
+    @classmethod
+    def validate_extra_output_topics(
+        cls, extra_output_topics: Any
+    ) -> dict[str, KafkaTopic] | Any:
+        if isinstance(extra_output_topics, dict):
+            return {
+                role: KafkaTopic(name=topic_name)
+                for role, topic_name in extra_output_topics.items()
+            }
+        return extra_output_topics
 
     @pydantic.field_serializer("output_topic")
     def serialize_topic(self, topic: KafkaTopic | None) -> str | None:

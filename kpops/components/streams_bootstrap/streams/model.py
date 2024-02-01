@@ -50,6 +50,32 @@ class StreamsConfig(KafkaStreamsConfig):
         default=None, description=describe_attr("delete_output", __doc__)
     )
 
+    @pydantic.field_validator("input_topics", mode="before")
+    @classmethod
+    def validate_input_topics(cls, input_topics: Any) -> list[KafkaTopic] | Any:
+        if not input_topics:
+            return []
+        if isinstance(input_topics, list):
+            return [KafkaTopic(name=topic_name) for topic_name in input_topics]
+        return input_topics
+
+    @pydantic.field_validator("extra_input_topics", mode="before")
+    @classmethod
+    def validate_extra_input_topics(
+        cls, extra_input_topics: Any
+    ) -> dict[str, list[KafkaTopic]] | Any:
+        if isinstance(extra_input_topics, dict):
+            return {
+                role: [KafkaTopic(name=topic_name) for topic_name in topics]
+                for role, topics in extra_input_topics.items()
+            }
+        return extra_input_topics
+
+    @pydantic.field_validator("error_topic", mode="before")
+    @classmethod
+    def validate_error_topic(cls, error_topic: Any) -> KafkaTopic | Any:
+        return super(StreamsConfig, cls).validate_output_topic(error_topic)  # noqa: UP008  # pyright: ignore[reportCallIssue]
+
     @pydantic.field_serializer("input_topics")
     def serialize_topics(self, topics: list[KafkaTopic]) -> list[str]:
         return [topic.name for topic in topics]
@@ -180,7 +206,7 @@ class StreamsAppValues(KafkaAppValues):
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
     """
 
-    streams: StreamsConfig = Field(
+    streams: StreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
         default=...,
         description=describe_attr("streams", __doc__),
     )
