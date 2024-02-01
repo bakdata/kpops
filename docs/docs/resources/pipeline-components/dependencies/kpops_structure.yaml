@@ -78,12 +78,6 @@ kpops_components_fields:
   - app
   - repo_config
   - version
-  topic-component:
-  - name
-  - prefix
-  - from_
-  - to
-  - topic
 kpops_components_inheritance_ref:
   helm-app:
     bases:
@@ -156,11 +150,5 @@ kpops_components_inheritance_ref:
     parents:
     - helm-app
     - kubernetes-app
-    - pipeline-component
-    - base-defaults-component
-  topic-component:
-    bases:
-    - pipeline-component
-    parents:
     - pipeline-component
     - base-defaults-component

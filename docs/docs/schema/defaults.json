@@ -1484,42 +1484,6 @@
             "title": "ToSection",
             "type": "object"
         },
-        "TopicComponent": {
-            "additionalProperties": true,
-            "description": "",
-            "properties": {
-                "from_": {
-                    "title": "From ",
-                    "type": "null"
-                },
-                "name": {
-                    "description": "Component name",
-                    "title": "Name",
-                    "type": "string"
-                },
-                "prefix": {
-                    "default": "${pipeline.name}-",
-                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
-                    "title": "Prefix",
-                    "type": "string"
-                },
-                "to": {
-                    "title": "To",
-                    "type": "null"
-                },
-                "topic": {
-                    "$ref": "#/$defs/KafkaTopic"
-                }
-            },
-            "required": [
-                "name",
-                "from_",
-                "to",
-                "topic"
-            ],
-            "title": "TopicComponent",
-            "type": "object"
-        },
         "TopicConfig": {
             "additionalProperties": false,
             "description": "Configure an output topic.",
@@ -1653,9 +1617,6 @@
         },
         "streams-bootstrap": {
             "$ref": "#/$defs/StreamsBootstrap"
-        },
-        "topic-component": {
-            "$ref": "#/$defs/TopicComponent"
         }
     },
     "required": [
@@ -1668,8 +1629,7 @@
         "pipeline-component",
         "producer-app",
         "streams-app",
-        "streams-bootstrap",
-        "topic-component"
+        "streams-bootstrap"
     ],
     "title": "DefaultsSchema",
     "type": "object"
