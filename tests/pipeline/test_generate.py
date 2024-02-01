@@ -669,7 +669,7 @@ class TestGenerate:
         )
         component, topic = list(pipeline.graph.nodes)
         edges = list(pipeline.graph.edges)
-        assert component == f"component-{topic}"
+        assert component == topic.removeprefix("topic-")
         assert (component, topic) in edges
 
     @pytest.mark.asyncio()
