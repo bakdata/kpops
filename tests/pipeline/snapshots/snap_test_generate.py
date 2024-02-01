@@ -20,8 +20,6 @@ snapshots['TestGenerate.test_default_config test-pipeline'] = [
             },
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'outputTopic': 'resources-custom-config-app1',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -111,8 +109,6 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
             'schedule': '30 3/8 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'outputTopic': 'resources-pipeline-with-inflate-scheduled-producer',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -530,8 +526,6 @@ snapshots['TestGenerate.test_load_pipeline test-pipeline'] = [
             'schedule': '30 3/8 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'outputTopic': 'resources-first-pipeline-scheduled-producer',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -717,8 +711,6 @@ snapshots['TestGenerate.test_model_serialization test-pipeline'] = [
         'app': {
             'streams': {
                 'brokers': 'test',
-                'extraOutputTopics': {
-                },
                 'outputTopic': 'out',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -935,8 +927,6 @@ snapshots['TestGenerate.test_pipelines_with_env_values test-pipeline'] = [
             'schedule': '20 3/8 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'outputTopic': 'resources-pipeline-with-envs-input-producer',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -1132,8 +1122,6 @@ snapshots['TestGenerate.test_prefix_pipeline_component test-pipeline'] = [
             'schedule': '0 12 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'schemaRegistryUrl': 'http://localhost:8081/'
             },
             'suspend': True
@@ -1158,8 +1146,6 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
         'app': {
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'outputTopic': 'resources-read-from-component-producer1',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -1192,8 +1178,6 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
         'app': {
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'outputTopic': 'resources-read-from-component-producer2',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -1878,8 +1862,6 @@ snapshots['TestGenerate.test_substitute_in_component test-pipeline'] = [
             'schedule': '30 3/8 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'outputTopic': 'resources-component-type-substitution-scheduled-producer',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -2080,8 +2062,6 @@ snapshots['TestGenerate.test_with_custom_config_with_absolute_defaults_path test
             },
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'outputTopic': 'app1-test-topic',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -2173,8 +2153,6 @@ snapshots['TestGenerate.test_with_custom_config_with_relative_defaults_path test
             },
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'outputTopic': 'app1-test-topic',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }

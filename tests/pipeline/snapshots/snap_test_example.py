@@ -24,8 +24,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'schedule': '0 12 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'optimizeLeaveGroupBehavior': False,
                 'outputTopic': 'atm-fraud-account-producer-topic',
                 'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
@@ -77,8 +75,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'schedule': '0 12 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'optimizeLeaveGroupBehavior': False,
                 'outputTopic': 'atm-fraud-transaction-avro-producer-topic',
                 'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
@@ -381,8 +377,6 @@ snapshots['TestExample.test_word_count word-count-pipeline'] = [
             'replicaCount': 1,
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'optimizeLeaveGroupBehavior': False,
                 'outputTopic': 'word-count-data-producer-topic',
                 'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
