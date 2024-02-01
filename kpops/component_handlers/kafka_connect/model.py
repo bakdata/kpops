@@ -52,11 +52,21 @@ class KafkaConnectorConfig(DescConfigModel):
     )
 
     @field_validator("connector_class")
+    @classmethod
     def connector_class_must_contain_dot(cls, connector_class: str) -> str:
         if "." not in connector_class:
             msg = f"Invalid connector class {connector_class}"
             raise ValueError(msg)
         return connector_class
+
+    @pydantic.field_validator("topics", mode="before")
+    @classmethod
+    def validate_topics(cls, topics: Any) -> list[KafkaTopic] | None | Any:
+        if not topics:
+            return []
+        if isinstance(topics, str):
+            return [KafkaTopic(name=topic_name) for topic_name in topics.split(",")]
+        return topics
 
     @property
     def class_name(self) -> str:
