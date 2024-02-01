@@ -3,13 +3,19 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from collections.abc import Callable, Iterable
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, TypeAlias
 
 import networkx as nx
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, SerializeAsAny, computed_field
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    PrivateAttr,
+    SerializeAsAny,
+    computed_field,
+)
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
@@ -43,7 +49,7 @@ class Pipeline(BaseModel):
     """Pipeline representation."""
 
     _component_index: dict[str, PipelineComponent] = {}
-    _graph: nx.DiGraph = Field(default_factory=nx.DiGraph, exclude=True)
+    _graph: nx.DiGraph = PrivateAttr(default_factory=nx.DiGraph)
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -93,6 +99,9 @@ class Pipeline(BaseModel):
             if not predicate(component):
                 self.remove(component.id)
 
+    def validate(self) -> None:
+        self.__validate_graph()
+
     def to_yaml(self) -> str:
         return yaml.dump(
             self.model_dump(mode="json", by_alias=True, exclude_none=True)["components"]
@@ -111,7 +120,7 @@ class Pipeline(BaseModel):
             for pending_task in pending_tasks:
                 await pending_task
 
-        graph: nx.DiGraph = self._graph.copy()  # pyright: ignore
+        graph: nx.DiGraph = self._graph.copy()  # pyright: ignore[reportAssignmentType, reportGeneralTypeIssues] imprecise type hint in networkx
 
         # We add an extra node to the graph, connecting all the leaf nodes to it
         # in that way we make this node the root of the graph, avoiding backtracking
@@ -160,6 +169,14 @@ class Pipeline(BaseModel):
         for output_topic in component.outputs:
             self.__add_output(output_topic, component.id)
 
+    def __add_output(self, topic_id: str, source: str) -> None:
+        self._graph.add_node(topic_id)
+        self._graph.add_edge(source, topic_id)
+
+    def __add_input(self, topic_id: str, target: str) -> None:
+        self._graph.add_node(topic_id)
+        self._graph.add_edge(topic_id, target)
+
     def __get_parallel_tasks_from(
         self, layer: list[str], runner: Callable[[PipelineComponent], Coroutine]
     ) -> list[Coroutine]:
@@ -175,17 +192,6 @@ class Pipeline(BaseModel):
         if not nx.is_directed_acyclic_graph(self._graph):
             msg = "Pipeline is not a valid DAG."
             raise ValueError(msg)
-
-    def validate(self) -> None:
-        self.__validate_graph()
-
-    def __add_output(self, topic_id: str, source: str) -> None:
-        self._graph.add_node(topic_id)
-        self._graph.add_edge(source, topic_id)
-
-    def __add_input(self, topic_id: str, target: str) -> None:
-        self._graph.add_node(topic_id)
-        self._graph.add_edge(topic_id, target)
 
 
 def create_env_components_index(
@@ -229,7 +235,7 @@ class PipelineGenerator:
         return self.pipeline
 
     def load_yaml(self, path: Path, environment: str | None) -> Pipeline:
-        """Load pipeline definition from yaml.
+        """Load pipeline definition from YAML file.
 
         The file is often named ``pipeline.yaml``
 
@@ -427,9 +433,10 @@ class PipelineGenerator:
         For example, for a given path ./data/v1/dev/pipeline.yaml the pipeline_name would be
         set to data-v1-dev. Then the sub environment variables are set:
 
-        pipeline.name_0 = data
-        pipeline.name_1 = v1
-        pipeline.name_2 = dev
+        .. code-block:: python
+            pipeline.name_0 = data
+            pipeline.name_1 = v1
+            pipeline.name_2 = dev
 
         :param base_dir: Base directory to the pipeline files
         :param path: Path to pipeline.yaml file

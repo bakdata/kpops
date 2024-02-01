@@ -177,7 +177,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
                 self.add_input_topics([name])
 
     def set_output_topics(self) -> None:
-        """Put values of config.to into the producer config section of streams bootstrap.
+        """Put values of `to` section into the producer config section of streams bootstrap.
 
         Supports extra_output_topics (topics by role) or output_topics.
         """
