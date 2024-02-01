@@ -2,10 +2,11 @@ from typing import Any
 
 import pydantic
 from pydantic import ConfigDict, Field
+from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import (
+    KafkaAppConfig,
     KafkaAppValues,
-    KafkaStreamsConfig,
 )
 from kpops.components.base_components.models.to_section import KafkaTopic
 from kpops.utils.docstring import describe_attr
@@ -15,15 +16,13 @@ from kpops.utils.pydantic import (
 )
 
 
-class StreamsConfig(KafkaStreamsConfig):
+class StreamsConfig(KafkaAppConfig):
     """Streams Bootstrap streams section.
 
     :param input_topics: Input topics, defaults to []
     :param input_pattern: Input pattern, defaults to None
     :param extra_input_topics: Extra input topics, defaults to {}
     :param extra_input_patterns: Extra input patterns, defaults to {}
-    :param extra_output_topics: Extra output topics, defaults to {}
-    :param output_topic: Output topic, defaults to None
     :param error_topic: Error topic, defaults to None
     :param config: Configuration, defaults to {}
     :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
@@ -41,12 +40,6 @@ class StreamsConfig(KafkaStreamsConfig):
     extra_input_patterns: dict[str, str] = Field(
         default={}, description=describe_attr("extra_input_patterns", __doc__)
     )
-    extra_output_topics: dict[str, KafkaTopic] = Field(
-        default={}, description=describe_attr("extra_output_topics", __doc__)
-    )
-    output_topic: KafkaTopic | None = Field(
-        default=None, description=describe_attr("output_topic", __doc__)
-    )
     error_topic: KafkaTopic | None = Field(
         default=None, description=describe_attr("error_topic", __doc__)
     )
@@ -56,13 +49,6 @@ class StreamsConfig(KafkaStreamsConfig):
     delete_output: bool | None = Field(
         default=None, description=describe_attr("delete_output", __doc__)
     )
-
-    @pydantic.field_validator("output_topic", mode="before")
-    @classmethod
-    def validate_output_topic(cls, output_topic: Any) -> KafkaTopic | None:
-        if output_topic and isinstance(output_topic, str):
-            return KafkaTopic(name=output_topic)
-        return None
 
     @pydantic.field_serializer("input_topics")
     def serialize_topics(self, topics: list[KafkaTopic]) -> list[str]:
@@ -77,16 +63,9 @@ class StreamsConfig(KafkaStreamsConfig):
         }
 
     @pydantic.field_serializer("output_topic", "error_topic")
+    @override
     def serialize_topic(self, topic: KafkaTopic | None) -> str | None:
-        if not topic:
-            return None
-        return topic.name
-
-    @pydantic.field_serializer("extra_output_topics")
-    def serialize_extra_output_topics(
-        self, extra_topics: dict[str, KafkaTopic]
-    ) -> dict[str, str]:
-        return {role: topic.name for role, topic in extra_topics.items()}
+        return super().serialize_topic(topic)
 
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:
         """Add given topics to the list of input topics.
