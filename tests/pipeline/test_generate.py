@@ -654,10 +654,11 @@ class TestGenerate:
         assert len(pipeline.components) == 2
         assert len(pipeline.graph.nodes) == 3
         assert len(pipeline.graph.edges) == 2
-        node_components = list(
-            filter(lambda node_id: "component" in node_id, pipeline.graph.nodes)
-        )
-        assert len(pipeline.components) == len(node_components)
+        topic_nodes = [
+            node for node in pipeline.graph.nodes if node.startswith("topic-")
+        ]
+        assert len(topic_nodes) == 1
+        assert len(pipeline.components) == len(pipeline.graph.nodes) - len(topic_nodes)
 
     def test_validate_topic_and_component_same_name(self):
         pipeline = kpops.generate(
