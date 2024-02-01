@@ -41,6 +41,7 @@ def test_to_snake(input: str, expected: str):
         ("connector_class", "connector.class"),
         ("topics_regex", "topics.regex"),
         ("topics", "topics"),
+        ("errors_deadletterqueue_topic_name", "errors.deadletterqueue.topic.name"),
     ],
 )
 def test_to_dot(input: str, expected: str):
