@@ -57,6 +57,13 @@ class StreamsConfig(KafkaStreamsConfig):
         default=None, description=describe_attr("delete_output", __doc__)
     )
 
+    @pydantic.field_validator("output_topic", mode="before")
+    @classmethod
+    def validate_output_topic(cls, output_topic: Any) -> KafkaTopic | None:
+        if output_topic and isinstance(output_topic, str):
+            return KafkaTopic(name=output_topic)
+        return None
+
     @pydantic.field_serializer("input_topics")
     def serialize_topics(self, topics: list[KafkaTopic]) -> list[str]:
         return [topic.name for topic in topics]

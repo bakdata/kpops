@@ -1,3 +1,5 @@
+from typing import Any
+
 import pydantic
 from pydantic import ConfigDict, Field
 
@@ -22,6 +24,13 @@ class ProducerStreamsConfig(KafkaStreamsConfig):
     output_topic: KafkaTopic | None = Field(
         default=None, description=describe_attr("output_topic", __doc__)
     )
+
+    @pydantic.field_validator("output_topic", mode="before")
+    @classmethod
+    def validate_output_topic(cls, output_topic: Any) -> KafkaTopic | None:
+        if output_topic and isinstance(output_topic, str):
+            return KafkaTopic(name=output_topic)
+        return None
 
     @pydantic.field_serializer("output_topic")
     def serialize_topic(self, topic: KafkaTopic | None) -> str | None:

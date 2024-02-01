@@ -19,6 +19,8 @@ from kpops.utils.docstring import describe_attr
 
 
 class ProducerAppCleaner(KafkaAppCleaner):
+    from_: None = None
+    to: None = None
     app: ProducerAppValues
 
     @property

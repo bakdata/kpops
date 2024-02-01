@@ -15,6 +15,8 @@ from kpops.utils.docstring import describe_attr
 
 
 class StreamsAppCleaner(KafkaAppCleaner):
+    from_: None = None
+    to: None = None
     app: StreamsAppValues
 
     @property
