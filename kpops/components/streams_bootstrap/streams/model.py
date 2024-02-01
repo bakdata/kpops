@@ -72,7 +72,7 @@ class StreamsConfig(KafkaStreamsConfig):
     @pydantic.field_validator("error_topic", mode="before")
     @classmethod
     def validate_error_topic(cls, error_topic: Any) -> KafkaTopic | Any:
-        return super(StreamsConfig, cls).validate_output_topic(error_topic)  # noqa: UP008  # pyright: ignore[reportCallIssue]
+        return super(StreamsConfig, cls).validate_output_topic(error_topic)  # noqa: UP008  # pyright: ignore[reportGeneralTypeIssues]
 
     @pydantic.field_serializer("input_topics")
     def serialize_topics(self, topics: list[KafkaTopic]) -> list[str]:
