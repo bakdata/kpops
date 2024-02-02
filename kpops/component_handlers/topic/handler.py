@@ -86,23 +86,20 @@ class TopicHandler:
         return list(Diff.from_dicts(comparable_in_cluster_config_dict, current_config))
 
     async def __dry_run_topic_creation(
-        self,
-        topic: KafkaTopic,
-        topic_spec: TopicSpec,  # TODO: move to KafkaTopic
+        self, topic: KafkaTopic, topic_spec: TopicSpec
     ) -> None:
         try:
             topic_in_cluster = await self.proxy_wrapper.get_topic(topic.name)
             topic_name = topic_in_cluster.topic_name
-            if topic.config:
-                topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
-                    topic_name
-                )
-                in_cluster_config, new_config = parse_and_compare_topic_configs(
-                    topic_config_in_cluster, topic.config.configs
-                )
-                if diff := render_diff(in_cluster_config, new_config):
-                    log.info(f"Config changes for topic {topic_name}:")
-                    log.info("\n" + diff)
+            topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
+                topic_name
+            )
+            in_cluster_config, new_config = parse_and_compare_topic_configs(
+                topic_config_in_cluster, topic.config.configs
+            )
+            if diff := render_diff(in_cluster_config, new_config):
+                log.info(f"Config changes for topic {topic_name}:")
+                log.info("\n" + diff)
 
             log.info(f"Topic Creation: {topic_name} already exists in cluster.")
             log.debug("HTTP/1.1 400 Bad Request")
