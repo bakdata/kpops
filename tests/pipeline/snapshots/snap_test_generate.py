@@ -307,22 +307,6 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
             'suffix': '-clean',
-            'to': {
-                'models': {
-                },
-                'topics': {
-                    'kafka-sink-connector': {
-                        'configs': {
-                        },
-                        'type': 'output'
-                    },
-                    'should-inflate-inflated-sink-connector': {
-                        'configs': {
-                        },
-                        'role': 'test'
-                    }
-                }
-            },
             'type': 'kafka-connector-resetter',
             'version': '1.0.4'
         },
@@ -1290,22 +1274,6 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
             'suffix': '-clean',
-            'to': {
-                'models': {
-                },
-                'topics': {
-                    'inflate-step-inflated-sink-connector': {
-                        'configs': {
-                        },
-                        'role': 'test'
-                    },
-                    'kafka-sink-connector': {
-                        'configs': {
-                        },
-                        'type': 'output'
-                    }
-                }
-            },
             'type': 'kafka-connector-resetter',
             'version': '1.0.4'
         },
@@ -1477,22 +1445,6 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
             'suffix': '-clean',
-            'to': {
-                'models': {
-                },
-                'topics': {
-                    'inflate-step-without-prefix-inflated-sink-connector': {
-                        'configs': {
-                        },
-                        'role': 'test'
-                    },
-                    'kafka-sink-connector': {
-                        'configs': {
-                        },
-                        'type': 'output'
-                    }
-                }
-            },
             'type': 'kafka-connector-resetter',
             'version': '1.0.4'
         },

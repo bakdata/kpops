@@ -37,6 +37,8 @@ class KafkaConnectorResetter(HelmApp):
     :param version: Helm chart version, defaults to "1.0.4"
     """
 
+    from_: None = None
+    to: None = None
     app: KafkaConnectorResetterValues
     repo_config: HelmRepoConfig = Field(
         default=HelmRepoConfig(
@@ -159,7 +161,14 @@ class KafkaConnector(PipelineComponent, ABC):
             handlers=self.handlers,
             **kwargs,
             **self.model_dump(
-                exclude={"_resetter", "resetter_values", "resetter_namespace", "app"}
+                exclude={
+                    "_resetter",
+                    "resetter_values",
+                    "resetter_namespace",
+                    "app",
+                    "from_",
+                    "to",
+                }
             ),
             app=KafkaConnectorResetterValues(
                 connector_type=self._connector_type.value,

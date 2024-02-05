@@ -19,8 +19,6 @@ from kpops.utils.docstring import describe_attr
 
 
 class ProducerAppCleaner(KafkaAppCleaner):
-    from_: None = None
-    to: None = None
     app: ProducerAppValues
 
     @property
@@ -59,7 +57,7 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
         return ProducerAppCleaner(
             config=self.config,
             handlers=self.handlers,
-            **self.model_dump(exclude={"from", "to"}),
+            **self.model_dump(exclude={"from_", "to"}),
         )
 
     @override
