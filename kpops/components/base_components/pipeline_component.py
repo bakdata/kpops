@@ -54,7 +54,6 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         default=None,
         description=describe_attr("to", __doc__),
     )
-    # to: None = None  # TODO
 
     model_config = ConfigDict(extra="allow")
 
