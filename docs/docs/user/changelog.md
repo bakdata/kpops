@@ -1,4 +1,27 @@
 # Changelog
+## [3.2.0](https://github.com/bakdata/kpops/releases/tag/3.2.0) - Release Date: [2024-02-01]
+
+### 🚀 Features
+
+- Refactor pipeline filter and add to public API - [#405](https://github.com/bakdata/kpops/pull/405)
+
+
+### 🏭 Refactor
+
+- Refactor enrichment using Pydantic model validator - [#444](https://github.com/bakdata/kpops/pull/444)
+
+- Refactor pipeline filter and add to public API - [#405](https://github.com/bakdata/kpops/pull/405)
+
+
+### 📝 Documentation
+
+- Improve Sphinx docs highlighting using RST markup - [#443](https://github.com/bakdata/kpops/pull/443)
+
+
+
+
+
+
 ## [3.1.0](https://github.com/bakdata/kpops/releases/tag/3.1.0) - Release Date: [2024-01-30]
 
 ### 🚀 Features
