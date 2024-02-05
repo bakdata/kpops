@@ -37,8 +37,8 @@ class KafkaConnectorResetter(HelmApp):
     :param version: Helm chart version, defaults to "1.0.4"
     """
 
-    app: KafkaConnectorResetterValues  # pyright: ignore[reportIncompatibleVariableOverride]
-    repo_config: HelmRepoConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    app: KafkaConnectorResetterValues
+    repo_config: HelmRepoConfig = Field(
         default=HelmRepoConfig(
             repository_name="bakdata-kafka-connect-resetter",
             url="https://bakdata.github.io/kafka-connect-resetter/",

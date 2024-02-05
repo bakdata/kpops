@@ -204,7 +204,7 @@ class StreamsAppValues(KafkaAppValues):
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
     """
 
-    streams: StreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    streams: StreamsConfig = Field(
         default=...,
         description=describe_attr("streams", __doc__),
     )
