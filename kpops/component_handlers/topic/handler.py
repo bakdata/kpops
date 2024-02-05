@@ -190,7 +190,7 @@ class TopicHandler:
             }
             log.debug(error_message)
 
-    @classmethod  # TODO: move to KafkaTopic?
+    @classmethod
     def __prepare_body(cls, topic: KafkaTopic) -> TopicSpec:
         """Prepare the POST request body needed for the topic creation.
 
