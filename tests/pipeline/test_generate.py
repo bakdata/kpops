@@ -849,3 +849,18 @@ class TestGenerate:
             enriched_pipeline[0]["name"]
             == "in-order-to-have-len-fifty-two-name-should-end--here"
         )
+
+    def test_substitution_in_inflated_component(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "resetter_values/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH / "resetter_values"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        assert enriched_pipeline[1]["_resetter"]["app"]["labels"]["app-name"] == "${component.name}"

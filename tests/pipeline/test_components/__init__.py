@@ -4,4 +4,5 @@ from tests.pipeline.test_components.components import (
     ScheduledProducer,
     ShouldInflate,
     TestSchemaProvider,
+    InflateBadly,
 )
