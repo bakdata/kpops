@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 import logging
 from pathlib import Path
 from typing import Any
@@ -7,6 +8,9 @@ from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 
 from hooks.gen_docs.gen_docs_env_vars import collect_fields
+from kpops.components.base_components.base_defaults_component import (
+    BaseDefaultsComponent,
+)
 from kpops.config import KpopsConfig
 from kpops.utils.docstring import describe_object
 
@@ -39,6 +43,12 @@ def extract_config_fields_for_yaml(
     return extracted_fields
 
 
+def get_subclasses(cls: type):
+    yield cls
+    for _cls in cls.__subclasses__():
+        yield from get_subclasses(_cls)
+
+
 def create_config(file_name: str, dir_path: Path) -> None:
     file_path = touch_yaml_file(file_name, dir_path)
     with file_path.open(mode="w") as conf:
@@ -55,8 +65,17 @@ def create_config(file_name: str, dir_path: Path) -> None:
         conf.write(yaml.dump(non_required))
 
 
-def create_defaults(file_name: str, dir_path: Path) -> None:
+def create_defaults(
+    file_name: str, dir_path: Path, components: Iterable[type[BaseDefaultsComponent] | None]
+) -> None:
     file_path = touch_yaml_file(file_name, dir_path)
+    if components is None:
+        components = get_subclasses(BaseDefaultsComponent)
+    with file_path.open(mode="w") as defaults:
+        for component in components:
+            for name, finfo in component.model_fields.items():
+                if not finfo.exclude:
+                    defaults.write(f"{finfo.serialization_alias or name}:\n")
 
 
 def create_pipeline(file_name: str, dir_path: Path) -> None:
