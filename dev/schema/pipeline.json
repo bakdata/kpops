@@ -412,35 +412,6 @@
             "title": "KafkaSourceConnector",
             "type": "object"
         },
-        "KafkaTopic": {
-            "properties": {
-                "config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/TopicConfig"
-                        }
-                    ],
-                    "default": {
-                        "configs": {},
-                        "key_schema": null,
-                        "partitions_count": null,
-                        "replication_factor": null,
-                        "role": null,
-                        "type": null,
-                        "value_schema": null
-                    }
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
-            ],
-            "title": "KafkaTopic",
-            "type": "object"
-        },
         "OutputTopicTypes": {
             "description": "Types of output topic.\n\n- OUTPUT: output topic\n- ERROR: error topic",
             "enum": [
@@ -585,7 +556,7 @@
                 },
                 "extraOutputTopics": {
                     "additionalProperties": {
-                        "$ref": "#/$defs/KafkaTopic"
+                        "type": "string"
                     },
                     "default": {},
                     "description": "Extra output topics",
@@ -595,14 +566,15 @@
                 "outputTopic": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/KafkaTopic"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "Output topic"
+                    "description": "Output topic",
+                    "title": "Outputtopic"
                 },
                 "schemaRegistryUrl": {
                     "anyOf": [
@@ -945,14 +917,15 @@
                 "errorTopic": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/KafkaTopic"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "Error topic"
+                    "description": "Error topic",
+                    "title": "Errortopic"
                 },
                 "extraInputPatterns": {
                     "additionalProperties": {
@@ -966,7 +939,7 @@
                 "extraInputTopics": {
                     "additionalProperties": {
                         "items": {
-                            "$ref": "#/$defs/KafkaTopic"
+                            "type": "string"
                         },
                         "type": "array"
                     },
@@ -977,7 +950,7 @@
                 },
                 "extraOutputTopics": {
                     "additionalProperties": {
-                        "$ref": "#/$defs/KafkaTopic"
+                        "type": "string"
                     },
                     "default": {},
                     "description": "Extra output topics",
@@ -1001,7 +974,7 @@
                     "default": [],
                     "description": "Input topics",
                     "items": {
-                        "$ref": "#/$defs/KafkaTopic"
+                        "type": "string"
                     },
                     "title": "Inputtopics",
                     "type": "array"
@@ -1009,14 +982,15 @@
                 "outputTopic": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/KafkaTopic"
+                            "type": "string"
                         },
                         {
                             "type": "null"
                         }
                     ],
                     "default": null,
-                    "description": "Output topic"
+                    "description": "Output topic",
+                    "title": "Outputtopic"
                 },
                 "schemaRegistryUrl": {
                     "anyOf": [
