@@ -127,10 +127,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             elif is_dataclass(v):
                 kwargs[k] = asdict(v)
 
-        env_pipeline_path = ENV.get("pipeline_path")
-        if not env_pipeline_path:
-            env_pipeline_path = Path()
-        pipeline_path = Path(env_pipeline_path)
+        pipeline_path = Path(ENV.get("pipeline_path", ""))
         defaults_file_paths_ = get_defaults_file_paths(
             pipeline_path, config, ENV.get("environment")
         )
@@ -209,7 +206,7 @@ def get_defaults_file_paths(
     default_paths = []
 
     if not pipeline_path.is_file():
-        message = f"No pipeline.yaml found in directory: {pipeline_path}"
+        message = f"No pipeline.yaml found in directory: {pipeline_path.parent}"
         raise FileNotFoundError(message)
 
     path = pipeline_path.resolve()

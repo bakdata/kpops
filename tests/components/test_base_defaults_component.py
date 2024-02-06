@@ -211,6 +211,20 @@ class TestBaseDefaultsComponent:
             (
                 RESOURCES_PATH
                 / "pipelines/test-distributed-defaults/pipeline-deep/pipeline.yaml",
+                None,
+                [
+                    Path(
+                        f"{RESOURCES_PATH}/pipelines/test-distributed-defaults/pipeline-deep/defaults.yaml"
+                    ),
+                    Path(
+                        f"{RESOURCES_PATH}/pipelines/test-distributed-defaults/defaults.yaml"
+                    ),
+                    Path(f"{RESOURCES_PATH}/defaults.yaml"),
+                ],
+            ),
+            (
+                RESOURCES_PATH
+                / "pipelines/test-distributed-defaults/pipeline-deep/pipeline.yaml",
                 "development",
                 [
                     Path(
@@ -251,7 +265,7 @@ class TestBaseDefaultsComponent:
     def test_get_defaults_file_paths(
         self,
         pipeline_path: Path,
-        environment: str,
+        environment: str | None,
         expected_default_paths: list[Path],
     ):
         config = KpopsConfig()

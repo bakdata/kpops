@@ -3,13 +3,13 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
-from collections import Counter
+from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeAlias
 
 import networkx as nx
 import yaml
-from pydantic import BaseModel, Field, SerializeAsAny
+from pydantic import BaseModel, ConfigDict, Field, SerializeAsAny, computed_field
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
@@ -20,7 +20,7 @@ from kpops.utils.yaml import load_yaml_file, substitute_nested
 PIPELINE_PATH = "pipeline_path"
 
 if TYPE_CHECKING:
-    from collections.abc import Awaitable, Callable, Coroutine, Iterator
+    from collections.abc import Awaitable, Coroutine, Iterator
     from pathlib import Path
 
     from kpops.cli.registry import Registry
@@ -38,64 +38,74 @@ class ValidationError(Exception):
     pass
 
 
+ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
+
+
 class Pipeline(BaseModel):
     """Pipeline representation."""
 
-    components: list[SerializeAsAny[PipelineComponent]] = Field(
-        default=[], title="Components"
-    )
     graph: nx.DiGraph = Field(default_factory=nx.DiGraph, exclude=True)
-    _component_index: dict[str, PipelineComponent | None] = {}
+    _component_index: dict[str, PipelineComponent] = {}
 
-    class Config:
-        arbitrary_types_allowed = True
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    @computed_field(title="Components")
+    @property
+    def components(self) -> list[SerializeAsAny[PipelineComponent]]:
+        return list(self._component_index.values())
 
     @property
     def last(self) -> PipelineComponent:
         return self.components[-1]
 
-    def find(self, component_name: str) -> PipelineComponent:
-        for component in self.components:
-            if component_name == component.name:
-                return component
-        msg = f"Component {component_name} not found"
-        raise ValueError(msg)
-
-    def __add_to_graph(self, component: PipelineComponent):
-        self._component_index[component.id] = component
-        self.graph.add_node(component.id)
-
-        for input_topic in component.inputs:
-            self.__add_input(input_topic, component.id)
-
-        for output_topic in component.outputs:
-            self.__add_output(output_topic, component.id)
-
     def add(self, component: PipelineComponent) -> None:
-        self.components.append(component)
+        if self._component_index.get(component.id) is not None:
+            msg = (
+                f"Pipeline steps must have unique id, '{component.id}' already exists."
+            )
+            raise ValidationError(msg)
+        self._component_index[component.id] = component
         self.__add_to_graph(component)
 
-    def __bool__(self) -> bool:
-        return bool(self.components)
+    def remove(self, component_id: str) -> None:
+        self._component_index.pop(component_id)
 
-    def __iter__(self) -> Iterator[PipelineComponent]:  # pyright: ignore [reportIncompatibleMethodOverride]
-        return iter(self.components)
+    def get(self, component_id: str) -> PipelineComponent | None:
+        self._component_index.get(component_id)
 
-    def __len__(self) -> int:
-        return len(self.components)
+    def find(self, predicate: ComponentFilterPredicate) -> Iterator[PipelineComponent]:
+        """Find pipeline components matching a custom predicate.
+
+        :param predicate: Filter function,
+            returns boolean value whether the component should be kept or removed
+        :returns: Iterator of components matching the predicate
+        """
+        for component in self.components:
+            if predicate(component):
+                yield component
+
+    def filter(self, predicate: ComponentFilterPredicate) -> None:
+        """Filter pipeline components using a custom predicate.
+
+        :param predicate: Filter function,
+            returns boolean value whether the component should be kept or removed
+        """
+        for component in self.components:
+            # filter out components not matching the predicate
+            if not predicate(component):
+                self.remove(component.id)
 
     def to_yaml(self) -> str:
         return yaml.dump(
             self.model_dump(mode="json", by_alias=True, exclude_none=True)["components"]
         )
 
-    def build_execution_graph_from(
-        self,
-        components: list[PipelineComponent],
-        reverse: bool,
-        runner: Callable[[PipelineComponent], Coroutine],
+    def build_execution_graph(
+        self, runner: Callable[[PipelineComponent], Coroutine], /, reverse: bool = False
     ) -> Awaitable:
-        sub_graph_nodes = self.__get_graph_nodes(components)
+        sub_graph_nodes = self.__collect_graph_nodes(
+            reversed(self.components) if reverse else self.components
+        )
 
         async def run_parallel_tasks(coroutines: list[Coroutine]) -> None:
             tasks = []
@@ -136,8 +146,33 @@ class Pipeline(BaseModel):
 
         return run_graph_tasks(sorted_tasks)
 
+    def __getitem__(self, component_id: str) -> PipelineComponent:
+        try:
+            return self._component_index[component_id]
+        except KeyError as exc:
+            msg = f"Component {component_id} not found"
+            raise ValueError(msg) from exc
+
+    def __bool__(self) -> bool:
+        return bool(self._component_index)
+
+    def __iter__(self) -> Iterator[PipelineComponent]:  # pyright: ignore [reportIncompatibleMethodOverride]
+        yield from self._component_index.values()
+
+    def __len__(self) -> int:
+        return len(self.components)
+
+    def __add_to_graph(self, component: PipelineComponent):
+        self.graph.add_node(component.id)
+
+        for input_topic in component.inputs:
+            self.__add_input(input_topic, component.id)
+
+        for output_topic in component.outputs:
+            self.__add_output(output_topic, component.id)
+
     @staticmethod
-    def __get_graph_nodes(components: list[PipelineComponent]) -> Iterator[str]:
+    def __collect_graph_nodes(components: Iterable[PipelineComponent]) -> Iterator[str]:
         for component in components:
             yield component.id
             yield from component.inputs
@@ -146,14 +181,13 @@ class Pipeline(BaseModel):
     def __get_parallel_tasks_from(
         self, layer: list[str], runner: Callable[[PipelineComponent], Coroutine]
     ) -> list[Coroutine]:
-        parallel_tasks = []
+        def gen_parallel_tasks():
+            for node_in_layer in layer:
+                # check if component, skip topics
+                if (component := self._component_index.get(node_in_layer)) is not None:
+                    yield runner(component)
 
-        for node_in_layer in layer:
-            component = self._component_index[node_in_layer]
-            if component is not None:
-                parallel_tasks.append(runner(component))
-
-        return parallel_tasks
+        return list(gen_parallel_tasks())
 
     def __validate_graph(self) -> None:
         if not nx.is_directed_acyclic_graph(self.graph):
@@ -161,25 +195,15 @@ class Pipeline(BaseModel):
             raise ValueError(msg)
 
     def validate(self) -> None:  # pyright: ignore [reportIncompatibleMethodOverride]
-        self.validate_unique_names()
         self.__validate_graph()
 
-    def __add_output(self, output_topic: str, source: str) -> None:
-        self._component_index[output_topic] = None
-        self.graph.add_node(output_topic)
-        self.graph.add_edge(source, output_topic)
+    def __add_output(self, topic_id: str, source: str) -> None:
+        self.graph.add_node(topic_id)
+        self.graph.add_edge(source, topic_id)
 
-    def __add_input(self, input_topic: str, target: str) -> None:
-        self._component_index[input_topic] = None
-        self.graph.add_node(input_topic)
-        self.graph.add_edge(input_topic, target)
-
-    def validate_unique_names(self) -> None:
-        step_names = [component.full_name for component in self.components]
-        duplicates = [name for name, count in Counter(step_names).items() if count > 1]
-        if duplicates:
-            msg = f"step names should be unique. duplicate step names: {', '.join(duplicates)}"
-            raise ValidationError(msg)
+    def __add_input(self, topic_id: str, target: str) -> None:
+        self.graph.add_node(topic_id)
+        self.graph.add_edge(topic_id, target)
 
 
 def create_env_components_index(
@@ -293,6 +317,28 @@ class PipelineGenerator:
         :param component_class: Type of pipeline component
         :param component_data: Arguments for instantiation of pipeline component
         """
+
+        def is_name(name: str) -> ComponentFilterPredicate:
+            def predicate(component: PipelineComponent) -> bool:
+                return component.name == name
+
+            return predicate
+
+        # NOTE: temporary until we can just get components by id
+        # performance improvement
+        def find(component_name: str) -> PipelineComponent:
+            """Find component in pipeline by name.
+
+            :param component_name: Name of component to get
+            :returns: Component matching the name
+            :raises ValueError: Component not found
+            """
+            try:
+                return next(self.pipeline.find(is_name(component_name)))
+            except StopIteration as exc:
+                msg = f"Component {component_name} not found"
+                raise ValueError(msg) from exc
+
         component = component_class(
             config=self.config,
             handlers=self.handlers,
@@ -309,13 +355,11 @@ class PipelineGenerator:
                     original_from_component_name,
                     from_topic,
                 ) in enriched_component.from_.components.items():
-                    original_from_component = self.pipeline.find(
-                        original_from_component_name
-                    )
+                    original_from_component = find(original_from_component_name)
+
                     inflated_from_component = original_from_component.inflate()[-1]
-                    resolved_from_component = self.pipeline.find(
-                        inflated_from_component.name
-                    )
+                    resolved_from_component = find(inflated_from_component.name)
+
                     enriched_component.weave_from_topics(
                         resolved_from_component.to, from_topic
                     )
