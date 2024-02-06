@@ -867,3 +867,21 @@ class TestGenerate:
             enriched_pipeline[1]["_resetter"]["app"]["label"]
             == "inflated-connector-name"
         )
+
+    def test_substitution_in_resetter(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "resetter_values/pipeline_connector_only.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH / "resetter_values"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline[0]["_resetter"]["app"]["label"]
+            == "inflated-connector-name"
+        )

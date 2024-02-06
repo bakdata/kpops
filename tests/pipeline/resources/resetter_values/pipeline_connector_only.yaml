@@ -1,0 +1,5 @@
+- type: kafka-sink-connector
+  name: es-sink-connector
+  app:
+    connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+    
