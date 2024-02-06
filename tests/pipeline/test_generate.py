@@ -877,7 +877,7 @@ class TestGenerate:
         assert pipeline.components[0].name == "es-sink-connector"
         assert pipeline.components[0]._resetter.name == "es-sink-connector"
         assert hasattr(pipeline.components[0]._resetter.app, "label")
-        assert pipeline.components[0]._resetter.app.label == "es-sink-connector"  # type: ignore
+        assert pipeline.components[0]._resetter.app.label == "es-sink-connector"  # type: ignore[reportGeneralTypeIssues]
 
         enriched_pipeline: list = yaml.safe_load(pipeline.to_yaml())
         assert enriched_pipeline[0]["name"] == "es-sink-connector"
