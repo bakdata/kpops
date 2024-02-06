@@ -519,6 +519,10 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             "to": None,
             "type": "kafka-sink-connector",
         }
-        config.defaults_path = Path(Path(__file__).parents[1] / "pipeline/resources/resetter_values")
-        sink_connector = KafkaSinkConnector(enrich=False, config=config, handlers=handlers, **component_data)
-        assert sink_connector._resetter.app.label == "inflated-connector-name"
+        config.defaults_path = Path(
+            Path(__file__).parents[1] / "pipeline/resources/resetter_values"
+        )
+        sink_connector = KafkaSinkConnector(
+            enrich=False, config=config, handlers=handlers, **component_data
+        )
+        assert sink_connector._resetter.app.label == "inflated-connector-name"  # type: ignore[reportGeneralTypeIssues]

@@ -1,4 +1,5 @@
 import json
+
 from kpops.utils.dict_ops import generate_substitution, update_nested_pair
 from kpops.utils.environment import ENV
 from kpops.utils.types import JsonType

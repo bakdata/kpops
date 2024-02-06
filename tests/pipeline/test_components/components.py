@@ -1,6 +1,3 @@
-import abc
-from typing import Any
-from pydantic import BaseModel
 from schema_registry.client.schema import AvroSchema
 from typing_extensions import override
 
@@ -20,7 +17,6 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
-from kpops.components.streams_bootstrap.streams.model import StreamsAppValues
 
 
 class ScheduledProducer(ProducerApp):
@@ -97,6 +93,7 @@ class TestSchemaProvider(SchemaProvider):
             ],
         }
         return AvroSchema(schema)
+
 
 class InflateBadly(StreamsApp):
     def inflate(self) -> list[PipelineComponent]:

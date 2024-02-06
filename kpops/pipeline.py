@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
 from collections.abc import Callable, Iterable
 from dataclasses import dataclass, field
@@ -12,10 +11,9 @@ import yaml
 from pydantic import BaseModel, ConfigDict, Field, SerializeAsAny, computed_field
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.dict_ops import generate_substitution, update_nested_pair
+from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.environment import ENV
-from kpops.utils.types import JsonType
-from kpops.utils.yaml import load_yaml_file, substitute_nested
+from kpops.utils.yaml import load_yaml_file
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Coroutine, Iterator
