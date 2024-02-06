@@ -33,9 +33,9 @@ class KafkaConnectorConfig(DescConfigModel):
 
     connector_class: str
     name: SkipJsonSchema[str]
-    topics: SkipJsonSchema[list[KafkaTopic]] = []
-    topics_regex: SkipJsonSchema[str | None] = None
-    errors_deadletterqueue_topic_name: SkipJsonSchema[KafkaTopic | None] = None
+    topics: list[KafkaTopic] = []
+    topics_regex: str | None = None
+    errors_deadletterqueue_topic_name: KafkaTopic | None = None
 
     @override
     @staticmethod
