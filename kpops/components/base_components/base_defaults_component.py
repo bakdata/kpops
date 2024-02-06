@@ -83,19 +83,17 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
     def __init__(self, **values: Any) -> None:
         if values.get("enrich", True):
-            values = self.extend_with_defaults(**values)
-            component_class = self.__class__
-            new_self = component_class(**values, enrich=False)
+            cls = self.__class__
+            values = cls.extend_with_defaults(**values)
+            new_self = cls(**values, enrich=False)
             values = new_self.model_dump(mode="json")
-            component_data = component_class.substitute_in_component(
-                new_self.config, **values
-            )
+            values = cls.substitute_in_component(new_self.config, **values)
             self.__init__(
                 enrich=False,
                 validate_=True,
                 config=new_self.config,
                 handlers=new_self.handlers,
-                **component_data,
+                **values,
             )
         else:
             super().__init__(**values)
