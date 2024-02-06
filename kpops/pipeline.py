@@ -215,7 +215,7 @@ def create_env_components_index(
         if "type" not in component or "name" not in component:
             msg = "To override components per environment, every component should at least have a type and a name."
             raise ValueError(msg)
-        index[component["name"]] = component
+        index[component["name"]] = component  # TODO: id
     return index
 
 
