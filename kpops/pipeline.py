@@ -372,6 +372,10 @@ class PipelineGenerator:
         :param component: Component to be enriched
         :returns: Enriched component
         """
+        env_component = self.env_components_index.get(component.name)
+        if not env_component:
+            return component
+
         env_component_as_dict = update_nested_pair(
             self.env_components_index.get(component.name, {}),
             component.model_dump(mode="json"),
