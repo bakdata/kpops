@@ -1,4 +1,5 @@
 from __future__ import annotations
+import json
 
 import logging
 from abc import ABC
@@ -21,12 +22,16 @@ from pydantic.json_schema import SkipJsonSchema
 from kpops.component_handlers import ComponentHandlers
 from kpops.config import KpopsConfig
 from kpops.utils import cached_classproperty
-from kpops.utils.dict_ops import update_nested, update_nested_pair
+from kpops.utils.dict_ops import (
+    generate_substitution,
+    update_nested,
+    update_nested_pair,
+)
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
 from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
-from kpops.utils.substitution import substitute_in_component
-from kpops.utils.yaml import load_yaml_file
+from kpops.utils.types import JsonType
+from kpops.utils.yaml import load_yaml_file, substitute_nested
 
 try:
     from typing import Self
@@ -55,7 +60,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     )
 
     enrich: SkipJsonSchema[bool] = Field(
-        default=False,
+        default=True,
         description=describe_attr("enrich", __doc__),
         exclude=True,
     )
@@ -76,28 +81,68 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         exclude=True,
     )
 
-    @pydantic.model_validator(mode="before")
-    @classmethod
-    def enrich_component(cls, values: dict[str, Any]) -> dict[str, Any]:
+    def __init__(self, **values: Any) -> None:
         if values.get("enrich", True):
-            values = cls.extend_with_defaults(**values)
-        return values
+            values = self.extend_with_defaults(**values)
+            component_class = self.__class__
+            new_self = component_class(**values, enrich=False)
+            values = new_self.model_dump(mode="json", by_alias=True)
+            component_data = self.substitute_in_component(new_self.config, **values)
+            self.__init__(
+                enrich=False,
+                validate_=True,
+                config=new_self.config,
+                handlers=new_self.handlers,
+                **component_data,
+            )
+        else:
+            super().__init__(**values)
+
+    # @pydantic.model_validator(mode="before")
+    # @classmethod
+    # def enrich_component(cls, values: dict[str, Any]) -> dict[str, Any]:
+    #     if values.get("enrich", True):
+    #         values = cls.extend_with_defaults(**values)
+    #     return values
+
+    # @pydantic.model_validator(mode="after")
+    # def substitute_component(self) -> Self:
+    #     # env_component_as_dict = update_nested_pair(
+    #     #     self.env_components_index.get(self.name, {}),
+    #     #     self.model_dump(mode="json", by_alias=True),
+    #     # )
+    #     if (
+    #         hasattr(self, "app") and hasattr(self.app, "label")
+    #         # and self._resetter.app.label == "es-sink-connector"
+    #     ):
+    #         resetter_label = self.app.label
+    #         pass
+    #     if (
+    #         hasattr(self, "_resetter")
+    #         # and self._resetter.app.label == "es-sink-connector"
+    #     ):
+    #         connector_label = self._resetter.app.label
+    #         pass
+    #     if self.enrich:
+    #         values = self.model_dump(mode="json", by_alias=True)
+    #         component_data = self.substitute_in_component(self.config, **values)
+    #         component_class = self.__class__
+    #         new_self = component_class(
+    #             enrich=False,
+    #             validate_=True,
+    #             config=self.config,
+    #             handlers=self.handlers,
+    #             **component_data,
+    #         )
+    #         # del self
+    #         return new_self
+    #     return self
 
     @pydantic.model_validator(mode="after")
     def validate_component(self) -> Self:
-        if self.validate_:
+        if not self.enrich and self.validate_:
             self._validate_custom()
         return self
-
-    @pydantic.model_validator(mode="after")
-    def substitute_in_component(self):
-        component_class = type(self)
-        component_dumped = self.model_dump()
-        component_substituted = substitute_in_component(component_dumped, self.config)
-        if component_dumped == component_substituted:
-            return self
-        component_substituted = component_class(enrich=False, config=self.config, handlers=self.handlers, **component_substituted)
-        return component_substituted
 
     @computed_field
     @cached_classproperty
@@ -123,6 +168,42 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
                 yield base
 
         return tuple(gen_parents())
+
+    @classmethod
+    def substitute_in_component(
+        cls, config: KpopsConfig, **component_data: Any
+    ) -> dict[str, Any]:
+        """Substitute all $-placeholders in a component in dict representation.
+
+        :param component_as_dict: Component represented as dict
+        :return: Updated component
+        """
+        # Leftover variables that were previously introduced in the component by the substitution
+        # functions, still hardcoded, because of their names.
+        # TODO(Ivan Yordanov): Get rid of them
+        substitution_hardcoded: dict[str, JsonType] = {
+            "error_topic_name": config.topic_name_config.default_error_topic_name,
+            "output_topic_name": config.topic_name_config.default_output_topic_name,
+        }
+        component_substitution = generate_substitution(
+            component_data,
+            "component",
+            substitution_hardcoded,
+            separator=".",
+        )
+        substitution = generate_substitution(
+            config.model_dump(mode="json"),
+            "config",
+            existing_substitution=component_substitution,
+            separator=".",
+        )
+
+        return json.loads(
+            substitute_nested(
+                json.dumps(component_data),
+                **update_nested_pair(substitution, ENV),
+            )
+        )
 
     @classmethod
     def extend_with_defaults(cls, config: KpopsConfig, **kwargs: Any) -> dict[str, Any]:

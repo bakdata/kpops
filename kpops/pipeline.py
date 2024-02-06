@@ -342,54 +342,27 @@ class PipelineGenerator:
             validate=False,
             **component_data,
         )
-        component = self.enrich_component(component)
         # inflate & enrich components
         for inflated_component in component.inflate():  # TODO: recursively
-            enriched_component = self.enrich_component(inflated_component)
-            if enriched_component.from_:
+            if inflated_component.from_:
                 # read from specified components
                 for (
                     original_from_component_name,
                     from_topic,
-                ) in enriched_component.from_.components.items():
+                ) in inflated_component.from_.components.items():
                     original_from_component = find(original_from_component_name)
 
                     inflated_from_component = original_from_component.inflate()[-1]
                     resolved_from_component = find(inflated_from_component.name)
 
-                    enriched_component.weave_from_topics(
+                    inflated_component.weave_from_topics(
                         resolved_from_component.to, from_topic
                     )
             elif self.pipeline:
                 # read from previous component
                 prev_component = self.pipeline.last
-                enriched_component.weave_from_topics(prev_component.to)
-            self.pipeline.add(enriched_component)
-
-    def enrich_component(
-        self,
-        component: PipelineComponent,
-    ) -> PipelineComponent:
-        """Enrich a pipeline component with env-specific config and substitute variables.
-
-        :param component: Component to be enriched
-        :returns: Enriched component
-        """
-        component.validate_ = True
-        env_component_as_dict = update_nested_pair(
-            self.env_components_index.get(component.name, {}),
-            component.model_dump(mode="json", by_alias=True),
-        )
-
-        component_class = type(component)
-        return component_class(
-            enrich=False,
-            config=self.config,
-            handlers=self.handlers,
-            **env_component_as_dict,
-        )
-
-
+                inflated_component.weave_from_topics(prev_component.to)
+            self.pipeline.add(inflated_component)
 
     @staticmethod
     def pipeline_filename_environment(pipeline_path: Path, environment: str) -> Path:
