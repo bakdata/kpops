@@ -14,9 +14,6 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.helm_app import HelmAppValues
-from kpops.components.base_components.models.to_section import (
-    ToSection,
-)
 from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap import StreamsBootstrap
@@ -152,15 +149,9 @@ class KafkaApp(PipelineComponent, ABC):
 
     Producer or streaming apps should inherit from this class.
 
-    :param to: Topic(s) into which the component will write output,
-        defaults to None
     :param app: Application-specific settings
     """
 
-    to: ToSection | None = Field(
-        default=None,
-        description=describe_attr("to", __doc__),
-    )
     app: KafkaAppValues = Field(
         default=...,
         description=describe_attr("app", __doc__),
