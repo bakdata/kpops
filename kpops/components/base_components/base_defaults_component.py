@@ -25,6 +25,7 @@ from kpops.utils.dict_ops import update_nested, update_nested_pair
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
 from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
+from kpops.utils.substitution import substitute_in_component
 from kpops.utils.yaml import load_yaml_file
 
 try:
@@ -87,6 +88,16 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         if self.validate_:
             self._validate_custom()
         return self
+
+    @pydantic.model_validator(mode="after")
+    def substitute_in_component(self):
+        component_class = type(self)
+        component_dumped = self.model_dump()
+        component_substituted = substitute_in_component(component_dumped, self.config)
+        if component_dumped == component_substituted:
+            return self
+        component_substituted = component_class(enrich=False, config=self.config, handlers=self.handlers, **component_substituted)
+        return component_substituted
 
     @computed_field
     @cached_classproperty
