@@ -69,7 +69,7 @@ class TestStreamsApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "streams-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                     }
@@ -215,10 +215,10 @@ class TestStreamsApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "streams-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
-                        "${error_topic_name}": TopicConfig(
+                        "streams-app-error-topic": TopicConfig(
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
@@ -237,8 +237,8 @@ class TestStreamsApp:
             "first-extra-topic": "extra-topic-1",
             "second-extra-topic": "extra-topic-2",
         }
-        assert streams_app.app.streams.output_topic == "${output_topic_name}"
-        assert streams_app.app.streams.error_topic == "${error_topic_name}"
+        assert streams_app.app.streams.output_topic == "streams-app-output-topic"
+        assert streams_app.app.streams.error_topic == "streams-app-error-topic"
 
     def test_weave_inputs_from_prev_component(
         self, config: KpopsConfig, handlers: ComponentHandlers
@@ -294,10 +294,10 @@ class TestStreamsApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "streams-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
-                        "${error_topic_name}": TopicConfig(
+                        "streams-app-error-topic": TopicConfig(
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
@@ -341,8 +341,8 @@ class TestStreamsApp:
                             "first-extra-topic": "extra-topic-1",
                             "second-extra-topic": "extra-topic-2",
                         },
-                        "outputTopic": "${output_topic_name}",
-                        "errorTopic": "${error_topic_name}",
+                        "outputTopic": "streams-app-output-topic",
+                        "errorTopic": "streams-app-error-topic",
                     },
                 },
                 HelmUpgradeInstallFlags(
@@ -405,7 +405,7 @@ class TestStreamsApp:
                         "nameOverride": STREAMS_APP_FULL_NAME,
                         "streams": {
                             "brokers": "fake-broker:9092",
-                            "outputTopic": "${output_topic_name}",
+                            "outputTopic": "streams-app-output-topic",
                             "deleteOutput": False,
                         },
                     },
@@ -461,7 +461,7 @@ class TestStreamsApp:
                         "nameOverride": STREAMS_APP_FULL_NAME,
                         "streams": {
                             "brokers": "fake-broker:9092",
-                            "outputTopic": "${output_topic_name}",
+                            "outputTopic": "streams-app-output-topic",
                             "deleteOutput": True,
                         },
                     },

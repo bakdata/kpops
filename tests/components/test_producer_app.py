@@ -65,7 +65,7 @@ class TestProducerApp:
                 "clean_schemas": True,
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "producer-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                     }
@@ -86,7 +86,7 @@ class TestProducerApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "producer-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
@@ -98,7 +98,7 @@ class TestProducerApp:
             },
         )
 
-        assert producer_app.app.streams.output_topic == "${output_topic_name}"
+        assert producer_app.app.streams.output_topic == "producer-app-output-topic"
         assert producer_app.app.streams.extra_output_topics == {
             "first-extra-topic": "extra-topic-1"
         }
@@ -133,7 +133,7 @@ class TestProducerApp:
                     "nameOverride": PRODUCER_APP_FULL_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "${output_topic_name}",
+                        "outputTopic": "producer-app-output-topic",
                     },
                 },
                 HelmUpgradeInstallFlags(
@@ -205,7 +205,7 @@ class TestProducerApp:
                         "nameOverride": PRODUCER_APP_FULL_NAME,
                         "streams": {
                             "brokers": "fake-broker:9092",
-                            "outputTopic": "${output_topic_name}",
+                            "outputTopic": "producer-app-output-topic",
                         },
                     },
                     HelmUpgradeInstallFlags(
@@ -262,7 +262,7 @@ class TestProducerApp:
                         "nameOverride": PRODUCER_APP_FULL_NAME,
                         "streams": {
                             "brokers": "fake-broker:9092",
-                            "outputTopic": "${output_topic_name}",
+                            "outputTopic": "producer-app-output-topic",
                         },
                     },
                     HelmUpgradeInstallFlags(
@@ -296,7 +296,7 @@ class TestProducerApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "producer-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
@@ -307,10 +307,13 @@ class TestProducerApp:
                 },
             },
         )
-        assert producer_app.output_topic == "${output_topic_name}"
+        assert producer_app.output_topic == "producer-app-output-topic"
         assert producer_app.extra_output_topics == {
             "first-extra-topic": "extra-topic-1"
         }
         assert producer_app.input_topics == []
         assert list(producer_app.inputs) == []
-        assert list(producer_app.outputs) == ["${output_topic_name}", "extra-topic-1"]
+        assert list(producer_app.outputs) == [
+            "producer-app-output-topic",
+            "extra-topic-1",
+        ]
