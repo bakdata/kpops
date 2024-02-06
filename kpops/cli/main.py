@@ -32,7 +32,7 @@ from kpops.utils.pydantic import YamlConfigSettingsSource
 from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
-    from kpops.components.base_components.pipeline_component import PipelineComponent
+    from kpops.components import PipelineComponent
 
 
 LOG_DIVIDER = "#" * 100
