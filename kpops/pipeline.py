@@ -342,27 +342,48 @@ class PipelineGenerator:
             validate=False,
             **component_data,
         )
+        component = self.enrich_component_with_env(component)
         # inflate & enrich components
         for inflated_component in component.inflate():  # TODO: recursively
-            if inflated_component.from_:
+            enriched_component = self.enrich_component_with_env(inflated_component)
+            if enriched_component.from_:
                 # read from specified components
                 for (
                     original_from_component_name,
                     from_topic,
-                ) in inflated_component.from_.components.items():
+                ) in enriched_component.from_.components.items():
                     original_from_component = find(original_from_component_name)
 
                     inflated_from_component = original_from_component.inflate()[-1]
                     resolved_from_component = find(inflated_from_component.name)
 
-                    inflated_component.weave_from_topics(
+                    enriched_component.weave_from_topics(
                         resolved_from_component.to, from_topic
                     )
             elif self.pipeline:
                 # read from previous component
                 prev_component = self.pipeline.last
-                inflated_component.weave_from_topics(prev_component.to)
-            self.pipeline.add(inflated_component)
+                enriched_component.weave_from_topics(prev_component.to)
+            self.pipeline.add(enriched_component)
+
+    def enrich_component_with_env(
+        self, component: PipelineComponent
+    ) -> PipelineComponent:
+        """Enrich a pipeline component with env-specific config.
+
+        :param component: Component to be enriched
+        :returns: Enriched component
+        """
+        env_component_as_dict = update_nested_pair(
+            self.env_components_index.get(component.name, {}),
+            component.model_dump(mode="json", by_alias=True),
+        )
+
+        return component.__class__(
+            config=self.config,
+            handlers=self.handlers,
+            **env_component_as_dict,
+        )
 
     @staticmethod
     def pipeline_filename_environment(pipeline_path: Path, environment: str) -> Path:
