@@ -863,4 +863,7 @@ class TestGenerate:
         )
         assert result.exit_code == 0, result.stdout
         enriched_pipeline: list = yaml.safe_load(result.stdout)
-        assert enriched_pipeline[1]["_resetter"]["app"]["labels"]["app-name"] == "${component.name}"
+        assert (
+            enriched_pipeline[1]["_resetter"]["app"]["label"]
+            == "inflated-connector-name"
+        )

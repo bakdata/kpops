@@ -104,6 +104,6 @@ class InflateBadly(StreamsApp):
             name="inflated-connector-name",
             config=self.config,
             handlers=self.handlers,
-            app={},
+            app={},  # type: ignore[reportArgumentType]
         )
         return [self, connector]
