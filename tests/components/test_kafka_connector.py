@@ -28,8 +28,8 @@ class TestKafkaConnector:
         return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
             topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component_type}-error-topic",
-                default_output_topic_name="${component_type}-output-topic",
+                default_error_topic_name="${component.type}-error-topic",
+                default_output_topic_name="${component.type}-output-topic",
             ),
             kafka_brokers="broker:9092",
             helm_diff_config=HelmDiffConfig(),
