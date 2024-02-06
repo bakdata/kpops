@@ -86,7 +86,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             values = self.extend_with_defaults(**values)
             component_class = self.__class__
             new_self = component_class(**values, enrich=False)
-            values = new_self.model_dump(mode="json", by_alias=True)
+            values = new_self.model_dump(mode="json")
             component_data = component_class.substitute_in_component(
                 new_self.config, **values
             )

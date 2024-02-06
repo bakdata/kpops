@@ -376,7 +376,7 @@ class PipelineGenerator:
         """
         env_component_as_dict = update_nested_pair(
             self.env_components_index.get(component.name, {}),
-            component.model_dump(mode="json", by_alias=True),
+            component.model_dump(mode="json"),
         )
 
         return component.__class__(

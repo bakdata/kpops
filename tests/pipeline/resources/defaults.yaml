@@ -8,7 +8,7 @@ kafka-app:
   app:
     streams:
       brokers: ${config.kafka_brokers}
-      schemaRegistryUrl: ${config.schema_registry.url}
+      schema_registry_url: ${config.schema_registry.url}
   version: "2.4.2"
 
 producer-app: {} # inherits from kafka-app
