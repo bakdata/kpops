@@ -11,7 +11,7 @@ from typer.testing import CliRunner
 
 import kpops
 from kpops.cli.main import FilterType, app
-from kpops.components import PipelineComponent
+from kpops.components import KafkaSinkConnector, PipelineComponent
 from kpops.pipeline import ParsingException, ValidationError
 
 runner = CliRunner()
@@ -869,18 +869,17 @@ class TestGenerate:
         )
 
     def test_substitution_in_resetter(self):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                str(RESOURCE_PATH / "resetter_values/pipeline_connector_only.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH / "resetter_values"),
-            ],
-            catch_exceptions=False,
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "resetter_values/pipeline_connector_only.yaml",
+            defaults=RESOURCE_PATH / "resetter_values",
         )
-        assert result.exit_code == 0, result.stdout
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        assert isinstance(pipeline.components[0], KafkaSinkConnector)
+        assert pipeline.components[0].name == "es-sink-connector"
+        assert pipeline.components[0]._resetter.name == "es-sink-connector"
+
+        enriched_pipeline: list = yaml.safe_load(pipeline.to_yaml())
+        assert enriched_pipeline[0]["name"] == "es-sink-connector"
+        assert enriched_pipeline[0]["_resetter"]["name"] == "es-sink-connector"
         assert (
             enriched_pipeline[0]["_resetter"]["app"]["label"]
             == "inflated-connector-name"
