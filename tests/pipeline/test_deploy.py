@@ -54,7 +54,7 @@ class TestDeploy:
         streams_app_mock_deploy.assert_called_once_with(True)
         helm_app_mock_deploy.assert_called_once_with(True)
 
-        # check reverse order
+        # check order
         assert mock_deploy.mock_calls == [
             mocker.call.producer_app_mock_deploy(True),
             mocker.call.streams_app_mock_deploy(True),
