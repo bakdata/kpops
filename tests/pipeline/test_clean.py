@@ -6,8 +6,6 @@ from pytest_mock import MockerFixture
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
-from kpops.component_handlers import ComponentHandlers
-from kpops.config import KpopsConfig
 
 runner = CliRunner()
 
@@ -16,18 +14,6 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class TestClean:
-    @pytest.fixture()
-    def config(self) -> KpopsConfig:
-        return KpopsConfig()
-
-    @pytest.fixture()
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=AsyncMock(),
-            connector_handler=AsyncMock(),
-            topic_handler=AsyncMock(),
-        )
-
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         async_mock = AsyncMock()
@@ -37,6 +23,18 @@ class TestClean:
         ).return_value
 
     # TODO: test using public Pipeline API
+    # @pytest.fixture()
+    # def config(self) -> KpopsConfig:
+    #     return KpopsConfig()
+
+    # @pytest.fixture()
+    # def handlers(self) -> ComponentHandlers:
+    #     return ComponentHandlers(
+    #         schema_handler=AsyncMock(),
+    #         connector_handler=AsyncMock(),
+    #         topic_handler=AsyncMock(),
+    #     )
+
     # @pytest.fixture()
     # def pipeline(self, config: KpopsConfig, handlers: ComponentHandlers) -> Pipeline:
     #     kwargs = {"config": config, "handlers": handlers}
