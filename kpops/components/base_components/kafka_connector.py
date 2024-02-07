@@ -153,14 +153,6 @@ class KafkaConnector(PipelineComponent, ABC):
         kwargs: dict[str, Any] = {}
         if self.resetter_namespace:
             kwargs["namespace"] = self.resetter_namespace
-        app = KafkaConnectorResetterValues(
-            connector_type=self._connector_type.value,
-            config=KafkaConnectorResetterConfig(
-                connector=self.full_name,
-                brokers=self.config.kafka_brokers,
-            ),
-            **self.resetter_values.model_dump(),
-        )
         return KafkaConnectorResetter(
             config=self.config,
             handlers=self.handlers,
@@ -168,7 +160,14 @@ class KafkaConnector(PipelineComponent, ABC):
             **self.model_dump(
                 exclude={"_resetter", "resetter_values", "resetter_namespace", "app"}
             ),
-            app=app,
+            app=KafkaConnectorResetterValues(
+                connector_type=self._connector_type.value,
+                config=KafkaConnectorResetterConfig(
+                    connector=self.full_name,
+                    brokers=self.config.kafka_brokers,
+                ),
+                **self.resetter_values.model_dump(),
+            ),
         )
 
     @override
