@@ -699,13 +699,13 @@ class TestGenerate:
             defaults=RESOURCE_PATH / "pipelines-with-graphs" / "simple-pipeline",
         )
         assert len(pipeline.components) == 2
-        assert len(pipeline.graph.nodes) == 3
-        assert len(pipeline.graph.edges) == 2
+        assert len(pipeline._graph.nodes) == 3
+        assert len(pipeline._graph.edges) == 2
         topic_nodes = [
-            node for node in pipeline.graph.nodes if node.startswith("topic-")
+            node for node in pipeline._graph.nodes if node.startswith("topic-")
         ]
         assert len(topic_nodes) == 1
-        assert len(pipeline.components) == len(pipeline.graph.nodes) - len(topic_nodes)
+        assert len(pipeline.components) == len(pipeline._graph.nodes) - len(topic_nodes)
 
     def test_validate_topic_and_component_same_name(self):
         pipeline = kpops.generate(
@@ -715,8 +715,8 @@ class TestGenerate:
             / "pipelines-with-graphs"
             / "same-topic-and-component-name",
         )
-        component, topic = list(pipeline.graph.nodes)
-        edges = list(pipeline.graph.edges)
+        component, topic = list(pipeline._graph.nodes)
+        edges = list(pipeline._graph.edges)
         assert component == topic.removeprefix("topic-")
         assert (component, topic) in edges
 
@@ -787,8 +787,8 @@ class TestGenerate:
 
         assert called_component.mock_calls == [
             mock.call("transaction-avro-producer-1"),
-            mock.call("s3-connector-1"),
             mock.call("transaction-joiner"),
+            mock.call("s3-connector-1"),
         ]
 
     @pytest.mark.asyncio()
