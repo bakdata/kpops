@@ -576,7 +576,7 @@
                     "description": "Output topic",
                     "title": "Outputtopic"
                 },
-                "schema_registry_url": {
+                "schemaRegistryUrl": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -587,7 +587,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
+                    "title": "Schemaregistryurl"
                 }
             },
             "required": [
@@ -992,7 +992,7 @@
                     "description": "Output topic",
                     "title": "Outputtopic"
                 },
-                "schema_registry_url": {
+                "schemaRegistryUrl": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -1003,7 +1003,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
+                    "title": "Schemaregistryurl"
                 }
             },
             "required": [
