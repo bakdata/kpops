@@ -39,7 +39,7 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
         return StreamsAppCleaner(
             config=self.config,
             handlers=self.handlers,
-            **self.model_dump(exclude={"_cleaner", "from_", "to"}),
+            **self.model_dump(exclude={"_cleaner"}),
         )
 
     @property
