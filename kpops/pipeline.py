@@ -372,7 +372,7 @@ class PipelineGenerator:
         :returns: Enriched component
         """
         env_component = self.env_components_index.get(component.name)
-        if not env_component:  # FIXME: adding this works for test_example but breaks test_substitute_in_component
+        if not env_component:
             return component
         env_component_as_dict = update_nested_pair(
             env_component,
