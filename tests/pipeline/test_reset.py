@@ -1,0 +1,90 @@
+from pathlib import Path
+from unittest.mock import AsyncMock, MagicMock
+
+import pytest
+from pytest_mock import MockerFixture
+from typer.testing import CliRunner
+
+from kpops.cli.main import app
+from kpops.component_handlers import ComponentHandlers
+from kpops.config import KpopsConfig
+
+runner = CliRunner()
+
+RESOURCE_PATH = Path(__file__).parent / "resources"
+
+
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
+class Testreset:
+    @pytest.fixture()
+    def config(self) -> KpopsConfig:
+        return KpopsConfig()
+
+    @pytest.fixture()
+    def handlers(self) -> ComponentHandlers:
+        return ComponentHandlers(
+            schema_handler=AsyncMock(),
+            connector_handler=AsyncMock(),
+            topic_handler=AsyncMock(),
+        )
+
+    @pytest.fixture(autouse=True)
+    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+        async_mock = AsyncMock()
+        return mocker.patch(
+            "kpops.components.base_components.helm_app.Helm",
+            return_value=async_mock,
+        ).return_value
+
+    @pytest.fixture(autouse=True)
+    def mock_reset(self, mocker: MockerFixture):
+        mocker.patch(
+            "kpops.components.base_components.pipeline_component.PipelineComponent",
+            "reset",
+        )
+        mocker.patch("kpops.components.base_components.helm_app.HelmApp", "reset")
+        mocker.patch(
+            "kpops.components.streams_bootstrap.producer.producer_app.ProducerApp.reset",
+        )
+
+    def test_order(self, mocker: MockerFixture):
+        producer_app_mock_reset = mocker.patch(
+            "kpops.components.streams_bootstrap.producer.producer_app.ProducerApp.reset",
+        )
+        streams_app_mock_reset = mocker.patch(
+            "kpops.components.streams_bootstrap.streams.streams_app.StreamsApp.reset",
+        )
+        kafka_sink_connector_mock_reset = mocker.patch(
+            "kpops.components.base_components.kafka_connector.KafkaSinkConnector.reset",
+        )
+        mock_reset = mocker.AsyncMock()
+        mock_reset.attach_mock(producer_app_mock_reset, "producer_app_mock_reset")
+        mock_reset.attach_mock(streams_app_mock_reset, "streams_app_mock_reset")
+        mock_reset.attach_mock(
+            kafka_sink_connector_mock_reset, "kafka_sink_connector_mock_reset"
+        )
+
+        result = runner.invoke(
+            app,
+            [
+                "reset",
+                str(RESOURCE_PATH / "simple-pipeline" / "pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0, result.stdout
+
+        # check called
+        producer_app_mock_reset.assert_called_once_with(True)
+        streams_app_mock_reset.assert_called_once_with(True)
+        kafka_sink_connector_mock_reset.assert_called_once_with(True)
+
+        # check reverse order
+        assert mock_reset.mock_calls == [
+            mocker.call.kafka_sink_connector_mock_reset(True),
+            mocker.call.streams_app_mock_reset(True),
+            mocker.call.producer_app_mock_reset(True),
+        ]
