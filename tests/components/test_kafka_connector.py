@@ -73,7 +73,7 @@ class TestKafkaConnector:
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ) -> KafkaConnector:
-        return KafkaConnector(
+        return KafkaConnector(  # HACK: not supposed to be instantiated, because ABC
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,
