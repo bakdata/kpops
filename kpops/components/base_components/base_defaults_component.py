@@ -76,7 +76,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     )
     validate_: SkipJsonSchema[bool] = Field(
         validation_alias=AliasChoices("validate", "validate_"),
-        default=True,
+        default=False,
         description=describe_attr("validate", __doc__),
         exclude=True,
     )
@@ -92,6 +92,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             values = cls.substitute_in_component(new_self.config, **values)
             self.__init__(
                 enrich=False,
+                validate=True,
                 config=new_self.config,
                 handlers=new_self.handlers,
                 **values,
