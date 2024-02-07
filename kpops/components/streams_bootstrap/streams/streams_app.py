@@ -1,6 +1,6 @@
 from functools import cached_property
 
-from pydantic import Field
+from pydantic import Field, computed_field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import (
@@ -33,12 +33,13 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
         description=describe_attr("app", __doc__),
     )
 
+    @computed_field
     @cached_property
     def _cleaner(self) -> StreamsAppCleaner:
         return StreamsAppCleaner(
             config=self.config,
             handlers=self.handlers,
-            **self.model_dump(),
+            **self.model_dump(exclude={"_cleaner"}),
         )
 
     @property
