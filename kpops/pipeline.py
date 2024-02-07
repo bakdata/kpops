@@ -203,14 +203,14 @@ class Pipeline(BaseModel):
 
 
 def create_env_components_index(
-    environment_components: list[dict],
-) -> dict[str, dict]:
+    environment_components: list[dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
     """Create an index for all registered components in the project.
 
     :param environment_components: List of all components to be included
     :return: component index
     """
-    index: dict[str, dict] = {}
+    index: dict[str, dict[str, Any]] = {}
     for component in environment_components:
         if "type" not in component or "name" not in component:
             msg = "To override components per environment, every component should at least have a type and a name."
@@ -303,7 +303,7 @@ class PipelineGenerator:
                     raise ParsingException from ex
 
     def apply_component(
-        self, component_class: type[PipelineComponent], component_data: dict
+        self, component_class: type[PipelineComponent], component_data: dict[str, Any]
     ) -> None:
         """Instantiate, enrich and inflate pipeline component.
 
