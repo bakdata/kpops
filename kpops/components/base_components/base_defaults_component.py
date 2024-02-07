@@ -206,7 +206,7 @@ def get_defaults_file_paths(
     default_paths = []
 
     if not pipeline_path.is_file():
-        message = f"No pipeline.yaml found in directory: {pipeline_path.parent}"
+        message = f"{pipeline_path} is not a valid pipeline file."
         raise FileNotFoundError(message)
 
     path = pipeline_path.resolve()

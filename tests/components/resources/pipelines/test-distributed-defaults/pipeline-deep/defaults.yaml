@@ -1,6 +1,6 @@
 helm-app:
   name: ${component.type}
-  namespace: example-namespace
+  namespace: namespace-to-override-it-all
 
 streams-bootstrap:
   app:

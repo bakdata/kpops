@@ -163,7 +163,7 @@ class TestHelmApp:
         app_values: HelmAppValues,
     ):
         class AppWithLocalChart(HelmApp):
-            repo_config: HelmRepoConfig | None = None
+            repo_config: None = None
 
             @property
             @override
