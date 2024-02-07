@@ -86,7 +86,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             cls = self.__class__
             values = cls.extend_with_defaults(**values)
             new_self = cls(**values, enrich=False)
-            values = new_self.model_dump(mode="json")
+            values = new_self.model_dump(mode="json", by_alias=True)
             values = cls.substitute_in_component(new_self.config, **values)
             # HACK: why is double substitution necessary for test_substitute_in_component
             values = cls.substitute_in_component(new_self.config, **values)
