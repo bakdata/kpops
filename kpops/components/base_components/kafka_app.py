@@ -54,6 +54,9 @@ class KafkaAppValues(HelmAppValues):
 class KafkaAppCleaner(StreamsBootstrap):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
 
+    from_: None = None
+    to: None = None
+
     @property
     @override
     def helm_chart(self) -> str:
