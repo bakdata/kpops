@@ -26,6 +26,7 @@ PRODUCER_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
 )
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestProducerApp:
     def test_release_name(self):
         assert PRODUCER_APP_CLEAN_RELEASE_NAME.endswith("-clean")

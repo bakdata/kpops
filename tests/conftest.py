@@ -4,11 +4,12 @@ from unittest import mock
 
 import pytest
 
+from kpops.utils.environment import ENV, Environment
 from kpops.utils.yaml import load_yaml_file
 
 
 @pytest.fixture()
-def mock_env() -> Iterator[os._Environ[str]]:
+def mock_os_env() -> Iterator[os._Environ[str]]:
     """Clear ``os.environ``.
 
     :yield: ``os.environ``. Prevents the function and the mock
@@ -16,6 +17,17 @@ def mock_env() -> Iterator[os._Environ[str]]:
     """
     with mock.patch.dict(os.environ, clear=True):
         yield os.environ
+
+
+@pytest.fixture()
+def mock_env() -> Iterator[Environment]:
+    """Clear KPOps environment.
+
+    :yield: ``Environment``. Prevents the function and the mock
+        context from exiting.
+    """
+    ENV.clear()
+    yield ENV
 
 
 @pytest.fixture()

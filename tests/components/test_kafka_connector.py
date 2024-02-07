@@ -22,6 +22,7 @@ CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 RESETTER_NAMESPACE = "test-namespace"
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestKafkaConnector:
     @pytest.fixture()
     def config(self) -> KpopsConfig:

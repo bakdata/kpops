@@ -31,6 +31,7 @@ STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
 )
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestStreamsApp:
     def test_release_name(self):
         assert STREAMS_APP_CLEAN_RELEASE_NAME.endswith("-clean")
