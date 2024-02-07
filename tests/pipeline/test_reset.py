@@ -6,8 +6,6 @@ from pytest_mock import MockerFixture
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
-from kpops.component_handlers import ComponentHandlers
-from kpops.config import KpopsConfig
 
 runner = CliRunner()
 
@@ -16,18 +14,6 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class Testreset:
-    @pytest.fixture()
-    def config(self) -> KpopsConfig:
-        return KpopsConfig()
-
-    @pytest.fixture()
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=AsyncMock(),
-            connector_handler=AsyncMock(),
-            topic_handler=AsyncMock(),
-        )
-
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         async_mock = AsyncMock()
@@ -35,17 +21,6 @@ class Testreset:
             "kpops.components.base_components.helm_app.Helm",
             return_value=async_mock,
         ).return_value
-
-    @pytest.fixture(autouse=True)
-    def mock_reset(self, mocker: MockerFixture):
-        mocker.patch(
-            "kpops.components.base_components.pipeline_component.PipelineComponent",
-            "reset",
-        )
-        mocker.patch("kpops.components.base_components.helm_app.HelmApp", "reset")
-        mocker.patch(
-            "kpops.components.streams_bootstrap.producer.producer_app.ProducerApp.reset",
-        )
 
     def test_order(self, mocker: MockerFixture):
         producer_app_mock_reset = mocker.patch(

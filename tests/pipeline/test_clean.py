@@ -36,17 +36,6 @@ class TestClean:
             return_value=async_mock,
         ).return_value
 
-    @pytest.fixture(autouse=True)
-    def mock_clean(self, mocker: MockerFixture):
-        mocker.patch(
-            "kpops.components.base_components.pipeline_component.PipelineComponent",
-            "clean",
-        )
-        mocker.patch("kpops.components.base_components.helm_app.HelmApp", "clean")
-        mocker.patch(
-            "kpops.components.streams_bootstrap.producer.producer_app.ProducerApp.clean",
-        )
-
     # TODO: test using public Pipeline API
     # @pytest.fixture()
     # def pipeline(self, config: KpopsConfig, handlers: ComponentHandlers) -> Pipeline:
