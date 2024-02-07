@@ -335,7 +335,6 @@ class PipelineGenerator:
                 raise ValueError(msg) from exc
 
         component = component_class(
-            validate=False,
             config=self.config,
             handlers=self.handlers,
             **component_data,
@@ -380,7 +379,6 @@ class PipelineGenerator:
         )
 
         return component.__class__(
-            validate=False,
             config=self.config,
             handlers=self.handlers,
             **env_component_as_dict,
