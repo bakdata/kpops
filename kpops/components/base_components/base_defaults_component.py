@@ -85,16 +85,16 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         if values.get("enrich", True):
             cls = self.__class__
             values = cls.extend_with_defaults(**values)
-            new_self = cls(**values, enrich=False)
-            values = new_self.model_dump(mode="json", by_alias=True)
-            values = cls.substitute_in_component(new_self.config, **values)
+            tmp_self = cls(**values, enrich=False)
+            values = tmp_self.model_dump(mode="json", by_alias=True)
+            values = cls.substitute_in_component(tmp_self.config, **values)
             # HACK: why is double substitution necessary for test_substitute_in_component
-            values = cls.substitute_in_component(new_self.config, **values)
+            values = cls.substitute_in_component(tmp_self.config, **values)
             self.__init__(
                 enrich=False,
                 validate=True,
-                config=new_self.config,
-                handlers=new_self.handlers,
+                config=tmp_self.config,
+                handlers=tmp_self.handlers,
                 **values,
             )
         else:
