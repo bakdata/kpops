@@ -1,3 +1,4 @@
+import json
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -48,7 +49,6 @@ def substitute_nested(input: str, **kwargs) -> str:
     """Allow for multiple substitutions to be passed.
 
     Will make as many passes as needed to substitute all possible placeholders.
-    A ceiling is set to avoid infinite loops.
 
     HINT: If :param input: is a ``Mapping`` that you converted into ``str``,
     You can pass it as a string, and as a ``Mapping`` to enable self-reference.
@@ -63,7 +63,7 @@ def substitute_nested(input: str, **kwargs) -> str:
         }
     >>> input = "${a}, ${b}, ${c}, ${d}"
     >>> print("Substituted string: " + substitute_nested(input, **substitution))
-    0, 0, 0, 0
+    "0, 0, 0, 0"
 
     :param input: The raw input containing $-placeholders
     :param **kwargs: Substitutions
@@ -72,6 +72,7 @@ def substitute_nested(input: str, **kwargs) -> str:
     """
     if not kwargs:
         return input
+    kwargs = substitute_in_self(kwargs)
     old_str, new_str = "", substitute(input, kwargs)
     steps = set()
     while new_str not in steps:
@@ -81,6 +82,26 @@ def substitute_nested(input: str, **kwargs) -> str:
         msg = "An infinite loop condition detected. Check substitution variables."
         raise ValueError(msg)
     return old_str
+
+
+def substitute_in_self(input: Mapping[str, Any]) -> dict[str, Any]:
+    """Substitute all self-references in mapping.
+
+    Will make as many passes as needed to substitute all possible placeholders.
+
+    :param input: Mapping containing $-placeholders
+    :raises Exception: An infinite loop condition detected. Check substitution variables.
+    :return: Substituted input mapping as dict
+    """
+    old_str, new_str = "", substitute(json.dumps(input), input)
+    steps = set()
+    while new_str not in steps:
+        steps.add(new_str)
+        old_str, new_str = new_str, substitute(new_str, json.loads(new_str))
+    if new_str != old_str:
+        msg = "An infinite loop condition detected. Check substitution variables."
+        raise ValueError(msg)
+    return json.loads(old_str)
 
 
 def print_yaml(data: Mapping | str, *, substitution: dict | None = None) -> None:
