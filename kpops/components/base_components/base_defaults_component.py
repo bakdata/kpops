@@ -90,7 +90,6 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             values = cls.substitute_in_component(new_self.config, **values)
             self.__init__(
                 enrich=False,
-                validate_=True,
                 config=new_self.config,
                 handlers=new_self.handlers,
                 **values,
