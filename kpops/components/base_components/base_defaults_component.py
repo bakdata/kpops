@@ -100,46 +100,6 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         else:
             super().__init__(**values)
 
-    # @pydantic.model_validator(mode="before")
-    # @classmethod
-    # def enrich_component(cls, values: dict[str, Any]) -> dict[str, Any]:
-    #     if values.get("enrich", True):
-    #         values = cls.extend_with_defaults(**values)
-    #     return values
-
-    # @pydantic.model_validator(mode="after")
-    # def substitute_component(self) -> Self:
-    #     # env_component_as_dict = update_nested_pair(
-    #     #     self.env_components_index.get(self.name, {}),
-    #     #     self.model_dump(mode="json", by_alias=True),
-    #     # )
-    #     if (
-    #         hasattr(self, "app") and hasattr(self.app, "label")
-    #         # and self._resetter.app.label == "es-sink-connector"
-    #     ):
-    #         resetter_label = self.app.label
-    #         pass
-    #     if (
-    #         hasattr(self, "_resetter")
-    #         # and self._resetter.app.label == "es-sink-connector"
-    #     ):
-    #         connector_label = self._resetter.app.label
-    #         pass
-    #     if self.enrich:
-    #         values = self.model_dump(mode="json", by_alias=True)
-    #         component_data = self.substitute_in_component(self.config, **values)
-    #         component_class = self.__class__
-    #         new_self = component_class(
-    #             enrich=False,
-    #             validate_=True,
-    #             config=self.config,
-    #             handlers=self.handlers,
-    #             **component_data,
-    #         )
-    #         # del self
-    #         return new_self
-    #     return self
-
     @pydantic.model_validator(mode="after")
     def validate_component(self) -> Self:
         if not self.enrich and self.validate_:
