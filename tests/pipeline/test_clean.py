@@ -58,15 +58,13 @@ class TestClean:
         streams_app_mock_clean = mocker.patch(
             "kpops.components.streams_bootstrap.streams.streams_app.StreamsApp.clean",
         )
-        kafka_sink_connector_mock_clean = mocker.patch(
-            "kpops.components.base_components.kafka_connector.KafkaSinkConnector.clean",
+        helm_app_mock_clean = mocker.patch(
+            "kpops.components.base_components.helm_app.HelmApp.clean",
         )
         mock_clean = mocker.AsyncMock()
         mock_clean.attach_mock(producer_app_mock_clean, "producer_app_mock_clean")
         mock_clean.attach_mock(streams_app_mock_clean, "streams_app_mock_clean")
-        mock_clean.attach_mock(
-            kafka_sink_connector_mock_clean, "kafka_sink_connector_mock_clean"
-        )
+        mock_clean.attach_mock(helm_app_mock_clean, "helm_app_mock_clean")
 
         result = runner.invoke(
             app,
@@ -84,11 +82,11 @@ class TestClean:
         # check called
         producer_app_mock_clean.assert_called_once_with(True)
         streams_app_mock_clean.assert_called_once_with(True)
-        kafka_sink_connector_mock_clean.assert_called_once_with(True)
+        helm_app_mock_clean.assert_called_once_with(True)
 
         # check reverse order
         assert mock_clean.mock_calls == [
-            mocker.call.kafka_sink_connector_mock_clean(True),
+            mocker.call.helm_app_mock_clean(True),
             mocker.call.streams_app_mock_clean(True),
             mocker.call.producer_app_mock_clean(True),
         ]

@@ -1,3 +1,6 @@
 - type: producer-app
+
 - type: streams-app
-- type: kafka-sink-connector
+
+- type: helm-app
+  app: {}

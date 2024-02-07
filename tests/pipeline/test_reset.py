@@ -15,11 +15,10 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class TestReset:
     @pytest.fixture(autouse=True)
-    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        async_mock = AsyncMock()
+    def mock_helm(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
             "kpops.components.base_components.helm_app.Helm",
-            return_value=async_mock,
+            return_value=AsyncMock(),
         ).return_value
 
     def test_order(self, mocker: MockerFixture):
@@ -29,15 +28,13 @@ class TestReset:
         streams_app_mock_reset = mocker.patch(
             "kpops.components.streams_bootstrap.streams.streams_app.StreamsApp.reset",
         )
-        kafka_sink_connector_mock_reset = mocker.patch(
-            "kpops.components.base_components.kafka_connector.KafkaSinkConnector.reset",
+        helm_app_mock_reset = mocker.patch(
+            "kpops.components.base_components.helm_app.HelmApp.reset",
         )
         mock_reset = mocker.AsyncMock()
         mock_reset.attach_mock(producer_app_mock_reset, "producer_app_mock_reset")
         mock_reset.attach_mock(streams_app_mock_reset, "streams_app_mock_reset")
-        mock_reset.attach_mock(
-            kafka_sink_connector_mock_reset, "kafka_sink_connector_mock_reset"
-        )
+        mock_reset.attach_mock(helm_app_mock_reset, "helm_app_mock_reset")
 
         result = runner.invoke(
             app,
@@ -55,11 +52,11 @@ class TestReset:
         # check called
         producer_app_mock_reset.assert_called_once_with(True)
         streams_app_mock_reset.assert_called_once_with(True)
-        kafka_sink_connector_mock_reset.assert_called_once_with(True)
+        helm_app_mock_reset.assert_called_once_with(True)
 
         # check reverse order
         assert mock_reset.mock_calls == [
-            mocker.call.kafka_sink_connector_mock_reset(True),
+            mocker.call.helm_app_mock_reset(True),
             mocker.call.streams_app_mock_reset(True),
             mocker.call.producer_app_mock_reset(True),
         ]
