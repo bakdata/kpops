@@ -10,7 +10,6 @@ parameters.
 | command           |    ✅    |       -       | string | KPOps command to run. generate, deploy, destroy, reset, clean are possible values. Flags such as --dry-run and --execute need to be specified |
 | pipeline          |    ✅    |       -       | string | Pipeline to run by KPOps                                                                                                                      |
 | working-directory |    ❌    |       .       | string | root directory used by KPOps to run pipelines                                                                                                 |
-| defaults          |    ❌    |       -       | string | defaults folder path                                                                                                                          |
 | config            |    ❌    |       -       | string | Directory containing the config*.yaml file(s)                                                                                                 |
 | environment       |    ❌    |       -       | string | Environment to run KPOps in                                                                                                                   |
 | components        |    ❌    |       -       | string | components package path                                                                                                                       |

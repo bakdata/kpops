@@ -11,7 +11,7 @@ from typer.testing import CliRunner
 
 import kpops
 from kpops.cli.main import FilterType, app
-from kpops.components import PipelineComponent
+from kpops.components import KafkaSinkConnector, PipelineComponent
 from kpops.pipeline import ParsingException, ValidationError
 
 runner = CliRunner()
@@ -649,10 +649,10 @@ class TestGenerate:
             RESOURCE_PATH / "pipelines-with-graphs/simple-pipeline/pipeline.yaml",
         )
         assert len(pipeline.components) == 2
-        assert len(pipeline.graph.nodes) == 3
-        assert len(pipeline.graph.edges) == 2
+        assert len(pipeline._graph.nodes) == 3
+        assert len(pipeline._graph.edges) == 2
         node_components = list(
-            filter(lambda node_id: "component" in node_id, pipeline.graph.nodes)
+            filter(lambda node_id: "component" in node_id, pipeline._graph.nodes)
         )
         assert len(pipeline.components) == len(node_components)
 
@@ -661,8 +661,8 @@ class TestGenerate:
             RESOURCE_PATH
             / "pipelines-with-graphs/same-topic-and-component-name/pipeline.yaml",
         )
-        component, topic = list(pipeline.graph.nodes)
-        edges = list(pipeline.graph.edges)
+        component, topic = list(pipeline._graph.nodes)
+        edges = list(pipeline._graph.edges)
         assert component == f"component-{topic}"
         assert (component, topic) in edges
 
@@ -731,8 +731,8 @@ class TestGenerate:
 
         assert called_component.mock_calls == [
             mock.call("transaction-avro-producer-1"),
-            mock.call("s3-connector-1"),
             mock.call("transaction-joiner"),
+            mock.call("s3-connector-1"),
         ]
 
     @pytest.mark.asyncio()
@@ -791,3 +791,34 @@ class TestGenerate:
             enriched_pipeline[0]["name"]
             == "in-order-to-have-len-fifty-two-name-should-end--here"
         )
+
+    def test_substitution_in_inflated_component(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "resetter_values/pipeline.yaml"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline[1]["_resetter"]["app"]["label"]
+            == "inflated-connector-name"
+        )
+
+    def test_substitution_in_resetter(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "resetter_values/pipeline_connector_only.yaml",
+        )
+        assert isinstance(pipeline.components[0], KafkaSinkConnector)
+        assert pipeline.components[0].name == "es-sink-connector"
+        assert pipeline.components[0]._resetter.name == "es-sink-connector"
+        assert hasattr(pipeline.components[0]._resetter.app, "label")
+        assert pipeline.components[0]._resetter.app.label == "es-sink-connector"  # type: ignore[reportGeneralTypeIssues]
+
+        enriched_pipeline: list = yaml.safe_load(pipeline.to_yaml())
+        assert enriched_pipeline[0]["name"] == "es-sink-connector"
+        assert enriched_pipeline[0]["_resetter"]["name"] == "es-sink-connector"
+        assert enriched_pipeline[0]["_resetter"]["app"]["label"] == "es-sink-connector"

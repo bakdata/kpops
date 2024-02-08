@@ -23,14 +23,15 @@ CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 RESETTER_NAMESPACE = "test-namespace"
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestKafkaConnector:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
         ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipeline.yaml")
         return KpopsConfig(
             topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component_type}-error-topic",
-                default_output_topic_name="${component_type}-output-topic",
+                default_error_topic_name="${component.type}-error-topic",
+                default_output_topic_name="${component.type}-output-topic",
             ),
             kafka_brokers="broker:9092",
             helm_diff_config=HelmDiffConfig(),
@@ -75,7 +76,7 @@ class TestKafkaConnector:
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ) -> KafkaConnector:
-        return KafkaConnector(
+        return KafkaConnector(  # HACK: not supposed to be instantiated, because ABC
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,

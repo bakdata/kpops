@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 from abc import ABC
 from collections.abc import Sequence
@@ -21,11 +22,16 @@ from pydantic.json_schema import SkipJsonSchema
 from kpops.component_handlers import ComponentHandlers
 from kpops.config import KpopsConfig
 from kpops.utils import cached_classproperty
-from kpops.utils.dict_ops import update_nested, update_nested_pair
+from kpops.utils.dict_ops import (
+    generate_substitution,
+    update_nested,
+    update_nested_pair,
+)
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
 from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
-from kpops.utils.yaml import load_yaml_file
+from kpops.utils.types import JsonType
+from kpops.utils.yaml import load_yaml_file, substitute_nested
 
 try:
     from typing import Self
@@ -53,7 +59,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         ignored_types=(cached_property, cached_classproperty),
     )
     enrich: SkipJsonSchema[bool] = Field(
-        default=False,
+        default=True,
         description=describe_attr("enrich", __doc__),
         exclude=True,
     )
@@ -69,21 +75,33 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     )
     validate_: SkipJsonSchema[bool] = Field(
         validation_alias=AliasChoices("validate", "validate_"),
-        default=True,
+        default=False,
         description=describe_attr("validate", __doc__),
         exclude=True,
     )
 
-    @pydantic.model_validator(mode="before")
-    @classmethod
-    def enrich_component(cls, values: dict[str, Any]) -> dict[str, Any]:
+    def __init__(self, **values: Any) -> None:
         if values.get("enrich", True):
+            cls = self.__class__
             values = cls.extend_with_defaults(**values)
-        return values
+            tmp_self = cls(**values, enrich=False)
+            values = tmp_self.model_dump(mode="json", by_alias=True)
+            values = cls.substitute_in_component(tmp_self.config, **values)
+            # HACK: why is double substitution necessary for test_substitute_in_component
+            values = cls.substitute_in_component(tmp_self.config, **values)
+            self.__init__(
+                enrich=False,
+                validate=True,
+                config=tmp_self.config,
+                handlers=tmp_self.handlers,
+                **values,
+            )
+        else:
+            super().__init__(**values)
 
     @pydantic.model_validator(mode="after")
     def validate_component(self) -> Self:
-        if self.validate_:
+        if not self.enrich and self.validate_:
             self._validate_custom()
         return self
 
@@ -111,6 +129,42 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
                 yield base
 
         return tuple(gen_parents())
+
+    @classmethod
+    def substitute_in_component(
+        cls, config: KpopsConfig, **component_data: Any
+    ) -> dict[str, Any]:
+        """Substitute all $-placeholders in a component in dict representation.
+
+        :param component_as_dict: Component represented as dict
+        :return: Updated component
+        """
+        # Leftover variables that were previously introduced in the component by the substitution
+        # functions, still hardcoded, because of their names.
+        # TODO(Ivan Yordanov): Get rid of them
+        substitution_hardcoded: dict[str, JsonType] = {
+            "error_topic_name": config.topic_name_config.default_error_topic_name,
+            "output_topic_name": config.topic_name_config.default_output_topic_name,
+        }
+        component_substitution = generate_substitution(
+            component_data,
+            "component",
+            substitution_hardcoded,
+            separator=".",
+        )
+        substitution = generate_substitution(
+            config.model_dump(mode="json"),
+            "config",
+            existing_substitution=component_substitution,
+            separator=".",
+        )
+
+        return json.loads(
+            substitute_nested(
+                json.dumps(component_data),
+                **update_nested_pair(substitution, ENV),
+            )
+        )
 
     @classmethod
     def extend_with_defaults(cls, config: KpopsConfig, **kwargs: Any) -> dict[str, Any]:

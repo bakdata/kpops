@@ -1,0 +1,11 @@
+helm-app:
+  name: "${component.type}"
+  namespace: "namespace"
+  app:
+    label: ${component.name}
+    streams:
+      brokers: ${config.kafka_brokers}
+
+kafka-sink-connector:
+  app:
+    "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector"

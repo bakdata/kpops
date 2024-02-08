@@ -26,6 +26,7 @@ PRODUCER_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
 )
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestProducerApp:
     def test_release_name(self):
         assert PRODUCER_APP_CLEAN_RELEASE_NAME.endswith("-clean")
@@ -43,8 +44,8 @@ class TestProducerApp:
         ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipeline.yaml")
         return KpopsConfig(
             topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component_type}-error-topic",
-                default_output_topic_name="${component_type}-output-topic",
+                default_error_topic_name="${component.type}-error-topic",
+                default_output_topic_name="${component.type}-output-topic",
             ),
             pipeline_base_dir=PIPELINE_BASE_DIR,
         )
@@ -66,13 +67,19 @@ class TestProducerApp:
                 "clean_schemas": True,
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "producer-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                     }
                 },
             },
         )
+
+    def test_cleaner_inheritance(self, producer_app: ProducerApp):
+        cleaner = producer_app._cleaner
+        assert cleaner
+        assert not hasattr(cleaner, "_cleaner")
+        assert cleaner.app == producer_app.app
 
     def test_output_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
@@ -87,7 +94,7 @@ class TestProducerApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "producer-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
@@ -99,7 +106,7 @@ class TestProducerApp:
             },
         )
 
-        assert producer_app.app.streams.output_topic == "${output_topic_name}"
+        assert producer_app.app.streams.output_topic == "producer-app-output-topic"
         assert producer_app.app.streams.extra_output_topics == {
             "first-extra-topic": "extra-topic-1"
         }
@@ -134,7 +141,7 @@ class TestProducerApp:
                     "nameOverride": PRODUCER_APP_FULL_NAME,
                     "streams": {
                         "brokers": "fake-broker:9092",
-                        "outputTopic": "${output_topic_name}",
+                        "outputTopic": "producer-app-output-topic",
                     },
                 },
                 HelmUpgradeInstallFlags(
@@ -206,7 +213,7 @@ class TestProducerApp:
                         "nameOverride": PRODUCER_APP_FULL_NAME,
                         "streams": {
                             "brokers": "fake-broker:9092",
-                            "outputTopic": "${output_topic_name}",
+                            "outputTopic": "producer-app-output-topic",
                         },
                     },
                     HelmUpgradeInstallFlags(
@@ -263,7 +270,7 @@ class TestProducerApp:
                         "nameOverride": PRODUCER_APP_FULL_NAME,
                         "streams": {
                             "brokers": "fake-broker:9092",
-                            "outputTopic": "${output_topic_name}",
+                            "outputTopic": "producer-app-output-topic",
                         },
                     },
                     HelmUpgradeInstallFlags(
@@ -297,7 +304,7 @@ class TestProducerApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "producer-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
@@ -308,10 +315,13 @@ class TestProducerApp:
                 },
             },
         )
-        assert producer_app.output_topic == "${output_topic_name}"
+        assert producer_app.output_topic == "producer-app-output-topic"
         assert producer_app.extra_output_topics == {
             "first-extra-topic": "extra-topic-1"
         }
         assert producer_app.input_topics == []
         assert list(producer_app.inputs) == []
-        assert list(producer_app.outputs) == ["${output_topic_name}", "extra-topic-1"]
+        assert list(producer_app.outputs) == [
+            "producer-app-output-topic",
+            "extra-topic-1",
+        ]

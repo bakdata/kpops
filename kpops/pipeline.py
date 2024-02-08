@@ -1,21 +1,24 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
-from collections.abc import Callable, Iterable
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, TypeAlias
+from typing import TYPE_CHECKING, Any, TypeAlias
 
 import networkx as nx
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, SerializeAsAny, computed_field
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    SerializeAsAny,
+    computed_field,
+)
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.dict_ops import generate_substitution, update_nested_pair
+from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.environment import ENV
-from kpops.utils.types import JsonType
-from kpops.utils.yaml import load_yaml_file, substitute_nested
+from kpops.utils.yaml import load_yaml_file
 
 PIPELINE_PATH = "pipeline_path"
 
@@ -44,8 +47,8 @@ ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
 class Pipeline(BaseModel):
     """Pipeline representation."""
 
-    graph: nx.DiGraph = Field(default_factory=nx.DiGraph, exclude=True)
     _component_index: dict[str, PipelineComponent] = {}
+    _graph: nx.DiGraph = nx.DiGraph()
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -95,6 +98,9 @@ class Pipeline(BaseModel):
             if not predicate(component):
                 self.remove(component.id)
 
+    def validate(self) -> None:
+        self.__validate_graph()
+
     def to_yaml(self) -> str:
         return yaml.dump(
             self.model_dump(mode="json", by_alias=True, exclude_none=True)["components"]
@@ -103,42 +109,33 @@ class Pipeline(BaseModel):
     def build_execution_graph(
         self, runner: Callable[[PipelineComponent], Coroutine], /, reverse: bool = False
     ) -> Awaitable:
-        sub_graph_nodes = self.__collect_graph_nodes(
-            reversed(self.components) if reverse else self.components
-        )
-
         async def run_parallel_tasks(coroutines: list[Coroutine]) -> None:
             tasks = []
             for coro in coroutines:
                 tasks.append(asyncio.create_task(coro))
             await asyncio.gather(*tasks)
 
-        async def run_graph_tasks(pending_tasks: list[Awaitable]):
+        async def run_graph_tasks(pending_tasks: list[Awaitable]) -> None:
             for pending_task in pending_tasks:
                 await pending_task
 
-        sub_graph = self.graph.subgraph(sub_graph_nodes)
-        transformed_graph = sub_graph.copy()
+        graph: nx.DiGraph = self._graph.copy()  # pyright: ignore[reportAssignmentType, reportGeneralTypeIssues] imprecise type hint in networkx
 
-        root_node = "root_node_bfs"
         # We add an extra node to the graph, connecting all the leaf nodes to it
         # in that way we make this node the root of the graph, avoiding backtracking
-        transformed_graph.add_node(root_node)
+        root_node = "root_node_bfs"
+        graph.add_node(root_node)
 
-        for node in sub_graph:
-            predecessors = list(sub_graph.predecessors(node))
+        for node in graph:
+            predecessors = list(graph.predecessors(node))
             if not predecessors:
-                transformed_graph.add_edge(root_node, node)
+                graph.add_edge(root_node, node)
 
-        layers_graph: list[list[str]] = list(
-            nx.bfs_layers(transformed_graph, root_node)
-        )
+        layers_graph: list[list[str]] = list(nx.bfs_layers(graph, root_node))
 
         sorted_tasks = []
         for layer in layers_graph[1:]:
-            parallel_tasks = self.__get_parallel_tasks_from(layer, runner)
-
-            if parallel_tasks:
+            if parallel_tasks := self.__get_parallel_tasks_from(layer, runner):
                 sorted_tasks.append(run_parallel_tasks(parallel_tasks))
 
         if reverse:
@@ -163,7 +160,7 @@ class Pipeline(BaseModel):
         return len(self.components)
 
     def __add_to_graph(self, component: PipelineComponent):
-        self.graph.add_node(component.id)
+        self._graph.add_node(component.id)
 
         for input_topic in component.inputs:
             self.__add_input(input_topic, component.id)
@@ -171,12 +168,13 @@ class Pipeline(BaseModel):
         for output_topic in component.outputs:
             self.__add_output(output_topic, component.id)
 
-    @staticmethod
-    def __collect_graph_nodes(components: Iterable[PipelineComponent]) -> Iterator[str]:
-        for component in components:
-            yield component.id
-            yield from component.inputs
-            yield from component.outputs
+    def __add_output(self, topic_id: str, source: str) -> None:
+        self._graph.add_node(topic_id)
+        self._graph.add_edge(source, topic_id)
+
+    def __add_input(self, topic_id: str, target: str) -> None:
+        self._graph.add_node(topic_id)
+        self._graph.add_edge(topic_id, target)
 
     def __get_parallel_tasks_from(
         self, layer: list[str], runner: Callable[[PipelineComponent], Coroutine]
@@ -190,36 +188,25 @@ class Pipeline(BaseModel):
         return list(gen_parallel_tasks())
 
     def __validate_graph(self) -> None:
-        if not nx.is_directed_acyclic_graph(self.graph):
+        if not nx.is_directed_acyclic_graph(self._graph):
             msg = "Pipeline is not a valid DAG."
             raise ValueError(msg)
 
-    def validate(self) -> None:  # pyright: ignore [reportIncompatibleMethodOverride]
-        self.__validate_graph()
-
-    def __add_output(self, topic_id: str, source: str) -> None:
-        self.graph.add_node(topic_id)
-        self.graph.add_edge(source, topic_id)
-
-    def __add_input(self, topic_id: str, target: str) -> None:
-        self.graph.add_node(topic_id)
-        self.graph.add_edge(topic_id, target)
-
 
 def create_env_components_index(
-    environment_components: list[dict],
-) -> dict[str, dict]:
+    environment_components: list[dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
     """Create an index for all registered components in the project.
 
     :param environment_components: List of all components to be included
     :return: component index
     """
-    index: dict[str, dict] = {}
+    index: dict[str, dict[str, Any]] = {}
     for component in environment_components:
         if "type" not in component or "name" not in component:
             msg = "To override components per environment, every component should at least have a type and a name."
             raise ValueError(msg)
-        index[component["name"]] = component
+        index[component["name"]] = component  # TODO: id
     return index
 
 
@@ -308,7 +295,7 @@ class PipelineGenerator:
                     raise ParsingException from ex
 
     def apply_component(
-        self, component_class: type[PipelineComponent], component_data: dict
+        self, component_class: type[PipelineComponent], component_data: dict[str, Any]
     ) -> None:
         """Instantiate, enrich and inflate pipeline component.
 
@@ -342,90 +329,51 @@ class PipelineGenerator:
         component = component_class(
             config=self.config,
             handlers=self.handlers,
-            validate=False,
             **component_data,
         )
-        component = self.enrich_component(component)
+        component = self.enrich_component_with_env(component)
         # inflate & enrich components
         for inflated_component in component.inflate():  # TODO: recursively
-            enriched_component = self.enrich_component(inflated_component)
-            if enriched_component.from_:
+            if inflated_component.from_:
                 # read from specified components
                 for (
                     original_from_component_name,
                     from_topic,
-                ) in enriched_component.from_.components.items():
+                ) in inflated_component.from_.components.items():
                     original_from_component = find(original_from_component_name)
 
                     inflated_from_component = original_from_component.inflate()[-1]
                     resolved_from_component = find(inflated_from_component.name)
 
-                    enriched_component.weave_from_topics(
+                    inflated_component.weave_from_topics(
                         resolved_from_component.to, from_topic
                     )
             elif self.pipeline:
                 # read from previous component
                 prev_component = self.pipeline.last
-                enriched_component.weave_from_topics(prev_component.to)
-            self.pipeline.add(enriched_component)
+                inflated_component.weave_from_topics(prev_component.to)
+            self.pipeline.add(inflated_component)
 
-    def enrich_component(
-        self,
-        component: PipelineComponent,
+    def enrich_component_with_env(
+        self, component: PipelineComponent
     ) -> PipelineComponent:
-        """Enrich a pipeline component with env-specific config and substitute variables.
+        """Enrich a pipeline component with env-specific config.
 
         :param component: Component to be enriched
         :returns: Enriched component
         """
-        component.validate_ = True
+        env_component = self.env_components_index.get(component.name)
+        if not env_component:
+            return component
         env_component_as_dict = update_nested_pair(
-            self.env_components_index.get(component.name, {}),
+            env_component,
             component.model_dump(mode="json", by_alias=True),
         )
 
-        component_data = self.substitute_in_component(env_component_as_dict)
-
-        component_class = type(component)
-        return component_class(
-            enrich=False,
+        return component.__class__(
             config=self.config,
             handlers=self.handlers,
-            **component_data,
-        )
-
-    def substitute_in_component(self, component_as_dict: dict) -> dict:
-        """Substitute all $-placeholders in a component in dict representation.
-
-        :param component_as_dict: Component represented as dict
-        :return: Updated component
-        """
-        config = self.config
-        # Leftover variables that were previously introduced in the component by the substitution
-        # functions, still hardcoded, because of their names.
-        # TODO(Ivan Yordanov): Get rid of them
-        substitution_hardcoded: dict[str, JsonType] = {
-            "error_topic_name": config.topic_name_config.default_error_topic_name,
-            "output_topic_name": config.topic_name_config.default_output_topic_name,
-        }
-        component_substitution = generate_substitution(
-            component_as_dict,
-            "component",
-            substitution_hardcoded,
-            separator=".",
-        )
-        substitution = generate_substitution(
-            config.model_dump(mode="json"),
-            "config",
-            existing_substitution=component_substitution,
-            separator=".",
-        )
-
-        return json.loads(
-            substitute_nested(
-                json.dumps(component_as_dict),
-                **update_nested_pair(substitution, ENV),
-            )
+            **env_component_as_dict,
         )
 
     @staticmethod

@@ -138,9 +138,7 @@ def gen_pipeline_schema(
         )
         core_schema: DefinitionsSchema = component.__pydantic_core_schema__  # pyright:ignore[reportGeneralTypeIssues]
 
-        model_schema: ModelFieldsSchema = core_schema["schema"]["schema"]["schema"][  # pyright:ignore[reportGeneralTypeIssues,reportTypedDictNotRequiredAccess]
-            "schema"
-        ]
+        model_schema: ModelFieldsSchema = core_schema["schema"]["schema"]["schema"]  # pyright:ignore[reportGeneralTypeIssues,reportTypedDictNotRequiredAccess]
         model_schema["fields"]["type"] = ModelField(
             type="model-field",
             schema=LiteralSchema(

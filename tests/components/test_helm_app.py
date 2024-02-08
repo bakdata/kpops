@@ -22,6 +22,7 @@ from tests.components.test_base_defaults_component import (
 )
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestHelmApp:
     @pytest.fixture()
     def config(self) -> KpopsConfig:

@@ -17,6 +17,7 @@ from kpops.utils.environment import ENV
 from tests.components import PIPELINE_BASE_DIR, RESOURCES_PATH
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestStreamsBootstrap:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
