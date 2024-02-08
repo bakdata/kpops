@@ -75,6 +75,22 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         assert isinstance(resetter, KafkaConnectorResetter)
         assert connector._resetter.helm_release_name == CONNECTOR_CLEAN_RELEASE_NAME
 
+    def test_resetter_inheritance(self, connector: KafkaSinkConnector):
+        setattr(connector.resetter_values, "testKey", "foo")
+        resetter = connector._resetter
+        assert resetter
+        assert not hasattr(resetter, "_resetter")
+
+        assert not hasattr(resetter, "resetter_namespace")
+        assert resetter.namespace == connector.resetter_namespace
+
+        assert not hasattr(resetter, "resetter_values")
+        # check that resetter values are contained in resetter app values
+        assert (
+            connector.resetter_values.model_dump().items()
+            <= resetter.app.model_dump().items()
+        )
+
     def test_connector_config_parsing(
         self,
         config: KpopsConfig,

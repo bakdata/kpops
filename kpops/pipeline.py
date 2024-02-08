@@ -1,11 +1,10 @@
 from __future__ import annotations
 
 import asyncio
-import json
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import TYPE_CHECKING, TypeAlias
+from typing import TYPE_CHECKING, Any, TypeAlias
 
 import networkx as nx
 import yaml
@@ -17,10 +16,9 @@ from pydantic import (
 )
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.utils.dict_ops import generate_substitution, update_nested_pair
+from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.environment import ENV
-from kpops.utils.types import JsonType
-from kpops.utils.yaml import load_yaml_file, substitute_nested
+from kpops.utils.yaml import load_yaml_file
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Coroutine, Iterator
@@ -194,19 +192,19 @@ class Pipeline(BaseModel):
 
 
 def create_env_components_index(
-    environment_components: list[dict],
-) -> dict[str, dict]:
+    environment_components: list[dict[str, Any]],
+) -> dict[str, dict[str, Any]]:
     """Create an index for all registered components in the project.
 
     :param environment_components: List of all components to be included
     :return: component index
     """
-    index: dict[str, dict] = {}
+    index: dict[str, dict[str, Any]] = {}
     for component in environment_components:
         if "type" not in component or "name" not in component:
             msg = "To override components per environment, every component should at least have a type and a name."
             raise ValueError(msg)
-        index[component["name"]] = component
+        index[component["name"]] = component  # TODO: id
     return index
 
 
@@ -294,7 +292,7 @@ class PipelineGenerator:
                     raise ParsingException from ex
 
     def apply_component(
-        self, component_class: type[PipelineComponent], component_data: dict
+        self, component_class: type[PipelineComponent], component_data: dict[str, Any]
     ) -> None:
         """Instantiate, enrich and inflate pipeline component.
 
@@ -328,90 +326,51 @@ class PipelineGenerator:
         component = component_class(
             config=self.config,
             handlers=self.handlers,
-            validate=False,
             **component_data,
         )
-        component = self.enrich_component(component)
+        component = self.enrich_component_with_env(component)
         # inflate & enrich components
         for inflated_component in component.inflate():  # TODO: recursively
-            enriched_component = self.enrich_component(inflated_component)
-            if enriched_component.from_:
+            if inflated_component.from_:
                 # read from specified components
                 for (
                     original_from_component_name,
                     from_topic,
-                ) in enriched_component.from_.components.items():
+                ) in inflated_component.from_.components.items():
                     original_from_component = find(original_from_component_name)
 
                     inflated_from_component = original_from_component.inflate()[-1]
                     resolved_from_component = find(inflated_from_component.name)
 
-                    enriched_component.weave_from_topics(
+                    inflated_component.weave_from_topics(
                         resolved_from_component.to, from_topic
                     )
             elif self.pipeline:
                 # read from previous component
                 prev_component = self.pipeline.last
-                enriched_component.weave_from_topics(prev_component.to)
-            self.pipeline.add(enriched_component)
+                inflated_component.weave_from_topics(prev_component.to)
+            self.pipeline.add(inflated_component)
 
-    def enrich_component(
-        self,
-        component: PipelineComponent,
+    def enrich_component_with_env(
+        self, component: PipelineComponent
     ) -> PipelineComponent:
-        """Enrich a pipeline component with env-specific config and substitute variables.
+        """Enrich a pipeline component with env-specific config.
 
         :param component: Component to be enriched
         :returns: Enriched component
         """
-        component.validate_ = True
+        env_component = self.env_components_index.get(component.name)
+        if not env_component:
+            return component
         env_component_as_dict = update_nested_pair(
-            self.env_components_index.get(component.name, {}),
+            env_component,
             component.model_dump(mode="json", by_alias=True),
         )
 
-        component_data = self.substitute_in_component(env_component_as_dict)
-
-        component_class = type(component)
-        return component_class(
-            enrich=False,
+        return component.__class__(
             config=self.config,
             handlers=self.handlers,
-            **component_data,
-        )
-
-    def substitute_in_component(self, component_as_dict: dict) -> dict:
-        """Substitute all $-placeholders in a component in dict representation.
-
-        :param component_as_dict: Component represented as dict
-        :return: Updated component
-        """
-        config = self.config
-        # Leftover variables that were previously introduced in the component by the substitution
-        # functions, still hardcoded, because of their names.
-        # TODO(Ivan Yordanov): Get rid of them
-        substitution_hardcoded: dict[str, JsonType] = {
-            "error_topic_name": config.topic_name_config.default_error_topic_name,
-            "output_topic_name": config.topic_name_config.default_output_topic_name,
-        }
-        component_substitution = generate_substitution(
-            component_as_dict,
-            "component",
-            substitution_hardcoded,
-            separator=".",
-        )
-        substitution = generate_substitution(
-            config.model_dump(mode="json"),
-            "config",
-            existing_substitution=component_substitution,
-            separator=".",
-        )
-
-        return json.loads(
-            substitute_nested(
-                json.dumps(component_as_dict),
-                **update_nested_pair(substitution, ENV),
-            )
+            **env_component_as_dict,
         )
 
     @staticmethod

@@ -17,6 +17,7 @@ from kpops.config import KpopsConfig
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestStreamsBootstrap:
     @pytest.fixture()
     def config(self) -> KpopsConfig:

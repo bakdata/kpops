@@ -638,7 +638,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
+                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -649,7 +649,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry Url"
                 }
             },
             "required": [
@@ -966,7 +966,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
+                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -977,7 +977,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry Url"
                 }
             },
             "required": [
@@ -1474,7 +1474,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
+                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -1485,7 +1485,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry Url"
                 }
             },
             "required": [
