@@ -2,6 +2,7 @@ import json
 
 import pytest
 from pydantic import BaseModel
+from pytest_mock import MockerFixture
 
 from kpops.utils.dict_ops import (
     generate_substitution,
@@ -12,46 +13,35 @@ from kpops.utils.types import JsonType
 
 
 class TestDictOps:
-    @pytest.mark.parametrize(
-        ("list_dic", "expected"),
-        [
-            (
-                [{}, {}, {}, {}],
-                {},
-            ),
-            # deep update nested dicts
-            (
-                [{"k1": {"foo": 1}}, {"k1": {"bar": ""}}, {"k1": {"baz": "2"}}],
-                {"k1": {"foo": 1, "bar": "", "baz": "2"}},
-            ),
-            # do not overwrite different value types, dict in ``original_dict``
-            (
-                [{"k1": {"bar": ""}}, {"k1": 1}],
-                {"k1": {"bar": ""}},
-            ),
-            # do not overwrite different value types, dict in ``other_dict``
-            (
-                [{"k1": 1}, {"k1": {"bar": ""}}, {"k1": {"baz": ""}}],
-                {"k1": 1},
-            ),
-            # do not overwrite None
-            (
-                [{"k1": None}, {"k1": {"foo": "bar"}}, {"k1": {"baz": "bar"}}],
-                {"k1": None},
-            ),
-            # do not overwrite existing values
-            (
-                [{"k1": 1}, {"k1": 2}, {"k1": 3}],
-                {"k1": 1},
-            ),
-        ],
-    )
     def test_update_nested(
         self,
-        list_dic: list[dict[str, JsonType]],
-        expected: dict[str, JsonType],
+        mocker: MockerFixture,
     ):
-        assert update_nested(*list_dic) == expected
+        list_dic = [{"k1": {"foo": 1}}, {"k1": {"bar": ""}}, {"k1": {"baz": "2"}}]
+        expected = {"k1": {"foo": 1, "bar": "", "baz": "2"}}
+
+        update_nested_pair_mock = mocker.patch(
+            "kpops.utils.dict_ops.update_nested_pair"
+        )
+        update_nested_pair_mock.return_value = expected
+
+        mock = mocker.MagicMock()
+        mock.attach_mock(update_nested_pair_mock, "update_nested_pair")
+
+        actual = update_nested(*list_dic)
+
+        mock.assert_has_calls(
+            [
+                mocker.call.update_nested_pair({"k1": {"foo": 1}}, {"k1": {"bar": ""}}),
+                mocker.call.update_nested_pair(
+                    {"k1": {"bar": "", "baz": "2", "foo": 1}},
+                    {"k1": {"baz": "2"}},
+                ),
+            ]
+        )
+        assert update_nested_pair_mock.call_count == 2
+
+        assert actual == expected
 
     @pytest.mark.parametrize(
         ("d1", "d2", "expected"),
@@ -99,7 +89,8 @@ class TestDictOps:
         d2: dict[str, JsonType],
         expected: dict[str, JsonType],
     ):
-        assert update_nested_pair(d1, d2) == expected
+        pair = update_nested_pair(d1, d2)
+        assert pair == expected
 
     def test_substitution_generation(self):
         class SimpleModel(BaseModel):
