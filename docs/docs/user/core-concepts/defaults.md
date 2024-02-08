@@ -14,15 +14,35 @@ It is possible, although not recommended, to add settings that are specific to a
 
 ### Configuration
 
-It is possible to set specific `defaults` for each `environment` by adding files called `defaults_{environment}.yaml` to the defaults folder at `defaults_path`. The defaults are loaded based on the currently set environment.
+KPOps allows using multiple default values. The `defaults.yaml` (or `defaults_<env>.yaml`) files can be distributed across multiple files. These will be picked up by KPOps and get merged into a single `pipeline.yaml` file.
+KPOps starts from reading the default files from where the pipeline path is defined and picks up every defaults file on its way to where the `pipeline_base_dir` is defined.
+
+The deepest `defaults.yaml` file in the folder hierarchy (i.e., the closest one to the `pipeline.yaml`) overwrites the higher-level defaults' values.
 
 It is important to note that `defaults_{environment}.yaml` overrides only the settings that are explicitly set to be different from the ones in the base `defaults` file.
+
+For example, imagine the following folder structure, where the `pipeline_base_dir` is configured to `pipelines`:
+
+```
+└─ pipelines
+   └── distributed-defaults
+       ├── defaults.yaml
+       ├── defaults_dev.yaml
+       └── pipeline-deep
+           ├── defaults.yaml
+           └── pipeline.yaml
+```
+
+KPOps picks up the defaults in the following order (high to low priority):
+
+- `./pipelines/distributed-defaults/pipeline-deep/defaults.yaml`
+- `./pipelines/distributed-defaults/defaults_dev.yaml`
+- `./pipelines/distributed-defaults/defaults.yaml`
 
 <!-- dprint-ignore-start -->
 
 !!! tip
     `defaults` is the default value of `defaults_filename_prefix`.
-    Together with `defaults_path` and `environment` it can be changed in [`config.yaml`](../config/#__codelineno-0-16)
 
 <!-- dprint-ignore-end -->
 

@@ -1,4 +1,5 @@
 import json
+from unittest import mock
 
 import pytest
 from pydantic import BaseModel
@@ -14,7 +15,7 @@ from kpops.utils.types import JsonType
 
 class TestDictOps:
     def test_update_nested(self, mocker: MockerFixture):
-        list_dic = [{"k1": {"foo": 1}}, {"k1": {"bar": ""}}, {"k1": {"baz": "2"}}]
+        dicts = [{"k1": {"foo": 1}}, {"k1": {"bar": ""}}, {"k1": {"baz": "2"}}]
         expected = {"k1": {"foo": 1, "bar": "", "baz": "2"}}
 
         update_nested_pair_mock = mocker.patch(
@@ -22,15 +23,15 @@ class TestDictOps:
         )
         update_nested_pair_mock.return_value = expected
 
-        actual = update_nested(*list_dic)
+        actual = update_nested(*dicts)
 
         update_nested_pair_mock.assert_has_calls(
             [
-                mocker.call({"k1": {"foo": 1}}, {"k1": {"bar": ""}}),
-                mocker.call(
+                mock.call({"k1": {"foo": 1}}, {"k1": {"bar": ""}}),
+                mock.call(
                     {"k1": {"bar": "", "baz": "2", "foo": 1}}, {"k1": {"baz": "2"}}
                 ),
-            ]  # type: ignore[reportGeneralTypeIssues]
+            ]
         )
 
         assert update_nested_pair_mock.call_count == 2
