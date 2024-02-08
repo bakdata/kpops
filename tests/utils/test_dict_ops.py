@@ -13,10 +13,7 @@ from kpops.utils.types import JsonType
 
 
 class TestDictOps:
-    def test_update_nested(
-        self,
-        mocker: MockerFixture,
-    ):
+    def test_update_nested(self, mocker: MockerFixture):
         list_dic = [{"k1": {"foo": 1}}, {"k1": {"bar": ""}}, {"k1": {"baz": "2"}}]
         expected = {"k1": {"foo": 1, "bar": "", "baz": "2"}}
 
@@ -25,20 +22,17 @@ class TestDictOps:
         )
         update_nested_pair_mock.return_value = expected
 
-        mock = mocker.MagicMock()
-        mock.attach_mock(update_nested_pair_mock, "update_nested_pair")
-
         actual = update_nested(*list_dic)
 
-        mock.assert_has_calls(
+        update_nested_pair_mock.assert_has_calls(  # type: ignore[reportGeneralTypeIssues]
             [
-                mocker.call.update_nested_pair({"k1": {"foo": 1}}, {"k1": {"bar": ""}}),
-                mocker.call.update_nested_pair(
-                    {"k1": {"bar": "", "baz": "2", "foo": 1}},
-                    {"k1": {"baz": "2"}},
+                mocker.call({"k1": {"foo": 1}}, {"k1": {"bar": ""}}),
+                mocker.call(
+                    {"k1": {"bar": "", "baz": "2", "foo": 1}}, {"k1": {"baz": "2"}}
                 ),
-            ]
+            ]  # type: ignore[reportGeneralTypeIssues]
         )
+
         assert update_nested_pair_mock.call_count == 2
 
         assert actual == expected
