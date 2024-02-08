@@ -17,6 +17,7 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
+from kpops.components.streams_bootstrap.streams.model import StreamsAppAutoScaling
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
 from kpops.config import KpopsConfig, TopicNameConfig
 
@@ -77,6 +78,18 @@ class TestStreamsApp:
                 },
             },
         )
+
+    def test_cleaner_inheritance(self, streams_app: StreamsApp):
+        streams_app.app.autoscaling = StreamsAppAutoScaling(
+            enabled=True,
+            consumer_group="foo",
+            lag_threshold=100,
+            idle_replicas=1,
+        )
+        cleaner = streams_app._cleaner
+        assert cleaner
+        assert not hasattr(cleaner, "_cleaner")
+        assert cleaner.app == streams_app.app
 
     def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         streams_app = StreamsApp(

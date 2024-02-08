@@ -74,6 +74,12 @@ class TestProducerApp:
             },
         )
 
+    def test_cleaner_inheritance(self, producer_app: ProducerApp):
+        cleaner = producer_app._cleaner
+        assert cleaner
+        assert not hasattr(cleaner, "_cleaner")
+        assert cleaner.app == producer_app.app
+
     def test_output_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
             name=PRODUCER_APP_NAME,

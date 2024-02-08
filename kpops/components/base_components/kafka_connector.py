@@ -158,7 +158,8 @@ class KafkaConnector(PipelineComponent, ABC):
             handlers=self.handlers,
             **kwargs,
             **self.model_dump(
-                exclude={"_resetter", "resetter_values", "resetter_namespace", "app"}
+                by_alias=True,
+                exclude={"_resetter", "resetter_values", "resetter_namespace", "app"},
             ),
             app=KafkaConnectorResetterValues(
                 connector_type=self._connector_type.value,
