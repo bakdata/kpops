@@ -1,4 +1,3 @@
-from pathlib import Path
 from unittest.mock import ANY, MagicMock, call
 
 import pytest
