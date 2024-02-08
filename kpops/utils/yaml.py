@@ -44,14 +44,21 @@ def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str
 
     return ImprovedTemplate(input).safe_substitute(**prepare_substitution(substitution))
 
+def _diff_substituted_str(s1: str, s2: str):
+    """Compare 2 strings, raise exception if equal.
+
+    :param s1: String to compare
+    :param s2: String to compare
+    :raises ValueError: An infinite loop condition detected. Check substitution variables.
+    """
+    if s1 != s2:
+        msg = "An infinite loop condition detected. Check substitution variables."
+        raise ValueError(msg)
 
 def substitute_nested(input: str, **kwargs) -> str:
     """Allow for multiple substitutions to be passed.
 
     Will make as many passes as needed to substitute all possible placeholders.
-
-    HINT: If :param input: is a ``Mapping`` that you converted into ``str``,
-    You can pass it as a string, and as a ``Mapping`` to enable self-reference.
 
     :Example:
 
@@ -67,7 +74,7 @@ def substitute_nested(input: str, **kwargs) -> str:
 
     :param input: The raw input containing $-placeholders
     :param **kwargs: Substitutions
-    :raises Exception: An infinite loop condition detected. Check substitution variables.
+    :raises ValueError: An infinite loop condition detected. Check substitution variables.
     :return: Substituted input string
     """
     if not kwargs:
@@ -78,11 +85,8 @@ def substitute_nested(input: str, **kwargs) -> str:
     while new_str not in steps:
         steps.add(new_str)
         old_str, new_str = new_str, substitute(new_str, kwargs)
-    if new_str != old_str:
-        msg = "An infinite loop condition detected. Check substitution variables."
-        raise ValueError(msg)
+    _diff_substituted_str(new_str, old_str)
     return old_str
-
 
 def substitute_in_self(input: Mapping[str, Any]) -> dict[str, Any]:
     """Substitute all self-references in mapping.
@@ -90,7 +94,7 @@ def substitute_in_self(input: Mapping[str, Any]) -> dict[str, Any]:
     Will make as many passes as needed to substitute all possible placeholders.
 
     :param input: Mapping containing $-placeholders
-    :raises Exception: An infinite loop condition detected. Check substitution variables.
+    :raises ValueError: An infinite loop condition detected. Check substitution variables.
     :return: Substituted input mapping as dict
     """
     old_str, new_str = "", substitute(json.dumps(input), input)
@@ -98,9 +102,7 @@ def substitute_in_self(input: Mapping[str, Any]) -> dict[str, Any]:
     while new_str not in steps:
         steps.add(new_str)
         old_str, new_str = new_str, substitute(new_str, json.loads(new_str))
-    if new_str != old_str:
-        msg = "An infinite loop condition detected. Check substitution variables."
-        raise ValueError(msg)
+    _diff_substituted_str(new_str, old_str)
     return json.loads(old_str)
 
 
