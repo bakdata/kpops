@@ -21,23 +21,28 @@ The deepest `defaults.yaml` file in the folder hierarchy (i.e., the closest one 
 
 It is important to note that `defaults_{environment}.yaml` overrides only the settings that are explicitly set to be different from the ones in the base `defaults` file.
 
-For example, imagine the following folder structure, where the `pipeline_base_dir` is configured to `pipelines`:
+<!-- dprint-ignore-start -->
 
-```
-└─ pipelines
-   └── distributed-defaults
-       ├── defaults.yaml
-       ├── defaults_dev.yaml
-       └── pipeline-deep
+??? Example "defaults merge priority"
+    Imagine the following folder structure, where the `pipeline_base_dir` is configured to `pipelines`:
+
+    ```
+    └─ pipelines
+       └── distributed-defaults
            ├── defaults.yaml
-           └── pipeline.yaml
-```
+           ├── defaults_dev.yaml
+           └── pipeline-deep
+               ├── defaults.yaml
+               └── pipeline.yaml
+    ```
 
-KPOps picks up the defaults in the following order (high to low priority):
+    KPOps picks up the defaults in the following order (high to low priority):
 
-- `./pipelines/distributed-defaults/pipeline-deep/defaults.yaml`
-- `./pipelines/distributed-defaults/defaults_dev.yaml`
-- `./pipelines/distributed-defaults/defaults.yaml`
+    - `./pipelines/distributed-defaults/pipeline-deep/defaults.yaml`
+    - `./pipelines/distributed-defaults/defaults_dev.yaml`
+    - `./pipelines/distributed-defaults/defaults.yaml`
+
+<!-- dprint-ignore-end -->
 
 <!-- dprint-ignore-start -->
 
