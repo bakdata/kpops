@@ -24,7 +24,7 @@ class TestDictOps:
 
         actual = update_nested(*list_dic)
 
-        update_nested_pair_mock.assert_has_calls(  # type: ignore[reportGeneralTypeIssues]
+        update_nested_pair_mock.assert_has_calls(
             [
                 mocker.call({"k1": {"foo": 1}}, {"k1": {"bar": ""}}),
                 mocker.call(
