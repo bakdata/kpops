@@ -2,8 +2,9 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from enum import Enum
-from typing import Any
+from typing import Annotated, Any
 
+import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from kpops.utils.docstring import describe_attr
@@ -87,3 +88,10 @@ class KafkaTopic(BaseModel):
     @staticmethod
     def deduplicate(topics: Iterable[KafkaTopic]) -> list[KafkaTopic]:
         return list({topic.name: topic for topic in topics}.values())
+
+
+# Pydantic type for KafkaTopic that serializes to str, used for generating the correct JSON schema
+KafkaTopicStr = Annotated[
+    KafkaTopic,
+    pydantic.WithJsonSchema({"type": "string"}),
+]

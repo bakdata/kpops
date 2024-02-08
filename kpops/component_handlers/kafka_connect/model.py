@@ -13,7 +13,7 @@ from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
 from kpops.components.base_components.helm_app import HelmAppValues
-from kpops.components.base_components.models.topic import KafkaTopic
+from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
@@ -33,9 +33,9 @@ class KafkaConnectorConfig(DescConfigModel):
 
     connector_class: str
     name: SkipJsonSchema[str]
-    topics: list[KafkaTopic] = []
+    topics: list[KafkaTopicStr] = []
     topics_regex: str | None = None
-    errors_deadletterqueue_topic_name: KafkaTopic | None = None
+    errors_deadletterqueue_topic_name: KafkaTopicStr | None = None
 
     @override
     @staticmethod

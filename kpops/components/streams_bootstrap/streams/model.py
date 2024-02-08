@@ -8,7 +8,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
     KafkaStreamsConfig,
 )
-from kpops.components.base_components.models.topic import KafkaTopic
+from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
@@ -28,19 +28,19 @@ class StreamsConfig(KafkaStreamsConfig):
     :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
     """
 
-    input_topics: list[KafkaTopic] = Field(
+    input_topics: list[KafkaTopicStr] = Field(
         default=[], description=describe_attr("input_topics", __doc__)
     )
     input_pattern: str | None = Field(
         default=None, description=describe_attr("input_pattern", __doc__)
     )
-    extra_input_topics: dict[str, list[KafkaTopic]] = Field(
+    extra_input_topics: dict[str, list[KafkaTopicStr]] = Field(
         default={}, description=describe_attr("extra_input_topics", __doc__)
     )
     extra_input_patterns: dict[str, str] = Field(
         default={}, description=describe_attr("extra_input_patterns", __doc__)
     )
-    error_topic: KafkaTopic | None = Field(
+    error_topic: KafkaTopicStr | None = Field(
         default=None, description=describe_attr("error_topic", __doc__)
     )
     config: dict[str, Any] = Field(

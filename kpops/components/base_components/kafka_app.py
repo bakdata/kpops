@@ -14,7 +14,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.helm_app import HelmAppValues
-from kpops.components.base_components.models.topic import KafkaTopic
+from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.utils.docstring import describe_attr
@@ -45,11 +45,13 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
         ),  # TODO: same for other camelcase fields, avoids duplicates during enrichment
         description=describe_attr("schema_registry_url", __doc__),
     )
-    extra_output_topics: dict[str, KafkaTopic] = Field(
+    extra_output_topics: dict[str, KafkaTopicStr] = Field(
         default={}, description=describe_attr("extra_output_topics", __doc__)
     )
-    output_topic: KafkaTopic | None = Field(
-        default=None, description=describe_attr("output_topic", __doc__)
+    output_topic: KafkaTopicStr | None = Field(
+        default=None,
+        description=describe_attr("output_topic", __doc__),
+        json_schema_extra={},
     )
 
     model_config = ConfigDict(extra="allow")
