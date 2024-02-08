@@ -9,5 +9,3 @@ helm-app:
 kafka-sink-connector:
   app:
     "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector"
-  # resetter_values:
-  #   label: ${component.name}
