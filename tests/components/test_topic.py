@@ -61,7 +61,7 @@ class TestKafkaTopic:
                 ],
                 [
                     KafkaTopic(
-                        name="a", config=TopicConfig(type=OutputTopicTypes.OUTPUT)
+                        name="a", config=TopicConfig(type=OutputTopicTypes.ERROR)
                     ),
                     KafkaTopic(name="b"),
                 ],
