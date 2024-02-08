@@ -2,13 +2,18 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from collections.abc import Callable, Iterable
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, TypeAlias
 
 import networkx as nx
 import yaml
-from pydantic import BaseModel, ConfigDict, Field, SerializeAsAny, computed_field
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    SerializeAsAny,
+    computed_field,
+)
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import update_nested_pair
@@ -40,8 +45,8 @@ ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
 class Pipeline(BaseModel):
     """Pipeline representation."""
 
-    graph: nx.DiGraph = Field(default_factory=nx.DiGraph, exclude=True)
     _component_index: dict[str, PipelineComponent] = {}
+    _graph: nx.DiGraph = nx.DiGraph()
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -91,6 +96,9 @@ class Pipeline(BaseModel):
             if not predicate(component):
                 self.remove(component.id)
 
+    def validate(self) -> None:
+        self.__validate_graph()
+
     def to_yaml(self) -> str:
         return yaml.dump(
             self.model_dump(mode="json", by_alias=True, exclude_none=True)["components"]
@@ -99,42 +107,33 @@ class Pipeline(BaseModel):
     def build_execution_graph(
         self, runner: Callable[[PipelineComponent], Coroutine], /, reverse: bool = False
     ) -> Awaitable:
-        sub_graph_nodes = self.__collect_graph_nodes(
-            reversed(self.components) if reverse else self.components
-        )
-
         async def run_parallel_tasks(coroutines: list[Coroutine]) -> None:
             tasks = []
             for coro in coroutines:
                 tasks.append(asyncio.create_task(coro))
             await asyncio.gather(*tasks)
 
-        async def run_graph_tasks(pending_tasks: list[Awaitable]):
+        async def run_graph_tasks(pending_tasks: list[Awaitable]) -> None:
             for pending_task in pending_tasks:
                 await pending_task
 
-        sub_graph = self.graph.subgraph(sub_graph_nodes)
-        transformed_graph = sub_graph.copy()
+        graph: nx.DiGraph = self._graph.copy()  # pyright: ignore[reportAssignmentType, reportGeneralTypeIssues] imprecise type hint in networkx
 
-        root_node = "root_node_bfs"
         # We add an extra node to the graph, connecting all the leaf nodes to it
         # in that way we make this node the root of the graph, avoiding backtracking
-        transformed_graph.add_node(root_node)
+        root_node = "root_node_bfs"
+        graph.add_node(root_node)
 
-        for node in sub_graph:
-            predecessors = list(sub_graph.predecessors(node))
+        for node in graph:
+            predecessors = list(graph.predecessors(node))
             if not predecessors:
-                transformed_graph.add_edge(root_node, node)
+                graph.add_edge(root_node, node)
 
-        layers_graph: list[list[str]] = list(
-            nx.bfs_layers(transformed_graph, root_node)
-        )
+        layers_graph: list[list[str]] = list(nx.bfs_layers(graph, root_node))
 
         sorted_tasks = []
         for layer in layers_graph[1:]:
-            parallel_tasks = self.__get_parallel_tasks_from(layer, runner)
-
-            if parallel_tasks:
+            if parallel_tasks := self.__get_parallel_tasks_from(layer, runner):
                 sorted_tasks.append(run_parallel_tasks(parallel_tasks))
 
         if reverse:
@@ -159,7 +158,7 @@ class Pipeline(BaseModel):
         return len(self.components)
 
     def __add_to_graph(self, component: PipelineComponent):
-        self.graph.add_node(component.id)
+        self._graph.add_node(component.id)
 
         for input_topic in component.inputs:
             self.__add_input(input_topic, component.id)
@@ -167,12 +166,13 @@ class Pipeline(BaseModel):
         for output_topic in component.outputs:
             self.__add_output(output_topic, component.id)
 
-    @staticmethod
-    def __collect_graph_nodes(components: Iterable[PipelineComponent]) -> Iterator[str]:
-        for component in components:
-            yield component.id
-            yield from component.inputs
-            yield from component.outputs
+    def __add_output(self, topic_id: str, source: str) -> None:
+        self._graph.add_node(topic_id)
+        self._graph.add_edge(source, topic_id)
+
+    def __add_input(self, topic_id: str, target: str) -> None:
+        self._graph.add_node(topic_id)
+        self._graph.add_edge(topic_id, target)
 
     def __get_parallel_tasks_from(
         self, layer: list[str], runner: Callable[[PipelineComponent], Coroutine]
@@ -186,20 +186,9 @@ class Pipeline(BaseModel):
         return list(gen_parallel_tasks())
 
     def __validate_graph(self) -> None:
-        if not nx.is_directed_acyclic_graph(self.graph):
+        if not nx.is_directed_acyclic_graph(self._graph):
             msg = "Pipeline is not a valid DAG."
             raise ValueError(msg)
-
-    def validate(self) -> None:
-        self.__validate_graph()
-
-    def __add_output(self, topic_id: str, source: str) -> None:
-        self.graph.add_node(topic_id)
-        self.graph.add_edge(source, topic_id)
-
-    def __add_input(self, topic_id: str, target: str) -> None:
-        self.graph.add_node(topic_id)
-        self.graph.add_edge(topic_id, target)
 
 
 def create_env_components_index(
