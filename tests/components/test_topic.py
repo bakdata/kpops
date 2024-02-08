@@ -2,7 +2,11 @@ from collections.abc import Iterable
 
 import pytest
 
-from kpops.components.base_components.models.topic import KafkaTopic
+from kpops.components.base_components.models.topic import (
+    KafkaTopic,
+    OutputTopicTypes,
+    TopicConfig,
+)
 
 
 class TestKafkaTopic:
@@ -39,6 +43,23 @@ class TestKafkaTopic:
                     KafkaTopic(name="b"),
                 ],
                 [KafkaTopic(name="a"), KafkaTopic(name="b")],
+            ),
+            (
+                [
+                    KafkaTopic(
+                        name="a", config=TopicConfig(type=OutputTopicTypes.OUTPUT)
+                    ),
+                    KafkaTopic(name="b"),
+                    KafkaTopic(
+                        name="a", config=TopicConfig(type=OutputTopicTypes.ERROR)
+                    ),
+                ],
+                [
+                    KafkaTopic(
+                        name="a", config=TopicConfig(type=OutputTopicTypes.ERROR)
+                    ),
+                    KafkaTopic(name="b"),
+                ],
             ),
         ],
     )
