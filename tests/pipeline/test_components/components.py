@@ -95,7 +95,7 @@ class TestSchemaProvider(SchemaProvider):
         return AvroSchema(schema)
 
 
-class InflateBadly(StreamsApp):
+class SimpleInflateConnectors(StreamsApp):
     def inflate(self) -> list[PipelineComponent]:
         connector = KafkaSinkConnector(
             name="inflated-connector-name",
