@@ -17,23 +17,27 @@ class TestKafkaTopic:
     @pytest.mark.parametrize(
         ("input", "expected"),
         [
-            (
+            pytest.param(
                 [KafkaTopic(name="a")],
                 [KafkaTopic(name="a")],
+                id="single element",
             ),
-            (
+            pytest.param(
                 [KafkaTopic(name="a"), KafkaTopic(name="a")],
                 [KafkaTopic(name="a")],
+                id="repetition single",
             ),
-            (
+            pytest.param(
                 [KafkaTopic(name="a"), KafkaTopic(name="b")],
                 [KafkaTopic(name="a"), KafkaTopic(name="b")],
+                id="no repetition",
             ),
-            (
+            pytest.param(
                 [KafkaTopic(name="a"), KafkaTopic(name="b"), KafkaTopic(name="a")],
                 [KafkaTopic(name="a"), KafkaTopic(name="b")],
+                id="repetition multiple",
             ),
-            (
+            pytest.param(
                 [
                     KafkaTopic(name="a"),
                     KafkaTopic(name="a"),
@@ -43,8 +47,9 @@ class TestKafkaTopic:
                     KafkaTopic(name="b"),
                 ],
                 [KafkaTopic(name="a"), KafkaTopic(name="b")],
+                id="repetition complex",
             ),
-            (
+            pytest.param(
                 [
                     KafkaTopic(
                         name="a", config=TopicConfig(type=OutputTopicTypes.OUTPUT)
@@ -56,10 +61,11 @@ class TestKafkaTopic:
                 ],
                 [
                     KafkaTopic(
-                        name="a", config=TopicConfig(type=OutputTopicTypes.ERROR)
+                        name="a", config=TopicConfig(type=OutputTopicTypes.OUTPUT)
                     ),
                     KafkaTopic(name="b"),
                 ],
+                id="overwrite",
             ),
         ],
     )
