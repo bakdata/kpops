@@ -358,14 +358,14 @@ class TestStreamsApp:
         assert streams_app.to
         assert streams_app.to.kafka_topics == [
             KafkaTopic(
-                name="${output_topic_name}",
+                name="streams-app-output-topic",
                 config=TopicConfig(
                     type=OutputTopicTypes.OUTPUT,
                     partitions_count=10,
                 ),
             ),
             KafkaTopic(
-                name="${error_topic_name}",
+                name="streams-app-error-topic",
                 config=TopicConfig(
                     type=OutputTopicTypes.ERROR,
                     partitions_count=10,
