@@ -1,4 +1,24 @@
 # Changelog
+## [3.2.1](https://github.com/bakdata/kpops/releases/tag/3.2.1) - Release Date: [2024-02-08]
+
+### 🐛 Fixes
+
+- Fix order of pipeline steps for clean/reset - [#450](https://github.com/bakdata/kpops/pull/450)
+
+- Fix substitution - [#449](https://github.com/bakdata/kpops/pull/449)
+
+- Fix cleaner inheritance, parent model should be aliased during instantiation - [#452](https://github.com/bakdata/kpops/pull/452)
+
+
+### 🏭 Refactor
+
+- Simplify execution graph logic - [#446](https://github.com/bakdata/kpops/pull/446)
+
+
+
+
+
+
 ## [3.2.0](https://github.com/bakdata/kpops/releases/tag/3.2.0) - Release Date: [2024-02-01]
 
 ### 🚀 Features
