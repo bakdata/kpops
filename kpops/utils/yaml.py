@@ -45,7 +45,6 @@ def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str
     return ImprovedTemplate(input).safe_substitute(**prepare_substitution(substitution))
 
 
-
 def _diff_substituted_str(s1: str, s2: str):
     """Compare 2 strings, raise exception if equal.
 
