@@ -45,6 +45,7 @@ def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str
     return ImprovedTemplate(input).safe_substitute(**prepare_substitution(substitution))
 
 
+
 def _diff_substituted_str(s1: str, s2: str):
     """Compare 2 strings, raise exception if equal.
 
@@ -91,7 +92,7 @@ def substitute_nested(input: str, **kwargs) -> str:
     return old_str
 
 
-def substitute_in_self(input: Mapping[str, Any]) -> dict[str, Any]:
+def substitute_in_self(input: dict[str, Any]) -> dict[str, Any]:
     """Substitute all self-references in mapping.
 
     Will make as many passes as needed to substitute all possible placeholders.
