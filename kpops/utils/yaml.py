@@ -44,6 +44,7 @@ def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str
 
     return ImprovedTemplate(input).safe_substitute(**prepare_substitution(substitution))
 
+
 def _diff_substituted_str(s1: str, s2: str):
     """Compare 2 strings, raise exception if equal.
 
@@ -54,6 +55,7 @@ def _diff_substituted_str(s1: str, s2: str):
     if s1 != s2:
         msg = "An infinite loop condition detected. Check substitution variables."
         raise ValueError(msg)
+
 
 def substitute_nested(input: str, **kwargs) -> str:
     """Allow for multiple substitutions to be passed.
@@ -87,6 +89,7 @@ def substitute_nested(input: str, **kwargs) -> str:
         old_str, new_str = new_str, substitute(new_str, kwargs)
     _diff_substituted_str(new_str, old_str)
     return old_str
+
 
 def substitute_in_self(input: Mapping[str, Any]) -> dict[str, Any]:
     """Substitute all self-references in mapping.
