@@ -19,6 +19,7 @@ from kpops.utils.colorify import magentaify
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestHelmApp:
     @pytest.fixture()
     def config(self) -> KpopsConfig:

@@ -148,7 +148,6 @@ class KafkaConnector(PipelineComponent, ABC):
         app["name"] = component_name
         return KafkaConnectorConfig(**app)
 
-    @computed_field
     @cached_property
     def _resetter(self) -> KafkaConnectorResetter:
         kwargs: dict[str, Any] = {}
@@ -159,7 +158,8 @@ class KafkaConnector(PipelineComponent, ABC):
             handlers=self.handlers,
             **kwargs,
             **self.model_dump(
-                exclude={"_resetter", "resetter_values", "resetter_namespace", "app"}
+                by_alias=True,
+                exclude={"_resetter", "resetter_values", "resetter_namespace", "app"},
             ),
             app=KafkaConnectorResetterValues(
                 connector_type=self._connector_type.value,
@@ -218,6 +218,11 @@ class KafkaSourceConnector(KafkaConnector):
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 
+    @computed_field
+    @cached_property
+    def _resetter(self) -> KafkaConnectorResetter:
+        return super()._resetter
+
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
         msg = "Kafka source connector doesn't support FromSection"
@@ -239,6 +244,11 @@ class KafkaSinkConnector(KafkaConnector):
     """Kafka sink connector model."""
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SINK)
+
+    @computed_field
+    @cached_property
+    def _resetter(self) -> KafkaConnectorResetter:
+        return super()._resetter
 
     @property
     @override
