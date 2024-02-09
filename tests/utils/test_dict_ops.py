@@ -84,8 +84,7 @@ class TestDictOps:
         d2: dict[str, JsonType],
         expected: dict[str, JsonType],
     ):
-        pair = update_nested_pair(d1, d2)
-        assert pair == expected
+        assert update_nested_pair(d1, d2) == expected
 
     def test_substitution_generation(self):
         class SimpleModel(BaseModel):
