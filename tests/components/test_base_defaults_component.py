@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from unittest.mock import MagicMock
 
@@ -189,7 +190,7 @@ class TestBaseDefaultsComponent:
     def test_env_var_substitution(
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
-        ENV["pipeline_name"] = str(DEFAULTS_PATH)
+        ENV["pipeline_name"] = DEFAULTS_PATH.as_posix()
         component = EnvVarTest(config=config, handlers=handlers)
 
         assert component.name == str(
