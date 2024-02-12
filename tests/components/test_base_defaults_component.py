@@ -193,7 +193,7 @@ class TestBaseDefaultsComponent:
         component = EnvVarTest(config=config, handlers=handlers)
 
         assert (
-            Path(component.name or "") == DEFAULTS_PATH
+            Path(component.name) == DEFAULTS_PATH  # type: ignore[reportAttributeAccessIssue]
         ), "Environment variables should be substituted"
 
     def test_merge_defaults(self, config: KpopsConfig, handlers: ComponentHandlers):
