@@ -2,6 +2,8 @@ import os
 from collections import UserDict
 from collections.abc import ItemsView, KeysView, MutableMapping, ValuesView
 
+PIPELINE_PATH = "pipeline.path"
+
 
 class Environment(UserDict[str, str]):
     """Internal environment wrapping OS environment."""

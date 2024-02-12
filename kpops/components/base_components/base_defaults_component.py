@@ -28,7 +28,7 @@ from kpops.utils.dict_ops import (
     update_nested_pair,
 )
 from kpops.utils.docstring import describe_attr
-from kpops.utils.environment import ENV
+from kpops.utils.environment import ENV, PIPELINE_PATH
 from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
 from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
@@ -81,8 +81,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     )
 
     def __init__(self, **values: Any) -> None:
-        pipeline_path = ENV.get("pipeline_path", None)
-        if values.get("enrich", True) and pipeline_path:
+        if values.get("enrich", True):
             cls = self.__class__
             values = cls.extend_with_defaults(**values)
             tmp_self = cls(**values, enrich=False)
@@ -176,22 +175,24 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         :returns: Enriched kwargs with inherited defaults
         """
         kwargs["config"] = config
-        for k, v in kwargs.items():
-            if isinstance(v, pydantic.BaseModel):
-                kwargs[k] = v.model_dump(exclude_unset=True)
-            elif is_dataclass(v):
-                kwargs[k] = asdict(v)
+        if (pipeline_path_str := ENV.get(PIPELINE_PATH)) is not None:
+            pipeline_path = Path(pipeline_path_str)
+            for k, v in kwargs.items():
+                if isinstance(v, pydantic.BaseModel):
+                    kwargs[k] = v.model_dump(exclude_unset=True)
+                elif is_dataclass(v):
+                    kwargs[k] = asdict(v)
 
-        pipeline_path = Path(ENV.get("pipeline_path", ""))
-        defaults_file_paths_ = get_defaults_file_paths(
-            pipeline_path, config, ENV.get("environment")
-        )
-        defaults = cls.load_defaults(*defaults_file_paths_)
-        log.debug(
-            typer.style("Enriching component of type ", bold=False)
-            + typer.style(cls.type, bold=True, underline=True)
-        )
-        return update_nested_pair(kwargs, defaults)
+            defaults_file_paths_ = get_defaults_file_paths(
+                pipeline_path, config, ENV.get("environment")
+            )
+            defaults = cls.load_defaults(*defaults_file_paths_)
+            log.debug(
+                typer.style("Enriching component of type ", bold=False)
+                + typer.style(cls.type, bold=True, underline=True)
+            )
+            return update_nested_pair(kwargs, defaults)
+        return kwargs
 
     @classmethod
     def load_defaults(cls, *defaults_file_paths: Path) -> dict[str, Any]:
