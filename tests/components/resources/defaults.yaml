@@ -8,4 +8,4 @@ child:
   nested:
     foo: foo
 env-var-test:
-  name: $pipeline_name
+  name: ${pipeline_name}

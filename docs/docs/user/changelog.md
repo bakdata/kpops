@@ -1,4 +1,15 @@
 # Changelog
+## [3.2.2](https://github.com/bakdata/kpops/releases/tag/3.2.2) - Release Date: [2024-02-12]
+
+### 🐛 Fixes
+
+- Fix nested substitution - [#451](https://github.com/bakdata/kpops/pull/451)
+
+
+
+
+
+
 ## [3.2.1](https://github.com/bakdata/kpops/releases/tag/3.2.1) - Release Date: [2024-02-08]
 
 ### 🐛 Fixes
