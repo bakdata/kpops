@@ -241,7 +241,7 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
     if value is None:
         return {}
     log.debug(
-        f"\tFound defaults for component type {typer.style(key, bold=True, fg=typer.colors.MAGENTA)} in file: {path}"
+        f"Found defaults for component type {typer.style(key, bold=True, fg=typer.colors.MAGENTA)}"
     )
     return value
 

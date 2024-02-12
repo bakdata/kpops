@@ -27,9 +27,7 @@ def load_yaml_file(
     file_path: Path, *, substitution: Mapping[str, Any] | None = None
 ) -> dict | list[dict]:
     with file_path.open() as yaml_file:
-        log.debug(
-            f"Picked up: {file_path.resolve().relative_to(file_path.resolve().parents[1])}"
-        )
+        log.debug(f"Picked up: {file_path.resolve().relative_to(Path.cwd())}")
         return yaml.load(substitute(yaml_file.read(), substitution), Loader=yaml.Loader)
 
 
