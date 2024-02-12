@@ -61,13 +61,13 @@ def _find_classes(module_name: str, baseclass: type[T]) -> Iterator[type[T]]:
             f"Picked up: {file_path.resolve().relative_to(file_path.resolve().parents[1])}"
         )
     for _, _class in inspect.getmembers(module, inspect.isclass):
-        if not __is_kpops_module(_class.__module__, module_name) and issubclass(
-            _class, baseclass
-        ):
+        if not __filter_internal_kpops_classes(
+            _class.__module__, module_name
+        ) and issubclass(_class, baseclass):
             yield _class
 
 
-def __is_kpops_module(class_module: str, module_name: str) -> bool:
+def __filter_internal_kpops_classes(class_module: str, module_name: str) -> bool:
     # filter out internal kpops classes and components unless specifically requested
     return class_module.startswith(KPOPS_MODULE) and not module_name.startswith(
         KPOPS_MODULE
