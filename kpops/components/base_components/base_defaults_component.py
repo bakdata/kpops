@@ -247,16 +247,17 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
 def get_defaults_file_paths(
     pipeline_path: Path, config: KpopsConfig, environment: str | None
 ) -> list[Path]:
-    """Return the paths to the main and the environment defaults-files.
+    """Return a list of default file paths related to the given pipeline.
 
-    The files need not exist, this function will only check if the dir set in
-    `config.defaults_path` exists and return paths to the defaults files
-    calculated from it. It is up to the caller to handle any false paths.
+    This function traverses the directory hierarchy upwards starting from the directory containing
+    the pipeline.yaml file specified by `pipeline_path`, looking for default files
+    associated with the pipeline.
 
-    :param pipeline_path: The path to the pipeline.yaml file
-    :param config: KPOps configuration
-    :param environment: Environment
-    :returns: The defaults files paths
+    :param pipeline_path: The path to the pipeline.yaml file.
+    :param config: The KPOps configuration object containing settings such as pipeline_base_dir
+                   and defaults_filename_prefix.
+    :param environment: Optional. The environment for which default configuration files are sought.
+    :returns: A list of Path objects representing the default configuration file paths.
     """
     default_paths = []
 
