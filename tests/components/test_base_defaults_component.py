@@ -192,8 +192,9 @@ class TestBaseDefaultsComponent:
         ENV["pipeline_name"] = DEFAULTS_PATH.as_posix()
         component = EnvVarTest(config=config, handlers=handlers)
 
+        assert component.name
         assert (
-            Path(component.name) == DEFAULTS_PATH  # type: ignore[reportAttributeAccessIssue]
+            Path(component.name) == DEFAULTS_PATH
         ), "Environment variables should be substituted"
 
     def test_merge_defaults(self, config: KpopsConfig, handlers: ComponentHandlers):
