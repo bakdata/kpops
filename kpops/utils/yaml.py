@@ -46,7 +46,7 @@ def substitute(input: str, substitution: Mapping[str, Any] | None = None) -> str
 
 
 def _diff_substituted_str(s1: str, s2: str):
-    """Compare 2 strings, raise exception if equal.
+    """Compare 2 strings, raise exception if not equal.
 
     :param s1: String to compare
     :param s2: String to compare
