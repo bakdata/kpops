@@ -1,6 +1,5 @@
-import logging
 import json
-
+import logging
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
