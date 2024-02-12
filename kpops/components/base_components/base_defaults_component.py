@@ -173,9 +173,9 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         :returns: Enriched kwargs with inherited defaults
         """
         pipeline_path_str = ENV.get(PIPELINE_PATH)
+        kwargs["config"] = config
         if not pipeline_path_str:
             return kwargs
-        kwargs["config"] = config
         pipeline_path = Path(pipeline_path_str)
         for k, v in kwargs.items():
             if isinstance(v, pydantic.BaseModel):
