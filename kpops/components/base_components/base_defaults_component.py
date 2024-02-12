@@ -172,25 +172,26 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inherited defaults
         """
+        pipeline_path_str = ENV.get(PIPELINE_PATH)
+        if not pipeline_path_str:
+            return kwargs
         kwargs["config"] = config
-        if (pipeline_path_str := ENV.get(PIPELINE_PATH)) is not None:
-            pipeline_path = Path(pipeline_path_str)
-            for k, v in kwargs.items():
-                if isinstance(v, pydantic.BaseModel):
-                    kwargs[k] = v.model_dump(exclude_unset=True)
-                elif is_dataclass(v):
-                    kwargs[k] = asdict(v)
+        pipeline_path = Path(pipeline_path_str)
+        for k, v in kwargs.items():
+            if isinstance(v, pydantic.BaseModel):
+                kwargs[k] = v.model_dump(exclude_unset=True)
+            elif is_dataclass(v):
+                kwargs[k] = asdict(v)
 
-            defaults_file_paths_ = get_defaults_file_paths(
-                pipeline_path, config, ENV.get("environment")
-            )
-            defaults = cls.load_defaults(*defaults_file_paths_)
-            log.debug(
-                typer.style("Enriching component of type ", bold=False)
-                + typer.style(cls.type, bold=True, underline=True)
-            )
-            return update_nested_pair(kwargs, defaults)
-        return kwargs
+        defaults_file_paths_ = get_defaults_file_paths(
+            pipeline_path, config, ENV.get("environment")
+        )
+        defaults = cls.load_defaults(*defaults_file_paths_)
+        log.debug(
+            typer.style("Enriching component of type ", bold=False)
+            + typer.style(cls.type, bold=True, underline=True)
+        )
+        return update_nested_pair(kwargs, defaults)
 
     @classmethod
     def load_defaults(cls, *defaults_file_paths: Path) -> dict[str, Any]:
