@@ -249,7 +249,8 @@ def get_defaults_file_paths(
 ) -> list[Path]:
     """Return a list of default file paths related to the given pipeline.
 
-    This function traverses the directory hierarchy upwards starting from the directory containing
+    This function traverses the directory hierarchy upwards till the `pipeline_base_dir`,
+    starting from the directory containing
     the pipeline.yaml file specified by `pipeline_path`, looking for default files
     associated with the pipeline.
 
