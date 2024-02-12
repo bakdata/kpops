@@ -191,11 +191,13 @@ class TestBaseDefaultsComponent:
     def test_env_var_substitution(
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
-        ENV["pipeline_name"] = str(RESOURCES_PATH)
+        ENV["pipeline_name"] = RESOURCES_PATH.as_posix()
         component = EnvVarTest(config=config, handlers=handlers)
 
-        assert component.name == str(
-            RESOURCES_PATH
+        assert component.name
+
+        assert (
+            Path(component.name) == RESOURCES_PATH
         ), "Environment variables should be substituted"
 
     def test_merge_defaults(self, config: KpopsConfig, handlers: ComponentHandlers):
