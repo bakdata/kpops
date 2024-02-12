@@ -33,7 +33,7 @@ class TestProxyWrapper:
 
     @pytest_asyncio.fixture(autouse=True)
     async def _setup(self, httpx_mock: HTTPXMock):
-        config = KpopsConfig(defaults_path=DEFAULTS_PATH)
+        config = KpopsConfig()
         self.proxy_wrapper = ProxyWrapper(config.kafka_rest)
         with Path(
             RESOURCES_PATH / "kafka_rest_proxy_responses" / "cluster-info.json",

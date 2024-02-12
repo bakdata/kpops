@@ -40,7 +40,6 @@ class TestGenerate:
     def test_python_api_filter_include(self, log_info: MagicMock):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            defaults=RESOURCE_PATH,
             output=False,
             steps="converter",
             filter_type=FilterType.INCLUDE,
@@ -53,7 +52,6 @@ class TestGenerate:
     def test_python_api_filter_exclude(self, log_info: MagicMock):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            defaults=RESOURCE_PATH,
             output=False,
             steps="converter,scheduled-producer",
             filter_type=FilterType.EXCLUDE,
@@ -288,8 +286,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "pipeline-with-all-env/pipeline/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH / "pipeline-with-all-env/defaults"),
                 "--config",
                 str(RESOURCE_PATH / "pipeline-with-all-env/configs"),
                 "--environment",
@@ -664,8 +660,6 @@ class TestGenerate:
                 [
                     "generate",
                     str(RESOURCE_PATH / "pipeline-with-loop/pipeline.yaml"),
-                    "--defaults",
-                    str(RESOURCE_PATH / "pipeline-with-loop"),
                 ],
                 catch_exceptions=False,
             )
@@ -673,7 +667,6 @@ class TestGenerate:
     def test_validate_simple_graph(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "pipelines-with-graphs/simple-pipeline/pipeline.yaml",
-            defaults=RESOURCE_PATH / "pipelines-with-graphs" / "simple-pipeline",
         )
         assert len(pipeline.components) == 2
         assert len(pipeline._graph.nodes) == 3
@@ -687,9 +680,6 @@ class TestGenerate:
         pipeline = kpops.generate(
             RESOURCE_PATH
             / "pipelines-with-graphs/same-topic-and-component-name/pipeline.yaml",
-            defaults=RESOURCE_PATH
-            / "pipelines-with-graphs"
-            / "same-topic-and-component-name",
         )
         component, topic = list(pipeline._graph.nodes)
         edges = list(pipeline._graph.edges)
@@ -700,7 +690,6 @@ class TestGenerate:
     async def test_parallel_execution_graph(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
-            defaults=RESOURCE_PATH / "parallel-pipeline",
             config=RESOURCE_PATH / "parallel-pipeline",
         )
 
@@ -742,7 +731,6 @@ class TestGenerate:
     async def test_subgraph_execution(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
-            defaults=RESOURCE_PATH / "parallel-pipeline",
             config=RESOURCE_PATH / "parallel-pipeline",
         )
 
@@ -771,7 +759,6 @@ class TestGenerate:
     async def test_parallel_execution_graph_reverse(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
-            defaults=RESOURCE_PATH / "parallel-pipeline",
             config=RESOURCE_PATH / "parallel-pipeline",
         )
 
@@ -831,8 +818,6 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "resetter_values/pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH / "resetter_values"),
             ],
             catch_exceptions=False,
         )
@@ -846,7 +831,6 @@ class TestGenerate:
     def test_substitution_in_resetter(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "resetter_values/pipeline_connector_only.yaml",
-            defaults=RESOURCE_PATH / "resetter_values",
         )
         assert isinstance(pipeline.components[0], KafkaSinkConnector)
         assert pipeline.components[0].name == "es-sink-connector"

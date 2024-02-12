@@ -4219,6 +4219,243 @@ snapshots['TestGenerate.test_with_custom_config_with_relative_defaults_path test
     }
 ]
 
+snapshots['TestGenerate.test_with_env_all_resources test-pipeline'] = [
+    {
+        '_cleaner': {
+            'app': {
+                'commandLine': {
+                    'FAKE_ARG': 'override-arg'
+                },
+                'image': 'example-registry/fake-image',
+                'imageTag': '0.0.1',
+                'schedule': '20 3/8 * * *',
+                'streams': {
+                    'brokers': 'http://override-dev:9092',
+                    'extraOutputTopics': {
+                    },
+                    'outputTopic': 'resources-pipeline-with-all-env-pipeline-input-producer',
+                    'schemaRegistryUrl': 'http://localhost:8081/'
+                }
+            },
+            'name': 'input-producer',
+            'namespace': 'example-namespace',
+            'prefix': 'resources-pipeline-with-all-env-pipeline-',
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
+                },
+                'repository_name': 'bakdata-streams-bootstrap',
+                'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'to': {
+                'models': {
+                    'com/bakdata/kafka/fake': '1.0.0'
+                },
+                'topics': {
+                    'resources-pipeline-with-all-env-pipeline-input-producer': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 12,
+                        'type': 'output',
+                        'value_schema': 'com.bakdata.fake.Produced'
+                    }
+                }
+            },
+            'type': 'producer-app-cleaner',
+            'version': '2.4.2'
+        },
+        'app': {
+            'commandLine': {
+                'FAKE_ARG': 'override-arg'
+            },
+            'image': 'example-registry/fake-image',
+            'imageTag': '0.0.1',
+            'schedule': '20 3/8 * * *',
+            'streams': {
+                'brokers': 'http://override-dev:9092',
+                'extraOutputTopics': {
+                },
+                'outputTopic': 'resources-pipeline-with-all-env-pipeline-input-producer',
+                'schemaRegistryUrl': 'http://localhost:8081/'
+            }
+        },
+        'name': 'input-producer',
+        'namespace': 'example-namespace',
+        'prefix': 'resources-pipeline-with-all-env-pipeline-',
+        'repo_config': {
+            'repo_auth_flags': {
+                'insecure_skip_tls_verify': False
+            },
+            'repository_name': 'bakdata-streams-bootstrap',
+            'url': 'https://bakdata.github.io/streams-bootstrap/'
+        },
+        'to': {
+            'models': {
+                'com/bakdata/kafka/fake': '1.0.0'
+            },
+            'topics': {
+                'resources-pipeline-with-all-env-pipeline-input-producer': {
+                    'configs': {
+                        'cleanup.policy': 'compact,delete'
+                    },
+                    'partitions_count': 12,
+                    'type': 'output',
+                    'value_schema': 'com.bakdata.fake.Produced'
+                }
+            }
+        },
+        'type': 'scheduled-producer',
+        'version': '2.4.2'
+    },
+    {
+        '_cleaner': {
+            'app': {
+                'autoscaling': {
+                    'consumerGroup': 'converter-resources-pipeline-with-all-env-pipeline-converter',
+                    'cooldownPeriod': 300,
+                    'enabled': True,
+                    'lagThreshold': 10000,
+                    'maxReplicas': 1,
+                    'minReplicas': 0,
+                    'offsetResetPolicy': 'earliest',
+                    'pollingInterval': 30,
+                    'topics': [
+                    ]
+                },
+                'commandLine': {
+                    'CONVERT_XML': True
+                },
+                'resources': {
+                    'limits': {
+                        'memory': '2G'
+                    },
+                    'requests': {
+                        'memory': '2G'
+                    }
+                },
+                'streams': {
+                    'brokers': 'http://override-dev:9092',
+                    'config': {
+                        'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
+                    },
+                    'errorTopic': 'resources-pipeline-with-all-env-pipeline-converter-error',
+                    'inputTopics': [
+                        'resources-pipeline-with-all-env-pipeline-input-producer'
+                    ],
+                    'outputTopic': 'resources-pipeline-with-all-env-pipeline-converter',
+                    'schemaRegistryUrl': 'http://localhost:8081/'
+                }
+            },
+            'name': 'converter',
+            'namespace': 'example-namespace',
+            'prefix': 'resources-pipeline-with-all-env-pipeline-',
+            'repo_config': {
+                'repo_auth_flags': {
+                    'insecure_skip_tls_verify': False
+                },
+                'repository_name': 'bakdata-streams-bootstrap',
+                'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-pipeline-with-all-env-pipeline-converter': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete',
+                            'retention.ms': '-1'
+                        },
+                        'partitions_count': 50,
+                        'type': 'output'
+                    },
+                    'resources-pipeline-with-all-env-pipeline-converter-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 10,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
+            },
+            'type': 'streams-app-cleaner',
+            'version': '2.4.2'
+        },
+        'app': {
+            'autoscaling': {
+                'consumerGroup': 'converter-resources-pipeline-with-all-env-pipeline-converter',
+                'cooldownPeriod': 300,
+                'enabled': True,
+                'lagThreshold': 10000,
+                'maxReplicas': 1,
+                'minReplicas': 0,
+                'offsetResetPolicy': 'earliest',
+                'pollingInterval': 30,
+                'topics': [
+                ]
+            },
+            'commandLine': {
+                'CONVERT_XML': True
+            },
+            'resources': {
+                'limits': {
+                    'memory': '2G'
+                },
+                'requests': {
+                    'memory': '2G'
+                }
+            },
+            'streams': {
+                'brokers': 'http://override-dev:9092',
+                'config': {
+                    'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
+                },
+                'errorTopic': 'resources-pipeline-with-all-env-pipeline-converter-error',
+                'inputTopics': [
+                    'resources-pipeline-with-all-env-pipeline-input-producer'
+                ],
+                'outputTopic': 'resources-pipeline-with-all-env-pipeline-converter',
+                'schemaRegistryUrl': 'http://localhost:8081/'
+            }
+        },
+        'name': 'converter',
+        'namespace': 'example-namespace',
+        'prefix': 'resources-pipeline-with-all-env-pipeline-',
+        'repo_config': {
+            'repo_auth_flags': {
+                'insecure_skip_tls_verify': False
+            },
+            'repository_name': 'bakdata-streams-bootstrap',
+            'url': 'https://bakdata.github.io/streams-bootstrap/'
+        },
+        'to': {
+            'models': {
+            },
+            'topics': {
+                'resources-pipeline-with-all-env-pipeline-converter': {
+                    'configs': {
+                        'cleanup.policy': 'compact,delete',
+                        'retention.ms': '-1'
+                    },
+                    'partitions_count': 50,
+                    'type': 'output'
+                },
+                'resources-pipeline-with-all-env-pipeline-converter-error': {
+                    'configs': {
+                        'cleanup.policy': 'compact,delete'
+                    },
+                    'partitions_count': 10,
+                    'type': 'error',
+                    'value_schema': 'com.bakdata.kafka.DeadLetter'
+                }
+            }
+        },
+        'type': 'converter',
+        'version': '2.4.2'
+    }
+]
+
 snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
     {
         '_cleaner': {
