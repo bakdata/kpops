@@ -88,8 +88,6 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             tmp_self = cls(**values, enrich=False)
             values = tmp_self.model_dump(mode="json", by_alias=True)
             values = cls.substitute_in_component(tmp_self.config, **values)
-            # HACK: why is double substitution necessary for test_substitute_in_component
-            values = cls.substitute_in_component(tmp_self.config, **values)
             self.__init__(
                 enrich=False,
                 validate=True,
