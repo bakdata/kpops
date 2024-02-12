@@ -1,3 +1,0 @@
-kafka_brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
-components_module: tests.pipeline.test_components
-pipeline_base_dir: tests/pipeline

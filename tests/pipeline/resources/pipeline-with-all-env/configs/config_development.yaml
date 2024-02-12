@@ -1,3 +1,0 @@
-kafka_brokers: "http://override-dev:9092"
-schema_registry:
-  enabled: true

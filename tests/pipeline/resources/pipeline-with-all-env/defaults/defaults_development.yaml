@@ -1,3 +1,0 @@
-helm-app:
-  name: ${component.type}-development
-  namespace: development-namespace

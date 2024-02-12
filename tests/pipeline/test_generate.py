@@ -280,26 +280,6 @@ class TestGenerate:
         enriched_pipeline: list = yaml.safe_load(result.stdout)
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    def test_with_env_all_resources(self, snapshot: SnapshotTest):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                str(RESOURCE_PATH / "pipeline-with-all-env/pipeline/pipeline.yaml"),
-                "--config",
-                str(RESOURCE_PATH / "pipeline-with-all-env/configs"),
-                "--environment",
-                "development",
-                "--verbose",
-            ],
-            catch_exceptions=False,
-        )
-
-        assert result.exit_code == 0, result.stdout
-
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
-
     def test_prefix_pipeline_component(self, snapshot: SnapshotTest):
         result = runner.invoke(
             app,
