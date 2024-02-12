@@ -28,7 +28,7 @@ from kpops.utils.dict_ops import (
     update_nested_pair,
 )
 from kpops.utils.docstring import describe_attr
-from kpops.utils.environment import ENV
+from kpops.utils.environment import ENV, PIPELINE_PATH
 from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
 from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
@@ -86,8 +86,6 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             values = cls.extend_with_defaults(**values)
             tmp_self = cls(**values, enrich=False)
             values = tmp_self.model_dump(mode="json", by_alias=True)
-            values = cls.substitute_in_component(tmp_self.config, **values)
-            # HACK: why is double substitution necessary for test_substitute_in_component
             values = cls.substitute_in_component(tmp_self.config, **values)
             self.__init__(
                 enrich=False,
@@ -175,22 +173,24 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         :returns: Enriched kwargs with inherited defaults
         """
         kwargs["config"] = config
-        for k, v in kwargs.items():
-            if isinstance(v, pydantic.BaseModel):
-                kwargs[k] = v.model_dump(exclude_unset=True)
-            elif is_dataclass(v):
-                kwargs[k] = asdict(v)
+        if (pipeline_path_str := ENV.get(PIPELINE_PATH)) is not None:
+            pipeline_path = Path(pipeline_path_str)
+            for k, v in kwargs.items():
+                if isinstance(v, pydantic.BaseModel):
+                    kwargs[k] = v.model_dump(exclude_unset=True)
+                elif is_dataclass(v):
+                    kwargs[k] = asdict(v)
 
-        pipeline_path = Path(ENV.get("pipeline_path", ""))
-        defaults_file_paths_ = get_defaults_file_paths(
-            pipeline_path, config, ENV.get("environment")
-        )
-        defaults = cls.load_defaults(*defaults_file_paths_)
-        log.debug(
-            typer.style("Enriching component of type ", bold=False)
-            + typer.style(cls.type, bold=True, underline=True)
-        )
-        return update_nested_pair(kwargs, defaults)
+            defaults_file_paths_ = get_defaults_file_paths(
+                pipeline_path, config, ENV.get("environment")
+            )
+            defaults = cls.load_defaults(*defaults_file_paths_)
+            log.debug(
+                typer.style("Enriching component of type ", bold=False)
+                + typer.style(cls.type, bold=True, underline=True)
+            )
+            return update_nested_pair(kwargs, defaults)
+        return kwargs
 
     @classmethod
     def load_defaults(cls, *defaults_file_paths: Path) -> dict[str, Any]:
@@ -247,16 +247,18 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
 def get_defaults_file_paths(
     pipeline_path: Path, config: KpopsConfig, environment: str | None
 ) -> list[Path]:
-    """Return the paths to the main and the environment defaults-files.
+    """Return a list of default file paths related to the given pipeline.
 
-    The files need not exist, this function will only check if the dir set in
-    `config.defaults_path` exists and return paths to the defaults files
-    calculated from it. It is up to the caller to handle any false paths.
+    This function traverses the directory hierarchy upwards till the `pipeline_base_dir`,
+    starting from the directory containing
+    the pipeline.yaml file specified by `pipeline_path`, looking for default files
+    associated with the pipeline.
 
-    :param pipeline_path: The path to the pipeline.yaml file
-    :param config: KPOps configuration
-    :param environment: Environment
-    :returns: The defaults files paths
+    :param pipeline_path: The path to the pipeline.yaml file.
+    :param config: The KPOps configuration object containing settings such as pipeline_base_dir
+                   and defaults_filename_prefix.
+    :param environment: Optional. The environment for which default configuration files are sought.
+    :returns: A list of Path objects representing the default configuration file paths.
     """
     default_paths = []
 

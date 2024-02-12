@@ -17,10 +17,8 @@ from pydantic import (
 
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import update_nested_pair
-from kpops.utils.environment import ENV
+from kpops.utils.environment import ENV, PIPELINE_PATH
 from kpops.utils.yaml import load_yaml_file
-
-PIPELINE_PATH = "pipeline_path"
 
 if TYPE_CHECKING:
     from collections.abc import Awaitable, Coroutine, Iterator
