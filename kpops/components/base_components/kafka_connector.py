@@ -75,7 +75,7 @@ class KafkaConnectorResetter(HelmApp):
         )
 
     @override
-    def reset(self, dry_run: bool) -> None:
+    async def reset(self, dry_run: bool) -> None:
         """Reset connector.
 
         At first, it deletes the previous cleanup job (connector resetter)
@@ -89,22 +89,22 @@ class KafkaConnectorResetter(HelmApp):
                 f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {self.app.config.connector}"
             )
         )
-        self.destroy(dry_run)
+        await self.destroy(dry_run)
 
         log.info(
             magentaify(
                 f"Connector Cleanup: deploy Connect {self.app.connector_type} resetter for {self.app.config.connector}"
             )
         )
-        self.deploy(dry_run)
+        await self.deploy(dry_run)
 
         if not self.config.retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
-            self.destroy(dry_run)
+            await self.destroy(dry_run)
 
     @override
-    def clean(self, dry_run: bool) -> None:
-        self.reset(dry_run)
+    async def clean(self, dry_run: bool) -> None:
+        await self.reset(dry_run)
 
 
 class KafkaConnector(PipelineComponent, ABC):
@@ -148,7 +148,6 @@ class KafkaConnector(PipelineComponent, ABC):
         app["name"] = component_name
         return KafkaConnectorConfig(**app)
 
-    @computed_field
     @cached_property
     def _resetter(self) -> KafkaConnectorResetter:
         kwargs: dict[str, Any] = {}
@@ -159,7 +158,8 @@ class KafkaConnector(PipelineComponent, ABC):
             handlers=self.handlers,
             **kwargs,
             **self.model_dump(
-                exclude={"_resetter", "resetter_values", "resetter_namespace", "app"}
+                by_alias=True,
+                exclude={"_resetter", "resetter_values", "resetter_namespace", "app"},
             ),
             app=KafkaConnectorResetterValues(
                 connector_type=self._connector_type.value,
@@ -172,39 +172,41 @@ class KafkaConnector(PipelineComponent, ABC):
         )
 
     @override
-    def deploy(self, dry_run: bool) -> None:
+    async def deploy(self, dry_run: bool) -> None:
         if self.to:
-            self.handlers.topic_handler.create_topics(
+            await self.handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
             )
 
             if self.handlers.schema_handler:
-                self.handlers.schema_handler.submit_schemas(
+                await self.handlers.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
 
-        self.handlers.connector_handler.create_connector(self.app, dry_run=dry_run)
+        await self.handlers.connector_handler.create_connector(
+            self.app, dry_run=dry_run
+        )
 
     @override
-    def destroy(self, dry_run: bool) -> None:
-        self.handlers.connector_handler.destroy_connector(
+    async def destroy(self, dry_run: bool) -> None:
+        await self.handlers.connector_handler.destroy_connector(
             self.full_name, dry_run=dry_run
         )
 
     @override
-    def clean(self, dry_run: bool) -> None:
+    async def clean(self, dry_run: bool) -> None:
         if self.to:
             if self.handlers.schema_handler:
-                self.handlers.schema_handler.delete_schemas(
+                await self.handlers.schema_handler.delete_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
-            self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
+            await self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
 
 
 class KafkaSourceConnector(KafkaConnector):
     """Kafka source connector model.
 
-    :param offset_topic: offset.storage.topic,
+    :param offset_topic: `offset.storage.topic`,
         more info: https://kafka.apache.org/documentation/#connect_running,
         defaults to None
     """
@@ -216,27 +218,43 @@ class KafkaSourceConnector(KafkaConnector):
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 
+    @computed_field
+    @cached_property
+    def _resetter(self) -> KafkaConnectorResetter:
+        return super()._resetter
+
     @override
     def apply_from_inputs(self, name: str, topic: FromTopic) -> NoReturn:
         msg = "Kafka source connector doesn't support FromSection"
         raise NotImplementedError(msg)
 
     @override
-    def reset(self, dry_run: bool) -> None:
+    async def reset(self, dry_run: bool) -> None:
         self._resetter.app.config.offset_topic = self.offset_topic
-        self._resetter.reset(dry_run)
+        await self._resetter.reset(dry_run)
 
     @override
-    def clean(self, dry_run: bool) -> None:
-        super().clean(dry_run)
+    async def clean(self, dry_run: bool) -> None:
+        await super().clean(dry_run)
         self._resetter.app.config.offset_topic = self.offset_topic
-        self._resetter.clean(dry_run)
+        await self._resetter.clean(dry_run)
 
 
 class KafkaSinkConnector(KafkaConnector):
     """Kafka sink connector model."""
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SINK)
+
+    @computed_field
+    @cached_property
+    def _resetter(self) -> KafkaConnectorResetter:
+        return super()._resetter
+
+    @property
+    @override
+    def input_topics(self) -> list[str]:
+        topics = getattr(self.app, "topics", None)
+        return topics.split(",") if topics is not None else []
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
@@ -254,12 +272,12 @@ class KafkaSinkConnector(KafkaConnector):
         setattr(self.app, "errors.deadletterqueue.topic.name", topic_name)
 
     @override
-    def reset(self, dry_run: bool) -> None:
+    async def reset(self, dry_run: bool) -> None:
         self._resetter.app.config.delete_consumer_group = False
-        self._resetter.reset(dry_run)
+        await self._resetter.reset(dry_run)
 
     @override
-    def clean(self, dry_run: bool) -> None:
-        super().clean(dry_run)
+    async def clean(self, dry_run: bool) -> None:
+        await super().clean(dry_run)
         self._resetter.app.config.delete_consumer_group = True
-        self._resetter.clean(dry_run)
+        await self._resetter.clean(dry_run)

@@ -11,7 +11,8 @@ from kpops.utils.pydantic import DescConfigModel
 class InputTopicTypes(str, Enum):
     """Input topic types.
 
-    INPUT (input topic), PATTERN (extra-topic-pattern or input-topic-pattern)
+    - INPUT: input topic
+    - PATTERN: extra-topic-pattern or input-topic-pattern
     """
 
     INPUT = "input"
@@ -38,7 +39,7 @@ class FromTopic(DescConfigModel):
 
     @model_validator(mode="after")
     def extra_topic_role(self) -> Any:
-        """Ensure that cls.role is used correctly, assign type if needed."""
+        """Ensure that `cls.role` is used correctly, assign type if needed."""
         if self.type == InputTopicTypes.INPUT and self.role:
             msg = "Define role only if `type` is `pattern` or `None`"
             raise ValueError(msg)

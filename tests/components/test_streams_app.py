@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import ANY, MagicMock
+from unittest.mock import ANY, AsyncMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -17,6 +17,7 @@ from kpops.components.base_components.models.to_section import (
     TopicConfig,
     ToSection,
 )
+from kpops.components.streams_bootstrap.streams.model import StreamsAppAutoScaling
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
 from kpops.config import KpopsConfig, TopicNameConfig
 
@@ -31,6 +32,7 @@ STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
 )
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestStreamsApp:
     def test_release_name(self):
         assert STREAMS_APP_CLEAN_RELEASE_NAME.endswith("-clean")
@@ -38,9 +40,9 @@ class TestStreamsApp:
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
+            schema_handler=AsyncMock(),
+            connector_handler=AsyncMock(),
+            topic_handler=AsyncMock(),
         )
 
     @pytest.fixture()
@@ -48,8 +50,8 @@ class TestStreamsApp:
         return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
             topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component_type}-error-topic",
-                default_output_topic_name="${component_type}-output-topic",
+                default_error_topic_name="${component.type}-error-topic",
+                default_output_topic_name="${component.type}-output-topic",
             ),
             helm_diff_config=HelmDiffConfig(),
         )
@@ -69,13 +71,25 @@ class TestStreamsApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "streams-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                     }
                 },
             },
         )
+
+    def test_cleaner_inheritance(self, streams_app: StreamsApp):
+        streams_app.app.autoscaling = StreamsAppAutoScaling(
+            enabled=True,
+            consumer_group="foo",
+            lag_threshold=100,
+            idle_replicas=1,
+        )
+        cleaner = streams_app._cleaner
+        assert cleaner
+        assert not hasattr(cleaner, "_cleaner")
+        assert cleaner.app == streams_app.app
 
     def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         streams_app = StreamsApp(
@@ -215,10 +229,10 @@ class TestStreamsApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "streams-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
-                        "${error_topic_name}": TopicConfig(
+                        "streams-app-error-topic": TopicConfig(
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
@@ -237,8 +251,8 @@ class TestStreamsApp:
             "first-extra-topic": "extra-topic-1",
             "second-extra-topic": "extra-topic-2",
         }
-        assert streams_app.app.streams.output_topic == "${output_topic_name}"
-        assert streams_app.app.streams.error_topic == "${error_topic_name}"
+        assert streams_app.app.streams.output_topic == "streams-app-output-topic"
+        assert streams_app.app.streams.error_topic == "streams-app-error-topic"
 
     def test_weave_inputs_from_prev_component(
         self, config: KpopsConfig, handlers: ComponentHandlers
@@ -276,7 +290,8 @@ class TestStreamsApp:
 
         assert streams_app.app.streams.input_topics == ["prev-output-topic", "b", "a"]
 
-    def test_deploy_order_when_dry_run_is_false(
+    @pytest.mark.asyncio()
+    async def test_deploy_order_when_dry_run_is_false(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
@@ -293,10 +308,10 @@ class TestStreamsApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "streams-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
-                        "${error_topic_name}": TopicConfig(
+                        "streams-app-error-topic": TopicConfig(
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
@@ -318,12 +333,12 @@ class TestStreamsApp:
             streams_app.helm, "upgrade_install"
         )
 
-        mock = mocker.MagicMock()
+        mock = mocker.AsyncMock()
         mock.attach_mock(mock_create_topics, "mock_create_topics")
         mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
 
         dry_run = False
-        streams_app.deploy(dry_run=dry_run)
+        await streams_app.deploy(dry_run=dry_run)
 
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=dry_run),
@@ -340,8 +355,8 @@ class TestStreamsApp:
                             "first-extra-topic": "extra-topic-1",
                             "second-extra-topic": "extra-topic-2",
                         },
-                        "outputTopic": "${output_topic_name}",
-                        "errorTopic": "${error_topic_name}",
+                        "outputTopic": "streams-app-output-topic",
+                        "errorTopic": "streams-app-error-topic",
                     },
                 },
                 HelmUpgradeInstallFlags(
@@ -359,16 +374,18 @@ class TestStreamsApp:
             ),
         ]
 
-    def test_destroy(self, streams_app: StreamsApp, mocker: MockerFixture):
+    @pytest.mark.asyncio()
+    async def test_destroy(self, streams_app: StreamsApp, mocker: MockerFixture):
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
-        streams_app.destroy(dry_run=True)
+        await streams_app.destroy(dry_run=True)
 
         mock_helm_uninstall.assert_called_once_with(
             "test-namespace", STREAMS_APP_RELEASE_NAME, True
         )
 
-    def test_reset_when_dry_run_is_false(
+    @pytest.mark.asyncio()
+    async def test_reset_when_dry_run_is_false(
         self, streams_app: StreamsApp, mocker: MockerFixture
     ):
         cleaner = streams_app._cleaner
@@ -382,7 +399,7 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
         dry_run = False
-        streams_app.reset(dry_run=dry_run)
+        await streams_app.reset(dry_run=dry_run)
 
         mock.assert_has_calls(
             [
@@ -402,7 +419,7 @@ class TestStreamsApp:
                         "nameOverride": STREAMS_APP_FULL_NAME,
                         "streams": {
                             "brokers": "fake-broker:9092",
-                            "outputTopic": "${output_topic_name}",
+                            "outputTopic": "streams-app-output-topic",
                             "deleteOutput": False,
                         },
                     },
@@ -420,7 +437,8 @@ class TestStreamsApp:
             ]
         )
 
-    def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
+    @pytest.mark.asyncio()
+    async def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
         streams_app: StreamsApp,
         mocker: MockerFixture,
@@ -437,7 +455,7 @@ class TestStreamsApp:
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
         dry_run = False
-        streams_app.clean(dry_run=dry_run)
+        await streams_app.clean(dry_run=dry_run)
 
         mock.assert_has_calls(
             [
@@ -457,7 +475,7 @@ class TestStreamsApp:
                         "nameOverride": STREAMS_APP_FULL_NAME,
                         "streams": {
                             "brokers": "fake-broker:9092",
-                            "outputTopic": "${output_topic_name}",
+                            "outputTopic": "streams-app-output-topic",
                             "deleteOutput": True,
                         },
                     },
@@ -474,3 +492,57 @@ class TestStreamsApp:
                 ANY,  # __str__
             ]
         )
+
+    @pytest.mark.asyncio()
+    async def test_get_input_output_topics(
+        self, config: KpopsConfig, handlers: ComponentHandlers
+    ):
+        streams_app = StreamsApp(
+            name="my-app",
+            config=config,
+            handlers=handlers,
+            **{
+                "namespace": "test-namespace",
+                "app": {
+                    "streams": {"brokers": "fake-broker:9092"},
+                },
+                "from": {
+                    "topics": {
+                        "example-input": {"type": "input"},
+                        "b": {"type": "input"},
+                        "a": {"type": "input"},
+                        "topic-extra2": {"role": "role2"},
+                        "topic-extra3": {"role": "role2"},
+                        "topic-extra": {"role": "role1"},
+                        ".*": {"type": "pattern"},
+                        "example.*": {
+                            "type": "pattern",
+                            "role": "another-pattern",
+                        },
+                    }
+                },
+                "to": {
+                    "topics": {
+                        "example-output": {"type": "output"},
+                        "extra-topic": {"role": "fake-role"},
+                    }
+                },
+            },
+        )
+
+        assert streams_app.input_topics == ["example-input", "b", "a"]
+        assert streams_app.extra_input_topics == {
+            "role1": ["topic-extra"],
+            "role2": ["topic-extra2", "topic-extra3"],
+        }
+        assert streams_app.output_topic == "example-output"
+        assert streams_app.extra_output_topics == {"fake-role": "extra-topic"}
+        assert list(streams_app.outputs) == ["example-output", "extra-topic"]
+        assert list(streams_app.inputs) == [
+            "example-input",
+            "b",
+            "a",
+            "topic-extra2",
+            "topic-extra3",
+            "topic-extra",
+        ]

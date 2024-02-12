@@ -17,6 +17,7 @@ from kpops.config import KpopsConfig
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestStreamsBootstrap:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
@@ -50,7 +51,8 @@ class TestStreamsBootstrap:
         assert streams_bootstrap.version == "2.9.0"
         assert streams_bootstrap.namespace == "test-namespace"
 
-    def test_should_deploy_streams_bootstrap_app(
+    @pytest.mark.asyncio()
+    async def test_should_deploy_streams_bootstrap_app(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
@@ -84,7 +86,7 @@ class TestStreamsBootstrap:
             new_callable=mocker.PropertyMock,
         )
 
-        streams_bootstrap.deploy(dry_run=True)
+        await streams_bootstrap.deploy(dry_run=True)
 
         print_helm_diff.assert_called_once()
         helm_upgrade_install.assert_called_once_with(

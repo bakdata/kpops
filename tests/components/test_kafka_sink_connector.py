@@ -72,6 +72,22 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         assert isinstance(resetter, KafkaConnectorResetter)
         assert connector._resetter.helm_release_name == CONNECTOR_CLEAN_RELEASE_NAME
 
+    def test_resetter_inheritance(self, connector: KafkaSinkConnector):
+        setattr(connector.resetter_values, "testKey", "foo")
+        resetter = connector._resetter
+        assert resetter
+        assert not hasattr(resetter, "_resetter")
+
+        assert not hasattr(resetter, "resetter_namespace")
+        assert resetter.namespace == connector.resetter_namespace
+
+        assert not hasattr(resetter, "resetter_values")
+        # check that resetter values are contained in resetter app values
+        assert (
+            connector.resetter_values.model_dump().items()
+            <= resetter.app.model_dump().items()
+        )
+
     def test_connector_config_parsing(
         self,
         config: KpopsConfig,
@@ -148,7 +164,8 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         )
         assert getattr(connector.app, "topics.regex") == topic_pattern
 
-    def test_deploy_order(
+    @pytest.mark.asyncio()
+    async def test_deploy_order(
         self,
         connector: KafkaSinkConnector,
         mocker: MockerFixture,
@@ -160,16 +177,17 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             connector.handlers.connector_handler, "create_connector"
         )
 
-        mock = mocker.MagicMock()
+        mock = mocker.AsyncMock()
         mock.attach_mock(mock_create_topics, "mock_create_topics")
         mock.attach_mock(mock_create_connector, "mock_create_connector")
-        connector.deploy(dry_run=True)
+        await connector.deploy(dry_run=True)
         assert mock.mock_calls == [
             mocker.call.mock_create_topics(to_section=connector.to, dry_run=True),
             mocker.call.mock_create_connector(connector.app, dry_run=True),
         ]
 
-    def test_destroy(
+    @pytest.mark.asyncio()
+    async def test_destroy(
         self,
         connector: KafkaSinkConnector,
         mocker: MockerFixture,
@@ -178,23 +196,25 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             connector.handlers.connector_handler, "destroy_connector"
         )
 
-        connector.destroy(dry_run=True)
+        await connector.destroy(dry_run=True)
 
         mock_destroy_connector.assert_called_once_with(
             CONNECTOR_FULL_NAME, dry_run=True
         )
 
-    def test_reset_when_dry_run_is_true(
+    @pytest.mark.asyncio()
+    async def test_reset_when_dry_run_is_true(
         self,
         connector: KafkaSinkConnector,
         dry_run_handler_mock: MagicMock,
     ):
         dry_run = True
-        connector.reset(dry_run=dry_run)
+        await connector.reset(dry_run=dry_run)
 
         dry_run_handler_mock.print_helm_diff.assert_called_once()
 
-    def test_reset_when_dry_run_is_false(
+    @pytest.mark.asyncio()
+    async def test_reset_when_dry_run_is_false(
         self,
         connector: KafkaSinkConnector,
         dry_run_handler_mock: MagicMock,
@@ -214,7 +234,8 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         mock.attach_mock(helm_mock, "helm")
 
         dry_run = False
-        connector.reset(dry_run=dry_run)
+
+        await connector.reset(dry_run=dry_run)
         mock_resetter_reset.assert_called_once_with(dry_run)
 
         mock.assert_has_calls(
@@ -264,16 +285,19 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         dry_run_handler_mock.print_helm_diff.assert_not_called()
         mock_delete_topics.assert_not_called()
 
-    def test_clean_when_dry_run_is_true(
+    @pytest.mark.asyncio()
+    async def test_clean_when_dry_run_is_true(
         self,
         connector: KafkaSinkConnector,
         dry_run_handler_mock: MagicMock,
     ):
         dry_run = True
-        connector.clean(dry_run=dry_run)
+
+        await connector.clean(dry_run=dry_run)
         dry_run_handler_mock.print_helm_diff.assert_called_once()
 
-    def test_clean_when_dry_run_is_false(
+    @pytest.mark.asyncio()
+    async def test_clean_when_dry_run_is_false(
         self,
         connector: KafkaSinkConnector,
         helm_mock: MagicMock,
@@ -294,7 +318,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         mock.attach_mock(helm_mock, "helm")
 
         dry_run = False
-        connector.clean(dry_run=dry_run)
+        await connector.clean(dry_run=dry_run)
 
         assert log_info_mock.mock_calls == [
             call.log_info(
@@ -354,7 +378,8 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         ]
         dry_run_handler_mock.print_helm_diff.assert_not_called()
 
-    def test_clean_without_to_when_dry_run_is_true(
+    @pytest.mark.asyncio()
+    async def test_clean_without_to_when_dry_run_is_true(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
@@ -370,10 +395,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         )
 
         dry_run = True
-        connector.clean(dry_run)
+
+        await connector.clean(dry_run)
         dry_run_handler_mock.print_helm_diff.assert_called_once()
 
-    def test_clean_without_to_when_dry_run_is_false(
+    @pytest.mark.asyncio()
+    async def test_clean_without_to_when_dry_run_is_false(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
@@ -402,7 +429,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         mock.attach_mock(helm_mock, "helm")
 
         dry_run = False
-        connector.clean(dry_run)
+        await connector.clean(dry_run)
 
         assert mock.mock_calls == [
             mocker.call.helm.add_repo(

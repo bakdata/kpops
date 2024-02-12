@@ -1,8 +1,7 @@
 from __future__ import annotations
 
+import asyncio
 import logging
-from collections.abc import Iterator
-from enum import Enum
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
@@ -11,6 +10,7 @@ import typer
 
 from kpops import __version__
 from kpops.cli.custom_formatter import CustomFormatter
+from kpops.cli.options import FilterType
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
@@ -21,7 +21,7 @@ from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
-from kpops.pipeline import Pipeline, PipelineGenerator
+from kpops.pipeline import ComponentFilterPredicate, Pipeline, PipelineGenerator
 from kpops.utils.cli_commands import create_config, create_defaults, create_pipeline
 from kpops.utils.gen_schema import (
     SchemaScope,
@@ -108,14 +108,16 @@ DRY_RUN: bool = typer.Option(
     help="Whether to dry run the command or execute it",
 )
 
-
-class FilterType(str, Enum):
-    INCLUDE = "include"
-    EXCLUDE = "exclude"
+PARALLEL: bool = typer.Option(
+    False,
+    "--parallel/--no-parallel",
+    rich_help_panel="EXPERIMENTAL: features in preview, not production-ready",
+    help="Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.",
+)
 
 
 FILTER_TYPE: FilterType = typer.Option(
-    default=FilterType.INCLUDE.value,
+    default=FilterType.INCLUDE,
     case_sensitive=False,
     help="Whether the --steps option should include/exclude the steps",
 )
@@ -173,44 +175,21 @@ def parse_steps(steps: str) -> set[str]:
     return set(steps.split(","))
 
 
-def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
-    return [step.name for step in steps_to_apply]
+def is_in_steps(component: PipelineComponent, component_names: set[str]) -> bool:
+    return component.name in component_names
 
 
-def filter_steps_to_apply(
-    pipeline: Pipeline, steps: set[str], filter_type: FilterType
-) -> list[PipelineComponent]:
-    def is_in_steps(component: PipelineComponent) -> bool:
-        return component.name in steps
+def create_default_step_names_filter_predicate(
+    component_names: set[str], filter_type: FilterType
+) -> ComponentFilterPredicate:
+    def predicate(component: PipelineComponent) -> bool:
+        match filter_type, is_in_steps(component, component_names):
+            case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
+                return False
+            case _:
+                return True
 
-    log.debug(
-        f"KPOPS_PIPELINE_STEPS is defined with values: {steps} and filter type of {filter_type.value}"
-    )
-    filtered_steps = [
-        component
-        for component in pipeline
-        if (
-            is_in_steps(component)
-            if filter_type is FilterType.INCLUDE
-            else not is_in_steps(component)
-        )
-    ]
-    log.info(f"The following steps are included:\n{get_step_names(filtered_steps)}")
-    return filtered_steps
-
-
-def get_steps_to_apply(
-    pipeline: Pipeline, steps: str | None, filter_type: FilterType
-) -> list[PipelineComponent]:
-    if steps:
-        return filter_steps_to_apply(pipeline, parse_steps(steps), filter_type)
-    return list(pipeline)
-
-
-def reverse_pipeline_steps(
-    pipeline: Pipeline, steps: str | None, filter_type: FilterType
-) -> Iterator[PipelineComponent]:
-    return reversed(get_steps_to_apply(pipeline, steps, filter_type))
+    return predicate
 
 
 def log_action(action: str, pipeline_component: PipelineComponent):
@@ -310,6 +289,8 @@ def generate(
     defaults: Optional[Path] = DEFAULT_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     output: bool = OUTPUT_OPTION,
+    steps: Optional[str] = PIPELINE_STEPS,
+    filter_type: FilterType = FILTER_TYPE,
     environment: Optional[str] = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
 ) -> Pipeline:
@@ -320,7 +301,24 @@ def generate(
         environment,
         verbose,
     )
+
     pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
+
+    if steps:
+        component_names = parse_steps(steps)
+        log.debug(
+            f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
+        )
+
+        predicate = create_default_step_names_filter_predicate(
+            component_names, filter_type
+        )
+        pipeline.filter(predicate)
+
+        def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
+            return [step.name for step in steps_to_apply]
+
+        log.info(f"Filtered pipeline:\n{get_step_names(pipeline.components)}")
     if output:
         print_yaml(pipeline.to_yaml())
     return pipeline
@@ -347,12 +345,13 @@ def manifest(
         defaults=defaults,
         config=config,
         output=False,
+        steps=steps,
+        filter_type=filter_type,
         environment=environment,
         verbose=verbose,
     )
-    steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
     resources: list[Resource] = []
-    for component in steps_to_apply:
+    for component in pipeline.components:
         resource = component.manifest()
         resources.append(resource)
         if output:
@@ -372,20 +371,33 @@ def deploy(
     environment: Optional[str] = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
-    kpops_config = create_kpops_config(
-        config,
-        defaults,
-        dotenv,
-        environment,
-        verbose,
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        defaults=defaults,
+        config=config,
+        output=False,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
     )
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
 
-    steps_to_apply = get_steps_to_apply(pipeline, steps, filter_type)
-    for component in steps_to_apply:
+    async def deploy_runner(component: PipelineComponent):
         log_action("Deploy", component)
-        component.deploy(dry_run)
+        await component.deploy(dry_run)
+
+    async def async_deploy():
+        if parallel:
+            pipeline_tasks = pipeline.build_execution_graph(deploy_runner)
+            await pipeline_tasks
+        else:
+            for component in pipeline.components:
+                await deploy_runner(component)
+
+    asyncio.run(async_deploy())
 
 
 @app.command(help="Destroy pipeline steps")  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
@@ -399,19 +411,35 @@ def destroy(
     environment: Optional[str] = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
-    kpops_config = create_kpops_config(
-        config,
-        defaults,
-        dotenv,
-        environment,
-        verbose,
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        defaults=defaults,
+        config=config,
+        output=False,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
     )
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
-    for component in pipeline_steps:
+
+    async def destroy_runner(component: PipelineComponent):
         log_action("Destroy", component)
-        component.destroy(dry_run)
+        await component.destroy(dry_run)
+
+    async def async_destroy():
+        if parallel:
+            pipeline_tasks = pipeline.build_execution_graph(
+                destroy_runner, reverse=True
+            )
+            await pipeline_tasks
+        else:
+            for component in reversed(pipeline.components):
+                await destroy_runner(component)
+
+    asyncio.run(async_destroy())
 
 
 @app.command(help="Reset pipeline steps")  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
@@ -425,20 +453,34 @@ def reset(
     environment: Optional[str] = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
-    kpops_config = create_kpops_config(
-        config,
-        defaults,
-        dotenv,
-        environment,
-        verbose,
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        defaults=defaults,
+        config=config,
+        output=False,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
     )
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
-    for component in pipeline_steps:
+
+    async def reset_runner(component: PipelineComponent):
+        await component.destroy(dry_run)
         log_action("Reset", component)
-        component.destroy(dry_run)
-        component.reset(dry_run)
+        await component.reset(dry_run)
+
+    async def async_reset():
+        if parallel:
+            pipeline_tasks = pipeline.build_execution_graph(reset_runner, reverse=True)
+            await pipeline_tasks
+        else:
+            for component in reversed(pipeline.components):
+                await reset_runner(component)
+
+    asyncio.run(async_reset())
 
 
 @app.command(help="Clean pipeline steps")  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
@@ -452,20 +494,34 @@ def clean(
     environment: Optional[str] = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
+    parallel: bool = PARALLEL,
 ):
-    kpops_config = create_kpops_config(
-        config,
-        defaults,
-        dotenv,
-        environment,
-        verbose,
+    pipeline = generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        defaults=defaults,
+        config=config,
+        output=False,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
     )
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-    pipeline_steps = reverse_pipeline_steps(pipeline, steps, filter_type)
-    for component in pipeline_steps:
+
+    async def clean_runner(component: PipelineComponent):
+        await component.destroy(dry_run)
         log_action("Clean", component)
-        component.destroy(dry_run)
-        component.clean(dry_run)
+        await component.clean(dry_run)
+
+    async def async_clean():
+        if parallel:
+            pipeline_tasks = pipeline.build_execution_graph(clean_runner, reverse=True)
+            await pipeline_tasks
+        else:
+            for component in reversed(pipeline.components):
+                await clean_runner(component)
+
+    asyncio.run(async_clean())
 
 
 def version_callback(show_version: bool) -> None:

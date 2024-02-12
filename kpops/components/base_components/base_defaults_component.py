@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import logging
 from abc import ABC
 from collections.abc import Sequence
@@ -21,11 +22,16 @@ from pydantic.json_schema import SkipJsonSchema
 from kpops.component_handlers import ComponentHandlers
 from kpops.config import KpopsConfig
 from kpops.utils import cached_classproperty
-from kpops.utils.dict_ops import update_nested, update_nested_pair
+from kpops.utils.dict_ops import (
+    generate_substitution,
+    update_nested,
+    update_nested_pair,
+)
 from kpops.utils.docstring import describe_attr
 from kpops.utils.environment import ENV
 from kpops.utils.pydantic import DescConfigModel, issubclass_patched, to_dash
-from kpops.utils.yaml import load_yaml_file
+from kpops.utils.types import JsonType
+from kpops.utils.yaml import load_yaml_file, substitute_nested
 
 try:
     from typing import Self
@@ -38,7 +44,7 @@ log = logging.getLogger("BaseDefaultsComponent")
 class BaseDefaultsComponent(DescConfigModel, ABC):
     """Base for all components, handles defaults.
 
-    Component defaults are usually provided in a yaml file called
+    Component defaults are usually provided in a YAML file called
     `defaults.yaml`. This class ensures that the defaults are read and assigned
     correctly to the component.
 
@@ -54,7 +60,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     )
 
     enrich: SkipJsonSchema[bool] = Field(
-        default=False,
+        default=True,
         description=describe_attr("enrich", __doc__),
         exclude=True,
     )
@@ -70,17 +76,35 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     )
     validate_: SkipJsonSchema[bool] = Field(
         validation_alias=AliasChoices("validate", "validate_"),
-        default=True,
+        default=False,
         description=describe_attr("validate", __doc__),
         exclude=True,
     )
 
-    def __init__(self, **kwargs) -> None:
-        if kwargs.get("enrich", True):
-            kwargs = self.extend_with_defaults(**kwargs)
-        super().__init__(**kwargs)
-        if kwargs.get("validate", True):
-            self._validate_custom(**kwargs)
+    def __init__(self, **values: Any) -> None:
+        if values.get("enrich", True):
+            cls = self.__class__
+            values = cls.extend_with_defaults(**values)
+            tmp_self = cls(**values, enrich=False)
+            values = tmp_self.model_dump(mode="json", by_alias=True)
+            values = cls.substitute_in_component(tmp_self.config, **values)
+            # HACK: why is double substitution necessary for test_substitute_in_component
+            values = cls.substitute_in_component(tmp_self.config, **values)
+            self.__init__(
+                enrich=False,
+                validate=True,
+                config=tmp_self.config,
+                handlers=tmp_self.handlers,
+                **values,
+            )
+        else:
+            super().__init__(**values)
+
+    @pydantic.model_validator(mode="after")
+    def validate_component(self) -> Self:
+        if not self.enrich and self.validate_:
+            self._validate_custom()
+        return self
 
     @computed_field
     @cached_classproperty
@@ -106,6 +130,42 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
                 yield base
 
         return tuple(gen_parents())
+
+    @classmethod
+    def substitute_in_component(
+        cls, config: KpopsConfig, **component_data: Any
+    ) -> dict[str, Any]:
+        """Substitute all $-placeholders in a component in dict representation.
+
+        :param component_as_dict: Component represented as dict
+        :return: Updated component
+        """
+        # Leftover variables that were previously introduced in the component by the substitution
+        # functions, still hardcoded, because of their names.
+        # TODO(Ivan Yordanov): Get rid of them
+        substitution_hardcoded: dict[str, JsonType] = {
+            "error_topic_name": config.topic_name_config.default_error_topic_name,
+            "output_topic_name": config.topic_name_config.default_output_topic_name,
+        }
+        component_substitution = generate_substitution(
+            component_data,
+            "component",
+            substitution_hardcoded,
+            separator=".",
+        )
+        substitution = generate_substitution(
+            config.model_dump(mode="json"),
+            "config",
+            existing_substitution=component_substitution,
+            separator=".",
+        )
+
+        return json.loads(
+            substitute_nested(
+                json.dumps(component_data),
+                **update_nested_pair(substitution, ENV),
+            )
+        )
 
     @classmethod
     def extend_with_defaults(cls, config: KpopsConfig, **kwargs: Any) -> dict[str, Any]:
@@ -156,23 +216,20 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             )
         return defaults
 
-    def _validate_custom(self, **kwargs) -> None:
-        """Run custom validation on component.
-
-        :param kwargs: The init kwargs for the component
-        """
+    def _validate_custom(self) -> None:
+        """Run custom validation on component."""
 
 
 def defaults_from_yaml(path: Path, key: str) -> dict:
-    """Read component-specific settings from a defaults yaml file and return @default if not found.
+    """Read component-specific settings from a ``defaults*.yaml`` file and return @default if not found.
 
-    :param path: Path to defaults yaml file
+    :param path: Path to ``defaults*.yaml`` file
     :param key: Component type
-    :returns: All defaults set for the given component in the provided yaml
+    :returns: All defaults set for the given component in the provided YAML
 
     :Example:
-
-    kafka_app_defaults = defaults_from_yaml(Path("/path/to/defaults.yaml"), "kafka-app")
+    .. code-block:: python
+        kafka_app_defaults = defaults_from_yaml(Path("/path/to/defaults.yaml"), "kafka-app")
     """
     content = load_yaml_file(path, substitution=ENV)
     if not isinstance(content, dict):

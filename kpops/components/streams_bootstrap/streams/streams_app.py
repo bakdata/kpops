@@ -1,6 +1,6 @@
 from functools import cached_property
 
-from pydantic import Field
+from pydantic import Field, computed_field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import (
@@ -33,13 +33,34 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
         description=describe_attr("app", __doc__),
     )
 
+    @computed_field
     @cached_property
     def _cleaner(self) -> StreamsAppCleaner:
         return StreamsAppCleaner(
             config=self.config,
             handlers=self.handlers,
-            **self.model_dump(),
+            **self.model_dump(by_alias=True, exclude={"_cleaner"}),
         )
+
+    @property
+    @override
+    def input_topics(self) -> list[str]:
+        return self.app.streams.input_topics
+
+    @property
+    @override
+    def extra_input_topics(self) -> dict[str, list[str]]:
+        return self.app.streams.extra_input_topics
+
+    @property
+    @override
+    def output_topic(self) -> str | None:
+        return self.app.streams.output_topic
+
+    @property
+    @override
+    def extra_output_topics(self) -> dict[str, str]:
+        return self.app.streams.extra_output_topics
 
     @override
     def add_input_topics(self, topics: list[str]) -> None:
@@ -75,11 +96,11 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
         return f"{self.repo_config.repository_name}/{AppType.STREAMS_APP.value}"
 
     @override
-    def reset(self, dry_run: bool) -> None:
+    async def reset(self, dry_run: bool) -> None:
         self._cleaner.app.streams.delete_output = False
-        self._cleaner.clean(dry_run)
+        await self._cleaner.clean(dry_run)
 
     @override
-    def clean(self, dry_run: bool) -> None:
+    async def clean(self, dry_run: bool) -> None:
         self._cleaner.app.streams.delete_output = True
-        self._cleaner.clean(dry_run)
+        await self._cleaner.clean(dry_run)

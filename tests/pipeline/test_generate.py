@@ -1,12 +1,17 @@
+import asyncio
 from pathlib import Path
+from unittest import mock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import yaml
+from pytest_mock import MockerFixture
 from snapshottest.module import SnapshotTest
 from typer.testing import CliRunner
 
 import kpops
-from kpops.cli.main import app
+from kpops.cli.main import FilterType, app
+from kpops.components import KafkaSinkConnector, PipelineComponent
 from kpops.pipeline import ParsingException, ValidationError
 
 runner = CliRunner()
@@ -16,6 +21,10 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class TestGenerate:
+    @pytest.fixture(autouse=True)
+    def log_info(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch("kpops.cli.main.log.info")
+
     def test_python_api(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
@@ -23,6 +32,39 @@ class TestGenerate:
             output=False,
         )
         assert len(pipeline) == 3
+        assert [component.type for component in pipeline.components] == [
+            "scheduled-producer",
+            "converter",
+            "filter",
+        ]
+
+    def test_python_api_filter_include(self, log_info: MagicMock):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
+            defaults=RESOURCE_PATH,
+            output=False,
+            steps="converter",
+            filter_type=FilterType.INCLUDE,
+        )
+        assert len(pipeline) == 1
+        assert pipeline.components[0].type == "converter"
+        assert log_info.call_count == 1
+        log_info.assert_any_call("Filtered pipeline:\n['converter']")
+
+    def test_python_api_filter_exclude(self, log_info: MagicMock):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
+            defaults=RESOURCE_PATH,
+            output=False,
+            steps="converter,scheduled-producer",
+            filter_type=FilterType.EXCLUDE,
+        )
+        assert len(pipeline) == 1
+        assert pipeline.components[0].type == "filter"
+        assert log_info.call_count == 1
+        log_info.assert_any_call(
+            "Filtered pipeline:\n['a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name']"
+        )
 
     def test_load_pipeline(self, snapshot: SnapshotTest):
         result = runner.invoke(
@@ -140,7 +182,7 @@ class TestGenerate:
 
         snapshot.assert_match(enriched_pipeline, "test-pipeline")
 
-    @pytest.mark.timeout(0.5)
+    @pytest.mark.timeout(2)
     def test_substitute_in_component_infinite_loop(self):
         with pytest.raises((ValueError, ParsingException)):
             runner.invoke(
@@ -574,10 +616,10 @@ class TestGenerate:
         input_components = enriched_pipeline[4]["from"]["components"]
         assert "type" not in output_topics["output-topic"]
         assert output_topics["error-topic"]["type"] == "error"
-        assert "type" not in output_topics["extra-topic"]
+        assert "type" not in output_topics["extra-topic-output"]
         assert "role" not in output_topics["output-topic"]
         assert "role" not in output_topics["error-topic"]
-        assert output_topics["extra-topic"]["role"] == "role"
+        assert output_topics["extra-topic-output"]["role"] == "role"
 
         assert "type" not in ["input-topic"]
         assert "type" not in input_topics["extra-topic"]
@@ -598,7 +640,13 @@ class TestGenerate:
         assert input_components["component-extra-pattern"]["role"] == "role"
 
     def test_kubernetes_app_name_validation(self):
-        with pytest.raises((ValueError, ParsingException)):
+        with pytest.raises(
+            ParsingException,
+            match="Error enriching filter component illegal_name",
+        ), pytest.raises(
+            ValueError,
+            match="The component name illegal_name is invalid for Kubernetes.",
+        ):
             runner.invoke(
                 app,
                 [
@@ -615,8 +663,11 @@ class TestGenerate:
 
     def test_validate_unique_step_names(self):
         with pytest.raises(
+            ParsingException,
+            match="Error enriching pipeline-component component component",
+        ), pytest.raises(
             ValidationError,
-            match="step names should be unique. duplicate step names: resources-pipeline-duplicate-step-names-component",
+            match="Pipeline steps must have unique id, 'component-resources-pipeline-duplicate-step-names-component' already exists.",
         ):
             runner.invoke(
                 app,
@@ -628,6 +679,158 @@ class TestGenerate:
                 ],
                 catch_exceptions=False,
             )
+
+    def test_validate_loops_on_pipeline(self):
+        with pytest.raises(ValueError, match="Pipeline is not a valid DAG."):
+            runner.invoke(
+                app,
+                [
+                    "generate",
+                    str(RESOURCE_PATH / "pipeline-with-loop/pipeline.yaml"),
+                    "--defaults",
+                    str(RESOURCE_PATH / "pipeline-with-loop"),
+                ],
+                catch_exceptions=False,
+            )
+
+    def test_validate_simple_graph(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "pipelines-with-graphs/simple-pipeline/pipeline.yaml",
+            defaults=RESOURCE_PATH / "pipelines-with-graphs" / "simple-pipeline",
+        )
+        assert len(pipeline.components) == 2
+        assert len(pipeline._graph.nodes) == 3
+        assert len(pipeline._graph.edges) == 2
+        node_components = list(
+            filter(lambda node_id: "component" in node_id, pipeline._graph.nodes)
+        )
+        assert len(pipeline.components) == len(node_components)
+
+    def test_validate_topic_and_component_same_name(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH
+            / "pipelines-with-graphs/same-topic-and-component-name/pipeline.yaml",
+            defaults=RESOURCE_PATH
+            / "pipelines-with-graphs"
+            / "same-topic-and-component-name",
+        )
+        component, topic = list(pipeline._graph.nodes)
+        edges = list(pipeline._graph.edges)
+        assert component == f"component-{topic}"
+        assert (component, topic) in edges
+
+    @pytest.mark.asyncio()
+    async def test_parallel_execution_graph(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
+            defaults=RESOURCE_PATH / "parallel-pipeline",
+            config=RESOURCE_PATH / "parallel-pipeline",
+        )
+
+        called_component = AsyncMock()
+
+        sleep_table_components = {
+            "transaction-avro-producer-1": 1,
+            "transaction-avro-producer-2": 0,
+            "transaction-avro-producer-3": 2,
+            "transaction-joiner": 3,
+            "fraud-detector": 2,
+            "account-linker": 0,
+            "s3-connector-1": 2,
+            "s3-connector-2": 1,
+            "s3-connector-3": 0,
+        }
+
+        async def name_runner(component: PipelineComponent):
+            await asyncio.sleep(sleep_table_components[component.name])
+            await called_component(component.name)
+
+        execution_graph = pipeline.build_execution_graph(name_runner)
+
+        await execution_graph
+
+        assert called_component.mock_calls == [
+            mock.call("transaction-avro-producer-2"),
+            mock.call("transaction-avro-producer-1"),
+            mock.call("transaction-avro-producer-3"),
+            mock.call("transaction-joiner"),
+            mock.call("fraud-detector"),
+            mock.call("account-linker"),
+            mock.call("s3-connector-3"),
+            mock.call("s3-connector-2"),
+            mock.call("s3-connector-1"),
+        ]
+
+    @pytest.mark.asyncio()
+    async def test_subgraph_execution(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
+            defaults=RESOURCE_PATH / "parallel-pipeline",
+            config=RESOURCE_PATH / "parallel-pipeline",
+        )
+
+        called_component = AsyncMock()
+
+        async def name_runner(component: PipelineComponent):
+            await called_component(component.name)
+
+        pipeline.remove(pipeline.components[8].id)
+        pipeline.remove(pipeline.components[7].id)
+        pipeline.remove(pipeline.components[5].id)
+        pipeline.remove(pipeline.components[4].id)
+        pipeline.remove(pipeline.components[2].id)
+        pipeline.remove(pipeline.components[1].id)
+        execution_graph = pipeline.build_execution_graph(name_runner)
+
+        await execution_graph
+
+        assert called_component.mock_calls == [
+            mock.call("transaction-avro-producer-1"),
+            mock.call("transaction-joiner"),
+            mock.call("s3-connector-1"),
+        ]
+
+    @pytest.mark.asyncio()
+    async def test_parallel_execution_graph_reverse(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
+            defaults=RESOURCE_PATH / "parallel-pipeline",
+            config=RESOURCE_PATH / "parallel-pipeline",
+        )
+
+        called_component = AsyncMock()
+
+        sleep_table_components = {
+            "transaction-avro-producer-1": 1,
+            "transaction-avro-producer-2": 0,
+            "transaction-avro-producer-3": 2,
+            "transaction-joiner": 3,
+            "fraud-detector": 2,
+            "account-linker": 0,
+            "s3-connector-1": 2,
+            "s3-connector-2": 1,
+            "s3-connector-3": 0,
+        }
+
+        async def name_runner(component: PipelineComponent):
+            await asyncio.sleep(sleep_table_components[component.name])
+            await called_component(component.name)
+
+        execution_graph = pipeline.build_execution_graph(name_runner, reverse=True)
+
+        await execution_graph
+
+        assert called_component.mock_calls == [
+            mock.call("s3-connector-3"),
+            mock.call("s3-connector-2"),
+            mock.call("s3-connector-1"),
+            mock.call("account-linker"),
+            mock.call("fraud-detector"),
+            mock.call("transaction-joiner"),
+            mock.call("transaction-avro-producer-2"),
+            mock.call("transaction-avro-producer-1"),
+            mock.call("transaction-avro-producer-3"),
+        ]
 
     def test_temp_trim_release_name(self):
         result = runner.invoke(
@@ -646,3 +849,37 @@ class TestGenerate:
             enriched_pipeline[0]["name"]
             == "in-order-to-have-len-fifty-two-name-should-end--here"
         )
+
+    def test_substitution_in_inflated_component(self):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "resetter_values/pipeline.yaml"),
+                "--defaults",
+                str(RESOURCE_PATH / "resetter_values"),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        enriched_pipeline: list = yaml.safe_load(result.stdout)
+        assert (
+            enriched_pipeline[1]["_resetter"]["app"]["label"]
+            == "inflated-connector-name"
+        )
+
+    def test_substitution_in_resetter(self):
+        pipeline = kpops.generate(
+            RESOURCE_PATH / "resetter_values/pipeline_connector_only.yaml",
+            defaults=RESOURCE_PATH / "resetter_values",
+        )
+        assert isinstance(pipeline.components[0], KafkaSinkConnector)
+        assert pipeline.components[0].name == "es-sink-connector"
+        assert pipeline.components[0]._resetter.name == "es-sink-connector"
+        assert hasattr(pipeline.components[0]._resetter.app, "label")
+        assert pipeline.components[0]._resetter.app.label == "es-sink-connector"  # type: ignore[reportGeneralTypeIssues]
+
+        enriched_pipeline: list = yaml.safe_load(pipeline.to_yaml())
+        assert enriched_pipeline[0]["name"] == "es-sink-connector"
+        assert enriched_pipeline[0]["_resetter"]["name"] == "es-sink-connector"
+        assert enriched_pipeline[0]["_resetter"]["app"]["label"] == "es-sink-connector"

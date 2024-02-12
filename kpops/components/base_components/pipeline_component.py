@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from abc import ABC
+from typing import TYPE_CHECKING
 
 from pydantic import AliasChoices, ConfigDict, Field
 
@@ -19,6 +20,9 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.utils.docstring import describe_attr
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class PipelineComponent(BaseDefaultsComponent, ABC):
@@ -59,6 +63,32 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         super().__init__(**kwargs)
         self.set_input_topics()
         self.set_output_topics()
+
+    @property
+    def input_topics(self) -> list[str]:
+        """Get all the input topics from config."""
+        return []
+
+    @property
+    def extra_input_topics(self) -> dict[str, list[str]]:
+        """Get extra input topics list from config."""
+        return {}
+
+    @property
+    def output_topic(self) -> str | None:
+        """Get output topic from config."""
+        return None
+
+    @property
+    def extra_output_topics(self) -> dict[str, str]:
+        """Get extra output topics list from config."""
+        return {}
+
+    @property
+    def id(self) -> str:
+        # TODO: remove "component-" prefix, prefix topics instead
+        # ideally return just self.name
+        return f"component-{self.full_name}"
 
     @property
     def full_name(self) -> str:
@@ -118,6 +148,18 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
             for name, topic in self.from_.topics.items():
                 self.apply_from_inputs(name, topic)
 
+    @property
+    def inputs(self) -> Iterator[str]:
+        yield from self.input_topics
+        for role_topics in self.extra_input_topics.values():
+            yield from role_topics
+
+    @property
+    def outputs(self) -> Iterator[str]:
+        if output_topic := self.output_topic:
+            yield output_topic
+        yield from self.extra_output_topics.values()
+
     def apply_from_inputs(self, name: str, topic: FromTopic) -> None:
         """Add a `from` section input to the component config.
 
@@ -135,7 +177,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
                 self.add_input_topics([name])
 
     def set_output_topics(self) -> None:
-        """Put values of config.to into the producer config section of streams bootstrap.
+        """Put values of `to` section into the producer config section of streams bootstrap.
 
         Supports extra_output_topics (topics by role) or output_topics.
         """
@@ -192,25 +234,25 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """Render final component resources, e.g. Kubernetes manifests."""
         return []
 
-    def deploy(self, dry_run: bool) -> None:
+    async def deploy(self, dry_run: bool) -> None:
         """Deploy component, e.g. to Kubernetes cluster.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
-    def destroy(self, dry_run: bool) -> None:
+    async def destroy(self, dry_run: bool) -> None:
         """Uninstall component, e.g. from Kubernetes cluster.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
-    def reset(self, dry_run: bool) -> None:
+    async def reset(self, dry_run: bool) -> None:
         """Reset component state.
 
         :param dry_run: Whether to do a dry run of the command
         """
 
-    def clean(self, dry_run: bool) -> None:
+    async def clean(self, dry_run: bool) -> None:
         """Destroy component including related states.
 
         :param dry_run: Whether to do a dry run of the command

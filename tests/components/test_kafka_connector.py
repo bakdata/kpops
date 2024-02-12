@@ -1,6 +1,6 @@
 import re
 from pathlib import Path
-from unittest.mock import MagicMock
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -22,14 +22,15 @@ CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 RESETTER_NAMESPACE = "test-namespace"
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestKafkaConnector:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
         return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
             topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component_type}-error-topic",
-                default_output_topic_name="${component_type}-output-topic",
+                default_error_topic_name="${component.type}-error-topic",
+                default_output_topic_name="${component.type}-output-topic",
             ),
             kafka_brokers="broker:9092",
             helm_diff_config=HelmDiffConfig(),
@@ -38,15 +39,17 @@ class TestKafkaConnector:
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
+            schema_handler=AsyncMock(),
+            connector_handler=AsyncMock(),
+            topic_handler=AsyncMock(),
         )
 
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
+        async_mock = AsyncMock()
         return mocker.patch(
-            "kpops.components.base_components.helm_app.Helm"
+            "kpops.components.base_components.helm_app.Helm",
+            return_value=async_mock,
         ).return_value
 
     @pytest.fixture()
@@ -71,7 +74,7 @@ class TestKafkaConnector:
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ) -> KafkaConnector:
-        return KafkaConnector(
+        return KafkaConnector(  # HACK: not supposed to be instantiated, because ABC
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,

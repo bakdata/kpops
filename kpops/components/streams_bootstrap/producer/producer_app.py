@@ -1,6 +1,6 @@
 from functools import cached_property
 
-from pydantic import Field
+from pydantic import Field, computed_field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import (
@@ -51,12 +51,13 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
         description=describe_attr("from_", __doc__),
     )
 
+    @computed_field
     @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
         return ProducerAppCleaner(
             config=self.config,
             handlers=self.handlers,
-            **self.model_dump(),
+            **self.model_dump(by_alias=True, exclude={"_cleaner"}),
         )
 
     @override
@@ -67,6 +68,16 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
                 raise ValueError(msg)
             case _:
                 super().apply_to_outputs(name, topic)
+
+    @property
+    @override
+    def output_topic(self) -> str | None:
+        return self.app.streams.output_topic
+
+    @property
+    @override
+    def extra_output_topics(self) -> dict[str, str]:
+        return self.app.streams.extra_output_topics
 
     @override
     def set_output_topic(self, topic_name: str) -> None:
@@ -82,5 +93,5 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
         return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
     @override
-    def clean(self, dry_run: bool) -> None:
-        self._cleaner.clean(dry_run)
+    async def clean(self, dry_run: bool) -> None:
+        await self._cleaner.clean(dry_run)

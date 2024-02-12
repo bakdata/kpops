@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC
 
-from pydantic import ConfigDict, Field
+from pydantic import AliasChoices, ConfigDict, Field
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import (
@@ -28,7 +28,11 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
 
     brokers: str = Field(default=..., description=describe_attr("brokers", __doc__))
     schema_registry_url: str | None = Field(
-        default=None, description=describe_attr("schema_registry_url", __doc__)
+        default=None,
+        validation_alias=AliasChoices(
+            "schema_registry_url", "schemaRegistryUrl"
+        ),  # TODO: same for other camelcase fields, avoids duplicates during enrichment
+        description=describe_attr("schema_registry_url", __doc__),
     )
 
     model_config = ConfigDict(
@@ -72,20 +76,20 @@ class KafkaAppCleaner(StreamsBootstrap):
         )
 
     @override
-    def clean(self, dry_run: bool) -> None:
+    async def clean(self, dry_run: bool) -> None:
         """Clean an app using a cleanup job.
 
         :param dry_run: Dry run command
         """
         log.info(f"Uninstall old cleanup job for {self.helm_release_name}")
-        self.destroy(dry_run)
+        await self.destroy(dry_run)
 
         log.info(f"Init cleanup job for {self.helm_release_name}")
-        self.deploy(dry_run)
+        await self.deploy(dry_run)
 
         if not self.config.retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {self.helm_release_name}")
-            self.destroy(dry_run)
+            await self.destroy(dry_run)
 
 
 class KafkaApp(PipelineComponent, ABC):
@@ -102,14 +106,15 @@ class KafkaApp(PipelineComponent, ABC):
     )
 
     @override
-    def deploy(self, dry_run: bool) -> None:
+    async def deploy(self, dry_run: bool) -> None:
         if self.to:
-            self.handlers.topic_handler.create_topics(
+            await self.handlers.topic_handler.create_topics(
                 to_section=self.to, dry_run=dry_run
             )
 
             if self.handlers.schema_handler:
-                self.handlers.schema_handler.submit_schemas(
+                await self.handlers.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
-        super().deploy(dry_run)
+
+        await super().deploy(dry_run)

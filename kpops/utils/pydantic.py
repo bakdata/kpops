@@ -4,7 +4,6 @@ from typing import Any
 
 import humps
 from pydantic import BaseModel, ConfigDict, Field
-from pydantic.alias_generators import to_snake
 from pydantic.fields import FieldInfo
 from pydantic_settings import PydanticBaseSettingsSource
 from typing_extensions import TypeVar, override
@@ -22,6 +21,11 @@ def to_camel(s: str) -> str:
 def to_dash(s: str) -> str:
     """Convert PascalCase to dash-case."""
     return humps.depascalize(s).lower().replace("_", "-")
+
+
+def to_snake(s: str) -> str:
+    """Convert PascalCase to snake_case."""
+    return humps.depascalize(s).lower()
 
 
 def to_dot(s: str) -> str:
@@ -100,9 +104,10 @@ def issubclass_patched(
 ) -> bool:
     """Pydantic breaks ``issubclass``.
 
-    ``issubclass(set[str], set)  # True``
-    ``issubclass(BaseSettings, BaseModel)  # True``
-    ``issubclass(set[str], BaseModel)  # raises exception``
+    .. code-block:: python
+        issubclass(set[str], set)  # True
+        issubclass(BaseSettings, BaseModel)  # True
+        issubclass(set[str], BaseModel)  # raises Exception
 
     :param cls: class to check
     :base: class(es) to check against, defaults to ``BaseModel``
@@ -157,7 +162,7 @@ class YamlConfigSettingsSource(PydanticBaseSettingsSource):
 
     @staticmethod
     def load_config(file: Path) -> dict:
-        """Load yaml file if it exists.
+        """Load YAML file if it exists.
 
         :param file: Path to a ``config*.yaml``
         :return: Dict containing the config or empty dict if file doesn't exist
