@@ -181,10 +181,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             elif is_dataclass(v):
                 kwargs[k] = asdict(v)
 
-        env_pipeline_path = ENV.get("pipeline_path")
-        if not env_pipeline_path:
-            env_pipeline_path = Path()
-        pipeline_path = Path(env_pipeline_path)
+        pipeline_path = Path(ENV.get("pipeline_path", ""))
         defaults_file_paths_ = get_defaults_file_paths(
             pipeline_path, config, ENV.get("environment")
         )
