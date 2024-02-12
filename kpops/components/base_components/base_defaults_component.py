@@ -237,8 +237,9 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
     value = content.get(key)
     if value is None:
         return {}
+    default_file_name = path.resolve().relative_to(path.resolve().parent)
     log.debug(
-        f"Found defaults for component type {typer.style(key, bold=True, fg=typer.colors.MAGENTA)}"
+        f"Found defaults for component type {typer.style(key, bold=True, fg=typer.colors.MAGENTA)} in {default_file_name}"
     )
     return value
 
