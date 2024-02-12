@@ -81,7 +81,8 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     )
 
     def __init__(self, **values: Any) -> None:
-        if values.get("enrich", True):
+        pipeline_path = ENV.get("pipeline_path", None)
+        if values.get("enrich", True) and pipeline_path:
             cls = self.__class__
             values = cls.extend_with_defaults(**values)
             tmp_self = cls(**values, enrich=False)
