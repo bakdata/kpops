@@ -2,182 +2,182 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/developer/auto-generation/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/developer/contributing/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/developer/getting-started/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/resources/architecture/components-hierarchy/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/resources/examples/defaults/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/resources/examples/pipeline/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/resources/pipeline-components/pipeline/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/resources/pipeline-defaults/defaults/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/resources/variables/cli_env_vars/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/resources/variables/config_env_vars/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/changelog/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/what-is-kpops/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/config/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/defaults/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/components/helm-app/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/components/kafka-app/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/components/kafka-connector/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/components/kafka-sink-connector/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/components/kafka-source-connector/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/components/kubernetes-app/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/components/overview/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/components/producer-app/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/components/streams-app/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/components/streams-bootstrap/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/variables/environment_variables/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/core-concepts/variables/substitution/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/examples/atm-fraud-pipeline/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/getting-started/quick-start/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/getting-started/setup/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/getting-started/teardown/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/migration-guide/v1-v2/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/migration-guide/v2-v3/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/references/cli-commands/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/references/editor-integration/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://bakdata.github.io/kpops/3.2/user/references/ci-integration/github-actions/</loc>
-         <lastmod>2024-02-08</lastmod>
+         <lastmod>2024-02-12</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
