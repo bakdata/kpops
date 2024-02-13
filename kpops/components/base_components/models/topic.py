@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from enum import Enum
-from typing import Annotated, Any
+from typing import Annotated, Any, TypeVar, overload
 
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -101,7 +101,20 @@ class KafkaTopic(BaseModel):
 
 
 # Pydantic type for KafkaTopic that serializes to str, used for generating the correct JSON schema
-def deserialize_kafka_topic_from_str(topic: Any) -> KafkaTopic | Any:
+_T = TypeVar("_T", bound=Any)
+
+
+@overload
+def deserialize_kafka_topic_from_str(topic: _T) -> _T:
+    ...
+
+
+@overload
+def deserialize_kafka_topic_from_str(topic: str) -> KafkaTopic | str:
+    ...
+
+
+def deserialize_kafka_topic_from_str(topic: _T) -> KafkaTopic | _T:
     if topic and isinstance(topic, str):
         return KafkaTopic(name=topic)
     return topic
