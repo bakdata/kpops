@@ -64,6 +64,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
 
     @property
     def id(self) -> str:
+        """Unique identifier of this component."""
         return self.name
 
     @property

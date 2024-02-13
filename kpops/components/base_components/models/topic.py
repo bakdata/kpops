@@ -91,10 +91,12 @@ class KafkaTopic(BaseModel):
 
     @property
     def id(self) -> str:
+        """Unique identifier of this topic."""
         return f"topic-{self.name}"
 
     @staticmethod
     def deduplicate(topics: Iterable[KafkaTopic]) -> list[KafkaTopic]:
+        """Deduplicate an iterable of Kafka topics based on their name, overwriting previous ones."""
         return list({topic.name: topic for topic in topics}.values())
 
 
