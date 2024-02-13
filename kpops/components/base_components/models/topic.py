@@ -91,7 +91,14 @@ class KafkaTopic(BaseModel):
 
 
 # Pydantic type for KafkaTopic that serializes to str, used for generating the correct JSON schema
+def deserialize_kafka_topic_from_str(topic: Any) -> KafkaTopic | Any:
+    if topic and isinstance(topic, str):
+        return KafkaTopic(name=topic)
+    return topic
+
+
 KafkaTopicStr = Annotated[
     KafkaTopic,
     pydantic.WithJsonSchema({"type": "string"}),
+    pydantic.BeforeValidator(deserialize_kafka_topic_from_str),
 ]

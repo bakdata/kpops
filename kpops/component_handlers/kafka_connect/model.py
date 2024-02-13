@@ -67,13 +67,6 @@ class KafkaConnectorConfig(DescConfigModel):
             return [KafkaTopic(name=topic_name) for topic_name in topics.split(",")]
         return topics
 
-    @pydantic.field_validator("errors_deadletterqueue_topic_name", mode="before")
-    @classmethod
-    def validate_topic(cls, topic: Any) -> KafkaTopic | Any:
-        if topic and isinstance(topic, str):
-            return KafkaTopic(name=topic)
-        return topic
-
     @property
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
