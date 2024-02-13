@@ -96,7 +96,7 @@ class Pipeline(BaseModel):
             if not predicate(component):
                 self.remove(component.id)
 
-    def validate(self) -> None:
+    def validate(self) -> None:  # pyright: ignore [reportIncompatibleMethodOverride]
         self.__validate_graph()
 
     def to_yaml(self) -> str:
