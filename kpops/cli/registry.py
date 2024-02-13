@@ -57,7 +57,7 @@ def _find_classes(module_name: str, baseclass: type[T]) -> Iterator[type[T]]:
     module = importlib.import_module(module_name)
     if module.__file__ and not module_name.startswith(KPOPS_MODULE):
         file_path = Path(module.__file__)
-        log.debug(f"Picked up: {file_path.resolve().relative_to(Path.cwd())}")
+        log.debug(f"Picked up: {file_path.relative_to(Path.cwd())}")
     for _, _class in inspect.getmembers(module, inspect.isclass):
         if not __filter_internal_kpops_classes(
             _class.__module__, module_name
