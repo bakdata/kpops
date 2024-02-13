@@ -68,12 +68,6 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
             }
         return extra_output_topics
 
-    @pydantic.field_serializer("output_topic")
-    def serialize_topic(self, topic: KafkaTopic | None) -> str | None:
-        if not topic:
-            return None
-        return topic.name
-
     @pydantic.field_serializer("extra_output_topics")
     def serialize_extra_output_topics(
         self, extra_topics: dict[str, KafkaTopic]

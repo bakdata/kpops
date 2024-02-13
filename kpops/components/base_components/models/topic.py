@@ -97,8 +97,13 @@ def deserialize_kafka_topic_from_str(topic: Any) -> KafkaTopic | Any:
     return topic
 
 
+def serialize_kafka_topic_to_str(topic: KafkaTopic) -> str:
+    return topic.name
+
+
 KafkaTopicStr = Annotated[
     KafkaTopic,
     pydantic.WithJsonSchema({"type": "string"}),
     pydantic.BeforeValidator(deserialize_kafka_topic_from_str),
+    pydantic.PlainSerializer(serialize_kafka_topic_to_str),
 ]

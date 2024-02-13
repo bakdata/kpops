@@ -2,7 +2,6 @@ from typing import Any
 
 import pydantic
 from pydantic import ConfigDict, Field
-from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
@@ -80,11 +79,6 @@ class StreamsConfig(KafkaStreamsConfig):
         return {
             role: self.serialize_topics(topics) for role, topics in extra_topics.items()
         }
-
-    @pydantic.field_serializer("output_topic", "error_topic")
-    @override
-    def serialize_topic(self, topic: KafkaTopic | None) -> str | None:
-        return super().serialize_topic(topic)
 
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:
         """Add given topics to the list of input topics.

@@ -77,12 +77,6 @@ class KafkaConnectorConfig(DescConfigModel):
             return None
         return ",".join(topic.name for topic in topics)
 
-    @pydantic.field_serializer("errors_deadletterqueue_topic_name")
-    def serialize_topic(self, topic: KafkaTopic | None) -> str | None:
-        if not topic:
-            return None
-        return topic.name
-
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")
     def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
