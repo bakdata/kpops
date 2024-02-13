@@ -227,37 +227,6 @@
                 "connector.class": {
                     "title": "Connector.Class",
                     "type": "string"
-                },
-                "errors.deadletterqueue.topic.name": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null
-                },
-                "topics": {
-                    "default": [],
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Topics",
-                    "type": "array"
-                },
-                "topics.regex": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "title": "Topics.Regex"
                 }
             },
             "required": [
@@ -604,7 +573,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "Output topic"
+                    "description": "Output topic",
+                    "title": "Outputtopic"
                 },
                 "schema_registry_url": {
                     "anyOf": [
@@ -954,7 +924,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "Error topic"
+                    "description": "Error topic",
+                    "title": "Errortopic"
                 },
                 "extraInputPatterns": {
                     "additionalProperties": {
@@ -1018,7 +989,8 @@
                         }
                     ],
                     "default": null,
-                    "description": "Output topic"
+                    "description": "Output topic",
+                    "title": "Outputtopic"
                 },
                 "schema_registry_url": {
                     "anyOf": [
