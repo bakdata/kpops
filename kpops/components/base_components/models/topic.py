@@ -100,7 +100,6 @@ class KafkaTopic(BaseModel):
         return list({topic.name: topic for topic in topics}.values())
 
 
-# Pydantic type for KafkaTopic that serializes to str, used for generating the correct JSON schema
 _T = TypeVar("_T", bound=Any)
 
 
@@ -124,6 +123,7 @@ def serialize_kafka_topic_to_str(topic: KafkaTopic) -> str:
     return topic.name
 
 
+# Pydantic type for KafkaTopic that serializes to str, used for generating the correct JSON schema
 KafkaTopicStr = Annotated[
     KafkaTopic,
     pydantic.WithJsonSchema({"type": "string"}),
