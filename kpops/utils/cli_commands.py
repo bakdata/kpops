@@ -1,5 +1,5 @@
-from collections.abc import Iterable
 import logging
+from collections.abc import Iterable, Iterator
 from pathlib import Path
 from typing import Any
 
@@ -48,6 +48,10 @@ def get_subclasses(cls: type):
     for _cls in cls.__subclasses__():
         yield from get_subclasses(_cls)
 
+def generate_component_attrs(component: type[BaseDefaultsComponent]) -> Iterator[str]:
+    for name, finfo in component.model_fields.items():
+        if not finfo.exclude:
+            yield f"  {finfo.serialization_alias or name}:\n"  # TODO(Ivan Yordanov): Why that alias?
 
 def create_config(file_name: str, dir_path: Path) -> None:
     file_path = touch_yaml_file(file_name, dir_path)
@@ -66,17 +70,35 @@ def create_config(file_name: str, dir_path: Path) -> None:
 
 
 def create_defaults(
-    file_name: str, dir_path: Path, components: Iterable[type[BaseDefaultsComponent] | None]
+    file_name: str,
+    dir_path: Path,
+    components: Iterable[type[BaseDefaultsComponent]] | None,
+) -> None:
+    file_path = touch_yaml_file(file_name, dir_path)
+    # if components is None:
+    #     components = get_subclasses(BaseDefaultsComponent)
+    with file_path.open(mode="w") as defaults:
+        for component in (components or get_subclasses(BaseDefaultsComponent)):
+            defaults.write(f"{component.type}:\n")
+            defaults.writelines(generate_component_attrs(component))
+            defaults.write("\n")
+
+
+def create_pipeline(
+    file_name: str,
+    dir_path: Path,
+    components: dict[str, type[BaseDefaultsComponent]] | None,
 ) -> None:
     file_path = touch_yaml_file(file_name, dir_path)
     if components is None:
-        components = get_subclasses(BaseDefaultsComponent)
-    with file_path.open(mode="w") as defaults:
-        for component in components:
-            for name, finfo in component.model_fields.items():
-                if not finfo.exclude:
-                    defaults.write(f"{finfo.serialization_alias or name}:\n")
-
-
-def create_pipeline(file_name: str, dir_path: Path) -> None:
-    file_path = touch_yaml_file(file_name, dir_path)
+        components = {
+            component.type: component
+            for component
+            in get_subclasses(BaseDefaultsComponent)
+        }
+    with file_path.open(mode="w") as pipeline:
+        for name, component in components.items():
+            pipeline.write(f"- name: {name}:\n")
+            pipeline.write(f"  type: {component.type}:\n")
+            pipeline.writelines(generate_component_attrs(component))
+            pipeline.write("\n")

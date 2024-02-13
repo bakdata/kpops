@@ -236,9 +236,9 @@ def init(
     pipeline_name = "pipeline"
     defaults_name = "defaults"
     config_name = "config"
-    create_pipeline(pipeline_name + ".yaml", path)
-    create_defaults(defaults_name + ".yaml", path)
-    create_config(config_name + ".yaml", path)
+    create_pipeline(pipeline_name, path, None)
+    create_defaults(defaults_name, path, None)
+    create_config(config_name, path)
 
 
 @app.command(  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
