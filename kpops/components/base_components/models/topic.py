@@ -78,6 +78,14 @@ class TopicConfig(DescConfigModel):
 
 
 class KafkaTopic(BaseModel):
+    """Internal representation of a Kafka topic.
+
+    Users configure topic name and config through the `ToSection` of a `PipelineComponent`
+
+    :param name: Topic name
+    :param config: Topic config
+    """
+
     name: str
     config: TopicConfig = TopicConfig()
 
