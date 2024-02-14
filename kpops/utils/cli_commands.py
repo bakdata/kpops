@@ -17,13 +17,12 @@ from kpops.utils.docstring import describe_object
 log = logging.getLogger("cli_commands_utils")
 
 
+
+
 def touch_yaml_file(file_name, dir_path) -> Path:
     file_path = Path(dir_path / (file_name + ".yaml"))
     file_path.touch(exist_ok=False)
     return file_path
-
-
-# def describe_field_from_schema(field_name: str, schema: dict, file):
 
 
 def extract_config_fields_for_yaml(
@@ -47,6 +46,12 @@ def get_subclasses(cls: type):
     yield cls
     for _cls in cls.__subclasses__():
         yield from get_subclasses(_cls)
+
+COMPONENT_TYPES = {
+    cls.type: cls
+    for cls
+    in get_subclasses(BaseDefaultsComponent)
+}
 
 def generate_component_attrs(component: type[BaseDefaultsComponent]) -> Iterator[str]:
     for name, finfo in component.model_fields.items():
@@ -75,8 +80,6 @@ def create_defaults(
     components: Iterable[type[BaseDefaultsComponent]] | None,
 ) -> None:
     file_path = touch_yaml_file(file_name, dir_path)
-    # if components is None:
-    #     components = get_subclasses(BaseDefaultsComponent)
     with file_path.open(mode="w") as defaults:
         for component in (components or get_subclasses(BaseDefaultsComponent)):
             defaults.write(f"{component.type}:\n")

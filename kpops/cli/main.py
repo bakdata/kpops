@@ -22,7 +22,7 @@ from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline import ComponentFilterPredicate, Pipeline, PipelineGenerator
-from kpops.utils.cli_commands import create_config, create_defaults, create_pipeline
+from kpops.utils.cli_commands import create_config, create_defaults, create_pipeline, COMPONENT_TYPES
 from kpops.utils.gen_schema import (
     SchemaScope,
     gen_config_schema,
@@ -94,6 +94,7 @@ PROJECT_PATH: Path = typer.Argument(
 PROJECT_NAME: Optional[str] = typer.Option(
     default=None,
     help="Name of the new KPOps project. A new directory with the provided name will be created. Leave empty to use the existing dir provided via `--path`.",
+    # prompt=True,
 )
 
 PIPELINE_STEPS: Optional[str] = typer.Option(
@@ -133,6 +134,16 @@ ENVIRONMENT: str | None = typer.Option(
         "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). "
     ),
 )
+
+COMPONENTS_TYPES: list[str] | None = typer.Option(
+    default=None,
+    help="The types of the components to be added"
+)
+COMPONENTS_NAMES: list[str] | None = typer.Option(
+    default=None,
+    help="The names of the components to be added"
+)
+
 
 logger = logging.getLogger()
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -226,12 +237,30 @@ def create_kpops_config(
 def init(
     path: Path = PROJECT_PATH,
     name: Optional[str] = PROJECT_NAME,
+    components_names: Optional[list[str]] = COMPONENTS_NAMES,
+    components_types: Optional[list[str]] = COMPONENTS_TYPES,
 ):
     if name:
         path = path / name
     elif next(path.iterdir(), False):
         log.warning("Please provide a path to an empty directory.")
         return
+    if len(components_names or []) != len(components_types or []):
+        raise Exception("Exception!")
+    if not components_names:
+        components_names, components_types = [], []
+        existing_component_types = [
+            f"{type_}\n"
+            for type_ in COMPONENT_TYPES
+        ]
+        while True:
+            components_names.append(typer.prompt("Component name: "))
+            if not components_names[-1]:
+                break
+            components_types.append(typer.prompt("Component type: "))
+            while components_types[-1] not in COMPONENT_TYPES:
+                print(f"Component type not recognized.\nThe available types are: {existing_component_types}")
+                components_types.append(typer.prompt("Component type: "))
     path.mkdir(exist_ok=True)
     pipeline_name = "pipeline"
     defaults_name = "defaults"
