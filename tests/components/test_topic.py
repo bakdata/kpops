@@ -30,6 +30,13 @@ class TestKafkaTopic:
         assert model.topic == KafkaTopic(name="topic-name")
         assert model.model_dump()["topic"] == "topic-name"
 
+        exc_msg = "Topic should be a valid KafkaTopic instance or topic name string"
+        with pytest.raises(ValueError, match=exc_msg):
+            Model(topic="")  # pyright: ignore[reportGeneralTypeIssues]
+
+        with pytest.raises(ValueError, match=exc_msg):
+            Model(topic=1)  # pyright: ignore[reportGeneralTypeIssues]
+
     @pytest.mark.parametrize(
         ("input", "expected"),
         [

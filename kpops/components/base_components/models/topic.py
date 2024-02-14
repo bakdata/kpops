@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable
 from enum import Enum
-from typing import Annotated, Any, TypeVar, overload
+from typing import Annotated, Any
 
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -100,23 +100,13 @@ class KafkaTopic(BaseModel):
         return list({topic.name: topic for topic in topics}.values())
 
 
-_T = TypeVar("_T", bound=Any)
-
-
-@overload
-def deserialize_kafka_topic_from_str(topic: _T) -> _T:
-    ...
-
-
-@overload
-def deserialize_kafka_topic_from_str(topic: str) -> KafkaTopic | str:
-    ...
-
-
-def deserialize_kafka_topic_from_str(topic: _T) -> KafkaTopic | _T:
+def deserialize_kafka_topic_from_str(topic: Any) -> KafkaTopic | dict:
     if topic and isinstance(topic, str):
         return KafkaTopic(name=topic)
-    return topic
+    if isinstance(topic, KafkaTopic | dict):
+        return topic
+    msg = f"Topic should be a valid {KafkaTopic.__name__} instance or topic name string"
+    raise ValueError(msg)
 
 
 def serialize_kafka_topic_to_str(topic: KafkaTopic) -> str:
