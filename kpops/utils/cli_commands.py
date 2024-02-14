@@ -1,3 +1,4 @@
+from enum import Enum
 import logging
 from collections.abc import Iterable, Iterator
 from pathlib import Path
@@ -14,8 +15,9 @@ from kpops.components.base_components.base_defaults_component import (
 from kpops.config import KpopsConfig
 from kpops.utils.docstring import describe_object
 
-log = logging.getLogger("cli_commands_utils")
+from kpops.utils.gen_schema import _add_components
 
+log = logging.getLogger("cli_commands_utils")
 
 
 
@@ -42,20 +44,25 @@ def extract_config_fields_for_yaml(
     return extracted_fields
 
 
-def get_subclasses(cls: type):
+def get_subclasses(cls: type, include_self: bool):
     yield cls
     for _cls in cls.__subclasses__():
-        yield from get_subclasses(_cls)
+        yield from get_subclasses(_cls, True)
 
 COMPONENT_TYPES = {
     cls.type: cls
     for cls
-    in get_subclasses(BaseDefaultsComponent)
+    in get_subclasses(BaseDefaultsComponent, False)
 }
 
-def generate_component_attrs(component: type[BaseDefaultsComponent]) -> Iterator[str]:
+COMPONENT_TYPES_NO_ABC = {
+    cls.type: cls
+    for cls in _add_components("kpops.components", False)
+}   
+
+def generate_component_attrs(component: type[BaseDefaultsComponent], *exclude: str) -> Iterator[str]:
     for name, finfo in component.model_fields.items():
-        if not finfo.exclude:
+        if not (finfo.exclude or name in exclude):
             yield f"  {finfo.serialization_alias or name}:\n"  # TODO(Ivan Yordanov): Why that alias?
 
 def create_config(file_name: str, dir_path: Path) -> None:
@@ -80,8 +87,15 @@ def create_defaults(
     components: Iterable[type[BaseDefaultsComponent]] | None,
 ) -> None:
     file_path = touch_yaml_file(file_name, dir_path)
+    if components:
+        bases = set()
+        for component in components:
+            for base in component.parents:
+                bases.add(base)
+    else:
+        bases = set(COMPONENT_TYPES.values())
     with file_path.open(mode="w") as defaults:
-        for component in (components or get_subclasses(BaseDefaultsComponent)):
+        for component in bases:
             defaults.write(f"{component.type}:\n")
             defaults.writelines(generate_component_attrs(component))
             defaults.write("\n")
@@ -93,15 +107,9 @@ def create_pipeline(
     components: dict[str, type[BaseDefaultsComponent]] | None,
 ) -> None:
     file_path = touch_yaml_file(file_name, dir_path)
-    if components is None:
-        components = {
-            component.type: component
-            for component
-            in get_subclasses(BaseDefaultsComponent)
-        }
     with file_path.open(mode="w") as pipeline:
-        for name, component in components.items():
-            pipeline.write(f"- name: {name}:\n")
-            pipeline.write(f"  type: {component.type}:\n")
-            pipeline.writelines(generate_component_attrs(component))
+        for name, component in (components or COMPONENT_TYPES_NO_ABC).items():
+            pipeline.write(f"- name: {name}\n")
+            pipeline.write(f"  type: {component.type}\n")
+            pipeline.writelines(generate_component_attrs(component, "name"))
             pipeline.write("\n")

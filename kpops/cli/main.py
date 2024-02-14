@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import asyncio
+import enum
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -22,7 +23,7 @@ from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline import ComponentFilterPredicate, Pipeline, PipelineGenerator
-from kpops.utils.cli_commands import create_config, create_defaults, create_pipeline, COMPONENT_TYPES
+from kpops.utils.cli_commands import create_config, create_defaults, create_pipeline, COMPONENT_TYPES_NO_ABC
 from kpops.utils.gen_schema import (
     SchemaScope,
     gen_config_schema,
@@ -250,23 +251,24 @@ def init(
     if not components_names:
         components_names, components_types = [], []
         existing_component_types = [
-            f"{type_}\n"
-            for type_ in COMPONENT_TYPES
+            type_
+            for type_ in COMPONENT_TYPES_NO_ABC
         ]
-        while True:
-            components_names.append(typer.prompt("Component name: "))
+        while typer.confirm("Add a component"):
+            components_names.append(typer.prompt("Component name"))
             if not components_names[-1]:
                 break
-            components_types.append(typer.prompt("Component type: "))
-            while components_types[-1] not in COMPONENT_TYPES:
+            components_types.append(typer.prompt("Component type"))
+            while components_types[-1] not in COMPONENT_TYPES_NO_ABC:
                 print(f"Component type not recognized.\nThe available types are: {existing_component_types}")
-                components_types.append(typer.prompt("Component type: "))
+                components_types[-1] = typer.prompt("Component type")
     path.mkdir(exist_ok=True)
     pipeline_name = "pipeline"
     defaults_name = "defaults"
     config_name = "config"
-    create_pipeline(pipeline_name, path, None)
-    create_defaults(defaults_name, path, None)
+    component_types = [COMPONENT_TYPES_NO_ABC[type_] for type_ in COMPONENT_TYPES_NO_ABC]
+    create_pipeline(pipeline_name, path, dict(zip(components_names, component_types, strict=True)))
+    create_defaults(defaults_name, path, component_types)
     create_config(config_name, path)
 
 
