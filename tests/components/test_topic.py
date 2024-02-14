@@ -1,18 +1,34 @@
 from collections.abc import Iterable
 
+import pydantic
 import pytest
 
 from kpops.components.base_components.models.topic import (
     KafkaTopic,
+    KafkaTopicStr,
     OutputTopicTypes,
     TopicConfig,
 )
+
+
+class Model(pydantic.BaseModel):
+    __test__ = False
+    topic: KafkaTopicStr | None
 
 
 class TestKafkaTopic:
     def test_id(self):
         topic = KafkaTopic(name="foo")
         assert topic.id == "topic-foo"
+
+    def test_kafka_topic_str(self):
+        model = Model(topic=None)
+        assert model.topic is None
+        assert model.model_dump()["topic"] is None
+
+        model = Model(topic="topic-name")  # pyright: ignore[reportGeneralTypeIssues]
+        assert model.topic == KafkaTopic(name="topic-name")
+        assert model.model_dump()["topic"] == "topic-name"
 
     @pytest.mark.parametrize(
         ("input", "expected"),
