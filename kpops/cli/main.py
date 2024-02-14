@@ -23,7 +23,7 @@ from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline import ComponentFilterPredicate, Pipeline, PipelineGenerator
-from kpops.utils.cli_commands import create_config, create_defaults, create_pipeline, COMPONENT_TYPES_NO_ABC
+from kpops.utils.cli_commands import create_config, init_project
 from kpops.utils.gen_schema import (
     SchemaScope,
     gen_config_schema,
@@ -238,38 +238,13 @@ def create_kpops_config(
 def init(
     path: Path = PROJECT_PATH,
     name: Optional[str] = PROJECT_NAME,
-    components_names: Optional[list[str]] = COMPONENTS_NAMES,
-    components_types: Optional[list[str]] = COMPONENTS_TYPES,
 ):
     if name:
         path = path / name
     elif next(path.iterdir(), False):
         log.warning("Please provide a path to an empty directory.")
         return
-    if len(components_names or []) != len(components_types or []):
-        raise Exception("Exception!")
-    if not components_names:
-        components_names, components_types = [], []
-        existing_component_types = [
-            type_
-            for type_ in COMPONENT_TYPES_NO_ABC
-        ]
-        while typer.confirm("Add a component"):
-            components_names.append(typer.prompt("Component name"))
-            if not components_names[-1]:
-                break
-            components_types.append(typer.prompt("Component type"))
-            while components_types[-1] not in COMPONENT_TYPES_NO_ABC:
-                print(f"Component type not recognized.\nThe available types are: {existing_component_types}")
-                components_types[-1] = typer.prompt("Component type")
-    path.mkdir(exist_ok=True)
-    pipeline_name = "pipeline"
-    defaults_name = "defaults"
-    config_name = "config"
-    component_types = [COMPONENT_TYPES_NO_ABC[type_] for type_ in COMPONENT_TYPES_NO_ABC]
-    create_pipeline(pipeline_name, path, dict(zip(components_names, component_types, strict=True)))
-    create_defaults(defaults_name, path, component_types)
-    create_config(config_name, path)
+    init_project(path)
 
 
 @app.command(  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
