@@ -108,7 +108,7 @@ class HelmApp(KubernetesApp):
 
     @property
     def helm_name_override(self) -> str:
-        """The name override for the Helm chart. Can be overridden."""
+        """The Helm chart `nameOverride`. Can be overridden."""
         return trim(K8S_LABEL_MAX_LEN, self.full_name, getattr(self, "suffix", ""))
 
     @property

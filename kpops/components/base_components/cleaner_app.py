@@ -28,7 +28,6 @@ class CleanerApp(HelmApp, ABC):
     @property
     @override
     def helm_name_override(self) -> str:
-        """The name override for the Helm chart. Can be overridden."""
         return create_helm_name_override(self.full_name, self.suffix)
 
     @property
