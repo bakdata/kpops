@@ -23,7 +23,7 @@ from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline import ComponentFilterPredicate, Pipeline, PipelineGenerator
-from kpops.utils.cli_commands import create_config, init_project
+from kpops.utils.cli_commands import init_project
 from kpops.utils.gen_schema import (
     SchemaScope,
     gen_config_schema,

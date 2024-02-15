@@ -1,7 +1,5 @@
-from enum import Enum
 import json
 import logging
-from collections.abc import Iterable, Iterator
 from pathlib import Path
 from typing import Any
 
@@ -10,22 +8,19 @@ from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 
 from hooks.gen_docs.gen_docs_env_vars import collect_fields
-from kpops.components.base_components.base_defaults_component import (
-    BaseDefaultsComponent,
-)
 from kpops.config import KpopsConfig
 from kpops.utils.docstring import describe_object
-
-from kpops.utils.gen_schema import _add_components
 
 log = logging.getLogger("cli_commands_utils")
 
 def is_jsonable(x):
     try:
         json.dumps(x)
-        return True
     except (TypeError, OverflowError):
         return False
+    else:
+        return True
+
 
 def touch_yaml_file(file_name, dir_path) -> Path:
     file_path = Path(dir_path / (file_name + ".yaml"))
