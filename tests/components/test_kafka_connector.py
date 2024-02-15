@@ -17,6 +17,9 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_FULL_NAME = "${pipeline.name}-" + CONNECTOR_NAME
 CONNECTOR_CLEAN_FULL_NAME = CONNECTOR_FULL_NAME + "-clean"
+CONNECTOR_CLEAN_HELM_NAMEOVERRIDE = (
+    "${pipeline.name}-test-connector-with-long-name-0123-612f3-clean"
+)
 CONNECTOR_CLEAN_RELEASE_NAME = "${pipeline.name}-test-connector-with-long-612f3-clean"
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 RESETTER_NAMESPACE = "test-namespace"
