@@ -107,6 +107,11 @@ class HelmApp(KubernetesApp):
         return create_helm_release_name(self.full_name)
 
     @property
+    def helm_name_override(self) -> str:
+        """The name override for the Helm chart. Can be overridden."""
+        return trim(K8S_LABEL_MAX_LEN, self.full_name, getattr(self, "suffix", ""))
+
+    @property
     def helm_chart(self) -> str:
         """Return component's Helm chart."""
         msg = (
@@ -179,9 +184,7 @@ class HelmApp(KubernetesApp):
         :returns: The values to be used by Helm
         """
         if self.app.name_override is None:
-            self.app.name_override = trim(
-                K8S_LABEL_MAX_LEN, self.full_name, getattr(self, "suffix", "")
-            )
+            self.app.name_override = self.helm_name_override
         return self.app.model_dump()
 
     def print_helm_diff(self, stdout: str) -> None:
