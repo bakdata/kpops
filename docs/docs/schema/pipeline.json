@@ -158,6 +158,7 @@
                 "nameOverride": {
                     "anyOf": [
                         {
+                            "maxLength": 63,
                             "type": "string"
                         },
                         {
@@ -520,6 +521,7 @@
                 "nameOverride": {
                     "anyOf": [
                         {
+                            "maxLength": 63,
                             "type": "string"
                         },
                         {
@@ -861,6 +863,7 @@
                 "nameOverride": {
                     "anyOf": [
                         {
+                            "maxLength": 63,
                             "type": "string"
                         },
                         {

@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import logging
 from functools import cached_property
-from typing import Any
+from typing import Annotated, Any
 
+import pydantic
 from pydantic import Field, SerializationInfo, model_serializer
 from typing_extensions import override
 
@@ -35,7 +36,9 @@ class HelmAppValues(KubernetesAppValues):
     :param name_override: Override name with this value
     """
 
-    name_override: str | None = Field(
+    name_override: Annotated[
+        str, pydantic.StringConstraints(max_length=63)
+    ] | None = Field(
         default=None,
         title="Nameoverride",
         description=describe_attr("name_override", __doc__),
@@ -175,6 +178,7 @@ class HelmApp(KubernetesApp):
         """
         if self.app.name_override is None:
             self.app.name_override = self.full_name
+            # create_helm_release_name(self.full_name, self.suffix)
         return self.app.model_dump()
 
     def print_helm_diff(self, stdout: str) -> None:
