@@ -25,8 +25,14 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
 STREAMS_APP_FULL_NAME = "${pipeline.name}-" + STREAMS_APP_NAME
+STREAMS_APP_HELM_NAME_OVERRIDE = (
+    "${pipeline.name}-" + "test-streams-app-with-long-name-01234567-a35c6"
+)
 STREAMS_APP_RELEASE_NAME = create_helm_release_name(STREAMS_APP_FULL_NAME)
 STREAMS_APP_CLEAN_FULL_NAME = STREAMS_APP_FULL_NAME + "-clean"
+STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE = (
+    "${pipeline.name}-" + "test-streams-app-with-long-name-01-c98c5-clean"
+)
 STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
     STREAMS_APP_CLEAN_FULL_NAME, "-clean"
 )
@@ -102,7 +108,7 @@ class TestStreamsApp:
     def test_cleaner_helm_name_override(self, streams_app: StreamsApp):
         assert (
             streams_app._cleaner.to_helm_values()["nameOverride"]
-            == "${pipeline.name}-test-streams-app-with-long-name-01-c98c5-clean"
+            == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
         )
 
     def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
@@ -362,7 +368,7 @@ class TestStreamsApp:
                 dry_run,
                 "test-namespace",
                 {
-                    "nameOverride": STREAMS_APP_FULL_NAME,
+                    "nameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "extraOutputTopics": {
@@ -430,7 +436,7 @@ class TestStreamsApp:
                     dry_run,
                     "test-namespace",
                     {
-                        "nameOverride": STREAMS_APP_FULL_NAME,
+                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -486,7 +492,7 @@ class TestStreamsApp:
                     dry_run,
                     "test-namespace",
                     {
-                        "nameOverride": STREAMS_APP_FULL_NAME,
+                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",

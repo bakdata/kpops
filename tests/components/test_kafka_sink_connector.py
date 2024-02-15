@@ -70,6 +70,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
     def test_resetter(self, connector: KafkaSinkConnector):
         resetter = connector._resetter
         assert isinstance(resetter, KafkaConnectorResetter)
+        assert resetter.full_name == CONNECTOR_CLEAN_FULL_NAME
 
     def test_resetter_release_name(self, connector: KafkaSinkConnector):
         assert connector.app.name == CONNECTOR_FULL_NAME
@@ -267,7 +268,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     dry_run,
                     RESETTER_NAMESPACE,
                     {
-                        "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                        "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                         "connectorType": CONNECTOR_TYPE,
                         "config": {
                             "brokers": "broker:9092",
@@ -363,7 +364,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 dry_run,
                 RESETTER_NAMESPACE,
                 {
-                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                     "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
@@ -464,7 +465,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 dry_run,
                 RESETTER_NAMESPACE,
                 {
-                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                     "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
