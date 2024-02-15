@@ -15,7 +15,7 @@ def create_helm_release_name(name: str, suffix: str = "") -> str:
 
 
 def create_helm_name_override(name: str, suffix: str = "") -> str:
-    """Create Helm chart `nameOverride`.
+    """Create Helm chart name override.
 
     :param name: The Helm name override to be shortened.
     :param suffix: The release suffix to preserve

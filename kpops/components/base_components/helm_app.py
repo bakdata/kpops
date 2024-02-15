@@ -37,7 +37,7 @@ log = logging.getLogger("HelmApp")
 class HelmAppValues(KubernetesAppValues):
     """Helm app values.
 
-    :param name_override: Override Helm chart name, assigned automatically
+    :param name_override: Helm chart name override, assigned automatically
     """
 
     name_override: Annotated[
@@ -110,7 +110,7 @@ class HelmApp(KubernetesApp):
 
     @property
     def helm_name_override(self) -> str:
-        """The Helm chart `nameOverride`."""
+        """Helm chart name override."""
         return create_helm_name_override(self.full_name)
 
     @property

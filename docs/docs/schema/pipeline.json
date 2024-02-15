@@ -166,7 +166,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Override Helm chart name, assigned automatically",
+                    "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
                 }
             },
@@ -529,7 +529,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Override Helm chart name, assigned automatically",
+                    "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
                 },
                 "streams": {
@@ -871,7 +871,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Override Helm chart name, assigned automatically",
+                    "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
                 },
                 "streams": {
