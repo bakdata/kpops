@@ -13,6 +13,7 @@ from kpops.components.base_components.models.to_section import (
     OutputTopicTypes,
     TopicConfig,
 )
+from kpops.components.streams_bootstrap.producer.producer_app import ProducerAppCleaner
 from kpops.config import KpopsConfig, TopicNameConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
@@ -74,11 +75,25 @@ class TestProducerApp:
             },
         )
 
-    def test_cleaner_inheritance(self, producer_app: ProducerApp):
+    def test_cleaner(self, producer_app: ProducerApp):
         cleaner = producer_app._cleaner
-        assert cleaner
+        assert isinstance(cleaner, ProducerAppCleaner)
         assert not hasattr(cleaner, "_cleaner")
-        assert cleaner.app == producer_app.app
+
+    def test_cleaner_inheritance(self, producer_app: ProducerApp):
+        assert producer_app._cleaner.app == producer_app.app
+
+    def test_cleaner_helm_release_name(self, producer_app: ProducerApp):
+        assert (
+            producer_app._cleaner.helm_release_name
+            == "${pipeline.name}-test-producer-app-with-l-abc43-clean"
+        )
+
+    def test_cleaner_helm_name_override(self, producer_app: ProducerApp):
+        assert (
+            producer_app._cleaner.to_helm_values()["nameOverride"]
+            == "${pipeline.name}-test-producer-app-with-long-name-0-abc43-clean"
+        )
 
     def test_output_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(

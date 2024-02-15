@@ -79,6 +79,11 @@ class TestStreamsApp:
             },
         )
 
+    def test_cleaner(self, streams_app: StreamsApp):
+        cleaner = streams_app._cleaner
+        assert isinstance(cleaner, StreamsAppCleaner)
+        assert not hasattr(cleaner, "_cleaner")
+
     def test_cleaner_inheritance(self, streams_app: StreamsApp):
         streams_app.app.autoscaling = StreamsAppAutoScaling(
             enabled=True,
@@ -86,10 +91,19 @@ class TestStreamsApp:
             lag_threshold=100,
             idle_replicas=1,
         )
-        cleaner = streams_app._cleaner
-        assert cleaner
-        assert not hasattr(cleaner, "_cleaner")
-        assert cleaner.app == streams_app.app
+        assert streams_app._cleaner.app == streams_app.app
+
+    def test_cleaner_helm_release_name(self, streams_app: StreamsApp):
+        assert (
+            streams_app._cleaner.helm_release_name
+            == "${pipeline.name}-test-streams-app-with-lo-c98c5-clean"
+        )
+
+    def test_cleaner_helm_name_override(self, streams_app: StreamsApp):
+        assert (
+            streams_app._cleaner.to_helm_values()["nameOverride"]
+            == "${pipeline.name}-test-streams-app-with-long-name-01-c98c5-clean"
+        )
 
     def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         streams_app = StreamsApp(

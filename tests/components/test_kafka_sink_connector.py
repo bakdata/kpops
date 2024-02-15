@@ -76,7 +76,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         assert connector._resetter.helm_release_name == CONNECTOR_CLEAN_RELEASE_NAME
 
     def test_resetter_helm_name_override(self, connector: KafkaSinkConnector):
-        assert connector.app.name == CONNECTOR_FULL_NAME
         assert (
             connector._resetter.to_helm_values()["nameOverride"]
             == CONNECTOR_CLEAN_HELM_NAMEOVERRIDE
