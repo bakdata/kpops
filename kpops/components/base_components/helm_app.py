@@ -37,7 +37,7 @@ log = logging.getLogger("HelmApp")
 class HelmAppValues(KubernetesAppValues):
     """Helm app values.
 
-    :param name_override: Override name with this value
+    :param name_override: Override Helm chart name, assigned automatically
     """
 
     name_override: Annotated[
