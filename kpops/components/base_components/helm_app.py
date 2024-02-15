@@ -176,7 +176,7 @@ class HelmApp(KubernetesApp):
     def to_helm_values(self) -> dict:
         """Generate a dictionary of values readable by Helm from `self.app`.
 
-        :returns: Thte values to be used by Helm
+        :returns: The values to be used by Helm
         """
         if self.app.name_override is None:
             self.app.name_override = trim(
