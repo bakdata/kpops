@@ -51,7 +51,7 @@ class KafkaAppValues(HelmAppValues):
     )
 
 
-class KafkaAppCleaner(StreamsBootstrap):
+class KafkaAppCleaner(StreamsBootstrap, ABC):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
 
     suffix: str = "-clean"
