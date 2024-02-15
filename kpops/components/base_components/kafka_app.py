@@ -54,6 +54,8 @@ class KafkaAppValues(HelmAppValues):
 class KafkaAppCleaner(StreamsBootstrap):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
 
+    suffix: str = "-clean"
+
     @property
     @override
     def helm_chart(self) -> str:
@@ -61,9 +63,13 @@ class KafkaAppCleaner(StreamsBootstrap):
 
     @property
     @override
+    def full_name(self) -> str:
+        return super().full_name + self.suffix
+
+    @property
+    @override
     def helm_release_name(self) -> str:
-        suffix = "-clean"
-        return create_helm_release_name(self.full_name + suffix, suffix)
+        return create_helm_release_name(self.full_name, self.suffix)
 
     @property
     @override
