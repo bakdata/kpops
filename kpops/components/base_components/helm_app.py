@@ -17,9 +17,11 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.component_handlers.helm_wrapper.utils import (
+    create_helm_name_override,
+    create_helm_release_name,
+)
 from kpops.component_handlers.kubernetes.model import K8S_LABEL_MAX_LEN
-from kpops.component_handlers.kubernetes.utils import trim
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,
@@ -103,13 +105,13 @@ class HelmApp(KubernetesApp):
 
     @property
     def helm_release_name(self) -> str:
-        """The name for the Helm release. Can be overridden."""
+        """The name for the Helm release."""
         return create_helm_release_name(self.full_name)
 
     @property
     def helm_name_override(self) -> str:
-        """The Helm chart `nameOverride`. Can be overridden."""
-        return trim(K8S_LABEL_MAX_LEN, self.full_name, getattr(self, "suffix", ""))
+        """The Helm chart `nameOverride`."""
+        return create_helm_name_override(self.full_name)
 
     @property
     def helm_chart(self) -> str:
