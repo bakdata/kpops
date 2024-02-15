@@ -18,6 +18,8 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.component_handlers.kubernetes.model import K8S_LABEL_MAX_LEN
+from kpops.component_handlers.kubernetes.utils import trim
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,
@@ -37,7 +39,7 @@ class HelmAppValues(KubernetesAppValues):
     """
 
     name_override: Annotated[
-        str, pydantic.StringConstraints(max_length=63)
+        str, pydantic.StringConstraints(max_length=K8S_LABEL_MAX_LEN)
     ] | None = Field(
         default=None,
         title="Nameoverride",
@@ -177,8 +179,9 @@ class HelmApp(KubernetesApp):
         :returns: Thte values to be used by Helm
         """
         if self.app.name_override is None:
-            self.app.name_override = self.full_name
-            # create_helm_release_name(self.full_name, self.suffix)
+            self.app.name_override = trim(
+                K8S_LABEL_MAX_LEN, self.full_name, getattr(self, "suffix", "")
+            )
         return self.app.model_dump()
 
     def print_helm_diff(self, stdout: str) -> None:
