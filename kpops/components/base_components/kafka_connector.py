@@ -18,7 +18,7 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorType,
 )
 from kpops.components.base_components.base_defaults_component import deduplicate
-from kpops.components.base_components.cleaner_app import CleanerApp
+from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -28,7 +28,7 @@ from kpops.utils.docstring import describe_attr
 log = logging.getLogger("KafkaConnector")
 
 
-class KafkaConnectorResetter(CleanerApp, ABC):
+class KafkaConnectorResetter(Cleaner, ABC):
     """Helm app for resetting and cleaning a Kafka Connector.
 
     :param repo_config: Configuration of the Helm chart repo to be used for

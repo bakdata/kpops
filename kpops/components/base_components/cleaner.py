@@ -10,7 +10,7 @@ from kpops.component_handlers.helm_wrapper.utils import (
 from kpops.components.base_components.helm_app import HelmApp
 
 
-class CleanerApp(HelmApp, ABC):
+class Cleaner(HelmApp, ABC):
     """Generic Helm app for cleaning or resetting."""
 
     suffix: str = "-clean"

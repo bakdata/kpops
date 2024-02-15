@@ -6,7 +6,7 @@ from abc import ABC
 from pydantic import AliasChoices, ConfigDict, Field
 from typing_extensions import override
 
-from kpops.components.base_components.cleaner_app import CleanerApp
+from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap import StreamsBootstrap
@@ -48,7 +48,7 @@ class KafkaAppValues(HelmAppValues):
     )
 
 
-class KafkaAppCleaner(CleanerApp, StreamsBootstrap, ABC):
+class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
 
     @property
