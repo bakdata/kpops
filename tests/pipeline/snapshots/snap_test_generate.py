@@ -37,6 +37,7 @@ snapshots['TestGenerate.test_default_config test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -124,6 +125,7 @@ snapshots['TestGenerate.test_default_config test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -228,6 +230,7 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                     'com/bakdata/kafka/fake': '1.0.0'
@@ -338,6 +341,7 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -485,6 +489,7 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -683,6 +688,7 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -790,6 +796,7 @@ snapshots['TestGenerate.test_kafka_connect_sink_weave_from_topics test-pipeline'
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -941,6 +948,7 @@ snapshots['TestGenerate.test_load_pipeline test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                     'com/bakdata/kafka/fake': '1.0.0'
@@ -1051,6 +1059,7 @@ snapshots['TestGenerate.test_load_pipeline test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -1198,6 +1207,7 @@ snapshots['TestGenerate.test_load_pipeline test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -1321,6 +1331,7 @@ snapshots['TestGenerate.test_model_serialization test-pipeline'] = [
                 'repository_name': 'masked',
                 'url': 'masked'
             },
+            'suffix': '-clean',
             'type': 'producer-app-cleaner',
             'version': '2.4.2'
         },
@@ -1396,6 +1407,7 @@ snapshots['TestGenerate.test_no_input_topic test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -1511,6 +1523,7 @@ snapshots['TestGenerate.test_no_input_topic test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -1631,6 +1644,7 @@ snapshots['TestGenerate.test_no_user_defined_components test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -1739,6 +1753,7 @@ snapshots['TestGenerate.test_pipelines_with_envs test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                     'com/bakdata/kafka/fake': '1.0.0'
@@ -1849,6 +1864,7 @@ snapshots['TestGenerate.test_pipelines_with_envs test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -1996,6 +2012,7 @@ snapshots['TestGenerate.test_pipelines_with_envs test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -2126,6 +2143,7 @@ snapshots['TestGenerate.test_prefix_pipeline_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'type': 'producer-app-cleaner',
             'version': '2.9.0'
         },
@@ -2185,6 +2203,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -2253,6 +2272,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -2341,6 +2361,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -2530,6 +2551,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -2639,6 +2661,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -2828,6 +2851,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -2931,6 +2955,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -3046,6 +3071,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -3154,6 +3180,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -3258,6 +3285,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -3358,6 +3386,7 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -3459,6 +3488,7 @@ snapshots['TestGenerate.test_substitute_in_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                     'com/bakdata/kafka/fake': '1.0.0'
@@ -3574,6 +3604,7 @@ snapshots['TestGenerate.test_substitute_in_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -3728,6 +3759,7 @@ snapshots['TestGenerate.test_substitute_in_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -3863,6 +3895,7 @@ snapshots['TestGenerate.test_with_custom_config_with_absolute_defaults_path test
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -3950,6 +3983,7 @@ snapshots['TestGenerate.test_with_custom_config_with_absolute_defaults_path test
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -4056,6 +4090,7 @@ snapshots['TestGenerate.test_with_custom_config_with_relative_defaults_path test
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -4143,6 +4178,7 @@ snapshots['TestGenerate.test_with_custom_config_with_relative_defaults_path test
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -4256,6 +4292,7 @@ snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },

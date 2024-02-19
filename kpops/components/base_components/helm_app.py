@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import logging
 from functools import cached_property
-from typing import Any
+from typing import Annotated, Any
 
+import pydantic
 from pydantic import Field, SerializationInfo, model_serializer
 from typing_extensions import override
 
@@ -16,7 +17,11 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmTemplateFlags,
     HelmUpgradeInstallFlags,
 )
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.component_handlers.helm_wrapper.utils import (
+    create_helm_name_override,
+    create_helm_release_name,
+)
+from kpops.component_handlers.kubernetes.model import K8S_LABEL_MAX_LEN
 from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,
@@ -32,10 +37,12 @@ log = logging.getLogger("HelmApp")
 class HelmAppValues(KubernetesAppValues):
     """Helm app values.
 
-    :param name_override: Override name with this value
+    :param name_override: Helm chart name override, assigned automatically
     """
 
-    name_override: str | None = Field(
+    name_override: Annotated[
+        str, pydantic.StringConstraints(max_length=K8S_LABEL_MAX_LEN)
+    ] | None = Field(
         default=None,
         title="Nameoverride",
         description=describe_attr("name_override", __doc__),
@@ -98,8 +105,13 @@ class HelmApp(KubernetesApp):
 
     @property
     def helm_release_name(self) -> str:
-        """The name for the Helm release. Can be overridden."""
+        """The name for the Helm release."""
         return create_helm_release_name(self.full_name)
+
+    @property
+    def helm_name_override(self) -> str:
+        """Helm chart name override."""
+        return create_helm_name_override(self.full_name)
 
     @property
     def helm_chart(self) -> str:
@@ -168,13 +180,13 @@ class HelmApp(KubernetesApp):
         if stdout:
             log.info(magentaify(stdout))
 
-    def to_helm_values(self) -> dict:
+    def to_helm_values(self) -> dict[str, Any]:
         """Generate a dictionary of values readable by Helm from `self.app`.
 
-        :returns: Thte values to be used by Helm
+        :returns: The values to be used by Helm
         """
         if self.app.name_override is None:
-            self.app.name_override = self.full_name
+            self.app.name_override = self.helm_name_override
         return self.app.model_dump()
 
     def print_helm_diff(self, stdout: str) -> None:
