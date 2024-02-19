@@ -44,6 +44,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -146,6 +147,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -254,6 +256,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -376,6 +379,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -515,6 +519,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -702,6 +707,7 @@ snapshots['TestExample.test_word_count word-count-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
@@ -801,6 +807,7 @@ snapshots['TestExample.test_word_count word-count-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'to': {
                 'models': {
                 },
