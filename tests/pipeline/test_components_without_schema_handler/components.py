@@ -7,7 +7,7 @@ from kpops.components import (
     ProducerApp,
     StreamsApp,
 )
-from kpops.components.base_components.models.to_section import OutputTopicTypes
+from kpops.components.base_components.models.topic import OutputTopicTypes
 
 
 class ScheduledProducer(ProducerApp):

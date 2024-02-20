@@ -161,10 +161,10 @@ class Pipeline(BaseModel):
         self._graph.add_node(component.id)
 
         for input_topic in component.inputs:
-            self.__add_input(input_topic, component.id)
+            self.__add_input(input_topic.id, component.id)
 
         for output_topic in component.outputs:
-            self.__add_output(output_topic, component.id)
+            self.__add_output(output_topic.id, component.id)
 
     def __add_output(self, topic_id: str, source: str) -> None:
         self._graph.add_node(topic_id)

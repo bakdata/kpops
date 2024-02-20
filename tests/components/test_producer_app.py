@@ -9,7 +9,8 @@ from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components import ProducerApp
-from kpops.components.base_components.models.to_section import (
+from kpops.components.base_components.models.topic import (
+    KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
 )
@@ -126,9 +127,11 @@ class TestProducerApp:
             },
         )
 
-        assert producer_app.app.streams.output_topic == "producer-app-output-topic"
+        assert producer_app.app.streams.output_topic == KafkaTopic(
+            name="producer-app-output-topic"
+        )
         assert producer_app.app.streams.extra_output_topics == {
-            "first-extra-topic": "extra-topic-1"
+            "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
 
     @pytest.mark.asyncio()
@@ -137,8 +140,8 @@ class TestProducerApp:
         producer_app: ProducerApp,
         mocker: MockerFixture,
     ):
-        mock_create_topics = mocker.patch.object(
-            producer_app.handlers.topic_handler, "create_topics"
+        mock_create_topic = mocker.patch.object(
+            producer_app.handlers.topic_handler, "create_topic"
         )
 
         mock_helm_upgrade_install = mocker.patch.object(
@@ -146,12 +149,16 @@ class TestProducerApp:
         )
 
         mock = mocker.AsyncMock()
-        mock.attach_mock(mock_create_topics, "mock_create_topics")
+        mock.attach_mock(mock_create_topic, "mock_create_topic")
         mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
 
         await producer_app.deploy(dry_run=False)
+        assert producer_app.to
         assert mock.mock_calls == [
-            mocker.call.mock_create_topics(to_section=producer_app.to, dry_run=False),
+            *(
+                mocker.call.mock_create_topic(topic, dry_run=False)
+                for topic in producer_app.to.kafka_topics
+            ),
             mocker.call.mock_helm_upgrade_install(
                 PRODUCER_APP_RELEASE_NAME,
                 "bakdata-streams-bootstrap/producer-app",
@@ -335,13 +342,15 @@ class TestProducerApp:
                 },
             },
         )
-        assert producer_app.output_topic == "producer-app-output-topic"
-        assert producer_app.extra_output_topics == {
-            "first-extra-topic": "extra-topic-1"
+        assert producer_app.app.streams.output_topic == KafkaTopic(
+            name="producer-app-output-topic"
+        )
+        assert producer_app.app.streams.extra_output_topics == {
+            "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
         assert producer_app.input_topics == []
         assert list(producer_app.inputs) == []
         assert list(producer_app.outputs) == [
-            "producer-app-output-topic",
-            "extra-topic-1",
+            KafkaTopic(name="producer-app-output-topic"),
+            KafkaTopic(name="extra-topic-1"),
         ]

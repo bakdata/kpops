@@ -23,10 +23,9 @@ from kpops.components.base_components.models.from_section import (
     TopicName,
 )
 from kpops.components.base_components.models.to_section import (
-    OutputTopicTypes,
-    TopicConfig,
     ToSection,
 )
+from kpops.components.base_components.models.topic import OutputTopicTypes, TopicConfig
 from kpops.config import KpopsConfig
 from kpops.utils.environment import ENV
 from tests.components.test_kafka_connector import (
@@ -101,8 +100,8 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector: KafkaSourceConnector,
         mocker: MockerFixture,
     ):
-        mock_create_topics = mocker.patch.object(
-            connector.handlers.topic_handler, "create_topics"
+        mock_create_topic = mocker.patch.object(
+            connector.handlers.topic_handler, "create_topic"
         )
 
         mock_create_connector = mocker.patch.object(
@@ -110,12 +109,18 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         )
 
         mock = mocker.AsyncMock()
-        mock.attach_mock(mock_create_topics, "mock_create_topics")
+        mock.attach_mock(mock_create_topic, "mock_create_topic")
         mock.attach_mock(mock_create_connector, "mock_create_connector")
-        await connector.deploy(dry_run=True)
+        dry_run = True
+
+        await connector.deploy(dry_run=dry_run)
+        assert connector.to
         assert mock.mock_calls == [
-            mocker.call.mock_create_topics(to_section=connector.to, dry_run=True),
-            mocker.call.mock_create_connector(connector.app, dry_run=True),
+            *(
+                mocker.call.mock_create_topic(topic, dry_run=dry_run)
+                for topic in connector.to.kafka_topics
+            ),
+            mocker.call.mock_create_connector(connector.app, dry_run=dry_run),
         ]
 
     @pytest.mark.asyncio()
@@ -158,8 +163,8 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         mocker: MockerFixture,
     ):
         assert connector.handlers.connector_handler
-        mock_delete_topics = mocker.patch.object(
-            connector.handlers.topic_handler, "delete_topics"
+        mock_delete_topic = mocker.patch.object(
+            connector.handlers.topic_handler, "delete_topic"
         )
         mock_clean_connector = mocker.spy(
             connector.handlers.connector_handler, "clean_connector"
@@ -212,7 +217,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ANY,  # __bool__
             ANY,  # __str__
         ]
-        mock_delete_topics.assert_not_called()
+        mock_delete_topic.assert_not_called()
         dry_run_handler_mock.print_helm_diff.assert_not_called()
 
     @pytest.mark.asyncio()
@@ -237,23 +242,27 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     ):
         assert connector.handlers.connector_handler
 
-        mock_delete_topics = mocker.patch.object(
-            connector.handlers.topic_handler, "delete_topics"
+        mock_delete_topic = mocker.patch.object(
+            connector.handlers.topic_handler, "delete_topic"
         )
         mock_clean_connector = mocker.spy(
             connector.handlers.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
-        mock.attach_mock(mock_delete_topics, "mock_delete_topics")
+        mock.attach_mock(mock_delete_topic, "mock_delete_topic")
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
         mock.attach_mock(helm_mock, "helm")
 
         dry_run = False
         await connector.clean(dry_run)
 
+        assert connector.to
         assert mock.mock_calls == [
-            mocker.call.mock_delete_topics(connector.to, dry_run=dry_run),
+            *(
+                mocker.call.mock_delete_topic(topic, dry_run=dry_run)
+                for topic in connector.to.kafka_topics
+            ),
             mocker.call.helm.add_repo(
                 "bakdata-kafka-connect-resetter",
                 "https://bakdata.github.io/kafka-connect-resetter/",
@@ -319,15 +328,15 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
         assert connector.handlers.connector_handler
 
-        mock_delete_topics = mocker.patch.object(
-            connector.handlers.topic_handler, "delete_topics"
+        mock_delete_topic = mocker.patch.object(
+            connector.handlers.topic_handler, "delete_topic"
         )
         mock_clean_connector = mocker.spy(
             connector.handlers.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
-        mock.attach_mock(mock_delete_topics, "mock_delete_topics")
+        mock.attach_mock(mock_delete_topic, "mock_delete_topic")
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
         mock.attach_mock(helm_mock, "helm")
 
@@ -376,7 +385,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             ANY,  # __str__
         ]
 
-        mock_delete_topics.assert_not_called()
+        mock_delete_topic.assert_not_called()
         dry_run_handler_mock.print_helm_diff.assert_not_called()
 
     @pytest.mark.asyncio()
