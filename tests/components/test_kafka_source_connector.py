@@ -29,7 +29,7 @@ from kpops.components.base_components.models.topic import OutputTopicTypes, Topi
 from kpops.config import KpopsConfig
 from kpops.utils.environment import ENV
 from tests.components.test_kafka_connector import (
-    CONNECTOR_CLEAN_FULL_NAME,
+    CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
     CONNECTOR_CLEAN_RELEASE_NAME,
     CONNECTOR_FULL_NAME,
     CONNECTOR_NAME,
@@ -201,7 +201,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                         "connector": CONNECTOR_FULL_NAME,
                         "offsetTopic": OFFSETS_TOPIC,
                     },
-                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                 },
                 HelmUpgradeInstallFlags(
                     version="1.0.4",
@@ -281,7 +281,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 dry_run,
                 RESETTER_NAMESPACE,
                 {
-                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                     "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
@@ -362,7 +362,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 dry_run,
                 RESETTER_NAMESPACE,
                 {
-                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                     "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",

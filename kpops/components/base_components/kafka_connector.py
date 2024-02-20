@@ -9,17 +9,16 @@ from pydantic import Field, PrivateAttr, ValidationInfo, computed_field, field_v
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import (
-    HelmFlags,
     HelmRepoConfig,
 )
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
     KafkaConnectorResetterConfig,
     KafkaConnectorResetterValues,
     KafkaConnectorType,
 )
-from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
+from kpops.components.base_components.cleaner import Cleaner
+from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -29,7 +28,7 @@ from kpops.utils.docstring import describe_attr
 log = logging.getLogger("KafkaConnector")
 
 
-class KafkaConnectorResetter(HelmApp):
+class KafkaConnectorResetter(Cleaner, ABC):
     """Helm app for resetting and cleaning a Kafka Connector.
 
     :param repo_config: Configuration of the Helm chart repo to be used for
@@ -49,32 +48,11 @@ class KafkaConnectorResetter(HelmApp):
     version: str | None = Field(
         default="1.0.4", description=describe_attr("version", __doc__)
     )
-    suffix: str = "-clean"
-
-    @property
-    @override
-    def full_name(self) -> str:
-        return super().full_name + self.suffix
 
     @property
     @override
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
-
-    @property
-    @override
-    def helm_release_name(self) -> str:
-        return create_helm_release_name(self.full_name, self.suffix)
-
-    @property
-    @override
-    def helm_flags(self) -> HelmFlags:
-        return HelmFlags(
-            create_namespace=self.config.create_namespace,
-            version=self.version,
-            wait_for_jobs=True,
-            wait=True,
-        )
 
     @override
     async def reset(self, dry_run: bool) -> None:

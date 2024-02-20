@@ -14,14 +14,21 @@ from kpops.components.base_components.models.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
+from kpops.components.streams_bootstrap.producer.producer_app import ProducerAppCleaner
 from kpops.config import KpopsConfig, TopicNameConfig
 
 DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
 PRODUCER_APP_FULL_NAME = "${pipeline.name}-" + PRODUCER_APP_NAME
+PRODUCER_APP_HELM_NAME_OVERRIDE = (
+    "${pipeline.name}-" + "test-producer-app-with-long-name-0123456-c4c51"
+)
 PRODUCER_APP_RELEASE_NAME = create_helm_release_name(PRODUCER_APP_FULL_NAME)
 PRODUCER_APP_CLEAN_FULL_NAME = PRODUCER_APP_FULL_NAME + "-clean"
+PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE = (
+    "${pipeline.name}-" + "test-producer-app-with-long-name-0-abc43-clean"
+)
 PRODUCER_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
     PRODUCER_APP_CLEAN_FULL_NAME, "-clean"
 )
@@ -75,11 +82,25 @@ class TestProducerApp:
             },
         )
 
-    def test_cleaner_inheritance(self, producer_app: ProducerApp):
+    def test_cleaner(self, producer_app: ProducerApp):
         cleaner = producer_app._cleaner
-        assert cleaner
+        assert isinstance(cleaner, ProducerAppCleaner)
         assert not hasattr(cleaner, "_cleaner")
-        assert cleaner.app == producer_app.app
+
+    def test_cleaner_inheritance(self, producer_app: ProducerApp):
+        assert producer_app._cleaner.app == producer_app.app
+
+    def test_cleaner_helm_release_name(self, producer_app: ProducerApp):
+        assert (
+            producer_app._cleaner.helm_release_name
+            == "${pipeline.name}-test-producer-app-with-l-abc43-clean"
+        )
+
+    def test_cleaner_helm_name_override(self, producer_app: ProducerApp):
+        assert (
+            producer_app._cleaner.to_helm_values()["nameOverride"]
+            == PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE
+        )
 
     def test_output_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
@@ -144,7 +165,7 @@ class TestProducerApp:
                 False,
                 "test-namespace",
                 {
-                    "nameOverride": PRODUCER_APP_FULL_NAME,
+                    "nameOverride": PRODUCER_APP_HELM_NAME_OVERRIDE,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "outputTopic": "producer-app-output-topic",
@@ -216,7 +237,7 @@ class TestProducerApp:
                     True,
                     "test-namespace",
                     {
-                        "nameOverride": PRODUCER_APP_FULL_NAME,
+                        "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
@@ -273,7 +294,7 @@ class TestProducerApp:
                     False,
                     "test-namespace",
                     {
-                        "nameOverride": PRODUCER_APP_FULL_NAME,
+                        "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",

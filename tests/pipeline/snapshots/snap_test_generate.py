@@ -21,6 +21,8 @@ snapshots['TestGenerate.test_default_config test-pipeline'] = [
                 },
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'extraOutputTopics': {
+                    },
                     'outputTopic': 'resources-custom-config-app1',
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
@@ -34,6 +36,19 @@ snapshots['TestGenerate.test_default_config test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-custom-config-app1': {
+                        'configs': {
+                        },
+                        'partitions_count': 3,
+                        'type': 'output'
+                    }
+                }
             },
             'type': 'producer-app-cleaner',
             'version': '2.9.0'
@@ -49,6 +64,8 @@ snapshots['TestGenerate.test_default_config test-pipeline'] = [
             },
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'extraOutputTopics': {
+                },
                 'outputTopic': 'resources-custom-config-app1',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -104,6 +121,25 @@ snapshots['TestGenerate.test_default_config test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-custom-config-app2': {
+                        'configs': {
+                        },
+                        'partitions_count': 3,
+                        'type': 'output'
+                    },
+                    'resources-custom-config-app2-error': {
+                        'configs': {
+                        },
+                        'partitions_count': 1,
+                        'type': 'error'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.9.0'
@@ -168,6 +204,8 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
                 'schedule': '30 3/8 * * *',
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'extraOutputTopics': {
+                    },
                     'outputTopic': 'resources-pipeline-with-inflate-scheduled-producer',
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
@@ -182,6 +220,22 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                    'com/bakdata/kafka/fake': '1.0.0'
+                },
+                'topics': {
+                    'resources-pipeline-with-inflate-scheduled-producer': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 12,
+                        'type': 'output',
+                        'value_schema': 'com.bakdata.fake.Produced'
+                    }
+                }
+            },
             'type': 'producer-app-cleaner',
             'version': '2.4.2'
         },
@@ -194,6 +248,8 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
             'schedule': '30 3/8 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'extraOutputTopics': {
+                },
                 'outputTopic': 'resources-pipeline-with-inflate-scheduled-producer',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -274,6 +330,29 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-pipeline-with-inflate-converter': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete',
+                            'retention.ms': '-1'
+                        },
+                        'partitions_count': 50,
+                        'type': 'output'
+                    },
+                    'resources-pipeline-with-inflate-converter-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 10,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -400,6 +479,28 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-pipeline-with-inflate-should-inflate': {
+                        'configs': {
+                            'retention.ms': '-1'
+                        },
+                        'partitions_count': 50,
+                        'type': 'output'
+                    },
+                    'resources-pipeline-with-inflate-should-inflate-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
+            },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
         },
@@ -495,6 +596,22 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
             'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'kafka-sink-connector': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    },
+                    'should-inflate-inflated-sink-connector': {
+                        'configs': {
+                        },
+                        'role': 'test'
+                    }
+                }
+            },
             'type': 'kafka-connector-resetter',
             'version': '1.0.4'
         },
@@ -560,6 +677,26 @@ snapshots['TestGenerate.test_inflate_pipeline test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-pipeline-with-inflate-should-inflate-inflated-streams-app-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    },
+                    'resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -630,6 +767,15 @@ snapshots['TestGenerate.test_kafka_connect_sink_weave_from_topics test-pipeline'
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
+            'from': {
+                'components': {
+                },
+                'topics': {
+                    'example-topic': {
+                        'type': 'input'
+                    }
+                }
+            },
             'name': 'streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-kafka-connect-sink-',
@@ -639,6 +785,26 @@ snapshots['TestGenerate.test_kafka_connect_sink_weave_from_topics test-pipeline'
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'example-output': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    },
+                    'resources-kafka-connect-sink-streams-app-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -756,6 +922,8 @@ snapshots['TestGenerate.test_load_pipeline test-pipeline'] = [
                 'schedule': '30 3/8 * * *',
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'extraOutputTopics': {
+                    },
                     'outputTopic': 'resources-first-pipeline-scheduled-producer',
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
@@ -770,6 +938,22 @@ snapshots['TestGenerate.test_load_pipeline test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                    'com/bakdata/kafka/fake': '1.0.0'
+                },
+                'topics': {
+                    'resources-first-pipeline-scheduled-producer': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 12,
+                        'type': 'output',
+                        'value_schema': 'com.bakdata.fake.Produced'
+                    }
+                }
+            },
             'type': 'producer-app-cleaner',
             'version': '2.4.2'
         },
@@ -782,6 +966,8 @@ snapshots['TestGenerate.test_load_pipeline test-pipeline'] = [
             'schedule': '30 3/8 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'extraOutputTopics': {
+                },
                 'outputTopic': 'resources-first-pipeline-scheduled-producer',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -862,6 +1048,29 @@ snapshots['TestGenerate.test_load_pipeline test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-first-pipeline-converter': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete',
+                            'retention.ms': '-1'
+                        },
+                        'partitions_count': 50,
+                        'type': 'output'
+                    },
+                    'resources-first-pipeline-converter-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 10,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -988,6 +1197,28 @@ snapshots['TestGenerate.test_load_pipeline test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name': {
+                        'configs': {
+                            'retention.ms': '-1'
+                        },
+                        'partitions_count': 50,
+                        'type': 'output'
+                    },
+                    'resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
+            },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
         },
@@ -1071,6 +1302,8 @@ snapshots['TestGenerate.test_model_serialization test-pipeline'] = [
             'app': {
                 'streams': {
                     'brokers': 'test',
+                    'extraOutputTopics': {
+                    },
                     'outputTopic': 'out',
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
@@ -1088,12 +1321,15 @@ snapshots['TestGenerate.test_model_serialization test-pipeline'] = [
                 'repository_name': 'masked',
                 'url': 'masked'
             },
+            'suffix': '-clean',
             'type': 'producer-app-cleaner',
             'version': '2.4.2'
         },
         'app': {
             'streams': {
                 'brokers': 'test',
+                'extraOutputTopics': {
+                },
                 'outputTopic': 'out',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -1142,6 +1378,15 @@ snapshots['TestGenerate.test_no_input_topic test-pipeline'] = [
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
+            'from': {
+                'components': {
+                },
+                'topics': {
+                    '.*': {
+                        'type': 'pattern'
+                    }
+                }
+            },
             'name': 'app1',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-input-topic-pipeline-',
@@ -1151,6 +1396,26 @@ snapshots['TestGenerate.test_no_input_topic test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'example-output': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    },
+                    'resources-no-input-topic-pipeline-app1-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -1248,6 +1513,31 @@ snapshots['TestGenerate.test_no_input_topic test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'example-output-extra': {
+                        'configs': {
+                        },
+                        'role': 'extra'
+                    },
+                    'resources-no-input-topic-pipeline-app2-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    },
+                    'test-output-extra': {
+                        'configs': {
+                        },
+                        'role': 'test-output'
+                    }
+                }
+            },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
         },
@@ -1325,6 +1615,15 @@ snapshots['TestGenerate.test_no_user_defined_components test-pipeline'] = [
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
+            'from': {
+                'components': {
+                },
+                'topics': {
+                    'example-topic': {
+                        'type': 'input'
+                    }
+                }
+            },
             'name': 'streams-app',
             'namespace': 'example-namespace',
             'prefix': 'resources-no-user-defined-components-',
@@ -1334,6 +1633,26 @@ snapshots['TestGenerate.test_no_user_defined_components test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'example-output': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    },
+                    'resources-no-user-defined-components-streams-app-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -1408,6 +1727,8 @@ snapshots['TestGenerate.test_pipelines_with_env_values test-pipeline'] = [
                 'schedule': '20 3/8 * * *',
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'extraOutputTopics': {
+                    },
                     'outputTopic': 'resources-pipeline-with-envs-input-producer',
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
@@ -1422,6 +1743,22 @@ snapshots['TestGenerate.test_pipelines_with_env_values test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                    'com/bakdata/kafka/fake': '1.0.0'
+                },
+                'topics': {
+                    'resources-pipeline-with-envs-input-producer': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 12,
+                        'type': 'output',
+                        'value_schema': 'com.bakdata.fake.Produced'
+                    }
+                }
+            },
             'type': 'producer-app-cleaner',
             'version': '2.4.2'
         },
@@ -1434,6 +1771,8 @@ snapshots['TestGenerate.test_pipelines_with_env_values test-pipeline'] = [
             'schedule': '20 3/8 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'extraOutputTopics': {
+                },
                 'outputTopic': 'resources-pipeline-with-envs-input-producer',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -1514,6 +1853,29 @@ snapshots['TestGenerate.test_pipelines_with_env_values test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-pipeline-with-envs-converter': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete',
+                            'retention.ms': '-1'
+                        },
+                        'partitions_count': 50,
+                        'type': 'output'
+                    },
+                    'resources-pipeline-with-envs-converter-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 10,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -1640,6 +2002,28 @@ snapshots['TestGenerate.test_pipelines_with_env_values test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-pipeline-with-envs-filter': {
+                        'configs': {
+                            'retention.ms': '-1'
+                        },
+                        'partitions_count': 50,
+                        'type': 'output'
+                    },
+                    'resources-pipeline-with-envs-filter-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
+            },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
         },
@@ -1733,6 +2117,8 @@ snapshots['TestGenerate.test_prefix_pipeline_component test-pipeline'] = [
                 'schedule': '0 12 * * *',
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'extraOutputTopics': {
+                    },
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 },
                 'suspend': True
@@ -1747,6 +2133,7 @@ snapshots['TestGenerate.test_prefix_pipeline_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
             'type': 'producer-app-cleaner',
             'version': '2.9.0'
         },
@@ -1763,6 +2150,8 @@ snapshots['TestGenerate.test_prefix_pipeline_component test-pipeline'] = [
             'schedule': '0 12 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'extraOutputTopics': {
+                },
                 'schemaRegistryUrl': 'http://localhost:8081/'
             },
             'suspend': True
@@ -1788,6 +2177,8 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
             'app': {
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'extraOutputTopics': {
+                    },
                     'outputTopic': 'resources-read-from-component-producer1',
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
@@ -1802,12 +2193,26 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-read-from-component-producer1': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    }
+                }
+            },
             'type': 'producer-app-cleaner',
             'version': '2.4.2'
         },
         'app': {
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'extraOutputTopics': {
+                },
                 'outputTopic': 'resources-read-from-component-producer1',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -1841,6 +2246,8 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
             'app': {
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'extraOutputTopics': {
+                    },
                     'outputTopic': 'resources-read-from-component-producer2',
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
@@ -1855,12 +2262,26 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-read-from-component-producer2': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    }
+                }
+            },
             'type': 'producer-app-cleaner',
             'version': '2.4.2'
         },
         'app': {
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'extraOutputTopics': {
+                },
                 'outputTopic': 'resources-read-from-component-producer2',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -1929,6 +2350,28 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-read-from-component-inflate-step': {
+                        'configs': {
+                            'retention.ms': '-1'
+                        },
+                        'partitions_count': 50,
+                        'type': 'output'
+                    },
+                    'resources-read-from-component-inflate-step-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -2016,6 +2459,22 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
             'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'inflate-step-inflated-sink-connector': {
+                        'configs': {
+                        },
+                        'role': 'test'
+                    },
+                    'kafka-sink-connector': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    }
+                }
+            },
             'type': 'kafka-connector-resetter',
             'version': '1.0.4'
         },
@@ -2081,6 +2540,26 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-read-from-component-inflate-step-inflate-step-inflated-streams-app': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    },
+                    'resources-read-from-component-inflate-step-inflated-streams-app-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -2172,6 +2651,28 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-read-from-component-inflate-step-without-prefix': {
+                        'configs': {
+                            'retention.ms': '-1'
+                        },
+                        'partitions_count': 50,
+                        'type': 'output'
+                    },
+                    'resources-read-from-component-inflate-step-without-prefix-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
+            },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
         },
@@ -2258,6 +2759,22 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'url': 'https://bakdata.github.io/kafka-connect-resetter/'
             },
             'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'inflate-step-without-prefix-inflated-sink-connector': {
+                        'configs': {
+                        },
+                        'role': 'test'
+                    },
+                    'kafka-sink-connector': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    }
+                }
+            },
             'type': 'kafka-connector-resetter',
             'version': '1.0.4'
         },
@@ -2324,6 +2841,26 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    },
+                    'resources-read-from-component-inflate-step-without-prefix-inflated-streams-app-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
+            },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
         },
@@ -2389,6 +2926,15 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
+            'from': {
+                'components': {
+                    'producer1': {
+                        'type': 'input'
+                    }
+                },
+                'topics': {
+                }
+            },
             'name': 'consumer1',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
@@ -2398,6 +2944,26 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-read-from-component-consumer1': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    },
+                    'resources-read-from-component-consumer1-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -2473,6 +3039,18 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
+            'from': {
+                'components': {
+                    'consumer1': {
+                        'type': 'input'
+                    },
+                    'producer1': {
+                        'type': 'input'
+                    }
+                },
+                'topics': {
+                }
+            },
             'name': 'consumer2',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
@@ -2482,6 +3060,21 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-read-from-component-consumer2-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -2555,6 +3148,18 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
+            'from': {
+                'components': {
+                    'producer2': {
+                        'type': 'input'
+                    }
+                },
+                'topics': {
+                    'resources-read-from-component-producer1': {
+                        'type': 'input'
+                    }
+                }
+            },
             'name': 'consumer3',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
@@ -2564,6 +3169,21 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-read-from-component-consumer3-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -2636,6 +3256,15 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
+            'from': {
+                'components': {
+                    'inflate-step': {
+                        'type': 'input'
+                    }
+                },
+                'topics': {
+                }
+            },
             'name': 'consumer4',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
@@ -2645,6 +3274,21 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-read-from-component-consumer4-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -2713,6 +3357,15 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
+            'from': {
+                'components': {
+                    'inflate-step-without-prefix': {
+                        'type': 'input'
+                    }
+                },
+                'topics': {
+                }
+            },
             'name': 'consumer5',
             'namespace': 'example-namespace',
             'prefix': 'resources-read-from-component-',
@@ -2722,6 +3375,21 @@ snapshots['TestGenerate.test_read_from_component test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-read-from-component-consumer5-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -2794,6 +3462,8 @@ snapshots['TestGenerate.test_substitute_in_component test-pipeline'] = [
                 'schedule': '30 3/8 * * *',
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'extraOutputTopics': {
+                    },
                     'outputTopic': 'resources-component-type-substitution-scheduled-producer',
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
@@ -2807,6 +3477,22 @@ snapshots['TestGenerate.test_substitute_in_component test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                    'com/bakdata/kafka/fake': '1.0.0'
+                },
+                'topics': {
+                    'resources-component-type-substitution-scheduled-producer': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 12,
+                        'type': 'output',
+                        'value_schema': 'com.bakdata.fake.Produced'
+                    }
+                }
             },
             'type': 'producer-app-cleaner',
             'version': '2.4.2'
@@ -2825,6 +3511,8 @@ snapshots['TestGenerate.test_substitute_in_component test-pipeline'] = [
             'schedule': '30 3/8 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'extraOutputTopics': {
+                },
                 'outputTopic': 'resources-component-type-substitution-scheduled-producer',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -2905,6 +3593,29 @@ snapshots['TestGenerate.test_substitute_in_component test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-component-type-substitution-converter': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete',
+                            'retention.ms': '-1'
+                        },
+                        'partitions_count': 50,
+                        'type': 'output'
+                    },
+                    'resources-component-type-substitution-converter-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 10,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
@@ -3038,6 +3749,28 @@ snapshots['TestGenerate.test_substitute_in_component test-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'resources-component-type-substitution-filter-app': {
+                        'configs': {
+                            'retention.ms': '-1'
+                        },
+                        'partitions_count': 50,
+                        'type': 'output'
+                    },
+                    'resources-component-type-substitution-filter-app-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
+            },
             'type': 'streams-app-cleaner',
             'version': '2.4.2'
         },
@@ -3136,6 +3869,8 @@ snapshots['TestGenerate.test_with_custom_config_with_absolute_defaults_path test
                 },
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'extraOutputTopics': {
+                    },
                     'outputTopic': 'app1-test-topic',
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
@@ -3149,6 +3884,19 @@ snapshots['TestGenerate.test_with_custom_config_with_absolute_defaults_path test
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'app1-test-topic': {
+                        'configs': {
+                        },
+                        'partitions_count': 3,
+                        'type': 'output'
+                    }
+                }
             },
             'type': 'producer-app-cleaner',
             'version': '2.9.0'
@@ -3164,6 +3912,8 @@ snapshots['TestGenerate.test_with_custom_config_with_absolute_defaults_path test
             },
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'extraOutputTopics': {
+                },
                 'outputTopic': 'app1-test-topic',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -3219,6 +3969,25 @@ snapshots['TestGenerate.test_with_custom_config_with_absolute_defaults_path test
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'app2-dead-letter-topic': {
+                        'configs': {
+                        },
+                        'partitions_count': 1,
+                        'type': 'error'
+                    },
+                    'app2-test-topic': {
+                        'configs': {
+                        },
+                        'partitions_count': 3,
+                        'type': 'output'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.9.0'
@@ -3285,6 +4054,8 @@ snapshots['TestGenerate.test_with_custom_config_with_relative_defaults_path test
                 },
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'extraOutputTopics': {
+                    },
                     'outputTopic': 'app1-test-topic',
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
@@ -3298,6 +4069,19 @@ snapshots['TestGenerate.test_with_custom_config_with_relative_defaults_path test
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'app1-test-topic': {
+                        'configs': {
+                        },
+                        'partitions_count': 3,
+                        'type': 'output'
+                    }
+                }
             },
             'type': 'producer-app-cleaner',
             'version': '2.9.0'
@@ -3313,6 +4097,8 @@ snapshots['TestGenerate.test_with_custom_config_with_relative_defaults_path test
             },
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'extraOutputTopics': {
+                },
                 'outputTopic': 'app1-test-topic',
                 'schemaRegistryUrl': 'http://localhost:8081/'
             }
@@ -3368,6 +4154,25 @@ snapshots['TestGenerate.test_with_custom_config_with_relative_defaults_path test
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'app2-dead-letter-topic': {
+                        'configs': {
+                        },
+                        'partitions_count': 1,
+                        'type': 'error'
+                    },
+                    'app2-test-topic': {
+                        'configs': {
+                        },
+                        'partitions_count': 3,
+                        'type': 'output'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.9.0'
@@ -3438,6 +4243,15 @@ snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
                     'schemaRegistryUrl': 'http://localhost:8081/'
                 }
             },
+            'from': {
+                'components': {
+                },
+                'topics': {
+                    'example-topic': {
+                        'type': 'input'
+                    }
+                }
+            },
             'name': 'streams-app-development',
             'namespace': 'development-namespace',
             'prefix': 'resources-kafka-connect-sink-',
@@ -3447,6 +4261,26 @@ snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
                 },
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
+            },
+            'suffix': '-clean',
+            'to': {
+                'models': {
+                },
+                'topics': {
+                    'example-output': {
+                        'configs': {
+                        },
+                        'type': 'output'
+                    },
+                    'resources-kafka-connect-sink-streams-app-development-error': {
+                        'configs': {
+                            'cleanup.policy': 'compact,delete'
+                        },
+                        'partitions_count': 1,
+                        'type': 'error',
+                        'value_schema': 'com.bakdata.kafka.DeadLetter'
+                    }
+                }
             },
             'type': 'streams-app-cleaner',
             'version': '2.9.0'

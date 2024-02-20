@@ -158,6 +158,7 @@
                 "nameOverride": {
                     "anyOf": [
                         {
+                            "maxLength": 63,
                             "type": "string"
                         },
                         {
@@ -165,7 +166,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Override name with this value",
+                    "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
                 }
             },
@@ -551,6 +552,7 @@
                 "nameOverride": {
                     "anyOf": [
                         {
+                            "maxLength": 63,
                             "type": "string"
                         },
                         {
@@ -558,7 +560,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Override name with this value",
+                    "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
                 },
                 "streams": {
@@ -891,6 +893,7 @@
                 "nameOverride": {
                     "anyOf": [
                         {
+                            "maxLength": 63,
                             "type": "string"
                         },
                         {
@@ -898,7 +901,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Override name with this value",
+                    "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
                 },
                 "streams": {

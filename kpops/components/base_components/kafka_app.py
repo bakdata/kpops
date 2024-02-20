@@ -9,10 +9,7 @@ import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.model import (
-    HelmFlags,
-)
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -93,7 +90,7 @@ class KafkaAppValues(HelmAppValues):
     )
 
 
-class KafkaAppCleaner(StreamsBootstrap):
+class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
 
     from_: None = None
@@ -103,22 +100,6 @@ class KafkaAppCleaner(StreamsBootstrap):
     @override
     def helm_chart(self) -> str:
         raise NotImplementedError
-
-    @property
-    @override
-    def helm_release_name(self) -> str:
-        suffix = "-clean"
-        return create_helm_release_name(self.full_name + suffix, suffix)
-
-    @property
-    @override
-    def helm_flags(self) -> HelmFlags:
-        return HelmFlags(
-            create_namespace=self.config.create_namespace,
-            version=self.version,
-            wait=True,
-            wait_for_jobs=True,
-        )
 
     @override
     async def clean(self, dry_run: bool) -> None:
