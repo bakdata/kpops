@@ -47,7 +47,7 @@ runs:
       shell: bash
       if: ${{ inputs.release == 'false' }}
       run: |
-        poetry run mike deploy ${{ inputs.version }} --push --rebase --config-file ./docs/mkdocs.yml
+        poetry run mike deploy ${{ inputs.version }} --push --config-file ./docs/mkdocs.yml
 
     - name: Deploy ${{ inputs.version }} version (latest) of the documentation with mike
       shell: bash
@@ -55,4 +55,4 @@ runs:
       run: |
         sem_version=${{ inputs.version }}
         major_minor_version=${sem_version%.*}
-        poetry run mike deploy "$major_minor_version" latest --update-aliases --push --rebase --config-file ./docs/mkdocs.yml
+        poetry run mike deploy "$major_minor_version" latest --update-aliases --push --config-file ./docs/mkdocs.yml

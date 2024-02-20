@@ -1,0 +1,26 @@
+name: Update GitHub pages
+
+on:
+  push:
+    tags:
+      # Push events to every tag including hierarchical tags like v1.0/beta
+      - '**'
+
+jobs:
+  update-docs:
+    runs-on: ubuntu-22.04
+    name: Update docs
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all tags; Required for doc versioning
+
+      - name: Update gh-pages
+        uses: ./.github/actions/update-docs
+        with:
+          username: ${{ secrets.GH_USERNAME }}
+          email: ${{ secrets.GH_EMAIL }}
+          token: ${{ secrets.GH_TOKEN }}
+          version: ${{ github.ref_name }}
+          release: true
