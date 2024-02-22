@@ -15,7 +15,7 @@ class ToSection(DescConfigModel):
     :param models: Data models
     """
 
-    topics: dict[TopicName, TopicConfig] = Field(  # TODO: list[KafkaTopic] ?
+    topics: dict[TopicName, TopicConfig] = Field(
         default={}, description=describe_attr("topics", __doc__)
     )
     models: dict[ModelName, ModelVersion] = Field(
