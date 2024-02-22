@@ -302,28 +302,6 @@ class PipelineGenerator:
         :param component_class: Type of pipeline component
         :param component_data: Arguments for instantiation of pipeline component
         """
-
-        def is_name(name: str) -> ComponentFilterPredicate:
-            def predicate(component: PipelineComponent) -> bool:
-                return component.name == name
-
-            return predicate
-
-        # NOTE: temporary until we can just get components by id
-        # performance improvement
-        def find(component_name: str) -> PipelineComponent:
-            """Find component in pipeline by name.
-
-            :param component_name: Name of component to get
-            :returns: Component matching the name
-            :raises ValueError: Component not found
-            """
-            try:
-                return next(self.pipeline.find(is_name(component_name)))
-            except StopIteration as exc:
-                msg = f"Component {component_name} not found"
-                raise ValueError(msg) from exc
-
         component = component_class(
             config=self.config,
             handlers=self.handlers,
@@ -335,13 +313,13 @@ class PipelineGenerator:
             if inflated_component.from_:
                 # read from specified components
                 for (
-                    original_from_component_name,
+                    original_from_component_id,
                     from_topic,
                 ) in inflated_component.from_.components.items():
-                    original_from_component = find(original_from_component_name)
+                    original_from_component = self.pipeline[original_from_component_id]
 
                     inflated_from_component = original_from_component.inflate()[-1]
-                    resolved_from_component = find(inflated_from_component.name)
+                    resolved_from_component = self.pipeline[inflated_from_component.id]
 
                     inflated_component.weave_from_topics(
                         resolved_from_component.to, from_topic
