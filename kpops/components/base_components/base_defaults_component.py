@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 import logging
 from abc import ABC
-from collections.abc import Sequence
+from collections.abc import Hashable, Sequence
 from dataclasses import asdict, is_dataclass
 from functools import cached_property
 from pathlib import Path
@@ -288,7 +288,7 @@ def get_defaults_file_paths(
     return default_paths
 
 
-_T = TypeVar("_T")
+_T = TypeVar("_T", bound=Hashable)
 
 
 def deduplicate(seq: Sequence[_T]) -> list[_T]:

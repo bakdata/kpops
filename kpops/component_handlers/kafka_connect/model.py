@@ -1,6 +1,7 @@
 from enum import Enum
 from typing import Any, Literal
 
+import pydantic
 from pydantic import (
     BaseModel,
     ConfigDict,
@@ -12,6 +13,7 @@ from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
 from kpops.components.base_components.helm_app import HelmAppValues
+from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
@@ -31,6 +33,9 @@ class KafkaConnectorConfig(DescConfigModel):
 
     connector_class: str
     name: SkipJsonSchema[str]
+    topics: list[KafkaTopicStr] = []
+    topics_regex: str | None = None
+    errors_deadletterqueue_topic_name: KafkaTopicStr | None = None
 
     @override
     @staticmethod
@@ -44,18 +49,33 @@ class KafkaConnectorConfig(DescConfigModel):
         extra="allow",
         alias_generator=to_dot,
         json_schema_extra=json_schema_extra,
+        populate_by_name=True,
     )
 
     @field_validator("connector_class")
+    @classmethod
     def connector_class_must_contain_dot(cls, connector_class: str) -> str:
         if "." not in connector_class:
             msg = f"Invalid connector class {connector_class}"
             raise ValueError(msg)
         return connector_class
 
+    @pydantic.field_validator("topics", mode="before")
+    @classmethod
+    def deserialize_topics(cls, topics: Any) -> list[KafkaTopic] | None | Any:
+        if isinstance(topics, str):
+            return [KafkaTopic(name=topic_name) for topic_name in topics.split(",")]
+        return topics
+
     @property
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
+
+    @pydantic.field_serializer("topics")
+    def serialize_topics(self, topics: list[KafkaTopic]) -> str | None:
+        if not topics:
+            return None
+        return ",".join(topic.name for topic in topics)
 
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")

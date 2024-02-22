@@ -65,10 +65,8 @@ class TestKafkaConnector:
     @pytest.fixture()
     def connector_config(self) -> KafkaConnectorConfig:
         return KafkaConnectorConfig(
-            **{
-                "connector.class": CONNECTOR_CLASS,
-                "name": CONNECTOR_FULL_NAME,
-            }
+            connector_class=CONNECTOR_CLASS,
+            name=CONNECTOR_FULL_NAME,
         )
 
     @pytest.fixture()
