@@ -20,6 +20,7 @@ from kpops.components.base_components.models.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
+from kpops.components.streams_bootstrap.streams.model import StreamsAppAutoScaling
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
 from kpops.config import KpopsConfig, TopicNameConfig
 
@@ -27,13 +28,20 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
 STREAMS_APP_FULL_NAME = "${pipeline.name}-" + STREAMS_APP_NAME
+STREAMS_APP_HELM_NAME_OVERRIDE = (
+    "${pipeline.name}-" + "test-streams-app-with-long-name-01234567-a35c6"
+)
 STREAMS_APP_RELEASE_NAME = create_helm_release_name(STREAMS_APP_FULL_NAME)
 STREAMS_APP_CLEAN_FULL_NAME = STREAMS_APP_FULL_NAME + "-clean"
+STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE = (
+    "${pipeline.name}-" + "test-streams-app-with-long-name-01-c98c5-clean"
+)
 STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
     STREAMS_APP_CLEAN_FULL_NAME, "-clean"
 )
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestStreamsApp:
     def test_release_name(self):
         assert STREAMS_APP_CLEAN_RELEASE_NAME.endswith("-clean")
@@ -51,8 +59,8 @@ class TestStreamsApp:
         return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
             topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component_type}-error-topic",
-                default_output_topic_name="${component_type}-output-topic",
+                default_error_topic_name="${component.type}-error-topic",
+                default_output_topic_name="${component.type}-output-topic",
             ),
             helm_diff_config=HelmDiffConfig(),
         )
@@ -72,12 +80,38 @@ class TestStreamsApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "streams-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                     }
                 },
             },
+        )
+
+    def test_cleaner(self, streams_app: StreamsApp):
+        cleaner = streams_app._cleaner
+        assert isinstance(cleaner, StreamsAppCleaner)
+        assert not hasattr(cleaner, "_cleaner")
+
+    def test_cleaner_inheritance(self, streams_app: StreamsApp):
+        streams_app.app.autoscaling = StreamsAppAutoScaling(
+            enabled=True,
+            consumer_group="foo",
+            lag_threshold=100,
+            idle_replicas=1,
+        )
+        assert streams_app._cleaner.app == streams_app.app
+
+    def test_cleaner_helm_release_name(self, streams_app: StreamsApp):
+        assert (
+            streams_app._cleaner.helm_release_name
+            == "${pipeline.name}-test-streams-app-with-lo-c98c5-clean"
+        )
+
+    def test_cleaner_helm_name_override(self, streams_app: StreamsApp):
+        assert (
+            streams_app._cleaner.to_helm_values()["nameOverride"]
+            == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
         )
 
     def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
@@ -222,10 +256,10 @@ class TestStreamsApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "streams-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
-                        "${error_topic_name}": TopicConfig(
+                        "streams-app-error-topic": TopicConfig(
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
@@ -245,10 +279,10 @@ class TestStreamsApp:
             "second-extra-role": KafkaTopic(name="extra-topic-2"),
         }
         assert streams_app.app.streams.output_topic == KafkaTopic(
-            name="${output_topic_name}"
+            name="streams-app-output-topic"
         )
         assert streams_app.app.streams.error_topic == KafkaTopic(
-            name="${error_topic_name}"
+            name="streams-app-error-topic"
         )
 
     def test_weave_inputs_from_prev_component(
@@ -309,10 +343,10 @@ class TestStreamsApp:
                 },
                 "to": {
                     "topics": {
-                        "${output_topic_name}": TopicConfig(
+                        "streams-app-output-topic": TopicConfig(
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
-                        "${error_topic_name}": TopicConfig(
+                        "streams-app-error-topic": TopicConfig(
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
@@ -344,14 +378,14 @@ class TestStreamsApp:
         assert streams_app.to
         assert streams_app.to.kafka_topics == [
             KafkaTopic(
-                name="${output_topic_name}",
+                name="streams-app-output-topic",
                 config=TopicConfig(
                     type=OutputTopicTypes.OUTPUT,
                     partitions_count=10,
                 ),
             ),
             KafkaTopic(
-                name="${error_topic_name}",
+                name="streams-app-error-topic",
                 config=TopicConfig(
                     type=OutputTopicTypes.ERROR,
                     partitions_count=10,
@@ -383,15 +417,15 @@ class TestStreamsApp:
                 dry_run,
                 "test-namespace",
                 {
-                    "nameOverride": STREAMS_APP_FULL_NAME,
+                    "nameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "extraOutputTopics": {
                             "first-extra-topic": "extra-topic-1",
                             "second-extra-topic": "extra-topic-2",
                         },
-                        "outputTopic": "${output_topic_name}",
-                        "errorTopic": "${error_topic_name}",
+                        "outputTopic": "streams-app-output-topic",
+                        "errorTopic": "streams-app-error-topic",
                     },
                 },
                 HelmUpgradeInstallFlags(
@@ -451,10 +485,10 @@ class TestStreamsApp:
                     dry_run,
                     "test-namespace",
                     {
-                        "nameOverride": STREAMS_APP_FULL_NAME,
+                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                         "streams": {
                             "brokers": "fake-broker:9092",
-                            "outputTopic": "${output_topic_name}",
+                            "outputTopic": "streams-app-output-topic",
                             "deleteOutput": False,
                         },
                     },
@@ -507,10 +541,10 @@ class TestStreamsApp:
                     dry_run,
                     "test-namespace",
                     {
-                        "nameOverride": STREAMS_APP_FULL_NAME,
+                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                         "streams": {
                             "brokers": "fake-broker:9092",
-                            "outputTopic": "${output_topic_name}",
+                            "outputTopic": "streams-app-output-topic",
                             "deleteOutput": True,
                         },
                     },

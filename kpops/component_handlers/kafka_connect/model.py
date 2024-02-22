@@ -13,7 +13,7 @@ from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
 from kpops.components.base_components.helm_app import HelmAppValues
-from kpops.components.base_components.models.topic import KafkaTopic
+from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
@@ -33,9 +33,9 @@ class KafkaConnectorConfig(DescConfigModel):
 
     connector_class: str
     name: SkipJsonSchema[str]
-    topics: SkipJsonSchema[list[KafkaTopic]] = []
-    topics_regex: SkipJsonSchema[str | None] = None
-    errors_deadletterqueue_topic_name: SkipJsonSchema[KafkaTopic | None] = None
+    topics: list[KafkaTopicStr] = []
+    topics_regex: str | None = None
+    errors_deadletterqueue_topic_name: KafkaTopicStr | None = None
 
     @override
     @staticmethod
@@ -62,17 +62,10 @@ class KafkaConnectorConfig(DescConfigModel):
 
     @pydantic.field_validator("topics", mode="before")
     @classmethod
-    def validate_topics(cls, topics: Any) -> list[KafkaTopic] | None | Any:
+    def deserialize_topics(cls, topics: Any) -> list[KafkaTopic] | None | Any:
         if isinstance(topics, str):
             return [KafkaTopic(name=topic_name) for topic_name in topics.split(",")]
         return topics
-
-    @pydantic.field_validator("errors_deadletterqueue_topic_name", mode="before")
-    @classmethod
-    def validate_topic(cls, topic: Any) -> KafkaTopic | Any:
-        if topic and isinstance(topic, str):
-            return KafkaTopic(name=topic)
-        return topic
 
     @property
     def class_name(self) -> str:
@@ -83,12 +76,6 @@ class KafkaConnectorConfig(DescConfigModel):
         if not topics:
             return None
         return ",".join(topic.name for topic in topics)
-
-    @pydantic.field_serializer("errors_deadletterqueue_topic_name")
-    def serialize_topic(self, topic: KafkaTopic | None) -> str | None:
-        if not topic:
-            return None
-        return topic.name
 
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")

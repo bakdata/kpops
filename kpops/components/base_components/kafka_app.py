@@ -6,18 +6,12 @@ from collections.abc import Callable
 from typing import Any
 
 import pydantic
-from pydantic import ConfigDict, Field
+from pydantic import AliasChoices, ConfigDict, Field
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.model import (
-    HelmFlags,
-)
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmAppValues
-from kpops.components.base_components.models.to_section import (
-    ToSection,
-)
-from kpops.components.base_components.models.topic import KafkaTopic
+from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.utils.docstring import describe_attr
@@ -42,27 +36,26 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
 
     brokers: str = Field(default=..., description=describe_attr("brokers", __doc__))
     schema_registry_url: str | None = Field(
-        default=None, description=describe_attr("schema_registry_url", __doc__)
+        default=None,
+        validation_alias=AliasChoices(
+            "schema_registry_url", "schemaRegistryUrl"
+        ),  # TODO: same for other camelcase fields, avoids duplicates during enrichment
+        description=describe_attr("schema_registry_url", __doc__),
     )
-    extra_output_topics: dict[str, KafkaTopic] = Field(
+    extra_output_topics: dict[str, KafkaTopicStr] = Field(
         default={}, description=describe_attr("extra_output_topics", __doc__)
     )
-    output_topic: KafkaTopic | None = Field(
-        default=None, description=describe_attr("output_topic", __doc__)
+    output_topic: KafkaTopicStr | None = Field(
+        default=None,
+        description=describe_attr("output_topic", __doc__),
+        json_schema_extra={},
     )
 
     model_config = ConfigDict(extra="allow")
 
-    @pydantic.field_validator("output_topic", mode="before")
-    @classmethod
-    def validate_output_topic(cls, output_topic: Any) -> KafkaTopic | Any:
-        if output_topic and isinstance(output_topic, str):
-            return KafkaTopic(name=output_topic)
-        return output_topic
-
     @pydantic.field_validator("extra_output_topics", mode="before")
     @classmethod
-    def validate_extra_output_topics(
+    def deserialize_extra_output_topics(
         cls, extra_output_topics: Any
     ) -> dict[str, KafkaTopic] | Any:
         if isinstance(extra_output_topics, dict):
@@ -71,12 +64,6 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
                 for role, topic_name in extra_output_topics.items()
             }
         return extra_output_topics
-
-    @pydantic.field_serializer("output_topic")
-    def serialize_topic(self, topic: KafkaTopic | None) -> str | None:
-        if not topic:
-            return None
-        return topic.name
 
     @pydantic.field_serializer("extra_output_topics")
     def serialize_extra_output_topics(
@@ -103,29 +90,16 @@ class KafkaAppValues(HelmAppValues):
     )
 
 
-class KafkaAppCleaner(StreamsBootstrap):
+class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
+
+    from_: None = None
+    to: None = None
 
     @property
     @override
     def helm_chart(self) -> str:
         raise NotImplementedError
-
-    @property
-    @override
-    def helm_release_name(self) -> str:
-        suffix = "-clean"
-        return create_helm_release_name(self.full_name + suffix, suffix)
-
-    @property
-    @override
-    def helm_flags(self) -> HelmFlags:
-        return HelmFlags(
-            create_namespace=self.config.create_namespace,
-            version=self.version,
-            wait=True,
-            wait_for_jobs=True,
-        )
 
     @override
     async def clean(self, dry_run: bool) -> None:
@@ -149,15 +123,9 @@ class KafkaApp(PipelineComponent, ABC):
 
     Producer or streaming apps should inherit from this class.
 
-    :param to: Topic(s) into which the component will write output,
-        defaults to None
     :param app: Application-specific settings
     """
 
-    to: ToSection | None = Field(
-        default=None,
-        description=describe_attr("to", __doc__),
-    )
     app: KafkaAppValues = Field(
         default=...,
         description=describe_attr("app", __doc__),

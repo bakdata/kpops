@@ -158,6 +158,7 @@
                 "nameOverride": {
                     "anyOf": [
                         {
+                            "maxLength": 63,
                             "type": "string"
                         },
                         {
@@ -165,7 +166,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Override name with this value",
+                    "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
                 }
             },
@@ -227,6 +228,37 @@
                 "connector.class": {
                     "title": "Connector.Class",
                     "type": "string"
+                },
+                "errors.deadletterqueue.topic.name": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null
+                },
+                "topics": {
+                    "default": [],
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Topics",
+                    "type": "array"
+                },
+                "topics.regex": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Topics.Regex"
                 }
             },
             "required": [
@@ -412,35 +444,6 @@
             "title": "KafkaSourceConnector",
             "type": "object"
         },
-        "KafkaTopic": {
-            "properties": {
-                "config": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/TopicConfig"
-                        }
-                    ],
-                    "default": {
-                        "configs": {},
-                        "key_schema": null,
-                        "partitions_count": null,
-                        "replication_factor": null,
-                        "role": null,
-                        "type": null,
-                        "value_schema": null
-                    }
-                },
-                "name": {
-                    "title": "Name",
-                    "type": "string"
-                }
-            },
-            "required": [
-                "name"
-            ],
-            "title": "KafkaTopic",
-            "type": "object"
-        },
         "OutputTopicTypes": {
             "description": "Types of output topic.\n\n- OUTPUT: output topic\n- ERROR: error topic",
             "enum": [
@@ -549,6 +552,7 @@
                 "nameOverride": {
                     "anyOf": [
                         {
+                            "maxLength": 63,
                             "type": "string"
                         },
                         {
@@ -556,7 +560,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Override name with this value",
+                    "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
                 },
                 "streams": {
@@ -585,7 +589,7 @@
                 },
                 "extraOutputTopics": {
                     "additionalProperties": {
-                        "$ref": "#/$defs/KafkaTopic"
+                        "type": "string"
                     },
                     "default": {},
                     "description": "Extra output topics",
@@ -595,7 +599,7 @@
                 "outputTopic": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/KafkaTopic"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -604,7 +608,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
+                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -615,7 +619,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry Url"
                 }
             },
             "required": [
@@ -889,6 +893,7 @@
                 "nameOverride": {
                     "anyOf": [
                         {
+                            "maxLength": 63,
                             "type": "string"
                         },
                         {
@@ -896,7 +901,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Override name with this value",
+                    "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
                 },
                 "streams": {
@@ -945,7 +950,7 @@
                 "errorTopic": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/KafkaTopic"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -966,7 +971,7 @@
                 "extraInputTopics": {
                     "additionalProperties": {
                         "items": {
-                            "$ref": "#/$defs/KafkaTopic"
+                            "type": "string"
                         },
                         "type": "array"
                     },
@@ -977,7 +982,7 @@
                 },
                 "extraOutputTopics": {
                     "additionalProperties": {
-                        "$ref": "#/$defs/KafkaTopic"
+                        "type": "string"
                     },
                     "default": {},
                     "description": "Extra output topics",
@@ -1001,7 +1006,7 @@
                     "default": [],
                     "description": "Input topics",
                     "items": {
-                        "$ref": "#/$defs/KafkaTopic"
+                        "type": "string"
                     },
                     "title": "Inputtopics",
                     "type": "array"
@@ -1009,7 +1014,7 @@
                 "outputTopic": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/KafkaTopic"
+                            "type": "string"
                         },
                         {
                             "type": "null"
@@ -1018,7 +1023,7 @@
                     "default": null,
                     "description": "Output topic"
                 },
-                "schemaRegistryUrl": {
+                "schema_registry_url": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -1029,7 +1034,7 @@
                     ],
                     "default": null,
                     "description": "URL of the schema registry",
-                    "title": "Schemaregistryurl"
+                    "title": "Schema Registry Url"
                 }
             },
             "required": [

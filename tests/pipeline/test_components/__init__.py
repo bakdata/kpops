@@ -3,5 +3,6 @@ from tests.pipeline.test_components.components import (
     Filter,
     ScheduledProducer,
     ShouldInflate,
+    SimpleInflateConnectors,
     TestSchemaProvider,
 )

@@ -1,4 +1,69 @@
 # Changelog
+## [3.2.3](https://github.com/bakdata/kpops/releases/tag/3.2.3) - Release Date: [2024-02-19]
+
+### 🐛 Fixes
+
+- Trim and hash Helm name override to 63 characters - [#456](https://github.com/bakdata/kpops/pull/456)
+
+
+
+
+
+
+## [3.2.2](https://github.com/bakdata/kpops/releases/tag/3.2.2) - Release Date: [2024-02-12]
+
+### 🐛 Fixes
+
+- Fix nested substitution - [#451](https://github.com/bakdata/kpops/pull/451)
+
+
+
+
+
+
+## [3.2.1](https://github.com/bakdata/kpops/releases/tag/3.2.1) - Release Date: [2024-02-08]
+
+### 🐛 Fixes
+
+- Fix order of pipeline steps for clean/reset - [#450](https://github.com/bakdata/kpops/pull/450)
+
+- Fix substitution - [#449](https://github.com/bakdata/kpops/pull/449)
+
+- Fix cleaner inheritance, parent model should be aliased during instantiation - [#452](https://github.com/bakdata/kpops/pull/452)
+
+
+### 🏭 Refactor
+
+- Simplify execution graph logic - [#446](https://github.com/bakdata/kpops/pull/446)
+
+
+
+
+
+
+## [3.2.0](https://github.com/bakdata/kpops/releases/tag/3.2.0) - Release Date: [2024-02-01]
+
+### 🚀 Features
+
+- Refactor pipeline filter and add to public API - [#405](https://github.com/bakdata/kpops/pull/405)
+
+
+### 🏭 Refactor
+
+- Refactor enrichment using Pydantic model validator - [#444](https://github.com/bakdata/kpops/pull/444)
+
+- Refactor pipeline filter and add to public API - [#405](https://github.com/bakdata/kpops/pull/405)
+
+
+### 📝 Documentation
+
+- Improve Sphinx docs highlighting using RST markup - [#443](https://github.com/bakdata/kpops/pull/443)
+
+
+
+
+
+
 ## [3.1.0](https://github.com/bakdata/kpops/releases/tag/3.1.0) - Release Date: [2024-01-30]
 
 ### 🚀 Features

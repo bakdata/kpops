@@ -29,52 +29,29 @@ class TopicHandler:
         self.proxy_wrapper = proxy_wrapper
 
     async def create_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
+        """Create a new Kafka topic or update topic configuration if it already exists.
+
+        :param topic: Kafka topic to be created or updated
+        :param dry_run: Whether to do a dry run without making changes
+        :raises TopicTransactionError: Partition count of topic changed
+        :raises TopicTransactionError: Replication factor of topic changed
+        """
         topic_spec = self.__prepare_body(topic)
         if dry_run:
             await self.__dry_run_topic_creation(topic, topic_spec)
         else:
-            try:
-                await self.proxy_wrapper.get_topic(topic.name)
-                topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
-                    topic.name
-                )
-                differences = self.__get_topic_config_diff(
-                    topic_config_in_cluster, topic.config.configs
-                )
-
-                if differences:
-                    json_body = []
-                    for difference in differences:
-                        if difference.diff_type is DiffType.REMOVE:
-                            json_body.append(
-                                {"name": difference.key, "operation": "DELETE"}
-                            )
-                        elif config_value := difference.change.new_value:
-                            json_body.append(
-                                {"name": difference.key, "value": config_value}
-                            )
-                    await self.proxy_wrapper.batch_alter_topic_config(
-                        topic.name, json_body
-                    )
-
-                else:
-                    log.info(
-                        f"Topic Creation: config of topic {topic.name} didn't change. Skipping update."
-                    )
-            except TopicNotFoundException:
-                await self.proxy_wrapper.create_topic(topic_spec)
+            await self.__execute_topic_creation(topic, topic_spec)
 
     async def delete_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
+        """Delete an existing Kafka topic.
+
+        :param topic: Kafka topic to be deleted
+        :param dry_run: Whether to do a dry run without making changes
+        """
         if dry_run:
             await self.__dry_run_topic_deletion(topic.name)
         else:
-            try:
-                await self.proxy_wrapper.get_topic(topic.name)
-                await self.proxy_wrapper.delete_topic(topic.name)
-            except TopicNotFoundException:
-                log.warning(
-                    f"Topic Deletion: topic {topic.name} does not exist in the cluster and cannot be deleted. Skipping."
-                )
+            await self.__execute_topic_deletion(topic.name)
 
     @staticmethod
     def __get_topic_config_diff(
@@ -127,6 +104,38 @@ class TopicHandler:
             log.debug(f"Host: {self.proxy_wrapper.url}")
             log.debug(HEADERS)
             log.debug(topic_spec.model_dump())
+
+    async def __execute_topic_creation(
+        self, topic: KafkaTopic, topic_spec: TopicSpec
+    ) -> None:
+        try:
+            await self.proxy_wrapper.get_topic(topic.name)
+            topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
+                topic.name
+            )
+            differences = self.__get_topic_config_diff(
+                topic_config_in_cluster, topic.config.configs
+            )
+
+            if differences:
+                json_body = []
+                for difference in differences:
+                    if difference.diff_type is DiffType.REMOVE:
+                        json_body.append(
+                            {"name": difference.key, "operation": "DELETE"}
+                        )
+                    elif config_value := difference.change.new_value:
+                        json_body.append(
+                            {"name": difference.key, "value": config_value}
+                        )
+                await self.proxy_wrapper.batch_alter_topic_config(topic.name, json_body)
+
+            else:
+                log.info(
+                    f"Topic Creation: config of topic {topic.name} didn't change. Skipping update."
+                )
+        except TopicNotFoundException:
+            await self.proxy_wrapper.create_topic(topic_spec)
 
     @staticmethod
     def __check_partition_count(
@@ -190,7 +199,16 @@ class TopicHandler:
             }
             log.debug(error_message)
 
-    @classmethod  # TODO: move to KafkaTopic?
+    async def __execute_topic_deletion(self, topic_name: str) -> None:
+        try:
+            await self.proxy_wrapper.get_topic(topic_name)
+            await self.proxy_wrapper.delete_topic(topic_name)
+        except TopicNotFoundException:
+            log.warning(
+                f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping."
+            )
+
+    @classmethod
     def __prepare_body(cls, topic: KafkaTopic) -> TopicSpec:
         """Prepare the POST request body needed for the topic creation.
 

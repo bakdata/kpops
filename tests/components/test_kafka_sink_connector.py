@@ -32,6 +32,7 @@ from kpops.config import KpopsConfig
 from kpops.utils.colorify import magentaify
 from tests.components.test_kafka_connector import (
     CONNECTOR_CLEAN_FULL_NAME,
+    CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
     CONNECTOR_CLEAN_RELEASE_NAME,
     CONNECTOR_FULL_NAME,
     CONNECTOR_NAME,
@@ -69,11 +70,36 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             ),
         )
 
-    def test_resetter_release_name(self, connector: KafkaSinkConnector):
-        assert connector.app.name == CONNECTOR_FULL_NAME
+    def test_resetter(self, connector: KafkaSinkConnector):
         resetter = connector._resetter
         assert isinstance(resetter, KafkaConnectorResetter)
+        assert resetter.full_name == CONNECTOR_CLEAN_FULL_NAME
+
+    def test_resetter_release_name(self, connector: KafkaSinkConnector):
+        assert connector.app.name == CONNECTOR_FULL_NAME
         assert connector._resetter.helm_release_name == CONNECTOR_CLEAN_RELEASE_NAME
+
+    def test_resetter_helm_name_override(self, connector: KafkaSinkConnector):
+        assert (
+            connector._resetter.to_helm_values()["nameOverride"]
+            == CONNECTOR_CLEAN_HELM_NAMEOVERRIDE
+        )
+
+    def test_resetter_inheritance(self, connector: KafkaSinkConnector):
+        setattr(connector.resetter_values, "testKey", "foo")
+        resetter = connector._resetter
+        assert resetter
+        assert not hasattr(resetter, "_resetter")
+
+        assert not hasattr(resetter, "resetter_namespace")
+        assert resetter.namespace == connector.resetter_namespace
+
+        assert not hasattr(resetter, "resetter_values")
+        # check that resetter values are contained in resetter app values
+        assert (
+            connector.resetter_values.model_dump().items()
+            <= resetter.app.model_dump().items()
+        )
 
     def test_connector_config_parsing(
         self,
@@ -262,7 +288,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                     dry_run,
                     RESETTER_NAMESPACE,
                     {
-                        "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                        "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                         "connectorType": CONNECTOR_TYPE,
                         "config": {
                             "brokers": "broker:9092",
@@ -362,7 +388,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 dry_run,
                 RESETTER_NAMESPACE,
                 {
-                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                     "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",
@@ -463,7 +489,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
                 dry_run,
                 RESETTER_NAMESPACE,
                 {
-                    "nameOverride": CONNECTOR_CLEAN_FULL_NAME,
+                    "nameOverride": CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
                     "connectorType": CONNECTOR_TYPE,
                     "config": {
                         "brokers": "broker:9092",

@@ -2,13 +2,12 @@ from typing import Any
 
 import pydantic
 from pydantic import ConfigDict, Field
-from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
     KafkaStreamsConfig,
 )
-from kpops.components.base_components.models.topic import KafkaTopic
+from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
@@ -28,19 +27,19 @@ class StreamsConfig(KafkaStreamsConfig):
     :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
     """
 
-    input_topics: list[KafkaTopic] = Field(
+    input_topics: list[KafkaTopicStr] = Field(
         default=[], description=describe_attr("input_topics", __doc__)
     )
     input_pattern: str | None = Field(
         default=None, description=describe_attr("input_pattern", __doc__)
     )
-    extra_input_topics: dict[str, list[KafkaTopic]] = Field(
+    extra_input_topics: dict[str, list[KafkaTopicStr]] = Field(
         default={}, description=describe_attr("extra_input_topics", __doc__)
     )
     extra_input_patterns: dict[str, str] = Field(
         default={}, description=describe_attr("extra_input_patterns", __doc__)
     )
-    error_topic: KafkaTopic | None = Field(
+    error_topic: KafkaTopicStr | None = Field(
         default=None, description=describe_attr("error_topic", __doc__)
     )
     config: dict[str, Any] = Field(
@@ -52,14 +51,14 @@ class StreamsConfig(KafkaStreamsConfig):
 
     @pydantic.field_validator("input_topics", mode="before")
     @classmethod
-    def validate_input_topics(cls, input_topics: Any) -> list[KafkaTopic] | Any:
+    def deserialize_input_topics(cls, input_topics: Any) -> list[KafkaTopic] | Any:
         if isinstance(input_topics, list):
             return [KafkaTopic(name=topic_name) for topic_name in input_topics]
         return input_topics
 
     @pydantic.field_validator("extra_input_topics", mode="before")
     @classmethod
-    def validate_extra_input_topics(
+    def deserialize_extra_input_topics(
         cls, extra_input_topics: Any
     ) -> dict[str, list[KafkaTopic]] | Any:
         if isinstance(extra_input_topics, dict):
@@ -68,11 +67,6 @@ class StreamsConfig(KafkaStreamsConfig):
                 for role, topics in extra_input_topics.items()
             }
         return extra_input_topics
-
-    @pydantic.field_validator("error_topic", mode="before")
-    @classmethod
-    def validate_error_topic(cls, error_topic: Any) -> KafkaTopic | Any:
-        return super(StreamsConfig, cls).validate_output_topic(error_topic)  # noqa: UP008  # pyright: ignore[reportGeneralTypeIssues]
 
     @pydantic.field_serializer("input_topics")
     def serialize_topics(self, topics: list[KafkaTopic]) -> list[str]:
@@ -85,11 +79,6 @@ class StreamsConfig(KafkaStreamsConfig):
         return {
             role: self.serialize_topics(topics) for role, topics in extra_topics.items()
         }
-
-    @pydantic.field_serializer("output_topic", "error_topic")
-    @override
-    def serialize_topic(self, topic: KafkaTopic | None) -> str | None:
-        return super().serialize_topic(topic)
 
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:
         """Add given topics to the list of input topics.
@@ -204,7 +193,7 @@ class StreamsAppValues(KafkaAppValues):
     :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
     """
 
-    streams: StreamsConfig = Field(  # pyright: ignore[reportIncompatibleVariableOverride]
+    streams: StreamsConfig = Field(
         default=...,
         description=describe_attr("streams", __doc__),
     )

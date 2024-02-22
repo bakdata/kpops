@@ -32,7 +32,7 @@ from kpops.utils.pydantic import YamlConfigSettingsSource
 from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
-    from kpops.components.base_components.pipeline_component import PipelineComponent
+    from kpops.components import PipelineComponent
 
 
 LOG_DIVIDER = "#" * 100
@@ -440,7 +440,7 @@ def reset(
             pipeline_tasks = pipeline.build_execution_graph(reset_runner, reverse=True)
             await pipeline_tasks
         else:
-            for component in pipeline.components:
+            for component in reversed(pipeline.components):
                 await reset_runner(component)
 
     asyncio.run(async_reset())
@@ -481,7 +481,7 @@ def clean(
             pipeline_tasks = pipeline.build_execution_graph(clean_runner, reverse=True)
             await pipeline_tasks
         else:
-            for component in pipeline.components:
+            for component in reversed(pipeline.components):
                 await clean_runner(component)
 
     asyncio.run(async_clean())

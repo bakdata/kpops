@@ -17,19 +17,25 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_FULL_NAME = "${pipeline.name}-" + CONNECTOR_NAME
 CONNECTOR_CLEAN_FULL_NAME = CONNECTOR_FULL_NAME + "-clean"
-CONNECTOR_CLEAN_RELEASE_NAME = "${pipeline.name}-test-connector-with-long-612f3-clean"
+CONNECTOR_CLEAN_HELM_NAMEOVERRIDE = (
+    "${pipeline.name}-" + "test-connector-with-long-name-0123-612f3-clean"
+)
+CONNECTOR_CLEAN_RELEASE_NAME = (
+    "${pipeline.name}-" + "test-connector-with-long-612f3-clean"
+)
 CONNECTOR_CLASS = "com.bakdata.connect.TestConnector"
 RESETTER_NAMESPACE = "test-namespace"
 
 
+@pytest.mark.usefixtures("mock_env")
 class TestKafkaConnector:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
         return KpopsConfig(
             defaults_path=DEFAULTS_PATH,
             topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component_type}-error-topic",
-                default_output_topic_name="${component_type}-output-topic",
+                default_error_topic_name="${component.type}-error-topic",
+                default_output_topic_name="${component.type}-output-topic",
             ),
             kafka_brokers="broker:9092",
             helm_diff_config=HelmDiffConfig(),
@@ -71,7 +77,7 @@ class TestKafkaConnector:
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ) -> KafkaConnector:
-        return KafkaConnector(
+        return KafkaConnector(  # HACK: not supposed to be instantiated, because ABC
             name=CONNECTOR_NAME,
             config=config,
             handlers=handlers,

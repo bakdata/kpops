@@ -54,7 +54,6 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         default=None,
         description=describe_attr("to", __doc__),
     )
-    # to: None = None  # TODO
 
     model_config = ConfigDict(extra="allow")
 
@@ -65,6 +64,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
 
     @property
     def id(self) -> str:
+        """Unique identifier of this component."""
         return self.name
 
     @property
