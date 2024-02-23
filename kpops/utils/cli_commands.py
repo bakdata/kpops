@@ -1,4 +1,3 @@
-import json
 import logging
 from pathlib import Path
 from typing import Any
@@ -10,23 +9,10 @@ from pydantic_core import PydanticUndefined
 from hooks.gen_docs.gen_docs_env_vars import collect_fields
 from kpops.config import KpopsConfig
 from kpops.utils.docstring import describe_object
+from kpops.utils.json import is_jsonable
+from kpops.utils.yaml import touch_yaml_file
 
 log = logging.getLogger("cli_commands_utils")
-
-
-def is_jsonable(x):
-    try:
-        json.dumps(x)
-    except (TypeError, OverflowError):
-        return False
-    else:
-        return True
-
-
-def touch_yaml_file(file_name, dir_path) -> Path:
-    file_path = Path(dir_path / (file_name + ".yaml"))
-    file_path.touch(exist_ok=False)
-    return file_path
 
 
 def extract_config_fields_for_yaml(

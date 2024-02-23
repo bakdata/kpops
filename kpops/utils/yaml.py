@@ -11,6 +11,12 @@ from rich.syntax import Syntax
 from kpops.utils.dict_ops import ImprovedTemplate
 
 
+def touch_yaml_file(file_name, dir_path) -> Path:
+    file_path = Path(dir_path / (file_name + ".yaml"))
+    file_path.touch(exist_ok=False)
+    return file_path
+
+
 def generate_hashkey(
     file_path: Path, substitution: Mapping[str, Any] | None = None
 ) -> tuple:

@@ -94,7 +94,6 @@ PROJECT_PATH: Path = typer.Argument(
 PROJECT_NAME: Optional[str] = typer.Option(
     default=None,
     help="Name of the new KPOps project. A new directory with the provided name will be created. Leave empty to use the existing dir provided via `--path`.",
-    # prompt=True,
 )
 
 PIPELINE_STEPS: Optional[str] = typer.Option(
