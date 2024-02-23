@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import asyncio
-import enum
 import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -137,12 +136,10 @@ ENVIRONMENT: str | None = typer.Option(
 )
 
 COMPONENTS_TYPES: list[str] | None = typer.Option(
-    default=None,
-    help="The types of the components to be added"
+    default=None, help="The types of the components to be added"
 )
 COMPONENTS_NAMES: list[str] | None = typer.Option(
-    default=None,
-    help="The names of the components to be added"
+    default=None, help="The names of the components to be added"
 )
 
 

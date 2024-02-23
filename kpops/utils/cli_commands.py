@@ -13,6 +13,7 @@ from kpops.utils.docstring import describe_object
 
 log = logging.getLogger("cli_commands_utils")
 
+
 def is_jsonable(x):
     try:
         json.dumps(x)
@@ -62,6 +63,7 @@ def create_config(file_name: str, dir_path: Path) -> None:
         conf.write(yaml.dump(required))
         conf.write("\n# Non-required fields\n")
         conf.write(yaml.dump(non_required))
+
 
 def init_project(path: Path):
     create_config("config", path)
