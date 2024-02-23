@@ -96,6 +96,11 @@ PROJECT_NAME: Optional[str] = typer.Option(
     help="Name of the new KPOps project. A new directory with the provided name will be created. Leave empty to use the existing dir provided via `--path`.",
 )
 
+CONFIG_INCLUDE_OPTIONAL: bool = typer.Option(
+    default=False,
+    help="Whether to include non-required settings in the generated \"config.yaml\""
+)
+
 PIPELINE_STEPS: Optional[str] = typer.Option(
     default=None,
     envvar=f"{ENV_PREFIX}PIPELINE_STEPS",
@@ -234,13 +239,14 @@ def create_kpops_config(
 def init(
     path: Path = PROJECT_PATH,
     name: Optional[str] = PROJECT_NAME,
+    config_include_opt: bool = CONFIG_INCLUDE_OPTIONAL,
 ):
     if name:
         path = path / name
     elif next(path.iterdir(), False):
         log.warning("Please provide a path to an empty directory.")
         return
-    init_project(path)
+    init_project(path, config_include_opt)
 
 
 @app.command(  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
