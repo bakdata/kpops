@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://bakdata.github.io/kpops/dev/user/references/cli-commands/">
       
       
-        <link rel="prev" href="../../migration-guide/v3-v4/">
+        <link rel="prev" href="../../migration-guide/v2-v3/">
       
       
         <link rel="next" href="../editor-integration/">
@@ -1159,8 +1159,6 @@
       
         
       
-        
-      
     
     
     
@@ -1222,26 +1220,6 @@
   
   <span class="md-ellipsis">
     Migrate from v2 to v3
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../migration-guide/v3-v4/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Migrate from v3 to v4
   </span>
   
 
@@ -1334,6 +1312,13 @@
         <li class="md-nav__item">
   <a href="#kpops-generate" class="md-nav__link">
     kpops generate
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kpops-init" class="md-nav__link">
+    kpops init
   </a>
   
 </li>
@@ -1691,6 +1676,13 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#kpops-init" class="md-nav__link">
+    kpops init
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#kpops-manifest" class="md-nav__link">
     kpops manifest
   </a>
@@ -1746,6 +1738,7 @@
 <li><code>deploy</code>: Deploy pipeline steps</li>
 <li><code>destroy</code>: Destroy pipeline steps</li>
 <li><code>generate</code>: Generate enriched pipeline representation</li>
+<li><code>init</code>: Initialize a new a KPOps project.</li>
 <li><code>manifest</code>: Render final resource representation</li>
 <li><code>reset</code>: Reset pipeline steps</li>
 <li><code>schema</code>: Generate JSON schema.</li>
@@ -1762,6 +1755,7 @@
 <p><strong>Options</strong>:</p>
 <ul>
 <li><code>--dotenv FILE</code>: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]</li>
+<li><code>--defaults DIRECTORY</code>: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
 <li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]</li>
@@ -1783,6 +1777,7 @@
 <p><strong>Options</strong>:</p>
 <ul>
 <li><code>--dotenv FILE</code>: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]</li>
+<li><code>--defaults DIRECTORY</code>: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
 <li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]</li>
@@ -1804,6 +1799,7 @@
 <p><strong>Options</strong>:</p>
 <ul>
 <li><code>--dotenv FILE</code>: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]</li>
+<li><code>--defaults DIRECTORY</code>: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
 <li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]</li>
@@ -1825,6 +1821,7 @@
 <p><strong>Options</strong>:</p>
 <ul>
 <li><code>--dotenv FILE</code>: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]</li>
+<li><code>--defaults DIRECTORY</code>: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
 <li><code>--output / --no-output</code>: Enable output printing  [default: output]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
@@ -1833,10 +1830,25 @@
 <li><code>--verbose / --no-verbose</code>: Enable verbose printing  [default: no-verbose]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
+<h2 id="kpops-init"><code>kpops init</code><a class="headerlink" href="#kpops-init" title="Permanent link">&para;</a></h2>
+<p>Initialize a new a KPOps project.</p>
+<p><strong>Usage</strong>:</p>
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>init<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PATH
+</span></code></pre></div></td></tr></table></div>
+<p><strong>Arguments</strong>:</p>
+<ul>
+<li><code>PATH</code>: Path for a new KPOps project.  [required]</li>
+</ul>
+<p><strong>Options</strong>:</p>
+<ul>
+<li><code>--name TEXT</code>: Name of the new KPOps project. A new directory with the provided name will be created. Leave empty to use the existing dir provided via <code>--path</code>.</li>
+<li><code>--config-include-opt / --no-config-include-opt</code>: Whether to include non-required settings in the generated 'config.yaml'  [default: no-config-include-opt]</li>
+<li><code>--help</code>: Show this message and exit.</li>
+</ul>
 <h2 id="kpops-manifest"><code>kpops manifest</code><a class="headerlink" href="#kpops-manifest" title="Permanent link">&para;</a></h2>
 <p>In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>manifest<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATH
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>manifest<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATH
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
@@ -1845,6 +1857,7 @@
 <p><strong>Options</strong>:</p>
 <ul>
 <li><code>--dotenv FILE</code>: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]</li>
+<li><code>--defaults DIRECTORY</code>: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
 <li><code>--output / --no-output</code>: Enable output printing  [default: output]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
@@ -1856,7 +1869,7 @@
 <h2 id="kpops-reset"><code>kpops reset</code><a class="headerlink" href="#kpops-reset" title="Permanent link">&para;</a></h2>
 <p>Reset pipeline steps</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>reset<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATH
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>reset<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATH
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
@@ -1865,6 +1878,7 @@
 <p><strong>Options</strong>:</p>
 <ul>
 <li><code>--dotenv FILE</code>: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]</li>
+<li><code>--defaults DIRECTORY</code>: Path to defaults folder  [env var: KPOPS_DEFAULT_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
 <li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]</li>
@@ -1878,7 +1892,7 @@
 <p>Generate JSON schema.</p>
 <p>The schemas can be used to enable support for KPOps files in a text editor.</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SCOPE:<span class="o">{</span>pipeline<span class="p">|</span>defaults<span class="p">|</span>config<span class="o">}</span>
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-8-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>schema<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>SCOPE:<span class="o">{</span>pipeline<span class="p">|</span>defaults<span class="p">|</span>config<span class="o">}</span>
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
