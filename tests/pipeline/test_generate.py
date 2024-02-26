@@ -701,10 +701,11 @@ class TestGenerate:
         assert len(pipeline.components) == 2
         assert len(pipeline._graph.nodes) == 3
         assert len(pipeline._graph.edges) == 2
-        node_components = list(
-            filter(lambda node_id: "component" in node_id, pipeline._graph.nodes)
-        )
-        assert len(pipeline.components) == len(node_components)
+        topic_nodes = [
+            node for node in pipeline._graph.nodes if node.startswith("topic-")
+        ]
+        assert len(topic_nodes) == 1
+        assert len(pipeline.components) == len(pipeline._graph.nodes) - len(topic_nodes)
 
     def test_validate_topic_and_component_same_name(self):
         pipeline = kpops.generate(
@@ -716,7 +717,7 @@ class TestGenerate:
         )
         component, topic = list(pipeline._graph.nodes)
         edges = list(pipeline._graph.edges)
-        assert component == f"component-{topic}"
+        assert component == topic.removeprefix("topic-")
         assert (component, topic) in edges
 
     @pytest.mark.asyncio()

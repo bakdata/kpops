@@ -60,10 +60,8 @@ class TestConnectorHandler:
     @pytest.fixture()
     def connector_config(self) -> KafkaConnectorConfig:
         return KafkaConnectorConfig(
-            **{
-                "connector.class": "com.bakdata.connect.TestConnector",
-                "name": CONNECTOR_NAME,
-            }
+            connector_class="com.bakdata.connect.TestConnector",
+            name=CONNECTOR_NAME,
         )
 
     @pytest.mark.asyncio()
@@ -107,7 +105,7 @@ class TestConnectorHandler:
             "topics": TOPIC_NAME,
         }
 
-        config = KafkaConnectorConfig(**configs)
+        config = KafkaConnectorConfig(**configs)  # pyright: ignore[reportGeneralTypeIssues]
         await handler.create_connector(config, dry_run=True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(config)
@@ -148,7 +146,7 @@ class TestConnectorHandler:
             "topics": TOPIC_NAME,
         }
 
-        connector_config = KafkaConnectorConfig(**configs)
+        connector_config = KafkaConnectorConfig(**configs)  # pyright: ignore[reportGeneralTypeIssues]
         await handler.create_connector(connector_config, dry_run=True)
         connector_wrapper.get_connector.assert_called_once_with(CONNECTOR_NAME)
         connector_wrapper.validate_connector_config.assert_called_once_with(

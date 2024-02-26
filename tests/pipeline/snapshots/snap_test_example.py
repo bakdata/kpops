@@ -25,8 +25,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'schedule': '0 12 * * *',
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                    'extraOutputTopics': {
-                    },
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'atm-fraud-account-producer-topic',
                     'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
@@ -44,17 +42,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
-            'to': {
-                'models': {
-                },
-                'topics': {
-                    'atm-fraud-account-producer-topic': {
-                        'configs': {
-                        },
-                        'partitions_count': 3
-                    }
-                }
-            },
+            'suffix': '-clean',
             'type': 'producer-app-cleaner',
             'version': '2.9.0'
         },
@@ -73,8 +61,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'schedule': '0 12 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'optimizeLeaveGroupBehavior': False,
                 'outputTopic': 'atm-fraud-account-producer-topic',
                 'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
@@ -127,8 +113,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'schedule': '0 12 * * *',
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                    'extraOutputTopics': {
-                    },
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'atm-fraud-transaction-avro-producer-topic',
                     'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
@@ -146,17 +130,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
-            'to': {
-                'models': {
-                },
-                'topics': {
-                    'atm-fraud-transaction-avro-producer-topic': {
-                        'configs': {
-                        },
-                        'partitions_count': 3
-                    }
-                }
-            },
+            'suffix': '-clean',
             'type': 'producer-app-cleaner',
             'version': '2.9.0'
         },
@@ -179,8 +153,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
             'schedule': '0 12 * * *',
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'optimizeLeaveGroupBehavior': False,
                 'outputTopic': 'atm-fraud-transaction-avro-producer-topic',
                 'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
@@ -254,23 +226,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
-            'to': {
-                'models': {
-                },
-                'topics': {
-                    'atm-fraud-transaction-joiner-dead-letter-topic': {
-                        'configs': {
-                        },
-                        'partitions_count': 1,
-                        'type': 'error'
-                    },
-                    'atm-fraud-transaction-joiner-topic': {
-                        'configs': {
-                        },
-                        'partitions_count': 3
-                    }
-                }
-            },
+            'suffix': '-clean',
             'type': 'streams-app-cleaner',
             'version': '2.9.0'
         },
@@ -376,23 +332,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
-            'to': {
-                'models': {
-                },
-                'topics': {
-                    'atm-fraud-fraud-detector-dead-letter-topic': {
-                        'configs': {
-                        },
-                        'partitions_count': 1,
-                        'type': 'error'
-                    },
-                    'atm-fraud-fraud-detector-topic': {
-                        'configs': {
-                        },
-                        'partitions_count': 3
-                    }
-                }
-            },
+            'suffix': '-clean',
             'type': 'streams-app-cleaner',
             'version': '2.9.0'
         },
@@ -493,18 +433,6 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 }
             },
             'debug': True,
-            'from': {
-                'components': {
-                    'account-producer': {
-                        'role': 'accounts'
-                    },
-                    'fraud-detector': {
-                        'type': 'input'
-                    }
-                },
-                'topics': {
-                }
-            },
             'name': 'account-linker',
             'namespace': '${NAMESPACE}',
             'prefix': 'atm-fraud-',
@@ -515,23 +443,7 @@ snapshots['TestExample.test_atm_fraud atm-fraud-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
-            'to': {
-                'models': {
-                },
-                'topics': {
-                    'atm-fraud-account-linker-dead-letter-topic': {
-                        'configs': {
-                        },
-                        'partitions_count': 1,
-                        'type': 'error'
-                    },
-                    'atm-fraud-account-linker-topic': {
-                        'configs': {
-                        },
-                        'partitions_count': 3
-                    }
-                }
-            },
+            'suffix': '-clean',
             'type': 'streams-app-cleaner',
             'version': '2.9.0'
         },
@@ -684,8 +596,6 @@ snapshots['TestExample.test_word_count word-count-pipeline'] = [
                 'replicaCount': 1,
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                    'extraOutputTopics': {
-                    },
                     'optimizeLeaveGroupBehavior': False,
                     'outputTopic': 'word-count-data-producer-topic',
                     'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
@@ -702,17 +612,7 @@ snapshots['TestExample.test_word_count word-count-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
-            'to': {
-                'models': {
-                },
-                'topics': {
-                    'word-count-data-producer-topic': {
-                        'configs': {
-                        },
-                        'partitions_count': 3
-                    }
-                }
-            },
+            'suffix': '-clean',
             'type': 'producer-app-cleaner',
             'version': '2.9.0'
         },
@@ -730,8 +630,6 @@ snapshots['TestExample.test_word_count word-count-pipeline'] = [
             'replicaCount': 1,
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                'extraOutputTopics': {
-                },
                 'optimizeLeaveGroupBehavior': False,
                 'outputTopic': 'word-count-data-producer-topic',
                 'schemaRegistryUrl': 'http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/'
@@ -801,25 +699,7 @@ snapshots['TestExample.test_word_count word-count-pipeline'] = [
                 'repository_name': 'bakdata-streams-bootstrap',
                 'url': 'https://bakdata.github.io/streams-bootstrap/'
             },
-            'to': {
-                'models': {
-                },
-                'topics': {
-                    'word-count-word-counter-dead-letter-topic': {
-                        'configs': {
-                        },
-                        'partitions_count': 1,
-                        'type': 'error'
-                    },
-                    'word-count-word-counter-topic': {
-                        'configs': {
-                            'cleanup.policy': 'compact'
-                        },
-                        'partitions_count': 3,
-                        'type': 'output'
-                    }
-                }
-            },
+            'suffix': '-clean',
             'type': 'streams-app-cleaner',
             'version': '2.9.0'
         },

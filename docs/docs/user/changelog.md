@@ -1,4 +1,15 @@
 # Changelog
+## [3.2.3](https://github.com/bakdata/kpops/releases/tag/3.2.3) - Release Date: [2024-02-19]
+
+### 🐛 Fixes
+
+- Trim and hash Helm name override to 63 characters - [#456](https://github.com/bakdata/kpops/pull/456)
+
+
+
+
+
+
 ## [3.2.2](https://github.com/bakdata/kpops/releases/tag/3.2.2) - Release Date: [2024-02-12]
 
 ### 🐛 Fixes
