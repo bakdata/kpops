@@ -98,7 +98,7 @@ PROJECT_NAME: Optional[str] = typer.Option(
 
 CONFIG_INCLUDE_OPTIONAL: bool = typer.Option(
     default=False,
-    help="Whether to include non-required settings in the generated \"config.yaml\""
+    help="Whether to include non-required settings in the generated 'config.yaml'",
 )
 
 PIPELINE_STEPS: Optional[str] = typer.Option(
