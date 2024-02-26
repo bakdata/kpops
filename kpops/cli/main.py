@@ -234,7 +234,7 @@ def create_kpops_config(
 
 
 @app.command(  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
-    help="Create a new a KPOps project."
+    help="Initialize a new a KPOps project."
 )
 def init(
     path: Path = PROJECT_PATH,

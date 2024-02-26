@@ -18,6 +18,13 @@ log = logging.getLogger("cli_commands_utils")
 def extract_config_fields_for_yaml(
     fields: dict[str, Any], required: bool
 ) -> dict[str, Any]:
+    """Return only (non-)required fields and their respective default values.
+
+    :param fields: Dict containing the fields to be categorized. The key of a
+        record is the name of the field, the value is the field's type.
+    :param required: Whether to extract only the required fields or only the
+        non-required ones.
+    """
     extracted_fields = {}
     for key, value in fields.items():
         if issubclass(type(value), FieldInfo):
@@ -36,6 +43,12 @@ def extract_config_fields_for_yaml(
 
 
 def create_config(file_name: str, dir_path: Path, include_optional: bool) -> None:
+    """Create a KPOps config yaml.
+
+    :param file_name: Name for the file
+    :param dir_path: Directory in which the file should be created
+    :param include_optional: Whether to include non-required settings
+    """
     file_path = touch_yaml_file(file_name, dir_path)
     with file_path.open(mode="w") as conf:
         conf.write("# " + describe_object(KpopsConfig.__doc__))  # Write title
@@ -53,6 +66,12 @@ def create_config(file_name: str, dir_path: Path, include_optional: bool) -> Non
 
 
 def init_project(path: Path, conf_incl_opt: bool):
+    """Initiate a default empty project.
+
+    :param path: Directory in which the project should be initiated
+    :param conf_incl_opt: Whether to include non-required settings
+        in the generated config file
+    """
     create_config("config", path, conf_incl_opt)
     touch_yaml_file("pipeline", path)
     touch_yaml_file("defaults", path)

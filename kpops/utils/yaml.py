@@ -12,6 +12,11 @@ from kpops.utils.dict_ops import ImprovedTemplate
 
 
 def touch_yaml_file(file_name, dir_path) -> Path:
+    """Create an empty YAML file.
+
+    :param file_name: Name of the new file
+    :param dir_path: Parent directory of the new file
+    """
     file_path = Path(dir_path / (file_name + ".yaml"))
     file_path.touch(exist_ok=False)
     return file_path
