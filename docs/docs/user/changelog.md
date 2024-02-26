@@ -1,4 +1,31 @@
 # Changelog
+## [3.2.4](https://github.com/bakdata/kpops/releases/tag/3.2.4) - Release Date: [2024-02-26]
+
+### 🐛 Fixes
+
+- Fix docs CI to include the latest changes to a tagged version in the changelog - [#459](https://github.com/bakdata/kpops/pull/459)
+
+- Fix tempfile creation - [#461](https://github.com/bakdata/kpops/pull/461)
+
+- Fix symbolic link to CONTRIBUTING.md and parallel option in action.yaml - [#462](https://github.com/bakdata/kpops/pull/462)
+
+
+### 🏭 Refactor
+
+- Refactor Kafka topics - [#447](https://github.com/bakdata/kpops/pull/447)
+
+- Refactor PipelineGenerator to use component ids - [#460](https://github.com/bakdata/kpops/pull/460)
+
+
+### 📝 Documentation
+
+- Fix docs CI to include the latest changes to a tagged version in the changelog - [#459](https://github.com/bakdata/kpops/pull/459)
+
+
+
+
+
+
 ## [3.2.3](https://github.com/bakdata/kpops/releases/tag/3.2.3) - Release Date: [2024-02-19]
 
 ### 🐛 Fixes
