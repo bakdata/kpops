@@ -394,6 +394,37 @@
                 "connector.class": {
                     "title": "Connector.Class",
                     "type": "string"
+                },
+                "errors.deadletterqueue.topic.name": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null
+                },
+                "topics": {
+                    "default": [],
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Topics",
+                    "type": "array"
+                },
+                "topics.regex": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "title": "Topics.Regex"
                 }
             },
             "required": [
@@ -587,6 +618,27 @@
                     "description": "Brokers",
                     "title": "Brokers",
                     "type": "string"
+                },
+                "extraOutputTopics": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra output topics",
+                    "title": "Extraoutputtopics",
+                    "type": "object"
+                },
+                "outputTopic": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Output topic"
                 },
                 "schema_registry_url": {
                     "anyOf": [
@@ -886,8 +938,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Output topic",
-                    "title": "Outputtopic"
+                    "description": "Output topic"
                 },
                 "schema_registry_url": {
                     "anyOf": [
@@ -1332,8 +1383,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Error topic",
-                    "title": "Errortopic"
+                    "description": "Error topic"
                 },
                 "extraInputPatterns": {
                     "additionalProperties": {
@@ -1397,8 +1447,7 @@
                         }
                     ],
                     "default": null,
-                    "description": "Output topic",
-                    "title": "Outputtopic"
+                    "description": "Output topic"
                 },
                 "schema_registry_url": {
                     "anyOf": [
