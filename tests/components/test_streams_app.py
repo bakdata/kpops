@@ -13,9 +13,12 @@ from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components import StreamsApp
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
+    ToSection,
+)
+from kpops.components.base_components.models.topic import (
+    KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
-    ToSection,
 )
 from kpops.components.streams_bootstrap.streams.model import StreamsAppAutoScaling
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
@@ -25,8 +28,14 @@ DEFAULTS_PATH = Path(__file__).parent / "resources"
 
 STREAMS_APP_NAME = "test-streams-app-with-long-name-0123456789abcdefghijklmnop"
 STREAMS_APP_FULL_NAME = "${pipeline.name}-" + STREAMS_APP_NAME
+STREAMS_APP_HELM_NAME_OVERRIDE = (
+    "${pipeline.name}-" + "test-streams-app-with-long-name-01234567-a35c6"
+)
 STREAMS_APP_RELEASE_NAME = create_helm_release_name(STREAMS_APP_FULL_NAME)
 STREAMS_APP_CLEAN_FULL_NAME = STREAMS_APP_FULL_NAME + "-clean"
+STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE = (
+    "${pipeline.name}-" + "test-streams-app-with-long-name-01-c98c5-clean"
+)
 STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
     STREAMS_APP_CLEAN_FULL_NAME, "-clean"
 )
@@ -79,6 +88,11 @@ class TestStreamsApp:
             },
         )
 
+    def test_cleaner(self, streams_app: StreamsApp):
+        cleaner = streams_app._cleaner
+        assert isinstance(cleaner, StreamsAppCleaner)
+        assert not hasattr(cleaner, "_cleaner")
+
     def test_cleaner_inheritance(self, streams_app: StreamsApp):
         streams_app.app.autoscaling = StreamsAppAutoScaling(
             enabled=True,
@@ -86,10 +100,19 @@ class TestStreamsApp:
             lag_threshold=100,
             idle_replicas=1,
         )
-        cleaner = streams_app._cleaner
-        assert cleaner
-        assert not hasattr(cleaner, "_cleaner")
-        assert cleaner.app == streams_app.app
+        assert streams_app._cleaner.app == streams_app.app
+
+    def test_cleaner_helm_release_name(self, streams_app: StreamsApp):
+        assert (
+            streams_app._cleaner.helm_release_name
+            == "${pipeline.name}-test-streams-app-with-lo-c98c5-clean"
+        )
+
+    def test_cleaner_helm_name_override(self, streams_app: StreamsApp):
+        assert (
+            streams_app._cleaner.to_helm_values()["nameOverride"]
+            == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
+        )
 
     def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         streams_app = StreamsApp(
@@ -118,11 +141,15 @@ class TestStreamsApp:
                 },
             },
         )
+        assert streams_app.app.streams.input_topics == [
+            KafkaTopic(name="example-input"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="a"),
+        ]
         assert streams_app.app.streams.extra_input_topics == {
-            "role1": ["topic-extra"],
-            "role2": ["topic-extra2", "topic-extra3"],
+            "role1": [KafkaTopic(name="topic-extra")],
+            "role2": [KafkaTopic(name="topic-extra2"), KafkaTopic(name="topic-extra3")],
         }
-        assert streams_app.app.streams.input_topics == ["example-input", "b", "a"]
         assert streams_app.app.streams.input_pattern == ".*"
         assert streams_app.app.streams.extra_input_patterns == {
             "another-pattern": "example.*"
@@ -236,11 +263,11 @@ class TestStreamsApp:
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            role="first-extra-topic",
+                            role="first-extra-role",
                             partitions_count=10,
                         ),
                         "extra-topic-2": TopicConfig(
-                            role="second-extra-topic",
+                            role="second-extra-role",
                             partitions_count=10,
                         ),
                     }
@@ -248,11 +275,15 @@ class TestStreamsApp:
             },
         )
         assert streams_app.app.streams.extra_output_topics == {
-            "first-extra-topic": "extra-topic-1",
-            "second-extra-topic": "extra-topic-2",
+            "first-extra-role": KafkaTopic(name="extra-topic-1"),
+            "second-extra-role": KafkaTopic(name="extra-topic-2"),
         }
-        assert streams_app.app.streams.output_topic == "streams-app-output-topic"
-        assert streams_app.app.streams.error_topic == "streams-app-error-topic"
+        assert streams_app.app.streams.output_topic == KafkaTopic(
+            name="streams-app-output-topic"
+        )
+        assert streams_app.app.streams.error_topic == KafkaTopic(
+            name="streams-app-error-topic"
+        )
 
     def test_weave_inputs_from_prev_component(
         self, config: KpopsConfig, handlers: ComponentHandlers
@@ -288,7 +319,11 @@ class TestStreamsApp:
             )
         )
 
-        assert streams_app.app.streams.input_topics == ["prev-output-topic", "b", "a"]
+        assert streams_app.app.streams.input_topics == [
+            KafkaTopic(name="prev-output-topic"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="a"),
+        ]
 
     @pytest.mark.asyncio()
     async def test_deploy_order_when_dry_run_is_false(
@@ -326,29 +361,63 @@ class TestStreamsApp:
                 },
             },
         )
-        mock_create_topics = mocker.patch.object(
-            streams_app.handlers.topic_handler, "create_topics"
+        mock_create_topic = mocker.patch.object(
+            streams_app.handlers.topic_handler, "create_topic"
         )
         mock_helm_upgrade_install = mocker.patch.object(
             streams_app.helm, "upgrade_install"
         )
 
         mock = mocker.AsyncMock()
-        mock.attach_mock(mock_create_topics, "mock_create_topics")
+        mock.attach_mock(mock_create_topic, "mock_create_topic")
         mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
 
         dry_run = False
         await streams_app.deploy(dry_run=dry_run)
 
+        assert streams_app.to
+        assert streams_app.to.kafka_topics == [
+            KafkaTopic(
+                name="streams-app-output-topic",
+                config=TopicConfig(
+                    type=OutputTopicTypes.OUTPUT,
+                    partitions_count=10,
+                ),
+            ),
+            KafkaTopic(
+                name="streams-app-error-topic",
+                config=TopicConfig(
+                    type=OutputTopicTypes.ERROR,
+                    partitions_count=10,
+                ),
+            ),
+            KafkaTopic(
+                name="extra-topic-1",
+                config=TopicConfig(
+                    partitions_count=10,
+                    role="first-extra-topic",
+                ),
+            ),
+            KafkaTopic(
+                name="extra-topic-2",
+                config=TopicConfig(
+                    partitions_count=10,
+                    role="second-extra-topic",
+                ),
+            ),
+        ]
         assert mock.mock_calls == [
-            mocker.call.mock_create_topics(to_section=streams_app.to, dry_run=dry_run),
+            *(
+                mocker.call.mock_create_topic(topic, dry_run=dry_run)
+                for topic in streams_app.to.kafka_topics
+            ),
             mocker.call.mock_helm_upgrade_install(
                 STREAMS_APP_RELEASE_NAME,
                 "bakdata-streams-bootstrap/streams-app",
                 dry_run,
                 "test-namespace",
                 {
-                    "nameOverride": STREAMS_APP_FULL_NAME,
+                    "nameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
                     "streams": {
                         "brokers": "fake-broker:9092",
                         "extraOutputTopics": {
@@ -416,7 +485,7 @@ class TestStreamsApp:
                     dry_run,
                     "test-namespace",
                     {
-                        "nameOverride": STREAMS_APP_FULL_NAME,
+                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -472,7 +541,7 @@ class TestStreamsApp:
                     dry_run,
                     "test-namespace",
                     {
-                        "nameOverride": STREAMS_APP_FULL_NAME,
+                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
@@ -530,19 +599,28 @@ class TestStreamsApp:
             },
         )
 
-        assert streams_app.input_topics == ["example-input", "b", "a"]
-        assert streams_app.extra_input_topics == {
-            "role1": ["topic-extra"],
-            "role2": ["topic-extra2", "topic-extra3"],
+        assert streams_app.app.streams.input_topics == [
+            KafkaTopic(name="example-input"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="a"),
+        ]
+        assert streams_app.app.streams.extra_input_topics == {
+            "role1": [KafkaTopic(name="topic-extra")],
+            "role2": [KafkaTopic(name="topic-extra2"), KafkaTopic(name="topic-extra3")],
         }
-        assert streams_app.output_topic == "example-output"
-        assert streams_app.extra_output_topics == {"fake-role": "extra-topic"}
-        assert list(streams_app.outputs) == ["example-output", "extra-topic"]
+        assert streams_app.output_topic == KafkaTopic(name="example-output")
+        assert streams_app.extra_output_topics == {
+            "fake-role": KafkaTopic(name="extra-topic")
+        }
+        assert list(streams_app.outputs) == [
+            KafkaTopic(name="example-output"),
+            KafkaTopic(name="extra-topic"),
+        ]
         assert list(streams_app.inputs) == [
-            "example-input",
-            "b",
-            "a",
-            "topic-extra2",
-            "topic-extra3",
-            "topic-extra",
+            KafkaTopic(name="example-input"),
+            KafkaTopic(name="b"),
+            KafkaTopic(name="a"),
+            KafkaTopic(name="topic-extra2"),
+            KafkaTopic(name="topic-extra3"),
+            KafkaTopic(name="topic-extra"),
         ]

@@ -11,6 +11,8 @@ try:
 except ImportError:
     from typing_extensions import Self
 
+K8S_LABEL_MAX_LEN = 63
+
 
 class KubernetesManifest(UserDict[str, JsonType]):
     """Representation of a Kubernetes API object as YAML/JSON mapping."""

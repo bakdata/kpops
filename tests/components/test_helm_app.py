@@ -12,6 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
+from kpops.component_handlers.kubernetes.model import K8S_LABEL_MAX_LEN
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.config import KpopsConfig
 from kpops.utils.colorify import magentaify
@@ -223,3 +224,24 @@ class TestHelmApp:
         )
 
         log_info_mock.assert_called_once_with(magentaify(stdout))
+
+    def test_helm_name_override(
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        repo_config: HelmRepoConfig,
+    ):
+        helm_app = HelmApp(
+            prefix="test-pipeline-prefix-with-a-long-name-",
+            name="helm-app-name-is-very-long-as-well",
+            config=config,
+            handlers=handlers,
+            app=HelmAppValues(),
+            namespace="test-namespace",
+            repo_config=repo_config,
+        )
+        assert (
+            helm_app.to_helm_values()["nameOverride"]
+            == "test-pipeline-prefix-with-a-long-name-helm-app-name-is-ve-3fbb7"
+        )
+        assert len(helm_app.to_helm_values()["nameOverride"]) == K8S_LABEL_MAX_LEN

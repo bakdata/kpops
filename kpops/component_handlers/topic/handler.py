@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 
 from kpops.component_handlers.topic.exception import (
@@ -15,7 +17,7 @@ from kpops.component_handlers.topic.utils import (
     parse_and_compare_topic_configs,
     parse_rest_proxy_topic_config,
 )
-from kpops.components.base_components.models.to_section import TopicConfig, ToSection
+from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.utils.colorify import greenify, magentaify
 from kpops.utils.dict_differ import Diff, DiffType, render_diff
 
@@ -23,61 +25,33 @@ log = logging.getLogger("KafkaTopic")
 
 
 class TopicHandler:
-    def __init__(self, proxy_wrapper: ProxyWrapper):
+    def __init__(self, proxy_wrapper: ProxyWrapper) -> None:
         self.proxy_wrapper = proxy_wrapper
 
-    async def create_topics(self, to_section: ToSection, dry_run: bool) -> None:
-        for topic_name, topic_config in to_section.topics.items():
-            topic_spec = self.__prepare_body(topic_name, topic_config)
-            if dry_run:
-                await self.__dry_run_topic_creation(
-                    topic_name, topic_spec, topic_config
-                )
-            else:
-                try:
-                    await self.proxy_wrapper.get_topic(topic_name=topic_name)
-                    topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
-                        topic_name=topic_name
-                    )
-                    differences = self.__get_topic_config_diff(
-                        topic_config_in_cluster, topic_config.configs
-                    )
+    async def create_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
+        """Create a new Kafka topic or update topic configuration if it already exists.
 
-                    if differences:
-                        json_body = []
-                        for difference in differences:
-                            if difference.diff_type is DiffType.REMOVE:
-                                json_body.append(
-                                    {"name": difference.key, "operation": "DELETE"}
-                                )
-                            elif config_value := difference.change.new_value:
-                                json_body.append(
-                                    {"name": difference.key, "value": config_value}
-                                )
-                        await self.proxy_wrapper.batch_alter_topic_config(
-                            topic_name=topic_name,
-                            json_body=json_body,
-                        )
+        :param topic: Kafka topic to be created or updated
+        :param dry_run: Whether to do a dry run without making changes
+        :raises TopicTransactionError: Partition count of topic changed
+        :raises TopicTransactionError: Replication factor of topic changed
+        """
+        topic_spec = self.__prepare_body(topic)
+        if dry_run:
+            await self.__dry_run_topic_creation(topic, topic_spec)
+        else:
+            await self.__execute_topic_creation(topic, topic_spec)
 
-                    else:
-                        log.info(
-                            f"Topic Creation: config of topic {topic_name} didn't change. Skipping update."
-                        )
-                except TopicNotFoundException:
-                    await self.proxy_wrapper.create_topic(topic_spec=topic_spec)
+    async def delete_topic(self, topic: KafkaTopic, dry_run: bool) -> None:
+        """Delete an existing Kafka topic.
 
-    async def delete_topics(self, to_section: ToSection, dry_run: bool) -> None:
-        for topic_name in to_section.topics:
-            if dry_run:
-                await self.__dry_run_topic_deletion(topic_name=topic_name)
-            else:
-                try:
-                    await self.proxy_wrapper.get_topic(topic_name=topic_name)
-                    await self.proxy_wrapper.delete_topic(topic_name=topic_name)
-                except TopicNotFoundException:
-                    log.warning(
-                        f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping."
-                    )
+        :param topic: Kafka topic to be deleted
+        :param dry_run: Whether to do a dry run without making changes
+        """
+        if dry_run:
+            await self.__dry_run_topic_deletion(topic.name)
+        else:
+            await self.__execute_topic_deletion(topic.name)
 
     @staticmethod
     def __get_topic_config_diff(
@@ -89,24 +63,20 @@ class TopicHandler:
         return list(Diff.from_dicts(comparable_in_cluster_config_dict, current_config))
 
     async def __dry_run_topic_creation(
-        self,
-        topic_name: str,
-        topic_spec: TopicSpec,
-        topic_config: TopicConfig | None = None,
+        self, topic: KafkaTopic, topic_spec: TopicSpec
     ) -> None:
         try:
-            topic_in_cluster = await self.proxy_wrapper.get_topic(topic_name=topic_name)
+            topic_in_cluster = await self.proxy_wrapper.get_topic(topic.name)
             topic_name = topic_in_cluster.topic_name
-            if topic_config:
-                topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
-                    topic_name=topic_name
-                )
-                in_cluster_config, new_config = parse_and_compare_topic_configs(
-                    topic_config_in_cluster, topic_config.configs
-                )
-                if diff := render_diff(in_cluster_config, new_config):
-                    log.info(f"Config changes for topic {topic_name}:")
-                    log.info("\n" + diff)
+            topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
+                topic_name
+            )
+            in_cluster_config, new_config = parse_and_compare_topic_configs(
+                topic_config_in_cluster, topic.config.configs
+            )
+            if diff := render_diff(in_cluster_config, new_config):
+                log.info(f"Config changes for topic {topic_name}:")
+                log.info("\n" + diff)
 
             log.info(f"Topic Creation: {topic_name} already exists in cluster.")
             log.debug("HTTP/1.1 400 Bad Request")
@@ -127,13 +97,45 @@ class TopicHandler:
         except TopicNotFoundException:
             log.info(
                 greenify(
-                    f"Topic Creation: {topic_name} does not exist in the cluster. Creating topic."
+                    f"Topic Creation: {topic.name} does not exist in the cluster. Creating topic."
                 )
             )
             log.debug(f"POST /clusters/{self.proxy_wrapper.cluster_id}/topics HTTP/1.1")
             log.debug(f"Host: {self.proxy_wrapper.url}")
             log.debug(HEADERS)
             log.debug(topic_spec.model_dump())
+
+    async def __execute_topic_creation(
+        self, topic: KafkaTopic, topic_spec: TopicSpec
+    ) -> None:
+        try:
+            await self.proxy_wrapper.get_topic(topic.name)
+            topic_config_in_cluster = await self.proxy_wrapper.get_topic_config(
+                topic.name
+            )
+            differences = self.__get_topic_config_diff(
+                topic_config_in_cluster, topic.config.configs
+            )
+
+            if differences:
+                json_body = []
+                for difference in differences:
+                    if difference.diff_type is DiffType.REMOVE:
+                        json_body.append(
+                            {"name": difference.key, "operation": "DELETE"}
+                        )
+                    elif config_value := difference.change.new_value:
+                        json_body.append(
+                            {"name": difference.key, "value": config_value}
+                        )
+                await self.proxy_wrapper.batch_alter_topic_config(topic.name, json_body)
+
+            else:
+                log.info(
+                    f"Topic Creation: config of topic {topic.name} didn't change. Skipping update."
+                )
+        except TopicNotFoundException:
+            await self.proxy_wrapper.create_topic(topic_spec)
 
     @staticmethod
     def __check_partition_count(
@@ -174,7 +176,7 @@ class TopicHandler:
 
     async def __dry_run_topic_deletion(self, topic_name: str) -> None:
         try:
-            topic_in_cluster = await self.proxy_wrapper.get_topic(topic_name=topic_name)
+            topic_in_cluster = await self.proxy_wrapper.get_topic(topic_name)
             log.info(
                 magentaify(
                     f"Topic Deletion: topic {topic_in_cluster.topic_name} exists in the cluster. Deleting topic."
@@ -197,15 +199,24 @@ class TopicHandler:
             }
             log.debug(error_message)
 
+    async def __execute_topic_deletion(self, topic_name: str) -> None:
+        try:
+            await self.proxy_wrapper.get_topic(topic_name)
+            await self.proxy_wrapper.delete_topic(topic_name)
+        except TopicNotFoundException:
+            log.warning(
+                f"Topic Deletion: topic {topic_name} does not exist in the cluster and cannot be deleted. Skipping."
+            )
+
     @classmethod
-    def __prepare_body(cls, topic_name: str, topic_config: TopicConfig) -> TopicSpec:
+    def __prepare_body(cls, topic: KafkaTopic) -> TopicSpec:
         """Prepare the POST request body needed for the topic creation.
 
         :param topic_name: The name of the topic
         :param topic_config: The topic config
         :return: Topic specification
         """
-        topic_spec_json: dict = topic_config.model_dump(
+        topic_spec_json: dict = topic.config.model_dump(
             include={
                 "partitions_count": True,
                 "replication_factor": True,
@@ -217,5 +228,5 @@ class TopicHandler:
         for config_name, config_value in topic_spec_json["configs"].items():
             configs.append({"name": config_name, "value": config_value})
         topic_spec_json["configs"] = configs
-        topic_spec_json["topic_name"] = topic_name
+        topic_spec_json["topic_name"] = topic.name
         return TopicSpec(**topic_spec_json)

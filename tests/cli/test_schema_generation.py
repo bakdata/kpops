@@ -11,7 +11,7 @@ from typer.testing import CliRunner
 
 from kpops.cli.main import app
 from kpops.cli.registry import Registry
-from kpops.components.base_components import PipelineComponent
+from kpops.components import PipelineComponent
 from kpops.utils.docstring import describe_attr
 
 if TYPE_CHECKING:
