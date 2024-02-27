@@ -1,4 +1,20 @@
 # Changelog
+## [4.0.0](https://github.com/bakdata/kpops/releases/tag/4.0.0) - Release Date: [2024-02-27]
+
+### 🏗️ Breaking changes
+
+- Distribute defaults across multiple files - [#438](https://github.com/bakdata/kpops/pull/438)
+
+
+### 🚀 Features
+
+- Distribute defaults across multiple files - [#438](https://github.com/bakdata/kpops/pull/438)
+
+
+
+
+
+
 ## [3.2.4](https://github.com/bakdata/kpops/releases/tag/3.2.4) - Release Date: [2024-02-26]
 
 ### 🐛 Fixes
