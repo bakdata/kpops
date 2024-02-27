@@ -1,4 +1,3 @@
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -16,8 +15,9 @@ from kpops.component_handlers.kubernetes.model import K8S_LABEL_MAX_LEN
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.config import KpopsConfig
 from kpops.utils.colorify import magentaify
-
-DEFAULTS_PATH = Path(__file__).parent / "resources"
+from tests.components.test_base_defaults_component import (
+    PIPELINE_BASE_DIR,
+)
 
 
 @pytest.mark.usefixtures("mock_env")
@@ -25,8 +25,7 @@ class TestHelmApp:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
         return KpopsConfig(
-            defaults_path=DEFAULTS_PATH,
-            helm_diff_config=HelmDiffConfig(),
+            helm_diff_config=HelmDiffConfig(), pipeline_base_dir=PIPELINE_BASE_DIR
         )
 
     @pytest.fixture()

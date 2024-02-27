@@ -11,9 +11,6 @@ inputs:
   working-directory:
     description: "The root directory containing the config.yaml, pipelines folder and defaults"
     default: "."
-  defaults:
-    description: "Defaults folder path"
-    required: false
   config:
     description: "Directory containing the config*.yaml file(s)"
     required: false
@@ -86,4 +83,4 @@ runs:
     - name: ${{ inputs.command }} ${{ inputs.pipeline }} pipeline
       shell: bash
       working-directory: ${{inputs.working-directory}}
-      run: kpops ${{ inputs.command }} ${{ inputs.pipeline }} ${{ (inputs.defaults != '' && format('--defaults {0}', inputs.defaults)) || '' }} ${{ (inputs.config != '' && format('--config {0}', inputs.config)) || '' }} ${{ (inputs.environment != '' && format('--environment {0}', inputs.environment)) || '' }} ${{ (inputs.filter-type != '' && format('--filter-type {0}', inputs.filter-type)) || '' }} ${{ (inputs.parallel == 'true' && '--parallel') || '' }}
+      run: kpops ${{ inputs.command }} ${{ inputs.pipeline }} ${{ (inputs.config != '' && format('--config {0}', inputs.config)) || '' }} ${{ (inputs.environment != '' && format('--environment {0}', inputs.environment)) || '' }} ${{ (inputs.filter-type != '' && format('--filter-type {0}', inputs.filter-type)) || '' }} ${{ (inputs.parallel == 'true' && '--parallel') || '' }}

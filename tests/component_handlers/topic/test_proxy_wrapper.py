@@ -16,10 +16,10 @@ from kpops.component_handlers.topic.exception import (
 from kpops.component_handlers.topic.model import TopicResponse, TopicSpec
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.config import KpopsConfig
+from tests.component_handlers.topic import RESOURCES_PATH
 
 HEADERS = {"Content-Type": "application/json"}
 DEFAULT_HOST = "http://localhost:8082"
-DEFAULTS_PATH = Path(__file__).parent.parent / "resources"
 
 
 class TestProxyWrapper:
@@ -33,10 +33,10 @@ class TestProxyWrapper:
 
     @pytest_asyncio.fixture(autouse=True)
     async def _setup(self, httpx_mock: HTTPXMock):
-        config = KpopsConfig(defaults_path=DEFAULTS_PATH)
+        config = KpopsConfig()
         self.proxy_wrapper = ProxyWrapper(config.kafka_rest)
         with Path(
-            DEFAULTS_PATH / "kafka_rest_proxy_responses" / "cluster-info.json",
+            RESOURCES_PATH / "kafka_rest_proxy_responses" / "cluster-info.json",
         ).open() as f:
             cluster_response = json.load(f)
 

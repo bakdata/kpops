@@ -1,4 +1,5 @@
 import json
+import logging
 from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
@@ -10,6 +11,8 @@ from rich.console import Console
 from rich.syntax import Syntax
 
 from kpops.utils.dict_ops import ImprovedTemplate
+
+log = logging.getLogger("Yaml")
 
 
 def generate_hashkey(
@@ -25,6 +28,7 @@ def load_yaml_file(
     file_path: Path, *, substitution: Mapping[str, Any] | None = None
 ) -> dict | list[dict]:
     with file_path.open() as yaml_file:
+        log.debug(f"Picked up: {file_path.resolve().relative_to(Path.cwd())}")
         return yaml.load(substitute(yaml_file.read(), substitution), Loader=yaml.Loader)
 
 

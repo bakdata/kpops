@@ -5,6 +5,7 @@ kubernetes-app:
   namespace: ${NAMESPACE}
 
 kafka-app:
+  version: 2.9.0
   app:
     streams:
       brokers: ${config.kafka_brokers}

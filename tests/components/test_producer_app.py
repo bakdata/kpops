@@ -1,5 +1,4 @@
 import logging
-from pathlib import Path
 from unittest.mock import ANY, AsyncMock
 
 import pytest
@@ -16,8 +15,7 @@ from kpops.components.base_components.models.topic import (
 )
 from kpops.components.streams_bootstrap.producer.producer_app import ProducerAppCleaner
 from kpops.config import KpopsConfig, TopicNameConfig
-
-DEFAULTS_PATH = Path(__file__).parent / "resources"
+from tests.components import PIPELINE_BASE_DIR
 
 PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
 PRODUCER_APP_FULL_NAME = "${pipeline.name}-" + PRODUCER_APP_NAME
@@ -50,11 +48,11 @@ class TestProducerApp:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
         return KpopsConfig(
-            defaults_path=DEFAULTS_PATH,
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component.type}-error-topic",
                 default_output_topic_name="${component.type}-output-topic",
             ),
+            pipeline_base_dir=PIPELINE_BASE_DIR,
         )
 
     @pytest.fixture()

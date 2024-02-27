@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from pytest_mock import MockerFixture
 
 from kpops.cli.main import setup_handlers
@@ -17,7 +15,6 @@ MODULE = CustomSchemaProvider.__module__
 
 def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
     config = KpopsConfig(
-        defaults_path=Path("fake"),
         kafka_brokers="broker:9092",
         components_module=MODULE,
     )
@@ -51,7 +48,6 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
 
 def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     config = KpopsConfig(
-        defaults_path=Path("fake"),
         schema_registry=SchemaRegistryConfig(enabled=True),
         kafka_brokers="broker:9092",
     )

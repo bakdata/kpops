@@ -88,6 +88,9 @@ snapshots['TestGenerate.test_default_config test-pipeline'] = [
                 },
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'config': {
+                        'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
+                    },
                     'errorTopic': 'resources-custom-config-app2-error',
                     'inputTopics': [
                         'resources-custom-config-app1'
@@ -117,6 +120,9 @@ snapshots['TestGenerate.test_default_config test-pipeline'] = [
             },
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'config': {
+                    'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
+                },
                 'errorTopic': 'resources-custom-config-app2-error',
                 'inputTopics': [
                     'resources-custom-config-app1'
@@ -147,9 +153,11 @@ snapshots['TestGenerate.test_default_config test-pipeline'] = [
                 },
                 'resources-custom-config-app2-error': {
                     'configs': {
+                        'cleanup.policy': 'compact,delete'
                     },
                     'partitions_count': 1,
-                    'type': 'error'
+                    'type': 'error',
+                    'value_schema': 'com.bakdata.kafka.DeadLetter'
                 }
             }
         },
@@ -1410,7 +1418,7 @@ snapshots['TestGenerate.test_no_user_defined_components test-pipeline'] = [
     }
 ]
 
-snapshots['TestGenerate.test_pipelines_with_env_values test-pipeline'] = [
+snapshots['TestGenerate.test_pipelines_with_envs test-pipeline'] = [
     {
         '_cleaner': {
             'app': {
@@ -3235,6 +3243,9 @@ snapshots['TestGenerate.test_with_custom_config_with_absolute_defaults_path test
                 },
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'config': {
+                        'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
+                    },
                     'errorTopic': 'app2-dead-letter-topic',
                     'inputTopics': [
                         'app1-test-topic'
@@ -3264,6 +3275,9 @@ snapshots['TestGenerate.test_with_custom_config_with_absolute_defaults_path test
             },
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'config': {
+                    'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
+                },
                 'errorTopic': 'app2-dead-letter-topic',
                 'inputTopics': [
                     'app1-test-topic'
@@ -3288,9 +3302,11 @@ snapshots['TestGenerate.test_with_custom_config_with_absolute_defaults_path test
             'topics': {
                 'app2-dead-letter-topic': {
                     'configs': {
+                        'cleanup.policy': 'compact,delete'
                     },
                     'partitions_count': 1,
-                    'type': 'error'
+                    'type': 'error',
+                    'value_schema': 'com.bakdata.kafka.DeadLetter'
                 },
                 'app2-test-topic': {
                     'configs': {
@@ -3386,6 +3402,9 @@ snapshots['TestGenerate.test_with_custom_config_with_relative_defaults_path test
                 },
                 'streams': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                    'config': {
+                        'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
+                    },
                     'errorTopic': 'app2-dead-letter-topic',
                     'inputTopics': [
                         'app1-test-topic'
@@ -3415,6 +3434,9 @@ snapshots['TestGenerate.test_with_custom_config_with_relative_defaults_path test
             },
             'streams': {
                 'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
+                'config': {
+                    'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
+                },
                 'errorTopic': 'app2-dead-letter-topic',
                 'inputTopics': [
                     'app1-test-topic'
@@ -3439,9 +3461,11 @@ snapshots['TestGenerate.test_with_custom_config_with_relative_defaults_path test
             'topics': {
                 'app2-dead-letter-topic': {
                     'configs': {
+                        'cleanup.policy': 'compact,delete'
                     },
                     'partitions_count': 1,
-                    'type': 'error'
+                    'type': 'error',
+                    'value_schema': 'com.bakdata.kafka.DeadLetter'
                 },
                 'app2-test-topic': {
                     'configs': {
@@ -3466,7 +3490,7 @@ snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
                     'config': {
                         'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
                     },
-                    'errorTopic': 'resources-kafka-connect-sink-streams-app-development-error',
+                    'errorTopic': 'resources-pipeline-with-env-defaults-streams-app-development-error',
                     'inputTopics': [
                         'example-topic'
                     ],
@@ -3476,7 +3500,7 @@ snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
             },
             'name': 'streams-app-development',
             'namespace': 'development-namespace',
-            'prefix': 'resources-kafka-connect-sink-',
+            'prefix': 'resources-pipeline-with-env-defaults-',
             'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
@@ -3495,7 +3519,7 @@ snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
                 'config': {
                     'large.message.id.generator': 'com.bakdata.kafka.MurmurHashIdGenerator'
                 },
-                'errorTopic': 'resources-kafka-connect-sink-streams-app-development-error',
+                'errorTopic': 'resources-pipeline-with-env-defaults-streams-app-development-error',
                 'inputTopics': [
                     'example-topic'
                 ],
@@ -3514,7 +3538,7 @@ snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
         },
         'name': 'streams-app-development',
         'namespace': 'development-namespace',
-        'prefix': 'resources-kafka-connect-sink-',
+        'prefix': 'resources-pipeline-with-env-defaults-',
         'repo_config': {
             'repo_auth_flags': {
                 'insecure_skip_tls_verify': False
@@ -3531,7 +3555,7 @@ snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
                     },
                     'type': 'output'
                 },
-                'resources-kafka-connect-sink-streams-app-development-error': {
+                'resources-pipeline-with-env-defaults-streams-app-development-error': {
                     'configs': {
                         'cleanup.policy': 'compact,delete'
                     },
@@ -3549,13 +3573,13 @@ snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
             'app': {
                 'config': {
                     'brokers': 'http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092',
-                    'connector': 'resources-kafka-connect-sink-es-sink-connector'
+                    'connector': 'resources-pipeline-with-env-defaults-es-sink-connector'
                 },
                 'connectorType': 'sink'
             },
             'name': 'es-sink-connector',
             'namespace': 'development-namespace',
-            'prefix': 'resources-kafka-connect-sink-',
+            'prefix': 'resources-pipeline-with-env-defaults-',
             'repo_config': {
                 'repo_auth_flags': {
                     'insecure_skip_tls_verify': False
@@ -3576,13 +3600,13 @@ snapshots['TestGenerate.test_with_env_defaults test-pipeline'] = [
             'key.ignore': 'false',
             'linger.ms': '5000',
             'max.buffered.records': '20000',
-            'name': 'resources-kafka-connect-sink-es-sink-connector',
+            'name': 'resources-pipeline-with-env-defaults-es-sink-connector',
             'read.timeout.ms': '120000',
             'tasks.max': '1',
             'topics': 'example-output'
         },
         'name': 'es-sink-connector',
-        'prefix': 'resources-kafka-connect-sink-',
+        'prefix': 'resources-pipeline-with-env-defaults-',
         'resetter_values': {
         },
         'type': 'kafka-sink-connector'

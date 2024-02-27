@@ -41,8 +41,6 @@ class TestDestroy:
             [
                 "destroy",
                 str(RESOURCE_PATH / "simple-pipeline" / "pipeline.yaml"),
-                "--defaults",
-                str(RESOURCE_PATH),
             ],
             catch_exceptions=False,
         )

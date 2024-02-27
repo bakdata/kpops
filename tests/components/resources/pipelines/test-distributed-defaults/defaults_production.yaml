@@ -1,0 +1,3 @@
+helm-app:
+  name: prod-${component.type}
+  namespace: prod-example-namespace
