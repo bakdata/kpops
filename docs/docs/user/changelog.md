@@ -1,4 +1,69 @@
 # Changelog
+## [4.0.0](https://github.com/bakdata/kpops/releases/tag/4.0.0) - Release Date: [2024-02-27]
+
+### 🏗️ Breaking changes
+
+- Distribute defaults across multiple files - [#438](https://github.com/bakdata/kpops/pull/438)
+
+
+### 🚀 Features
+
+- Distribute defaults across multiple files - [#438](https://github.com/bakdata/kpops/pull/438)
+
+
+
+
+
+
+## [3.2.4](https://github.com/bakdata/kpops/releases/tag/3.2.4) - Release Date: [2024-02-26]
+
+### 🐛 Fixes
+
+- Fix docs CI to include the latest changes to a tagged version in the changelog - [#459](https://github.com/bakdata/kpops/pull/459)
+
+- Fix tempfile creation - [#461](https://github.com/bakdata/kpops/pull/461)
+
+- Fix symbolic link to CONTRIBUTING.md and parallel option in action.yaml - [#462](https://github.com/bakdata/kpops/pull/462)
+
+
+### 🏭 Refactor
+
+- Refactor Kafka topics - [#447](https://github.com/bakdata/kpops/pull/447)
+
+- Refactor PipelineGenerator to use component ids - [#460](https://github.com/bakdata/kpops/pull/460)
+
+
+### 📝 Documentation
+
+- Fix docs CI to include the latest changes to a tagged version in the changelog - [#459](https://github.com/bakdata/kpops/pull/459)
+
+
+
+
+
+
+## [3.2.3](https://github.com/bakdata/kpops/releases/tag/3.2.3) - Release Date: [2024-02-19]
+
+### 🐛 Fixes
+
+- Trim and hash Helm name override to 63 characters - [#456](https://github.com/bakdata/kpops/pull/456)
+
+
+
+
+
+
+## [3.2.2](https://github.com/bakdata/kpops/releases/tag/3.2.2) - Release Date: [2024-02-12]
+
+### 🐛 Fixes
+
+- Fix nested substitution - [#451](https://github.com/bakdata/kpops/pull/451)
+
+
+
+
+
+
 ## [3.2.1](https://github.com/bakdata/kpops/releases/tag/3.2.1) - Release Date: [2024-02-08]
 
 ### 🐛 Fixes

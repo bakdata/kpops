@@ -1,4 +1,4 @@
-name: Release to GitHub and update docs
+name: Release to GitHub and push tag
 
 on:
   workflow_dispatch:
@@ -27,21 +27,3 @@ jobs:
       github-username: "${{ secrets.GH_USERNAME }}"
       github-email: "${{ secrets.GH_EMAIL }}"
       github-token: "${{ secrets.GH_TOKEN }}"
-
-  update-docs:
-    runs-on: ubuntu-22.04
-    needs: create-github-release-push-tag
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0 # Fetch all tags; Required for doc versioning
-
-      - name: Update gh-pages
-        uses: ./.github/actions/update-docs
-        with:
-          username: ${{ secrets.GH_USERNAME }}
-          email: ${{ secrets.GH_EMAIL }}
-          token: ${{ secrets.GH_TOKEN }}
-          version: ${{ needs.create-github-release-push-tag.outputs.release-version }}
-          release: true

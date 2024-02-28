@@ -5,13 +5,12 @@ import pytest
 from kpops.pipeline import PipelineGenerator
 from kpops.utils.environment import ENV
 
-DEFAULTS_PATH = Path(__file__).parent / "resources"
 PIPELINE_PATH = Path("./some/random/path/for/testing/pipeline.yaml")
-DEFAULT_BASE_DIR = Path()
+PIPELINE_BASE_DIR = Path()
 
 
 def test_should_set_pipeline_name_with_default_base_dir():
-    PipelineGenerator.set_pipeline_name_env_vars(DEFAULT_BASE_DIR, PIPELINE_PATH)
+    PipelineGenerator.set_pipeline_name_env_vars(PIPELINE_BASE_DIR, PIPELINE_PATH)
 
     assert ENV["pipeline.name"] == "some-random-path-for-testing"
     assert ENV["pipeline.name_0"] == "some"

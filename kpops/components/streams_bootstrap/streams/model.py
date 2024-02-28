@@ -1,19 +1,17 @@
-from collections.abc import Callable
 from typing import Any
 
-from pydantic import ConfigDict, Field, SerializationInfo, model_serializer
+import pydantic
+from pydantic import ConfigDict, Field
 
-from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
     KafkaStreamsConfig,
 )
+from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
     DescConfigModel,
-    exclude_by_value,
-    exclude_defaults,
 )
 
 
@@ -24,32 +22,24 @@ class StreamsConfig(KafkaStreamsConfig):
     :param input_pattern: Input pattern, defaults to None
     :param extra_input_topics: Extra input topics, defaults to {}
     :param extra_input_patterns: Extra input patterns, defaults to {}
-    :param extra_output_topics: Extra output topics, defaults to {}
-    :param output_topic: Output topic, defaults to None
     :param error_topic: Error topic, defaults to None
     :param config: Configuration, defaults to {}
     :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
     """
 
-    input_topics: list[str] = Field(
+    input_topics: list[KafkaTopicStr] = Field(
         default=[], description=describe_attr("input_topics", __doc__)
     )
     input_pattern: str | None = Field(
         default=None, description=describe_attr("input_pattern", __doc__)
     )
-    extra_input_topics: dict[str, list[str]] = Field(
+    extra_input_topics: dict[str, list[KafkaTopicStr]] = Field(
         default={}, description=describe_attr("extra_input_topics", __doc__)
     )
     extra_input_patterns: dict[str, str] = Field(
         default={}, description=describe_attr("extra_input_patterns", __doc__)
     )
-    extra_output_topics: dict[str, str] = Field(
-        default={}, description=describe_attr("extra_output_topics", __doc__)
-    )
-    output_topic: str | None = Field(
-        default=None, description=describe_attr("output_topic", __doc__)
-    )
-    error_topic: str | None = Field(
+    error_topic: KafkaTopicStr | None = Field(
         default=None, description=describe_attr("error_topic", __doc__)
     )
     config: dict[str, Any] = Field(
@@ -59,16 +49,47 @@ class StreamsConfig(KafkaStreamsConfig):
         default=None, description=describe_attr("delete_output", __doc__)
     )
 
-    def add_input_topics(self, topics: list[str]) -> None:
+    @pydantic.field_validator("input_topics", mode="before")
+    @classmethod
+    def deserialize_input_topics(cls, input_topics: Any) -> list[KafkaTopic] | Any:
+        if isinstance(input_topics, list):
+            return [KafkaTopic(name=topic_name) for topic_name in input_topics]
+        return input_topics
+
+    @pydantic.field_validator("extra_input_topics", mode="before")
+    @classmethod
+    def deserialize_extra_input_topics(
+        cls, extra_input_topics: Any
+    ) -> dict[str, list[KafkaTopic]] | Any:
+        if isinstance(extra_input_topics, dict):
+            return {
+                role: [KafkaTopic(name=topic_name) for topic_name in topics]
+                for role, topics in extra_input_topics.items()
+            }
+        return extra_input_topics
+
+    @pydantic.field_serializer("input_topics")
+    def serialize_topics(self, topics: list[KafkaTopic]) -> list[str]:
+        return [topic.name for topic in topics]
+
+    @pydantic.field_serializer("extra_input_topics")
+    def serialize_extra_input_topics(
+        self, extra_topics: dict[str, list[KafkaTopic]]
+    ) -> dict[str, list[str]]:
+        return {
+            role: self.serialize_topics(topics) for role, topics in extra_topics.items()
+        }
+
+    def add_input_topics(self, topics: list[KafkaTopic]) -> None:
         """Add given topics to the list of input topics.
 
         Ensures no duplicate topics in the list.
 
         :param topics: Input topics
         """
-        self.input_topics = deduplicate(self.input_topics + topics)
+        self.input_topics = KafkaTopic.deduplicate(self.input_topics + topics)
 
-    def add_extra_input_topics(self, role: str, topics: list[str]) -> None:
+    def add_extra_input_topics(self, role: str, topics: list[KafkaTopic]) -> None:
         """Add given extra topics that share a role to the list of extra input topics.
 
         Ensures no duplicate topics in the list.
@@ -76,16 +97,9 @@ class StreamsConfig(KafkaStreamsConfig):
         :param topics: Extra input topics
         :param role: Topic role
         """
-        self.extra_input_topics[role] = deduplicate(
+        self.extra_input_topics[role] = KafkaTopic.deduplicate(
             self.extra_input_topics.get(role, []) + topics
         )
-
-    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
-    @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(
-        self, handler: Callable, info: SerializationInfo
-    ) -> dict[str, Any]:
-        return exclude_defaults(self, exclude_by_value(handler(self), None))
 
 
 class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):

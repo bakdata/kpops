@@ -9,19 +9,18 @@ from pydantic import Field, PrivateAttr, ValidationInfo, computed_field, field_v
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import (
-    HelmFlags,
     HelmRepoConfig,
 )
-from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
     KafkaConnectorResetterConfig,
     KafkaConnectorResetterValues,
     KafkaConnectorType,
 )
-from kpops.components.base_components.base_defaults_component import deduplicate
-from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
+from kpops.components.base_components.cleaner import Cleaner
+from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.models.from_section import FromTopic
+from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
@@ -29,7 +28,7 @@ from kpops.utils.docstring import describe_attr
 log = logging.getLogger("KafkaConnector")
 
 
-class KafkaConnectorResetter(HelmApp):
+class KafkaConnectorResetter(Cleaner, ABC):
     """Helm app for resetting and cleaning a Kafka Connector.
 
     :param repo_config: Configuration of the Helm chart repo to be used for
@@ -37,6 +36,8 @@ class KafkaConnectorResetter(HelmApp):
     :param version: Helm chart version, defaults to "1.0.4"
     """
 
+    from_: None = None
+    to: None = None
     app: KafkaConnectorResetterValues
     repo_config: HelmRepoConfig = Field(
         default=HelmRepoConfig(
@@ -47,32 +48,11 @@ class KafkaConnectorResetter(HelmApp):
     version: str | None = Field(
         default="1.0.4", description=describe_attr("version", __doc__)
     )
-    suffix: str = "-clean"
-
-    @property
-    @override
-    def full_name(self) -> str:
-        return super().full_name + self.suffix
 
     @property
     @override
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/kafka-connect-resetter"
-
-    @property
-    @override
-    def helm_release_name(self) -> str:
-        return create_helm_release_name(self.full_name, self.suffix)
-
-    @property
-    @override
-    def helm_flags(self) -> HelmFlags:
-        return HelmFlags(
-            create_namespace=self.config.create_namespace,
-            version=self.version,
-            wait_for_jobs=True,
-            wait=True,
-        )
 
     @override
     async def reset(self, dry_run: bool) -> None:
@@ -135,7 +115,7 @@ class KafkaConnector(PipelineComponent, ABC):
     @classmethod
     def connector_config_should_have_component_name(
         cls,
-        app: KafkaConnectorConfig | dict[str, str],
+        app: KafkaConnectorConfig | dict[str, Any],
         info: ValidationInfo,
     ) -> KafkaConnectorConfig:
         if isinstance(app, KafkaConnectorConfig):
@@ -159,7 +139,14 @@ class KafkaConnector(PipelineComponent, ABC):
             **kwargs,
             **self.model_dump(
                 by_alias=True,
-                exclude={"_resetter", "resetter_values", "resetter_namespace", "app"},
+                exclude={
+                    "_resetter",
+                    "resetter_values",
+                    "resetter_namespace",
+                    "app",
+                    "from_",
+                    "to",
+                },
             ),
             app=KafkaConnectorResetterValues(
                 connector_type=self._connector_type.value,
@@ -174,9 +161,8 @@ class KafkaConnector(PipelineComponent, ABC):
     @override
     async def deploy(self, dry_run: bool) -> None:
         if self.to:
-            await self.handlers.topic_handler.create_topics(
-                to_section=self.to, dry_run=dry_run
-            )
+            for topic in self.to.kafka_topics:
+                await self.handlers.topic_handler.create_topic(topic, dry_run=dry_run)
 
             if self.handlers.schema_handler:
                 await self.handlers.schema_handler.submit_schemas(
@@ -200,7 +186,8 @@ class KafkaConnector(PipelineComponent, ABC):
                 await self.handlers.schema_handler.delete_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
-            await self.handlers.topic_handler.delete_topics(self.to, dry_run=dry_run)
+            for topic in self.to.kafka_topics:
+                await self.handlers.topic_handler.delete_topic(topic, dry_run=dry_run)
 
 
 class KafkaSourceConnector(KafkaConnector):
@@ -252,24 +239,20 @@ class KafkaSinkConnector(KafkaConnector):
 
     @property
     @override
-    def input_topics(self) -> list[str]:
-        topics = getattr(self.app, "topics", None)
-        return topics.split(",") if topics is not None else []
+    def input_topics(self) -> list[KafkaTopic]:
+        return self.app.topics
 
     @override
-    def add_input_topics(self, topics: list[str]) -> None:
-        existing_topics: str | None = getattr(self.app, "topics", None)
-        topics = existing_topics.split(",") + topics if existing_topics else topics
-        topics = deduplicate(topics)
-        setattr(self.app, "topics", ",".join(topics))
+    def add_input_topics(self, topics: list[KafkaTopic]) -> None:
+        self.app.topics = KafkaTopic.deduplicate(self.app.topics + topics)
 
     @override
     def set_input_pattern(self, name: str) -> None:
-        setattr(self.app, "topics.regex", name)
+        self.app.topics_regex = name
 
     @override
-    def set_error_topic(self, topic_name: str) -> None:
-        setattr(self.app, "errors.deadletterqueue.topic.name", topic_name)
+    def set_error_topic(self, topic: KafkaTopic) -> None:
+        self.app.errors_deadletterqueue_topic_name = topic
 
     @override
     async def reset(self, dry_run: bool) -> None:

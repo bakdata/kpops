@@ -87,7 +87,7 @@ class Helm:
         """Prepare and execute the `helm upgrade --install` command."""
         if flags is None:
             flags = HelmUpgradeInstallFlags()
-        with tempfile.NamedTemporaryFile("w") as values_file:
+        with tempfile.NamedTemporaryFile("w", delete=False) as values_file:
             yaml.safe_dump(values, values_file)
 
             command = [

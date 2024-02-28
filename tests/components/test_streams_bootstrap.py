@@ -1,4 +1,3 @@
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -13,8 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.config import KpopsConfig
-
-DEFAULTS_PATH = Path(__file__).parent / "resources"
+from tests.components import PIPELINE_BASE_DIR
 
 
 @pytest.mark.usefixtures("mock_env")
@@ -22,8 +20,8 @@ class TestStreamsBootstrap:
     @pytest.fixture()
     def config(self) -> KpopsConfig:
         return KpopsConfig(
-            defaults_path=DEFAULTS_PATH,
             helm_diff_config=HelmDiffConfig(),
+            pipeline_base_dir=PIPELINE_BASE_DIR,
         )
 
     @pytest.fixture()
@@ -96,7 +94,10 @@ class TestStreamsBootstrap:
             "test-namespace",
             {
                 "nameOverride": "${pipeline.name}-example-name",
-                "streams": {"brokers": "fake-broker:9092", "outputTopic": "test"},
+                "streams": {
+                    "brokers": "fake-broker:9092",
+                    "outputTopic": "test",
+                },
             },
             HelmUpgradeInstallFlags(version="1.2.3"),
         )

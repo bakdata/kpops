@@ -1,13 +1,43 @@
 import json
+from unittest import mock
 
 import pytest
 from pydantic import BaseModel
+from pytest_mock import MockerFixture
 
-from kpops.utils.dict_ops import generate_substitution, update_nested_pair
+from kpops.utils.dict_ops import (
+    generate_substitution,
+    update_nested,
+    update_nested_pair,
+)
 from kpops.utils.types import JsonType
 
 
 class TestDictOps:
+    def test_update_nested(self, mocker: MockerFixture):
+        dicts = [{"k1": {"foo": 1}}, {"k1": {"bar": ""}}, {"k1": {"baz": "2"}}]
+        expected = {"k1": {"foo": 1, "bar": "", "baz": "2"}}
+
+        update_nested_pair_mock = mocker.patch(
+            "kpops.utils.dict_ops.update_nested_pair"
+        )
+        update_nested_pair_mock.return_value = expected
+
+        actual = update_nested(*dicts)
+
+        update_nested_pair_mock.assert_has_calls(
+            [
+                mock.call({"k1": {"foo": 1}}, {"k1": {"bar": ""}}),
+                mock.call(
+                    {"k1": {"bar": "", "baz": "2", "foo": 1}}, {"k1": {"baz": "2"}}
+                ),
+            ]
+        )
+
+        assert update_nested_pair_mock.call_count == 2
+
+        assert actual == expected
+
     @pytest.mark.parametrize(
         ("d1", "d2", "expected"),
         [
