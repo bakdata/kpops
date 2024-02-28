@@ -1331,16 +1331,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#supported-files" class="md-nav__link">
-    Supported files
+  <a href="#native" class="md-nav__link">
+    Native
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    Usage
+  <a href="#manual-for-unsupported-editors-with-lsp" class="md-nav__link">
+    Manual (for unsupported editors with LSP)
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concepts" class="md-nav__link">
+    Concepts
+  </a>
+  
+    <nav class="md-nav" aria-label="Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-files" class="md-nav__link">
+    Supported files
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1628,16 +1648,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#supported-files" class="md-nav__link">
-    Supported files
+  <a href="#native" class="md-nav__link">
+    Native
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#usage" class="md-nav__link">
-    Usage
+  <a href="#manual-for-unsupported-editors-with-lsp" class="md-nav__link">
+    Manual (for unsupported editors with LSP)
   </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#concepts" class="md-nav__link">
+    Concepts
+  </a>
+  
+    <nav class="md-nav" aria-label="Concepts">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#supported-files" class="md-nav__link">
+    Supported files
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1660,14 +1700,13 @@
 
 
 <h1 id="editor-integration">Editor integration<a class="headerlink" href="#editor-integration" title="Permanent link">&para;</a></h1>
-<p>KPOps provides JSON schemas that enable autocompletion and validation for all YAML files that the user must work with.</p>
-<h2 id="supported-files">Supported files<a class="headerlink" href="#supported-files" title="Permanent link">&para;</a></h2>
+<h2 id="native">Native<a class="headerlink" href="#native" title="Permanent link">&para;</a></h2>
+<p>We are working towards first-class editor support by providing plugins that work out of the box.</p>
 <ul>
-<li><a href="../../../resources/pipeline-components/pipeline/"><code>pipeline.yaml</code></a></li>
-<li><a href="../../core-concepts/defaults/"><code>defaults.yaml</code></a></li>
-<li><a href="../../core-concepts/config/"><code>config.yaml</code></a></li>
+<li>Neovim: <a href="https://github.com/disrupted/kpops.nvim">kpops.nvim</a></li>
+<li>Visual Studio Code: <em>planned</em></li>
 </ul>
-<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<h2 id="manual-for-unsupported-editors-with-lsp">Manual (for unsupported editors with LSP)<a class="headerlink" href="#manual-for-unsupported-editors-with-lsp" title="Permanent link">&para;</a></h2>
 <ol>
 <li>Install the <a href="https://github.com/redhat-developer/yaml-language-server#clients" target="_blank">yaml-language-server</a> in your editor of choice. (requires LSP support)</li>
 <li>Configure the extension with the settings below.</li>
@@ -1714,6 +1753,16 @@
 <p>It is possible to generate schemas with the <a href="../cli-commands/#kpops-schema"><code>kpops schema</code></a> command. Useful for including custom components or when using a pre-release version of KPOps.</p>
 </div>
 <!-- dprint-ignore-end -->
+
+<hr />
+<h2 id="concepts">Concepts<a class="headerlink" href="#concepts" title="Permanent link">&para;</a></h2>
+<p>KPOps provides JSON schemas that enable autocompletion and validation for all YAML files that the user must work with.</p>
+<h3 id="supported-files">Supported files<a class="headerlink" href="#supported-files" title="Permanent link">&para;</a></h3>
+<ul>
+<li><a href="../../../resources/pipeline-components/pipeline/"><code>pipeline.yaml</code></a></li>
+<li><a href="../../core-concepts/defaults/"><code>defaults.yaml</code></a></li>
+<li><a href="../../core-concepts/config/"><code>config.yaml</code></a></li>
+</ul>
 
 
 
