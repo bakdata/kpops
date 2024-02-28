@@ -143,7 +143,7 @@ $ kpops init [OPTIONS] PATH
 
 **Options**:
 
-* `--name TEXT`: Name of the new KPOps project. A new directory with the provided name will be created. Leave empty to use the existing dir provided via `--path`.
+* `--name TEXT`: Name of the new KPOps project. A new directory with the provided name will be created. Leave empty to use the existing dir provided via `[PATH]`.
 * `--config-include-opt / --no-config-include-opt`: Whether to include non-required settings in the generated 'config.yaml'  [default: no-config-include-opt]
 * `--help`: Show this message and exit.
 

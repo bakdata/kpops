@@ -1,10 +1,14 @@
 import json
+from typing import Any
 
 
-def is_jsonable(x):
-    """Check whether a value is json-serializable."""
+def is_jsonable(input: Any):
+    """Check whether a value is json-serializable.
+
+    :param input: Value to be checked.
+    """
     try:
-        json.dumps(x)
+        json.dumps(input)
     except (TypeError, OverflowError):
         return False
     else:

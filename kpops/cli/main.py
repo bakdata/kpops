@@ -84,7 +84,7 @@ PROJECT_PATH: Path = typer.Argument(
 
 PROJECT_NAME: Optional[str] = typer.Option(
     default=None,
-    help="Name of the new KPOps project. A new directory with the provided name will be created. Leave empty to use the existing dir provided via `--path`.",
+    help="Name of the new KPOps project. A new directory with the provided name will be created. Leave empty to use the existing dir provided via `[PATH]`.",
 )
 
 CONFIG_INCLUDE_OPTIONAL: bool = typer.Option(
@@ -128,13 +128,6 @@ ENVIRONMENT: str | None = typer.Option(
         "The environment you want to generate and deploy the pipeline to. "
         "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). "
     ),
-)
-
-COMPONENTS_TYPES: list[str] | None = typer.Option(
-    default=None, help="The types of the components to be added"
-)
-COMPONENTS_NAMES: list[str] | None = typer.Option(
-    default=None, help="The names of the components to be added"
 )
 
 
