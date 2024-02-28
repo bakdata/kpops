@@ -35,7 +35,7 @@ PATH_CONFIG_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "config_env_vars.md"
 PATH_CONFIG_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_config_env_vars.csv"
 TITLE_CONFIG_ENV_VARS = "Global config environment variables"
 DESCRIPTION_CONFIG_ENV_VARS = (
-    "These variables are a lower priority alternative to the settings in `config.yaml`. "
+    "These variables take precedence over the settings in `config.yaml`. "
     "Variables marked as required can instead be set in the global config."
 )
 
