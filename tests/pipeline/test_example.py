@@ -31,11 +31,7 @@ class TestExample:
         ), "examples directory is empty, please initialize and update the git submodule (see contributing guide)"
 
     @pytest.mark.usefixtures("test_submodule")
-    def test_word_count(self, snapshot: Snapshot):
-        pipeline = kpops.generate(Path("word-count/pipeline.yaml"))
-        snapshot.assert_match(pipeline.to_yaml(), "pipeline.yaml")
-
-    @pytest.mark.usefixtures("test_submodule")
-    def test_atm_fraud(self, snapshot: Snapshot):
-        pipeline = kpops.generate(Path("atm-fraud/pipeline.yaml"))
+    @pytest.mark.parametrize("pipeline_name", ["word-count", "atm-fraud"])
+    def test_generate(self, pipeline_name: str, snapshot: Snapshot):
+        pipeline = kpops.generate(Path(f"{pipeline_name}/pipeline.yaml"))
         snapshot.assert_match(pipeline.to_yaml(), "pipeline.yaml")
