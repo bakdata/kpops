@@ -7,7 +7,7 @@ We are working towards first-class editor support by providing plugins that work
 - Neovim: [kpops.nvim](https://github.com/disrupted/kpops.nvim)
 - Visual Studio Code: _planned_
 
-## Other editors with LSP support
+## Manual (for unsupported editors with LSP)
 
 1. Install the [yaml-language-server](https://github.com/redhat-developer/yaml-language-server#clients){target=_blank} in your editor of choice. (requires LSP support)
 2. Configure the extension with the settings below.
