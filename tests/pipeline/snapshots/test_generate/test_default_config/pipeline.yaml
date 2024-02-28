@@ -1,0 +1,111 @@
+- _cleaner:
+    app:
+      resources:
+        limits:
+          memory: 2G
+        requests:
+          memory: 2G
+      streams:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        outputTopic: resources-custom-config-app1
+        schemaRegistryUrl: http://localhost:8081/
+    name: app1
+    namespace: development-namespace
+    prefix: resources-custom-config-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: producer-app-cleaner
+    version: 2.9.0
+  app:
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      outputTopic: resources-custom-config-app1
+      schemaRegistryUrl: http://localhost:8081/
+  name: app1
+  namespace: development-namespace
+  prefix: resources-custom-config-
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      resources-custom-config-app1:
+        configs: {}
+        partitions_count: 3
+        type: output
+  type: producer-app
+  version: 2.9.0
+- _cleaner:
+    app:
+      image: some-image
+      labels:
+        pipeline: resources-custom-config
+      streams:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        config:
+          large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+        errorTopic: resources-custom-config-app2-error
+        inputTopics:
+        - resources-custom-config-app1
+        outputTopic: resources-custom-config-app2
+        schemaRegistryUrl: http://localhost:8081/
+    name: app2
+    namespace: development-namespace
+    prefix: resources-custom-config-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    version: 2.9.0
+  app:
+    image: some-image
+    labels:
+      pipeline: resources-custom-config
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-custom-config-app2-error
+      inputTopics:
+      - resources-custom-config-app1
+      outputTopic: resources-custom-config-app2
+      schemaRegistryUrl: http://localhost:8081/
+  name: app2
+  namespace: development-namespace
+  prefix: resources-custom-config-
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      resources-custom-config-app2:
+        configs: {}
+        partitions_count: 3
+        type: output
+      resources-custom-config-app2-error:
+        configs:
+          cleanup.policy: compact,delete
+        partitions_count: 1
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+  type: streams-app
+  version: 2.9.0
+

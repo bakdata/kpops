@@ -1,0 +1,133 @@
+- _cleaner:
+    app:
+      commandLine:
+        CONVERT_XML: true
+      resources:
+        limits:
+          memory: 2G
+        requests:
+          memory: 2G
+      streams:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        config:
+          large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+        errorTopic: resources-no-input-topic-pipeline-app1-error
+        inputPattern: .*
+        outputTopic: example-output
+        schemaRegistryUrl: http://localhost:8081/
+    name: app1
+    namespace: example-namespace
+    prefix: resources-no-input-topic-pipeline-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    version: 2.4.2
+  app:
+    commandLine:
+      CONVERT_XML: true
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-no-input-topic-pipeline-app1-error
+      inputPattern: .*
+      outputTopic: example-output
+      schemaRegistryUrl: http://localhost:8081/
+  from:
+    components: {}
+    topics:
+      .*:
+        type: pattern
+  name: app1
+  namespace: example-namespace
+  prefix: resources-no-input-topic-pipeline-
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      example-output:
+        configs: {}
+        type: output
+      resources-no-input-topic-pipeline-app1-error:
+        configs:
+          cleanup.policy: compact,delete
+        partitions_count: 1
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+  type: streams-app
+  version: 2.4.2
+- _cleaner:
+    app:
+      streams:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        config:
+          large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+        errorTopic: resources-no-input-topic-pipeline-app2-error
+        extraOutputTopics:
+          extra: example-output-extra
+          test-output: test-output-extra
+        inputTopics:
+        - example-output
+        schemaRegistryUrl: http://localhost:8081/
+    name: app2
+    namespace: example-namespace
+    prefix: resources-no-input-topic-pipeline-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    version: 2.4.2
+  app:
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-no-input-topic-pipeline-app2-error
+      extraOutputTopics:
+        extra: example-output-extra
+        test-output: test-output-extra
+      inputTopics:
+      - example-output
+      schemaRegistryUrl: http://localhost:8081/
+  name: app2
+  namespace: example-namespace
+  prefix: resources-no-input-topic-pipeline-
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      example-output-extra:
+        configs: {}
+        role: extra
+      resources-no-input-topic-pipeline-app2-error:
+        configs:
+          cleanup.policy: compact,delete
+        partitions_count: 1
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+      test-output-extra:
+        configs: {}
+        role: test-output
+  type: streams-app
+  version: 2.4.2
+

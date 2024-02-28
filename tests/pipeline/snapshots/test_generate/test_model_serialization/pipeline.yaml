@@ -1,0 +1,39 @@
+- _cleaner:
+    app:
+      streams:
+        brokers: test
+        outputTopic: out
+        schemaRegistryUrl: http://localhost:8081/
+    name: account-producer
+    namespace: test
+    prefix: resources-pipeline-with-paths-
+    repo_config:
+      repo_auth_flags:
+        ca_file: my-cert.cert
+        insecure_skip_tls_verify: false
+        password: $CI_JOB_TOKEN
+        username: masked
+      repository_name: masked
+      url: masked
+    suffix: -clean
+    type: producer-app-cleaner
+    version: 2.4.2
+  app:
+    streams:
+      brokers: test
+      outputTopic: out
+      schemaRegistryUrl: http://localhost:8081/
+  name: account-producer
+  namespace: test
+  prefix: resources-pipeline-with-paths-
+  repo_config:
+    repo_auth_flags:
+      ca_file: my-cert.cert
+      insecure_skip_tls_verify: false
+      password: $CI_JOB_TOKEN
+      username: masked
+    repository_name: masked
+    url: masked
+  type: producer-app
+  version: 2.4.2
+
