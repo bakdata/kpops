@@ -19,7 +19,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `deploy`: Deploy pipeline steps
 * `destroy`: Destroy pipeline steps
 * `generate`: Generate enriched pipeline representation
-* `init`: Initialize a new a KPOps project.
+* `init`: Initialize a new KPOps project.
 * `manifest`: Render final resource representation
 * `reset`: Reset pipeline steps
 * `schema`: Generate JSON schema.
@@ -129,7 +129,7 @@ $ kpops generate [OPTIONS] PIPELINE_PATH
 
 ## `kpops init`
 
-Initialize a new a KPOps project.
+Initialize a new KPOps project.
 
 **Usage**:
 
@@ -139,11 +139,10 @@ $ kpops init [OPTIONS] PATH
 
 **Arguments**:
 
-* `PATH`: Path for a new KPOps project.  [required]
+* `PATH`: Path for a new KPOps project. It should lead to an empty (or non-existent) directory. The part of the path that doesn't exist will be created.  [required]
 
 **Options**:
 
-* `--name TEXT`: Name of the new KPOps project. A new directory with the provided name will be created. Leave empty to use the existing dir provided via `[PATH]`.
 * `--config-include-opt / --no-config-include-opt`: Whether to include non-required settings in the generated 'config.yaml'  [default: no-config-include-opt]
 * `--help`: Show this message and exit.
 

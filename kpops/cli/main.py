@@ -74,17 +74,12 @@ PIPELINE_PATH_ARG: Path = typer.Argument(
 
 PROJECT_PATH: Path = typer.Argument(
     default=...,
-    exists=True,
+    exists=False,
     file_okay=False,
     dir_okay=True,
     readable=True,
     resolve_path=True,
-    help="Path for a new KPOps project.",
-)
-
-PROJECT_NAME: Optional[str] = typer.Option(
-    default=None,
-    help="Name of the new KPOps project. A new directory with the provided name will be created. Leave empty to use the existing dir provided via `[PATH]`.",
+    help="Path for a new KPOps project. It should lead to an empty (or non-existent) directory. The part of the path that doesn't exist will be created.",
 )
 
 CONFIG_INCLUDE_OPTIONAL: bool = typer.Option(
@@ -212,15 +207,14 @@ def create_kpops_config(
 
 
 @app.command(  # type: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
-    help="Initialize a new a KPOps project."
+    help="Initialize a new KPOps project."
 )
 def init(
     path: Path = PROJECT_PATH,
-    name: Optional[str] = PROJECT_NAME,
     config_include_opt: bool = CONFIG_INCLUDE_OPTIONAL,
 ):
-    if name:
-        path = path / name
+    if not path.exists():
+        path.mkdir(parents=False)
     elif next(path.iterdir(), False):
         log.warning("Please provide a path to an empty directory.")
         return
