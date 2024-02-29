@@ -38,7 +38,7 @@ class SchemaRegistryConfig(BaseSettings):
         description="Whether the Schema Registry handler should be initialized.",
     )
     url: AnyHttpUrl = Field(
-        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8081"),
+        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8081"),  # pyright: ignore[reportCallIssue]
         description="Address of the Schema Registry.",
     )
 
@@ -47,7 +47,7 @@ class KafkaRestConfig(BaseSettings):
     """Configuration for Kafka REST Proxy."""
 
     url: AnyHttpUrl = Field(
-        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8082"),
+        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8082"),  # pyright: ignore[reportCallIssue]
         description="Address of the Kafka REST Proxy.",
     )
 
@@ -56,7 +56,7 @@ class KafkaConnectConfig(BaseSettings):
     """Configuration for Kafka Connect."""
 
     url: AnyHttpUrl = Field(
-        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8083"),
+        default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8083"),  # pyright: ignore[reportCallIssue]
         description="Address of Kafka Connect.",
     )
 

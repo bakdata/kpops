@@ -185,11 +185,11 @@ def create_kpops_config(
     YamlConfigSettingsSource.config_dir = config
     YamlConfigSettingsSource.environment = environment
     return KpopsConfig(
-        _env_file=dotenv  # pyright: ignore[reportGeneralTypeIssues]
+        _env_file=dotenv  # pyright: ignore[reportCallIssue]
     )
 
 
-@app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
     help="""
     Generate JSON schema.
 
@@ -227,7 +227,7 @@ def schema(
             gen_config_schema()
 
 
-@app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
     short_help="Generate enriched pipeline representation",
     help="Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).",
 )
@@ -270,7 +270,7 @@ def generate(
     return pipeline
 
 
-@app.command(  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
     short_help="Render final resource representation",
     help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.",
 )
@@ -304,7 +304,7 @@ def manifest(
     return resources
 
 
-@app.command(help="Deploy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Deploy pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
 def deploy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
@@ -342,7 +342,7 @@ def deploy(
     asyncio.run(async_deploy())
 
 
-@app.command(help="Destroy pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Destroy pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
 def destroy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
@@ -382,7 +382,7 @@ def destroy(
     asyncio.run(async_destroy())
 
 
-@app.command(help="Reset pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Reset pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
 def reset(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
@@ -421,7 +421,7 @@ def reset(
     asyncio.run(async_reset())
 
 
-@app.command(help="Clean pipeline steps")  # pyright: ignore[reportGeneralTypeIssues] https://github.com/rec/dtyper/issues/8
+@app.command(help="Clean pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
 def clean(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,

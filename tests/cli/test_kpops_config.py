@@ -1,5 +1,5 @@
 import pytest
-from pydantic import AnyHttpUrl, TypeAdapter, ValidationError
+from pydantic import AnyHttpUrl, AnyUrl, TypeAdapter, ValidationError
 
 from kpops.config import (
     KafkaConnectConfig,
@@ -22,9 +22,9 @@ def test_kpops_config_with_default_values():
         == "${pipeline.name}-${component.name}-error"
     )
     assert default_config.schema_registry.enabled is False
-    assert default_config.schema_registry.url == AnyHttpUrl("http://localhost:8081")
-    assert default_config.kafka_rest.url == AnyHttpUrl("http://localhost:8082")
-    assert default_config.kafka_connect.url == AnyHttpUrl("http://localhost:8083")
+    assert default_config.schema_registry.url == AnyUrl("http://localhost:8081")
+    assert default_config.kafka_rest.url == AnyUrl("http://localhost:8082")
+    assert default_config.kafka_connect.url == AnyUrl("http://localhost:8083")
     assert default_config.timeout == 300
     assert default_config.create_namespace is False
     assert default_config.helm_config.context is None
@@ -39,7 +39,7 @@ def test_kpops_config_with_different_invalid_urls():
         KpopsConfig(
             kafka_brokers="http://broker:9092",
             kafka_connect=KafkaConnectConfig(
-                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host")
+                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host")  # pyright: ignore[reportCallIssue,reportArgumentType]
             ),
         )
 
@@ -47,7 +47,7 @@ def test_kpops_config_with_different_invalid_urls():
         KpopsConfig(
             kafka_brokers="http://broker:9092",
             kafka_rest=KafkaRestConfig(
-                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host")
+                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host")  # pyright: ignore[reportCallIssue,reportArgumentType]
             ),
         )
 
@@ -56,6 +56,6 @@ def test_kpops_config_with_different_invalid_urls():
             kafka_brokers="http://broker:9092",
             schema_registry=SchemaRegistryConfig(
                 enabled=True,
-                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host"),
+                url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host"),  # pyright: ignore[reportCallIssue,reportArgumentType]
             ),
         )
