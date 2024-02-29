@@ -1,4 +1,15 @@
 # Changelog
+## [4.0.1](https://github.com/bakdata/kpops/releases/tag/4.0.1) - Release Date: [2024-02-29]
+
+### 🐛 Fixes
+
+- Set supported Python cutoff to 3.11 - [#466](https://github.com/bakdata/kpops/pull/466)
+
+
+
+
+
+
 ## [4.0.0](https://github.com/bakdata/kpops/releases/tag/4.0.0) - Release Date: [2024-02-27]
 
 ### 🏗️ Breaking changes

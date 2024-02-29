@@ -15,7 +15,7 @@ from kpops.components import PipelineComponent
 from kpops.utils.docstring import describe_attr
 
 if TYPE_CHECKING:
-    from snapshottest.module import SnapshotTest
+    from pytest_snapshot.plugin import Snapshot
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
@@ -148,7 +148,7 @@ class TestGenSchema:
         assert result.stdout
 
     def test_gen_pipeline_schema_only_custom_module(
-        self, snapshot: SnapshotTest, stock_components: list[type[PipelineComponent]]
+        self, snapshot: Snapshot, stock_components: list[type[PipelineComponent]]
     ):
         result = runner.invoke(
             app,
@@ -164,7 +164,7 @@ class TestGenSchema:
 
         assert result.exit_code == 0, result.stdout
 
-        snapshot.assert_match(result.stdout, "test-schema-generation")
+        snapshot.assert_match(result.stdout, "schema.json")
         schema = json.loads(result.stdout)
         assert schema["title"] == "PipelineSchema"
         assert set(schema["items"]["discriminator"]["mapping"].keys()).isdisjoint(

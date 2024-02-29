@@ -136,9 +136,9 @@ def gen_pipeline_schema(
             annotation=Literal[component.type],  # type:ignore[valid-type]
             default=component.type,
         )
-        core_schema: DefinitionsSchema = component.__pydantic_core_schema__  # pyright:ignore[reportGeneralTypeIssues]
+        core_schema: DefinitionsSchema = component.__pydantic_core_schema__  # pyright:ignore[reportAssignmentType]
 
-        model_schema: ModelFieldsSchema = core_schema["schema"]["schema"]["schema"]  # pyright:ignore[reportGeneralTypeIssues,reportTypedDictNotRequiredAccess]
+        model_schema: ModelFieldsSchema = core_schema["schema"]["schema"]["schema"]  # pyright:ignore[reportGeneralTypeIssues,reportTypedDictNotRequiredAccess,reportAssignmentType]
         model_schema["fields"]["type"] = ModelField(
             type="model-field",
             schema=LiteralSchema(
@@ -154,7 +154,7 @@ def gen_pipeline_schema(
 
     class PipelineSchema(RootModel):
         root: Sequence[
-            AnnotatedPipelineComponents  # pyright:ignore[reportGeneralTypeIssues]
+            AnnotatedPipelineComponents  # pyright:ignore[reportInvalidTypeForm]
         ]
 
     print_schema(PipelineSchema)

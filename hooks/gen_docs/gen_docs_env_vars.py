@@ -1,4 +1,5 @@
 """Generates the documentation on KPOps environment variables."""
+from __future__ import annotations
 
 import csv
 import shutil
@@ -14,17 +15,11 @@ from pydantic_core import PydanticUndefined
 from pytablewriter import MarkdownTableWriter
 from typer.models import ArgumentInfo, OptionInfo
 
-from kpops.utils.dict_ops import generate_substitution
-
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
-
 from hooks import ROOT
 from hooks.gen_docs import IterableStrEnum
 from kpops.cli import main
 from kpops.config import KpopsConfig
+from kpops.utils.dict_ops import generate_substitution
 from kpops.utils.pydantic import issubclass_patched
 
 PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
@@ -75,7 +70,9 @@ class EnvVar:
     corresponding_setting_name: str | None
 
     @classmethod
-    def from_record(cls, record: dict[str, Any]) -> Self:
+    def from_record(
+        cls, record: dict[str, Any]
+    ) -> EnvVar:  # TODO: typing.Self for Python 3.11+
         """Construct an ``EnvVar`` instance from a specific dict.
 
         Reads a dict that contains keys equivalent to the

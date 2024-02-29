@@ -37,7 +37,7 @@ class SchemaHandler:
                 msg = f"The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your {SchemaProvider.__name__} implementation exists."
                 raise ValueError(msg)
             schema_provider_class = find_class(self.components_module, SchemaProvider)
-            return schema_provider_class()  # pyright: ignore[reportGeneralTypeIssues]
+            return schema_provider_class()  # pyright: ignore[reportAbstractUsage]
         except ClassNotFoundError as e:
             msg = f"No schema provider found in components module {self.components_module}. Please implement the abstract method in {SchemaProvider.__module__}.{SchemaProvider.__name__}."
             raise ValueError(msg) from e

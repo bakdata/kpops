@@ -26,16 +26,16 @@ class TestKafkaTopic:
         assert model.topic is None
         assert model.model_dump()["topic"] is None
 
-        model = Model(topic="topic-name")  # pyright: ignore[reportGeneralTypeIssues]
+        model = Model(topic="topic-name")  # pyright: ignore[reportArgumentType]
         assert model.topic == KafkaTopic(name="topic-name")
         assert model.model_dump()["topic"] == "topic-name"
 
         exc_msg = "Topic should be a valid KafkaTopic instance or topic name string"
         with pytest.raises(ValueError, match=exc_msg):
-            Model(topic="")  # pyright: ignore[reportGeneralTypeIssues]
+            Model(topic="")  # pyright: ignore[reportArgumentType]
 
         with pytest.raises(ValueError, match=exc_msg):
-            Model(topic=1)  # pyright: ignore[reportGeneralTypeIssues]
+            Model(topic=1)  # pyright: ignore[reportArgumentType]
 
     @pytest.mark.parametrize(
         ("input", "expected"),

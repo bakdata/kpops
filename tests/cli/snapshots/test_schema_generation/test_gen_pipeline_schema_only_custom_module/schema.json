@@ -1,13 +1,4 @@
-# -*- coding: utf-8 -*-
-# snapshottest: v1 - https://goo.gl/zC4yUc
-from __future__ import unicode_literals
-
-from snapshottest import Snapshot
-
-
-snapshots = Snapshot()
-
-snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema-generation'] = '''{
+{
     "$defs": {
         "EmptyPipelineComponent": {
             "additionalProperties": true,
@@ -121,7 +112,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "object"
         },
         "InputTopicTypes": {
-            "description": "Input topic types.\\n\\n- INPUT: input topic\\n- PATTERN: extra-topic-pattern or input-topic-pattern",
+            "description": "Input topic types.\n\n- INPUT: input topic\n- PATTERN: extra-topic-pattern or input-topic-pattern",
             "enum": [
                 "input",
                 "pattern"
@@ -130,7 +121,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
             "type": "string"
         },
         "OutputTopicTypes": {
-            "description": "Types of output topic.\\n\\n- OUTPUT: output topic\\n- ERROR: error topic",
+            "description": "Types of output topic.\n\n- OUTPUT: output topic\n- ERROR: error topic",
             "enum": [
                 "output",
                 "error"
@@ -244,7 +235,7 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
         },
         "SubPipelineComponentCorrectDocstr": {
             "additionalProperties": true,
-            "description": "Newline before title is removed.\\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
+            "description": "Newline before title is removed.\nSummarry is correctly imported. All whitespaces are removed and replaced with a single space. The description extraction terminates at the correct place, deletes 1 trailing coma",
             "properties": {
                 "example_attr": {
                     "description": "Parameter description looks correct and it is not included in the class description, terminates here",
@@ -513,4 +504,3 @@ snapshots['TestGenSchema.test_gen_pipeline_schema_only_custom_module test-schema
     "title": "PipelineSchema",
     "type": "array"
 }
-'''

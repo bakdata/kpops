@@ -34,7 +34,7 @@ from kpops.utils.types import JsonType
 from kpops.utils.yaml import load_yaml_file, substitute_nested
 
 try:
-    from typing import Self
+    from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
 except ImportError:
     from typing_extensions import Self
 
