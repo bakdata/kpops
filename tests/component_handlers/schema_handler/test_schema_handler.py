@@ -85,7 +85,7 @@ def kpops_config() -> KpopsConfig:
         kafka_brokers="broker:9092",
         schema_registry=SchemaRegistryConfig(
             enabled=True,
-            url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),
+            url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),  # pyright: ignore[reportCallIssue,reportArgumentType]
         ),
         components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )

@@ -33,4 +33,4 @@ def mock_env() -> Iterator[Environment]:
 @pytest.fixture()
 def load_yaml_file_clear_cache() -> Iterator[None]:
     yield
-    load_yaml_file.cache.clear()
+    load_yaml_file.cache.clear()  # pyright: ignore[reportFunctionMemberAccess]

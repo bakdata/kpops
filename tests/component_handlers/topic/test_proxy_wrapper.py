@@ -5,7 +5,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 import pytest_asyncio
-from pydantic import AnyHttpUrl
+from pydantic import AnyUrl
 from pytest_httpx import HTTPXMock
 from pytest_mock import MockerFixture
 
@@ -46,7 +46,7 @@ class TestProxyWrapper:
             json=cluster_response,
             status_code=200,
         )
-        assert self.proxy_wrapper.url == AnyHttpUrl(DEFAULT_HOST)
+        assert self.proxy_wrapper.url == AnyUrl(DEFAULT_HOST)
         assert self.proxy_wrapper.cluster_id == "cluster-1"
 
     @pytest.mark.asyncio()

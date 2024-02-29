@@ -14,7 +14,7 @@ from kpops.utils.dict_differ import render_diff
 
 if TYPE_CHECKING:
     try:
-        from typing import Self
+        from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
     except ImportError:
         from typing_extensions import Self
 
