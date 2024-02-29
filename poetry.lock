@@ -651,13 +651,13 @@ files = [
 
 [[package]]
 name = "mkdocs-macros-plugin"
-version = "0.7.0"
+version = "1.0.5"
 description = "Unleash the power of MkDocs with macros and variables"
 optional = false
-python-versions = ">=3.5"
+python-versions = ">=3.8"
 files = [
-    {file = "mkdocs-macros-plugin-0.7.0.tar.gz", hash = "sha256:9e64e1cabcf6925359de29fe54f62d5847fb455c2528c440b87f8f1240650608"},
-    {file = "mkdocs_macros_plugin-0.7.0-py3-none-any.whl", hash = "sha256:96bdabeb98b96139544f0048ea2f5cb80c7befde6b21e94c6d4596c22774cbcf"},
+    {file = "mkdocs-macros-plugin-1.0.5.tar.gz", hash = "sha256:fe348d75f01c911f362b6d998c57b3d85b505876dde69db924f2c512c395c328"},
+    {file = "mkdocs_macros_plugin-1.0.5-py3-none-any.whl", hash = "sha256:f60e26f711f5a830ddf1e7980865bf5c0f1180db56109803cdd280073c1a050a"},
 ]
 
 [package.dependencies]
@@ -1859,4 +1859,4 @@ watchmedo = ["PyYAML (>=3.10)"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10, <3.13"
-content-hash = "1a66d9ff4df2e033d85657fdd9925707d0e80b701c38542d2a9e3d389e0250df"
+content-hash = "26f7d8160b1d0e3f5111b04b67d057043acd65829c3ddcd4bf9cc758bd5061cb"
