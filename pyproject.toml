@@ -69,6 +69,10 @@ mike = "^1.1.2"
 
 [tool.poetry_bumpversion.file."kpops/__init__.py"]
 
+[tool.pyright]
+reportIncompatibleVariableOverride = "warning"
+reportIncompatibleMethodOverride = "warning"
+
 [tool.ruff]
 ignore = [
   # Rules in conflict with `ruff-format` -- START
