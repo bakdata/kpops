@@ -1,0 +1,162 @@
+- _cleaner:
+    app:
+      image: bakdata/kpops-demo-sentence-producer
+      imageTag: 1.0.0
+      labels:
+        pipeline: word-count
+      prometheus:
+        jmx:
+          enabled: false
+      replicaCount: 1
+      streams:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        optimizeLeaveGroupBehavior: false
+        outputTopic: word-count-data-producer-topic
+        schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
+    debug: true
+    name: data-producer
+    namespace: ${NAMESPACE}
+    prefix: word-count-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: producer-app-cleaner
+    version: 2.9.0
+  app:
+    image: bakdata/kpops-demo-sentence-producer
+    imageTag: 1.0.0
+    labels:
+      pipeline: word-count
+    prometheus:
+      jmx:
+        enabled: false
+    replicaCount: 1
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      optimizeLeaveGroupBehavior: false
+      outputTopic: word-count-data-producer-topic
+      schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
+  debug: true
+  name: data-producer
+  namespace: ${NAMESPACE}
+  prefix: word-count-
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      word-count-data-producer-topic:
+        configs: {}
+        partitions_count: 3
+  type: producer-app
+  version: 2.9.0
+- _cleaner:
+    app:
+      commandLine:
+        PRODUCTIVE: false
+      image: bakdata/kpops-demo-word-count-app
+      imageTag: 1.0.0
+      labels:
+        pipeline: word-count
+      prometheus:
+        jmx:
+          enabled: false
+      replicaCount: 1
+      streams:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        errorTopic: word-count-word-counter-dead-letter-topic
+        inputTopics:
+        - word-count-data-producer-topic
+        optimizeLeaveGroupBehavior: false
+        outputTopic: word-count-word-counter-topic
+        schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
+    debug: true
+    name: word-counter
+    namespace: ${NAMESPACE}
+    prefix: word-count-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    version: 2.9.0
+  app:
+    commandLine:
+      PRODUCTIVE: false
+    image: bakdata/kpops-demo-word-count-app
+    imageTag: 1.0.0
+    labels:
+      pipeline: word-count
+    prometheus:
+      jmx:
+        enabled: false
+    replicaCount: 1
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      errorTopic: word-count-word-counter-dead-letter-topic
+      inputTopics:
+      - word-count-data-producer-topic
+      optimizeLeaveGroupBehavior: false
+      outputTopic: word-count-word-counter-topic
+      schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
+  debug: true
+  name: word-counter
+  namespace: ${NAMESPACE}
+  prefix: word-count-
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      word-count-word-counter-dead-letter-topic:
+        configs: {}
+        partitions_count: 1
+        type: error
+      word-count-word-counter-topic:
+        configs:
+          cleanup.policy: compact
+        partitions_count: 3
+        type: output
+  type: streams-app
+  version: 2.9.0
+- _resetter:
+    app:
+      config:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        connector: word-count-redis-sink-connector
+      connectorType: sink
+    name: redis-sink-connector
+    namespace: ${NAMESPACE}
+    prefix: word-count-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-kafka-connect-resetter
+      url: https://bakdata.github.io/kafka-connect-resetter/
+    suffix: -clean
+    type: kafka-connector-resetter
+    version: 1.0.4
+  app:
+    connector.class: com.github.jcustenborder.kafka.connect.redis.RedisSinkConnector
+    key.converter: org.apache.kafka.connect.storage.StringConverter
+    name: word-count-redis-sink-connector
+    redis.database: 0
+    redis.hosts: redis-headless:6379
+    tasks.max: 1
+    topics: word-count-word-counter-topic
+    value.converter: org.apache.kafka.connect.storage.StringConverter
+  name: redis-sink-connector
+  prefix: word-count-
+  resetter_values: {}
+  type: kafka-sink-connector

@@ -2,11 +2,10 @@ import os
 from pathlib import Path
 
 import pytest
-import yaml
-from snapshottest.module import SnapshotTest
+from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
-from kpops.cli.main import app
+import kpops
 
 runner = CliRunner()
 
@@ -32,33 +31,7 @@ class TestExample:
         ), "examples directory is empty, please initialize and update the git submodule (see contributing guide)"
 
     @pytest.mark.usefixtures("test_submodule")
-    def test_word_count(self, snapshot: SnapshotTest):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                "word-count/pipeline.yaml",
-            ],
-            catch_exceptions=False,
-        )
-
-        assert result.exit_code == 0, result.stdout
-
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "word-count-pipeline")
-
-    @pytest.mark.usefixtures("test_submodule")
-    def test_atm_fraud(self, snapshot: SnapshotTest):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                "atm-fraud/pipeline.yaml",
-            ],
-            catch_exceptions=False,
-        )
-
-        assert result.exit_code == 0, result.stdout
-
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "atm-fraud-pipeline")
+    @pytest.mark.parametrize("pipeline_name", ["word-count", "atm-fraud"])
+    def test_generate(self, pipeline_name: str, snapshot: Snapshot):
+        pipeline = kpops.generate(Path(f"{pipeline_name}/pipeline.yaml"))
+        snapshot.assert_match(pipeline.to_yaml(), "pipeline.yaml")

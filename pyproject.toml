@@ -27,7 +27,7 @@ classifiers = [
 kpops = "kpops.cli.main:app"
 
 [tool.poetry.dependencies]
-python = ">=3.10, <3.12"
+python = ">=3.10, <3.13"
 pydantic = "^2.5.3"
 pydantic-settings = "^2.0.3"
 rich = "^12.4.4"
@@ -45,7 +45,7 @@ networkx = "^3.1"
 pytest = "^7.1.2"
 pytest-mock = "^3.10.0"
 pytest-timeout = "^2.1.0"
-snapshottest = "^0.6.0"
+pytest-snapshot = "^0.9.0"
 pre-commit = "^2.19.0"
 ruff = "^0.1.7"
 typer-cli = "^0.0.13"
@@ -61,7 +61,7 @@ optional = true
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.4.2"
-mkdocs-macros-plugin = "^0.7.0"
+mkdocs-macros-plugin = "^1.0.5"
 mkdocs-material = "^9.0.0"
 mkdocs-glightbox = "^0.3.1"
 mkdocs-exclude-search = "^0.6.5"
