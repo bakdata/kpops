@@ -27,7 +27,7 @@ classifiers = [
 kpops = "kpops.cli.main:app"
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.10, <3.12"
 pydantic = "^2.5.3"
 pydantic-settings = "^2.0.3"
 rich = "^12.4.4"
