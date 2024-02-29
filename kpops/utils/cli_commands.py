@@ -10,7 +10,6 @@ from hooks.gen_docs.gen_docs_env_vars import collect_fields
 from kpops.config import KpopsConfig
 from kpops.utils.docstring import describe_object
 from kpops.utils.json import is_jsonable
-from kpops.utils.yaml import touch_yaml_file
 
 log = logging.getLogger("cli_commands_utils")
 
@@ -49,7 +48,8 @@ def create_config(file_name: str, dir_path: Path, include_optional: bool) -> Non
     :param dir_path: Directory in which the file should be created
     :param include_optional: Whether to include non-required settings
     """
-    file_path = touch_yaml_file(file_name, dir_path)
+    file_path = Path(dir_path / (file_name + ".yaml"))
+    file_path.touch(exist_ok=False)
     with file_path.open(mode="w") as conf:
         conf.write("# " + describe_object(KpopsConfig.__doc__))  # Write title
         non_required = extract_config_fields_for_yaml(
@@ -73,5 +73,5 @@ def init_project(path: Path, conf_incl_opt: bool):
         in the generated config file
     """
     create_config("config", path, conf_incl_opt)
-    touch_yaml_file("pipeline", path)
-    touch_yaml_file("defaults", path)
+    Path(path / ("pipeline.yaml")).touch(exist_ok=False)
+    Path(path / ("defaults.yaml")).touch(exist_ok=False)
