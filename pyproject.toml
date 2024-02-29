@@ -60,8 +60,8 @@ polyfactory = "^2.13.0"
 optional = true
 
 [tool.poetry.group.docs.dependencies]
-mkdocs = "^1.5.3"
-mkdocs-macros-plugin = "^1.0.5"
+mkdocs = "^1.4.2"
+mkdocs-macros-plugin = "^0.7.0"
 mkdocs-material = "^9.0.0"
 mkdocs-glightbox = "^0.3.1"
 mkdocs-exclude-search = "^0.6.5"
