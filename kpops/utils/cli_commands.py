@@ -77,5 +77,5 @@ def init_project(path: Path, conf_incl_opt: bool):
         in the generated config file
     """
     create_config("config", path, conf_incl_opt)
-    Path(path / ("pipeline.yaml")).touch(exist_ok=False)
+    Path(path / "pipeline.yaml").touch(exist_ok=False)
     Path(path / ("defaults.yaml")).touch(exist_ok=False)
