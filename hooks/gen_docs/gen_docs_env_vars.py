@@ -44,7 +44,7 @@ PATH_CLI_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "cli_env_vars.md"
 PATH_CLI_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_cli_env_vars.csv"
 TITLE_CLI_ENV_VARS = "CLI Environment variables"
 DESCRIPTION_CLI_ENV_VARS = (
-    "These variables are a lower priority alternative to the commands' flags. "
+    "These variables take precedence over the commands' flags. "
     "If a variable is set, the corresponding flag does not have to be specified in commands. "
     "Variables marked as required can instead be set as flags."
 )
