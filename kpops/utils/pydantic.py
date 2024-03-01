@@ -109,8 +109,8 @@ def issubclass_patched(
         issubclass(BaseSettings, BaseModel)  # True
         issubclass(set[str], BaseModel)  # raises Exception
 
-    :param cls: class to check
-    :base: class(es) to check against, defaults to ``BaseModel``
+    :param __cls: class to check
+    :param __class_or_tuple: class(es) to check against, defaults to ``BaseModel``
     :return: Whether 'cls' is derived from another class or is the same class.
     """
     try:
