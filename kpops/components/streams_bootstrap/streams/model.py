@@ -1,13 +1,14 @@
-from typing import Any
+from typing import Any, Self
 
 import pydantic
-from pydantic import ConfigDict, Field
+from pydantic import ConfigDict, Field, model_validator
 
 from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
     KafkaStreamsConfig,
 )
 from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
+from kpops.pipeline import ValidationError
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
@@ -108,7 +109,9 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
     :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
     :param consumer_group: Name of the consumer group used for checking the
         offset on the topic and processing the related lag.
+        Mandatory to set when auto-scaling is enabled.
     :param lag_threshold: Average target value to trigger scaling actions.
+        Mandatory to set when auto-scaling is enabled.
     :param polling_interval: This is the interval to check each trigger on.
         https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval,
         defaults to 30
@@ -139,11 +142,13 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         default=False,
         description=describe_attr("streams", __doc__),
     )
-    consumer_group: str = Field(
+    consumer_group: str | None = Field(
+        default=None,
         title="Consumer group",
         description=describe_attr("consumer_group", __doc__),
     )
-    lag_threshold: int = Field(
+    lag_threshold: int | None = Field(
+        default=None,
         title="Lag threshold",
         description=describe_attr("lag_threshold", __doc__),
     )
@@ -182,6 +187,13 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         description=describe_attr("topics", __doc__),
     )
     model_config = ConfigDict(extra="allow")
+
+    @model_validator(mode="after")
+    def validate_model_config(self) -> Self:
+        if self.enabled and not (self.consumer_group or self.lag_threshold):
+            msg = "If eautoscaling.enabled is set to true, the autoscaling.fields consumer_group and autoscaling.lag_threshold should be set."
+            raise ValidationError(msg)
+        return self
 
 
 class StreamsAppValues(KafkaAppValues):
