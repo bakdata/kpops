@@ -113,7 +113,7 @@ class TestStreamsApp:
             )
         msg = (
             "If app.autoscaling.enabled is set to true, "
-            "the app.autoscaling.fields consumer_group and app.autoscaling.lag_threshold should be set."
+            "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
         )
         assert str(error.value) == msg
 
@@ -122,11 +122,24 @@ class TestStreamsApp:
     ):
         with pytest.raises(ValidationError) as error:
             streams_app.app.autoscaling = StreamsAppAutoScaling(
-                enabled=True, lag_threshold=100
+                enabled=True, consumer_group="a-test-group"
             )
         msg = (
             "If app.autoscaling.enabled is set to true, "
-            "the app.autoscaling.fields consumer_group and app.autoscaling.lag_threshold should be set."
+            "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
+        )
+        assert str(error.value) == msg
+
+    def test_raise_validation_error_when_autoscaling_enabled_and_lag_threshold_is_not_set_to_zero(
+        self, streams_app: StreamsApp
+    ):
+        with pytest.raises(ValidationError) as error:
+            streams_app.app.autoscaling = StreamsAppAutoScaling(
+                enabled=True, lag_threshold=0
+            )
+        msg = (
+            "If app.autoscaling.enabled is set to true, "
+            "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
         )
         assert str(error.value) == msg
 

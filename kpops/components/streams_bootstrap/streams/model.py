@@ -1,4 +1,4 @@
-from typing import Any, Self
+from typing import Any
 
 import pydantic
 from pydantic import ConfigDict, Field, model_validator
@@ -189,11 +189,13 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
     model_config = ConfigDict(extra="allow")
 
     @model_validator(mode="after")
-    def validate_model_config(self) -> Self:
+    def validate_mandatory_fields_are_set(
+        self: "StreamsAppAutoScaling",
+    ) -> "StreamsAppAutoScaling":  # pyright: ignore[reportArgumentType]
         if self.enabled and (not self.consumer_group or not self.lag_threshold):
             msg = (
                 "If app.autoscaling.enabled is set to true, "
-                "the app.autoscaling.fields consumer_group and app.autoscaling.lag_threshold should be set."
+                "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
             )
             raise ValidationError(msg)
         return self
