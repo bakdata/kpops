@@ -111,8 +111,24 @@ class TestStreamsApp:
             streams_app.app.autoscaling = StreamsAppAutoScaling(
                 enabled=True,
             )
-            msg = "If autoscaling.enabled is set to true, the fields autoscaling.consumer_group and autoscaling.lag_threshold should be set."
-            assert error.value == msg
+        msg = (
+            "If app.autoscaling.enabled is set to true, "
+            "the app.autoscaling.fields consumer_group and app.autoscaling.lag_threshold should be set."
+        )
+        assert str(error.value) == msg
+
+    def test_raise_validation_error_when_autoscaling_enabled_and_one_mandatory_fields_not_set(
+        self, streams_app: StreamsApp
+    ):
+        with pytest.raises(ValidationError) as error:
+            streams_app.app.autoscaling = StreamsAppAutoScaling(
+                enabled=True, lag_threshold=100
+            )
+        msg = (
+            "If app.autoscaling.enabled is set to true, "
+            "the app.autoscaling.fields consumer_group and app.autoscaling.lag_threshold should be set."
+        )
+        assert str(error.value) == msg
 
     def test_cleaner_helm_release_name(self, streams_app: StreamsApp):
         assert (

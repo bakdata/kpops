@@ -190,8 +190,11 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
 
     @model_validator(mode="after")
     def validate_model_config(self) -> Self:
-        if self.enabled and not (self.consumer_group or self.lag_threshold):
-            msg = "If eautoscaling.enabled is set to true, the autoscaling.fields consumer_group and autoscaling.lag_threshold should be set."
+        if self.enabled and (not self.consumer_group or not self.lag_threshold):
+            msg = (
+                "If app.autoscaling.enabled is set to true, "
+                "the app.autoscaling.fields consumer_group and app.autoscaling.lag_threshold should be set."
+            )
             raise ValidationError(msg)
         return self
 
