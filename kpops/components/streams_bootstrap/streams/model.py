@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import Any
 
 import pydantic
@@ -190,8 +192,8 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
 
     @model_validator(mode="after")
     def validate_mandatory_fields_are_set(
-        self: "StreamsAppAutoScaling",
-    ) -> "StreamsAppAutoScaling":  # pyright: ignore[reportArgumentType]
+        self: StreamsAppAutoScaling,
+    ) -> StreamsAppAutoScaling:  # TODO: typing.Self for Python 3.11+
         if self.enabled and (not self.consumer_group or not self.lag_threshold):
             msg = (
                 "If app.autoscaling.enabled is set to true, "
