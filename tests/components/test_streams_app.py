@@ -117,7 +117,7 @@ class TestStreamsApp:
         )
         assert str(error.value) == msg
 
-    def test_raise_validation_error_when_autoscaling_enabled_and_one_mandatory_fields_not_set(
+    def test_raise_validation_error_when_autoscaling_enabled_and_only_consumer_group_set(
         self, streams_app: StreamsApp
     ):
         with pytest.raises(ValidationError) as error:
@@ -130,12 +130,12 @@ class TestStreamsApp:
         )
         assert str(error.value) == msg
 
-    def test_raise_validation_error_when_autoscaling_enabled_and_lag_threshold_is_not_set_to_zero(
+    def test_raise_validation_error_when_autoscaling_enabled_and_only_lag_threshold_is_set(
         self, streams_app: StreamsApp
     ):
         with pytest.raises(ValidationError) as error:
             streams_app.app.autoscaling = StreamsAppAutoScaling(
-                enabled=True, lag_threshold=0
+                enabled=True, lag_threshold=1000
             )
         msg = (
             "If app.autoscaling.enabled is set to true, "

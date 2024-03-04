@@ -194,7 +194,7 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
     def validate_mandatory_fields_are_set(
         self: StreamsAppAutoScaling,
     ) -> StreamsAppAutoScaling:  # TODO: typing.Self for Python 3.11+
-        if self.enabled and (not self.consumer_group or not self.lag_threshold):
+        if self.enabled and (self.consumer_group is None or self.lag_threshold is None):
             msg = (
                 "If app.autoscaling.enabled is set to true, "
                 "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
