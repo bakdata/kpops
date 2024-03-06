@@ -2,8 +2,9 @@ from pathlib import Path
 from unittest.mock import ANY, MagicMock
 
 import pytest
+import yaml
 from pytest_mock import MockerFixture
-from snapshottest.module import SnapshotTest
+from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
 import kpops
@@ -97,7 +98,7 @@ class TestManifest:
         )
         assert result.exit_code == 0, result.stdout
 
-    def test_python_api(self, snapshot: SnapshotTest):
+    def test_python_api(self, snapshot: Snapshot):
         resources = kpops.manifest(
             RESOURCE_PATH / "custom-config/pipeline.yaml",
             output=False,
@@ -105,5 +106,4 @@ class TestManifest:
         )
         assert isinstance(resources, list)
         assert len(resources) == 2
-        for i, resource in enumerate(resources):
-            snapshot.assert_match(resource, f"resource {i}")
+        snapshot.assert_match(yaml.dump_all(resources), "resources")

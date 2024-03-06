@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 import yaml
 from pytest_mock import MockerFixture
-from snapshottest.module import SnapshotTest
+from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
 import kpops
@@ -63,7 +63,7 @@ class TestGenerate:
             "Filtered pipeline:\n['a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name']"
         )
 
-    def test_load_pipeline(self, snapshot: SnapshotTest):
+    def test_load_pipeline(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
@@ -75,9 +75,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
     def test_name_equal_prefix_name_concatenation(self):
         result = runner.invoke(
@@ -96,7 +94,7 @@ class TestGenerate:
         assert enriched_pipeline[0]["prefix"] == "my-fake-prefix-"
         assert enriched_pipeline[0]["name"] == "my-streams-app"
 
-    def test_pipelines_with_envs(self, snapshot: SnapshotTest):
+    def test_pipelines_with_envs(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
@@ -110,10 +108,9 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
-    def test_inflate_pipeline(self, snapshot: SnapshotTest):
+    def test_inflate_pipeline(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
@@ -125,10 +122,9 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
-    def test_substitute_in_component(self, snapshot: SnapshotTest):
+    def test_substitute_in_component(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
@@ -167,7 +163,7 @@ class TestGenerate:
             == "filter-app-filter"
         )
 
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
     @pytest.mark.timeout(2)
     def test_substitute_in_component_infinite_loop(self):
@@ -202,7 +198,7 @@ class TestGenerate:
             == "kafka-sink-connector-error-topic"
         )
 
-    def test_no_input_topic(self, snapshot: SnapshotTest):
+    def test_no_input_topic(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
@@ -214,10 +210,9 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
-    def test_no_user_defined_components(self, snapshot: SnapshotTest):
+    def test_no_user_defined_components(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
@@ -229,10 +224,9 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
-    def test_kafka_connect_sink_weave_from_topics(self, snapshot: SnapshotTest):
+    def test_kafka_connect_sink_weave_from_topics(self, snapshot: Snapshot):
         """Parse Connector topics from previous component to section."""
         result = runner.invoke(
             app,
@@ -245,10 +239,9 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
-    def test_read_from_component(self, snapshot: SnapshotTest):
+    def test_read_from_component(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
@@ -260,10 +253,9 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
-    def test_with_env_defaults(self, snapshot: SnapshotTest):
+    def test_with_env_defaults(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
@@ -277,10 +269,9 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
-    def test_prefix_pipeline_component(self, snapshot: SnapshotTest):
+    def test_prefix_pipeline_component(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
@@ -295,12 +286,11 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
     def test_with_custom_config_with_relative_defaults_path(
         self,
-        snapshot: SnapshotTest,
+        snapshot: Snapshot,
     ):
         result = runner.invoke(
             app,
@@ -328,11 +318,11 @@ class TestGenerate:
         error_topic = streams_app_details["app"]["streams"]["errorTopic"]
         assert error_topic == "app2-dead-letter-topic"
 
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
     def test_with_custom_config_with_absolute_defaults_path(
         self,
-        snapshot: SnapshotTest,
+        snapshot: Snapshot,
     ):
         with Path(RESOURCE_PATH / "custom-config/config.yaml").open(
             "r",
@@ -371,11 +361,11 @@ class TestGenerate:
             error_topic = streams_app_details["app"]["streams"]["errorTopic"]
             assert error_topic == "app2-dead-letter-topic"
 
-            snapshot.assert_match(enriched_pipeline, "test-pipeline")
+            snapshot.assert_match(result.stdout, "pipeline.yaml")
         finally:
             temp_config_path.unlink()
 
-    def test_default_config(self, snapshot: SnapshotTest):
+    def test_default_config(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
@@ -400,7 +390,7 @@ class TestGenerate:
         error_topic = streams_app_details["app"]["streams"]["errorTopic"]
         assert error_topic == "resources-custom-config-app2-error"
 
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
     def test_env_vars_precedence_over_config(self, monkeypatch: pytest.MonkeyPatch):
         monkeypatch.setenv(name="KPOPS_KAFKA_BROKERS", value="env_broker")
@@ -515,7 +505,7 @@ class TestGenerate:
         )
         assert result.exit_code != 0
 
-    def test_model_serialization(self, snapshot: SnapshotTest):
+    def test_model_serialization(self, snapshot: Snapshot):
         """Test model serialization of component containing pathlib.Path attribute."""
         result = runner.invoke(
             app,
@@ -528,8 +518,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        enriched_pipeline: list = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "test-pipeline")
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
     def test_dotenv_support(self):
         result = runner.invoke(

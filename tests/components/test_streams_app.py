@@ -23,6 +23,7 @@ from kpops.components.base_components.models.topic import (
 from kpops.components.streams_bootstrap.streams.model import StreamsAppAutoScaling
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
 from kpops.config import KpopsConfig, TopicNameConfig
+from kpops.pipeline import ValidationError
 from tests.components import PIPELINE_BASE_DIR
 
 RESOURCES_PATH = Path(__file__).parent / "resources"
@@ -102,6 +103,45 @@ class TestStreamsApp:
             idle_replicas=1,
         )
         assert streams_app._cleaner.app == streams_app.app
+
+    def test_raise_validation_error_when_autoscaling_enabled_and_mandatory_fields_not_set(
+        self, streams_app: StreamsApp
+    ):
+        with pytest.raises(ValidationError) as error:
+            streams_app.app.autoscaling = StreamsAppAutoScaling(
+                enabled=True,
+            )
+        msg = (
+            "If app.autoscaling.enabled is set to true, "
+            "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
+        )
+        assert str(error.value) == msg
+
+    def test_raise_validation_error_when_autoscaling_enabled_and_only_consumer_group_set(
+        self, streams_app: StreamsApp
+    ):
+        with pytest.raises(ValidationError) as error:
+            streams_app.app.autoscaling = StreamsAppAutoScaling(
+                enabled=True, consumer_group="a-test-group"
+            )
+        msg = (
+            "If app.autoscaling.enabled is set to true, "
+            "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
+        )
+        assert str(error.value) == msg
+
+    def test_raise_validation_error_when_autoscaling_enabled_and_only_lag_threshold_is_set(
+        self, streams_app: StreamsApp
+    ):
+        with pytest.raises(ValidationError) as error:
+            streams_app.app.autoscaling = StreamsAppAutoScaling(
+                enabled=True, lag_threshold=1000
+            )
+        msg = (
+            "If app.autoscaling.enabled is set to true, "
+            "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
+        )
+        assert str(error.value) == msg
 
     def test_cleaner_helm_release_name(self, streams_app: StreamsApp):
         assert (

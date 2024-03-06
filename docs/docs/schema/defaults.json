@@ -1131,9 +1131,17 @@
             "description": "Kubernetes Event-driven Autoscaling config.",
             "properties": {
                 "consumerGroup": {
-                    "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag.",
-                    "title": "Consumer group",
-                    "type": "string"
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Name of the consumer group used for checking the offset on the topic and processing the related lag. Mandatory to set when auto-scaling is enabled.",
+                    "title": "Consumer group"
                 },
                 "cooldownPeriod": {
                     "default": 300,
@@ -1161,9 +1169,17 @@
                     "title": "Idle replica count"
                 },
                 "lagThreshold": {
-                    "description": "Average target value to trigger scaling actions.",
-                    "title": "Lag threshold",
-                    "type": "integer"
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Average target value to trigger scaling actions. Mandatory to set when auto-scaling is enabled.",
+                    "title": "Lag threshold"
                 },
                 "maxReplicas": {
                     "default": 1,
@@ -1199,10 +1215,6 @@
                     "type": "array"
                 }
             },
-            "required": [
-                "consumerGroup",
-                "lagThreshold"
-            ],
             "title": "StreamsAppAutoScaling",
             "type": "object"
         },
