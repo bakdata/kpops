@@ -1,4 +1,26 @@
 # Changelog
+## [4.0.2](https://github.com/bakdata/kpops/releases/tag/4.0.2) - Release Date: [2024-03-04]
+
+### 📝 Documentation
+
+- Reference editor plugin for Neovim in docs - [#464](https://github.com/bakdata/kpops/pull/464)
+
+
+### 🌀 Miscellaneous
+
+- Add support for Python 3.12 - [#467](https://github.com/bakdata/kpops/pull/467)
+
+- Update Pyright - [#468](https://github.com/bakdata/kpops/pull/468)
+
+- Remove package classifiers that are automatically assigned by Poetry - [#469](https://github.com/bakdata/kpops/pull/469)
+
+- Validate autoscaling mandatory fields when enabled - [#470](https://github.com/bakdata/kpops/pull/470)
+
+
+
+
+
+
 ## [4.0.1](https://github.com/bakdata/kpops/releases/tag/4.0.1) - Release Date: [2024-02-29]
 
 ### 🐛 Fixes
