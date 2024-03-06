@@ -1,4 +1,4 @@
-These variables are a lower priority alternative to the settings in `config.yaml`. Variables marked as required can instead be set in the global config.
+These variables take precedence over the settings in `config.yaml`. Variables marked as required can instead be set in the global config.
 
 |                       Name                       |             Default Value              |Required|                                    Description                                    |               Setting name                |
 |--------------------------------------------------|----------------------------------------|--------|-----------------------------------------------------------------------------------|-------------------------------------------|
