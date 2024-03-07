@@ -1,4 +1,3 @@
-import logging
 from pathlib import Path
 from typing import Any
 
@@ -12,8 +11,6 @@ from kpops.config import KpopsConfig
 from kpops.utils.docstring import describe_object
 from kpops.utils.json import is_jsonable
 from kpops.utils.pydantic import issubclass_patched
-
-log = logging.getLogger("cli_commands_utils")
 
 
 def extract_config_fields_for_yaml(

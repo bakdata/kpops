@@ -1,5 +1,6 @@
 from pathlib import Path
 
+from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
 import kpops
@@ -16,14 +17,25 @@ def test_create_config(tmp_path: Path):
     create_config(req_conf_name, tmp_path, False)
     assert (opt_conf := Path(tmp_path / (opt_conf_name + ".yaml"))).exists()
     assert (req_conf := Path(tmp_path / (req_conf_name + ".yaml"))).exists()
-    with opt_conf.open() as opt_file, req_conf.open() as req_file:
-        assert len(opt_file.readlines()) > len(req_file.readlines())
+    assert len(opt_conf.read_text()) > len(req_conf.read_text())
 
 
-def test_init_project(tmp_path: Path):
-    kpops.init(tmp_path, config_include_opt=True)
-    for path in ["config.yaml", "defaults.yaml", "pipeline.yaml"]:
-        assert Path(tmp_path / path).exists()
+def test_init_project(tmp_path: Path, snapshot: Snapshot):
+    opt_path = tmp_path / "opt"
+    opt_path.mkdir()
+    kpops.init(opt_path, config_include_opt=False)
+    snapshot.assert_match(
+        Path(opt_path / "config.yaml").read_text(), "config_exclude_opt.yaml"
+    )
+    snapshot.assert_match(Path(opt_path / "pipeline.yaml").read_text(), "pipeline.yaml")
+    snapshot.assert_match(Path(opt_path / "defaults.yaml").read_text(), "defaults.yaml")
+
+    req_path = tmp_path / "req"
+    req_path.mkdir()
+    kpops.init(req_path, config_include_opt=True)
+    snapshot.assert_match(
+        Path(req_path / "config.yaml").read_text(), "config_include_opt.yaml"
+    )
 
 
 def test_init_project_from_cli_with_bad_path(tmp_path: Path):
