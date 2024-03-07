@@ -1,7 +1,7 @@
 __version__ = "4.0.2"
 
 # export public API functions
-from kpops.cli.main import clean, deploy, destroy, generate, manifest, reset
+from kpops.cli.main import clean, deploy, destroy, generate, init, manifest, reset
 
 __all__ = (
     "generate",
@@ -10,4 +10,5 @@ __all__ = (
     "destroy",
     "reset",
     "clean",
+    "init",
 )

@@ -19,6 +19,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `deploy`: Deploy pipeline steps
 * `destroy`: Destroy pipeline steps
 * `generate`: Generate enriched pipeline representation
+* `init`: Initialize a new KPOps project.
 * `manifest`: Render final resource representation
 * `reset`: Reset pipeline steps
 * `schema`: Generate JSON schema.
@@ -124,6 +125,25 @@ $ kpops generate [OPTIONS] PIPELINE_PATH
 * `--filter-type [include|exclude]`: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]
 * `--environment TEXT`: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
+* `--help`: Show this message and exit.
+
+## `kpops init`
+
+Initialize a new KPOps project.
+
+**Usage**:
+
+```console
+$ kpops init [OPTIONS] PATH
+```
+
+**Arguments**:
+
+* `PATH`: Path for a new KPOps project. It should lead to an empty (or non-existent) directory. The part of the path that doesn't exist will be created.  [required]
+
+**Options**:
+
+* `--config-include-opt / --no-config-include-opt`: Whether to include non-required settings in the generated 'config.yaml'  [default: no-config-include-opt]
 * `--help`: Show this message and exit.
 
 ## `kpops manifest`

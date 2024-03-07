@@ -1,0 +1,4 @@
+# Global configuration for KPOps project.
+
+# Required fields
+kafka_brokers: null

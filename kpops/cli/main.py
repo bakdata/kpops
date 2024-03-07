@@ -22,6 +22,7 @@ from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.pipeline import ComponentFilterPredicate, Pipeline, PipelineGenerator
+from kpops.utils.cli_commands import init_project
 from kpops.utils.gen_schema import (
     SchemaScope,
     gen_config_schema,
@@ -71,7 +72,22 @@ PIPELINE_PATH_ARG: Path = typer.Argument(
     help="Path to YAML with pipeline definition",
 )
 
-PIPELINE_STEPS: str | None = typer.Option(
+PROJECT_PATH: Path = typer.Argument(
+    default=...,
+    exists=False,
+    file_okay=False,
+    dir_okay=True,
+    readable=True,
+    resolve_path=True,
+    help="Path for a new KPOps project. It should lead to an empty (or non-existent) directory. The part of the path that doesn't exist will be created.",
+)
+
+CONFIG_INCLUDE_OPTIONAL: bool = typer.Option(
+    default=False,
+    help="Whether to include non-required settings in the generated 'config.yaml'",
+)
+
+PIPELINE_STEPS: Optional[str] = typer.Option(
     default=None,
     envvar=f"{ENV_PREFIX}PIPELINE_STEPS",
     help="Comma separated list of steps to apply the command on",
@@ -108,6 +124,7 @@ ENVIRONMENT: str | None = typer.Option(
         "Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development). "
     ),
 )
+
 
 logger = logging.getLogger()
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -187,6 +204,21 @@ def create_kpops_config(
     return KpopsConfig(
         _env_file=dotenv  # pyright: ignore[reportCallIssue]
     )
+
+
+@app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
+    help="Initialize a new KPOps project."
+)
+def init(
+    path: Path = PROJECT_PATH,
+    config_include_opt: bool = CONFIG_INCLUDE_OPTIONAL,
+):
+    if not path.exists():
+        path.mkdir(parents=False)
+    elif next(path.iterdir(), False):
+        log.warning("Please provide a path to an empty directory.")
+        return
+    init_project(path, config_include_opt)
 
 
 @app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8

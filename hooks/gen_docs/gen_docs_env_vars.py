@@ -228,7 +228,6 @@ def write_csv_to_md_file(
     :param source: path to csv file to read from
     :param target: path to md file to overwrite or create
     :param title: Title for the table, optional
-
     """
     if heading:
         heading += " "
