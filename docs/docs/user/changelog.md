@@ -1,4 +1,20 @@
 # Changelog
+## [4.1.0](https://github.com/bakdata/kpops/releases/tag/4.1.0) - Release Date: [2024-03-07]
+
+### 📝 Documentation
+
+- Document precedence between env vars and config.yaml - [#465](https://github.com/bakdata/kpops/pull/465)
+
+
+### 🌀 Miscellaneous
+
+- Create init command - [#394](https://github.com/bakdata/kpops/pull/394)
+
+
+
+
+
+
 ## [4.0.2](https://github.com/bakdata/kpops/releases/tag/4.0.2) - Release Date: [2024-03-04]
 
 ### 📝 Documentation
