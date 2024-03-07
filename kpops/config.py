@@ -132,6 +132,12 @@ class KpopsConfig(BaseSettings):
         dotenv_settings: PydanticBaseSettingsSource,
         file_secret_settings: PydanticBaseSettingsSource,
     ):
+        """Change the precedence of sources that the Pydantic settings are compiled from.
+
+        Environment variables (`env_settings`) take precedence over command line flags (`init_settings`).
+        Command line flags (`init_settings`) take precedence over settings from a
+        config.yaml (`YamlConfigSettingsSource(settings_cls)`) and so forth.
+        """
         return (
             env_settings,
             init_settings,
