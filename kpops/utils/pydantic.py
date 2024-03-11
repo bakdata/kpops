@@ -99,6 +99,21 @@ def exclude_defaults(model: BaseModel, dumped_model: dict[str, _V]) -> dict[str,
     }
 
 
+def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
+    """Collect and return a ``dict`` of all fields in a settings class.
+
+    :param model: settings class
+    :return: ``dict`` of all fields in a settings class
+    """
+    seen_fields = {}
+    for field_name, field_value in model.model_fields.items():
+        if field_value.annotation and issubclass_patched(field_value.annotation):
+            seen_fields[field_name] = collect_fields(field_value.annotation)
+        else:
+            seen_fields[field_name] = field_value
+    return seen_fields
+
+
 def issubclass_patched(
     __cls: type, __class_or_tuple: type | tuple[type, ...] = BaseModel
 ) -> bool:

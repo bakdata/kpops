@@ -10,7 +10,6 @@ from pathlib import Path
 from textwrap import fill
 from typing import Any
 
-from pydantic import BaseModel
 from pydantic_core import PydanticUndefined
 from pytablewriter import MarkdownTableWriter
 from typer.models import ArgumentInfo, OptionInfo
@@ -20,7 +19,7 @@ from hooks.gen_docs import IterableStrEnum
 from kpops.cli import main
 from kpops.config import KpopsConfig
 from kpops.utils.dict_ops import generate_substitution
-from kpops.utils.pydantic import issubclass_patched
+from kpops.utils.pydantic import collect_fields
 
 PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
 PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
@@ -273,21 +272,6 @@ def fill_csv_pipeline_config(target: Path) -> None:
             field_description,
             field_name,
         )
-
-
-def collect_fields(model: type[BaseModel]) -> dict[str, Any]:
-    """Collect and return a ``dict`` of all fields in a settings class.
-
-    :param model: settings class
-    :return: ``dict`` of all fields in a settings class
-    """
-    seen_fields = {}
-    for field_name, field_value in model.model_fields.items():
-        if field_value.annotation and issubclass_patched(field_value.annotation):
-            seen_fields[field_name] = collect_fields(field_value.annotation)
-        else:
-            seen_fields[field_name] = field_value
-    return seen_fields
 
 
 def fill_csv_cli(target: Path) -> None:

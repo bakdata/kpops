@@ -6,11 +6,10 @@ from pydantic import BaseModel
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 
-from hooks.gen_docs.gen_docs_env_vars import collect_fields
 from kpops.config import KpopsConfig
 from kpops.utils.docstring import describe_object
 from kpops.utils.json import is_jsonable
-from kpops.utils.pydantic import issubclass_patched
+from kpops.utils.pydantic import collect_fields, issubclass_patched
 
 
 def extract_config_fields_for_yaml(
