@@ -1,4 +1,25 @@
 # Changelog
+## [4.1.1](https://github.com/bakdata/kpops/releases/tag/4.1.1) - Release Date: [2024-03-11]
+
+### 🐛 Fixes
+
+- Fix import errors - [#472](https://github.com/bakdata/kpops/pull/472)
+
+
+### 🏭 Refactor
+
+- Fix import errors - [#472](https://github.com/bakdata/kpops/pull/472)
+
+
+### 🌀 Miscellaneous
+
+- Update httpx - [#471](https://github.com/bakdata/kpops/pull/471)
+
+
+
+
+
+
 ## [4.1.0](https://github.com/bakdata/kpops/releases/tag/4.1.0) - Release Date: [2024-03-07]
 
 ### 📝 Documentation
