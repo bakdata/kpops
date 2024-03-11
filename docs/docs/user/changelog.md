@@ -1,4 +1,15 @@
 # Changelog
+## [4.1.2](https://github.com/bakdata/kpops/releases/tag/4.1.2) - Release Date: [2024-03-11]
+
+### 📝 Documentation
+
+- fix(docs): Correct `from.components.<component-name>.type` to input - [#473](https://github.com/bakdata/kpops/pull/473)
+
+
+
+
+
+
 ## [4.1.1](https://github.com/bakdata/kpops/releases/tag/4.1.1) - Release Date: [2024-03-11]
 
 ### 🐛 Fixes
