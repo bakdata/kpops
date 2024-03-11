@@ -19,7 +19,7 @@ kafka-connector:
         role: some-role
     components: # read from specific component
       account-producer:
-        type: output # Implied when role is NOT specified
+        type: input # Implied when role is NOT specified
       other-producer:
         role: some-role # Implies `type` to be extra
       component-as-input-pattern:
