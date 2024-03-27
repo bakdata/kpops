@@ -1,10 +1,10 @@
 import json
-from pathlib import Path
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 import pytest_asyncio
+from anyio import Path
 from pydantic import AnyUrl
 from pytest_httpx import HTTPXMock
 from pytest_mock import MockerFixture
@@ -35,10 +35,10 @@ class TestProxyWrapper:
     async def _setup(self, httpx_mock: HTTPXMock):
         config = KpopsConfig()
         self.proxy_wrapper = ProxyWrapper(config.kafka_rest)
-        with Path(
+        content = await Path(
             RESOURCES_PATH / "kafka_rest_proxy_responses" / "cluster-info.json",
-        ).open() as f:
-            cluster_response = json.load(f)
+        ).read_text()
+        cluster_response = json.loads(content)
 
         httpx_mock.add_response(
             method="GET",
