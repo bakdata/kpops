@@ -105,15 +105,18 @@ class Pipeline(BaseModel):
         )
 
     def build_execution_graph(
-        self, runner: Callable[[PipelineComponent], Coroutine], /, reverse: bool = False
-    ) -> Awaitable:
+        self,
+        runner: Callable[[PipelineComponent], Coroutine[Any, Any, None]],
+        /,
+        reverse: bool = False,
+    ) -> Awaitable[None]:
         async def run_parallel_tasks(coroutines: list[Coroutine]) -> None:
             tasks = []
             for coro in coroutines:
                 tasks.append(asyncio.create_task(coro))
             await asyncio.gather(*tasks)
 
-        async def run_graph_tasks(pending_tasks: list[Awaitable]) -> None:
+        async def run_graph_tasks(pending_tasks: list[Awaitable[None]]) -> None:
             for pending_task in pending_tasks:
                 await pending_task
 
