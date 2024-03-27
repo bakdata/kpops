@@ -18,12 +18,10 @@ from kpops.components.base_components.models.to_section import (
 from kpops.components.base_components.models.topic import OutputTopicTypes, TopicConfig
 
 
-class ScheduledProducer(ProducerApp):
-    ...
+class ScheduledProducer(ProducerApp): ...
 
 
-class Converter(StreamsApp):
-    ...
+class Converter(StreamsApp): ...
 
 
 class SubStreamsApp(StreamsApp):
