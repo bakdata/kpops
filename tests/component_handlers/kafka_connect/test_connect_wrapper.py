@@ -508,11 +508,10 @@ class TestConnectorApiWrapper:
 
     @pytest.mark.asyncio()
     async def test_should_parse_validate_connector_config(self, httpx_mock: HTTPXMock):
-        async with await Path(
+        content = await Path(
             RESOURCES_PATH / "connect_validation_response.json",
-        ).open() as f:
-            content = await f.read()
-            actual_response = json.loads(content)
+        ).read_text()
+        actual_response = json.loads(content)
 
         httpx_mock.add_response(
             method="PUT",
