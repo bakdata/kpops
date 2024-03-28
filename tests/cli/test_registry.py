@@ -8,12 +8,10 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 from tests.cli.resources.custom_module import CustomSchemaProvider
 
 
-class SubComponent(PipelineComponent):
-    ...
+class SubComponent(PipelineComponent): ...
 
 
-class SubSubComponent(SubComponent):
-    ...
+class SubSubComponent(SubComponent): ...
 
 
 class Unrelated:

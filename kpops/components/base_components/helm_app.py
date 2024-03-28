@@ -40,9 +40,9 @@ class HelmAppValues(KubernetesAppValues):
     :param name_override: Helm chart name override, assigned automatically
     """
 
-    name_override: Annotated[
-        str, pydantic.StringConstraints(max_length=K8S_LABEL_MAX_LEN)
-    ] | None = Field(
+    name_override: (
+        Annotated[str, pydantic.StringConstraints(max_length=K8S_LABEL_MAX_LEN)] | None
+    ) = Field(
         default=None,
         title="Nameoverride",
         description=describe_attr("name_override", __doc__),

@@ -1,11 +1,11 @@
 import json
 import logging
-from pathlib import Path
 from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import pytest_asyncio
+from anyio import Path
 from pytest_mock import MockerFixture
 
 from kpops.component_handlers.topic.exception import (
@@ -50,20 +50,20 @@ class TestTopicHandler:
 
     @pytest_asyncio.fixture(autouse=True)
     async def get_topic_response_mock(self) -> MagicMock:
-        with Path(
+        content = await Path(
             RESOURCES_PATH / "kafka_rest_proxy_responses/get_topic_response.json",
-        ).open() as f:
-            response = json.load(f)
+        ).read_text()
+        response = json.loads(content)
 
-        with Path(
+        content = await Path(
             RESOURCES_PATH / "kafka_rest_proxy_responses/broker_response.json",
-        ).open() as f:
-            broker_response = json.load(f)
+        ).read_text()
+        broker_response = json.loads(content)
 
-        with Path(
+        content = await Path(
             RESOURCES_PATH / "kafka_rest_proxy_responses/topic_config_response.json",
-        ).open() as f:
-            response_topic_config = json.load(f)
+        ).read_text()
+        response_topic_config = json.loads(content)
 
         wrapper = AsyncMock()
         wrapper.get_topic.return_value = TopicResponse(**response)
@@ -75,16 +75,16 @@ class TestTopicHandler:
 
     @pytest_asyncio.fixture(autouse=True)
     async def get_default_topic_response_mock(self) -> MagicMock:
-        with Path(
+        content = await Path(
             RESOURCES_PATH
             / "kafka_rest_proxy_responses/get_default_topic_response.json",
-        ).open() as f:
-            response = json.load(f)
+        ).read_text()
+        response = json.loads(content)
 
-        with Path(
+        content = await Path(
             RESOURCES_PATH / "kafka_rest_proxy_responses/broker_response.json",
-        ).open() as f:
-            broker_response = json.load(f)
+        ).read_text()
+        broker_response = json.loads(content)
 
         wrapper = AsyncMock()
         wrapper.get_topic.return_value = TopicResponse(**response)

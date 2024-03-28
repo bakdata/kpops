@@ -34,8 +34,7 @@ class SchemaScope(str, Enum):
     CONFIG = "config"
 
 
-class MultiComponentGenerateJsonSchema(GenerateJsonSchema):
-    ...
+class MultiComponentGenerateJsonSchema(GenerateJsonSchema): ...
 
 
 log = logging.getLogger("")

@@ -1,4 +1,5 @@
 """Generates the documentation on KPOps environment variables."""
+
 from __future__ import annotations
 
 import csv

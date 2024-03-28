@@ -586,12 +586,15 @@ class TestGenerate:
         assert input_components["component-extra-pattern"]["role"] == "role"
 
     def test_kubernetes_app_name_validation(self):
-        with pytest.raises(
-            ParsingException,
-            match="Error enriching filter component illegal_name",
-        ), pytest.raises(
-            ValueError,
-            match="The component name illegal_name is invalid for Kubernetes.",
+        with (
+            pytest.raises(
+                ParsingException,
+                match="Error enriching filter component illegal_name",
+            ),
+            pytest.raises(
+                ValueError,
+                match="The component name illegal_name is invalid for Kubernetes.",
+            ),
         ):
             runner.invoke(
                 app,
@@ -606,12 +609,15 @@ class TestGenerate:
             )
 
     def test_validate_unique_step_names(self):
-        with pytest.raises(
-            ParsingException,
-            match="Error enriching pipeline-component component component",
-        ), pytest.raises(
-            ValidationError,
-            match="Pipeline steps must have unique id, 'component-resources-pipeline-duplicate-step-names-component' already exists.",
+        with (
+            pytest.raises(
+                ParsingException,
+                match="Error enriching pipeline-component component component",
+            ),
+            pytest.raises(
+                ValidationError,
+                match="Pipeline steps must have unique id, 'component-resources-pipeline-duplicate-step-names-component' already exists.",
+            ),
         ):
             runner.invoke(
                 app,
