@@ -105,15 +105,20 @@ class Pipeline(BaseModel):
         )
 
     def build_execution_graph(
-        self, runner: Callable[[PipelineComponent], Coroutine], /, reverse: bool = False
-    ) -> Awaitable:
-        async def run_parallel_tasks(coroutines: list[Coroutine]) -> None:
+        self,
+        runner: Callable[[PipelineComponent], Coroutine[Any, Any, None]],
+        /,
+        reverse: bool = False,
+    ) -> Awaitable[None]:
+        async def run_parallel_tasks(
+            coroutines: list[Coroutine[Any, Any, None]],
+        ) -> None:
             tasks = []
             for coro in coroutines:
                 tasks.append(asyncio.create_task(coro))
             await asyncio.gather(*tasks)
 
-        async def run_graph_tasks(pending_tasks: list[Awaitable]) -> None:
+        async def run_graph_tasks(pending_tasks: list[Awaitable[None]]) -> None:
             for pending_task in pending_tasks:
                 await pending_task
 
@@ -175,8 +180,10 @@ class Pipeline(BaseModel):
         self._graph.add_edge(topic_id, target)
 
     def __get_parallel_tasks_from(
-        self, layer: list[str], runner: Callable[[PipelineComponent], Coroutine]
-    ) -> list[Coroutine]:
+        self,
+        layer: list[str],
+        runner: Callable[[PipelineComponent], Coroutine[Any, Any, None]],
+    ) -> list[Coroutine[Any, Any, None]]:
         def gen_parallel_tasks():
             for node_in_layer in layer:
                 # check if component, skip topics
