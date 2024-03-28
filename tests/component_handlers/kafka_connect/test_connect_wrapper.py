@@ -1,10 +1,10 @@
 import json
 import sys
-from pathlib import Path
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 import pytest_asyncio
+from anyio import Path
 from pytest_httpx import HTTPXMock
 
 from kpops.component_handlers.kafka_connect.connect_wrapper import ConnectWrapper
@@ -508,10 +508,10 @@ class TestConnectorApiWrapper:
 
     @pytest.mark.asyncio()
     async def test_should_parse_validate_connector_config(self, httpx_mock: HTTPXMock):
-        with Path(
+        content = await Path(
             RESOURCES_PATH / "connect_validation_response.json",
-        ).open() as f:
-            actual_response = json.load(f)
+        ).read_text()
+        actual_response = json.loads(content)
 
         httpx_mock.add_response(
             method="PUT",

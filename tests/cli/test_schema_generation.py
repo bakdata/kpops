@@ -29,29 +29,24 @@ class EmptyPipelineComponent(PipelineComponent):
 
 
 # abstract component inheriting from ABC should be excluded
-class AbstractBaseComponent(PipelineComponent, ABC):
-    ...
+class AbstractBaseComponent(PipelineComponent, ABC): ...
 
 
 # abstract component with abstractmethods should be excluded
 class AbstractPipelineComponent(AbstractBaseComponent):
     @abstractmethod
-    def not_implemented(self) -> None:
-        ...
+    def not_implemented(self) -> None: ...
 
 
-class SubPipelineComponent(EmptyPipelineComponent):
-    ...
+class SubPipelineComponent(EmptyPipelineComponent): ...
 
 
 # type is inherited from SubPipelineComponent
-class SubPipelineComponentNoSchemaTypeNoType(SubPipelineComponent):
-    ...
+class SubPipelineComponentNoSchemaTypeNoType(SubPipelineComponent): ...
 
 
 # Correctly defined
-class SubPipelineComponentCorrect(SubPipelineComponent):
-    ...
+class SubPipelineComponentCorrect(SubPipelineComponent): ...
 
 
 # Correctly defined, docstr test

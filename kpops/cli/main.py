@@ -508,8 +508,7 @@ def main(
         callback=version_callback,
         is_eager=True,
     ),
-):
-    ...
+): ...
 
 
 if __name__ == "__main__":

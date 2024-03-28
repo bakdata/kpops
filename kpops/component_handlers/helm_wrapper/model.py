@@ -140,8 +140,7 @@ class HelmFlags(RepoAuthFlags):
         return command
 
 
-class HelmUpgradeInstallFlags(HelmFlags):
-    ...
+class HelmUpgradeInstallFlags(HelmFlags): ...
 
 
 class HelmTemplateFlags(HelmFlags):

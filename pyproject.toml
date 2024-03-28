@@ -23,6 +23,7 @@ kpops = "kpops.cli.main:app"
 
 [tool.poetry.dependencies]
 python = ">=3.10, <3.13"
+anyio = "^4.3.0"
 pydantic = "^2.5.3"
 pydantic-settings = "^2.0.3"
 rich = "^12.4.4"
@@ -42,7 +43,7 @@ pytest-mock = "^3.10.0"
 pytest-timeout = "^2.1.0"
 pytest-snapshot = "^0.9.0"
 pre-commit = "^2.19.0"
-ruff = "^0.1.7"
+ruff = "^0.3.4"
 typer-cli = "^0.0.13"
 pyright = "^1.1.352"
 pytest-rerunfailures = "^11.1.2"
@@ -73,6 +74,12 @@ reportIncompatibleMethodOverride = false
 # reportIncompatibleMethodOverride = "warning"
 
 [tool.ruff]
+output-format = "grouped"
+show-fixes = true
+target-version = "py310"
+extend-exclude = ["tests/*snapshots/*"]
+
+[tool.ruff.lint]
 ignore = [
   # Rules in conflict with `ruff-format` -- START
   "W191", # Checks for indentation that uses tabs. Spaces are preferred.
@@ -161,19 +168,15 @@ select = [
   # "FURB", # refurb, add when out of nursery
   # "LOG", # flake8-logging, add when out of nursery
 ]
-output-format = "grouped"
-show-fixes = true
 task-tags = ["TODO", "HACK", "FIXME", "XXX"]
-target-version = "py310"
-extend-exclude = ["tests/*snapshots/*"]
 
-[tool.ruff.extend-per-file-ignores]
+[tool.ruff.lint.extend-per-file-ignores]
 "tests/*/__init__.py" = ["F401"]
 
-[tool.ruff.flake8-bugbear]
+[tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["typer.Argument"]
 
-[tool.ruff.flake8-type-checking]
+[tool.ruff.lint.flake8-type-checking]
 runtime-evaluated-base-classes = ["pydantic.BaseModel"]
 
 [build-system]

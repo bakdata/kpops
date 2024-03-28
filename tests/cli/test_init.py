@@ -15,8 +15,10 @@ def test_create_config(tmp_path: Path):
     req_conf_name = "config_with_only_required"
     create_config(opt_conf_name, tmp_path, True)
     create_config(req_conf_name, tmp_path, False)
-    assert (opt_conf := Path(tmp_path / (opt_conf_name + ".yaml"))).exists()
-    assert (req_conf := Path(tmp_path / (req_conf_name + ".yaml"))).exists()
+    opt_conf = (tmp_path / opt_conf_name).with_suffix(".yaml")
+    assert opt_conf.exists()
+    req_conf = (tmp_path / req_conf_name).with_suffix(".yaml")
+    assert req_conf.exists()
     assert len(opt_conf.read_text()) > len(req_conf.read_text())
 
 

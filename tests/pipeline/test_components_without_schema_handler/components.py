@@ -10,17 +10,13 @@ from kpops.components import (
 from kpops.components.base_components.models.topic import OutputTopicTypes
 
 
-class ScheduledProducer(ProducerApp):
-    ...
+class ScheduledProducer(ProducerApp): ...
 
 
-class Converter(StreamsApp):
-    ...
+class Converter(StreamsApp): ...
 
 
 class ShouldInflate(StreamsApp):
-    ...
-
     @override
     def inflate(self) -> list[PipelineComponent]:
         inflate_steps = super().inflate()
