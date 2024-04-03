@@ -68,11 +68,11 @@ mike = "^1.1.2"
 [tool.pyright]
 reportIncompatibleVariableOverride = false
 reportIncompatibleMethodOverride = false
-reportUnknownArgumentType	= "error"
-reportUnknownLambdaType	= "error"
-reportUnknownMemberType	= "error"
+reportUnknownArgumentType = "error"
+reportUnknownLambdaType = "error"
+reportUnknownMemberType = "error"
 reportUnknownParameterType = "error"
-reportUnknownVariableType	= "error"
+reportUnknownVariableType = "error"
 
 # FIXME: causes issues on Python 3.10
 # reportIncompatibleVariableOverride = "warning"

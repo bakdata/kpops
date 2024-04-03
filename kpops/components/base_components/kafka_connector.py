@@ -157,7 +157,7 @@ class KafkaConnector(PipelineComponent, ABC):
                     connector=self.full_name,
                     brokers=self.config.kafka_brokers,
                 ),
-                **self.resetter_values.model_dump(),
+                **self.resetter_values.model_dump(), # We should 2 problem matches here
             ),
         )
 
