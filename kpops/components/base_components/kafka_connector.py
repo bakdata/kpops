@@ -154,10 +154,9 @@ class KafkaConnector(PipelineComponent, ABC):
                     connector=self.full_name,
                     brokers=self.config.kafka_brokers,
                 ),
-                **self.resetter_values.model_dump(), # Pyright error
+                **self.resetter_values.model_dump(),  # Pyright error
             ),
         )
-        a = 0 # Ruff errors here
 
     @override
     async def deploy(self, dry_run: bool) -> None:
