@@ -4,7 +4,7 @@
             "owner": "pyright",
             "pattern": [
                 {
-                    "regexp": "^\\s\\s(\\S*\\.py):(\\d+):(\\d+)\\s-\\s(error|warning|information):([\\s\\S]+?)(?=(?:^\\s\\s\\S*\\.py:\\d+:\\d+\\s-\\s(?:error|warning|information):|\\z))",
+                    "regexp": "^\\s\\s(\\S*\\.py):(\\d+):(\\d+)\\s-\\s(error|warning|information):([\\s\\S]+?)(?=(?:^\\s\\s\\S*\\.py:\\d+:\\d+\\s-\\s(?:error|warning|information):|\\z|\\d+ errors,))",
                     "file": 1,
                     "line": 2,
                     "column": 3,
