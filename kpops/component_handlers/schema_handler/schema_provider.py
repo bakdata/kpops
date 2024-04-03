@@ -15,5 +15,4 @@ class SchemaProvider(ABC):
     @abstractmethod
     def provide_schema(
         self, schema_class: str, models: dict[ModelName, ModelVersion]
-    ) -> Schema:
-        ...
+    ) -> Schema: ...

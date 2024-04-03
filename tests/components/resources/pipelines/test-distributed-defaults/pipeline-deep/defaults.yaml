@@ -1,0 +1,20 @@
+helm-app:
+  name: ${component.type}
+  namespace: namespace-to-override-it-all
+
+streams-bootstrap:
+  app:
+    streams:
+      brokers: "${config.kafka_brokers}"
+
+producer-app: {} # inherits from kafka-app
+
+streams-app: # inherits from kafka-app
+  to:
+    topics:
+      ${error_topic_name}:
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete

@@ -1,4 +1,4 @@
-name: Release to GitHub and update docs
+name: Release to GitHub and push tag
 
 on:
   workflow_dispatch:
@@ -15,11 +15,11 @@ on:
 
 jobs:
   create-github-release-push-tag:
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@1.25.5
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-release.yaml@1.40.4
     name: Release
     with:
       release-type: ${{ inputs.release-type }}
-      poetry-version: "1.5.1"
+      poetry-version: "1.7.1"
       changelog: true
       changelog-config: "./.github/changelog-config.json"
       changelog-file: "./docs/docs/user/changelog.md"
@@ -27,21 +27,3 @@ jobs:
       github-username: "${{ secrets.GH_USERNAME }}"
       github-email: "${{ secrets.GH_EMAIL }}"
       github-token: "${{ secrets.GH_TOKEN }}"
-
-  update-docs:
-    runs-on: ubuntu-22.04
-    needs: create-github-release-push-tag
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0 # Fetch all tags; Required for doc versioning
-
-      - name: Update gh-pages
-        uses: ./.github/actions/update-docs
-        with:
-          username: ${{ secrets.GH_USERNAME }}
-          email: ${{ secrets.GH_EMAIL }}
-          token: ${{ secrets.GH_TOKEN }}
-          version: ${{ needs.create-github-release-push-tag.outputs.release-version }}
-          release: true

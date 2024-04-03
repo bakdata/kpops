@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "kpops"
-version = "2.0.11"
+version = "4.1.2"
 description = "KPOps is a tool to deploy Kafka pipelines to Kubernetes"
 authors = ["bakdata <opensource@bakdata.com>"]
 license = "MIT"
@@ -10,12 +10,7 @@ documentation = "https://bakdata.github.io/kpops/latest"
 keywords = ["kafka", "kubernetes", "stream-processing", "pipelines"]
 classifiers = [
   "Environment :: Console",
-  "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3 :: Only",
-  "Programming Language :: Python :: 3.10",
   "Topic :: Software Development :: Libraries :: Python Modules",
   "Topic :: Software Development :: Libraries",
   "Topic :: Software Development",
@@ -27,8 +22,10 @@ classifiers = [
 kpops = "kpops.cli.main:app"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-pydantic = { extras = ["dotenv"], version = "^1.10.8" }
+python = ">=3.10, <3.13"
+anyio = "^4.3.0"
+pydantic = "^2.5.3"
+pydantic-settings = "^2.0.3"
 rich = "^12.4.4"
 PyYAML = "^6.0"
 typer = { extras = ["all"], version = "^0.6.1" }
@@ -37,27 +34,30 @@ pyhumps = "^3.7.3"
 cachetools = "^5.2.0"
 dictdiffer = "^0.9.0"
 python-schema-registry-client = "^2.4.1"
-httpx = "^0.24.1"
+httpx = "^0 >=0.24.1"
+networkx = "^3.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.2"
 pytest-mock = "^3.10.0"
 pytest-timeout = "^2.1.0"
-snapshottest = "^0.6.0"
+pytest-snapshot = "^0.9.0"
 pre-commit = "^2.19.0"
-ruff = "^0.1.5"
+ruff = "^0.3.4"
 typer-cli = "^0.0.13"
-pyright = "^1.1.314"
+pyright = "^1.1.352"
 pytest-rerunfailures = "^11.1.2"
-pytest-httpx = "^0.22.0"
+pytest-asyncio = "^0.21.1"
+pytest-httpx = "^0.30.0"
 pytablewriter = { extras = ["from"], version = "^1.0.0" }
+polyfactory = "^2.13.0"
 
 [tool.poetry.group.docs]
 optional = true
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "^1.4.2"
-mkdocs-macros-plugin = "^0.7.0"
+mkdocs-macros-plugin = "^1.0.5"
 mkdocs-material = "^9.0.0"
 mkdocs-glightbox = "^0.3.1"
 mkdocs-exclude-search = "^0.6.5"
@@ -65,9 +65,23 @@ mike = "^1.1.2"
 
 [tool.poetry_bumpversion.file."kpops/__init__.py"]
 
+[tool.pyright]
+reportIncompatibleVariableOverride = false
+reportIncompatibleMethodOverride = false
+
+# FIXME: causes issues on Python 3.10
+# reportIncompatibleVariableOverride = "warning"
+# reportIncompatibleMethodOverride = "warning"
+
 [tool.ruff]
+output-format = "grouped"
+show-fixes = true
+target-version = "py310"
+extend-exclude = ["tests/*snapshots/*"]
+
+[tool.ruff.lint]
 ignore = [
-# Rules in conflict with `ruff-format` -- START
+  # Rules in conflict with `ruff-format` -- START
   "W191", # Checks for indentation that uses tabs. Spaces are preferred.
   # "E111", # Checks for indentation with a non-multiple of 4 spaces, add when out of nursery
   # "E114", # Checks for indentation of comments with a non-multiple of 4 spaces, add when out of nursery
@@ -83,11 +97,11 @@ ignore = [
   "COM819", # Checks for the presence of prohibited trailing commas.
   "ISC001", # Checks for implicitly concatenated strings on a single line.
   "ISC002", # Checks for implicitly concatenated strings that span multiple lines.
-# Rules in conflict with `ruff-format` -- END
+  # Rules in conflict with `ruff-format` -- END
   "D1", # Missing docstring for {} -- Inconvenient to enforce
-# The following "D" rules do not correspond to our coding style. We use the pep257 convention, but
-# "D212" should not be ignored. In ruff (0.0.291) we cannot select a rule that is excluded by specifying
-# a convention, hence our only option is to manually replicate it.
+  # The following "D" rules do not correspond to our coding style. We use the pep257 convention, but
+  # "D212" should not be ignored. In ruff (0.0.291) we cannot select a rule that is excluded by specifying
+  # a convention, hence our only option is to manually replicate it.
   "D203", # 1 blank line required before class docstring
   "D213", # Multi-line docstring summary should start at the second line
   "D214", # Section is over-indented ("{name}")
@@ -142,7 +156,6 @@ select = [
   "ICN", # flake8-import-conventions
   "INP", # flake8-no-pep420
   "PIE", # flake8-pie
-  "PT", # flake8-pytest-style
   "Q", # flake8-quotes
   "RSE", # flake8-raise
   "RET", # flake8-return
@@ -155,20 +168,16 @@ select = [
   # "FURB", # refurb, add when out of nursery
   # "LOG", # flake8-logging, add when out of nursery
 ]
-output-format = "grouped"
-show-fixes = true
 task-tags = ["TODO", "HACK", "FIXME", "XXX"]
-target-version = "py310"
-extend-exclude = ["tests/*snapshots/*"]
 
-[tool.ruff.extend-per-file-ignores]
+[tool.ruff.lint.extend-per-file-ignores]
 "tests/*/__init__.py" = ["F401"]
 
-[tool.ruff.flake8-bugbear]
+[tool.ruff.lint.flake8-bugbear]
 extend-immutable-calls = ["typer.Argument"]
 
-[tool.ruff.flake8-type-checking]
-runtime-evaluated-base-classes = ["pydantic.BaseModel", "kpops.components.base_components.kafka_app.KafkaApp"]
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel"]
 
 [tool.pyright]
 reportUnknownArgumentType	= "error"
@@ -176,6 +185,7 @@ reportUnknownLambdaType	= "error"
 reportUnknownMemberType	= "error"
 reportUnknownParameterType = "error"
 reportUnknownVariableType	= "error"
+
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

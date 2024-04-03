@@ -5,7 +5,8 @@ kubernetes-app:
   namespace: ${NAMESPACE}
 
 kafka-app:
+  version: 2.9.0
   app:
     streams:
-      brokers: ${brokers}
-      schemaRegistryUrl: ${schema_registry_url}
+      brokers: ${config.kafka_brokers}
+      schemaRegistryUrl: ${config.schema_registry.url}

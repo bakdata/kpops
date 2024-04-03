@@ -1,16 +1,21 @@
-from collections.abc import Mapping, Set
+from __future__ import annotations
+
 from typing import Any
 
-from pydantic import BaseConfig, BaseModel, Extra, Field
-from typing_extensions import override
+import pydantic
+from pydantic import ConfigDict, Field, model_validator
 
-from kpops.components.base_components.base_defaults_component import deduplicate
 from kpops.components.base_components.kafka_app import (
-    KafkaAppConfig,
+    KafkaAppValues,
     KafkaStreamsConfig,
 )
+from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
+from kpops.pipeline import ValidationError
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import (
+    CamelCaseConfigModel,
+    DescConfigModel,
+)
 
 
 class StreamsConfig(KafkaStreamsConfig):
@@ -20,47 +25,74 @@ class StreamsConfig(KafkaStreamsConfig):
     :param input_pattern: Input pattern, defaults to None
     :param extra_input_topics: Extra input topics, defaults to {}
     :param extra_input_patterns: Extra input patterns, defaults to {}
-    :param extra_output_topics: Extra output topics, defaults to {}
-    :param output_topic: Output topic, defaults to None
     :param error_topic: Error topic, defaults to None
     :param config: Configuration, defaults to {}
+    :param delete_output: Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup, defaults to None
     """
 
-    input_topics: list[str] = Field(
+    input_topics: list[KafkaTopicStr] = Field(
         default=[], description=describe_attr("input_topics", __doc__)
     )
     input_pattern: str | None = Field(
         default=None, description=describe_attr("input_pattern", __doc__)
     )
-    extra_input_topics: dict[str, list[str]] = Field(
+    extra_input_topics: dict[str, list[KafkaTopicStr]] = Field(
         default={}, description=describe_attr("extra_input_topics", __doc__)
     )
     extra_input_patterns: dict[str, str] = Field(
         default={}, description=describe_attr("extra_input_patterns", __doc__)
     )
-    extra_output_topics: dict[str, str] = Field(
-        default={}, description=describe_attr("extra_output_topics", __doc__)
-    )
-    output_topic: str | None = Field(
-        default=None, description=describe_attr("output_topic", __doc__)
-    )
-    error_topic: str | None = Field(
+    error_topic: KafkaTopicStr | None = Field(
         default=None, description=describe_attr("error_topic", __doc__)
     )
-    config: dict[str, str] = Field(
+    config: dict[str, Any] = Field(
         default={}, description=describe_attr("config", __doc__)
     )
+    delete_output: bool | None = Field(
+        default=None, description=describe_attr("delete_output", __doc__)
+    )
 
-    def add_input_topics(self, topics: list[str]) -> None:
+    @pydantic.field_validator("input_topics", mode="before")
+    @classmethod
+    def deserialize_input_topics(cls, input_topics: Any) -> list[KafkaTopic] | Any:
+        if isinstance(input_topics, list):
+            return [KafkaTopic(name=topic_name) for topic_name in input_topics]
+        return input_topics
+
+    @pydantic.field_validator("extra_input_topics", mode="before")
+    @classmethod
+    def deserialize_extra_input_topics(
+        cls, extra_input_topics: Any
+    ) -> dict[str, list[KafkaTopic]] | Any:
+        if isinstance(extra_input_topics, dict):
+            return {
+                role: [KafkaTopic(name=topic_name) for topic_name in topics]
+                for role, topics in extra_input_topics.items()
+            }
+        return extra_input_topics
+
+    @pydantic.field_serializer("input_topics")
+    def serialize_topics(self, topics: list[KafkaTopic]) -> list[str]:
+        return [topic.name for topic in topics]
+
+    @pydantic.field_serializer("extra_input_topics")
+    def serialize_extra_input_topics(
+        self, extra_topics: dict[str, list[KafkaTopic]]
+    ) -> dict[str, list[str]]:
+        return {
+            role: self.serialize_topics(topics) for role, topics in extra_topics.items()
+        }
+
+    def add_input_topics(self, topics: list[KafkaTopic]) -> None:
         """Add given topics to the list of input topics.
 
         Ensures no duplicate topics in the list.
 
         :param topics: Input topics
         """
-        self.input_topics = deduplicate(self.input_topics + topics)
+        self.input_topics = KafkaTopic.deduplicate(self.input_topics + topics)
 
-    def add_extra_input_topics(self, role: str, topics: list[str]) -> None:
+    def add_extra_input_topics(self, role: str, topics: list[KafkaTopic]) -> None:
         """Add given extra topics that share a role to the list of extra input topics.
 
         Ensures no duplicate topics in the list.
@@ -68,50 +100,20 @@ class StreamsConfig(KafkaStreamsConfig):
         :param topics: Extra input topics
         :param role: Topic role
         """
-        self.extra_input_topics[role] = deduplicate(
+        self.extra_input_topics[role] = KafkaTopic.deduplicate(
             self.extra_input_topics.get(role, []) + topics
         )
 
-    @override
-    def dict(
-        self,
-        *,
-        include: None | Set[int | str] | Mapping[int | str, Any] = None,
-        exclude: None | Set[int | str] | Mapping[int | str, Any] = None,
-        by_alias: bool = False,
-        skip_defaults: bool | None = None,
-        exclude_unset: bool = False,
-        **kwargs,
-    ) -> dict:
-        """Generate a dictionary representation of the model.
 
-        Optionally, specify which fields to include or exclude.
-
-        :param include: Fields to include
-        :param include: Fields to exclude
-        :param by_alias: Use the fields' aliases in the dictionary
-        :param skip_defaults: Whether to skip defaults
-        :param exclude_unset: Whether to exclude unset fields
-        """
-        return super().dict(
-            include=include,
-            exclude=exclude,
-            by_alias=by_alias,
-            skip_defaults=skip_defaults,
-            exclude_unset=exclude_unset,
-            # The following lines are required only for the streams configs since we never not want to export defaults here, just fallback to helm default values
-            exclude_defaults=True,
-            exclude_none=True,
-        )
-
-
-class StreamsAppAutoScaling(BaseModel):
+class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
     """Kubernetes Event-driven Autoscaling config.
 
     :param enabled: Whether to enable auto-scaling using KEDA., defaults to False
     :param consumer_group: Name of the consumer group used for checking the
         offset on the topic and processing the related lag.
+        Mandatory to set when auto-scaling is enabled.
     :param lag_threshold: Average target value to trigger scaling actions.
+        Mandatory to set when auto-scaling is enabled.
     :param polling_interval: This is the interval to check each trigger on.
         https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval,
         defaults to 30
@@ -142,11 +144,13 @@ class StreamsAppAutoScaling(BaseModel):
         default=False,
         description=describe_attr("streams", __doc__),
     )
-    consumer_group: str = Field(
+    consumer_group: str | None = Field(
+        default=None,
         title="Consumer group",
         description=describe_attr("consumer_group", __doc__),
     )
-    lag_threshold: int = Field(
+    lag_threshold: int | None = Field(
+        default=None,
         title="Lag threshold",
         description=describe_attr("lag_threshold", __doc__),
     )
@@ -184,18 +188,28 @@ class StreamsAppAutoScaling(BaseModel):
         default=[],
         description=describe_attr("topics", __doc__),
     )
+    model_config = ConfigDict(extra="allow")
 
-    class Config(CamelCaseConfig, DescConfig):
-        extra = Extra.allow
+    @model_validator(mode="after")
+    def validate_mandatory_fields_are_set(
+        self: StreamsAppAutoScaling,
+    ) -> StreamsAppAutoScaling:  # TODO: typing.Self for Python 3.11+
+        if self.enabled and (self.consumer_group is None or self.lag_threshold is None):
+            msg = (
+                "If app.autoscaling.enabled is set to true, "
+                "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
+            )
+            raise ValidationError(msg)
+        return self
 
 
-class StreamsAppConfig(KafkaAppConfig):
-    """StreamsBoostrap app configurations.
+class StreamsAppValues(KafkaAppValues):
+    """streams-bootstrap app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.
 
-    :param streams: Streams Bootstrap streams section
-    :param autoscaling: Kubernetes Event-driven Autoscaling config, defaults to None
+    :param streams: streams-bootstrap streams section
+    :param autoscaling: Kubernetes event-driven autoscaling config, defaults to None
     """
 
     streams: StreamsConfig = Field(
@@ -206,6 +220,4 @@ class StreamsAppConfig(KafkaAppConfig):
         default=None,
         description=describe_attr("autoscaling", __doc__),
     )
-
-    class Config(BaseConfig):
-        extra = Extra.allow
+    model_config = ConfigDict(extra="allow")

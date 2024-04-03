@@ -2,170 +2,144 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
+from collections.abc import Callable
+from typing import Any
 
-from pydantic import BaseModel, Extra, Field
+import pydantic
+from pydantic import AliasChoices, ConfigDict, Field
 from typing_extensions import override
 
-from kpops.component_handlers.helm_wrapper.model import (
-    HelmRepoConfig,
-    HelmUpgradeInstallFlags,
-)
-from kpops.component_handlers.helm_wrapper.utils import trim_release_name
-from kpops.components.base_components.kubernetes_app import (
-    KubernetesApp,
-    KubernetesAppConfig,
-)
+from kpops.components.base_components.cleaner import Cleaner
+from kpops.components.base_components.helm_app import HelmAppValues
+from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
+from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.utils.docstring import describe_attr
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig
+from kpops.utils.pydantic import (
+    CamelCaseConfigModel,
+    DescConfigModel,
+    exclude_by_value,
+    exclude_defaults,
+)
 
 log = logging.getLogger("KafkaApp")
 
 
-class KafkaStreamsConfig(BaseModel):
+class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     """Kafka Streams config.
 
     :param brokers: Brokers
     :param schema_registry_url: URL of the schema registry, defaults to None
+    :param extra_output_topics: Extra output topics
+    :param output_topic: Output topic, defaults to None
     """
 
     brokers: str = Field(default=..., description=describe_attr("brokers", __doc__))
     schema_registry_url: str | None = Field(
-        default=None, description=describe_attr("schema_registry_url", __doc__)
+        default=None,
+        validation_alias=AliasChoices(
+            "schema_registry_url", "schemaRegistryUrl"
+        ),  # TODO: same for other camelcase fields, avoids duplicates during enrichment
+        description=describe_attr("schema_registry_url", __doc__),
+    )
+    extra_output_topics: dict[str, KafkaTopicStr] = Field(
+        default={}, description=describe_attr("extra_output_topics", __doc__)
+    )
+    output_topic: KafkaTopicStr | None = Field(
+        default=None,
+        description=describe_attr("output_topic", __doc__),
+        json_schema_extra={},
     )
 
-    class Config(CamelCaseConfig, DescConfig):
-        extra = Extra.allow
+    model_config = ConfigDict(extra="allow")
+
+    @pydantic.field_validator("extra_output_topics", mode="before")
+    @classmethod
+    def deserialize_extra_output_topics(
+        cls, extra_output_topics: Any
+    ) -> dict[str, KafkaTopic] | Any:
+        if isinstance(extra_output_topics, dict):
+            return {
+                role: KafkaTopic(name=topic_name)
+                for role, topic_name in extra_output_topics.items()
+            }
+        return extra_output_topics
+
+    @pydantic.field_serializer("extra_output_topics")
+    def serialize_extra_output_topics(
+        self, extra_topics: dict[str, KafkaTopic]
+    ) -> dict[str, str]:
+        return {role: topic.name for role, topic in extra_topics.items()}
+
+    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
+    @pydantic.model_serializer(mode="wrap", when_used="always")
+    def serialize_model(
+        self, handler: Callable, info: pydantic.SerializationInfo
+    ) -> dict[str, Any]:
+        return exclude_defaults(self, exclude_by_value(handler(self), None))
 
 
-class KafkaAppConfig(KubernetesAppConfig):
+class KafkaAppValues(HelmAppValues):
     """Settings specific to Kafka Apps.
 
     :param streams: Kafka streams config
-    :param name_override: Override name with this value, defaults to None
     """
 
     streams: KafkaStreamsConfig = Field(
         default=..., description=describe_attr("streams", __doc__)
     )
-    name_override: str | None = Field(
-        default=None, description=describe_attr("name_override", __doc__)
-    )
 
 
-class KafkaApp(KubernetesApp, ABC):
+class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
+    """Helm app for resetting and cleaning a streams-bootstrap app."""
+
+    from_: None = None
+    to: None = None
+
+    @property
+    @override
+    def helm_chart(self) -> str:
+        raise NotImplementedError
+
+    @override
+    async def clean(self, dry_run: bool) -> None:
+        """Clean an app using a cleanup job.
+
+        :param dry_run: Dry run command
+        """
+        log.info(f"Uninstall old cleanup job for {self.helm_release_name}")
+        await self.destroy(dry_run)
+
+        log.info(f"Init cleanup job for {self.helm_release_name}")
+        await self.deploy(dry_run)
+
+        if not self.config.retain_clean_jobs:
+            log.info(f"Uninstall cleanup job for {self.helm_release_name}")
+            await self.destroy(dry_run)
+
+
+class KafkaApp(PipelineComponent, ABC):
     """Base component for Kafka-based components.
 
     Producer or streaming apps should inherit from this class.
 
     :param app: Application-specific settings
-    :param repo_config: Configuration of the Helm chart repo to be used for
-        deploying the component,
-        defaults to HelmRepoConfig(repository_name="bakdata-streams-bootstrap", url="https://bakdata.github.io/streams-bootstrap/")
-    :param version: Helm chart version, defaults to "2.9.0"
     """
 
-    app: KafkaAppConfig = Field(
+    app: KafkaAppValues = Field(
         default=...,
         description=describe_attr("app", __doc__),
     )
-    repo_config: HelmRepoConfig = Field(
-        default=HelmRepoConfig(
-            repository_name="bakdata-streams-bootstrap",
-            url="https://bakdata.github.io/streams-bootstrap/",
-        ),
-        description=describe_attr("repo_config", __doc__),
-    )
-    version: str | None = Field(
-        default="2.9.0",
-        description=describe_attr("version", __doc__),
-    )
-
-    @property
-    def clean_up_helm_chart(self) -> str:
-        """Helm chart used to destroy and clean this component."""
-        raise NotImplementedError
 
     @override
-    def deploy(self, dry_run: bool) -> None:
+    async def deploy(self, dry_run: bool) -> None:
         if self.to:
-            self.handlers.topic_handler.create_topics(
-                to_section=self.to, dry_run=dry_run
-            )
+            for topic in self.to.kafka_topics:
+                await self.handlers.topic_handler.create_topic(topic, dry_run=dry_run)
 
             if self.handlers.schema_handler:
-                self.handlers.schema_handler.submit_schemas(
+                await self.handlers.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
-        super().deploy(dry_run)
 
-    def _run_clean_up_job(
-        self,
-        values: dict,
-        dry_run: bool,
-        retain_clean_jobs: bool = False,
-    ) -> None:
-        """Clean an app using the respective cleanup job.
-
-        :param values: The value YAML for the chart
-        :param dry_run: Dry run command
-        :param retain_clean_jobs: Whether to retain the cleanup job, defaults to False
-        :return:
-        """
-        suffix = "-clean"
-        clean_up_release_name = trim_release_name(
-            self.helm_release_name + suffix, suffix
-        )
-        log.info(f"Uninstall old cleanup job for {clean_up_release_name}")
-
-        self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
-
-        log.info(f"Init cleanup job for {clean_up_release_name}")
-
-        stdout = self.__install_clean_up_job(
-            clean_up_release_name, suffix, values, dry_run
-        )
-
-        if dry_run:
-            self.dry_run_handler.print_helm_diff(stdout, clean_up_release_name, log)
-
-        if not retain_clean_jobs:
-            log.info(f"Uninstall cleanup job for {clean_up_release_name}")
-            self.__uninstall_clean_up_job(clean_up_release_name, dry_run)
-
-    def __uninstall_clean_up_job(self, release_name: str, dry_run: bool) -> None:
-        """Uninstall clean up job.
-
-        :param release_name: Name of the Helm release
-        :param dry_run: Whether to do a dry run of the command
-        """
-        self.helm.uninstall(self.namespace, release_name, dry_run)
-
-    def __install_clean_up_job(
-        self,
-        release_name: str,
-        suffix: str,
-        values: dict,
-        dry_run: bool,
-    ) -> str:
-        """Install clean up job.
-
-        :param release_name: Name of the Helm release
-        :param suffix: Suffix to add to the release name, e.g. "-clean"
-        :param values: The Helm values for the chart
-        :param dry_run: Whether to do a dry run of the command
-        :return: Install clean up job with helm, return the output of the installation
-        """
-        clean_up_release_name = trim_release_name(release_name, suffix)
-        return self.helm.upgrade_install(
-            clean_up_release_name,
-            self.clean_up_helm_chart,
-            dry_run,
-            self.namespace,
-            values,
-            HelmUpgradeInstallFlags(
-                create_namespace=self.config.create_namespace,
-                version=self.version,
-                wait=True,
-                wait_for_jobs=True,
-            ),
-        )
+        await super().deploy(dry_run)

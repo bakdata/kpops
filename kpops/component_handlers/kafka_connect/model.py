@@ -1,10 +1,26 @@
 from enum import Enum
 from typing import Any, Literal
 
-from pydantic import BaseConfig, BaseModel, Extra, Field, validator
+import pydantic
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    SerializationInfo,
+    field_validator,
+    model_serializer,
+)
+from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
-from kpops.utils.pydantic import CamelCaseConfig, DescConfig, to_dot
+from kpops.components.base_components.helm_app import HelmAppValues
+from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
+from kpops.utils.pydantic import (
+    CamelCaseConfigModel,
+    DescConfigModel,
+    by_alias,
+    exclude_by_value,
+    to_dot,
+)
 
 
 class KafkaConnectorType(str, Enum):
@@ -12,36 +28,60 @@ class KafkaConnectorType(str, Enum):
     SOURCE = "source"
 
 
-class KafkaConnectorConfig(BaseModel):
+class KafkaConnectorConfig(DescConfigModel):
     """Settings specific to Kafka Connectors."""
 
     connector_class: str
-    name: str = Field(default=..., hidden_from_schema=True)
+    name: SkipJsonSchema[str]
+    topics: list[KafkaTopicStr] = []
+    topics_regex: str | None = None
+    errors_deadletterqueue_topic_name: KafkaTopicStr | None = None
 
-    class Config(DescConfig):
-        extra = Extra.allow
-        alias_generator = to_dot
+    @override
+    @staticmethod
+    def json_schema_extra(schema: dict[str, Any], model: type[BaseModel]) -> None:
+        super(KafkaConnectorConfig, KafkaConnectorConfig).json_schema_extra(
+            schema, model
+        )
+        schema["additional_properties"] = {"type": "string"}
 
-        @override
-        @classmethod
-        def schema_extra(cls, schema: dict[str, Any], model: type[BaseModel]) -> None:
-            super().schema_extra(schema, model)
-            schema["additionalProperties"] = {"type": "string"}
+    model_config = ConfigDict(
+        extra="allow",
+        alias_generator=to_dot,
+        json_schema_extra=json_schema_extra,
+        populate_by_name=True,
+    )
 
-    @validator("connector_class")
+    @field_validator("connector_class")
+    @classmethod
     def connector_class_must_contain_dot(cls, connector_class: str) -> str:
         if "." not in connector_class:
             msg = f"Invalid connector class {connector_class}"
             raise ValueError(msg)
         return connector_class
 
+    @pydantic.field_validator("topics", mode="before")
+    @classmethod
+    def deserialize_topics(cls, topics: Any) -> list[KafkaTopic] | None | Any:
+        if isinstance(topics, str):
+            return [KafkaTopic(name=topic_name) for topic_name in topics.split(",")]
+        return topics
+
     @property
     def class_name(self) -> str:
         return self.connector_class.split(".")[-1]
 
-    @override
-    def dict(self, **_) -> dict[str, Any]:
-        return super().dict(by_alias=True, exclude_none=True)
+    @pydantic.field_serializer("topics")
+    def serialize_topics(self, topics: list[KafkaTopic]) -> str | None:
+        if not topics:
+            return None
+        return ",".join(topic.name for topic in topics)
+
+    # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
+    @model_serializer(mode="wrap", when_used="always")
+    def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
+        result = exclude_by_value(handler(self), None)
+        return {by_alias(self, name): value for name, value in result.items()}
 
 
 class ConnectorTask(BaseModel):
@@ -53,10 +93,9 @@ class KafkaConnectResponse(BaseModel):
     name: str
     config: dict[str, str]
     tasks: list[ConnectorTask]
-    type: str | None
+    type: str | None = None
 
-    class Config(BaseConfig):
-        extra = Extra.forbid
+    model_config = ConfigDict(extra="forbid")
 
 
 class KafkaConnectConfigError(BaseModel):
@@ -74,24 +113,13 @@ class KafkaConnectConfigErrorResponse(BaseModel):
     configs: list[KafkaConnectConfigDescription]
 
 
-class KafkaConnectResetterConfig(BaseModel):
+class KafkaConnectorResetterConfig(CamelCaseConfigModel):
     brokers: str
     connector: str
     delete_consumer_group: bool | None = None
     offset_topic: str | None = None
 
-    class Config(CamelCaseConfig):
-        pass
 
-
-class KafkaConnectResetterValues(BaseModel):
+class KafkaConnectorResetterValues(HelmAppValues):
     connector_type: Literal["source", "sink"]
-    config: KafkaConnectResetterConfig
-    name_override: str
-
-    class Config(CamelCaseConfig):
-        pass
-
-    @override
-    def dict(self, **_) -> dict[str, Any]:
-        return super().dict(by_alias=True, exclude_none=True)
+    config: KafkaConnectorResetterConfig

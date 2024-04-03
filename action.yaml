@@ -1,0 +1,86 @@
+name: "KPOps runner"
+description: "Run KPOps command with the given params"
+
+inputs:
+  command:
+    description: "The KPOps command to run"
+    required: true
+  pipeline:
+    description: "Pipeline to run"
+    required: true
+  working-directory:
+    description: "The root directory containing the config.yaml, pipelines folder and defaults"
+    default: "."
+  config:
+    description: "Directory containing the config*.yaml file(s)"
+    required: false
+  environment:
+    description: "Environment to run KPOps in"
+    required: false
+  filter-type:
+    description: "Whether to include/exclude the steps defined in KPOPS_PIPELINE_STEPS (default is include)"
+    required: false
+  parallel:
+    description: "Whether to run the pipeline in parallel"
+    required: false
+    default: "false"
+  python-version:
+    description: "Python version to install (Defaults to the latest stable version of Python 3.11)"
+    required: false
+    default: "3.11.x"
+  kpops-version:
+    description: "KPOps version"
+    required: false
+    default: "latest"
+  helm-version:
+    description: "Helm version"
+    required: false
+    default: "latest"
+  token:
+    description: "secrets.GITHUB_TOKEN, needed for setup-helm action if helm-version is set to latest"
+    required: false
+
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Helm
+      uses: azure/setup-helm@v3
+      with:
+        version: ${{ inputs.helm-version }}
+        token: ${{ inputs.token }}
+
+    - name: Create temporary requirements.txt for caching
+      shell: bash
+      id: requirements
+      run: |
+        TEMP_FILE="${{ github.action_path }}/kpops-runner-action-requirements.txt"
+        echo "kpops${{ inputs.kpops-version != 'latest' && format('=={0}', inputs.kpops-version) || '' }}" > "$TEMP_FILE"
+        cat "$TEMP_FILE"
+        echo  "path=$TEMP_FILE">> $GITHUB_OUTPUT
+
+    - name: Set up Python ${{ inputs.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ inputs.python-version }}
+        cache: pip
+        cache-dependency-path: ''
+        # FIXME: https://github.com/actions/setup-python/issues/361
+        # "${{ steps.requirements.outputs.path }}"
+
+    - name: Install KPOps
+      shell: bash
+      run: |
+        echo "::group::install kpops package"
+        # Check if kpops-version contains ".dev"
+        if [[ "${{ inputs.kpops-version }}" == *".dev"* ]]; then
+          pip install -r "${{ steps.requirements.outputs.path }}" -i https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/
+        else
+          pip install -r "${{ steps.requirements.outputs.path }}"
+        fi
+        echo "::endgroup::"
+
+    - name: ${{ inputs.command }} ${{ inputs.pipeline }} pipeline
+      shell: bash
+      working-directory: ${{inputs.working-directory}}
+      run: kpops ${{ inputs.command }} ${{ inputs.pipeline }} ${{ (inputs.config != '' && format('--config {0}', inputs.config)) || '' }} ${{ (inputs.environment != '' && format('--environment {0}', inputs.environment)) || '' }} ${{ (inputs.filter-type != '' && format('--filter-type {0}', inputs.filter-type)) || '' }} ${{ (inputs.parallel == 'true' && '--parallel') || '' }}

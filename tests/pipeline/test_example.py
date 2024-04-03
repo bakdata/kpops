@@ -1,30 +1,37 @@
+import os
+from pathlib import Path
+
 import pytest
-import yaml
-from snapshottest.module import SnapshotTest
+from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
-from kpops.cli.main import app
+import kpops
 
 runner = CliRunner()
 
+EXAMPLES_PATH = Path("examples").absolute()
 
-@pytest.mark.usefixtures("mock_env")
+
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class TestExample:
-    def test_atm_fraud(self, snapshot: SnapshotTest):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                "./examples/bakdata/atm-fraud-detection/pipeline.yaml",
-                "--pipeline-base-dir",
-                "examples",
-                "--config",
-                "./examples/bakdata/atm-fraud-detection/config.yaml",
-            ],
-            catch_exceptions=False,
-        )
+    @pytest.fixture(scope="class", autouse=True)
+    def cd(self):
+        cwd = Path.cwd().absolute()
+        os.chdir(EXAMPLES_PATH)
+        yield
+        os.chdir(cwd)
 
-        assert result.exit_code == 0
+    def test_cwd(self):
+        assert Path.cwd() == EXAMPLES_PATH
 
-        enriched_pipeline: dict = yaml.safe_load(result.stdout)
-        snapshot.assert_match(enriched_pipeline, "atm-fraud-pipeline")
+    @pytest.fixture(scope="session")
+    def test_submodule(self):
+        assert any(
+            EXAMPLES_PATH.iterdir()
+        ), "examples directory is empty, please initialize and update the git submodule (see contributing guide)"
+
+    @pytest.mark.usefixtures("test_submodule")
+    @pytest.mark.parametrize("pipeline_name", ["word-count", "atm-fraud"])
+    def test_generate(self, pipeline_name: str, snapshot: Snapshot):
+        pipeline = kpops.generate(Path(f"{pipeline_name}/pipeline.yaml"))
+        snapshot.assert_match(pipeline.to_yaml(), "pipeline.yaml")

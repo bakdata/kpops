@@ -1,27 +1,26 @@
 """Generates the documentation on KPOps environment variables."""
 
+from __future__ import annotations
+
 import csv
 import shutil
-from collections.abc import Callable, Iterator
+from collections.abc import Callable
+from contextlib import suppress
 from dataclasses import dataclass
 from pathlib import Path
 from textwrap import fill
 from typing import Any
 
-from pydantic import BaseSettings
-from pydantic.fields import ModelField
+from pydantic_core import PydanticUndefined
 from pytablewriter import MarkdownTableWriter
 from typer.models import ArgumentInfo, OptionInfo
-
-try:
-    from typing import Self
-except ImportError:
-    from typing_extensions import Self
 
 from hooks import ROOT
 from hooks.gen_docs import IterableStrEnum
 from kpops.cli import main
-from kpops.cli.pipeline_config import PipelineConfig
+from kpops.config import KpopsConfig
+from kpops.utils.dict_ops import generate_substitution
+from kpops.utils.pydantic import collect_fields
 
 PATH_DOCS_RESOURCES = ROOT / "docs/docs/resources"
 PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
@@ -29,10 +28,10 @@ PATH_DOCS_VARIABLES = PATH_DOCS_RESOURCES / "variables"
 PATH_CONFIG_ENV_VARS_DOTENV_FILE = PATH_DOCS_VARIABLES / "config_env_vars.env"
 PATH_CONFIG_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "config_env_vars.md"
 PATH_CONFIG_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_config_env_vars.csv"
-TITLE_CONFIG_ENV_VARS = "Pipeline config environment variables"
+TITLE_CONFIG_ENV_VARS = "Global config environment variables"
 DESCRIPTION_CONFIG_ENV_VARS = (
-    "These variables are a lower priority alternative to the settings in `config.yaml`. "
-    "Variables marked as required can instead be set in the pipeline config."
+    "These variables take precedence over the settings in `config.yaml`. "
+    "Variables marked as required can instead be set in the global config."
 )
 
 PATH_CLI_ENV_VARS_DOTFILES_FILE = PATH_DOCS_VARIABLES / "cli_env_vars.env"
@@ -40,7 +39,7 @@ PATH_CLI_ENV_VARS_MD_FILE = PATH_DOCS_VARIABLES / "cli_env_vars.md"
 PATH_CLI_ENV_VARS_CSV_FILE = PATH_DOCS_VARIABLES / "temp_cli_env_vars.csv"
 TITLE_CLI_ENV_VARS = "CLI Environment variables"
 DESCRIPTION_CLI_ENV_VARS = (
-    "These variables are a lower priority alternative to the commands' flags. "
+    "These variables take precedence over the commands' flags. "
     "If a variable is set, the corresponding flag does not have to be specified in commands. "
     "Variables marked as required can instead be set as flags."
 )
@@ -71,7 +70,9 @@ class EnvVar:
     corresponding_setting_name: str | None
 
     @classmethod
-    def from_record(cls, record: dict[str, Any]) -> Self:
+    def from_record(
+        cls, record: dict[str, Any]
+    ) -> EnvVar:  # TODO: typing.Self for Python 3.11+
         """Construct an ``EnvVar`` instance from a specific dict.
 
         Reads a dict that contains keys equivalent to the
@@ -127,7 +128,7 @@ def csv_append_env_var(
                 width=68,
             )
     required = False
-    if default_value == Ellipsis:
+    if default_value in [Ellipsis, PydanticUndefined]:
         required = True
         default_value = ""
     elif default_value is None:
@@ -227,7 +228,6 @@ def write_csv_to_md_file(
     :param source: path to csv file to read from
     :param target: path to md file to overwrite or create
     :param title: Title for the table, optional
-
     """
     if heading:
         heading += " "
@@ -246,43 +246,33 @@ def write_csv_to_md_file(
 
 
 def fill_csv_pipeline_config(target: Path) -> None:
-    """Append all ``PipelineConfig``-related env vars to a ``.csv`` file.
+    """Append all ``KpopsConfig``-related env vars to a ``.csv`` file.
 
-    Finds all ``PipelineConfig``-related env vars and appends them to
+    Finds all ``KpopsConfig``-related env vars and appends them to
     a ``.csv`` file.
 
     :param target: The path to the `.csv` file. Note that it must already
         contain the column names
     """
-    for field in collect_fields(PipelineConfig):
-        field_info = PipelineConfig.Config.get_field_info(field.name)
+    for (field_name, field_value), env_var_name in zip(
+        generate_substitution(collect_fields(KpopsConfig), separator=".").items(),
+        generate_substitution(collect_fields(KpopsConfig), separator="__").keys(),
+        strict=True,
+    ):
+        with suppress(KeyError):  # In case the prefix is ever removed from KpopsConfig
+            env_var_name = KpopsConfig.model_config["env_prefix"] + env_var_name
         field_description: str = (
-            field.field_info.description
+            field_value.description
             or "No description available, please refer to the pipeline config documentation."
         )
-        field_default = field.field_info.default
-        if config_env_var := field_info.get(
-            "env",
-        ) or field.field_info.extra.get("env"):
-            csv_append_env_var(
-                target,
-                config_env_var,
-                field_default,
-                field_description,
-                field.name,
-            )
-
-
-def collect_fields(settings: type[BaseSettings]) -> Iterator[ModelField]:
-    """Collect and yield all fields in a settings class.
-
-    :param model: settings class
-    :yield: all settings including nested ones in settings classes
-    """
-    for field in settings.__fields__.values():
-        if issubclass(field_type := field.type_, BaseSettings):
-            yield from collect_fields(field_type)
-        yield field
+        field_default = field_value.default
+        csv_append_env_var(
+            target,
+            env_var_name.upper(),
+            field_default,
+            field_description,
+            field_name,
+        )
 
 
 def fill_csv_cli(target: Path) -> None:

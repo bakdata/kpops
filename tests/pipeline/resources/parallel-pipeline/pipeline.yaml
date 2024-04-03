@@ -1,0 +1,64 @@
+- type: producer-app
+  name: transaction-avro-producer-1
+  to:
+    topics:
+      my-output-topic-with-multiple-producers:
+        type: output
+        partitions_count: 3
+
+- type: producer-app
+  name: transaction-avro-producer-2
+  to:
+    topics:
+      my-output-topic-with-multiple-producers:
+        type: output
+        partitions_count: 3
+
+- type: producer-app
+  name: transaction-avro-producer-3
+  to:
+    topics:
+      my-output-topic-with-multiple-producers:
+        type: output
+        partitions_count: 3
+
+- type: streams-app
+  name: transaction-joiner
+
+- type: streams-app
+  name: fraud-detector
+
+- type: streams-app
+  name: account-linker
+  from:
+    components:
+      fraud-detector:
+        type: input
+
+- type: kafka-sink-connector
+  name: s3-connector-1
+  from:
+    topics:
+      account-linker-test-topic:
+        type: input
+  app:
+    connector.class: io.confluent.connect.s3.S3SinkConnector
+
+
+- type: kafka-sink-connector
+  name: s3-connector-2
+  from:
+    topics:
+      account-linker-test-topic:
+        type: input
+  app:
+    connector.class: io.confluent.connect.s3.S3SinkConnector
+
+- type: kafka-sink-connector
+  name: s3-connector-3
+  from:
+    topics:
+      account-linker-test-topic:
+        type: input
+  app:
+    connector.class: io.confluent.connect.s3.S3SinkConnector

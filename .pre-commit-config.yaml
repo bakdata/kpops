@@ -4,14 +4,22 @@ repos:
       - id: ruff-lint
         name: ruff-lint
         entry: ruff check
-        args: [ --force-exclude, --config, pyproject.toml, --fix, --show-fixes, --exit-non-zero-on-fix ]
+        args:
+          [
+            --force-exclude,
+            --config,
+            pyproject.toml,
+            --fix,
+            --show-fixes,
+            --exit-non-zero-on-fix,
+          ]
         language: system
         types_or: [python]
         require_serial: true # run once for all files
       - id: ruff-format
         name: ruff-format
         entry: ruff format
-        args: [ --force-exclude, --config, pyproject.toml ]
+        args: [--force-exclude, --config, pyproject.toml]
         language: system
         types_or: [python]
         require_serial: true # run once for all files
@@ -21,7 +29,6 @@ repos:
         language: system
         types: [python]
         require_serial: true # run once for all files
-        exclude: ^tests/.*snapshots/
       - id: gen-schema
         name: gen-schema
         entry: python hooks/gen_schema.py
@@ -68,7 +75,7 @@ repos:
           )$
         require_serial: true
       - id: dprint
-        name: dprint 
+        name: dprint
         entry: dprint fmt
         language: system
         types: [markdown]

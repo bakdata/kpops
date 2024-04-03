@@ -5,5 +5,7 @@ child:
   name: fake-child-name
   nice:
     fake-value: must-be-overwritten
+  nested:
+    foo: foo
 env-var-test:
-  name: $pipeline_name
+  name: ${pipeline_name}

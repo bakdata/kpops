@@ -1,0 +1,27 @@
+pipeline-component:
+  prefix: ""
+
+kubernetes-app:
+  namespace: ${NAMESPACE}
+
+kafka-connector:
+  namespace: ${NAMESPACE}
+
+kafka-app:
+  app:
+    streams:
+      brokers: ${config.kafka_brokers}
+      schemaRegistryUrl: ${config.schema_registry.url}
+
+streams-app:
+  app:
+    labels:
+      pipeline: ${pipeline.name}
+  to:
+    topics:
+      ${error_topic_name}:
+        type: error
+        partitions_count: 1
+      ${output_topic_name}:
+        type: output
+        partitions_count: 3

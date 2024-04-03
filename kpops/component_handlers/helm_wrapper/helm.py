@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import re
 import subprocess
 import tempfile
+from pathlib import Path
 from typing import TYPE_CHECKING
 
 import yaml
@@ -18,6 +20,8 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
     Version,
 )
+from kpops.component_handlers.kubernetes.model import KubernetesManifest
+from kpops.components.base_components.models.resource import Resource
 
 if TYPE_CHECKING:
     from collections.abc import Iterable, Iterator
@@ -71,7 +75,7 @@ class Helm:
         else:
             self.__execute(["helm", "repo", "update"])
 
-    def upgrade_install(
+    async def upgrade_install(
         self,
         release_name: str,
         chart: str,
@@ -83,7 +87,7 @@ class Helm:
         """Prepare and execute the `helm upgrade --install` command."""
         if flags is None:
             flags = HelmUpgradeInstallFlags()
-        with tempfile.NamedTemporaryFile("w") as values_file:
+        with tempfile.NamedTemporaryFile("w", delete=False) as values_file:
             yaml.safe_dump(values, values_file)
 
             command = [
@@ -100,15 +104,15 @@ class Helm:
             command.extend(flags.to_command())
             if dry_run:
                 command.append("--dry-run")
-            return self.__execute(command)
+            return await self.__async_execute(command)
 
-    def uninstall(
+    async def uninstall(
         self,
         namespace: str,
         release_name: str,
         dry_run: bool,
     ) -> str | None:
-        """Prepare and execute the helm uninstall command."""
+        """Prepare and execute the `helm uninstall` command."""
         command = [
             "helm",
             "uninstall",
@@ -119,7 +123,7 @@ class Helm:
         if dry_run:
             command.append("--dry-run")
         try:
-            return self.__execute(command)
+            return await self.__async_execute(command)
         except ReleaseNotFoundException:
             log.warning(
                 f"Release with name {release_name} not found. Could not uninstall app."
@@ -132,8 +136,8 @@ class Helm:
         namespace: str,
         values: dict,
         flags: HelmTemplateFlags | None = None,
-    ) -> str:
-        """From HELM: Render chart templates locally and display the output.
+    ) -> Resource:
+        """From Helm: Render chart templates locally and display the output.
 
         Any values that would normally be looked up or retrieved in-cluster will
         be faked locally. Additionally, none of the server-side testing of chart
@@ -144,11 +148,11 @@ class Helm:
         :param namespace: The Kubernetes namespace the command should execute in
         :param values: `values.yaml` to be used
         :param flags: the flags to be set for `helm template`, defaults to HelmTemplateFlags()
-        :return: the output of `helm template`
+        :return: the rendered resource (list of Kubernetes manifests)
         """
         if flags is None:
             flags = HelmTemplateFlags()
-        with tempfile.NamedTemporaryFile("w") as values_file:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False) as values_file:
             yaml.safe_dump(values, values_file)
             command = [
                 "helm",
@@ -161,7 +165,9 @@ class Helm:
                 values_file.name,
             ]
             command.extend(flags.to_command())
-            return self.__execute(command)
+            output = self.__execute(command)
+            manifests = KubernetesManifest.from_yaml(output)
+            return list(manifests)
 
     def get_manifest(self, release_name: str, namespace: str) -> Iterable[HelmTemplate]:
         command = [
@@ -198,7 +204,11 @@ class Helm:
             if line.startswith("---"):
                 is_beginning = True
                 if template_name and current_yaml_doc:
-                    yield HelmTemplate.load(template_name, "\n".join(current_yaml_doc))
+                    manifests = KubernetesManifest.from_yaml(
+                        "\n".join(current_yaml_doc)
+                    )
+                    manifest = next(manifests)  # only 1 manifest
+                    yield HelmTemplate(Path(template_name), manifest)
                     template_name = None
                     current_yaml_doc.clear()
             elif is_beginning:
@@ -219,6 +229,20 @@ class Helm:
         Helm.parse_helm_command_stderr_output(process.stderr)
         log.debug(process.stdout)
         return process.stdout
+
+    async def __async_execute(self, command: list[str]):
+        command = self.__set_global_flags(command)
+        log.debug(f"Executing {' '.join(command)}")
+        proc = await asyncio.create_subprocess_exec(
+            *command,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+
+        stdout, stderr = await proc.communicate()
+        Helm.parse_helm_command_stderr_output(stderr.decode())
+        log.debug(stdout)
+        return stdout.decode()
 
     def __set_global_flags(self, command: list[str]) -> list[str]:
         if self._context:

@@ -1,0 +1,3 @@
+helm-app:
+  name: dev-${component.type}
+  namespace: dev-example-namespace

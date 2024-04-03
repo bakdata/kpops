@@ -17,16 +17,18 @@ jobs:
         os:
           - ubuntu-22.04
           - windows-2022
-        python-version: [ "3.10", "3.11" ]
+        python-version: ["3.10", "3.11", "3.12"]
     runs-on: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
 
       - name: Install Python and set up Poetry
         uses: bakdata/ci-templates/actions/python-setup-poetry@v1.5.3
         with:
-          poetry-version: "1.4.1" # REASON: https://github.com/python-poetry/poetry/issues/8180
+          poetry-version: "1.7.1"
           python-version: ${{ matrix.python-version }}
 
       - name: Check Poetry lock file consistency
@@ -79,8 +81,8 @@ jobs:
 
       - name: Install docs dependencies
         run: poetry install --with docs
-      
-      - name: Check markdown formatting
+
+      - name: Check markdown, toml, css formatting
         uses: dprint/check@v2.2
         if: runner.os == 'Linux'
 
@@ -90,31 +92,33 @@ jobs:
   publish-snapshot-version:
     name: Publish snapshot to TestPyPI
     needs: [test]
-    uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@v1.25.0
+    uses: bakdata/ci-templates/.github/workflows/python-poetry-publish-snapshot.yaml@1.40.4
+    with:
+      poetry-version: "1.7.1"
     secrets:
       pypi-token: ${{ secrets.TEST_PYPI_TOKEN }}
-  
+
   publish-docs-from-main:
     runs-on: ubuntu-22.04
     if: ${{ github.ref == 'refs/heads/main' }}
     needs: [test]
     steps:
-      - uses: actions/checkout@v3
-      
+      - uses: actions/checkout@v4
+
       - name: Publish docs from main branch
         uses: ./.github/actions/update-docs
         with:
           username: ${{ secrets.GH_USERNAME }}
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}
-          version: main 
+          version: main
 
   publish-dev-docs-from-pr:
     runs-on: ubuntu-22.04
     if: ${{ github.event_name == 'pull_request' }}
     needs: [test]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
 
@@ -128,11 +132,11 @@ jobs:
             docs:
               - added|deleted|modified: 'docs/**'
 
-      - name: Publish dev docs from PR 
+      - name: Publish dev docs from PR
         if: steps.docs-changes.outputs.docs == 'true'
         uses: ./.github/actions/update-docs
         with:
           username: ${{ secrets.GH_USERNAME }}
           email: ${{ secrets.GH_EMAIL }}
           token: ${{ secrets.GH_TOKEN }}
-          version: dev 
+          version: dev
