@@ -68,6 +68,11 @@ mike = "^1.1.2"
 [tool.pyright]
 reportIncompatibleVariableOverride = false
 reportIncompatibleMethodOverride = false
+reportUnknownArgumentType	= "error"
+reportUnknownLambdaType	= "error"
+reportUnknownMemberType	= "error"
+reportUnknownParameterType = "error"
+reportUnknownVariableType	= "error"
 
 # FIXME: causes issues on Python 3.10
 # reportIncompatibleVariableOverride = "warning"
@@ -178,14 +183,6 @@ extend-immutable-calls = ["typer.Argument"]
 
 [tool.ruff.lint.flake8-type-checking]
 runtime-evaluated-base-classes = ["pydantic.BaseModel"]
-
-[tool.pyright]
-reportUnknownArgumentType	= "error"
-reportUnknownLambdaType	= "error"
-reportUnknownMemberType	= "error"
-reportUnknownParameterType = "error"
-reportUnknownVariableType	= "error"
-
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
