@@ -45,16 +45,6 @@ jobs:
             echo "::add-matcher::.github/ruff-matcher.json"
             poetry run ruff check . --config pyproject.toml --output-format text --no-fix
           else
-            poetry run pre-commit run ruff-lint --all-files --show-diff-on-failure
-          fi;
-      - name: Lint (ruff)
-        shell: bash
-        run: |
-          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
-          then
-            echo "::add-matcher::.github/ruff-matcher.json"
-            poetry run ruff check . --config pyproject.toml --output-format text --no-fix
-          else
             poetry run pre-commit run ruff --all-files --show-diff-on-failure
           fi;
 
@@ -62,7 +52,14 @@ jobs:
         run: poetry run pre-commit run ruff-format --all-files --show-diff-on-failure
 
       - name: Typing (pyright)
-        run: poetry run pre-commit run pyright --all-files
+        run: |
+          if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
+          then
+            echo "::add-matcher::.github/pyright-matcher.json"
+            poetry run pre-commit run pyright --all-files
+          else
+            poetry run pre-commit run pyright --all-files
+          fi;
 
       - name: Generate schema (kpops schema)
         run: poetry run pre-commit run gen-schema --all-files --show-diff-on-failure
