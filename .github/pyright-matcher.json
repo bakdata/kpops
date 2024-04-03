@@ -4,10 +4,6 @@
             "owner": "pyright",
             "pattern": [
                 {
-                    "regexp": "^(\\S*\\.py)$",
-                    "file": 1
-                },
-                {
                     "regexp": "^(\\s\\s\\S*\\.py):(\\d+):(\\d+)\\s-\\s(error|warning|information):([\\s\\S]+?)(?=(?:^\\s\\s\\S*\\.py:\\d+:\\d+\\s-\\s(?:error|warning|information):|\\z))",
                     "file": 1,
                     "line": 2,
