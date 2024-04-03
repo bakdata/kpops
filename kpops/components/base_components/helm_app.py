@@ -57,6 +57,7 @@ class HelmAppValues(KubernetesAppValues):
             by_alias=True, exclude_none=True, exclude_defaults=True
         )
 
+    a: str = 1
 
 class HelmApp(KubernetesApp):
     """Kubernetes app managed through Helm with an associated Helm chart.
