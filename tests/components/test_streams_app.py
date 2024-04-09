@@ -708,63 +708,6 @@ class TestStreamsApp:
         assert str(error.value) == msg
 
     @pytest.mark.asyncio()
-    @pytest.mark.skip(reason="For some reason the helm is not mocked!")
-    async def test_stateful_clean_with_dry_run_true(
-        self, stateful_streams_app: StreamsApp, mocker: MockerFixture
-    ):
-        cleaner = stateful_streams_app._cleaner
-        assert isinstance(cleaner, StreamsAppCleaner)
-
-        mock_helm_upgrade_install = mocker.patch.object(cleaner.helm, "upgrade_install")
-        mock_helm_uninstall = mocker.patch.object(cleaner.helm, "uninstall")
-        mock_delete_pvcs = mocker.patch.object(cleaner.pvc_handler, "delete_pvcs")
-
-        mock = MagicMock()
-        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
-        mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
-        mock.attach_mock(mock_delete_pvcs, "delete_pvcs")
-
-        dry_run = True
-        await stateful_streams_app.clean(dry_run=dry_run)
-
-        # TODO: Assert Log
-
-        mock.assert_has_calls(
-            [
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
-                mocker.call.helm_upgrade_install(
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
-                    dry_run,
-                    "test-namespace",
-                    {
-                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                        "streams": {
-                            "brokers": "fake-broker:9092",
-                            "outputTopic": "streams-app-output-topic",
-                            "deleteOutput": True,
-                        },
-                    },
-                    HelmUpgradeInstallFlags(
-                        version="2.9.0", wait=True, wait_for_jobs=True
-                    ),
-                ),
-                mocker.call.helm_uninstall(
-                    "test-namespace",
-                    STREAMS_APP_CLEAN_RELEASE_NAME,
-                    dry_run,
-                ),
-            ]
-        )
-
-    @pytest.mark.asyncio()
-    @pytest.mark.skip(reason="For some reason the call stack is wrong!")
     async def test_stateful_clean_with_dry_run_false(
         self, stateful_streams_app: StreamsApp, mocker: MockerFixture
     ):
@@ -799,6 +742,8 @@ class TestStreamsApp:
                     "test-namespace",
                     {
                         "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                        "statefulSet": True,
+                        "persistence": {"enabled": True, "size": "5Gi"},
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
