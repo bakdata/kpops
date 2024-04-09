@@ -13,7 +13,6 @@ from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import (
-    StatefulStreamsAppValues,
     StreamsAppValues,
 )
 from kpops.utils.docstring import describe_attr
@@ -31,12 +30,6 @@ class StreamsAppCleaner(KafkaAppCleaner):
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
-
-class StatefulStreamsAppCleaner(StreamsAppCleaner):
-    from_: None = None
-    to: None = None
-    app: StatefulStreamsAppValues
-
     @cached_property
     def pvc_handler(self) -> PVCHandler:
         return PVCHandler(self.full_name, self.namespace)
@@ -44,6 +37,10 @@ class StatefulStreamsAppCleaner(StreamsAppCleaner):
     @override
     async def clean(self, dry_run: bool) -> None:
         await super().clean(dry_run)
+        if self.app.stateful_set:
+            await self.clean_pvcs(dry_run)
+
+    async def clean_pvcs(self, dry_run):
         if dry_run:
             log.info(
                 f"Deleting the PVCs {self.pvc_handler.pvc_names} for StatefulSet '{self.full_name}'"
@@ -135,18 +132,3 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
     async def clean(self, dry_run: bool) -> None:
         self._cleaner.app.streams.delete_output = True
         await self._cleaner.clean(dry_run)
-
-
-class StatefulStreamsApp(StreamsApp):
-    app: StatefulStreamsAppValues = Field(
-        default=...,
-    )
-
-    @computed_field
-    @cached_property
-    def _cleaner(self) -> StatefulStreamsAppCleaner:
-        return StatefulStreamsAppCleaner(
-            config=self.config,
-            handlers=self.handlers,
-            **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"}),
-        )

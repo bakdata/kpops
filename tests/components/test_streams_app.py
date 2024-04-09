@@ -25,8 +25,6 @@ from kpops.components.streams_bootstrap.streams.model import (
     StreamsAppAutoScaling,
 )
 from kpops.components.streams_bootstrap.streams.streams_app import (
-    StatefulStreamsApp,
-    StatefulStreamsAppCleaner,
     StreamsAppCleaner,
 )
 from kpops.config import KpopsConfig, TopicNameConfig
@@ -100,16 +98,19 @@ class TestStreamsApp:
     @pytest.fixture()
     def stateful_streams_app(
         self, config: KpopsConfig, handlers: ComponentHandlers
-    ) -> StatefulStreamsApp:
-        return StatefulStreamsApp(
+    ) -> StreamsApp:
+        return StreamsApp(
             name=STREAMS_APP_NAME,
             config=config,
             handlers=handlers,
             **{
                 "namespace": "test-namespace",
                 "app": {
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "statefulSet": True,
                     "persistence": {"enabled": True, "size": "5Gi"},
+                    "streams": {
+                        "brokers": "fake-broker:9092",
+                    },
                 },
                 "to": {
                     "topics": {
@@ -693,15 +694,8 @@ class TestStreamsApp:
             KafkaTopic(name="topic-extra"),
         ]
 
-    def test_stateful_cleaner_is_correct_instance(
-        self, stateful_streams_app: StatefulStreamsApp
-    ):
-        cleaner = stateful_streams_app._cleaner
-        assert isinstance(cleaner, StreamsAppCleaner)
-        assert not hasattr(cleaner, "_cleaner")
-
     def test_raise_validation_error_when_persistence_enabled_and_size_not_set(
-        self, stateful_streams_app: StatefulStreamsApp
+        self, stateful_streams_app: StreamsApp
     ):
         with pytest.raises(ValidationError) as error:
             stateful_streams_app.app.persistence = PersistenceConfig(
@@ -716,10 +710,10 @@ class TestStreamsApp:
     @pytest.mark.asyncio()
     @pytest.mark.skip(reason="For some reason the helm is not mocked!")
     async def test_stateful_clean_with_dry_run_true(
-        self, stateful_streams_app: StatefulStreamsApp, mocker: MockerFixture
+        self, stateful_streams_app: StreamsApp, mocker: MockerFixture
     ):
         cleaner = stateful_streams_app._cleaner
-        assert isinstance(cleaner, StatefulStreamsAppCleaner)
+        assert isinstance(cleaner, StreamsAppCleaner)
 
         mock_helm_upgrade_install = mocker.patch.object(cleaner.helm, "upgrade_install")
         mock_helm_uninstall = mocker.patch.object(cleaner.helm, "uninstall")
@@ -732,6 +726,8 @@ class TestStreamsApp:
 
         dry_run = True
         await stateful_streams_app.clean(dry_run=dry_run)
+
+        # TODO: Assert Log
 
         mock.assert_has_calls(
             [
@@ -770,10 +766,10 @@ class TestStreamsApp:
     @pytest.mark.asyncio()
     @pytest.mark.skip(reason="For some reason the call stack is wrong!")
     async def test_stateful_clean_with_dry_run_false(
-        self, stateful_streams_app: StatefulStreamsApp, mocker: MockerFixture
+        self, stateful_streams_app: StreamsApp, mocker: MockerFixture
     ):
         cleaner = stateful_streams_app._cleaner
-        assert isinstance(cleaner, StatefulStreamsAppCleaner)
+        assert isinstance(cleaner, StreamsAppCleaner)
 
         mock_helm_upgrade_install = mocker.patch.object(cleaner.helm, "upgrade_install")
         mock_helm_uninstall = mocker.patch.object(cleaner.helm, "uninstall")
