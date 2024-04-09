@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 import pydantic
-from pydantic import ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
@@ -221,3 +221,43 @@ class StreamsAppValues(KafkaAppValues):
         description=describe_attr("autoscaling", __doc__),
     )
     model_config = ConfigDict(extra="allow")
+
+
+class PersistenceConfig(BaseModel):
+    enabled: bool = Field(
+        default=False, description="Whether create PVCs for the StatefulSet."
+    )
+    size: str = Field(
+        default=None,
+        description="The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
+    )
+
+    @model_validator(mode="after")
+    def validate_mandatory_fields_are_set(
+        self: PersistenceConfig,
+    ) -> PersistenceConfig:  # TODO: typing.Self for Python 3.11+
+        if self.enabled and self.size is None:
+            msg = (
+                "If app.persistence.enabled is set to true, "
+                "the field app.persistence.size needs to be set."
+            )
+            raise ValidationError(msg)
+        return self
+
+
+class StatefulStreamsAppValues(StreamsAppValues):
+    stateful_set: bool = Field(
+        default=True, frozen=True, serialization_alias="statefulSet"
+    )
+    persistence: PersistenceConfig
+
+    @field_validator("streams", mode="before", check_fields=False)
+    @classmethod
+    def enable_static_membership(
+        cls,
+        streams: StreamsConfig | dict[str, Any],
+    ) -> StreamsConfig:
+        if isinstance(streams, StreamsConfig):
+            streams = streams.model_dump()
+        streams["staticMembership"] = True
+        return StreamsConfig(**streams)

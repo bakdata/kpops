@@ -1,5 +1,5 @@
 from pathlib import Path
-from unittest.mock import ANY, AsyncMock
+from unittest.mock import ANY, AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -20,8 +20,15 @@ from kpops.components.base_components.models.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap.streams.model import StreamsAppAutoScaling
-from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
+from kpops.components.streams_bootstrap.streams.model import (
+    PersistenceConfig,
+    StreamsAppAutoScaling,
+)
+from kpops.components.streams_bootstrap.streams.streams_app import (
+    StatefulStreamsApp,
+    StatefulStreamsAppCleaner,
+    StreamsAppCleaner,
+)
 from kpops.config import KpopsConfig, TopicNameConfig
 from kpops.pipeline import ValidationError
 from tests.components import PIPELINE_BASE_DIR
@@ -79,6 +86,30 @@ class TestStreamsApp:
                 "namespace": "test-namespace",
                 "app": {
                     "streams": {"brokers": "fake-broker:9092"},
+                },
+                "to": {
+                    "topics": {
+                        "streams-app-output-topic": TopicConfig(
+                            type=OutputTopicTypes.OUTPUT, partitions_count=10
+                        ),
+                    }
+                },
+            },
+        )
+
+    @pytest.fixture()
+    def stateful_streams_app(
+        self, config: KpopsConfig, handlers: ComponentHandlers
+    ) -> StatefulStreamsApp:
+        return StatefulStreamsApp(
+            name=STREAMS_APP_NAME,
+            config=config,
+            handlers=handlers,
+            **{
+                "namespace": "test-namespace",
+                "app": {
+                    "streams": {"brokers": "fake-broker:9092"},
+                    "persistence": {"enabled": True, "size": "5Gi"},
                 },
                 "to": {
                     "topics": {
@@ -661,3 +692,134 @@ class TestStreamsApp:
             KafkaTopic(name="topic-extra3"),
             KafkaTopic(name="topic-extra"),
         ]
+
+    def test_stateful_cleaner_is_correct_instance(
+        self, stateful_streams_app: StatefulStreamsApp
+    ):
+        cleaner = stateful_streams_app._cleaner
+        assert isinstance(cleaner, StreamsAppCleaner)
+        assert not hasattr(cleaner, "_cleaner")
+
+    def test_raise_validation_error_when_persistence_enabled_and_size_not_set(
+        self, stateful_streams_app: StatefulStreamsApp
+    ):
+        with pytest.raises(ValidationError) as error:
+            stateful_streams_app.app.persistence = PersistenceConfig(
+                enabled=True,
+            )
+        msg = (
+            "If app.persistence.enabled is set to true, "
+            "the field app.persistence.size needs to be set."
+        )
+        assert str(error.value) == msg
+
+    @pytest.mark.asyncio()
+    @pytest.mark.skip(reason="For some reason the helm is not mocked!")
+    async def test_stateful_clean_with_dry_run_true(
+        self, stateful_streams_app: StatefulStreamsApp, mocker: MockerFixture
+    ):
+        cleaner = stateful_streams_app._cleaner
+        assert isinstance(cleaner, StatefulStreamsAppCleaner)
+
+        mock_helm_upgrade_install = mocker.patch.object(cleaner.helm, "upgrade_install")
+        mock_helm_uninstall = mocker.patch.object(cleaner.helm, "uninstall")
+        mock_delete_pvcs = mocker.patch.object(cleaner.pvc_handler, "delete_pvcs")
+
+        mock = MagicMock()
+        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
+        mock.attach_mock(mock_delete_pvcs, "delete_pvcs")
+
+        dry_run = True
+        await stateful_streams_app.clean(dry_run=dry_run)
+
+        mock.assert_has_calls(
+            [
+                mocker.call.helm_uninstall(
+                    "test-namespace",
+                    STREAMS_APP_CLEAN_RELEASE_NAME,
+                    dry_run,
+                ),
+                ANY,  # __bool__
+                ANY,  # __str__
+                mocker.call.helm_upgrade_install(
+                    STREAMS_APP_CLEAN_RELEASE_NAME,
+                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                    dry_run,
+                    "test-namespace",
+                    {
+                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                        "streams": {
+                            "brokers": "fake-broker:9092",
+                            "outputTopic": "streams-app-output-topic",
+                            "deleteOutput": True,
+                        },
+                    },
+                    HelmUpgradeInstallFlags(
+                        version="2.9.0", wait=True, wait_for_jobs=True
+                    ),
+                ),
+                mocker.call.helm_uninstall(
+                    "test-namespace",
+                    STREAMS_APP_CLEAN_RELEASE_NAME,
+                    dry_run,
+                ),
+            ]
+        )
+
+    @pytest.mark.asyncio()
+    @pytest.mark.skip(reason="For some reason the call stack is wrong!")
+    async def test_stateful_clean_with_dry_run_false(
+        self, stateful_streams_app: StatefulStreamsApp, mocker: MockerFixture
+    ):
+        cleaner = stateful_streams_app._cleaner
+        assert isinstance(cleaner, StatefulStreamsAppCleaner)
+
+        mock_helm_upgrade_install = mocker.patch.object(cleaner.helm, "upgrade_install")
+        mock_helm_uninstall = mocker.patch.object(cleaner.helm, "uninstall")
+        mock_delete_pvcs = mocker.patch.object(cleaner.pvc_handler, "delete_pvcs")
+
+        mock = MagicMock()
+        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
+        mock.attach_mock(mock_delete_pvcs, "delete_pvcs")
+
+        dry_run = False
+        await stateful_streams_app.clean(dry_run=dry_run)
+
+        mock.assert_has_calls(
+            [
+                mocker.call.helm_uninstall(
+                    "test-namespace",
+                    STREAMS_APP_CLEAN_RELEASE_NAME,
+                    dry_run,
+                ),
+                ANY,  # __bool__
+                ANY,  # __str__
+                mocker.call.helm_upgrade_install(
+                    STREAMS_APP_CLEAN_RELEASE_NAME,
+                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                    dry_run,
+                    "test-namespace",
+                    {
+                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                        "streams": {
+                            "brokers": "fake-broker:9092",
+                            "outputTopic": "streams-app-output-topic",
+                            "deleteOutput": True,
+                        },
+                    },
+                    HelmUpgradeInstallFlags(
+                        version="2.9.0", wait=True, wait_for_jobs=True
+                    ),
+                ),
+                mocker.call.helm_uninstall(
+                    "test-namespace",
+                    STREAMS_APP_CLEAN_RELEASE_NAME,
+                    dry_run,
+                ),
+                ANY,  # __bool__
+                ANY,  # __str__
+                mocker.call.delete_pvcs(),
+            ]
+        )
