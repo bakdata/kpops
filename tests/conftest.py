@@ -1,3 +1,4 @@
+import logging
 import os
 from collections.abc import Iterator
 from unittest import mock
@@ -6,6 +7,9 @@ import pytest
 
 from kpops.utils.environment import ENV, Environment
 from kpops.utils.yaml import load_yaml_file
+
+logger = logging.getLogger("faker")
+logger.setLevel(logging.INFO)  # quiet faker locale messages
 
 
 @pytest.fixture()
