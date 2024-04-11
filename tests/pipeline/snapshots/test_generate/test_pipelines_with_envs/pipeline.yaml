@@ -64,11 +64,14 @@
         topics: []
       commandLine:
         CONVERT_XML: true
+      persistence:
+        enabled: false
       resources:
         limits:
           memory: 2G
         requests:
           memory: 2G
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -102,11 +105,14 @@
       topics: []
     commandLine:
       CONVERT_XML: true
+    persistence:
+      enabled: false
     resources:
       limits:
         memory: 2G
       requests:
         memory: 2G
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
@@ -158,10 +164,13 @@
         TYPE: nothing
       image: fake-registry/filter
       imageTag: 2.4.1
+      persistence:
+        enabled: false
       replicaCount: 4
       resources:
         requests:
           memory: 3G
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -198,10 +207,13 @@
       TYPE: nothing
     image: fake-registry/filter
     imageTag: 2.4.1
+    persistence:
+      enabled: false
     replicaCount: 4
     resources:
       requests:
         memory: 3G
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:

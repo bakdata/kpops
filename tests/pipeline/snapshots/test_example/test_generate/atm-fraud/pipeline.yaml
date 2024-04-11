@@ -138,10 +138,13 @@
       imageTag: 1.0.0
       labels:
         pipeline: atm-fraud
+      persistence:
+        enabled: false
       prometheus:
         jmx:
           enabled: false
       replicaCount: 1
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         errorTopic: atm-fraud-transaction-joiner-dead-letter-topic
@@ -171,10 +174,13 @@
     imageTag: 1.0.0
     labels:
       pipeline: atm-fraud
+    persistence:
+      enabled: false
     prometheus:
       jmx:
         enabled: false
     replicaCount: 1
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       errorTopic: atm-fraud-transaction-joiner-dead-letter-topic
@@ -214,10 +220,13 @@
       imageTag: 1.0.0
       labels:
         pipeline: atm-fraud
+      persistence:
+        enabled: false
       prometheus:
         jmx:
           enabled: false
       replicaCount: 1
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         errorTopic: atm-fraud-fraud-detector-dead-letter-topic
@@ -247,10 +256,13 @@
     imageTag: 1.0.0
     labels:
       pipeline: atm-fraud
+    persistence:
+      enabled: false
     prometheus:
       jmx:
         enabled: false
     replicaCount: 1
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       errorTopic: atm-fraud-fraud-detector-dead-letter-topic
@@ -290,10 +302,13 @@
       imageTag: 1.0.0
       labels:
         pipeline: atm-fraud
+      persistence:
+        enabled: false
       prometheus:
         jmx:
           enabled: false
       replicaCount: 1
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         errorTopic: atm-fraud-account-linker-dead-letter-topic
@@ -326,10 +341,13 @@
     imageTag: 1.0.0
     labels:
       pipeline: atm-fraud
+    persistence:
+      enabled: false
     prometheus:
       jmx:
         enabled: false
     replicaCount: 1
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       errorTopic: atm-fraud-account-linker-dead-letter-topic

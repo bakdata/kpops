@@ -1,6 +1,9 @@
 - _cleaner:
     app:
       image: fake-image
+      persistence:
+        enabled: false
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -23,6 +26,9 @@
     version: 2.4.2
   app:
     image: fake-image
+    persistence:
+      enabled: false
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:

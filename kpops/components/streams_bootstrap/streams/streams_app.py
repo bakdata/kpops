@@ -40,14 +40,15 @@ class StreamsAppCleaner(KafkaAppCleaner):
         if self.app.stateful_set:
             await self.clean_pvcs(dry_run)
 
-    async def clean_pvcs(self, dry_run):
+    async def clean_pvcs(self, dry_run: bool) -> None:
         if dry_run:
+            pvc_names = await self.pvc_handler.pvc_names
             log.info(
-                f"Deleting the PVCs {self.pvc_handler.pvc_names} for StatefulSet '{self.full_name}'"
+                f"Deleting the PVCs {pvc_names} for StatefulSet '{self.full_name}'"
             )
         if not dry_run and self.app.persistence.enabled:
             log.info(f"Deleting the PVCs for StatefulSet '{self.full_name}'")
-            self.pvc_handler.delete_pvcs()
+            await self.pvc_handler.delete_pvcs()
 
 
 class StreamsApp(KafkaApp, StreamsBootstrap):

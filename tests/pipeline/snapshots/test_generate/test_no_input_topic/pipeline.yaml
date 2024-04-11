@@ -2,11 +2,14 @@
     app:
       commandLine:
         CONVERT_XML: true
+      persistence:
+        enabled: false
       resources:
         limits:
           memory: 2G
         requests:
           memory: 2G
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -29,11 +32,14 @@
   app:
     commandLine:
       CONVERT_XML: true
+    persistence:
+      enabled: false
     resources:
       limits:
         memory: 2G
       requests:
         memory: 2G
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
@@ -71,6 +77,9 @@
   version: 2.4.2
 - _cleaner:
     app:
+      persistence:
+        enabled: false
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -94,6 +103,9 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    persistence:
+      enabled: false
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
