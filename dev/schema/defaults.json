@@ -738,6 +738,45 @@
             "title": "OutputTopicTypes",
             "type": "string"
         },
+        "PersistenceConfig": {
+            "description": "streams-bootstrap persistence configurations.\n\n:param enabled: Whether to use a persistent volume to store the state of the streams app.\n:param size: The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.\n:param storage_class: Storage class to use for the persistent volume.",
+            "properties": {
+                "enabled": {
+                    "default": false,
+                    "description": "Whether to use a persistent volume to store the state of the streams app.\t",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "size": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
+                    "title": "Size"
+                },
+                "storage_class": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Storage class to use for the persistent volume.",
+                    "title": "Storage Class"
+                }
+            },
+            "title": "PersistenceConfig",
+            "type": "object"
+        },
         "PipelineComponent": {
             "additionalProperties": true,
             "description": "Base class for all components.",
@@ -1247,6 +1286,25 @@
                     "default": null,
                     "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
+                },
+                "persistence": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/PersistenceConfig"
+                        }
+                    ],
+                    "default": {
+                        "enabled": false,
+                        "size": null,
+                        "storage_class": null
+                    },
+                    "description": ""
+                },
+                "statefulSet": {
+                    "default": false,
+                    "description": "Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
+                    "title": "Statefulset",
+                    "type": "boolean"
                 },
                 "streams": {
                     "allOf": [
