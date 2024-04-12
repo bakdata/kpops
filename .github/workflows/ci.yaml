@@ -8,6 +8,10 @@ on:
       - main
   workflow_dispatch:
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   test:
     name: Test
@@ -38,7 +42,6 @@ jobs:
         run: poetry install --no-interaction
 
       - name: Lint (ruff)
-        shell: bash
         run: |
           if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
           then
@@ -52,7 +55,6 @@ jobs:
         run: poetry run pre-commit run ruff-format --all-files --show-diff-on-failure
 
       - name: Typing (pyright)
-        shell: bash
         run: |
           if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
           then
