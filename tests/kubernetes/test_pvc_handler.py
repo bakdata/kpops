@@ -43,14 +43,13 @@ async def test_pvc_names(pvc_handler: PVCHandler):
 
 @pytest.mark.asyncio
 async def test_delete_pvcs(pvc_handler: PVCHandler, mocker: MockerFixture):
-    mock = mocker.patch(
+    mocker.patch(
         f"{MODULE}.PVCHandler.get_pvc_names",
         new_callable=AsyncMock,
         return_value=["test-pvc"],
     )
-    print(mock)
-    with patch(f"{MODULE}.client.CoreV1Api") as mock_core_v1_api:
-        await pvc_handler.delete_pvcs()
-        mock_core_v1_api.return_value.delete_namespaced_persistent_volume_claim.assert_called_once_with(
-            "test-pvc", "test-namespace"
-        )
+    mock_core_v1_api = mocker.patch(f"{MODULE}.client.CoreV1Api")
+    await pvc_handler.delete_pvcs()
+    mock_core_v1_api.return_value.delete_namespaced_persistent_volume_claim.assert_called_once_with(
+        "test-pvc", "test-namespace"
+    )
