@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import logging
 
 from kubernetes_asyncio import client, config
@@ -12,13 +14,12 @@ class PVCHandler:
         self.namespace = namespace
 
     @classmethod
-    async def create(cls, app_name: str, namespace: str):
+    async def create(cls, app_name: str, namespace: str) -> PVCHandler:
         self = cls(app_name, namespace)
         await config.load_kube_config()
         return self
 
-    @property
-    async def pvc_names(self) -> list[str]:
+    async def get_pvc_names(self) -> list[str]:
         async with ApiClient() as api:
             core_v1_api = client.CoreV1Api(api)
             pvc_list = core_v1_api.list_namespaced_persistent_volume_claim(
@@ -38,7 +39,7 @@ class PVCHandler:
     async def delete_pvcs(self) -> None:
         async with ApiClient() as api:
             core_v1_api = client.CoreV1Api(api)
-            pvc_names = await self.pvc_names
+            pvc_names = await self.get_pvc_names()
             log.debug(
                 f"Deleting in namespace '{self.namespace}' StatefulSet '{self.app_name}' PVCs '{pvc_names}'"
             )

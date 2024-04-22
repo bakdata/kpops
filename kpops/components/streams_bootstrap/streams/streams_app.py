@@ -42,7 +42,7 @@ class StreamsAppCleaner(KafkaAppCleaner):
 
     async def clean_pvcs(self, dry_run: bool) -> None:
         if dry_run:
-            pvc_names = await self.pvc_handler.pvc_names
+            pvc_names = await self.pvc_handler.get_pvc_names()
             log.info(
                 f"Deleting the PVCs {pvc_names} for StatefulSet '{self.full_name}'"
             )
