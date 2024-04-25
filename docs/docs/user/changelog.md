@@ -1,4 +1,15 @@
 # Changelog
+## [4.2.1](https://github.com/bakdata/kpops/releases/tag/4.2.1) - Release Date: [2024-04-25]
+
+### 🚀 Features
+
+- Add support for cleaning StatefulSets with PVCs - [#482](https://github.com/bakdata/kpops/pull/482)
+
+
+
+
+
+
 ## [4.2.0](https://github.com/bakdata/kpops/releases/tag/4.2.0) - Release Date: [2024-04-25]
 
 ### 🏭 Refactor
