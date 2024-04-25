@@ -1,4 +1,26 @@
 # Changelog
+## [4.2.0](https://github.com/bakdata/kpops/releases/tag/4.2.0) - Release Date: [2024-04-25]
+
+### 🏭 Refactor
+
+- Improve type annotations for parallel pipeline jobs - [#476](https://github.com/bakdata/kpops/pull/476)
+
+
+### 🌀 Miscellaneous
+
+- Update Ruff - [#475](https://github.com/bakdata/kpops/pull/475)
+
+- Set Pyright to warn on unknown types - [#480](https://github.com/bakdata/kpops/pull/480)
+
+- Quiet faker debug logs in tests - [#483](https://github.com/bakdata/kpops/pull/483)
+
+- Add pyright matcher - [#481](https://github.com/bakdata/kpops/pull/481)
+
+
+
+
+
+
 ## [4.1.2](https://github.com/bakdata/kpops/releases/tag/4.1.2) - Release Date: [2024-03-11]
 
 ### 📝 Documentation
