@@ -64,10 +64,13 @@
       imageTag: 1.0.0
       labels:
         pipeline: word-count
+      persistence:
+        enabled: false
       prometheus:
         jmx:
           enabled: false
       replicaCount: 1
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         errorTopic: word-count-word-counter-dead-letter-topic
@@ -95,10 +98,13 @@
     imageTag: 1.0.0
     labels:
       pipeline: word-count
+    persistence:
+      enabled: false
     prometheus:
       jmx:
         enabled: false
     replicaCount: 1
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       errorTopic: word-count-word-counter-dead-letter-topic

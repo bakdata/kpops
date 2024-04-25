@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 import pydantic
-from pydantic import ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
@@ -203,6 +203,40 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
         return self
 
 
+class PersistenceConfig(BaseModel):
+    """streams-bootstrap persistence configurations.
+
+    :param enabled: Whether to use a persistent volume to store the state of the streams app.
+    :param size: The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.
+    :param storage_class: Storage class to use for the persistent volume.
+    """
+
+    enabled: bool = Field(
+        default=False,
+        description="Whether to use a persistent volume to store the state of the streams app.	",
+    )
+    size: str | None = Field(
+        default=None,
+        description="The size of the PersistentVolume to allocate to each streams pod in the StatefulSet.",
+    )
+    storage_class: str | None = Field(
+        default=None,
+        description="Storage class to use for the persistent volume.",
+    )
+
+    @model_validator(mode="after")
+    def validate_mandatory_fields_are_set(
+        self: PersistenceConfig,
+    ) -> PersistenceConfig:  # TODO: typing.Self for Python 3.11+
+        if self.enabled and self.size is None:
+            msg = (
+                "If app.persistence.enabled is set to true, "
+                "the field app.persistence.size needs to be set."
+            )
+            raise ValidationError(msg)
+        return self
+
+
 class StreamsAppValues(KafkaAppValues):
     """streams-bootstrap app configurations.
 
@@ -219,5 +253,13 @@ class StreamsAppValues(KafkaAppValues):
     autoscaling: StreamsAppAutoScaling | None = Field(
         default=None,
         description=describe_attr("autoscaling", __doc__),
+    )
+    stateful_set: bool = Field(
+        default=False,
+        description="Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
+    )
+    persistence: PersistenceConfig = Field(
+        default=PersistenceConfig(),
+        description=describe_attr("persistence", __doc__),
     )
     model_config = ConfigDict(extra="allow")

@@ -1,8 +1,10 @@
+import logging
 from functools import cached_property
 
 from pydantic import Field, computed_field
 from typing_extensions import override
 
+from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.kafka_app import (
     KafkaApp,
     KafkaAppCleaner,
@@ -10,8 +12,12 @@ from kpops.components.base_components.kafka_app import (
 from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.components.streams_bootstrap.app_type import AppType
-from kpops.components.streams_bootstrap.streams.model import StreamsAppValues
+from kpops.components.streams_bootstrap.streams.model import (
+    StreamsAppValues,
+)
 from kpops.utils.docstring import describe_attr
+
+log = logging.getLogger("StreamsApp")
 
 
 class StreamsAppCleaner(KafkaAppCleaner):
@@ -23,6 +29,26 @@ class StreamsAppCleaner(KafkaAppCleaner):
     @override
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
+
+    @cached_property
+    def pvc_handler(self) -> PVCHandler:
+        return PVCHandler(self.full_name, self.namespace)
+
+    @override
+    async def clean(self, dry_run: bool) -> None:
+        await super().clean(dry_run)
+        if self.app.stateful_set and self.app.persistence.enabled:
+            await self.clean_pvcs(dry_run)
+
+    async def clean_pvcs(self, dry_run: bool) -> None:
+        if dry_run:
+            pvc_names = await self.pvc_handler.list_pvcs()
+            log.info(
+                f"Deleting the PVCs {pvc_names} for StatefulSet '{self.full_name}'"
+            )
+        else:
+            log.info(f"Deleting the PVCs for StatefulSet '{self.full_name}'")
+            await self.pvc_handler.delete_pvcs()
 
 
 class StreamsApp(KafkaApp, StreamsBootstrap):

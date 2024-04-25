@@ -89,6 +89,9 @@
         - resources-read-from-component-inflate-step
       image: fake-registry/filter
       imageTag: 2.4.1
+      persistence:
+        enabled: false
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -123,6 +126,9 @@
       - resources-read-from-component-inflate-step
     image: fake-registry/filter
     imageTag: 2.4.1
+    persistence:
+      enabled: false
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
@@ -202,6 +208,9 @@
   type: kafka-sink-connector
 - _cleaner:
     app:
+      persistence:
+        enabled: false
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -223,6 +232,9 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    persistence:
+      enabled: false
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
@@ -269,6 +281,9 @@
         - resources-read-from-component-inflate-step-without-prefix
       image: fake-registry/filter
       imageTag: 2.4.1
+      persistence:
+        enabled: false
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -303,6 +318,9 @@
       - resources-read-from-component-inflate-step-without-prefix
     image: fake-registry/filter
     imageTag: 2.4.1
+    persistence:
+      enabled: false
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
@@ -382,6 +400,9 @@
   type: kafka-sink-connector
 - _cleaner:
     app:
+      persistence:
+        enabled: false
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -403,6 +424,9 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    persistence:
+      enabled: false
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
@@ -436,6 +460,9 @@
   version: 2.4.2
 - _cleaner:
     app:
+      persistence:
+        enabled: false
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -457,6 +484,9 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    persistence:
+      enabled: false
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
@@ -495,6 +525,9 @@
   version: 2.4.2
 - _cleaner:
     app:
+      persistence:
+        enabled: false
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -516,6 +549,9 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    persistence:
+      enabled: false
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
@@ -553,6 +589,9 @@
   version: 2.4.2
 - _cleaner:
     app:
+      persistence:
+        enabled: false
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -574,6 +613,9 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    persistence:
+      enabled: false
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
@@ -611,6 +653,9 @@
   version: 2.4.2
 - _cleaner:
     app:
+      persistence:
+        enabled: false
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -631,6 +676,9 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    persistence:
+      enabled: false
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
@@ -665,6 +713,9 @@
   version: 2.4.2
 - _cleaner:
     app:
+      persistence:
+        enabled: false
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -685,6 +736,9 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    persistence:
+      enabled: false
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:

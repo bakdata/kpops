@@ -1,5 +1,6 @@
+import logging
 from pathlib import Path
-from unittest.mock import ANY, AsyncMock
+from unittest.mock import ANY, AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -20,8 +21,13 @@ from kpops.components.base_components.models.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap.streams.model import StreamsAppAutoScaling
-from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
+from kpops.components.streams_bootstrap.streams.model import (
+    PersistenceConfig,
+    StreamsAppAutoScaling,
+)
+from kpops.components.streams_bootstrap.streams.streams_app import (
+    StreamsAppCleaner,
+)
 from kpops.config import KpopsConfig, TopicNameConfig
 from kpops.pipeline import ValidationError
 from tests.components import PIPELINE_BASE_DIR
@@ -41,6 +47,8 @@ STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE = (
 STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
     STREAMS_APP_CLEAN_FULL_NAME, "-clean"
 )
+
+log = logging.getLogger("TestStreamsApp")
 
 
 @pytest.mark.usefixtures("mock_env")
@@ -89,6 +97,39 @@ class TestStreamsApp:
                 },
             },
         )
+
+    @pytest.fixture()
+    def stateful_streams_app(
+        self, config: KpopsConfig, handlers: ComponentHandlers
+    ) -> StreamsApp:
+        return StreamsApp(
+            name=STREAMS_APP_NAME,
+            config=config,
+            handlers=handlers,
+            **{
+                "namespace": "test-namespace",
+                "app": {
+                    "statefulSet": True,
+                    "persistence": {"enabled": True, "size": "5Gi"},
+                    "streams": {
+                        "brokers": "fake-broker:9092",
+                    },
+                },
+                "to": {
+                    "topics": {
+                        "streams-app-output-topic": TopicConfig(
+                            type=OutputTopicTypes.OUTPUT, partitions_count=10
+                        ),
+                    }
+                },
+            },
+        )
+
+    @pytest.fixture()
+    def dry_run_handler_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch(
+            "kpops.components.base_components.helm_app.DryRunHandler"
+        ).return_value
 
     def test_cleaner(self, streams_app: StreamsApp):
         cleaner = streams_app._cleaner
@@ -661,3 +702,100 @@ class TestStreamsApp:
             KafkaTopic(name="topic-extra3"),
             KafkaTopic(name="topic-extra"),
         ]
+
+    def test_raise_validation_error_when_persistence_enabled_and_size_not_set(
+        self, stateful_streams_app: StreamsApp
+    ):
+        with pytest.raises(ValidationError) as error:
+            stateful_streams_app.app.persistence = PersistenceConfig(
+                enabled=True,
+            )
+        msg = (
+            "If app.persistence.enabled is set to true, "
+            "the field app.persistence.size needs to be set."
+        )
+        assert str(error.value) == msg
+
+    @pytest.mark.asyncio()
+    async def test_stateful_clean_with_dry_run_false(
+        self, stateful_streams_app: StreamsApp, mocker: MockerFixture
+    ):
+        cleaner = stateful_streams_app._cleaner
+        assert isinstance(cleaner, StreamsAppCleaner)
+
+        mock_helm_upgrade_install = mocker.patch.object(cleaner.helm, "upgrade_install")
+        mock_helm_uninstall = mocker.patch.object(cleaner.helm, "uninstall")
+        mock_delete_pvcs = mocker.patch.object(cleaner.pvc_handler, "delete_pvcs")
+
+        mock = MagicMock()
+        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
+        mock.attach_mock(mock_delete_pvcs, "delete_pvcs")
+
+        dry_run = False
+        await stateful_streams_app.clean(dry_run=dry_run)
+
+        mock.assert_has_calls(
+            [
+                mocker.call.helm_uninstall(
+                    "test-namespace",
+                    STREAMS_APP_CLEAN_RELEASE_NAME,
+                    dry_run,
+                ),
+                ANY,  # __bool__
+                ANY,  # __str__
+                mocker.call.helm_upgrade_install(
+                    STREAMS_APP_CLEAN_RELEASE_NAME,
+                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                    dry_run,
+                    "test-namespace",
+                    {
+                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                        "statefulSet": True,
+                        "persistence": {"enabled": True, "size": "5Gi"},
+                        "streams": {
+                            "brokers": "fake-broker:9092",
+                            "outputTopic": "streams-app-output-topic",
+                            "deleteOutput": True,
+                        },
+                    },
+                    HelmUpgradeInstallFlags(
+                        version="2.9.0", wait=True, wait_for_jobs=True
+                    ),
+                ),
+                mocker.call.helm_uninstall(
+                    "test-namespace",
+                    STREAMS_APP_CLEAN_RELEASE_NAME,
+                    dry_run,
+                ),
+                ANY,  # __bool__
+                ANY,  # __str__
+                mocker.call.delete_pvcs(),
+            ]
+        )
+
+    @pytest.mark.asyncio()
+    async def test_stateful_clean_with_dry_run_true(
+        self,
+        stateful_streams_app: StreamsApp,
+        mocker: MockerFixture,
+        caplog: pytest.LogCaptureFixture,
+    ):
+        caplog.set_level(logging.INFO)
+        cleaner = stateful_streams_app._cleaner
+        assert isinstance(cleaner, StreamsAppCleaner)
+
+        pvc_names = ["test-pvc1", "test-pvc2", "test-pvc3"]
+
+        mocker.patch.object(cleaner, "destroy")
+        mocker.patch.object(cleaner, "deploy")
+        mock_get_pvc_names = mocker.patch.object(cleaner.pvc_handler, "list_pvcs")
+        mock_get_pvc_names.return_value = pvc_names
+
+        dry_run = True
+        await stateful_streams_app.clean(dry_run=dry_run)
+        mock_get_pvc_names.assert_called_once()
+        assert (
+            f"Deleting the PVCs {pvc_names} for StatefulSet '{STREAMS_APP_CLEAN_FULL_NAME}'"
+            in caplog.text
+        )

@@ -52,6 +52,9 @@
       image: some-image
       labels:
         pipeline: resources-custom-config
+      persistence:
+        enabled: false
+      statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
@@ -76,6 +79,9 @@
     image: some-image
     labels:
       pipeline: resources-custom-config
+    persistence:
+      enabled: false
+    statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
