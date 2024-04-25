@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 from unittest.mock import ANY, AsyncMock, MagicMock
 
@@ -46,6 +47,8 @@ STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE = (
 STREAMS_APP_CLEAN_RELEASE_NAME = create_helm_release_name(
     STREAMS_APP_CLEAN_FULL_NAME, "-clean"
 )
+
+log = logging.getLogger("TestStreamsApp")
 
 
 @pytest.mark.usefixtures("mock_env")
@@ -121,6 +124,12 @@ class TestStreamsApp:
                 },
             },
         )
+
+    @pytest.fixture()
+    def dry_run_handler_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch(
+            "kpops.components.base_components.helm_app.DryRunHandler"
+        ).return_value
 
     def test_cleaner(self, streams_app: StreamsApp):
         cleaner = streams_app._cleaner
@@ -763,4 +772,30 @@ class TestStreamsApp:
                 ANY,  # __str__
                 mocker.call.delete_pvcs(),
             ]
+        )
+
+    @pytest.mark.asyncio()
+    async def test_stateful_clean_with_dry_run_true(
+        self,
+        stateful_streams_app: StreamsApp,
+        mocker: MockerFixture,
+        caplog: pytest.LogCaptureFixture,
+    ):
+        caplog.set_level(logging.INFO)
+        cleaner = stateful_streams_app._cleaner
+        assert isinstance(cleaner, StreamsAppCleaner)
+
+        pvc_names = ["test-pvc1", "test-pvc2", "test-pvc3"]
+
+        mocker.patch.object(cleaner, "destroy")
+        mocker.patch.object(cleaner, "deploy")
+        mock_get_pvc_names = mocker.patch.object(cleaner.pvc_handler, "get_pvc_names")
+        mock_get_pvc_names.return_value = pvc_names
+
+        dry_run = True
+        await stateful_streams_app.clean(dry_run=dry_run)
+        mock_get_pvc_names.assert_called_once()
+        assert (
+            f"Deleting the PVCs {pvc_names} for StatefulSet '{STREAMS_APP_CLEAN_FULL_NAME}'"
+            in caplog.text
         )
