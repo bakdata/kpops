@@ -1,4 +1,4 @@
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -32,20 +32,25 @@ async def test_pvc_names(pvc_handler: PVCHandler, mocker: MockerFixture):
     mock_core_v1_api.return_value.list_namespaced_persistent_volume_claim.return_value.items = [
         mock_pvc
     ]
-    pvc_names = await pvc_handler.get_pvc_names()
+    pvcs = await pvc_handler.list_pvcs()
 
-    assert pvc_names == ["test-pvc"]
+    assert pvcs == ["test-pvc"]
 
 
 @pytest.mark.asyncio
 async def test_delete_pvcs(pvc_handler: PVCHandler, mocker: MockerFixture):
-    mocker.patch(
-        f"{MODULE}.PVCHandler.get_pvc_names",
-        new_callable=AsyncMock,
-        return_value=["test-pvc"],
+    mocker.patch.object(
+        pvc_handler, "list_pvcs", return_value=["test-pvc-1", "test-pvc-2"]
     )
     mock_core_v1_api = mocker.patch(f"{MODULE}.client.CoreV1Api")
     await pvc_handler.delete_pvcs()
-    mock_core_v1_api.return_value.delete_namespaced_persistent_volume_claim.assert_called_once_with(
-        "test-pvc", "test-namespace"
+    mock_core_v1_api.return_value.assert_has_calls(
+        [
+            mocker.call.delete_namespaced_persistent_volume_claim(
+                "test-pvc-1", "test-namespace"
+            ),
+            mocker.call.delete_namespaced_persistent_volume_claim(
+                "test-pvc-2", "test-namespace"
+            ),
+        ]
     )

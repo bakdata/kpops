@@ -789,7 +789,7 @@ class TestStreamsApp:
 
         mocker.patch.object(cleaner, "destroy")
         mocker.patch.object(cleaner, "deploy")
-        mock_get_pvc_names = mocker.patch.object(cleaner.pvc_handler, "get_pvc_names")
+        mock_get_pvc_names = mocker.patch.object(cleaner.pvc_handler, "list_pvcs")
         mock_get_pvc_names.return_value = pvc_names
 
         dry_run = True

@@ -19,7 +19,7 @@ class PVCHandler:
         await config.load_kube_config()
         return self
 
-    async def get_pvc_names(self) -> list[str]:
+    async def list_pvcs(self) -> list[str]:
         async with ApiClient() as api:
             core_v1_api = client.CoreV1Api(api)
             pvc_list = core_v1_api.list_namespaced_persistent_volume_claim(
@@ -39,7 +39,7 @@ class PVCHandler:
     async def delete_pvcs(self) -> None:
         async with ApiClient() as api:
             core_v1_api = client.CoreV1Api(api)
-            pvc_names = await self.get_pvc_names()
+            pvc_names = await self.list_pvcs()
             log.debug(
                 f"Deleting in namespace '{self.namespace}' StatefulSet '{self.app_name}' PVCs '{pvc_names}'"
             )
