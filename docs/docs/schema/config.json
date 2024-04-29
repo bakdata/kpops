@@ -64,6 +64,19 @@
             "additionalProperties": false,
             "description": "Configuration for Kafka Connect.",
             "properties": {
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "default": 30,
+                    "description": "Operation timeout in seconds.",
+                    "title": "Timeout"
+                },
                 "url": {
                     "default": "http://localhost:8083/",
                     "description": "Address of Kafka Connect.",
@@ -215,6 +228,7 @@
                 }
             ],
             "default": {
+                "timeout": 30,
                 "url": "http://localhost:8083/"
             },
             "description": "Configuration for Kafka Connect."

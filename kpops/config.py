@@ -62,6 +62,9 @@ class KafkaConnectConfig(BaseSettings):
         default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8083"),  # pyright: ignore[reportCallIssue]
         description="Address of Kafka Connect.",
     )
+    timeout: int | float = Field(
+        default=30, description="Operation timeout in seconds."
+    )
 
 
 class KpopsConfig(BaseSettings):
