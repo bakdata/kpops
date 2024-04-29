@@ -64,6 +64,19 @@
             "additionalProperties": false,
             "description": "Configuration for Kafka Connect.",
             "properties": {
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "default": 30,
+                    "description": "Operation timeout in seconds.",
+                    "title": "Timeout"
+                },
                 "url": {
                     "default": "http://localhost:8083/",
                     "description": "Address of Kafka Connect.",
@@ -80,6 +93,19 @@
             "additionalProperties": false,
             "description": "Configuration for Kafka REST Proxy.",
             "properties": {
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "default": 30,
+                    "description": "Operation timeout in seconds.",
+                    "title": "Timeout"
+                },
                 "url": {
                     "default": "http://localhost:8082/",
                     "description": "Address of the Kafka REST Proxy.",
@@ -101,6 +127,19 @@
                     "description": "Whether the Schema Registry handler should be initialized.",
                     "title": "Enabled",
                     "type": "boolean"
+                },
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "default": 30,
+                    "description": "Operation timeout in seconds.",
+                    "title": "Timeout"
                 },
                 "url": {
                     "default": "http://localhost:8081/",
@@ -202,6 +241,7 @@
                 }
             ],
             "default": {
+                "timeout": 30,
                 "url": "http://localhost:8083/"
             },
             "description": "Configuration for Kafka Connect."
@@ -213,6 +253,7 @@
                 }
             ],
             "default": {
+                "timeout": 30,
                 "url": "http://localhost:8082/"
             },
             "description": "Configuration for Kafka REST Proxy."
@@ -238,15 +279,10 @@
             ],
             "default": {
                 "enabled": false,
+                "timeout": 30,
                 "url": "http://localhost:8081/"
             },
             "description": "Configuration for Schema Registry."
-        },
-        "timeout": {
-            "default": 300,
-            "description": "The timeout in seconds that specifies when actions like deletion or deploy timeout.",
-            "title": "Timeout",
-            "type": "integer"
         },
         "topic_name_config": {
             "allOf": [
