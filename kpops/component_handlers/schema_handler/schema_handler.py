@@ -26,7 +26,8 @@ log = logging.getLogger("SchemaHandler")
 class SchemaHandler:
     def __init__(self, kpops_config: KpopsConfig) -> None:
         self.schema_registry_client = AsyncSchemaRegistryClient(
-            str(kpops_config.schema_registry.url)
+            str(kpops_config.schema_registry.url),
+            timeout=kpops_config.schema_registry.timeout,  # pyright: ignore[reportArgumentType]
         )
         self.components_module = kpops_config.components_module
 
