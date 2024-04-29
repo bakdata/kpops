@@ -25,7 +25,6 @@ def test_kpops_config_with_default_values():
     assert default_config.schema_registry.url == AnyUrl("http://localhost:8081")
     assert default_config.kafka_rest.url == AnyUrl("http://localhost:8082")
     assert default_config.kafka_connect.url == AnyUrl("http://localhost:8083")
-    assert default_config.timeout == 300
     assert default_config.create_namespace is False
     assert default_config.helm_config.context is None
     assert default_config.helm_config.debug is False

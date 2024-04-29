@@ -108,10 +108,6 @@ class KpopsConfig(BaseSettings):
         default=KafkaConnectConfig(),
         description=describe_object(KafkaConnectConfig.__doc__),
     )
-    timeout: int = Field(
-        default=300,
-        description="The timeout in seconds that specifies when actions like deletion or deploy timeout.",
-    )
     create_namespace: bool = Field(
         default=False,
         description="Flag for `helm upgrade --install`. Create the release namespace if not present.",

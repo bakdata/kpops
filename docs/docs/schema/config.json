@@ -284,12 +284,6 @@
             },
             "description": "Configuration for Schema Registry."
         },
-        "timeout": {
-            "default": 300,
-            "description": "The timeout in seconds that specifies when actions like deletion or deploy timeout.",
-            "title": "Timeout",
-            "type": "integer"
-        },
         "topic_name_config": {
             "allOf": [
                 {
