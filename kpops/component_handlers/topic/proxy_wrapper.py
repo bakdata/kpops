@@ -32,8 +32,8 @@ class ProxyWrapper:
 
     def __init__(self, config: KafkaRestConfig) -> None:
         self._config: KafkaRestConfig = config
-        self._client = httpx.AsyncClient()
-        self._sync_client = httpx.Client()
+        self._client = httpx.AsyncClient(timeout=config.timeout)
+        self._sync_client = httpx.Client(timeout=config.timeout)
 
     @cached_property
     def cluster_id(self) -> str:

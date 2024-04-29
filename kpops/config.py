@@ -50,6 +50,9 @@ class KafkaRestConfig(BaseSettings):
         default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8082"),  # pyright: ignore[reportCallIssue]
         description="Address of the Kafka REST Proxy.",
     )
+    timeout: int | float = Field(
+        default=30, description="Operation timeout in seconds."
+    )
 
 
 class KafkaConnectConfig(BaseSettings):

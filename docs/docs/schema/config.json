@@ -80,6 +80,19 @@
             "additionalProperties": false,
             "description": "Configuration for Kafka REST Proxy.",
             "properties": {
+                "timeout": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "number"
+                        }
+                    ],
+                    "default": 30,
+                    "description": "Operation timeout in seconds.",
+                    "title": "Timeout"
+                },
                 "url": {
                     "default": "http://localhost:8082/",
                     "description": "Address of the Kafka REST Proxy.",
@@ -213,6 +226,7 @@
                 }
             ],
             "default": {
+                "timeout": 30,
                 "url": "http://localhost:8082/"
             },
             "description": "Configuration for Kafka REST Proxy."
