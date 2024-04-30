@@ -1697,7 +1697,7 @@
 
 <h1 id="migrate-from-v4-to-v5">Migrate from V4 to V5<a class="headerlink" href="#migrate-from-v4-to-v5" title="Permanent link">&para;</a></h1>
 <h2 id="allow-custom-timeout-for-external-services"><a href="https://github.com/bakdata/kpops/pull/485">Allow custom timeout for external services</a><a class="headerlink" href="#allow-custom-timeout-for-external-services" title="Permanent link">&para;</a></h2>
-<p>The global <code>timeout</code> setting has been removed. Instead, an individual timeout can be set for each external service.</p>
+<p>The global <code>timeout</code> setting has been removed. Instead, an individual timeout can be set for each external service. The default is 30 seconds.</p>
 <h4 id="configyaml">config.yaml<a class="headerlink" href="#configyaml" title="Permanent link">&para;</a></h4>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-0-2"> 2</a></span>
@@ -1714,14 +1714,14 @@
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3"></a><span class="w"> </span> kafka_rest:
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4"></a><span class="w"> </span>   url: &quot;http://my-custom-rest.url:8082&quot;
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="gi">+   timeout: 300</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5"></a><span class="gi">+   timeout: 30</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6"></a><span class="w"> </span> kafka_connect:
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7"></a><span class="w"> </span>   url: &quot;http://my-custom-connect.url:8083&quot;
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="gi">+   timeout: 300</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8"></a><span class="gi">+   timeout: 30</span>
 </span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9"></a><span class="w"> </span> schema_registry:
 </span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10"></a><span class="w"> </span>   enabled: true
 </span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11"></a><span class="w"> </span>   url: &quot;http://my-custom-sr.url:8081&quot;
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="gi">+   timeout: 300</span>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12"></a><span class="gi">+   timeout: 30</span>
 </span></code></pre></div></td></tr></table></div>
 
 
