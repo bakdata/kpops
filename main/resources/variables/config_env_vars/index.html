@@ -1146,6 +1146,8 @@
       
         
       
+        
+      
     
     
     
@@ -1227,6 +1229,26 @@
   
   <span class="md-ellipsis">
     Migrate from v3 to v4
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../user/migration-guide/v4-v5/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v4 to v5
   </span>
   
 
@@ -1637,11 +1659,25 @@
 <td>schema_registry.url</td>
 </tr>
 <tr>
+<td>KPOPS_SCHEMA_REGISTRY__TIMEOUT</td>
+<td>30</td>
+<td>False</td>
+<td>Operation timeout in seconds.</td>
+<td>schema_registry.timeout</td>
+</tr>
+<tr>
 <td>KPOPS_KAFKA_REST__URL</td>
 <td>http://localhost:8082/</td>
 <td>False</td>
 <td>Address of the Kafka REST Proxy.</td>
 <td>kafka_rest.url</td>
+</tr>
+<tr>
+<td>KPOPS_KAFKA_REST__TIMEOUT</td>
+<td>30</td>
+<td>False</td>
+<td>Operation timeout in seconds.</td>
+<td>kafka_rest.timeout</td>
 </tr>
 <tr>
 <td>KPOPS_KAFKA_CONNECT__URL</td>
@@ -1651,11 +1687,11 @@
 <td>kafka_connect.url</td>
 </tr>
 <tr>
-<td>KPOPS_TIMEOUT</td>
-<td>300</td>
+<td>KPOPS_KAFKA_CONNECT__TIMEOUT</td>
+<td>30</td>
 <td>False</td>
-<td>The timeout in seconds that specifies when actions like deletion or deploy timeout.</td>
-<td>timeout</td>
+<td>Operation timeout in seconds.</td>
+<td>kafka_connect.timeout</td>
 </tr>
 <tr>
 <td>KPOPS_CREATE_NAMESPACE</td>
