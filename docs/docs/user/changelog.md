@@ -1,4 +1,20 @@
 # Changelog
+## [5.0.0](https://github.com/bakdata/kpops/releases/tag/5.0.0) - Release Date: [2024-05-02]
+
+### 🏗️ Breaking changes
+
+- Allow custom timeout for external services - [#485](https://github.com/bakdata/kpops/pull/485)
+
+
+### 🌀 Miscellaneous
+
+- Update examples for v4 - [#486](https://github.com/bakdata/kpops/pull/486)
+
+
+
+
+
+
 ## [4.2.1](https://github.com/bakdata/kpops/releases/tag/4.2.1) - Release Date: [2024-04-25]
 
 ### 🚀 Features
