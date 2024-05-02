@@ -52,10 +52,7 @@ class TestConnectorHandler:
 
     @staticmethod
     def connector_handler(connect_wrapper: MagicMock) -> KafkaConnectHandler:
-        return KafkaConnectHandler(
-            connect_wrapper=connect_wrapper,
-            timeout=0,
-        )
+        return KafkaConnectHandler(connect_wrapper=connect_wrapper)
 
     @pytest.fixture()
     def connector_config(self) -> KafkaConnectorConfig:

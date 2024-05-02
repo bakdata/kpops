@@ -25,7 +25,7 @@ the [documentation](https://bakdata.github.io/kpops/latest).
 KPOps comes as a [PyPI package](https://pypi.org/project/kpops/).
 You can install it with [pip](https://github.com/pypa/pip):
 
-```shell
+```sh
 pip install kpops
 ```
 

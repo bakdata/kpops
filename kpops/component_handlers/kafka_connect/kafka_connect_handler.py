@@ -8,7 +8,6 @@ from kpops.component_handlers.kafka_connect.exception import (
     ConnectorNotFoundException,
     ConnectorStateException,
 )
-from kpops.component_handlers.kafka_connect.timeout import timeout
 from kpops.utils.colorify import magentaify
 from kpops.utils.dict_differ import render_diff
 
@@ -25,13 +24,8 @@ log = logging.getLogger("KafkaConnectHandler")
 
 
 class KafkaConnectHandler:
-    def __init__(
-        self,
-        connect_wrapper: ConnectWrapper,
-        timeout: int,
-    ):
+    def __init__(self, connect_wrapper: ConnectWrapper):
         self._connect_wrapper = connect_wrapper
-        self._timeout = timeout
 
     async def create_connector(
         self, connector_config: KafkaConnectorConfig, *, dry_run: bool
@@ -47,21 +41,11 @@ class KafkaConnectHandler:
             await self.__dry_run_connector_creation(connector_config)
         else:
             try:
-                await timeout(
-                    self._connect_wrapper.get_connector(connector_config.name),
-                    secs=self._timeout,
-                )
-
-                await timeout(
-                    self._connect_wrapper.update_connector_config(connector_config),
-                    secs=self._timeout,
-                )
+                await self._connect_wrapper.get_connector(connector_config.name)
+                await self._connect_wrapper.update_connector_config(connector_config)
 
             except ConnectorNotFoundException:
-                await timeout(
-                    self._connect_wrapper.create_connector(connector_config),
-                    secs=self._timeout,
-                )
+                await self._connect_wrapper.create_connector(connector_config)
 
     async def destroy_connector(self, connector_name: str, *, dry_run: bool) -> None:
         """Delete a connector resource from the cluster.
@@ -73,15 +57,9 @@ class KafkaConnectHandler:
             await self.__dry_run_connector_deletion(connector_name)
         else:
             try:
-                await timeout(
-                    self._connect_wrapper.get_connector(connector_name),
-                    secs=self._timeout,
-                )
+                await self._connect_wrapper.get_connector(connector_name)
+                await self._connect_wrapper.delete_connector(connector_name)
 
-                await timeout(
-                    self._connect_wrapper.delete_connector(connector_name),
-                    secs=self._timeout,
-                )
             except ConnectorNotFoundException:
                 log.warning(
                     f"Connector Destruction: the connector {connector_name} does not exist. Skipping."
@@ -138,5 +116,4 @@ class KafkaConnectHandler:
     def from_kpops_config(cls, config: KpopsConfig) -> Self:
         return cls(
             connect_wrapper=ConnectWrapper(config.kafka_connect),
-            timeout=config.timeout,
         )

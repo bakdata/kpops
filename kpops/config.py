@@ -41,6 +41,9 @@ class SchemaRegistryConfig(BaseSettings):
         default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8081"),  # pyright: ignore[reportCallIssue]
         description="Address of the Schema Registry.",
     )
+    timeout: int | float = Field(
+        default=30, description="Operation timeout in seconds."
+    )
 
 
 class KafkaRestConfig(BaseSettings):
@@ -50,6 +53,9 @@ class KafkaRestConfig(BaseSettings):
         default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8082"),  # pyright: ignore[reportCallIssue]
         description="Address of the Kafka REST Proxy.",
     )
+    timeout: int | float = Field(
+        default=30, description="Operation timeout in seconds."
+    )
 
 
 class KafkaConnectConfig(BaseSettings):
@@ -58,6 +64,9 @@ class KafkaConnectConfig(BaseSettings):
     url: AnyHttpUrl = Field(
         default=TypeAdapter(AnyHttpUrl).validate_python("http://localhost:8083"),  # pyright: ignore[reportCallIssue]
         description="Address of Kafka Connect.",
+    )
+    timeout: int | float = Field(
+        default=30, description="Operation timeout in seconds."
     )
 
 
@@ -98,10 +107,6 @@ class KpopsConfig(BaseSettings):
     kafka_connect: KafkaConnectConfig = Field(
         default=KafkaConnectConfig(),
         description=describe_object(KafkaConnectConfig.__doc__),
-    )
-    timeout: int = Field(
-        default=300,
-        description="The timeout in seconds that specifies when actions like deletion or deploy timeout.",
     )
     create_namespace: bool = Field(
         default=False,

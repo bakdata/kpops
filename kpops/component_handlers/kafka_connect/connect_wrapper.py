@@ -31,7 +31,7 @@ class ConnectWrapper:
 
     def __init__(self, config: KafkaConnectConfig) -> None:
         self._config: KafkaConnectConfig = config
-        self._client = httpx.AsyncClient()
+        self._client = httpx.AsyncClient(timeout=config.timeout)
 
     @property
     def url(self) -> AnyHttpUrl:
