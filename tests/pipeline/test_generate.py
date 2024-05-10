@@ -77,6 +77,20 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, "pipeline.yaml")
 
+    def test_load_pipeline_with_folder_path(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "pipeline-folder"),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0, result.stdout
+
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
+
     def test_name_equal_prefix_name_concatenation(self):
         result = runner.invoke(
             app,

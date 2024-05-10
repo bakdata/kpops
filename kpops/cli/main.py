@@ -66,7 +66,7 @@ PIPELINE_PATH_ARG: Path = typer.Argument(
     default=...,
     exists=True,
     file_okay=True,
-    dir_okay=False,
+    dir_okay=True,
     readable=True,
     envvar=f"{ENV_PREFIX}PIPELINE_PATH",
     help="Path to YAML with pipeline definition",
@@ -259,6 +259,15 @@ def schema(
             gen_config_schema()
 
 
+def collect_pipeline_paths(pipeline_path: Path) -> list[Path]:
+    paths = []
+    if pipeline_path.is_dir():
+        pipeline_file_paths_iter = pipeline_path.glob("**/pipeline*.yaml")
+        for pipeline_file_path in pipeline_file_paths_iter:
+            paths.append(pipeline_file_path)
+    return paths
+
+
 @app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
     short_help="Generate enriched pipeline representation",
     help="Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).",
@@ -279,27 +288,40 @@ def generate(
         environment,
         verbose,
     )
+    if pipeline_path.is_dir():
+        pipeline_file_paths = collect_pipeline_paths(pipeline_path)
+    else:
+        pipeline_file_paths = [pipeline_path]
+    list_pipeline = []
+    for pipeline_file_path in pipeline_file_paths:
+        pipeline = setup_pipeline(pipeline_file_path, kpops_config, environment)
 
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
+        if steps:
+            component_names = parse_steps(steps)
+            log.debug(
+                f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
+            )
 
-    if steps:
-        component_names = parse_steps(steps)
-        log.debug(
-            f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
-        )
+            predicate = create_default_step_names_filter_predicate(
+                component_names, filter_type
+            )
+            pipeline.filter(predicate)
 
-        predicate = create_default_step_names_filter_predicate(
-            component_names, filter_type
-        )
-        pipeline.filter(predicate)
+            def get_step_names(
+                steps_to_apply: list[PipelineComponent],
+            ) -> list[str]:
+                return [step.name for step in steps_to_apply]
 
-        def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
-            return [step.name for step in steps_to_apply]
+            log.info(f"Filtered pipeline:\n{get_step_names(pipeline.components)}")
+        if output:
+            print_yaml(pipeline.to_yaml())
+        list_pipeline.append(pipeline)
 
-        log.info(f"Filtered pipeline:\n{get_step_names(pipeline.components)}")
-    if output:
-        print_yaml(pipeline.to_yaml())
-    return pipeline
+    # TODO: Check if this logic breaks anything or not... We need to return a single Pipeline object.
+    base_pipeline = Pipeline()
+    for pipeline in list_pipeline:
+        base_pipeline.add_all(pipeline)
+    return base_pipeline
 
 
 @app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
