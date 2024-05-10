@@ -46,7 +46,8 @@ class TestGenerate:
         )
         assert len(pipeline) == 1
         assert pipeline.components[0].type == "converter"
-        assert log_info.call_count == 1
+        assert log_info.call_count == 2
+        log_info.assert_any_call("Picked up pipeline 'first-pipeline'")
         log_info.assert_any_call("Filtered pipeline:\n['converter']")
 
     def test_python_api_filter_exclude(self, log_info: MagicMock):
@@ -58,7 +59,8 @@ class TestGenerate:
         )
         assert len(pipeline) == 1
         assert pipeline.components[0].type == "filter"
-        assert log_info.call_count == 1
+        assert log_info.call_count == 2
+        log_info.assert_any_call("Picked up pipeline 'first-pipeline'")
         log_info.assert_any_call(
             "Filtered pipeline:\n['a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name']"
         )
