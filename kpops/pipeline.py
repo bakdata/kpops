@@ -63,6 +63,11 @@ class Pipeline(BaseModel):
         for component in pipeline.components:
             self.add(component)
 
+    @computed_field(title="Step Names")
+    @property
+    def step_names(self) -> list[str]:
+        return [step.name for step in self.components]
+
     def add(self, component: PipelineComponent) -> None:
         if self._component_index.get(component.id) is not None:
             msg = (

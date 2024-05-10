@@ -22,7 +22,11 @@ from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
-from kpops.pipeline import ComponentFilterPredicate, Pipeline, PipelineGenerator
+from kpops.pipeline import (
+    ComponentFilterPredicate,
+    Pipeline,
+    PipelineGenerator,
+)
 from kpops.utils.cli_commands import init_project
 from kpops.utils.gen_schema import (
     SchemaScope,
@@ -294,13 +298,7 @@ def generate(
                 component_names, filter_type
             )
             pipeline.filter(predicate)
-
-            def get_step_names(
-                steps_to_apply: list[PipelineComponent],
-            ) -> list[str]:
-                return [step.name for step in steps_to_apply]
-
-            log.info(f"Filtered pipeline:\n{get_step_names(pipeline.components)}")
+            log.info(f"Filtered pipeline:\n{pipeline.step_names}")
         if output:
             print_yaml(pipeline.to_yaml())
         list_pipeline.append(pipeline)

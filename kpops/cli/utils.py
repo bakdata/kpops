@@ -18,6 +18,7 @@ def collect_pipeline_paths(pipeline_path: Path) -> Generator[Path, None, None]:
         yield pipeline_path
     elif pipeline_path.is_dir():
         yield from pipeline_path.glob("**/pipeline*.yaml")
-    # TODO: Can this ever happen?
-    msg = "Pipeline path is not a file or directory."
-    raise RuntimeError(msg)
+    else:
+        # TODO: Can this ever happen?
+        msg = "Pipeline path is not a file or directory."
+        raise RuntimeError(msg)
