@@ -287,7 +287,7 @@ def generate(
     super_pipeline = Pipeline()
     for pipeline_file_path in collect_pipeline_paths(pipeline_path):
         pipeline = setup_pipeline(pipeline_file_path, kpops_config, environment)
-
+        log.info(f"Picked up pipeline {pipeline_file_path.parent.name}")
         if steps:
             component_names = parse_steps(steps)
             log.debug(
