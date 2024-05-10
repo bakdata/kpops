@@ -284,7 +284,7 @@ def generate(
         environment,
         verbose,
     )
-    list_pipeline = []
+    super_pipeline = Pipeline()
     for pipeline_file_path in collect_pipeline_paths(pipeline_path):
         pipeline = setup_pipeline(pipeline_file_path, kpops_config, environment)
 
@@ -299,14 +299,10 @@ def generate(
             )
             pipeline.filter(predicate)
             log.info(f"Filtered pipeline:\n{pipeline.step_names}")
-        if output:
-            print_yaml(pipeline.to_yaml())
-        list_pipeline.append(pipeline)
+        super_pipeline.append(pipeline)
 
-    # TODO: Check if this logic breaks anything or not... We need to return a single Pipeline object.
-    super_pipeline = Pipeline()
-    for pipeline in list_pipeline:
-        super_pipeline.add_all(pipeline)
+    if output:
+        print_yaml(super_pipeline.to_yaml())
     return super_pipeline
 
 

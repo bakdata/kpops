@@ -94,7 +94,6 @@
         value_schema: com.bakdata.kafka.DeadLetter
   type: filter
   version: 2.4.2
-
 - _cleaner:
     app:
       autoscaling:
@@ -188,7 +187,6 @@
         value_schema: com.bakdata.kafka.DeadLetter
   type: converter
   version: 2.4.2
-
 - _cleaner:
     app:
       commandLine:
