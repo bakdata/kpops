@@ -12,6 +12,7 @@ from kpops import __version__
 from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.options import FilterType
 from kpops.cli.registry import Registry
+from kpops.cli.utils import collect_pipeline_paths
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
@@ -259,15 +260,6 @@ def schema(
             gen_config_schema()
 
 
-def collect_pipeline_paths(pipeline_path: Path) -> list[Path]:
-    paths = []
-    if pipeline_path.is_dir():
-        pipeline_file_paths_iter = pipeline_path.glob("**/pipeline*.yaml")
-        for pipeline_file_path in pipeline_file_paths_iter:
-            paths.append(pipeline_file_path)
-    return paths
-
-
 @app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
     short_help="Generate enriched pipeline representation",
     help="Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).",
@@ -288,12 +280,8 @@ def generate(
         environment,
         verbose,
     )
-    if pipeline_path.is_dir():
-        pipeline_file_paths = collect_pipeline_paths(pipeline_path)
-    else:
-        pipeline_file_paths = [pipeline_path]
     list_pipeline = []
-    for pipeline_file_path in pipeline_file_paths:
+    for pipeline_file_path in collect_pipeline_paths(pipeline_path):
         pipeline = setup_pipeline(pipeline_file_path, kpops_config, environment)
 
         if steps:
@@ -318,10 +306,10 @@ def generate(
         list_pipeline.append(pipeline)
 
     # TODO: Check if this logic breaks anything or not... We need to return a single Pipeline object.
-    base_pipeline = Pipeline()
+    super_pipeline = Pipeline()
     for pipeline in list_pipeline:
-        base_pipeline.add_all(pipeline)
-    return base_pipeline
+        super_pipeline.add_all(pipeline)
+    return super_pipeline
 
 
 @app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
