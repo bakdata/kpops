@@ -1,0 +1,27 @@
+- type: kafka-sink-connector
+  name: s3-connector-1
+  from:
+    topics:
+      account-linker-test-topic:
+        type: input
+  app:
+    connector.class: io.confluent.connect.s3.S3SinkConnector
+
+
+- type: kafka-sink-connector
+  name: s3-connector-2
+  from:
+    topics:
+      account-linker-test-topic:
+        type: input
+  app:
+    connector.class: io.confluent.connect.s3.S3SinkConnector
+
+- type: kafka-sink-connector
+  name: s3-connector-3
+  from:
+    topics:
+      account-linker-test-topic:
+        type: input
+  app:
+    connector.class: io.confluent.connect.s3.S3SinkConnector
