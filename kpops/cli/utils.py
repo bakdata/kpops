@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from collections.abc import Generator
+from collections.abc import Iterator
 from pathlib import Path
 
 
-def collect_pipeline_paths(pipeline_path: Path) -> Generator[Path, None, None]:
+def collect_pipeline_paths(pipeline_path: Path) -> Iterator[Path]:
     """Generate paths to pipeline files.
 
     :param pipeline_path: The path to the pipeline file or directory.
@@ -19,6 +19,5 @@ def collect_pipeline_paths(pipeline_path: Path) -> Generator[Path, None, None]:
     elif pipeline_path.is_dir():
         yield from pipeline_path.glob("**/pipeline*.yaml")
     else:
-        # TODO: Can this ever happen?
-        msg = "Pipeline path is not a file or directory."
+        msg = f"The entered pipeline path '{pipeline_path}' should be a directory or file."
         raise RuntimeError(msg)

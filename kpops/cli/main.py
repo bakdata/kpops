@@ -299,7 +299,7 @@ def generate(
             )
             pipeline.filter(predicate)
             log.info(f"Filtered pipeline:\n{pipeline.step_names}")
-        super_pipeline.append(pipeline)
+        super_pipeline.extend(pipeline)
 
     if output:
         print_yaml(super_pipeline.to_yaml())
