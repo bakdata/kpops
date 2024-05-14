@@ -23,7 +23,7 @@ class PVCHandler:
         async with ApiClient() as api:
             core_v1_api = client.CoreV1Api(api)
             pvc_list = await core_v1_api.list_namespaced_persistent_volume_claim(
-                self.namespace, label_selector=f"app={self.app_name}"
+                namespace=self.namespace, label_selector=f"app={self.app_name}"
             )
 
             pvc_names = [pvc.metadata.name for pvc in pvc_list.items]

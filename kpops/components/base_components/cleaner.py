@@ -21,6 +21,10 @@ class Cleaner(HelmApp, ABC):
         return super().full_name + self.suffix
 
     @property
+    def app_full_name(self) -> str:
+        return super().full_name
+
+    @property
     @override
     def helm_release_name(self) -> str:
         return create_helm_release_name(self.full_name, self.suffix)

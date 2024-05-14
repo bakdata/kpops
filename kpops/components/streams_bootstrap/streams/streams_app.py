@@ -32,7 +32,7 @@ class StreamsAppCleaner(KafkaAppCleaner):
 
     @cached_property
     def pvc_handler(self) -> PVCHandler:
-        return PVCHandler(self.full_name, self.namespace)
+        return PVCHandler(self.app_full_name, self.namespace)
 
     @override
     async def clean(self, dry_run: bool) -> None:
@@ -44,10 +44,10 @@ class StreamsAppCleaner(KafkaAppCleaner):
         if dry_run:
             pvc_names = await self.pvc_handler.list_pvcs()
             log.info(
-                f"Deleting the PVCs {pvc_names} for StatefulSet '{self.full_name}'"
+                f"Deleting the PVCs {pvc_names} for StatefulSet '{self.app_full_name}'"
             )
         else:
-            log.info(f"Deleting the PVCs for StatefulSet '{self.full_name}'")
+            log.info(f"Deleting the PVCs for StatefulSet '{self.app_full_name}'")
             await self.pvc_handler.delete_pvcs()
 
 
