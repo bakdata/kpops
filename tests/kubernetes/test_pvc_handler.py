@@ -63,7 +63,9 @@ async def test_delete_pvcs(pvc_handler: PVCHandler, mocker: MockerFixture):
     mocker.patch.object(
         pvc_handler, "list_pvcs", return_value=["test-pvc-1", "test-pvc-2"]
     )
-    mock_core_v1_api = mocker.patch(f"{MODULE}.client.CoreV1Api")
+    mock_core_v1_api = mocker.patch(
+        f"{MODULE}.client.CoreV1Api", return_value=AsyncMock()
+    )
     await pvc_handler.delete_pvcs()
     mock_core_v1_api.return_value.assert_has_calls(
         [
