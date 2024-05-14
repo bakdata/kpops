@@ -11,7 +11,6 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components import StreamsApp
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
@@ -726,7 +725,15 @@ class TestStreamsApp:
 
         mock_helm_upgrade_install = mocker.patch.object(cleaner.helm, "upgrade_install")
         mock_helm_uninstall = mocker.patch.object(cleaner.helm, "uninstall")
-        mock_delete_pvcs = mocker.patch.object(cleaner.pvc_handler, "delete_pvcs")
+
+        module = StreamsAppCleaner.__module__
+        mock_pvc_handler_instance = AsyncMock()
+        mock_delete_pvcs = mock_pvc_handler_instance.delete_pvcs
+        mock_delete_pvcs.return_value = AsyncMock()
+
+        mocker.patch(
+            f"{module}.PVCHandler.create", return_value=mock_pvc_handler_instance
+        )
 
         mock = MagicMock()
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
@@ -785,22 +792,29 @@ class TestStreamsApp:
         caplog.set_level(logging.INFO)
         cleaner = stateful_streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
-        pvc_handler = cleaner.pvc_handler
-        assert isinstance(pvc_handler, PVCHandler)
-
-        assert pvc_handler.app_name == STREAMS_APP_FULL_NAME
-        assert pvc_handler.namespace == "test-namespace"
 
         pvc_names = ["test-pvc1", "test-pvc2", "test-pvc3"]
 
+        mock_pvc_handler_instance = AsyncMock()
+        mock_list_pvcs = mock_pvc_handler_instance.list_pvcs
+        mock_list_pvcs.return_value = pvc_names
+
+        module = StreamsAppCleaner.__module__
+        pvc_handler_create = mocker.patch(
+            f"{module}.PVCHandler.create", return_value=mock_pvc_handler_instance
+        )
         mocker.patch.object(cleaner, "destroy")
         mocker.patch.object(cleaner, "deploy")
-        mock_get_pvc_names = mocker.patch.object(pvc_handler, "list_pvcs")
-        mock_get_pvc_names.return_value = pvc_names
+        mocker.patch.object(mock_list_pvcs, "list_pvcs")
 
         dry_run = True
         await stateful_streams_app.clean(dry_run=dry_run)
-        mock_get_pvc_names.assert_called_once()
+
+        pvc_handler_create.assert_called_once_with(
+            STREAMS_APP_FULL_NAME, "test-namespace"
+        )
+
+        mock_list_pvcs.assert_called_once()
         assert (
             f"Deleting the PVCs {pvc_names} for StatefulSet '{STREAMS_APP_FULL_NAME}'"
             in caplog.text
