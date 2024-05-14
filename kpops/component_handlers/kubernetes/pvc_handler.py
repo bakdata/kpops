@@ -44,6 +44,6 @@ class PVCHandler:
                 f"Deleting in namespace '{self.namespace}' StatefulSet '{self.app_name}' PVCs '{pvc_names}'"
             )
             for pvc_name in pvc_names:
-                core_v1_api.delete_namespaced_persistent_volume_claim(
+                await core_v1_api.delete_namespaced_persistent_volume_claim(
                     pvc_name, self.namespace
-                )
+                )  # type: ignore [reportGeneralTypeIssues]
