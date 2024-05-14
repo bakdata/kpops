@@ -30,10 +30,6 @@ class StreamsAppCleaner(KafkaAppCleaner):
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
-    @cached_property
-    def pvc_handler(self) -> PVCHandler:
-        return PVCHandler(self.app_full_name, self.namespace)
-
     @override
     async def clean(self, dry_run: bool) -> None:
         await super().clean(dry_run)
@@ -41,14 +37,15 @@ class StreamsAppCleaner(KafkaAppCleaner):
             await self.clean_pvcs(dry_run)
 
     async def clean_pvcs(self, dry_run: bool) -> None:
+        pvc_handler = await PVCHandler.create(self.app_full_name, self.namespace)
         if dry_run:
-            pvc_names = await self.pvc_handler.list_pvcs()
+            pvc_names = await pvc_handler.list_pvcs()
             log.info(
                 f"Deleting the PVCs {pvc_names} for StatefulSet '{self.app_full_name}'"
             )
         else:
             log.info(f"Deleting the PVCs for StatefulSet '{self.app_full_name}'")
-            await self.pvc_handler.delete_pvcs()
+            await pvc_handler.delete_pvcs()
 
 
 class StreamsApp(KafkaApp, StreamsBootstrap):
