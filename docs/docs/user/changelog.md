@@ -1,4 +1,15 @@
 # Changelog
+## [5.0.1](https://github.com/bakdata/kpops/releases/tag/5.0.1) - Release Date: [2024-05-15]
+
+### 🐛 Fixes
+
+- Fix missing await on Kubernetes API - [#488](https://github.com/bakdata/kpops/pull/488)
+
+
+
+
+
+
 ## [5.0.0](https://github.com/bakdata/kpops/releases/tag/5.0.0) - Release Date: [2024-05-02]
 
 ### 🏗️ Breaking changes
