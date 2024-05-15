@@ -22,8 +22,8 @@ class PVCHandler:
     async def list_pvcs(self) -> list[str]:
         async with ApiClient() as api:
             core_v1_api = client.CoreV1Api(api)
-            pvc_list = core_v1_api.list_namespaced_persistent_volume_claim(
-                self.namespace, label_selector=f"app={self.app_name}"
+            pvc_list = await core_v1_api.list_namespaced_persistent_volume_claim(
+                namespace=self.namespace, label_selector=f"app={self.app_name}"
             )
 
             pvc_names = [pvc.metadata.name for pvc in pvc_list.items]
@@ -44,6 +44,6 @@ class PVCHandler:
                 f"Deleting in namespace '{self.namespace}' StatefulSet '{self.app_name}' PVCs '{pvc_names}'"
             )
             for pvc_name in pvc_names:
-                core_v1_api.delete_namespaced_persistent_volume_claim(
+                await core_v1_api.delete_namespaced_persistent_volume_claim(
                     pvc_name, self.namespace
-                )
+                )  # type: ignore [reportGeneralTypeIssues]
