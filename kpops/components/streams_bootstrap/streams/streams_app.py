@@ -5,6 +5,7 @@ from pydantic import Field, computed_field
 from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
+from kpops.components import HelmApp
 from kpops.components.base_components.kafka_app import (
     KafkaApp,
     KafkaAppCleaner,
@@ -37,14 +38,13 @@ class StreamsAppCleaner(KafkaAppCleaner):
             await self.clean_pvcs(dry_run)
 
     async def clean_pvcs(self, dry_run: bool) -> None:
-        pvc_handler = await PVCHandler.create(self.app_full_name, self.namespace)
+        app_full_name = super(HelmApp, self).full_name
+        pvc_handler = await PVCHandler.create(app_full_name, self.namespace)
         if dry_run:
             pvc_names = await pvc_handler.list_pvcs()
-            log.info(
-                f"Deleting the PVCs {pvc_names} for StatefulSet '{self.app_full_name}'"
-            )
+            log.info(f"Deleting the PVCs {pvc_names} for StatefulSet '{app_full_name}'")
         else:
-            log.info(f"Deleting the PVCs for StatefulSet '{self.app_full_name}'")
+            log.info(f"Deleting the PVCs for StatefulSet '{app_full_name}'")
             await pvc_handler.delete_pvcs()
 
 
