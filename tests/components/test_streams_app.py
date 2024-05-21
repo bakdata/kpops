@@ -29,7 +29,7 @@ from kpops.components.streams_bootstrap.streams.streams_app import (
     StreamsAppCleaner,
 )
 from kpops.config import KpopsConfig, TopicNameConfig
-from kpops.pipeline import ValidationError
+from kpops.exception import ValidationError
 from tests.components import PIPELINE_BASE_DIR
 
 RESOURCES_PATH = Path(__file__).parent / "resources"

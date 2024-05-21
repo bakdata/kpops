@@ -1,47 +1,23 @@
 from __future__ import annotations
 
-import asyncio
-import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 import dtyper
 import typer
 
+import kpops
 from kpops import __version__
-from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.options import FilterType
-from kpops.cli.registry import Registry
 from kpops.cli.utils import collect_pipeline_paths
-from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
-    KafkaConnectHandler,
-)
-from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
-from kpops.component_handlers.topic.handler import TopicHandler
-from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
-from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
-from kpops.pipeline import (
-    ComponentFilterPredicate,
-    Pipeline,
-    PipelineGenerator,
-)
-from kpops.utils.cli_commands import init_project
 from kpops.utils.gen_schema import (
     SchemaScope,
     gen_config_schema,
     gen_defaults_schema,
     gen_pipeline_schema,
 )
-from kpops.utils.pydantic import YamlConfigSettingsSource
 from kpops.utils.yaml import print_yaml
-
-if TYPE_CHECKING:
-    from kpops.components import PipelineComponent
-
-
-LOG_DIVIDER = "#" * 100
 
 app = dtyper.Typer(pretty_exceptions_enable=False)
 
@@ -131,86 +107,6 @@ ENVIRONMENT: str | None = typer.Option(
 )
 
 
-logger = logging.getLogger()
-logging.getLogger("httpx").setLevel(logging.WARNING)
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(CustomFormatter())
-logger.addHandler(stream_handler)
-
-log = logging.getLogger("")
-
-
-def setup_pipeline(
-    pipeline_path: Path,
-    kpops_config: KpopsConfig,
-    environment: str | None,
-) -> Pipeline:
-    registry = Registry()
-    if kpops_config.components_module:
-        registry.find_components(kpops_config.components_module)
-    registry.find_components("kpops.components")
-
-    handlers = setup_handlers(kpops_config)
-    parser = PipelineGenerator(kpops_config, registry, handlers)
-    return parser.load_yaml(pipeline_path, environment)
-
-
-def setup_handlers(config: KpopsConfig) -> ComponentHandlers:
-    schema_handler = SchemaHandler.load_schema_handler(config)
-    connector_handler = KafkaConnectHandler.from_kpops_config(config)
-    proxy_wrapper = ProxyWrapper(config.kafka_rest)
-    topic_handler = TopicHandler(proxy_wrapper)
-
-    return ComponentHandlers(schema_handler, connector_handler, topic_handler)
-
-
-def setup_logging_level(verbose: bool):
-    logging.getLogger().setLevel(logging.DEBUG if verbose else logging.INFO)
-
-
-def parse_steps(steps: str) -> set[str]:
-    return set(steps.split(","))
-
-
-def is_in_steps(component: PipelineComponent, component_names: set[str]) -> bool:
-    return component.name in component_names
-
-
-def create_default_step_names_filter_predicate(
-    component_names: set[str], filter_type: FilterType
-) -> ComponentFilterPredicate:
-    def predicate(component: PipelineComponent) -> bool:
-        match filter_type, is_in_steps(component, component_names):
-            case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
-                return False
-            case _:
-                return True
-
-    return predicate
-
-
-def log_action(action: str, pipeline_component: PipelineComponent):
-    log.info("\n")
-    log.info(LOG_DIVIDER)
-    log.info(f"{action} {pipeline_component.name}")
-    log.info(LOG_DIVIDER)
-    log.info("\n")
-
-
-def create_kpops_config(
-    config: Path,
-    dotenv: list[Path] | None = None,
-    environment: str | None = None,
-    verbose: bool = False,
-) -> KpopsConfig:
-    setup_logging_level(verbose)
-    YamlConfigSettingsSource.config_dir = config
-    YamlConfigSettingsSource.environment = environment
-    return KpopsConfig(
-        _env_file=dotenv  # pyright: ignore[reportCallIssue]
-    )
-
-
 @app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
     help="Initialize a new KPOps project."
 )
@@ -218,12 +114,7 @@ def init(
     path: Path = PROJECT_PATH,
     config_include_opt: bool = CONFIG_INCLUDE_OPTIONAL,
 ):
-    if not path.exists():
-        path.mkdir(parents=False)
-    elif next(path.iterdir(), False):
-        log.warning("Please provide a path to an empty directory.")
-        return
-    init_project(path, config_include_opt)
+    kpops.init(path, config_include_opt=config_include_opt)
 
 
 @app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
@@ -251,12 +142,12 @@ def schema(
 ) -> None:
     match scope:
         case SchemaScope.PIPELINE:
-            kpops_config = create_kpops_config(config)
+            kpops_config = KpopsConfig.create(config)
             gen_pipeline_schema(
                 kpops_config.components_module, include_stock_components
             )
         case SchemaScope.DEFAULTS:
-            kpops_config = create_kpops_config(config)
+            kpops_config = KpopsConfig.create(config)
             gen_defaults_schema(
                 kpops_config.components_module, include_stock_components
             )
@@ -272,38 +163,22 @@ def generate(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    output: bool = OUTPUT_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     environment: Optional[str] = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
-) -> Pipeline:
-    kpops_config = create_kpops_config(
-        config,
-        dotenv,
-        environment,
-        verbose,
-    )
-    super_pipeline = Pipeline()
+):
     for pipeline_file_path in collect_pipeline_paths(pipeline_path):
-        pipeline = setup_pipeline(pipeline_file_path, kpops_config, environment)
-        log.info(f"Picked up pipeline '{pipeline_file_path.parent.name}'")
-        if steps:
-            component_names = parse_steps(steps)
-            log.debug(
-                f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
-            )
-
-            predicate = create_default_step_names_filter_predicate(
-                component_names, filter_type
-            )
-            pipeline.filter(predicate)
-            log.info(f"Filtered pipeline:\n{pipeline.step_names}")
-        super_pipeline.extend(pipeline)
-
-    if output:
-        print_yaml(super_pipeline.to_yaml())
-    return super_pipeline
+        pipeline = kpops.generate(
+            pipeline_file_path,
+            dotenv,
+            config,
+            steps,
+            filter_type,
+            environment,
+            verbose,
+        )
+        print_yaml(pipeline.to_yaml())
 
 
 @app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
@@ -314,30 +189,24 @@ def manifest(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    output: bool = OUTPUT_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     environment: Optional[str] = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
-) -> list[Resource]:
-    pipeline = generate(
-        pipeline_path=pipeline_path,
-        dotenv=dotenv,
-        config=config,
-        output=False,
-        steps=steps,
-        filter_type=filter_type,
-        environment=environment,
-        verbose=verbose,
-    )
-    resources: list[Resource] = []
-    for component in pipeline.components:
-        resource = component.manifest()
-        resources.append(resource)
-        if output:
-            for manifest in resource:
-                print_yaml(manifest)
-    return resources
+):
+    for pipeline_file_path in collect_pipeline_paths(pipeline_path):
+        resources = kpops.manifest(
+            pipeline_path=pipeline_file_path,
+            dotenv=dotenv,
+            config=config,
+            steps=steps,
+            filter_type=filter_type,
+            environment=environment,
+            verbose=verbose,
+        )
+        for resource in resources:
+            for rendered_manifest in resource:
+                print_yaml(rendered_manifest)
 
 
 @app.command(help="Deploy pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
@@ -352,30 +221,18 @@ def deploy(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    pipeline = generate(
-        pipeline_path=pipeline_path,
-        dotenv=dotenv,
-        config=config,
-        output=False,
-        steps=steps,
-        filter_type=filter_type,
-        environment=environment,
-        verbose=verbose,
-    )
-
-    async def deploy_runner(component: PipelineComponent):
-        log_action("Deploy", component)
-        await component.deploy(dry_run)
-
-    async def async_deploy():
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(deploy_runner)
-            await pipeline_tasks
-        else:
-            for component in pipeline.components:
-                await deploy_runner(component)
-
-    asyncio.run(async_deploy())
+    for pipeline_file_path in collect_pipeline_paths(pipeline_path):
+        kpops.deploy(
+            pipeline_path=pipeline_file_path,
+            dotenv=dotenv,
+            config=config,
+            steps=steps,
+            filter_type=filter_type,
+            environment=environment,
+            dry_run=dry_run,
+            verbose=verbose,
+            parallel=parallel,
+        )
 
 
 @app.command(help="Destroy pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
@@ -390,32 +247,18 @@ def destroy(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    pipeline = generate(
-        pipeline_path=pipeline_path,
-        dotenv=dotenv,
-        config=config,
-        output=False,
-        steps=steps,
-        filter_type=filter_type,
-        environment=environment,
-        verbose=verbose,
-    )
-
-    async def destroy_runner(component: PipelineComponent):
-        log_action("Destroy", component)
-        await component.destroy(dry_run)
-
-    async def async_destroy():
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(
-                destroy_runner, reverse=True
-            )
-            await pipeline_tasks
-        else:
-            for component in reversed(pipeline.components):
-                await destroy_runner(component)
-
-    asyncio.run(async_destroy())
+    for pipeline_file_path in collect_pipeline_paths(pipeline_path):
+        kpops.destroy(
+            pipeline_path=pipeline_file_path,
+            dotenv=dotenv,
+            config=config,
+            steps=steps,
+            filter_type=filter_type,
+            environment=environment,
+            dry_run=dry_run,
+            verbose=verbose,
+            parallel=parallel,
+        )
 
 
 @app.command(help="Reset pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
@@ -430,31 +273,18 @@ def reset(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    pipeline = generate(
-        pipeline_path=pipeline_path,
-        dotenv=dotenv,
-        config=config,
-        output=False,
-        steps=steps,
-        filter_type=filter_type,
-        environment=environment,
-        verbose=verbose,
-    )
-
-    async def reset_runner(component: PipelineComponent):
-        await component.destroy(dry_run)
-        log_action("Reset", component)
-        await component.reset(dry_run)
-
-    async def async_reset():
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(reset_runner, reverse=True)
-            await pipeline_tasks
-        else:
-            for component in reversed(pipeline.components):
-                await reset_runner(component)
-
-    asyncio.run(async_reset())
+    for pipeline_file_path in collect_pipeline_paths(pipeline_path):
+        kpops.reset(
+            pipeline_path=pipeline_file_path,
+            dotenv=dotenv,
+            config=config,
+            steps=steps,
+            filter_type=filter_type,
+            environment=environment,
+            dry_run=dry_run,
+            verbose=verbose,
+            parallel=parallel,
+        )
 
 
 @app.command(help="Clean pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
@@ -469,31 +299,18 @@ def clean(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    pipeline = generate(
-        pipeline_path=pipeline_path,
-        dotenv=dotenv,
-        config=config,
-        output=False,
-        steps=steps,
-        filter_type=filter_type,
-        environment=environment,
-        verbose=verbose,
-    )
-
-    async def clean_runner(component: PipelineComponent):
-        await component.destroy(dry_run)
-        log_action("Clean", component)
-        await component.clean(dry_run)
-
-    async def async_clean():
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(clean_runner, reverse=True)
-            await pipeline_tasks
-        else:
-            for component in reversed(pipeline.components):
-                await clean_runner(component)
-
-    asyncio.run(async_clean())
+    for pipeline_file_path in collect_pipeline_paths(pipeline_path):
+        kpops.clean(
+            pipeline_path=pipeline_file_path,
+            dotenv=dotenv,
+            config=config,
+            steps=steps,
+            filter_type=filter_type,
+            environment=environment,
+            dry_run=dry_run,
+            verbose=verbose,
+            parallel=parallel,
+        )
 
 
 def version_callback(show_version: bool) -> None:

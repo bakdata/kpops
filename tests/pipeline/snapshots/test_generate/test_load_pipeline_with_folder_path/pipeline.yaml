@@ -1,7 +1,7 @@
 - _cleaner:
     app:
       autoscaling:
-        consumerGroup: filter-resources-pipeline-folder-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+        consumerGroup: filter-resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
         cooldownPeriod: 300
         enabled: true
         lagThreshold: 10000
@@ -10,7 +10,7 @@
         offsetResetPolicy: earliest
         pollingInterval: 30
         topics:
-        - resources-pipeline-folder-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+        - resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       commandLine:
         TYPE: nothing
       image: fake-registry/filter
@@ -26,12 +26,12 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-        errorTopic: resources-pipeline-folder-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
-        outputTopic: resources-pipeline-folder-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+        errorTopic: resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
+        outputTopic: resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
         schemaRegistryUrl: http://localhost:8081/
     name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
     namespace: example-namespace
-    prefix: resources-pipeline-folder-pipeline-3-
+    prefix: resources-pipeline-folders-pipeline-3-
     repo_config:
       repo_auth_flags:
         insecure_skip_tls_verify: false
@@ -42,7 +42,7 @@
     version: 2.4.2
   app:
     autoscaling:
-      consumerGroup: filter-resources-pipeline-folder-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+      consumerGroup: filter-resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       cooldownPeriod: 300
       enabled: true
       lagThreshold: 10000
@@ -51,7 +51,7 @@
       offsetResetPolicy: earliest
       pollingInterval: 30
       topics:
-      - resources-pipeline-folder-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+      - resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
     commandLine:
       TYPE: nothing
     image: fake-registry/filter
@@ -67,12 +67,12 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-pipeline-folder-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
-      outputTopic: resources-pipeline-folder-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+      errorTopic: resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
+      outputTopic: resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       schemaRegistryUrl: http://localhost:8081/
   name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
   namespace: example-namespace
-  prefix: resources-pipeline-folder-pipeline-3-
+  prefix: resources-pipeline-folders-pipeline-3-
   repo_config:
     repo_auth_flags:
       insecure_skip_tls_verify: false
@@ -81,12 +81,12 @@
   to:
     models: {}
     topics:
-      ? resources-pipeline-folder-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
+      ? resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       : configs:
           retention.ms: '-1'
         partitions_count: 50
         type: output
-      ? resources-pipeline-folder-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
+      ? resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
       : configs:
           cleanup.policy: compact,delete
         partitions_count: 1
@@ -94,10 +94,11 @@
         value_schema: com.bakdata.kafka.DeadLetter
   type: filter
   version: 2.4.2
+
 - _cleaner:
     app:
       autoscaling:
-        consumerGroup: converter-resources-pipeline-folder-pipeline-2-converter
+        consumerGroup: converter-resources-pipeline-folders-pipeline-2-converter
         cooldownPeriod: 300
         enabled: true
         lagThreshold: 10000
@@ -120,12 +121,12 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-        errorTopic: resources-pipeline-folder-pipeline-2-converter-error
-        outputTopic: resources-pipeline-folder-pipeline-2-converter
+        errorTopic: resources-pipeline-folders-pipeline-2-converter-error
+        outputTopic: resources-pipeline-folders-pipeline-2-converter
         schemaRegistryUrl: http://localhost:8081/
     name: converter
     namespace: example-namespace
-    prefix: resources-pipeline-folder-pipeline-2-
+    prefix: resources-pipeline-folders-pipeline-2-
     repo_config:
       repo_auth_flags:
         insecure_skip_tls_verify: false
@@ -136,7 +137,7 @@
     version: 2.4.2
   app:
     autoscaling:
-      consumerGroup: converter-resources-pipeline-folder-pipeline-2-converter
+      consumerGroup: converter-resources-pipeline-folders-pipeline-2-converter
       cooldownPeriod: 300
       enabled: true
       lagThreshold: 10000
@@ -159,12 +160,12 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-pipeline-folder-pipeline-2-converter-error
-      outputTopic: resources-pipeline-folder-pipeline-2-converter
+      errorTopic: resources-pipeline-folders-pipeline-2-converter-error
+      outputTopic: resources-pipeline-folders-pipeline-2-converter
       schemaRegistryUrl: http://localhost:8081/
   name: converter
   namespace: example-namespace
-  prefix: resources-pipeline-folder-pipeline-2-
+  prefix: resources-pipeline-folders-pipeline-2-
   repo_config:
     repo_auth_flags:
       insecure_skip_tls_verify: false
@@ -173,13 +174,13 @@
   to:
     models: {}
     topics:
-      resources-pipeline-folder-pipeline-2-converter:
+      resources-pipeline-folders-pipeline-2-converter:
         configs:
           cleanup.policy: compact,delete
           retention.ms: '-1'
         partitions_count: 50
         type: output
-      resources-pipeline-folder-pipeline-2-converter-error:
+      resources-pipeline-folders-pipeline-2-converter-error:
         configs:
           cleanup.policy: compact,delete
         partitions_count: 10
@@ -187,6 +188,7 @@
         value_schema: com.bakdata.kafka.DeadLetter
   type: converter
   version: 2.4.2
+
 - _cleaner:
     app:
       commandLine:
@@ -196,11 +198,11 @@
       schedule: 30 3/8 * * *
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        outputTopic: resources-pipeline-folder-pipeline-1-scheduled-producer
+        outputTopic: resources-pipeline-folders-pipeline-1-scheduled-producer
         schemaRegistryUrl: http://localhost:8081/
     name: scheduled-producer
     namespace: example-namespace
-    prefix: resources-pipeline-folder-pipeline-1-
+    prefix: resources-pipeline-folders-pipeline-1-
     repo_config:
       repo_auth_flags:
         insecure_skip_tls_verify: false
@@ -217,11 +219,11 @@
     schedule: 30 3/8 * * *
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      outputTopic: resources-pipeline-folder-pipeline-1-scheduled-producer
+      outputTopic: resources-pipeline-folders-pipeline-1-scheduled-producer
       schemaRegistryUrl: http://localhost:8081/
   name: scheduled-producer
   namespace: example-namespace
-  prefix: resources-pipeline-folder-pipeline-1-
+  prefix: resources-pipeline-folders-pipeline-1-
   repo_config:
     repo_auth_flags:
       insecure_skip_tls_verify: false
@@ -231,7 +233,7 @@
     models:
       com/bakdata/kafka/fake: 1.0.0
     topics:
-      resources-pipeline-folder-pipeline-1-scheduled-producer:
+      resources-pipeline-folders-pipeline-1-scheduled-producer:
         configs:
           cleanup.policy: compact,delete
         partitions_count: 12

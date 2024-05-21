@@ -12,7 +12,7 @@ from typer.testing import CliRunner
 import kpops
 from kpops.cli.main import FilterType, app
 from kpops.components import KafkaSinkConnector, PipelineComponent
-from kpops.pipeline import ParsingException, ValidationError
+from kpops.exception import ParsingException, ValidationError
 
 runner = CliRunner()
 
@@ -23,12 +23,11 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 class TestGenerate:
     @pytest.fixture(autouse=True)
     def log_info(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.cli.main.log.info")
+        return mocker.patch("kpops.api.log.info")
 
     def test_python_api(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            output=False,
         )
         assert len(pipeline) == 3
         assert [component.type for component in pipeline.components] == [
@@ -40,7 +39,6 @@ class TestGenerate:
     def test_python_api_filter_include(self, log_info: MagicMock):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            output=False,
             steps="converter",
             filter_type=FilterType.INCLUDE,
         )
@@ -53,7 +51,6 @@ class TestGenerate:
     def test_python_api_filter_exclude(self, log_info: MagicMock):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            output=False,
             steps="converter,scheduled-producer",
             filter_type=FilterType.EXCLUDE,
         )
@@ -682,47 +679,6 @@ class TestGenerate:
     async def test_parallel_execution_graph(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
-            config=RESOURCE_PATH / "parallel-pipeline",
-        )
-
-        called_component = AsyncMock()
-
-        sleep_table_components = {
-            "transaction-avro-producer-1": 1,
-            "transaction-avro-producer-2": 0,
-            "transaction-avro-producer-3": 2,
-            "transaction-joiner": 3,
-            "fraud-detector": 2,
-            "account-linker": 0,
-            "s3-connector-1": 2,
-            "s3-connector-2": 1,
-            "s3-connector-3": 0,
-        }
-
-        async def name_runner(component: PipelineComponent):
-            await asyncio.sleep(sleep_table_components[component.name])
-            await called_component(component.name)
-
-        execution_graph = pipeline.build_execution_graph(name_runner)
-
-        await execution_graph
-
-        assert called_component.mock_calls == [
-            mock.call("transaction-avro-producer-2"),
-            mock.call("transaction-avro-producer-1"),
-            mock.call("transaction-avro-producer-3"),
-            mock.call("transaction-joiner"),
-            mock.call("fraud-detector"),
-            mock.call("account-linker"),
-            mock.call("s3-connector-3"),
-            mock.call("s3-connector-2"),
-            mock.call("s3-connector-1"),
-        ]
-
-    @pytest.mark.asyncio()
-    async def test_pipeline_folders_parallel_execution_graph(self):
-        pipeline = kpops.generate(
-            RESOURCE_PATH / "parallel-pipeline-folders",
             config=RESOURCE_PATH / "parallel-pipeline",
         )
 
