@@ -1,19 +1,15 @@
 from __future__ import annotations
 
-import asyncio
-import logging
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional
+from typing import Optional
 
 import dtyper
 import typer
 
 import kpops
 from kpops import __version__
-from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.options import FilterType
 from kpops.config import ENV_PREFIX, KpopsConfig
-from kpops.utils.cli_commands import init_project
 from kpops.utils.gen_schema import (
     SchemaScope,
     gen_config_schema,
@@ -21,12 +17,6 @@ from kpops.utils.gen_schema import (
     gen_pipeline_schema,
 )
 from kpops.utils.yaml import print_yaml
-
-if TYPE_CHECKING:
-    from kpops.components import PipelineComponent
-
-
-LOG_DIVIDER = "#" * 100
 
 app = dtyper.Typer(pretty_exceptions_enable=False)
 
@@ -116,27 +106,6 @@ ENVIRONMENT: str | None = typer.Option(
 )
 
 
-logger = logging.getLogger()
-logging.getLogger("httpx").setLevel(logging.WARNING)
-stream_handler = logging.StreamHandler()
-stream_handler.setFormatter(CustomFormatter())
-logger.addHandler(stream_handler)
-
-log = logging.getLogger("")
-
-
-def parse_steps(steps: str) -> set[str]:
-    return set(steps.split(","))
-
-
-def log_action(action: str, pipeline_component: PipelineComponent):
-    log.info("\n")
-    log.info(LOG_DIVIDER)
-    log.info(f"{action} {pipeline_component.name}")
-    log.info(LOG_DIVIDER)
-    log.info("\n")
-
-
 @app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
     help="Initialize a new KPOps project."
 )
@@ -144,12 +113,7 @@ def init(
     path: Path = PROJECT_PATH,
     config_include_opt: bool = CONFIG_INCLUDE_OPTIONAL,
 ):
-    if not path.exists():
-        path.mkdir(parents=False)
-    elif next(path.iterdir(), False):
-        log.warning("Please provide a path to an empty directory.")
-        return
-    init_project(path, config_include_opt)
+    kpops.init(path, config_include_opt=config_include_opt)
 
 
 @app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
@@ -253,29 +217,17 @@ def deploy(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    pipeline = kpops.generate(
+    kpops.deploy(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
+        dry_run=dry_run,
         verbose=verbose,
+        parallel=parallel,
     )
-
-    async def deploy_runner(component: PipelineComponent):
-        log_action("Deploy", component)
-        await component.deploy(dry_run)
-
-    async def async_deploy():
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(deploy_runner)
-            await pipeline_tasks
-        else:
-            for component in pipeline.components:
-                await deploy_runner(component)
-
-    asyncio.run(async_deploy())
 
 
 @app.command(help="Destroy pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
@@ -290,31 +242,17 @@ def destroy(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    pipeline = kpops.generate(
+    kpops.destroy(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
+        dry_run=dry_run,
         verbose=verbose,
+        parallel=parallel,
     )
-
-    async def destroy_runner(component: PipelineComponent):
-        log_action("Destroy", component)
-        await component.destroy(dry_run)
-
-    async def async_destroy():
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(
-                destroy_runner, reverse=True
-            )
-            await pipeline_tasks
-        else:
-            for component in reversed(pipeline.components):
-                await destroy_runner(component)
-
-    asyncio.run(async_destroy())
 
 
 @app.command(help="Reset pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
@@ -329,30 +267,17 @@ def reset(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    pipeline = kpops.generate(
+    kpops.reset(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
+        dry_run=dry_run,
         verbose=verbose,
+        parallel=parallel,
     )
-
-    async def reset_runner(component: PipelineComponent):
-        await component.destroy(dry_run)
-        log_action("Reset", component)
-        await component.reset(dry_run)
-
-    async def async_reset():
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(reset_runner, reverse=True)
-            await pipeline_tasks
-        else:
-            for component in reversed(pipeline.components):
-                await reset_runner(component)
-
-    asyncio.run(async_reset())
 
 
 @app.command(help="Clean pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
@@ -367,30 +292,17 @@ def clean(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    pipeline = kpops.generate(
+    kpops.clean(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
+        dry_run=dry_run,
         verbose=verbose,
+        parallel=parallel,
     )
-
-    async def clean_runner(component: PipelineComponent):
-        await component.destroy(dry_run)
-        log_action("Clean", component)
-        await component.clean(dry_run)
-
-    async def async_clean():
-        if parallel:
-            pipeline_tasks = pipeline.build_execution_graph(clean_runner, reverse=True)
-            await pipeline_tasks
-        else:
-            for component in reversed(pipeline.components):
-                await clean_runner(component)
-
-    asyncio.run(async_clean())
 
 
 def version_callback(show_version: bool) -> None:
