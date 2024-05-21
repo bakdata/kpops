@@ -14,6 +14,8 @@
         outputTopic: word-count-data-producer-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     debug: true
+    helm_name_override: word-count-data-producer-clean
+    helm_release_name: word-count-data-producer-clean
     name: data-producer
     namespace: ${NAMESPACE}
     prefix: word-count-
@@ -40,6 +42,8 @@
       outputTopic: word-count-data-producer-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   debug: true
+  helm_name_override: word-count-data-producer
+  helm_release_name: word-count-data-producer
   name: data-producer
   namespace: ${NAMESPACE}
   prefix: word-count-
@@ -80,6 +84,8 @@
         outputTopic: word-count-word-counter-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     debug: true
+    helm_name_override: word-count-word-counter-clean
+    helm_release_name: word-count-word-counter-clean
     name: word-counter
     namespace: ${NAMESPACE}
     prefix: word-count-
@@ -114,6 +120,8 @@
       outputTopic: word-count-word-counter-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   debug: true
+  helm_name_override: word-count-word-counter
+  helm_release_name: word-count-word-counter
   name: word-counter
   namespace: ${NAMESPACE}
   prefix: word-count-
@@ -142,6 +150,8 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: word-count-redis-sink-connector
       connectorType: sink
+    helm_name_override: word-count-redis-sink-connector-clean
+    helm_release_name: word-count-redis-sink-connector-clean
     name: redis-sink-connector
     namespace: ${NAMESPACE}
     prefix: word-count-

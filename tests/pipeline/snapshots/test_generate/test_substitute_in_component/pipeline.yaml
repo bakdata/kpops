@@ -13,6 +13,8 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-component-type-substitution-scheduled-producer
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-component-type-substitution-scheduled-producer-clean
+    helm_release_name: resources-component-type-substitution-sch-01b02-clean
     name: scheduled-producer
     namespace: example-namespace
     prefix: resources-component-type-substitution-
@@ -38,6 +40,8 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-component-type-substitution-scheduled-producer
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-component-type-substitution-scheduled-producer
+  helm_release_name: resources-component-type-substitution-scheduled-b0010
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-component-type-substitution-
@@ -89,6 +93,8 @@
         - resources-component-type-substitution-scheduled-producer
         outputTopic: resources-component-type-substitution-converter
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-component-type-substitution-converter-clean
+    helm_release_name: resources-component-type-substitution-converter-clean
     name: converter
     namespace: example-namespace
     prefix: resources-component-type-substitution-
@@ -130,6 +136,8 @@
       - resources-component-type-substitution-scheduled-producer
       outputTopic: resources-component-type-substitution-converter
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-component-type-substitution-converter
+  helm_release_name: resources-component-type-substitution-converter
   name: converter
   namespace: example-namespace
   prefix: resources-component-type-substitution-
@@ -194,6 +202,8 @@
         - resources-component-type-substitution-converter
         outputTopic: resources-component-type-substitution-filter-app
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-component-type-substitution-filter-app-clean
+    helm_release_name: resources-component-type-substitution-fil-d68ac-clean
     name: filter-app
     namespace: example-namespace
     prefix: resources-component-type-substitution-
@@ -243,6 +253,8 @@
       - resources-component-type-substitution-converter
       outputTopic: resources-component-type-substitution-filter-app
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-component-type-substitution-filter-app
+  helm_release_name: resources-component-type-substitution-filter-app
   name: filter-app
   namespace: example-namespace
   prefix: resources-component-type-substitution-
