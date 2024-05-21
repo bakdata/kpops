@@ -201,8 +201,9 @@ def manifest(
         environment=environment,
         verbose=verbose,
     )
-    for rendered in resources:
-        print_yaml(rendered)
+    for resource in resources:
+        for rendered_manifest in resource:
+            print_yaml(rendered_manifest)
 
 
 @app.command(help="Deploy pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
