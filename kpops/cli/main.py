@@ -12,7 +12,6 @@ import kpops
 from kpops import __version__
 from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.options import FilterType
-from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.utils.cli_commands import init_project
 from kpops.utils.gen_schema import (
@@ -224,13 +223,12 @@ def manifest(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    output: bool = OUTPUT_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     environment: Optional[str] = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
-) -> list[Resource]:
-    pipeline = kpops.generate(
+):
+    resources = kpops.manifest(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
@@ -239,14 +237,8 @@ def manifest(
         environment=environment,
         verbose=verbose,
     )
-    resources: list[Resource] = []
-    for component in pipeline.components:
-        resource = component.manifest()
-        resources.append(resource)
-        if output:
-            for manifest in resource:
-                print_yaml(manifest)
-    return resources
+    for rendered in resources:
+        print_yaml(rendered)
 
 
 @app.command(help="Deploy pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8

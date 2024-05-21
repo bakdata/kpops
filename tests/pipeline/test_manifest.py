@@ -101,7 +101,6 @@ class TestManifest:
     def test_python_api(self, snapshot: Snapshot):
         resources = kpops.manifest(
             RESOURCE_PATH / "custom-config/pipeline.yaml",
-            output=False,
             environment="development",
         )
         assert isinstance(resources, list)

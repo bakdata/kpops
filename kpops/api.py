@@ -2,12 +2,17 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from typing import TYPE_CHECKING
 
+import kpops
 from kpops.cli.options import FilterType
 from kpops.config import KpopsConfig
 from kpops.pipeline import (
     Pipeline,
 )
+
+if TYPE_CHECKING:
+    from kpops.components.base_components.models.resource import Resource
 
 log = logging.getLogger("KPOpsAPI")
 
@@ -45,3 +50,28 @@ def generate(
         pipeline.filter(predicate)
         log.info(f"Filtered pipeline:\n{pipeline.step_names}")
     return pipeline
+
+
+def manifest(
+    pipeline_path: Path,
+    dotenv: list[Path] | None = None,
+    config: Path = Path(),
+    steps: str | None = None,
+    filter_type: FilterType = FilterType.INCLUDE,
+    environment: str | None = None,
+    verbose: bool = False,
+) -> list[Resource]:
+    pipeline = kpops.generate(
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        config=config,
+        steps=steps,
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
+    )
+    resources: list[Resource] = []
+    for component in pipeline.components:
+        resource = component.manifest()
+        resources.append(resource)
+    return resources
