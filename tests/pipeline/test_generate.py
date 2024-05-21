@@ -12,7 +12,7 @@ from typer.testing import CliRunner
 import kpops
 from kpops.cli.main import FilterType, app
 from kpops.components import KafkaSinkConnector, PipelineComponent
-from kpops.pipeline import ParsingException, ValidationError
+from kpops.exception import ParsingException, ValidationError
 
 runner = CliRunner()
 
@@ -23,12 +23,11 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 class TestGenerate:
     @pytest.fixture(autouse=True)
     def log_info(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.cli.main.log.info")
+        return mocker.patch("kpops.api.log.info")
 
     def test_python_api(self):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            output=False,
         )
         assert len(pipeline) == 3
         assert [component.type for component in pipeline.components] == [
@@ -40,25 +39,25 @@ class TestGenerate:
     def test_python_api_filter_include(self, log_info: MagicMock):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            output=False,
             steps="converter",
             filter_type=FilterType.INCLUDE,
         )
         assert len(pipeline) == 1
         assert pipeline.components[0].type == "converter"
-        assert log_info.call_count == 1
+        assert log_info.call_count == 2
+        log_info.assert_any_call("Picked up pipeline 'first-pipeline'")
         log_info.assert_any_call("Filtered pipeline:\n['converter']")
 
     def test_python_api_filter_exclude(self, log_info: MagicMock):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            output=False,
             steps="converter,scheduled-producer",
             filter_type=FilterType.EXCLUDE,
         )
         assert len(pipeline) == 1
         assert pipeline.components[0].type == "filter"
-        assert log_info.call_count == 1
+        assert log_info.call_count == 2
+        log_info.assert_any_call("Picked up pipeline 'first-pipeline'")
         log_info.assert_any_call(
             "Filtered pipeline:\n['a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name']"
         )

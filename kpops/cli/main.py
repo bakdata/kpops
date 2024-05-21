@@ -8,20 +8,12 @@ from typing import TYPE_CHECKING, Optional
 import dtyper
 import typer
 
+import kpops
 from kpops import __version__
 from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.options import FilterType
-from kpops.cli.registry import Registry
-from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
-    KafkaConnectHandler,
-)
-from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
-from kpops.component_handlers.topic.handler import TopicHandler
-from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.components.base_components.models.resource import Resource
 from kpops.config import ENV_PREFIX, KpopsConfig
-from kpops.pipeline import ComponentFilterPredicate, Pipeline, PipelineGenerator
 from kpops.utils.cli_commands import init_project
 from kpops.utils.gen_schema import (
     SchemaScope,
@@ -29,7 +21,6 @@ from kpops.utils.gen_schema import (
     gen_defaults_schema,
     gen_pipeline_schema,
 )
-from kpops.utils.pydantic import YamlConfigSettingsSource
 from kpops.utils.yaml import print_yaml
 
 if TYPE_CHECKING:
@@ -135,53 +126,8 @@ logger.addHandler(stream_handler)
 log = logging.getLogger("")
 
 
-def setup_pipeline(
-    pipeline_path: Path,
-    kpops_config: KpopsConfig,
-    environment: str | None,
-) -> Pipeline:
-    registry = Registry()
-    if kpops_config.components_module:
-        registry.find_components(kpops_config.components_module)
-    registry.find_components("kpops.components")
-
-    handlers = setup_handlers(kpops_config)
-    parser = PipelineGenerator(kpops_config, registry, handlers)
-    return parser.load_yaml(pipeline_path, environment)
-
-
-def setup_handlers(config: KpopsConfig) -> ComponentHandlers:
-    schema_handler = SchemaHandler.load_schema_handler(config)
-    connector_handler = KafkaConnectHandler.from_kpops_config(config)
-    proxy_wrapper = ProxyWrapper(config.kafka_rest)
-    topic_handler = TopicHandler(proxy_wrapper)
-
-    return ComponentHandlers(schema_handler, connector_handler, topic_handler)
-
-
-def setup_logging_level(verbose: bool):
-    logging.getLogger().setLevel(logging.DEBUG if verbose else logging.INFO)
-
-
 def parse_steps(steps: str) -> set[str]:
     return set(steps.split(","))
-
-
-def is_in_steps(component: PipelineComponent, component_names: set[str]) -> bool:
-    return component.name in component_names
-
-
-def create_default_step_names_filter_predicate(
-    component_names: set[str], filter_type: FilterType
-) -> ComponentFilterPredicate:
-    def predicate(component: PipelineComponent) -> bool:
-        match filter_type, is_in_steps(component, component_names):
-            case (FilterType.INCLUDE, False) | (FilterType.EXCLUDE, True):
-                return False
-            case _:
-                return True
-
-    return predicate
 
 
 def log_action(action: str, pipeline_component: PipelineComponent):
@@ -190,20 +136,6 @@ def log_action(action: str, pipeline_component: PipelineComponent):
     log.info(f"{action} {pipeline_component.name}")
     log.info(LOG_DIVIDER)
     log.info("\n")
-
-
-def create_kpops_config(
-    config: Path,
-    dotenv: list[Path] | None = None,
-    environment: str | None = None,
-    verbose: bool = False,
-) -> KpopsConfig:
-    setup_logging_level(verbose)
-    YamlConfigSettingsSource.config_dir = config
-    YamlConfigSettingsSource.environment = environment
-    return KpopsConfig(
-        _env_file=dotenv  # pyright: ignore[reportCallIssue]
-    )
 
 
 @app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
@@ -246,12 +178,12 @@ def schema(
 ) -> None:
     match scope:
         case SchemaScope.PIPELINE:
-            kpops_config = create_kpops_config(config)
+            kpops_config = KpopsConfig.create(config)
             gen_pipeline_schema(
                 kpops_config.components_module, include_stock_components
             )
         case SchemaScope.DEFAULTS:
-            kpops_config = create_kpops_config(config)
+            kpops_config = KpopsConfig.create(config)
             gen_defaults_schema(
                 kpops_config.components_module, include_stock_components
             )
@@ -267,39 +199,21 @@ def generate(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    output: bool = OUTPUT_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
     environment: Optional[str] = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
-) -> Pipeline:
-    kpops_config = create_kpops_config(
-        config,
+):
+    pipeline = kpops.generate(
+        pipeline_path,
         dotenv,
+        config,
+        steps,
+        filter_type,
         environment,
         verbose,
     )
-
-    pipeline = setup_pipeline(pipeline_path, kpops_config, environment)
-
-    if steps:
-        component_names = parse_steps(steps)
-        log.debug(
-            f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
-        )
-
-        predicate = create_default_step_names_filter_predicate(
-            component_names, filter_type
-        )
-        pipeline.filter(predicate)
-
-        def get_step_names(steps_to_apply: list[PipelineComponent]) -> list[str]:
-            return [step.name for step in steps_to_apply]
-
-        log.info(f"Filtered pipeline:\n{get_step_names(pipeline.components)}")
-    if output:
-        print_yaml(pipeline.to_yaml())
-    return pipeline
+    print_yaml(pipeline.to_yaml())
 
 
 @app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
@@ -316,11 +230,10 @@ def manifest(
     environment: Optional[str] = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
 ) -> list[Resource]:
-    pipeline = generate(
+    pipeline = kpops.generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
-        output=False,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
@@ -348,11 +261,10 @@ def deploy(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    pipeline = generate(
+    pipeline = kpops.generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
-        output=False,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
@@ -386,11 +298,10 @@ def destroy(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    pipeline = generate(
+    pipeline = kpops.generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
-        output=False,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
@@ -426,11 +337,10 @@ def reset(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    pipeline = generate(
+    pipeline = kpops.generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
-        output=False,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
@@ -465,11 +375,10 @@ def clean(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    pipeline = generate(
+    pipeline = kpops.generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
-        output=False,
         steps=steps,
         filter_type=filter_type,
         environment=environment,
