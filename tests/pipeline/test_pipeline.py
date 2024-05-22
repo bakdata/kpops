@@ -3,7 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from polyfactory.factories.pydantic_factory import ModelFactory
 
-from kpops.cli.options import FilterType
+from kpops.api.options import FilterType
 from kpops.component_handlers import (
     ComponentHandlers,
 )

@@ -21,7 +21,7 @@ from pydantic_core.core_schema import (
     ModelFieldsSchema,
 )
 
-from kpops.cli.registry import _find_classes
+from kpops.api.registry import _find_classes
 from kpops.components import (
     PipelineComponent,
 )

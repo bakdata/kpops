@@ -10,9 +10,9 @@ from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
 import kpops
+from kpops.api.exception import ParsingException, ValidationError
 from kpops.cli.main import FilterType, app
 from kpops.components import KafkaSinkConnector, PipelineComponent
-from kpops.exception import ParsingException, ValidationError
 
 runner = CliRunner()
 
@@ -23,7 +23,7 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 class TestGenerate:
     @pytest.fixture(autouse=True)
     def log_info(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.api.log.info")
+        return mocker.patch("kpops.api.api.log.info")
 
     def test_python_api(self):
         pipeline = kpops.generate(
