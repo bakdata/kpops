@@ -17,12 +17,6 @@ from pydantic import (
 
 from kpops.cli.registry import Registry
 from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
-    KafkaConnectHandler,
-)
-from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
-from kpops.component_handlers.topic.handler import TopicHandler
-from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.exception import ParsingException, ValidationError
 from kpops.utils.dict_ops import update_nested_pair
@@ -47,31 +41,6 @@ class Pipeline(BaseModel):
     _graph: nx.DiGraph = nx.DiGraph()
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    @classmethod
-    def create(
-        cls,
-        pipeline_path: Path,
-        kpops_config: KpopsConfig,
-        environment: str | None,
-    ) -> Pipeline:
-        registry = Registry()
-        if kpops_config.components_module:
-            registry.find_components(kpops_config.components_module)
-        registry.find_components("kpops.components")
-
-        handlers = cls.setup_handlers(kpops_config)
-        parser = PipelineGenerator(kpops_config, registry, handlers)
-        return parser.load_yaml(pipeline_path, environment)
-
-    @staticmethod
-    def setup_handlers(config: KpopsConfig) -> ComponentHandlers:
-        schema_handler = SchemaHandler.load_schema_handler(config)
-        connector_handler = KafkaConnectHandler.from_kpops_config(config)
-        proxy_wrapper = ProxyWrapper(config.kafka_rest)
-        topic_handler = TopicHandler(proxy_wrapper)
-
-        return ComponentHandlers(schema_handler, connector_handler, topic_handler)
 
     @property
     def step_names(self) -> list[str]:

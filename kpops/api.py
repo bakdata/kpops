@@ -8,15 +8,26 @@ from typing import TYPE_CHECKING
 import kpops
 from kpops.cli.custom_formatter import CustomFormatter
 from kpops.cli.options import FilterType
+from kpops.cli.registry import Registry
+from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
+    KafkaConnectHandler,
+)
+from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
+from kpops.component_handlers.topic.handler import TopicHandler
+from kpops.component_handlers.topic.proxy_wrapper import ProxyWrapper
 from kpops.config import KpopsConfig
 from kpops.pipeline import (
-    Pipeline,
+    PipelineGenerator,
 )
 from kpops.utils.cli_commands import init_project
 
 if TYPE_CHECKING:
     from kpops.components import PipelineComponent
     from kpops.components.base_components.models.resource import Resource
+    from kpops.pipeline import (
+        Pipeline,
+    )
 
 logger = logging.getLogger()
 logging.getLogger("httpx").setLevel(logging.WARNING)
@@ -55,7 +66,7 @@ def generate(
         environment,
         verbose,
     )
-    pipeline = Pipeline.create(pipeline_path, kpops_config, environment)
+    pipeline = create_pipeline(pipeline_path, kpops_config, environment)
     log.info(f"Picked up pipeline '{pipeline_path.parent.name}'")
     if steps:
         component_names = parse_steps(steps)
@@ -254,3 +265,27 @@ def init(
         log.warning("Please provide a path to an empty directory.")
         return
     init_project(path, config_include_opt)
+
+
+def create_pipeline(
+    pipeline_path: Path,
+    kpops_config: KpopsConfig,
+    environment: str | None,
+) -> Pipeline:
+    registry = Registry()
+    if kpops_config.components_module:
+        registry.find_components(kpops_config.components_module)
+    registry.find_components("kpops.components")
+
+    handlers = setup_handlers(kpops_config)
+    parser = PipelineGenerator(kpops_config, registry, handlers)
+    return parser.load_yaml(pipeline_path, environment)
+
+
+def setup_handlers(config: KpopsConfig) -> ComponentHandlers:
+    schema_handler = SchemaHandler.load_schema_handler(config)
+    connector_handler = KafkaConnectHandler.from_kpops_config(config)
+    proxy_wrapper = ProxyWrapper(config.kafka_rest)
+    topic_handler = TopicHandler(proxy_wrapper)
+
+    return ComponentHandlers(schema_handler, connector_handler, topic_handler)
