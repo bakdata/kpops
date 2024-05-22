@@ -6,9 +6,9 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 import kpops
-from kpops.cli.custom_formatter import CustomFormatter
-from kpops.cli.options import FilterType
-from kpops.cli.registry import Registry
+from kpops.api.custom_formatter import CustomFormatter
+from kpops.api.options import FilterType
+from kpops.api.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,

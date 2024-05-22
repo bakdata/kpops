@@ -16,7 +16,7 @@ from pydantic import (
 )
 
 from kpops.api.exception import ParsingException, ValidationError
-from kpops.cli.registry import Registry
+from kpops.api.registry import Registry
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import update_nested_pair

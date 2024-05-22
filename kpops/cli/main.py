@@ -8,7 +8,7 @@ import typer
 
 import kpops
 from kpops import __version__
-from kpops.cli.options import FilterType
+from kpops.api.options import FilterType
 from kpops.cli.utils import collect_pipeline_paths
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.utils.gen_schema import (
