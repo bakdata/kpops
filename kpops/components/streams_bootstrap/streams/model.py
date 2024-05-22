@@ -5,12 +5,12 @@ from typing import Any
 import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from kpops.api.exception import ValidationError
 from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
     KafkaStreamsConfig,
 )
 from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
-from kpops.exception import ValidationError
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,

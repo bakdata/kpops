@@ -5,6 +5,7 @@ from unittest.mock import ANY, AsyncMock, MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
+from kpops.api.exception import ValidationError
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
@@ -29,7 +30,6 @@ from kpops.components.streams_bootstrap.streams.streams_app import (
     StreamsAppCleaner,
 )
 from kpops.config import KpopsConfig, TopicNameConfig
-from kpops.exception import ValidationError
 from tests.components import PIPELINE_BASE_DIR
 
 RESOURCES_PATH = Path(__file__).parent / "resources"
