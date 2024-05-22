@@ -105,9 +105,11 @@ ENVIRONMENT: str | None = typer.Option(
 )
 
 
-@app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
-    help="Initialize a new KPOps project."
-)
+def parse_steps(steps: str | None) -> set[str] | None:
+    return set(steps.split(",")) if steps else None
+
+
+@app.command(help="Initialize a new KPOps project.")
 def init(
     path: Path = PROJECT_PATH,
     config_include_opt: bool = CONFIG_INCLUDE_OPTIONAL,
@@ -115,7 +117,7 @@ def init(
     kpops.init(path, config_include_opt=config_include_opt)
 
 
-@app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
+@app.command(
     help="""
     Generate JSON schema.
 
@@ -153,7 +155,7 @@ def schema(
             gen_config_schema()
 
 
-@app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
+@app.command(
     short_help="Generate enriched pipeline representation",
     help="Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).",
 )
@@ -167,18 +169,18 @@ def generate(
     verbose: bool = VERBOSE_OPTION,
 ):
     pipeline = kpops.generate(
-        pipeline_path,
-        dotenv,
-        config,
-        steps,
-        filter_type,
-        environment,
-        verbose,
+        pipeline_path=pipeline_path,
+        dotenv=dotenv,
+        config=config,
+        steps=parse_steps(steps),
+        filter_type=filter_type,
+        environment=environment,
+        verbose=verbose,
     )
     print_yaml(pipeline.to_yaml())
 
 
-@app.command(  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
+@app.command(
     short_help="Render final resource representation",
     help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.",
 )
@@ -195,7 +197,7 @@ def manifest(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
-        steps=steps,
+        steps=parse_steps(steps),
         filter_type=filter_type,
         environment=environment,
         verbose=verbose,
@@ -205,7 +207,7 @@ def manifest(
             print_yaml(rendered_manifest)
 
 
-@app.command(help="Deploy pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
+@app.command(help="Deploy pipeline steps")
 def deploy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
@@ -221,7 +223,7 @@ def deploy(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
-        steps=steps,
+        steps=parse_steps(steps),
         filter_type=filter_type,
         environment=environment,
         dry_run=dry_run,
@@ -230,7 +232,7 @@ def deploy(
     )
 
 
-@app.command(help="Destroy pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
+@app.command(help="Destroy pipeline steps")
 def destroy(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
@@ -246,7 +248,7 @@ def destroy(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
-        steps=steps,
+        steps=parse_steps(steps),
         filter_type=filter_type,
         environment=environment,
         dry_run=dry_run,
@@ -255,7 +257,7 @@ def destroy(
     )
 
 
-@app.command(help="Reset pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
+@app.command(help="Reset pipeline steps")
 def reset(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
@@ -271,7 +273,7 @@ def reset(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
-        steps=steps,
+        steps=parse_steps(steps),
         filter_type=filter_type,
         environment=environment,
         dry_run=dry_run,
@@ -280,7 +282,7 @@ def reset(
     )
 
 
-@app.command(help="Clean pipeline steps")  # pyright: ignore[reportCallIssue] https://github.com/rec/dtyper/issues/8
+@app.command(help="Clean pipeline steps")
 def clean(
     pipeline_path: Path = PIPELINE_PATH_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
@@ -296,7 +298,7 @@ def clean(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
-        steps=steps,
+        steps=parse_steps(steps),
         filter_type=filter_type,
         environment=environment,
         dry_run=dry_run,

@@ -28,15 +28,11 @@ if TYPE_CHECKING:
     from kpops.config import KpopsConfig
 
 
-def parse_steps(steps: str) -> set[str]:
-    return set(steps.split(","))
-
-
 def generate(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
     config: Path = Path(),
-    steps: str | None = None,
+    steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
     verbose: bool = False,
@@ -50,7 +46,7 @@ def generate(
     pipeline = create_pipeline(pipeline_path, kpops_config, environment)
     log.info(f"Picked up pipeline '{pipeline_path.parent.name}'")
     if steps:
-        component_names = parse_steps(steps)
+        component_names = steps
         log.debug(
             f"KPOPS_PIPELINE_STEPS is defined with values: {component_names} and filter type of {filter_type.value}"
         )
@@ -67,7 +63,7 @@ def manifest(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
     config: Path = Path(),
-    steps: str | None = None,
+    steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
     verbose: bool = False,
@@ -92,7 +88,7 @@ def deploy(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
     config: Path = Path(),
-    steps: str | None = None,
+    steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
     dry_run: bool = True,
@@ -128,7 +124,7 @@ def destroy(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
     config: Path = Path(),
-    steps: str | None = None,
+    steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
     dry_run: bool = True,
@@ -166,7 +162,7 @@ def reset(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
     config: Path = Path(),
-    steps: str | None = None,
+    steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
     dry_run: bool = True,
@@ -203,7 +199,7 @@ def clean(
     pipeline_path: Path,
     dotenv: list[Path] | None = None,
     config: Path = Path(),
-    steps: str | None = None,
+    steps: set[str] | None = None,
     filter_type: FilterType = FilterType.INCLUDE,
     environment: str | None = None,
     dry_run: bool = True,
