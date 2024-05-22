@@ -3,7 +3,6 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Optional
 
-import dtyper
 import typer
 
 import kpops
@@ -18,7 +17,7 @@ from kpops.utils.gen_schema import (
 )
 from kpops.utils.yaml import print_yaml
 
-app = dtyper.Typer(pretty_exceptions_enable=False)
+app = typer.Typer(pretty_exceptions_enable=False)
 
 DOTENV_PATH_OPTION: Optional[list[Path]] = typer.Option(
     default=None,
