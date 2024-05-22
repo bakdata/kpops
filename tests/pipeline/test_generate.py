@@ -23,7 +23,7 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 class TestGenerate:
     @pytest.fixture(autouse=True)
     def log_info(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.api.api.log.info")
+        return mocker.patch("kpops.api.log.info")
 
     def test_python_api(self):
         pipeline = kpops.generate(
