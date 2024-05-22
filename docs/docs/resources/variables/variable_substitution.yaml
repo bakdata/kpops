@@ -4,6 +4,8 @@
       app_type: "${component.type}"
       app_name: "${component.name}"
       app_schedule: "${component.app.schedule}"
+      helm_release_name: ${component.helm_release_name}
+      helm_name_override: ${component.helm_name_override}
     commandLine:
       FAKE_ARG: "fake-arg-value"
     schedule: "30 3/8 * * *"
