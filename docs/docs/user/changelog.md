@@ -1,4 +1,15 @@
 # Changelog
+## [5.1.0](https://github.com/bakdata/kpops/releases/tag/5.1.0) - Release Date: [2024-05-22]
+
+### 🌀 Miscellaneous
+
+- Add computed field for Helm release name and name override - [#490](https://github.com/bakdata/kpops/pull/490)
+
+
+
+
+
+
 ## [5.0.1](https://github.com/bakdata/kpops/releases/tag/5.0.1) - Release Date: [2024-05-15]
 
 ### 🐛 Fixes
