@@ -13,6 +13,8 @@
         - example-topic
         outputTopic: example-output
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-pipeline-with-env-defaults-streams-app-de-5b336-clean
+    helm_release_name: resources-pipeline-with-env-defaults-stre-5b336-clean
     name: streams-app-development
     namespace: development-namespace
     prefix: resources-pipeline-with-env-defaults-
@@ -43,6 +45,8 @@
     topics:
       example-topic:
         type: input
+  helm_name_override: resources-pipeline-with-env-defaults-streams-app-development
+  helm_release_name: resources-pipeline-with-env-defaults-streams-ap-49439
   name: streams-app-development
   namespace: development-namespace
   prefix: resources-pipeline-with-env-defaults-
@@ -71,6 +75,8 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-pipeline-with-env-defaults-es-sink-connector
       connectorType: sink
+    helm_name_override: resources-pipeline-with-env-defaults-es-sink-connector-clean
+    helm_release_name: resources-pipeline-with-env-defaults-es-s-d5f87-clean
     name: es-sink-connector
     namespace: development-namespace
     prefix: resources-pipeline-with-env-defaults-

@@ -9,6 +9,8 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-first-pipeline-scheduled-producer
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-first-pipeline-scheduled-producer-clean
+    helm_release_name: resources-first-pipeline-scheduled-producer-clean
     name: scheduled-producer
     namespace: example-namespace
     prefix: resources-first-pipeline-
@@ -30,6 +32,8 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-first-pipeline-scheduled-producer
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-first-pipeline-scheduled-producer
+  helm_release_name: resources-first-pipeline-scheduled-producer
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-first-pipeline-
@@ -81,6 +85,8 @@
         - resources-first-pipeline-scheduled-producer
         outputTopic: resources-first-pipeline-converter
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-first-pipeline-converter-clean
+    helm_release_name: resources-first-pipeline-converter-clean
     name: converter
     namespace: example-namespace
     prefix: resources-first-pipeline-
@@ -122,6 +128,8 @@
       - resources-first-pipeline-scheduled-producer
       outputTopic: resources-first-pipeline-converter
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-first-pipeline-converter
+  helm_release_name: resources-first-pipeline-converter
   name: converter
   namespace: example-namespace
   prefix: resources-first-pipeline-
@@ -180,6 +188,8 @@
         - resources-first-pipeline-converter
         outputTopic: resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-first-pipeline-a-long-name-a-long-name-a--48eb9-clean
+    helm_release_name: resources-first-pipeline-a-long-name-a-lo-48eb9-clean
     name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
     namespace: example-namespace
     prefix: resources-first-pipeline-
@@ -223,6 +233,8 @@
       - resources-first-pipeline-converter
       outputTopic: resources-first-pipeline-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-first-pipeline-a-long-name-a-long-name-a-long-n-68327
+  helm_release_name: resources-first-pipeline-a-long-name-a-long-nam-68327
   name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
   namespace: example-namespace
   prefix: resources-first-pipeline-

@@ -9,6 +9,8 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-pipeline-with-envs-input-producer
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-pipeline-with-envs-input-producer-clean
+    helm_release_name: resources-pipeline-with-envs-input-producer-clean
     name: input-producer
     namespace: example-namespace
     prefix: resources-pipeline-with-envs-
@@ -30,6 +32,8 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-pipeline-with-envs-input-producer
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-pipeline-with-envs-input-producer
+  helm_release_name: resources-pipeline-with-envs-input-producer
   name: input-producer
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
@@ -81,6 +85,8 @@
         - resources-pipeline-with-envs-input-producer
         outputTopic: resources-pipeline-with-envs-converter
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-pipeline-with-envs-converter-clean
+    helm_release_name: resources-pipeline-with-envs-converter-clean
     name: converter
     namespace: example-namespace
     prefix: resources-pipeline-with-envs-
@@ -122,6 +128,8 @@
       - resources-pipeline-with-envs-input-producer
       outputTopic: resources-pipeline-with-envs-converter
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-pipeline-with-envs-converter
+  helm_release_name: resources-pipeline-with-envs-converter
   name: converter
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
@@ -180,6 +188,8 @@
         - resources-pipeline-with-envs-converter
         outputTopic: resources-pipeline-with-envs-filter
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-pipeline-with-envs-filter-clean
+    helm_release_name: resources-pipeline-with-envs-filter-clean
     name: filter
     namespace: example-namespace
     prefix: resources-pipeline-with-envs-
@@ -223,6 +233,8 @@
       - resources-pipeline-with-envs-converter
       outputTopic: resources-pipeline-with-envs-filter
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-pipeline-with-envs-filter
+  helm_release_name: resources-pipeline-with-envs-filter
   name: filter
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
