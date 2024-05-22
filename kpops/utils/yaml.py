@@ -121,6 +121,7 @@ def print_yaml(data: Mapping | str, *, substitution: dict | None = None) -> None
     """
     if not isinstance(data, str):
         data = yaml.safe_dump(dict(data))
+        data = f"---\n{data}"
     syntax = Syntax(
         substitute(data, substitution),
         "yaml",
