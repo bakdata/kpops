@@ -9,6 +9,8 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-pipeline-with-inflate-scheduled-producer
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-pipeline-with-inflate-scheduled-producer-clean
+    helm_release_name: resources-pipeline-with-inflate-scheduled-18411-clean
     name: scheduled-producer
     namespace: example-namespace
     prefix: resources-pipeline-with-inflate-
@@ -30,6 +32,8 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-pipeline-with-inflate-scheduled-producer
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-pipeline-with-inflate-scheduled-producer
+  helm_release_name: resources-pipeline-with-inflate-scheduled-producer
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
@@ -81,6 +85,8 @@
         - resources-pipeline-with-inflate-scheduled-producer
         outputTopic: resources-pipeline-with-inflate-converter
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-pipeline-with-inflate-converter-clean
+    helm_release_name: resources-pipeline-with-inflate-converter-clean
     name: converter
     namespace: example-namespace
     prefix: resources-pipeline-with-inflate-
@@ -122,6 +128,8 @@
       - resources-pipeline-with-inflate-scheduled-producer
       outputTopic: resources-pipeline-with-inflate-converter
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-pipeline-with-inflate-converter
+  helm_release_name: resources-pipeline-with-inflate-converter
   name: converter
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
@@ -180,6 +188,8 @@
         - resources-pipeline-with-inflate-converter
         outputTopic: resources-pipeline-with-inflate-should-inflate
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-pipeline-with-inflate-should-inflate-clean
+    helm_release_name: resources-pipeline-with-inflate-should-inflate-clean
     name: should-inflate
     namespace: example-namespace
     prefix: resources-pipeline-with-inflate-
@@ -223,6 +233,8 @@
       - resources-pipeline-with-inflate-converter
       outputTopic: resources-pipeline-with-inflate-should-inflate
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-pipeline-with-inflate-should-inflate
+  helm_release_name: resources-pipeline-with-inflate-should-inflate
   name: should-inflate
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
@@ -253,6 +265,8 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-pipeline-with-inflate-should-inflate-inflated-sink-connector
       connectorType: sink
+    helm_name_override: resources-pipeline-with-inflate-should-inflate-infl-cfdd0-clean
+    helm_release_name: resources-pipeline-with-inflate-should-in-cfdd0-clean
     name: should-inflate-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-pipeline-with-inflate-
@@ -305,6 +319,8 @@
         - kafka-sink-connector
         outputTopic: resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-pipeline-with-inflate-should-inflate-infl-c7b41-clean
+    helm_release_name: resources-pipeline-with-inflate-should-in-c7b41-clean
     name: should-inflate-inflated-streams-app
     namespace: example-namespace
     prefix: resources-pipeline-with-inflate-
@@ -329,6 +345,8 @@
       - kafka-sink-connector
       outputTopic: resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-pipeline-with-inflate-should-inflate-inflated-s-2ea20
+  helm_release_name: resources-pipeline-with-inflate-should-inflate--2ea20
   name: should-inflate-inflated-streams-app
   namespace: example-namespace
   prefix: resources-pipeline-with-inflate-
