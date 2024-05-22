@@ -73,7 +73,6 @@ class Pipeline(BaseModel):
 
         return ComponentHandlers(schema_handler, connector_handler, topic_handler)
 
-    @computed_field(title="Step Names")
     @property
     def step_names(self) -> list[str]:
         return [step.name for step in self.components]
