@@ -39,7 +39,7 @@ class TestGenerate:
     def test_python_api_filter_include(self, log_info: MagicMock):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            steps="converter",
+            steps={"converter"},
             filter_type=FilterType.INCLUDE,
         )
         assert len(pipeline) == 1
@@ -51,7 +51,7 @@ class TestGenerate:
     def test_python_api_filter_exclude(self, log_info: MagicMock):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            steps="converter,scheduled-producer",
+            steps={"converter", "scheduled-producer"},
             filter_type=FilterType.EXCLUDE,
         )
         assert len(pipeline) == 1
