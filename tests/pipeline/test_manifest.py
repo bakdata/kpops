@@ -98,6 +98,20 @@ class TestManifest:
         )
         assert result.exit_code == 0, result.stdout
 
+    def test_manifest_command(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "manifest",
+                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                "--environment",
+                "development",
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, "manifest.yaml")
+
     def test_python_api(self, snapshot: Snapshot):
         resources = kpops.manifest(
             RESOURCE_PATH / "custom-config/pipeline.yaml",

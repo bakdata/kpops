@@ -29,6 +29,8 @@
         errorTopic: resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
         outputTopic: resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-pipeline-folders-pipeline-3-a-long-name-a-5e568-clean
+    helm_release_name: resources-pipeline-folders-pipeline-3-a-l-5e568-clean
     name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
     namespace: example-namespace
     prefix: resources-pipeline-folders-pipeline-3-
@@ -70,6 +72,8 @@
       errorTopic: resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-error
       outputTopic: resources-pipeline-folders-pipeline-3-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-pipeline-folders-pipeline-3-a-long-name-a-long--f9195
+  helm_release_name: resources-pipeline-folders-pipeline-3-a-long-na-f9195
   name: a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-3-
@@ -124,6 +128,8 @@
         errorTopic: resources-pipeline-folders-pipeline-2-converter-error
         outputTopic: resources-pipeline-folders-pipeline-2-converter
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-pipeline-folders-pipeline-2-converter-clean
+    helm_release_name: resources-pipeline-folders-pipeline-2-converter-clean
     name: converter
     namespace: example-namespace
     prefix: resources-pipeline-folders-pipeline-2-
@@ -163,6 +169,8 @@
       errorTopic: resources-pipeline-folders-pipeline-2-converter-error
       outputTopic: resources-pipeline-folders-pipeline-2-converter
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-pipeline-folders-pipeline-2-converter
+  helm_release_name: resources-pipeline-folders-pipeline-2-converter
   name: converter
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-2-
@@ -200,6 +208,8 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-pipeline-folders-pipeline-1-scheduled-producer
         schemaRegistryUrl: http://localhost:8081/
+    helm_name_override: resources-pipeline-folders-pipeline-1-scheduled-producer-clean
+    helm_release_name: resources-pipeline-folders-pipeline-1-sch-7b7df-clean
     name: scheduled-producer
     namespace: example-namespace
     prefix: resources-pipeline-folders-pipeline-1-
@@ -221,6 +231,8 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-pipeline-folders-pipeline-1-scheduled-producer
       schemaRegistryUrl: http://localhost:8081/
+  helm_name_override: resources-pipeline-folders-pipeline-1-scheduled-producer
+  helm_release_name: resources-pipeline-folders-pipeline-1-scheduled-066a8
   name: scheduled-producer
   namespace: example-namespace
   prefix: resources-pipeline-folders-pipeline-1-

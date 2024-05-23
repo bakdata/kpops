@@ -23,7 +23,7 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 class TestGenerate:
     @pytest.fixture(autouse=True)
     def log_info(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch("kpops.api.api.log.info")
+        return mocker.patch("kpops.api.log.info")
 
     def test_python_api(self):
         pipeline = kpops.generate(
@@ -39,7 +39,7 @@ class TestGenerate:
     def test_python_api_filter_include(self, log_info: MagicMock):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            steps="converter",
+            steps={"converter"},
             filter_type=FilterType.INCLUDE,
         )
         assert len(pipeline) == 1
@@ -51,7 +51,7 @@ class TestGenerate:
     def test_python_api_filter_exclude(self, log_info: MagicMock):
         pipeline = kpops.generate(
             RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
-            steps="converter,scheduled-producer",
+            steps={"converter", "scheduled-producer"},
             filter_type=FilterType.EXCLUDE,
         )
         assert len(pipeline) == 1

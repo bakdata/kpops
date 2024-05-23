@@ -1,6 +1,6 @@
 from pytest_mock import MockerFixture
 
-from kpops.api.api import setup_handlers
+from kpops.api import setup_handlers
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
@@ -10,7 +10,7 @@ from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.config import KpopsConfig, SchemaRegistryConfig
 from tests.cli.resources.custom_module import CustomSchemaProvider
 
-HANDLER_MODULE = "kpops.api.api"
+HANDLER_MODULE = "kpops.api"
 
 MODULE = CustomSchemaProvider.__module__
 

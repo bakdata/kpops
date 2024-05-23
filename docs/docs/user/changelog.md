@@ -1,4 +1,15 @@
 # Changelog
+## [5.1.1](https://github.com/bakdata/kpops/releases/tag/5.1.1) - Release Date: [2024-05-22]
+
+### 🐛 Fixes
+
+- Add YAML separator (---) to stdout - [#491](https://github.com/bakdata/kpops/pull/491)
+
+
+
+
+
+
 ## [5.1.0](https://github.com/bakdata/kpops/releases/tag/5.1.0) - Release Date: [2024-05-22]
 
 ### 🌀 Miscellaneous
