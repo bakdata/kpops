@@ -9,7 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING, TypeVar
 
 from kpops import __name__
-from kpops.cli.exception import ClassNotFoundError
+from kpops.api.exception import ClassNotFoundError
 from kpops.components.base_components.pipeline_component import PipelineComponent
 
 if TYPE_CHECKING:

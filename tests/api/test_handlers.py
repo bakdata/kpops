@@ -1,6 +1,6 @@
 from pytest_mock import MockerFixture
 
-from kpops.cli.main import setup_handlers
+from kpops.api import setup_handlers
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
@@ -10,6 +10,8 @@ from kpops.component_handlers.topic.handler import TopicHandler
 from kpops.config import KpopsConfig, SchemaRegistryConfig
 from tests.cli.resources.custom_module import CustomSchemaProvider
 
+HANDLER_MODULE = "kpops.api"
+
 MODULE = CustomSchemaProvider.__module__
 
 
@@ -18,12 +20,12 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
         kafka_brokers="broker:9092",
         components_module=MODULE,
     )
-    connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
+    connector_handler_mock = mocker.patch(f"{HANDLER_MODULE}.KafkaConnectHandler")
     connector_handler = KafkaConnectHandler.from_kpops_config(config)
     connector_handler_mock.from_kpops_config.return_value = connector_handler
 
-    topic_handler_mock = mocker.patch("kpops.cli.main.TopicHandler")
-    wrapper = mocker.patch("kpops.cli.main.ProxyWrapper")
+    topic_handler_mock = mocker.patch(f"{HANDLER_MODULE}.TopicHandler")
+    wrapper = mocker.patch(f"{HANDLER_MODULE}.ProxyWrapper")
     topic_handler = TopicHandler(wrapper)
     topic_handler_mock.return_value = topic_handler
 
@@ -51,16 +53,16 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
         schema_registry=SchemaRegistryConfig(enabled=True),
         kafka_brokers="broker:9092",
     )
-    schema_handler_mock = mocker.patch("kpops.cli.main.SchemaHandler")
+    schema_handler_mock = mocker.patch(f"{HANDLER_MODULE}.SchemaHandler")
     schema_handler = SchemaHandler.load_schema_handler(config)
     schema_handler_mock.load_schema_handler.return_value = schema_handler
 
-    connector_handler_mock = mocker.patch("kpops.cli.main.KafkaConnectHandler")
+    connector_handler_mock = mocker.patch(f"{HANDLER_MODULE}.KafkaConnectHandler")
     connector_handler = KafkaConnectHandler.from_kpops_config(config)
     connector_handler_mock.from_kpops_config.return_value = connector_handler
 
-    topic_handler_mock = mocker.patch("kpops.cli.main.TopicHandler")
-    wrapper = mocker.patch("kpops.cli.main.ProxyWrapper")
+    topic_handler_mock = mocker.patch(f"{HANDLER_MODULE}.TopicHandler")
+    wrapper = mocker.patch(f"{HANDLER_MODULE}.ProxyWrapper")
     topic_handler = TopicHandler(wrapper)
     topic_handler_mock.return_value = topic_handler
 

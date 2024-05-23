@@ -8,7 +8,7 @@ from typing import NamedTuple, cast
 import yaml
 
 from hooks import ROOT
-from kpops.cli.registry import _find_classes
+from kpops.api.registry import _find_classes
 from kpops.components import KafkaConnector, PipelineComponent
 from kpops.utils.colorify import redify, yellowify
 from kpops.utils.pydantic import issubclass_patched

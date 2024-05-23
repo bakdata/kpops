@@ -15,6 +15,9 @@ from pydantic import (
     computed_field,
 )
 
+from kpops.api.exception import ParsingException, ValidationError
+from kpops.api.registry import Registry
+from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.dict_ops import update_nested_pair
 from kpops.utils.environment import ENV, PIPELINE_PATH
@@ -24,20 +27,9 @@ if TYPE_CHECKING:
     from collections.abc import Awaitable, Coroutine, Iterator
     from pathlib import Path
 
-    from kpops.cli.registry import Registry
-    from kpops.component_handlers import ComponentHandlers
     from kpops.config import KpopsConfig
 
 log = logging.getLogger("PipelineGenerator")
-
-
-class ParsingException(Exception):
-    pass
-
-
-class ValidationError(Exception):
-    pass
-
 
 ComponentFilterPredicate: TypeAlias = Callable[[PipelineComponent], bool]
 
@@ -49,6 +41,10 @@ class Pipeline(BaseModel):
     _graph: nx.DiGraph = nx.DiGraph()
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    @property
+    def step_names(self) -> list[str]:
+        return [step.name for step in self.components]
 
     @computed_field(title="Components")
     @property
