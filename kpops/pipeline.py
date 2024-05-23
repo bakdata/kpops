@@ -55,10 +55,6 @@ class Pipeline(BaseModel):
     def last(self) -> PipelineComponent:
         return self.components[-1]
 
-    def extend(self, pipeline: Pipeline) -> None:
-        for component in pipeline.components:
-            self.add(component)
-
     def add(self, component: PipelineComponent) -> None:
         if self._component_index.get(component.id) is not None:
             msg = (
