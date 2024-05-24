@@ -75,4 +75,4 @@ def init_project(path: Path, conf_incl_opt: bool):
     """
     create_config(KpopsResources.CONFIG.value, path, conf_incl_opt)
     Path(path / KpopsResources.PIPELINE.as_yaml_file()).touch(exist_ok=False)
-    Path(path / KpopsResources.DEFAULT.as_yaml_file()).touch(exist_ok=False)
+    Path(path / KpopsResources.DEFAULTS.as_yaml_file()).touch(exist_ok=False)

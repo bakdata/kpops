@@ -6,6 +6,7 @@ from unittest.mock import MagicMock
 import pydantic
 import pytest
 
+from kpops.api.kpops_resources import KpopsResources
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
@@ -15,6 +16,10 @@ from kpops.config import KpopsConfig
 from kpops.pipeline import PIPELINE_PATH
 from kpops.utils.environment import ENV
 from tests.components import PIPELINE_BASE_DIR, RESOURCES_PATH
+
+PIPELINE_YAML = KpopsResources.PIPELINE.as_yaml_file()
+
+DEFAULTS_YAML = KpopsResources.DEFAULTS.as_yaml_file()
 
 
 class Parent(BaseDefaultsComponent):
@@ -86,9 +91,7 @@ class TestBaseDefaultsComponent:
     def test_load_defaults(
         self, component_class: type[BaseDefaultsComponent], defaults: dict
     ):
-        assert (
-            component_class.load_defaults(RESOURCES_PATH / "defaults.yaml") == defaults
-        )
+        assert component_class.load_defaults(RESOURCES_PATH / DEFAULTS_YAML) == defaults
 
     @pytest.mark.parametrize(
         ("component_class", "defaults"),
@@ -117,8 +120,9 @@ class TestBaseDefaultsComponent:
     ):
         assert (
             component_class.load_defaults(
-                RESOURCES_PATH / "defaults_development.yaml",
-                RESOURCES_PATH / "defaults.yaml",
+                RESOURCES_PATH
+                / KpopsResources.DEFAULTS.as_yaml_file(prefix="development"),
+                RESOURCES_PATH / DEFAULTS_YAML,
             )
             == defaults
         )
@@ -212,16 +216,17 @@ class TestBaseDefaultsComponent:
         [
             (
                 RESOURCES_PATH
-                / "pipelines/test-distributed-defaults/pipeline-deep/pipeline.yaml",
+                / "pipelines/test-distributed-defaults/pipeline-deep"
+                / PIPELINE_YAML,
                 None,
                 [
                     Path(
-                        f"{RESOURCES_PATH}/pipelines/test-distributed-defaults/pipeline-deep/defaults.yaml"
-                    ),
-                    Path(
-                        f"{RESOURCES_PATH}/pipelines/test-distributed-defaults/defaults.yaml"
-                    ),
-                    Path(f"{RESOURCES_PATH}/defaults.yaml"),
+                        f"{RESOURCES_PATH}/pipelines/test-distributed-defaults/pipeline-deep"
+                    )
+                    / DEFAULTS_YAML,
+                    Path(f"{RESOURCES_PATH}/pipelines/test-distributed-defaults")
+                    / DEFAULTS_YAML,
+                    Path(RESOURCES_PATH) / DEFAULTS_YAML,
                 ],
             ),
             (

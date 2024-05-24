@@ -5,7 +5,7 @@ FILE_PREFIX = ".yaml"
 
 class KpopsResources(str, Enum):
     PIPELINE = "pipeline"
-    DEFAULT = "default"
+    DEFAULTS = "defaults"
     CONFIG = "config"
 
     def as_yaml_file(self, suffix: str = "", prefix: str = "") -> str:
