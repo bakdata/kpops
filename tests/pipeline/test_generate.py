@@ -11,11 +11,11 @@ from typer.testing import CliRunner
 
 import kpops
 from kpops.api.exception import ParsingException, ValidationError
-from kpops.api.kpops_resources import KpopsResources
+from kpops.api.file_type import KpopsFileType
 from kpops.cli.main import FilterType, app
 from kpops.components import KafkaSinkConnector, PipelineComponent
 
-PIPELINE_YAML = KpopsResources.PIPELINE.as_yaml_file()
+PIPELINE_YAML = KpopsFileType.PIPELINE.as_yaml_file()
 
 runner = CliRunner()
 
@@ -177,7 +177,7 @@ class TestGenerate:
                     str(
                         RESOURCE_PATH
                         / "component-type-substitution"
-                        / KpopsResources.PIPELINE.as_yaml_file(suffix="infinite_"),
+                        / KpopsFileType.PIPELINE.as_yaml_file(suffix="infinite_"),
                     ),
                 ],
                 catch_exceptions=False,
@@ -817,7 +817,7 @@ class TestGenerate:
         pipeline = kpops.generate(
             RESOURCE_PATH
             / "resetter_values"
-            / KpopsResources.PIPELINE.as_yaml_file(prefix="_connector_only"),
+            / KpopsFileType.PIPELINE.as_yaml_file(prefix="_connector_only"),
         )
         assert isinstance(pipeline.components[0], KafkaSinkConnector)
         assert pipeline.components[0].name == "es-sink-connector"

@@ -7,10 +7,10 @@ import typer
 
 import kpops
 from kpops import __version__
+from kpops.api.file_type import KpopsFileType
 from kpops.api.options import FilterType
 from kpops.config import ENV_PREFIX, KpopsConfig
 from kpops.utils.gen_schema import (
-    SchemaScope,
     gen_config_schema,
     gen_defaults_schema,
     gen_pipeline_schema,
@@ -125,7 +125,7 @@ def init(
     """
 )
 def schema(
-    scope: SchemaScope = typer.Argument(
+    scope: KpopsFileType = typer.Argument(
         ...,
         show_default=False,
         help="""
@@ -141,17 +141,17 @@ def schema(
     ),
 ) -> None:
     match scope:
-        case SchemaScope.PIPELINE:
+        case KpopsFileType.PIPELINE:
             kpops_config = KpopsConfig.create(config)
             gen_pipeline_schema(
                 kpops_config.components_module, include_stock_components
             )
-        case SchemaScope.DEFAULTS:
+        case KpopsFileType.DEFAULTS:
             kpops_config = KpopsConfig.create(config)
             gen_defaults_schema(
                 kpops_config.components_module, include_stock_components
             )
-        case SchemaScope.CONFIG:
+        case KpopsFileType.CONFIG:
             gen_config_schema()
 
 

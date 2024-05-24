@@ -1,9 +1,11 @@
+from __future__ import annotations
+
 from enum import Enum
 
 FILE_PREFIX = ".yaml"
 
 
-class KpopsResources(str, Enum):
+class KpopsFileType(str, Enum):
     PIPELINE = "pipeline"
     DEFAULTS = "defaults"
     CONFIG = "config"
