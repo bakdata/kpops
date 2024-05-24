@@ -6,9 +6,10 @@ from kpops.api.kpops_resources import KpopsResources
 from kpops.pipeline import PipelineGenerator
 from kpops.utils.environment import ENV
 
-PIPELINE_PATH = Path(
-    f"./some/random/path/for/testing/{KpopsResources.PIPELINE.as_yaml_file()}"
+PIPELINE_PATH = (
+    Path("./some/random/path/for/testing") / KpopsResources.PIPELINE.as_yaml_file()
 )
+
 PIPELINE_BASE_DIR = Path()
 
 
