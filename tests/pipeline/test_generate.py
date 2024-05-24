@@ -11,8 +11,11 @@ from typer.testing import CliRunner
 
 import kpops
 from kpops.api.exception import ParsingException, ValidationError
+from kpops.api.kpops_resources import KpopsResources
 from kpops.cli.main import FilterType, app
 from kpops.components import KafkaSinkConnector, PipelineComponent
+
+PIPELINE_YAML = KpopsResources.PIPELINE.as_yaml_file()
 
 runner = CliRunner()
 
@@ -27,7 +30,7 @@ class TestGenerate:
 
     def test_python_api(self):
         pipeline = kpops.generate(
-            RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
+            RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
         )
         assert len(pipeline) == 3
         assert [component.type for component in pipeline.components] == [
@@ -38,7 +41,7 @@ class TestGenerate:
 
     def test_python_api_filter_include(self, log_info: MagicMock):
         pipeline = kpops.generate(
-            RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
+            RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
             steps={"converter"},
             filter_type=FilterType.INCLUDE,
         )
@@ -50,7 +53,7 @@ class TestGenerate:
 
     def test_python_api_filter_exclude(self, log_info: MagicMock):
         pipeline = kpops.generate(
-            RESOURCE_PATH / "first-pipeline" / "pipeline.yaml",
+            RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML,
             steps={"converter", "scheduled-producer"},
             filter_type=FilterType.EXCLUDE,
         )
@@ -67,21 +70,21 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "first-pipeline/pipeline.yaml"),
+                str(RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )
 
         assert result.exit_code == 0, result.stdout
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_name_equal_prefix_name_concatenation(self):
         result = runner.invoke(
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "name_prefix_concatenation/pipeline.yaml"),
+                str(RESOURCE_PATH / "name_prefix_concatenation" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )
@@ -98,7 +101,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "pipeline-with-envs/pipeline.yaml"),
+                str(RESOURCE_PATH / "pipeline-with-envs" / PIPELINE_YAML),
                 "--environment",
                 "development",
             ],
@@ -107,28 +110,28 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_inflate_pipeline(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "pipeline-with-inflate/pipeline.yaml"),
+                str(RESOURCE_PATH / "pipeline-with-inflate" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )
 
         assert result.exit_code == 0, result.stdout
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_substitute_in_component(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "component-type-substitution/pipeline.yaml"),
+                str(RESOURCE_PATH / "component-type-substitution" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )
@@ -162,7 +165,7 @@ class TestGenerate:
             == "filter-app-filter"
         )
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     @pytest.mark.timeout(2)
     def test_substitute_in_component_infinite_loop(self):
@@ -173,7 +176,8 @@ class TestGenerate:
                     "generate",
                     str(
                         RESOURCE_PATH
-                        / "component-type-substitution/infinite_pipeline.yaml",
+                        / "component-type-substitution"
+                        / KpopsResources.PIPELINE.as_yaml_file(suffix="infinite_"),
                     ),
                 ],
                 catch_exceptions=False,
@@ -184,7 +188,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "kafka-connect-sink-config/pipeline.yaml"),
+                str(RESOURCE_PATH / "kafka-connect-sink-config" / PIPELINE_YAML),
                 "--config",
                 str(RESOURCE_PATH / "kafka-connect-sink-config"),
             ],
@@ -202,28 +206,28 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "no-input-topic-pipeline/pipeline.yaml"),
+                str(RESOURCE_PATH / "no-input-topic-pipeline" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )
 
         assert result.exit_code == 0, result.stdout
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_no_user_defined_components(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "no-user-defined-components/pipeline.yaml"),
+                str(RESOURCE_PATH / "no-user-defined-components" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )
 
         assert result.exit_code == 0, result.stdout
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_kafka_connect_sink_weave_from_topics(self, snapshot: Snapshot):
         """Parse Connector topics from previous component to section."""
@@ -231,35 +235,35 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "kafka-connect-sink/pipeline.yaml"),
+                str(RESOURCE_PATH / "kafka-connect-sink" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )
 
         assert result.exit_code == 0, result.stdout
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_read_from_component(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "read-from-component/pipeline.yaml"),
+                str(RESOURCE_PATH / "read-from-component" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )
 
         assert result.exit_code == 0, result.stdout
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_with_env_defaults(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "pipeline-with-env-defaults/pipeline.yaml"),
+                str(RESOURCE_PATH / "pipeline-with-env-defaults" / PIPELINE_YAML),
                 "--environment",
                 "development",
             ],
@@ -268,7 +272,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_prefix_pipeline_component(self, snapshot: Snapshot):
         result = runner.invoke(
@@ -277,7 +281,8 @@ class TestGenerate:
                 "generate",
                 str(
                     RESOURCE_PATH
-                    / "pipeline-component-should-have-prefix/pipeline.yaml",
+                    / "pipeline-component-should-have-prefix"
+                    / PIPELINE_YAML,
                 ),
             ],
             catch_exceptions=False,
@@ -285,7 +290,7 @@ class TestGenerate:
 
         assert result.exit_code == 0, result.stdout
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_with_custom_config_with_relative_defaults_path(
         self,
@@ -295,7 +300,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                str(RESOURCE_PATH / "custom-config" / PIPELINE_YAML),
                 "--config",
                 str(RESOURCE_PATH / "custom-config"),
                 "--environment",
@@ -317,7 +322,7 @@ class TestGenerate:
         error_topic = streams_app_details["app"]["streams"]["errorTopic"]
         assert error_topic == "app2-dead-letter-topic"
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_with_custom_config_with_absolute_defaults_path(
         self,
@@ -338,7 +343,7 @@ class TestGenerate:
                 app,
                 [
                     "generate",
-                    str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                    str(RESOURCE_PATH / "custom-config" / PIPELINE_YAML),
                     "--config",
                     str(temp_config_path.parent),
                     "--environment",
@@ -360,7 +365,7 @@ class TestGenerate:
             error_topic = streams_app_details["app"]["streams"]["errorTopic"]
             assert error_topic == "app2-dead-letter-topic"
 
-            snapshot.assert_match(result.stdout, "pipeline.yaml")
+            snapshot.assert_match(result.stdout, PIPELINE_YAML)
         finally:
             temp_config_path.unlink()
 
@@ -369,7 +374,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                str(RESOURCE_PATH / "custom-config" / PIPELINE_YAML),
                 "--environment",
                 "development",
             ],
@@ -389,7 +394,7 @@ class TestGenerate:
         error_topic = streams_app_details["app"]["streams"]["errorTopic"]
         assert error_topic == "resources-custom-config-app2-error"
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_env_vars_precedence_over_config(self, monkeypatch: pytest.MonkeyPatch):
         monkeypatch.setenv(name="KPOPS_KAFKA_BROKERS", value="env_broker")
@@ -398,7 +403,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                str(RESOURCE_PATH / "custom-config" / PIPELINE_YAML),
                 "--config",
                 str(RESOURCE_PATH / "custom-config"),
                 "--environment",
@@ -419,7 +424,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                str(RESOURCE_PATH / "custom-config" / PIPELINE_YAML),
                 "--config",
                 str(RESOURCE_PATH / "custom-config"),
                 "--environment",
@@ -443,7 +448,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                str(RESOURCE_PATH / "custom-config" / PIPELINE_YAML),
                 "--config",
                 config_path,
             ],
@@ -475,7 +480,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                str(RESOURCE_PATH / "custom-config" / PIPELINE_YAML),
                 "--config",
                 config_path,
                 "--environment",
@@ -494,7 +499,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                str(RESOURCE_PATH / "custom-config" / PIPELINE_YAML),
                 "--config",
                 "./non-existent-dir",
                 "--environment",
@@ -510,21 +515,21 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "pipeline-with-paths/pipeline.yaml"),
+                str(RESOURCE_PATH / "pipeline-with-paths" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )
 
         assert result.exit_code == 0, result.stdout
 
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_dotenv_support(self):
         result = runner.invoke(
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "custom-config/pipeline.yaml"),
+                str(RESOURCE_PATH / "custom-config" / PIPELINE_YAML),
                 "--config",
                 str(RESOURCE_PATH / "dotenv"),
                 "--dotenv",
@@ -547,7 +552,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "pipeline-with-short-topics/pipeline.yaml"),
+                str(RESOURCE_PATH / "pipeline-with-short-topics" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )
@@ -601,7 +606,8 @@ class TestGenerate:
                     "generate",
                     str(
                         RESOURCE_PATH
-                        / "pipeline-with-illegal-kubernetes-name/pipeline.yaml",
+                        / "pipeline-with-illegal-kubernetes-name"
+                        / PIPELINE_YAML,
                     ),
                 ],
                 catch_exceptions=False,
@@ -622,7 +628,9 @@ class TestGenerate:
                 app,
                 [
                     "generate",
-                    str(RESOURCE_PATH / "pipeline-duplicate-step-names/pipeline.yaml"),
+                    str(
+                        RESOURCE_PATH / "pipeline-duplicate-step-names" / PIPELINE_YAML
+                    ),
                 ],
                 catch_exceptions=False,
             )
@@ -633,14 +641,14 @@ class TestGenerate:
                 app,
                 [
                     "generate",
-                    str(RESOURCE_PATH / "pipeline-with-loop/pipeline.yaml"),
+                    str(RESOURCE_PATH / "pipeline-with-loop" / PIPELINE_YAML),
                 ],
                 catch_exceptions=False,
             )
 
     def test_validate_simple_graph(self):
         pipeline = kpops.generate(
-            RESOURCE_PATH / "pipelines-with-graphs/simple-pipeline/pipeline.yaml",
+            RESOURCE_PATH / "pipelines-with-graphs" / "simple-pipeline" / PIPELINE_YAML,
         )
         assert len(pipeline.components) == 2
         assert len(pipeline._graph.nodes) == 3
@@ -654,7 +662,9 @@ class TestGenerate:
     def test_validate_topic_and_component_same_name(self):
         pipeline = kpops.generate(
             RESOURCE_PATH
-            / "pipelines-with-graphs/same-topic-and-component-name/pipeline.yaml",
+            / "pipelines-with-graphs"
+            / "same-topic-and-component-name"
+            / PIPELINE_YAML,
         )
         component, topic = list(pipeline._graph.nodes)
         edges = list(pipeline._graph.edges)
@@ -664,7 +674,7 @@ class TestGenerate:
     @pytest.mark.asyncio()
     async def test_parallel_execution_graph(self):
         pipeline = kpops.generate(
-            RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
+            RESOURCE_PATH / "parallel-pipeline" / PIPELINE_YAML,
             config=RESOURCE_PATH / "parallel-pipeline",
         )
 
@@ -705,7 +715,7 @@ class TestGenerate:
     @pytest.mark.asyncio()
     async def test_subgraph_execution(self):
         pipeline = kpops.generate(
-            RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
+            RESOURCE_PATH / "parallel-pipeline" / PIPELINE_YAML,
             config=RESOURCE_PATH / "parallel-pipeline",
         )
 
@@ -733,7 +743,7 @@ class TestGenerate:
     @pytest.mark.asyncio()
     async def test_parallel_execution_graph_reverse(self):
         pipeline = kpops.generate(
-            RESOURCE_PATH / "parallel-pipeline/pipeline.yaml",
+            RESOURCE_PATH / "parallel-pipeline" / PIPELINE_YAML,
             config=RESOURCE_PATH / "parallel-pipeline",
         )
 
@@ -776,7 +786,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "temp-trim-release-name/pipeline.yaml"),
+                str(RESOURCE_PATH / "temp-trim-release-name" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )
@@ -792,7 +802,7 @@ class TestGenerate:
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "resetter_values/pipeline.yaml"),
+                str(RESOURCE_PATH / "resetter_values" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )
@@ -805,7 +815,9 @@ class TestGenerate:
 
     def test_substitution_in_resetter(self):
         pipeline = kpops.generate(
-            RESOURCE_PATH / "resetter_values/pipeline_connector_only.yaml",
+            RESOURCE_PATH
+            / "resetter_values"
+            / KpopsResources.PIPELINE.as_yaml_file(prefix="_connector_only"),
         )
         assert isinstance(pipeline.components[0], KafkaSinkConnector)
         assert pipeline.components[0].name == "es-sink-connector"

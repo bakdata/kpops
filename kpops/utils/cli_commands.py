@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 
+from kpops.api.kpops_resources import KpopsResources
 from kpops.config import KpopsConfig
 from kpops.utils.docstring import describe_object
 from kpops.utils.json import is_jsonable
@@ -72,6 +73,6 @@ def init_project(path: Path, conf_incl_opt: bool):
     :param conf_incl_opt: Whether to include non-required settings
         in the generated config file
     """
-    create_config("config", path, conf_incl_opt)
-    Path(path / "pipeline.yaml").touch(exist_ok=False)
-    Path(path / "defaults.yaml").touch(exist_ok=False)
+    create_config(KpopsResources.CONFIG.value, path, conf_incl_opt)
+    Path(path / KpopsResources.PIPELINE.as_yaml_file()).touch(exist_ok=False)
+    Path(path / KpopsResources.DEFAULT.as_yaml_file()).touch(exist_ok=False)
