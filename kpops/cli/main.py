@@ -42,14 +42,14 @@ CONFIG_PATH_OPTION: Path = typer.Option(
     help="Path to the dir containing config.yaml files",
 )
 
-PIPELINE_PATH_ARG: Path = typer.Argument(
+PIPELINE_PATHS_ARG: list[Path] = typer.Argument(
     default=...,
     exists=True,
     file_okay=True,
     dir_okay=True,
     readable=True,
-    envvar=f"{ENV_PREFIX}PIPELINE_PATH",
-    help="Path to YAML with pipeline definition",
+    envvar=f"{ENV_PREFIX}PIPELINE_PATHS",
+    help="Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.",
 )
 
 PROJECT_PATH: Path = typer.Argument(
@@ -161,7 +161,7 @@ def schema(
     help="Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).",
 )
 def generate(
-    pipeline_path: Path = PIPELINE_PATH_ARG,
+    pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
@@ -169,7 +169,7 @@ def generate(
     environment: Optional[str] = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
 ):
-    for pipeline_file_path in collect_pipeline_paths(pipeline_path):
+    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
         pipeline = kpops.generate(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,
@@ -187,7 +187,7 @@ def generate(
     help="In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.",
 )
 def manifest(
-    pipeline_path: Path = PIPELINE_PATH_ARG,
+    pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
@@ -195,7 +195,7 @@ def manifest(
     environment: Optional[str] = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
 ):
-    for pipeline_file_path in collect_pipeline_paths(pipeline_path):
+    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
         resources = kpops.manifest(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,
@@ -212,7 +212,7 @@ def manifest(
 
 @app.command(help="Deploy pipeline steps")
 def deploy(
-    pipeline_path: Path = PIPELINE_PATH_ARG,
+    pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
@@ -222,7 +222,7 @@ def deploy(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    for pipeline_file_path in collect_pipeline_paths(pipeline_path):
+    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
         kpops.deploy(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,
@@ -238,7 +238,7 @@ def deploy(
 
 @app.command(help="Destroy pipeline steps")
 def destroy(
-    pipeline_path: Path = PIPELINE_PATH_ARG,
+    pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
@@ -248,7 +248,7 @@ def destroy(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    for pipeline_file_path in collect_pipeline_paths(pipeline_path):
+    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
         kpops.destroy(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,
@@ -264,7 +264,7 @@ def destroy(
 
 @app.command(help="Reset pipeline steps")
 def reset(
-    pipeline_path: Path = PIPELINE_PATH_ARG,
+    pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
@@ -274,7 +274,7 @@ def reset(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    for pipeline_file_path in collect_pipeline_paths(pipeline_path):
+    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
         kpops.reset(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,
@@ -290,7 +290,7 @@ def reset(
 
 @app.command(help="Clean pipeline steps")
 def clean(
-    pipeline_path: Path = PIPELINE_PATH_ARG,
+    pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
     dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
     steps: Optional[str] = PIPELINE_STEPS,
@@ -300,7 +300,7 @@ def clean(
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
 ):
-    for pipeline_file_path in collect_pipeline_paths(pipeline_path):
+    for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
         kpops.clean(
             pipeline_path=pipeline_file_path,
             dotenv=dotenv,

@@ -90,6 +90,20 @@ class TestGenerate:
 
         snapshot.assert_match(result.stdout, "pipeline.yaml")
 
+    def test_load_pipeline_with_multiple_pipeline_paths(self, snapshot: Snapshot):
+        path_1 = RESOURCE_PATH / "pipeline-folders/pipeline-1/pipeline.yaml"
+        path_2 = RESOURCE_PATH / "pipeline-folders/pipeline-2/pipeline.yaml"
+        path_3 = RESOURCE_PATH / "pipeline-folders/pipeline-3/pipeline.yaml"
+        result = runner.invoke(
+            app,
+            ["generate", str(path_1), str(path_2), str(path_3)],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0, result.stdout
+
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
+
     def test_name_equal_prefix_name_concatenation(self):
         result = runner.invoke(
             app,
