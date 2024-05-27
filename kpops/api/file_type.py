@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from enum import Enum
 
-FILE_PREFIX = ".yaml"
+FILE_EXTENSION = ".yaml"
 
 
 class KpopsFileType(str, Enum):
-    """Enum representing different types of Kpops file naming conventions.
+    """Enum representing different types of KPOps file naming conventions.
 
     Attributes:
         PIPELINE (str): Represents a pipeline YAML file type.
@@ -32,4 +32,4 @@ class KpopsFileType(str, Enum):
             >>> KpopsFileType.PIPELINE.as_yaml_file(prefix="pre_", suffix="_suf")
             'pre_pipeline_suf.yaml'
         """
-        return prefix + self.value + suffix + FILE_PREFIX
+        return prefix + self.value + suffix + FILE_EXTENSION
