@@ -121,7 +121,7 @@ class TestBaseDefaultsComponent:
         assert (
             component_class.load_defaults(
                 RESOURCES_PATH
-                / KpopsFileType.DEFAULTS.as_yaml_file(prefix="_development"),
+                / KpopsFileType.DEFAULTS.as_yaml_file(suffix="_development"),
                 RESOURCES_PATH / DEFAULTS_YAML,
             )
             == defaults

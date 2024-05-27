@@ -177,7 +177,7 @@ class TestGenerate:
                     str(
                         RESOURCE_PATH
                         / "component-type-substitution"
-                        / KpopsFileType.PIPELINE.as_yaml_file(suffix="infinite_"),
+                        / KpopsFileType.PIPELINE.as_yaml_file(prefix="infinite_"),
                     ),
                 ],
                 catch_exceptions=False,
@@ -817,7 +817,7 @@ class TestGenerate:
         pipeline = kpops.generate(
             RESOURCE_PATH
             / "resetter_values"
-            / KpopsFileType.PIPELINE.as_yaml_file(prefix="_connector_only"),
+            / KpopsFileType.PIPELINE.as_yaml_file(suffix="_connector_only"),
         )
         assert isinstance(pipeline.components[0], KafkaSinkConnector)
         assert pipeline.components[0].name == "es-sink-connector"
