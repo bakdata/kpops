@@ -1,0 +1,9 @@
+- type: converter
+  app:
+    commandLine:
+      CONVERT_XML: true
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G

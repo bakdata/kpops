@@ -68,7 +68,7 @@ class Pipeline(BaseModel):
         self._component_index.pop(component_id)
 
     def get(self, component_id: str) -> PipelineComponent | None:
-        self._component_index.get(component_id)
+        return self._component_index.get(component_id)
 
     def find(self, predicate: ComponentFilterPredicate) -> Iterator[PipelineComponent]:
         """Find pipeline components matching a custom predicate.
