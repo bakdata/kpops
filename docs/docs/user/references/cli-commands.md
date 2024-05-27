@@ -31,12 +31,12 @@ Clean pipeline steps
 **Usage**:
 
 ```console
-$ kpops clean [OPTIONS] PIPELINE_PATH
+$ kpops clean [OPTIONS] PIPELINE_PATHS...
 ```
 
 **Arguments**:
 
-* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `PIPELINE_PATHS...`: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]
 
 **Options**:
 
@@ -57,12 +57,12 @@ Deploy pipeline steps
 **Usage**:
 
 ```console
-$ kpops deploy [OPTIONS] PIPELINE_PATH
+$ kpops deploy [OPTIONS] PIPELINE_PATHS...
 ```
 
 **Arguments**:
 
-* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `PIPELINE_PATHS...`: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]
 
 **Options**:
 
@@ -83,12 +83,12 @@ Destroy pipeline steps
 **Usage**:
 
 ```console
-$ kpops destroy [OPTIONS] PIPELINE_PATH
+$ kpops destroy [OPTIONS] PIPELINE_PATHS...
 ```
 
 **Arguments**:
 
-* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `PIPELINE_PATHS...`: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]
 
 **Options**:
 
@@ -109,12 +109,12 @@ Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps
 **Usage**:
 
 ```console
-$ kpops generate [OPTIONS] PIPELINE_PATH
+$ kpops generate [OPTIONS] PIPELINE_PATHS...
 ```
 
 **Arguments**:
 
-* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `PIPELINE_PATHS...`: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]
 
 **Options**:
 
@@ -152,12 +152,12 @@ In addition to generate, render final resource representation for each pipeline 
 **Usage**:
 
 ```console
-$ kpops manifest [OPTIONS] PIPELINE_PATH
+$ kpops manifest [OPTIONS] PIPELINE_PATHS...
 ```
 
 **Arguments**:
 
-* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `PIPELINE_PATHS...`: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]
 
 **Options**:
 
@@ -176,12 +176,12 @@ Reset pipeline steps
 **Usage**:
 
 ```console
-$ kpops reset [OPTIONS] PIPELINE_PATH
+$ kpops reset [OPTIONS] PIPELINE_PATHS...
 ```
 
 **Arguments**:
 
-* `PIPELINE_PATH`: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]
+* `PIPELINE_PATHS...`: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]
 
 **Options**:
 
