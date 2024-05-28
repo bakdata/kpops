@@ -8,8 +8,8 @@ from typing import TYPE_CHECKING
 from schema_registry.client import AsyncSchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
 
-from kpops.cli.exception import ClassNotFoundError
-from kpops.cli.registry import find_class
+from kpops.api.exception import ClassNotFoundError
+from kpops.api.registry import find_class
 from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,

@@ -2,10 +2,14 @@ from pathlib import Path
 
 import pytest
 
+from kpops.api.file_type import KpopsFileType
 from kpops.pipeline import PipelineGenerator
 from kpops.utils.environment import ENV
 
-PIPELINE_PATH = Path("./some/random/path/for/testing/pipeline.yaml")
+PIPELINE_PATH = (
+    Path("./some/random/path/for/testing") / KpopsFileType.PIPELINE.as_yaml_file()
+)
+
 PIPELINE_BASE_DIR = Path()
 
 

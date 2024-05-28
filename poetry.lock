@@ -359,20 +359,6 @@ files = [
 ]
 
 [[package]]
-name = "dtyper"
-version = "2.1.0"
-description = "🗝 Make `typer` commands callable, or dataclasses 🗝"
-optional = false
-python-versions = ">=3.7"
-files = [
-    {file = "dtyper-2.1.0-py3-none-any.whl", hash = "sha256:331f513b33ccd43c1a803a2a06cdb879ed3925381aed9c04bd65470d58107ac6"},
-    {file = "dtyper-2.1.0.tar.gz", hash = "sha256:c18a7198c4d9f9194f862307dc326f2594acaffb8e2a6f81335ebc8bf6ed9e40"},
-]
-
-[package.dependencies]
-typer = "*"
-
-[[package]]
 name = "exceptiongroup"
 version = "1.0.4"
 description = "Backport of PEP 654 (exception groups)"
@@ -2303,4 +2289,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.10, <3.13"
-content-hash = "dc29f4a291f406a5d651b0a82645fd8457387a4a821d71a4da1a7a3bffa18d7e"
+content-hash = "80ac595bb43560de5e123076830390054b2c9c15b865f3665e1e1b114a31faad"

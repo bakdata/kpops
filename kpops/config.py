@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 
 from pydantic import AnyHttpUrl, Field, TypeAdapter
@@ -126,6 +127,25 @@ class KpopsConfig(BaseSettings):
     )
 
     model_config = SettingsConfigDict(env_prefix=ENV_PREFIX, env_nested_delimiter="__")
+
+    @classmethod
+    def create(
+        cls,
+        config: Path,
+        dotenv: list[Path] | None = None,
+        environment: str | None = None,
+        verbose: bool = False,
+    ) -> KpopsConfig:
+        cls.setup_logging_level(verbose)
+        YamlConfigSettingsSource.config_dir = config
+        YamlConfigSettingsSource.environment = environment
+        return KpopsConfig(
+            _env_file=dotenv  # pyright: ignore[reportCallIssue]
+        )
+
+    @staticmethod
+    def setup_logging_level(verbose: bool):
+        logging.getLogger().setLevel(logging.DEBUG if verbose else logging.INFO)
 
     @override
     @classmethod
