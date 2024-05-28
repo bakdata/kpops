@@ -6,7 +6,6 @@ kafka_brokers: null
 # Non-required fields
 components_module: null
 create_namespace: false
-defaults_filename_prefix: defaults
 helm_config:
   api_version: null
   context: null
