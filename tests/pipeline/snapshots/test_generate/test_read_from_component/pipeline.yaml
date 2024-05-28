@@ -4,8 +4,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-read-from-component-producer1
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-read-from-component-producer1-clean
-    helm_release_name: resources-read-from-component-producer1-clean
     name: producer1
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -22,8 +20,6 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-read-from-component-producer1
       schemaRegistryUrl: http://localhost:8081/
-  helm_name_override: resources-read-from-component-producer1
-  helm_release_name: resources-read-from-component-producer1
   name: producer1
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -46,8 +42,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-read-from-component-producer2
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: producer2-clean
-    helm_release_name: producer2-clean
     name: producer2
     namespace: example-namespace
     prefix: ''
@@ -64,8 +58,6 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-read-from-component-producer2
       schemaRegistryUrl: http://localhost:8081/
-  helm_name_override: producer2
-  helm_release_name: producer2
   name: producer2
   namespace: example-namespace
   prefix: ''
@@ -109,8 +101,6 @@
         - resources-read-from-component-producer2
         outputTopic: resources-read-from-component-inflate-step
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-read-from-component-inflate-step-clean
-    helm_release_name: resources-read-from-component-inflate-step-clean
     name: inflate-step
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -148,8 +138,6 @@
       - resources-read-from-component-producer2
       outputTopic: resources-read-from-component-inflate-step
       schemaRegistryUrl: http://localhost:8081/
-  helm_name_override: resources-read-from-component-inflate-step
-  helm_release_name: resources-read-from-component-inflate-step
   name: inflate-step
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -180,8 +168,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-read-from-component-inflate-step-inflated-sink-connector
       connectorType: sink
-    helm_name_override: resources-read-from-component-inflate-step-inflated-f12dd-clean
-    helm_release_name: resources-read-from-component-inflate-ste-f12dd-clean
     name: inflate-step-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -234,8 +220,6 @@
         - kafka-sink-connector
         outputTopic: resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-read-from-component-inflate-step-inflated-51f5c-clean
-    helm_release_name: resources-read-from-component-inflate-ste-51f5c-clean
     name: inflate-step-inflated-streams-app
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -260,8 +244,6 @@
       - kafka-sink-connector
       outputTopic: resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
-  helm_name_override: resources-read-from-component-inflate-step-inflated-streams-app
-  helm_release_name: resources-read-from-component-inflate-step-infl-5def2
   name: inflate-step-inflated-streams-app
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -311,8 +293,6 @@
         - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
         outputTopic: resources-read-from-component-inflate-step-without-prefix
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: inflate-step-without-prefix-clean
-    helm_release_name: inflate-step-without-prefix-clean
     name: inflate-step-without-prefix
     namespace: example-namespace
     prefix: ''
@@ -350,8 +330,6 @@
       - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
       outputTopic: resources-read-from-component-inflate-step-without-prefix
       schemaRegistryUrl: http://localhost:8081/
-  helm_name_override: inflate-step-without-prefix
-  helm_release_name: inflate-step-without-prefix
   name: inflate-step-without-prefix
   namespace: example-namespace
   prefix: ''
@@ -382,8 +360,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector
       connectorType: sink
-    helm_name_override: resources-read-from-component-inflate-step-without--08c44-clean
-    helm_release_name: resources-read-from-component-inflate-ste-08c44-clean
     name: inflate-step-without-prefix-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -436,8 +412,6 @@
         - kafka-sink-connector
         outputTopic: inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-read-from-component-inflate-step-without--53a68-clean
-    helm_release_name: resources-read-from-component-inflate-ste-53a68-clean
     name: inflate-step-without-prefix-inflated-streams-app
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -462,8 +436,6 @@
       - kafka-sink-connector
       outputTopic: inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
       schemaRegistryUrl: http://localhost:8081/
-  helm_name_override: resources-read-from-component-inflate-step-without-prefix-000dc
-  helm_release_name: resources-read-from-component-inflate-step-with-000dc
   name: inflate-step-without-prefix-inflated-streams-app
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -500,8 +472,6 @@
         - resources-read-from-component-producer1
         outputTopic: resources-read-from-component-consumer1
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-read-from-component-consumer1-clean
-    helm_release_name: resources-read-from-component-consumer1-clean
     name: consumer1
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -531,8 +501,6 @@
       producer1:
         type: input
     topics: {}
-  helm_name_override: resources-read-from-component-consumer1
-  helm_release_name: resources-read-from-component-consumer1
   name: consumer1
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -569,8 +537,6 @@
         - resources-read-from-component-producer1
         - resources-read-from-component-consumer1
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-read-from-component-consumer2-clean
-    helm_release_name: resources-read-from-component-consumer2-clean
     name: consumer2
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -602,8 +568,6 @@
       producer1:
         type: input
     topics: {}
-  helm_name_override: resources-read-from-component-consumer2
-  helm_release_name: resources-read-from-component-consumer2
   name: consumer2
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -637,8 +601,6 @@
         - resources-read-from-component-producer1
         - resources-read-from-component-producer2
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-read-from-component-consumer3-clean
-    helm_release_name: resources-read-from-component-consumer3-clean
     name: consumer3
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -670,8 +632,6 @@
     topics:
       resources-read-from-component-producer1:
         type: input
-  helm_name_override: resources-read-from-component-consumer3
-  helm_release_name: resources-read-from-component-consumer3
   name: consumer3
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -704,8 +664,6 @@
         inputTopics:
         - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-read-from-component-consumer4-clean
-    helm_release_name: resources-read-from-component-consumer4-clean
     name: consumer4
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -734,8 +692,6 @@
       inflate-step:
         type: input
     topics: {}
-  helm_name_override: resources-read-from-component-consumer4
-  helm_release_name: resources-read-from-component-consumer4
   name: consumer4
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -768,8 +724,6 @@
         inputTopics:
         - inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-read-from-component-consumer5-clean
-    helm_release_name: resources-read-from-component-consumer5-clean
     name: consumer5
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -798,8 +752,6 @@
       inflate-step-without-prefix:
         type: input
     topics: {}
-  helm_name_override: resources-read-from-component-consumer5
-  helm_release_name: resources-read-from-component-consumer5
   name: consumer5
   namespace: example-namespace
   prefix: resources-read-from-component-

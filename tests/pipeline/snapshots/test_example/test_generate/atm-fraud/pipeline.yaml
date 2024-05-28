@@ -16,8 +16,6 @@
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
       suspend: true
     debug: true
-    helm_name_override: atm-fraud-account-producer-clean
-    helm_release_name: atm-fraud-account-producer-clean
     name: account-producer
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
@@ -46,8 +44,6 @@
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     suspend: true
   debug: true
-  helm_name_override: atm-fraud-account-producer
-  helm_release_name: atm-fraud-account-producer
   name: account-producer
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
@@ -85,8 +81,6 @@
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
       suspend: true
     debug: true
-    helm_name_override: atm-fraud-transaction-avro-producer-clean
-    helm_release_name: atm-fraud-transaction-avro-producer-clean
     name: transaction-avro-producer
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
@@ -118,8 +112,6 @@
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     suspend: true
   debug: true
-  helm_name_override: atm-fraud-transaction-avro-producer
-  helm_release_name: atm-fraud-transaction-avro-producer
   name: transaction-avro-producer
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
@@ -162,8 +154,6 @@
         outputTopic: atm-fraud-transaction-joiner-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     debug: true
-    helm_name_override: atm-fraud-transaction-joiner-clean
-    helm_release_name: atm-fraud-transaction-joiner-clean
     name: transaction-joiner
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
@@ -200,8 +190,6 @@
       outputTopic: atm-fraud-transaction-joiner-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   debug: true
-  helm_name_override: atm-fraud-transaction-joiner
-  helm_release_name: atm-fraud-transaction-joiner
   name: transaction-joiner
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
@@ -248,8 +236,6 @@
         outputTopic: atm-fraud-fraud-detector-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     debug: true
-    helm_name_override: atm-fraud-fraud-detector-clean
-    helm_release_name: atm-fraud-fraud-detector-clean
     name: fraud-detector
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
@@ -286,8 +272,6 @@
       outputTopic: atm-fraud-fraud-detector-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   debug: true
-  helm_name_override: atm-fraud-fraud-detector
-  helm_release_name: atm-fraud-fraud-detector
   name: fraud-detector
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
@@ -337,8 +321,6 @@
         outputTopic: atm-fraud-account-linker-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     debug: true
-    helm_name_override: atm-fraud-account-linker-clean
-    helm_release_name: atm-fraud-account-linker-clean
     name: account-linker
     namespace: ${NAMESPACE}
     prefix: atm-fraud-
@@ -385,8 +367,6 @@
       fraud-detector:
         type: input
     topics: {}
-  helm_name_override: atm-fraud-account-linker
-  helm_release_name: atm-fraud-account-linker
   name: account-linker
   namespace: ${NAMESPACE}
   prefix: atm-fraud-
@@ -413,8 +393,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: atm-fraud-postgresql-connector
       connectorType: sink
-    helm_name_override: atm-fraud-postgresql-connector-clean
-    helm_release_name: atm-fraud-postgresql-connector-clean
     name: postgresql-connector
     namespace: ${NAMESPACE}
     prefix: atm-fraud-

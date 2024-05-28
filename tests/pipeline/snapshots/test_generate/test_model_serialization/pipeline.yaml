@@ -4,8 +4,6 @@
         brokers: test
         outputTopic: out
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-pipeline-with-paths-account-producer-clean
-    helm_release_name: resources-pipeline-with-paths-account-producer-clean
     name: account-producer
     namespace: test
     prefix: resources-pipeline-with-paths-
@@ -25,8 +23,6 @@
       brokers: test
       outputTopic: out
       schemaRegistryUrl: http://localhost:8081/
-  helm_name_override: resources-pipeline-with-paths-account-producer
-  helm_release_name: resources-pipeline-with-paths-account-producer
   name: account-producer
   namespace: test
   prefix: resources-pipeline-with-paths-
