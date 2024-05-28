@@ -19,6 +19,7 @@ from pydantic import (
 )
 from pydantic.json_schema import SkipJsonSchema
 
+from kpops.api.file_type import KpopsFileType
 from kpops.component_handlers import ComponentHandlers
 from kpops.config import KpopsConfig
 from kpops.utils import cached_classproperty
@@ -256,8 +257,7 @@ def get_defaults_file_paths(
     associated with the pipeline.
 
     :param pipeline_path: The path to the pipeline.yaml file.
-    :param config: The KPOps configuration object containing settings such as pipeline_base_dir
-                   and defaults_filename_prefix.
+    :param config: The KPOps configuration object containing settings such as pipeline_base_dir.
     :param environment: Optional. The environment for which default configuration files are sought.
     :returns: A list of Path objects representing the default configuration file paths.
     """
@@ -274,12 +274,12 @@ def get_defaults_file_paths(
         raise RuntimeError(message)
     while pipeline_base_dir != path:
         environment_default_file_path = (
-            path.parent / f"{config.defaults_filename_prefix}_{environment}.yaml"
+            path.parent / KpopsFileType.DEFAULTS.as_yaml_file(suffix=f"_{environment}")
         )
         if environment_default_file_path.is_file():
             default_paths.append(environment_default_file_path)
 
-        defaults_yaml_path = path.parent / f"{config.defaults_filename_prefix}.yaml"
+        defaults_yaml_path = path.parent / KpopsFileType.DEFAULTS.as_yaml_file()
         if defaults_yaml_path.is_file():
             default_paths.append(defaults_yaml_path)
 

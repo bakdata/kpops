@@ -89,10 +89,6 @@ class KpopsConfig(BaseSettings):
         ],
         description="The comma separated Kafka brokers address.",
     )
-    defaults_filename_prefix: str = Field(
-        default="defaults",
-        description="The name of the defaults file and the prefix of the defaults environment file.",
-    )
     topic_name_config: TopicNameConfig = Field(
         default=TopicNameConfig(),
         description=describe_object(TopicNameConfig.__doc__),
