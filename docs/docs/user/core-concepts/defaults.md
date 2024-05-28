@@ -44,13 +44,6 @@ It is important to note that `defaults_{environment}.yaml` overrides only the se
 
 <!-- dprint-ignore-end -->
 
-<!-- dprint-ignore-start -->
-
-!!! tip
-    `defaults` is the default value of `defaults_filename_prefix`.
-
-<!-- dprint-ignore-end -->
-
 ## Components
 
 <!-- When possible, automatically generate a list of all component-specific settings under each component. -->
