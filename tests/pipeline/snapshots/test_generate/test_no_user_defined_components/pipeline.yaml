@@ -13,8 +13,6 @@
         - example-topic
         outputTopic: example-output
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-no-user-defined-components-streams-app-clean
-    helm_release_name: resources-no-user-defined-components-stre-2d151-clean
     name: streams-app
     namespace: example-namespace
     prefix: resources-no-user-defined-components-
@@ -45,8 +43,6 @@
     topics:
       example-topic:
         type: input
-  helm_name_override: resources-no-user-defined-components-streams-app
-  helm_release_name: resources-no-user-defined-components-streams-app
   name: streams-app
   namespace: example-namespace
   prefix: resources-no-user-defined-components-

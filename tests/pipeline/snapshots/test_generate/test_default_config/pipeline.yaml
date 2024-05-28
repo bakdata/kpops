@@ -9,8 +9,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-custom-config-app1
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-custom-config-app1-clean
-    helm_release_name: resources-custom-config-app1-clean
     name: app1
     namespace: development-namespace
     prefix: resources-custom-config-
@@ -32,8 +30,6 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-custom-config-app1
       schemaRegistryUrl: http://localhost:8081/
-  helm_name_override: resources-custom-config-app1
-  helm_release_name: resources-custom-config-app1
   name: app1
   namespace: development-namespace
   prefix: resources-custom-config-
@@ -68,8 +64,6 @@
         - resources-custom-config-app1
         outputTopic: resources-custom-config-app2
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-custom-config-app2-clean
-    helm_release_name: resources-custom-config-app2-clean
     name: app2
     namespace: development-namespace
     prefix: resources-custom-config-
@@ -97,8 +91,6 @@
       - resources-custom-config-app1
       outputTopic: resources-custom-config-app2
       schemaRegistryUrl: http://localhost:8081/
-  helm_name_override: resources-custom-config-app2
-  helm_release_name: resources-custom-config-app2
   name: app2
   namespace: development-namespace
   prefix: resources-custom-config-
