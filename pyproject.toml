@@ -62,6 +62,7 @@ mkdocs-material = "^9.0.0"
 mkdocs-glightbox = "^0.3.1"
 mkdocs-exclude-search = "^0.6.5"
 mike = "^1.1.2"
+mkdocstrings = { extras = ["python"], version = "^0.25.1" }
 
 [tool.poetry_bumpversion.file."kpops/__init__.py"]
 

@@ -37,6 +37,7 @@ plugins:
       exclude:
         - resources/*
   - glightbox
+  - mkdocstrings
 
 extra:
   version:
@@ -120,6 +121,7 @@ nav:
               - GitHub Actions: user/references/ci-integration/github-actions.md
   - Developer Guide:
       - Getting Started: developer/getting-started.md
+      - API: developer/api.md
       - Contributing: developer/contributing.md
       - Code base:
           - Auto generation: developer/auto-generation.md
