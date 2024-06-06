@@ -3,6 +3,10 @@ from __future__ import annotations
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 
+from kpops.api.file_type import KpopsFileType
+
+PIPELINE_YAML = KpopsFileType.PIPELINE.as_yaml_file()
+
 
 def collect_pipeline_paths(pipeline_paths: Iterable[Path]) -> Iterator[Path]:
     """Generate paths to pipeline files.
@@ -15,10 +19,10 @@ def collect_pipeline_paths(pipeline_paths: Iterable[Path]) -> Iterator[Path]:
     :raises: ValueError: If `pipeline_path` is neither a file nor a directory.
     """
     for pipeline_path in pipeline_paths:
-        if pipeline_path.is_file():
+        if pipeline_path.is_file() and pipeline_path.name == PIPELINE_YAML:
             yield pipeline_path
         elif pipeline_path.is_dir():
-            yield from sorted(pipeline_path.glob("**/pipeline.yaml"))
+            yield from sorted(pipeline_path.glob(f"**/{PIPELINE_YAML}"))
         else:
             msg = f"The entered pipeline path '{pipeline_path}' should be a directory or file."
             raise ValueError(msg)
