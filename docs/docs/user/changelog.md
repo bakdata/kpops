@@ -1,4 +1,25 @@
 # Changelog
+## [6.0.0](https://github.com/bakdata/kpops/releases/tag/6.0.0) - Release Date: [2024-06-06]
+
+### 🏗️ Breaking changes
+
+- KPOps `6.0.0` - [#496](https://github.com/bakdata/kpops/pull/496)
+
+
+### 🚀 Features
+
+- KPOps `6.0.0` - [#496](https://github.com/bakdata/kpops/pull/496)
+
+
+### 🏭 Refactor
+
+- KPOps `6.0.0` - [#496](https://github.com/bakdata/kpops/pull/496)
+
+
+
+
+
+
 ## [5.1.1](https://github.com/bakdata/kpops/releases/tag/5.1.1) - Release Date: [2024-05-22]
 
 ### 🐛 Fixes
