@@ -3,8 +3,7 @@ from unittest.mock import MagicMock
 import pytest
 from polyfactory.factories.pydantic_factory import ModelFactory
 
-from kpops.cli.main import create_default_step_names_filter_predicate
-from kpops.cli.options import FilterType
+from kpops.api.options import FilterType
 from kpops.component_handlers import (
     ComponentHandlers,
 )
@@ -44,8 +43,8 @@ class TestPipeline:
         return pipeline
 
     def test_filter_include(self, pipeline: Pipeline):
-        predicate = create_default_step_names_filter_predicate(
-            {"example2", "example3"}, FilterType.INCLUDE
+        predicate = FilterType.INCLUDE.create_default_step_names_filter_predicate(
+            {"example2", "example3"}
         )
         pipeline.filter(predicate)
         assert len(pipeline.components) == 2
@@ -53,23 +52,19 @@ class TestPipeline:
         assert test_component_3 in pipeline.components
 
     def test_filter_include_empty(self, pipeline: Pipeline):
-        predicate = create_default_step_names_filter_predicate(
-            set(), FilterType.INCLUDE
-        )
+        predicate = FilterType.INCLUDE.create_default_step_names_filter_predicate(set())
         pipeline.filter(predicate)
         assert len(pipeline.components) == 0
 
     def test_filter_exclude(self, pipeline: Pipeline):
-        predicate = create_default_step_names_filter_predicate(
-            {"example2", "example3"}, FilterType.EXCLUDE
+        predicate = FilterType.EXCLUDE.create_default_step_names_filter_predicate(
+            {"example2", "example3"}
         )
         pipeline.filter(predicate)
         assert len(pipeline.components) == 1
         assert test_component_1 in pipeline.components
 
     def test_filter_exclude_empty(self, pipeline: Pipeline):
-        predicate = create_default_step_names_filter_predicate(
-            set(), FilterType.EXCLUDE
-        )
+        predicate = FilterType.EXCLUDE.create_default_step_names_filter_predicate(set())
         pipeline.filter(predicate)
         assert len(pipeline.components) == 3

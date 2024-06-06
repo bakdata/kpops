@@ -13,8 +13,6 @@
         - example-topic
         outputTopic: example-output
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-kafka-connect-sink-streams-app-clean
-    helm_release_name: resources-kafka-connect-sink-streams-app-clean
     name: streams-app
     namespace: example-namespace
     prefix: resources-kafka-connect-sink-
@@ -45,8 +43,6 @@
     topics:
       example-topic:
         type: input
-  helm_name_override: resources-kafka-connect-sink-streams-app
-  helm_release_name: resources-kafka-connect-sink-streams-app
   name: streams-app
   namespace: example-namespace
   prefix: resources-kafka-connect-sink-
@@ -75,8 +71,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-kafka-connect-sink-es-sink-connector
       connectorType: sink
-    helm_name_override: resources-kafka-connect-sink-es-sink-connector-clean
-    helm_release_name: resources-kafka-connect-sink-es-sink-connector-clean
     name: es-sink-connector
     namespace: example-namespace
     prefix: resources-kafka-connect-sink-

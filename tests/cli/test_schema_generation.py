@@ -9,8 +9,8 @@ import pytest
 from pydantic import ConfigDict, Field
 from typer.testing import CliRunner
 
+from kpops.api.registry import Registry
 from kpops.cli.main import app
-from kpops.cli.registry import Registry
 from kpops.components import PipelineComponent
 from kpops.utils.docstring import describe_attr
 

@@ -1,6 +1,12 @@
+from __future__ import annotations
+
 import logging
+from typing import TYPE_CHECKING
 
 import typer
+
+if TYPE_CHECKING:
+    from kpops.components import PipelineComponent
 
 
 class CustomFormatter(logging.Formatter):
@@ -23,3 +29,21 @@ class CustomFormatter(logging.Formatter):
         log_fmt = formats.get(record.levelno)
         formatter = logging.Formatter(log_fmt)
         return formatter.format(record)
+
+
+logger = logging.getLogger()
+logging.getLogger("httpx").setLevel(logging.WARNING)
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(CustomFormatter())
+logger.addHandler(stream_handler)
+
+log = logging.getLogger("")
+LOG_DIVIDER = "#" * 100
+
+
+def log_action(action: str, pipeline_component: PipelineComponent):
+    log.info("\n")
+    log.info(LOG_DIVIDER)
+    log.info(f"{action} {pipeline_component.name}")
+    log.info(LOG_DIVIDER)
+    log.info("\n")

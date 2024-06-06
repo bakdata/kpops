@@ -12,8 +12,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         schemaRegistryUrl: http://localhost:8081/
       suspend: true
-    helm_name_override: from-pipeline-component-account-producer-clean
-    helm_release_name: from-pipeline-component-account-producer-clean
     name: account-producer
     namespace: ${NAMESPACE}
     prefix: from-pipeline-component-
@@ -38,8 +36,6 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       schemaRegistryUrl: http://localhost:8081/
     suspend: true
-  helm_name_override: from-pipeline-component-account-producer
-  helm_release_name: from-pipeline-component-account-producer
   name: account-producer
   namespace: ${NAMESPACE}
   prefix: from-pipeline-component-

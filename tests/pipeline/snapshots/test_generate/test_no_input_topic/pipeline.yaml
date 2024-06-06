@@ -18,8 +18,6 @@
         inputPattern: .*
         outputTopic: example-output
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-no-input-topic-pipeline-app1-clean
-    helm_release_name: resources-no-input-topic-pipeline-app1-clean
     name: app1
     namespace: example-namespace
     prefix: resources-no-input-topic-pipeline-
@@ -55,8 +53,6 @@
     topics:
       .*:
         type: pattern
-  helm_name_override: resources-no-input-topic-pipeline-app1
-  helm_release_name: resources-no-input-topic-pipeline-app1
   name: app1
   namespace: example-namespace
   prefix: resources-no-input-topic-pipeline-
@@ -95,8 +91,6 @@
         inputTopics:
         - example-output
         schemaRegistryUrl: http://localhost:8081/
-    helm_name_override: resources-no-input-topic-pipeline-app2-clean
-    helm_release_name: resources-no-input-topic-pipeline-app2-clean
     name: app2
     namespace: example-namespace
     prefix: resources-no-input-topic-pipeline-
@@ -123,8 +117,6 @@
       inputTopics:
       - example-output
       schemaRegistryUrl: http://localhost:8081/
-  helm_name_override: resources-no-input-topic-pipeline-app2
-  helm_release_name: resources-no-input-topic-pipeline-app2
   name: app2
   namespace: example-namespace
   prefix: resources-no-input-topic-pipeline-

@@ -3,7 +3,6 @@ import json
 import logging
 from abc import ABC
 from collections.abc import Sequence
-from enum import Enum
 from typing import Annotated, Any, Literal, Union
 
 from pydantic import (
@@ -21,17 +20,11 @@ from pydantic_core.core_schema import (
     ModelFieldsSchema,
 )
 
-from kpops.cli.registry import _find_classes
+from kpops.api.registry import _find_classes
 from kpops.components import (
     PipelineComponent,
 )
 from kpops.config import KpopsConfig
-
-
-class SchemaScope(str, Enum):
-    PIPELINE = "pipeline"
-    DEFAULTS = "defaults"
-    CONFIG = "config"
 
 
 class MultiComponentGenerateJsonSchema(GenerateJsonSchema): ...
