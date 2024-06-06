@@ -19,7 +19,7 @@ def collect_pipeline_paths(pipeline_paths: Iterable[Path]) -> Iterator[Path]:
     :raises: ValueError: If `pipeline_path` is neither a file nor a directory.
     """
     for pipeline_path in pipeline_paths:
-        if pipeline_path.is_file() and pipeline_path.name == PIPELINE_YAML:
+        if pipeline_path.is_file():
             yield pipeline_path
         elif pipeline_path.is_dir():
             yield from sorted(pipeline_path.glob(f"**/{PIPELINE_YAML}"))
