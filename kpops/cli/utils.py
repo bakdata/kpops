@@ -18,7 +18,7 @@ def collect_pipeline_paths(pipeline_paths: Iterable[Path]) -> Iterator[Path]:
         if pipeline_path.is_file():
             yield pipeline_path
         elif pipeline_path.is_dir():
-            yield from sorted(pipeline_path.glob("**/pipeline*.yaml"))
+            yield from sorted(pipeline_path.glob("**/pipeline.yaml"))
         else:
             msg = f"The entered pipeline path '{pipeline_path}' should be a directory or file."
             raise ValueError(msg)
