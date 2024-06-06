@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://bakdata.github.io/kpops/main/user/references/cli-commands/">
       
       
-        <link rel="prev" href="../../migration-guide/v4-v5/">
+        <link rel="prev" href="../../migration-guide/v5-v6/">
       
       
         <link rel="next" href="../editor-integration/">
@@ -1163,6 +1163,8 @@
       
         
       
+        
+      
     
     
     
@@ -1264,6 +1266,26 @@
   
   <span class="md-ellipsis">
     Migrate from v4 to v5
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migration-guide/v5-v6/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v5 to v6
   </span>
   
 
@@ -1790,11 +1812,11 @@
 <h2 id="kpops-clean"><code>kpops clean</code><a class="headerlink" href="#kpops-clean" title="Permanent link">&para;</a></h2>
 <p>Clean pipeline steps</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>clean<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATH
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>clean<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATHS...
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>PIPELINE_PATH</code>: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]</li>
+<li><code>PIPELINE_PATHS...</code>: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]</li>
 </ul>
 <p><strong>Options</strong>:</p>
 <ul>
@@ -1811,11 +1833,11 @@
 <h2 id="kpops-deploy"><code>kpops deploy</code><a class="headerlink" href="#kpops-deploy" title="Permanent link">&para;</a></h2>
 <p>Deploy pipeline steps</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>deploy<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATH
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>deploy<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATHS...
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>PIPELINE_PATH</code>: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]</li>
+<li><code>PIPELINE_PATHS...</code>: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]</li>
 </ul>
 <p><strong>Options</strong>:</p>
 <ul>
@@ -1832,11 +1854,11 @@
 <h2 id="kpops-destroy"><code>kpops destroy</code><a class="headerlink" href="#kpops-destroy" title="Permanent link">&para;</a></h2>
 <p>Destroy pipeline steps</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>destroy<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATH
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>destroy<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATHS...
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>PIPELINE_PATH</code>: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]</li>
+<li><code>PIPELINE_PATHS...</code>: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]</li>
 </ul>
 <p><strong>Options</strong>:</p>
 <ul>
@@ -1853,17 +1875,16 @@
 <h2 id="kpops-generate"><code>kpops generate</code><a class="headerlink" href="#kpops-generate" title="Permanent link">&para;</a></h2>
 <p>Enrich pipeline steps with defaults. The enriched pipeline is used for all KPOps operations (deploy, destroy, ...).</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>generate<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATH
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>generate<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATHS...
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>PIPELINE_PATH</code>: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]</li>
+<li><code>PIPELINE_PATHS...</code>: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]</li>
 </ul>
 <p><strong>Options</strong>:</p>
 <ul>
 <li><code>--dotenv FILE</code>: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
-<li><code>--output / --no-output</code>: Enable output printing  [default: output]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
 <li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]</li>
 <li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
@@ -1887,17 +1908,16 @@
 <h2 id="kpops-manifest"><code>kpops manifest</code><a class="headerlink" href="#kpops-manifest" title="Permanent link">&para;</a></h2>
 <p>In addition to generate, render final resource representation for each pipeline step, e.g. Kubernetes manifests.</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>manifest<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATH
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-6-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>manifest<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATHS...
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>PIPELINE_PATH</code>: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]</li>
+<li><code>PIPELINE_PATHS...</code>: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]</li>
 </ul>
 <p><strong>Options</strong>:</p>
 <ul>
 <li><code>--dotenv FILE</code>: Path to dotenv file. Multiple files can be provided. The files will be loaded in order, with each file overriding the previous one.  [env var: KPOPS_DOTENV_PATH]</li>
 <li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
-<li><code>--output / --no-output</code>: Enable output printing  [default: output]</li>
 <li><code>--steps TEXT</code>: Comma separated list of steps to apply the command on  [env var: KPOPS_PIPELINE_STEPS]</li>
 <li><code>--filter-type [include|exclude]</code>: Whether the --steps option should include/exclude the steps  [default: FilterType.INCLUDE]</li>
 <li><code>--environment TEXT</code>: The environment you want to generate and deploy the pipeline to. Suffix your environment files with this value (e.g. defaults_development.yaml for environment=development).   [env var: KPOPS_ENVIRONMENT]</li>
@@ -1907,11 +1927,11 @@
 <h2 id="kpops-reset"><code>kpops reset</code><a class="headerlink" href="#kpops-reset" title="Permanent link">&para;</a></h2>
 <p>Reset pipeline steps</p>
 <p><strong>Usage</strong>:</p>
-<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>reset<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATH
+<div class="language-console highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-7-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1"></a><span class="gp">$ </span>kpops<span class="w"> </span>reset<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>PIPELINE_PATHS...
 </span></code></pre></div></td></tr></table></div>
 <p><strong>Arguments</strong>:</p>
 <ul>
-<li><code>PIPELINE_PATH</code>: Path to YAML with pipeline definition  [env var: KPOPS_PIPELINE_PATH;required]</li>
+<li><code>PIPELINE_PATHS...</code>: Paths to dir containing 'pipeline.yaml' or files named 'pipeline.yaml'.  [env var: KPOPS_PIPELINE_PATHS;required]</li>
 </ul>
 <p><strong>Options</strong>:</p>
 <ul>
