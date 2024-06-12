@@ -217,13 +217,15 @@ class KafkaSourceConnector(KafkaConnector):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        self._resetter.app.config.offset_topic = self.offset_topic
+        if self.offset_topic:
+            self._resetter.app.config.offset_topic = self.offset_topic
         await self._resetter.reset(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
         await super().clean(dry_run)
-        self._resetter.app.config.offset_topic = self.offset_topic
+        if self.offset_topic:
+            self._resetter.app.config.offset_topic = self.offset_topic
         await self._resetter.clean(dry_run)
 
 
