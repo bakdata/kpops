@@ -5,6 +5,7 @@ from abc import ABC
 from functools import cached_property
 from typing import Any, NoReturn
 
+import pydantic
 from pydantic import Field, PrivateAttr, ValidationInfo, computed_field, field_validator
 from typing_extensions import override
 
@@ -24,6 +25,11 @@ from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
+
+try:
+    from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
+except ImportError:
+    from typing_extensions import Self
 
 log = logging.getLogger("KafkaConnector")
 
@@ -205,6 +211,12 @@ class KafkaSourceConnector(KafkaConnector):
 
     _connector_type: KafkaConnectorType = PrivateAttr(KafkaConnectorType.SOURCE)
 
+    @pydantic.model_validator(mode="after")
+    def populate_offset_topic(self) -> Self:
+        if self.offset_topic:
+            self._resetter.app.config.offset_topic = self.offset_topic
+        return self
+
     @computed_field
     @cached_property
     def _resetter(self) -> KafkaConnectorResetter:
@@ -217,15 +229,11 @@ class KafkaSourceConnector(KafkaConnector):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        if self.offset_topic:
-            self._resetter.app.config.offset_topic = self.offset_topic
         await self._resetter.reset(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
         await super().clean(dry_run)
-        if self.offset_topic:
-            self._resetter.app.config.offset_topic = self.offset_topic
         await self._resetter.clean(dry_run)
 
 
