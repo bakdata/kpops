@@ -1,4 +1,15 @@
 # Changelog
+## [6.0.1](https://github.com/bakdata/kpops/releases/tag/6.0.1) - Release Date: [2024-06-12]
+
+### 🐛 Fixes
+
+- Fix connector resetter offset topic - [#497](https://github.com/bakdata/kpops/pull/497)
+
+
+
+
+
+
 ## [6.0.0](https://github.com/bakdata/kpops/releases/tag/6.0.0) - Release Date: [2024-06-06]
 
 ### 🏗️ Breaking changes
