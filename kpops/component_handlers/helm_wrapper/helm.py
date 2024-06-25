@@ -6,7 +6,7 @@ import re
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import yaml
 
@@ -127,6 +127,29 @@ class Helm:
         except ReleaseNotFoundException:
             log.warning(
                 f"Release with name {release_name} not found. Could not uninstall app."
+            )
+
+    def get_values(
+        self,
+        namespace: str,
+        release_name: str,
+    ) -> dict[str, Any] | None:
+        """Prepare and execute the `helm get values` command."""
+        command = [
+            "helm",
+            "get",
+            "values",
+            release_name,
+            "--namespace",
+            namespace,
+            "--output",
+            "yaml",
+        ]
+        try:
+            return yaml.safe_load(self.__execute(command))
+        except ReleaseNotFoundException:
+            log.warning(
+                f"Release with name {release_name} not found. Could not get values."
             )
 
     def template(

@@ -217,7 +217,6 @@ def clean(
     )
 
     async def clean_runner(component: PipelineComponent):
-        await component.destroy(dry_run)
         log_action("Clean", component)
         await component.clean(dry_run)
 

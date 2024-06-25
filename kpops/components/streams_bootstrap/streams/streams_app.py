@@ -62,10 +62,16 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
     @computed_field
     @cached_property
     def _cleaner(self) -> StreamsAppCleaner:
+        streams_app_values = self.model_dump(
+            by_alias=True, exclude={"_cleaner", "from_", "to"}
+        )
+        cluster_values = self.helm_values()
+        if cluster_values is not None:
+            app_values = streams_app_values.get("app")
+            if app_values is not None:
+                app_values["imageTag"] = cluster_values["imageTag"]
         return StreamsAppCleaner(
-            config=self.config,
-            handlers=self.handlers,
-            **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"}),
+            config=self.config, handlers=self.handlers, **streams_app_values
         )
 
     @property

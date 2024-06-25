@@ -12,7 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components import StreamsApp
+from kpops.components import HelmApp, StreamsApp
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     ToSection,
@@ -77,7 +77,10 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def streams_app(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        empty_helm_get_values: MagicMock,
     ) -> StreamsApp:
         return StreamsApp(
             name=STREAMS_APP_NAME,
@@ -100,7 +103,10 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def stateful_streams_app(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        empty_helm_get_values: MagicMock,
     ) -> StreamsApp:
         return StreamsApp(
             name=STREAMS_APP_NAME,
@@ -130,6 +136,10 @@ class TestStreamsApp:
         return mocker.patch(
             "kpops.components.base_components.helm_app.DryRunHandler"
         ).return_value
+
+    @pytest.fixture()
+    def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch.object(HelmApp, "helm_values", return_value=None)
 
     def test_cleaner(self, streams_app: StreamsApp):
         cleaner = streams_app._cleaner
@@ -196,7 +206,12 @@ class TestStreamsApp:
             == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
         )
 
-    def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
+    def test_set_topics(
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        empty_helm_get_values: MagicMock,
+    ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
             config=config,
@@ -245,7 +260,10 @@ class TestStreamsApp:
         assert "extraInputPatterns" in streams_config
 
     def test_no_empty_input_topic(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        empty_helm_get_values: MagicMock,
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -275,7 +293,12 @@ class TestStreamsApp:
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" not in streams_config
 
-    def test_should_validate(self, config: KpopsConfig, handlers: ComponentHandlers):
+    def test_should_validate(
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        empty_helm_get_values: MagicMock,
+    ):
         # An exception should be raised when both role and type are defined and type is input
         with pytest.raises(
             ValueError, match="Define role only if `type` is `pattern` or `None`"
@@ -325,7 +348,10 @@ class TestStreamsApp:
             )
 
     def test_set_streams_output_from_to(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        empty_helm_get_values: MagicMock,
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -368,7 +394,10 @@ class TestStreamsApp:
         )
 
     def test_weave_inputs_from_prev_component(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        empty_helm_get_values: MagicMock,
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -412,6 +441,7 @@ class TestStreamsApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
+        empty_helm_get_values: MagicMock,
         mocker: MockerFixture,
     ):
         streams_app = StreamsApp(
@@ -526,7 +556,12 @@ class TestStreamsApp:
         ]
 
     @pytest.mark.asyncio()
-    async def test_destroy(self, streams_app: StreamsApp, mocker: MockerFixture):
+    async def test_destroy(
+        self,
+        streams_app: StreamsApp,
+        mocker: MockerFixture,
+        empty_helm_get_values: MagicMock,
+    ):
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
         await streams_app.destroy(dry_run=True)
@@ -641,8 +676,107 @@ class TestStreamsApp:
         )
 
     @pytest.mark.asyncio()
+    async def test_should_clean_streams_app_with_old_image_tag(
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
+        mocker.patch.object(
+            HelmApp,
+            "helm_values",
+            return_value={
+                "commandLine": {"TENANT_NAME": "marketplace"},
+                "image": "registry/streams-app:latest",
+                "imageTag": "1.1.1",
+                "nameOverride": STREAMS_APP_NAME,
+                "prometheus": {"jmx": {"enabled": False}},
+                "replicaCount": 1,
+                "streams": {
+                    "brokers": "fake-broker:9092",
+                    "inputTopics": ["test-input-topic"],
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+        )
+        streams_app = StreamsApp(
+            name=STREAMS_APP_NAME,
+            config=config,
+            handlers=handlers,
+            **{
+                "namespace": "test-namespace",
+                "app": {
+                    "imageTag": "2.2.2",
+                    "streams": {"brokers": "fake-broker:9092"},
+                },
+                "from": {
+                    "topics": {
+                        "test-input-topic": {"type": "input"},
+                    }
+                },
+                "to": {
+                    "topics": {
+                        "streams-app-output-topic": {"type": "output"},
+                    }
+                },
+            },
+        )
+        mock_helm_upgrade_install = mocker.patch.object(
+            streams_app._cleaner.helm, "upgrade_install"
+        )
+        mock_helm_uninstall = mocker.patch.object(
+            streams_app._cleaner.helm, "uninstall"
+        )
+
+        mock = mocker.MagicMock()
+        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
+
+        dry_run = False
+        await streams_app.clean(dry_run=dry_run)
+
+        mock.assert_has_calls(
+            [
+                mocker.call.helm_uninstall(
+                    "test-namespace",
+                    STREAMS_APP_CLEAN_RELEASE_NAME,
+                    dry_run,
+                ),
+                ANY,  # __bool__
+                ANY,  # __str__
+                mocker.call.helm_upgrade_install(
+                    STREAMS_APP_CLEAN_RELEASE_NAME,
+                    "bakdata-streams-bootstrap/streams-app-cleanup-job",
+                    dry_run,
+                    "test-namespace",
+                    {
+                        "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                        "imageTag": "1.1.1",
+                        "streams": {
+                            "brokers": "fake-broker:9092",
+                            "inputTopics": ["test-input-topic"],
+                            "outputTopic": "streams-app-output-topic",
+                            "deleteOutput": True,
+                        },
+                    },
+                    HelmUpgradeInstallFlags(
+                        version="2.9.0", wait=True, wait_for_jobs=True
+                    ),
+                ),
+                mocker.call.helm_uninstall(
+                    "test-namespace",
+                    STREAMS_APP_CLEAN_RELEASE_NAME,
+                    dry_run,
+                ),
+            ]
+        )
+
+    @pytest.mark.asyncio()
     async def test_get_input_output_topics(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        empty_helm_get_values: MagicMock,
     ):
         streams_app = StreamsApp(
             name="my-app",
