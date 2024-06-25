@@ -72,6 +72,9 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         assert isinstance(resetter, KafkaConnectorResetter)
         assert connector._resetter.helm_release_name == CONNECTOR_CLEAN_RELEASE_NAME
 
+    def test_resetter_offset_topic(self, connector: KafkaSourceConnector):
+        assert connector._resetter.app.config.offset_topic == OFFSETS_TOPIC
+
     def test_from_section_raises_exception(
         self,
         config: KpopsConfig,
