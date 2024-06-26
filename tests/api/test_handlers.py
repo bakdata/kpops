@@ -16,10 +16,7 @@ MODULE = CustomSchemaProvider.__module__
 
 
 def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
-    config = KpopsConfig(
-        kafka_brokers="broker:9092",
-        components_module=MODULE,
-    )
+    config = KpopsConfig(kafka_brokers="broker:9092")
     connector_handler_mock = mocker.patch(f"{HANDLER_MODULE}.KafkaConnectHandler")
     connector_handler = KafkaConnectHandler.from_kpops_config(config)
     connector_handler_mock.from_kpops_config.return_value = connector_handler
