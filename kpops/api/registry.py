@@ -53,8 +53,8 @@ class Registry:
     def iter_component_modules() -> Iterator[ModuleType]:
         import kpops.components
 
-        for _, module_name, _ in _iter_namespace(kpops.components):
-            yield import_module(module_name)
+        yield kpops.components
+        yield from _iter_namespace(kpops.components)
 
 
 def find_class(modules: Iterable[ModuleType], base: type[T]) -> type[T]:
@@ -93,5 +93,8 @@ def __filter_internal_kpops_classes(class_module: str, module_name: str) -> bool
     )
 
 
-def _iter_namespace(ns_pkg: ModuleType) -> Iterator[pkgutil.ModuleInfo]:
-    return pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + ".")
+def _iter_namespace(ns_pkg: ModuleType) -> Iterator[ModuleType]:
+    for _, module_name, _ in pkgutil.iter_modules(
+        ns_pkg.__path__, ns_pkg.__name__ + "."
+    ):
+        yield import_module(module_name)
