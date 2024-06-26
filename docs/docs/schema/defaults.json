@@ -155,6 +155,12 @@
             "additionalProperties": true,
             "description": "Helm app values.",
             "properties": {
+                "imageTag": {
+                    "default": "latest",
+                    "description": "",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -278,6 +284,12 @@
             "additionalProperties": true,
             "description": "Settings specific to Kafka Apps.",
             "properties": {
+                "imageTag": {
+                    "default": "latest",
+                    "description": "",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -725,7 +737,14 @@
         "KubernetesAppValues": {
             "additionalProperties": true,
             "description": "Settings specific to Kubernetes apps.",
-            "properties": {},
+            "properties": {
+                "imageTag": {
+                    "default": "latest",
+                    "description": "",
+                    "title": "Imagetag",
+                    "type": "string"
+                }
+            },
             "title": "KubernetesAppValues",
             "type": "object"
         },
@@ -920,6 +939,12 @@
             "additionalProperties": true,
             "description": "Settings specific to producers.",
             "properties": {
+                "imageTag": {
+                    "default": "latest",
+                    "description": "",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -1272,6 +1297,12 @@
                     ],
                     "default": null,
                     "description": "Kubernetes event-driven autoscaling config"
+                },
+                "imageTag": {
+                    "default": "latest",
+                    "description": "",
+                    "title": "Imagetag",
+                    "type": "string"
                 },
                 "nameOverride": {
                     "anyOf": [

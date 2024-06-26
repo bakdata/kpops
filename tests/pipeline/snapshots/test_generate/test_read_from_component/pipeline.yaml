@@ -1,5 +1,6 @@
 - _cleaner:
     app:
+      imageTag: latest
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-read-from-component-producer1
@@ -16,6 +17,7 @@
     type: producer-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-read-from-component-producer1
@@ -38,6 +40,7 @@
   version: 2.4.2
 - _cleaner:
     app:
+      imageTag: latest
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-read-from-component-producer2
@@ -54,6 +57,7 @@
     type: producer-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-read-from-component-producer2
@@ -168,6 +172,7 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-read-from-component-inflate-step-inflated-sink-connector
       connectorType: sink
+      imageTag: latest
     name: inflate-step-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -195,7 +200,8 @@
     transforms.changeTopic.replacement: resources-read-from-component-inflate-step-index-v1
   name: inflate-step-inflated-sink-connector
   prefix: resources-read-from-component-
-  resetter_values: {}
+  resetter_values:
+    imageTag: latest
   to:
     models: {}
     topics:
@@ -208,6 +214,7 @@
   type: kafka-sink-connector
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -232,6 +239,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -360,6 +368,7 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector
       connectorType: sink
+      imageTag: latest
     name: inflate-step-without-prefix-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -387,7 +396,8 @@
     transforms.changeTopic.replacement: resources-read-from-component-inflate-step-without-prefix-index-v1
   name: inflate-step-without-prefix-inflated-sink-connector
   prefix: resources-read-from-component-
-  resetter_values: {}
+  resetter_values:
+    imageTag: latest
   to:
     models: {}
     topics:
@@ -400,6 +410,7 @@
   type: kafka-sink-connector
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -424,6 +435,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -460,6 +472,7 @@
   version: 2.4.2
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -484,6 +497,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -525,6 +539,7 @@
   version: 2.4.2
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -549,6 +564,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -589,6 +605,7 @@
   version: 2.4.2
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -613,6 +630,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -653,6 +671,7 @@
   version: 2.4.2
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -676,6 +695,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -713,6 +733,7 @@
   version: 2.4.2
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -736,6 +757,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false

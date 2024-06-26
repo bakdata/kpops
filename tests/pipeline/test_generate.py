@@ -219,6 +219,7 @@ class TestGenerate:
                 str(RESOURCE_PATH / "kafka-connect-sink-config" / PIPELINE_YAML),
                 "--config",
                 str(RESOURCE_PATH / "kafka-connect-sink-config"),
+                "--verbose",
             ],
             catch_exceptions=False,
         )

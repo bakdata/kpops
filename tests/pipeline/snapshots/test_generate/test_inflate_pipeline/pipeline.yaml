@@ -64,6 +64,7 @@
         topics: []
       commandLine:
         CONVERT_XML: true
+      imageTag: latest
       persistence:
         enabled: false
       resources:
@@ -105,6 +106,7 @@
       topics: []
     commandLine:
       CONVERT_XML: true
+    imageTag: latest
     persistence:
       enabled: false
     resources:
@@ -253,6 +255,7 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-pipeline-with-inflate-should-inflate-inflated-sink-connector
       connectorType: sink
+      imageTag: latest
     name: should-inflate-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-pipeline-with-inflate-
@@ -280,7 +283,8 @@
     transforms.changeTopic.replacement: resources-pipeline-with-inflate-should-inflate-index-v1
   name: should-inflate-inflated-sink-connector
   prefix: resources-pipeline-with-inflate-
-  resetter_values: {}
+  resetter_values:
+    imageTag: latest
   to:
     models: {}
     topics:
@@ -293,6 +297,7 @@
   type: kafka-sink-connector
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -317,6 +322,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false

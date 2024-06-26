@@ -1,6 +1,7 @@
 - _cleaner:
     app:
       image: fake-image
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -26,6 +27,7 @@
     version: 2.9.0
   app:
     image: fake-image
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -71,6 +73,7 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-pipeline-with-env-defaults-es-sink-connector
       connectorType: sink
+      imageTag: latest
     name: es-sink-connector
     namespace: development-namespace
     prefix: resources-pipeline-with-env-defaults-
@@ -97,6 +100,7 @@
     topics: example-output
   name: es-sink-connector
   prefix: resources-pipeline-with-env-defaults-
-  resetter_values: {}
+  resetter_values:
+    imageTag: latest
   type: kafka-sink-connector
 

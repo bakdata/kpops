@@ -1,5 +1,6 @@
 - _cleaner:
     app:
+      imageTag: latest
       streams:
         brokers: test
         outputTopic: out
@@ -19,6 +20,7 @@
     type: producer-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     streams:
       brokers: test
       outputTopic: out

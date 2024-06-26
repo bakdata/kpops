@@ -155,6 +155,12 @@
             "additionalProperties": true,
             "description": "Helm app values.",
             "properties": {
+                "imageTag": {
+                    "default": "latest",
+                    "description": "",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -588,6 +594,12 @@
             "additionalProperties": true,
             "description": "Settings specific to producers.",
             "properties": {
+                "imageTag": {
+                    "default": "latest",
+                    "description": "",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -940,6 +952,12 @@
                     ],
                     "default": null,
                     "description": "Kubernetes event-driven autoscaling config"
+                },
+                "imageTag": {
+                    "default": "latest",
+                    "description": "",
+                    "title": "Imagetag",
+                    "type": "string"
                 },
                 "nameOverride": {
                     "anyOf": [

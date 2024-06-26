@@ -1,3 +1,5 @@
 helm-app:
   name: ${component.type}
   namespace: example-namespace
+  app:
+    imageTag: latest

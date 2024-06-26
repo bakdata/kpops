@@ -49,7 +49,7 @@ class TestHelmApp:
 
     @pytest.fixture()
     def app_values(self) -> HelmAppValues:
-        return HelmAppValues(**{"foo": "test-value"})
+        return HelmAppValues(**{"foo": "test-value", "imageTag": "latest"})
 
     @pytest.fixture()
     def repo_config(self) -> HelmRepoConfig:
@@ -235,7 +235,7 @@ class TestHelmApp:
             name="helm-app-name-is-very-long-as-well",
             config=config,
             handlers=handlers,
-            app=HelmAppValues(),
+            app=HelmAppValues(**{"imageTag": "latest"}),
             namespace="test-namespace",
             repo_config=repo_config,
         )
