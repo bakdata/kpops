@@ -41,6 +41,7 @@ def test_iter_namespace():
     components_module = importlib.import_module("kpops.components")
     assert [module.__name__ for module in _iter_namespace(components_module)] == [
         "kpops.components.base_components",
+        "kpops.components.common",
         "kpops.components.streams_bootstrap",
         "kpops.components.test_components",
     ]
@@ -51,6 +52,7 @@ def test_iter_component_modules():
     assert [module.__name__ for module in Registry.iter_component_modules()] == [
         "kpops.components",
         "kpops.components.base_components",
+        "kpops.components.common",
         "kpops.components.streams_bootstrap",
         "kpops.components.test_components",
     ]
