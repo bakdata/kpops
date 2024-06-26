@@ -588,6 +588,11 @@
             "additionalProperties": true,
             "description": "Settings specific to producers.",
             "properties": {
+                "imageTag": {
+                    "default": "latest",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -940,6 +945,11 @@
                     ],
                     "default": null,
                     "description": "Kubernetes event-driven autoscaling config"
+                },
+                "imageTag": {
+                    "default": "latest",
+                    "title": "Imagetag",
+                    "type": "string"
                 },
                 "nameOverride": {
                     "anyOf": [

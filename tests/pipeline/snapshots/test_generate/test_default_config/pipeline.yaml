@@ -1,5 +1,6 @@
 - _cleaner:
     app:
+      imageTag: latest
       resources:
         limits:
           memory: 2G
@@ -21,6 +22,7 @@
     type: producer-app-cleaner
     version: 2.9.0
   app:
+    imageTag: latest
     resources:
       limits:
         memory: 2G
@@ -50,6 +52,7 @@
 - _cleaner:
     app:
       image: some-image
+      imageTag: latest
       labels:
         pipeline: resources-custom-config
       persistence:
@@ -77,6 +80,7 @@
     version: 2.9.0
   app:
     image: some-image
+    imageTag: latest
     labels:
       pipeline: resources-custom-config
     persistence:

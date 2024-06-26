@@ -72,6 +72,7 @@
         topics: []
       commandLine:
         CONVERT_XML: true
+      imageTag: latest
       persistence:
         enabled: false
       resources:
@@ -113,6 +114,7 @@
       topics: []
     commandLine:
       CONVERT_XML: true
+    imageTag: latest
     persistence:
       enabled: false
     resources:
