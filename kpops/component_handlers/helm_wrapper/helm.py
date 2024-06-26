@@ -6,8 +6,9 @@ import re
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
+import pyhelm3
 import yaml
 
 from kpops.component_handlers.helm_wrapper.exception import ReleaseNotFoundException
@@ -31,6 +32,7 @@ log = logging.getLogger("Helm")
 
 class Helm:
     def __init__(self, helm_config: HelmConfig) -> None:
+        self._client = pyhelm3.Client()
         self._context = helm_config.context
         self._debug = helm_config.debug
         self._version = self.get_version()
@@ -78,13 +80,29 @@ class Helm:
     async def upgrade_install(
         self,
         release_name: str,
-        chart: str,
+        chart_name: str,
         dry_run: bool,
         namespace: str,
-        values: dict,
+        values: dict[str, Any],
         flags: HelmUpgradeInstallFlags | None = None,
     ) -> str:
         """Prepare and execute the `helm upgrade --install` command."""
+        chart = await self._client.get_chart(
+            chart_name,
+            # TODO?
+            # repo=...,
+            # version="v1.8.x",
+        )
+        await self._client.install_or_upgrade_release(
+            release_name,
+            chart,
+            values,
+            namespace=namespace,
+            dry_run=dry_run,
+            atomic=True,
+            wait=True,
+        )
+
         if flags is None:
             flags = HelmUpgradeInstallFlags()
         with tempfile.NamedTemporaryFile("w", delete=False) as values_file:

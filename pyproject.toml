@@ -36,6 +36,7 @@ python-schema-registry-client = "^2.4.1"
 httpx = "^0 >=0.24.1"
 networkx = "^3.1"
 kubernetes-asyncio = "^29.0.0"
+pyhelm3 = "^0.3.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.1.2"
