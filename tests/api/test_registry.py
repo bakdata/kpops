@@ -8,7 +8,7 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.api.exception import ClassNotFoundError
-from kpops.api.registry import Registry, _find_classes, find_class, iter_namespace
+from kpops.api.registry import Registry, _find_classes, _iter_namespace, find_class
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from tests.cli.resources.custom_module import CustomSchemaProvider
@@ -37,7 +37,9 @@ def custom_components(mocker: MockerFixture):
 
 def test_iter_namespace():
     components_module = importlib.import_module("kpops.components")
-    assert [module_name for _, module_name, _ in iter_namespace(components_module)] == [
+    assert [
+        module_name for _, module_name, _ in _iter_namespace(components_module)
+    ] == [
         "base_components",
         "streams_bootstrap",
         "test_components",

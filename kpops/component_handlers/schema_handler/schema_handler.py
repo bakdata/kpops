@@ -9,7 +9,7 @@ from schema_registry.client import AsyncSchemaRegistryClient
 from schema_registry.client.schema import AvroSchema
 
 from kpops.api.exception import ClassNotFoundError
-from kpops.api.registry import find_class
+from kpops.api.registry import Registry, find_class
 from kpops.component_handlers.schema_handler.schema_provider import (
     Schema,
     SchemaProvider,
@@ -33,7 +33,9 @@ class SchemaHandler:
     @cached_property
     def schema_provider(self) -> SchemaProvider:
         try:
-            schema_provider_class = find_class(SchemaProvider)
+            schema_provider_class = find_class(
+                *Registry.iter_component_modules(), base=SchemaProvider
+            )
             return schema_provider_class()  # pyright: ignore[reportAbstractUsage]
         except ClassNotFoundError as e:
             msg = f"No schema provider found. Please implement the abstract method in {SchemaProvider.__module__}.{SchemaProvider.__name__}."

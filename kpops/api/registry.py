@@ -10,7 +10,6 @@ from pathlib import Path
 from types import ModuleType
 from typing import TYPE_CHECKING, TypeVar
 
-import kpops.components
 from kpops import __name__
 from kpops.api.exception import ClassNotFoundError
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -38,7 +37,7 @@ class Registry:
 
         :param module_name: name of the python module.
         """
-        custom_modules = self.iter_custom_modules()
+        custom_modules = self.iter_component_modules()
         for _class in _find_classes(*custom_modules, base=PipelineComponent):
             self._classes[_class.type] = _class
 
@@ -50,7 +49,9 @@ class Registry:
             raise ClassNotFoundError(msg) from ke
 
     @staticmethod
-    def iter_custom_modules() -> Iterator[ModuleType]:
+    def iter_component_modules() -> Iterator[ModuleType]:
+        import kpops.components
+
         for _, module_name, _ in _iter_namespace(kpops.components):
             yield import_module(module_name)
 
