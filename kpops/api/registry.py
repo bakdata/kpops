@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import importlib
+import importlib.util
 import inspect
 import logging
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from types import ModuleType
 from typing import TYPE_CHECKING, TypeVar
 
 from kpops import __name__
@@ -53,7 +55,7 @@ def find_class(module_name: str, baseclass: type[T]) -> type[T]:
         raise ClassNotFoundError from e
 
 
-def _find_classes(module_name: str, baseclass: type[T]) -> Iterator[type[T]]:
+def _import_module(module_name: str) -> ModuleType:
     module = importlib.import_module(module_name)
     if module.__file__ and not module_name.startswith(KPOPS_MODULE):
         file_path = Path(module.__file__)
@@ -62,6 +64,11 @@ def _find_classes(module_name: str, baseclass: type[T]) -> Iterator[type[T]]:
             log.debug(f"Picked up: {rel_path}")
         except ValueError:
             log.debug(f"Picked up: {file_path}")
+    return module
+
+
+def _find_classes(module_name: str, baseclass: type[T]) -> Iterator[type[T]]:
+    module = _import_module(module_name)
     for _, _class in inspect.getmembers(module, inspect.isclass):
         if not __filter_internal_kpops_classes(
             _class.__module__, module_name
@@ -70,7 +77,24 @@ def _find_classes(module_name: str, baseclass: type[T]) -> Iterator[type[T]]:
 
 
 def __filter_internal_kpops_classes(class_module: str, module_name: str) -> bool:
-    # filter out internal kpops classes and components unless specifically requested
+    """Filter out internal KPOps classes and components unless specifically requested."""
     return class_module.startswith(KPOPS_MODULE) and not module_name.startswith(
         KPOPS_MODULE
     )
+
+
+def _find_modules(path: Path) -> Iterator[str]:
+    def python_file_to_module(py_file: Path) -> str:
+        if py_file.suffix != ".py":
+            msg = "Provided custom component path is not a Python file or directory"
+            raise ValueError(msg)
+        return py_file.with_suffix("").as_posix().replace("/", ".")
+
+    if path.is_file():
+        yield python_file_to_module(path)
+    elif path.is_dir():
+        for py_file in path.rglob("*.py"):
+            yield python_file_to_module(py_file)
+    else:
+        msg = "Provide the path to a valid Python file or package"
+        raise ValueError(msg)
