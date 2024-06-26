@@ -5,7 +5,6 @@ import pydantic
 from pydantic import (
     BaseModel,
     ConfigDict,
-    Field,
     SerializationInfo,
     field_validator,
     model_serializer,
@@ -124,4 +123,3 @@ class KafkaConnectorResetterConfig(CamelCaseConfigModel):
 class KafkaConnectorResetterValues(HelmAppValues):
     connector_type: Literal["source", "sink"]
     config: KafkaConnectorResetterConfig
-    image_tag: str = Field(default="latest", alias="imageTag")
