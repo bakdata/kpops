@@ -19,7 +19,10 @@ KUBERNETES_NAME_CHECK_PATTERN = re.compile(
 
 
 class KubernetesAppValues(CamelCaseConfigModel, DescConfigModel):
-    """Settings specific to Kubernetes apps."""
+    """Settings specific to Kubernetes apps.
+
+    :param image_tag: The image tag of the Kubernetes app.
+    """
 
     image_tag: str = Field(
         default="latest", description=describe_attr("imageTag", __doc__)
