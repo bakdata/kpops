@@ -1,9 +1,12 @@
+import logging
 from abc import ABC
+from typing import Self
 
+import pydantic
 from pydantic import Field
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
-from kpops.components.base_components.helm_app import HelmApp
+from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.utils.docstring import describe_attr
 
 STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
@@ -11,6 +14,17 @@ STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     url="https://bakdata.github.io/streams-bootstrap/",
 )
 STREAMS_BOOTSTRAP_VERSION = "2.9.0"
+
+log = logging.getLogger("StreamsBootstrap")
+
+
+class StreamsBootstrapValues(HelmAppValues):
+    """Base value class for all streams bootstrap related components.
+
+    :param image_tag: Docker image tag of the Kafka Streams app.
+    """
+
+    image_tag: str = Field(default="latest")
 
 
 class StreamsBootstrap(HelmApp, ABC):
@@ -21,6 +35,11 @@ class StreamsBootstrap(HelmApp, ABC):
     :param version: Helm chart version, defaults to "2.9.0"
     """
 
+    app: StreamsBootstrapValues = Field(
+        default_factory=StreamsBootstrapValues,
+        description=describe_attr("app", __doc__),
+    )
+
     repo_config: HelmRepoConfig = Field(
         default=STREAMS_BOOTSTRAP_HELM_REPO,
         description=describe_attr("repo_config", __doc__),
@@ -29,3 +48,11 @@ class StreamsBootstrap(HelmApp, ABC):
         default=STREAMS_BOOTSTRAP_VERSION,
         description=describe_attr("version", __doc__),
     )
+
+    @pydantic.model_validator(mode="after")
+    def warning_for_latest_image_tag(self) -> Self:
+        if self.app.image_tag == "latest" and "$" not in self.name:
+            log.warning(
+                f"The imageTag for component '{self.name}' is not set and defaults to 'latest'. Please, consider providing a stable imageTag."
+            )
+        return self

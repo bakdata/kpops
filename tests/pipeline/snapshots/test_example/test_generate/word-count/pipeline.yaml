@@ -165,6 +165,5 @@
     value.converter: org.apache.kafka.connect.storage.StringConverter
   name: redis-sink-connector
   prefix: word-count-
-  resetter_values:
-    imageTag: latest
+  resetter_values: {}
   type: kafka-sink-connector

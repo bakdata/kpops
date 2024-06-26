@@ -200,8 +200,7 @@
     transforms.changeTopic.replacement: resources-read-from-component-inflate-step-index-v1
   name: inflate-step-inflated-sink-connector
   prefix: resources-read-from-component-
-  resetter_values:
-    imageTag: latest
+  resetter_values: {}
   to:
     models: {}
     topics:
@@ -396,8 +395,7 @@
     transforms.changeTopic.replacement: resources-read-from-component-inflate-step-without-prefix-index-v1
   name: inflate-step-without-prefix-inflated-sink-connector
   prefix: resources-read-from-component-
-  resetter_values:
-    imageTag: latest
+  resetter_values: {}
   to:
     models: {}
     topics:

@@ -283,8 +283,7 @@
     transforms.changeTopic.replacement: resources-pipeline-with-inflate-should-inflate-index-v1
   name: should-inflate-inflated-sink-connector
   prefix: resources-pipeline-with-inflate-
-  resetter_values:
-    imageTag: latest
+  resetter_values: {}
   to:
     models: {}
     topics:

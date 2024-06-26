@@ -155,12 +155,6 @@
             "additionalProperties": true,
             "description": "Helm app values.",
             "properties": {
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Specifies the version or specific build of a container image to use.",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -596,7 +590,6 @@
             "properties": {
                 "imageTag": {
                     "default": "latest",
-                    "description": "Specifies the version or specific build of a container image to use.",
                     "title": "Imagetag",
                     "type": "string"
                 },
@@ -955,7 +948,6 @@
                 },
                 "imageTag": {
                     "default": "latest",
-                    "description": "Specifies the version or specific build of a container image to use.",
                     "title": "Imagetag",
                     "type": "string"
                 },

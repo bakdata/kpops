@@ -155,12 +155,6 @@
             "additionalProperties": true,
             "description": "Helm app values.",
             "properties": {
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Specifies the version or specific build of a container image to use.",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -284,12 +278,6 @@
             "additionalProperties": true,
             "description": "Settings specific to Kafka Apps.",
             "properties": {
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Specifies the version or specific build of a container image to use.",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -737,14 +725,7 @@
         "KubernetesAppValues": {
             "additionalProperties": true,
             "description": "Settings specific to Kubernetes apps.",
-            "properties": {
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Specifies the version or specific build of a container image to use.",
-                    "title": "Imagetag",
-                    "type": "string"
-                }
-            },
+            "properties": {},
             "title": "KubernetesAppValues",
             "type": "object"
         },
@@ -941,7 +922,6 @@
             "properties": {
                 "imageTag": {
                     "default": "latest",
-                    "description": "Specifies the version or specific build of a container image to use.",
                     "title": "Imagetag",
                     "type": "string"
                 },
@@ -1300,7 +1280,6 @@
                 },
                 "imageTag": {
                     "default": "latest",
-                    "description": "Specifies the version or specific build of a container image to use.",
                     "title": "Imagetag",
                     "type": "string"
                 },
@@ -1359,10 +1338,10 @@
                 "app": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/HelmAppValues"
+                            "$ref": "#/$defs/StreamsBootstrapValues"
                         }
                     ],
-                    "description": "Helm app values"
+                    "description": ""
                 },
                 "from": {
                     "anyOf": [
@@ -1440,10 +1419,36 @@
             },
             "required": [
                 "name",
-                "namespace",
-                "app"
+                "namespace"
             ],
             "title": "StreamsBootstrap",
+            "type": "object"
+        },
+        "StreamsBootstrapValues": {
+            "additionalProperties": true,
+            "description": "Base value class for all streams bootstrap related components.",
+            "properties": {
+                "imageTag": {
+                    "default": "latest",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "Nameoverride"
+                }
+            },
+            "title": "StreamsBootstrapValues",
             "type": "object"
         },
         "StreamsConfig": {

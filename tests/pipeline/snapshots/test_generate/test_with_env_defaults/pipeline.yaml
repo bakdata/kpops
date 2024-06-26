@@ -100,7 +100,6 @@
     topics: example-output
   name: es-sink-connector
   prefix: resources-pipeline-with-env-defaults-
-  resetter_values:
-    imageTag: latest
+  resetter_values: {}
   type: kafka-sink-connector
 

@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from collections.abc import Callable
-from typing import Any, Self
+from typing import Any
 
 import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
@@ -130,14 +130,6 @@ class KafkaApp(PipelineComponent, ABC):
         default=...,
         description=describe_attr("app", __doc__),
     )
-
-    @pydantic.model_validator(mode="after")
-    def warning_for_latest_image_tag(self) -> Self:
-        if self.app.image_tag == "latest" and "$" not in self.name:
-            log.warning(
-                f"The imageTag for component '{self.name}' is not set and defaults to 'latest'. Please, consider providing a stable imageTag."
-            )
-        return self
 
     @override
     async def deploy(self, dry_run: bool) -> None:
