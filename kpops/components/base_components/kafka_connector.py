@@ -134,16 +134,6 @@ class KafkaConnector(PipelineComponent, ABC):
         app["name"] = component_name
         return KafkaConnectorConfig(**app)
 
-    # @pydantic.model_validator(mode="after")
-    # def warning_for_latest_image_tag(self) -> Self:
-    #     resetter_image_tag = self.resetter_values.get("imageTag")
-    #     if not resetter_image_tag or resetter_image_tag == "latest":
-    #         log.warning(
-    #             f"The imageTag for the Kafka Connect resetter in component '{self.name}' is not set and defaults to 'latest'. "
-    #             f"Please, consider providing a stable imageTag."
-    #         )
-    #     return self
-
     @cached_property
     def _resetter(self) -> KafkaConnectorResetter:
         kwargs: dict[str, Any] = {}
