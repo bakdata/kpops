@@ -52,8 +52,11 @@ class StreamsBootstrap(HelmApp, ABC):
 
     @pydantic.model_validator(mode="after")
     def warning_for_latest_image_tag(self) -> Self:
-        if self.app.image_tag == "latest" and "$" not in self.name:
+        if self.app.image_tag == "latest" and self.is_substituted():
             log.warning(
                 f"The imageTag for component '{self.name}' is not set and defaults to 'latest'. Please, consider providing a stable imageTag."
             )
         return self
+
+    def is_substituted(self):
+        return "$" not in self.name
