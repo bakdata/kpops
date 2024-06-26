@@ -65,6 +65,7 @@ def find_class(*modules: ModuleType, base: type[T]) -> type[T]:
 
 def import_module(module_name: str) -> ModuleType:
     module = importlib.import_module(module_name)
+    # TODO: remove? unnecessary now
     if module.__file__ and not module_name.startswith(KPOPS_MODULE):
         file_path = Path(module.__file__)
         try:
