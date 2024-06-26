@@ -34,7 +34,7 @@ class SchemaHandler:
     def schema_provider(self) -> SchemaProvider:
         try:
             schema_provider_class = find_class(
-                *Registry.iter_component_modules(), base=SchemaProvider
+                Registry.iter_component_modules(), base=SchemaProvider
             )
             return schema_provider_class()  # pyright: ignore[reportAbstractUsage]
         except ClassNotFoundError as e:
