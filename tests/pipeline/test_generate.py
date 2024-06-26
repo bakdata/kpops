@@ -22,7 +22,7 @@ runner = CliRunner()
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
-@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "custom_components")
 class TestGenerate:
     @pytest.fixture(autouse=True)
     def log_info(self, mocker: MockerFixture) -> MagicMock:
