@@ -3,11 +3,14 @@ from __future__ import annotations
 import importlib
 import inspect
 import logging
+import pkgutil
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+from types import ModuleType
 from typing import TYPE_CHECKING, TypeVar
 
+import kpops.components
 from kpops import __name__
 from kpops.api.exception import ClassNotFoundError
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -37,6 +40,10 @@ class Registry:
         """
         for _class in _find_classes(module_name, PipelineComponent):
             self._classes[_class.type] = _class
+
+    def load_components(self) -> None:
+        for _, module_name, _ in iter_namespace(kpops.components):
+            self.find_components(module_name)
 
     def __getitem__(self, component_type: str) -> type[PipelineComponent]:
         try:
@@ -74,3 +81,7 @@ def __filter_internal_kpops_classes(class_module: str, module_name: str) -> bool
     return class_module.startswith(KPOPS_MODULE) and not module_name.startswith(
         KPOPS_MODULE
     )
+
+
+def iter_namespace(ns_pkg: ModuleType) -> Iterator[pkgutil.ModuleInfo]:
+    return pkgutil.iter_modules(ns_pkg.__path__, ns_pkg.__name__ + ".")

@@ -250,8 +250,7 @@ def create_pipeline(
     environment: str | None,
 ) -> Pipeline:
     registry = Registry()
-    if kpops_config.components_module:
-        registry.find_components(kpops_config.components_module)
+    registry.load_components()
     registry.find_components("kpops.components")
 
     handlers = setup_handlers(kpops_config)
