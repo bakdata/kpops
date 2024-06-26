@@ -3,7 +3,7 @@ from pathlib import Path
 from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
-import kpops
+import kpops.api as kpops
 from kpops.cli.main import app
 from kpops.utils.cli_commands import create_config
 

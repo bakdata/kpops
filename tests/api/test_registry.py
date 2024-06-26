@@ -8,18 +8,18 @@ import pytest
 from kpops.api.exception import ClassNotFoundError
 from kpops.api.registry import Registry, _find_classes, _iter_namespace, find_class
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
-from kpops.components import (
-    HelmApp,
-    KafkaApp,
+from kpops.components.base_components.helm_app import HelmApp
+from kpops.components.base_components.kafka_app import KafkaApp
+from kpops.components.base_components.kafka_connector import (
     KafkaConnector,
     KafkaSinkConnector,
     KafkaSourceConnector,
-    KubernetesApp,
-    PipelineComponent,
-    ProducerApp,
-    StreamsApp,
-    StreamsBootstrap,
 )
+from kpops.components.base_components.kubernetes_app import KubernetesApp
+from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.common.streams_bootstrap import StreamsBootstrap
+from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
+from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
 from tests.cli.resources.custom_module import CustomSchemaProvider
 
 

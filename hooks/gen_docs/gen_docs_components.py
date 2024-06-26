@@ -9,7 +9,10 @@ import yaml
 
 from hooks import ROOT
 from kpops.api.registry import Registry
-from kpops.components import KafkaConnector, PipelineComponent
+from kpops.components.base_components.kafka_connector import KafkaConnector
+from kpops.components.base_components.pipeline_component import (
+    PipelineComponent,
+)
 from kpops.utils.colorify import redify, yellowify
 from kpops.utils.pydantic import issubclass_patched
 from kpops.utils.yaml import load_yaml_file

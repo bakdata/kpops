@@ -5,8 +5,7 @@ from typing import Optional
 
 import typer
 
-import kpops
-from kpops import __version__
+import kpops.api as kpops
 from kpops.api.file_type import KpopsFileType
 from kpops.api.options import FilterType
 from kpops.cli.utils import collect_pipeline_paths
@@ -306,7 +305,7 @@ def clean(
 
 def version_callback(show_version: bool) -> None:
     if show_version:
-        typer.echo(f"KPOps {__version__}")
+        # typer.echo(f"KPOps {__version__}")  # FIXME: read version from package
         raise typer.Exit
 
 

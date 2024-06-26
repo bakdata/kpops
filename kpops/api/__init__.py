@@ -4,7 +4,6 @@ import asyncio
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import kpops
 from kpops.api.logs import log, log_action
 from kpops.api.options import FilterType
 from kpops.api.registry import Registry
@@ -23,8 +22,8 @@ from kpops.pipeline import (
 from kpops.utils.cli_commands import init_project
 
 if TYPE_CHECKING:
-    from kpops.components import PipelineComponent
     from kpops.components.base_components.models.resource import Resource
+    from kpops.components.base_components.pipeline_component import PipelineComponent
     from kpops.config import KpopsConfig
 
 
@@ -68,7 +67,7 @@ def manifest(
     environment: str | None = None,
     verbose: bool = False,
 ) -> list[Resource]:
-    pipeline = kpops.generate(
+    pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
@@ -95,7 +94,7 @@ def deploy(
     verbose: bool = True,
     parallel: bool = False,
 ):
-    pipeline = kpops.generate(
+    pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
@@ -131,7 +130,7 @@ def destroy(
     verbose: bool = True,
     parallel: bool = False,
 ):
-    pipeline = kpops.generate(
+    pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
@@ -169,7 +168,7 @@ def reset(
     verbose: bool = True,
     parallel: bool = False,
 ):
-    pipeline = kpops.generate(
+    pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
@@ -206,7 +205,7 @@ def clean(
     verbose: bool = True,
     parallel: bool = False,
 ):
-    pipeline = kpops.generate(
+    pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,

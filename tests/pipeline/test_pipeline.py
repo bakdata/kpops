@@ -7,9 +7,9 @@ from kpops.api.options import FilterType
 from kpops.component_handlers import (
     ComponentHandlers,
 )
-from kpops.components import PipelineComponent
 from kpops.components.base_components.models.from_section import FromSection
 from kpops.components.base_components.models.to_section import ToSection
+from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.pipeline import Pipeline
 
 PREFIX = "example-prefix-"

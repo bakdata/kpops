@@ -5,7 +5,7 @@ import pytest
 from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
-import kpops
+import kpops.api as kpops
 
 runner = CliRunner()
 

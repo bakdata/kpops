@@ -11,14 +11,13 @@ from pathlib import Path
 from types import ModuleType
 from typing import TYPE_CHECKING, TypeVar
 
-from kpops import __name__
 from kpops.api.exception import ClassNotFoundError
 from kpops.components.base_components.pipeline_component import PipelineComponent
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-KPOPS_MODULE = __name__ + "."
+KPOPS_MODULE = "kpops."
 
 T = TypeVar("T")
 ClassDict = dict[str, type[T]]  # type -> class

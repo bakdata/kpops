@@ -10,7 +10,7 @@ from typer.testing import CliRunner
 
 from kpops.api.registry import Registry
 from kpops.cli.main import app
-from kpops.components import PipelineComponent
+from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.docstring import describe_attr
 
 RESOURCE_PATH = Path(__file__).parent / "resources"

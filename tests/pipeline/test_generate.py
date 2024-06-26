@@ -9,11 +9,12 @@ from pytest_mock import MockerFixture
 from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
-import kpops
+import kpops.api as kpops
 from kpops.api.exception import ParsingException, ValidationError
 from kpops.api.file_type import KpopsFileType
 from kpops.cli.main import FilterType, app
-from kpops.components import KafkaSinkConnector, PipelineComponent
+from kpops.components.base_components.kafka_connector import KafkaSinkConnector
+from kpops.components.base_components.pipeline_component import PipelineComponent
 
 PIPELINE_YAML = KpopsFileType.PIPELINE.as_yaml_file()
 
@@ -66,32 +67,12 @@ class TestGenerate:
         )
 
     def test_load_pipeline(self, snapshot: Snapshot):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                str(RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML),
-            ],
-            catch_exceptions=False,
-        )
-
-        assert result.exit_code == 0, result.stdout
-
-        snapshot.assert_match(result.stdout, PIPELINE_YAML)
+        pipeline = kpops.generate(RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML)
+        snapshot.assert_match(pipeline.to_yaml(), PIPELINE_YAML)
 
     def test_load_pipeline_with_folder_path(self, snapshot: Snapshot):
-        result = runner.invoke(
-            app,
-            [
-                "generate",
-                str(RESOURCE_PATH / "pipeline-folders"),
-            ],
-            catch_exceptions=False,
-        )
-
-        assert result.exit_code == 0, result.stdout
-
-        snapshot.assert_match(result.stdout, "pipeline.yaml")
+        pipeline = kpops.generate(RESOURCE_PATH / "pipeline-folders")
+        snapshot.assert_match(pipeline.to_yaml(), "pipeline.yaml")
 
     def test_load_pipeline_with_multiple_pipeline_paths(self, snapshot: Snapshot):
         path_1 = RESOURCE_PATH / "pipeline-folders/pipeline-1/pipeline.yaml"

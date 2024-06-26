@@ -21,7 +21,7 @@ from pydantic_core.core_schema import (
 )
 
 from kpops.api.registry import Registry
-from kpops.components import (
+from kpops.components.base_components.pipeline_component import (
     PipelineComponent,
 )
 from kpops.config import KpopsConfig
