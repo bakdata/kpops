@@ -6,9 +6,11 @@ from typing import Optional
 import typer
 
 import kpops.api as kpops
-from kpops.api.file_type import KpopsFileType
+from kpops.api.file_type import CONFIG_YAML, DEFAULTS_YAML, PIPELINE_YAML, KpopsFileType
 from kpops.api.options import FilterType
-from kpops.cli.utils import collect_pipeline_paths
+from kpops.cli.utils import (
+    collect_pipeline_paths,
+)
 from kpops.config import ENV_PREFIX
 from kpops.utils.gen_schema import (
     gen_config_schema,
@@ -128,12 +130,14 @@ def schema(
     scope: KpopsFileType = typer.Argument(
         ...,
         show_default=False,
-        help="""
+        help=f"""
         Scope of the generated schema
         \n\n\n
-        pipeline: Schema of PipelineComponents. Includes the built-in KPOps components by default. To include custom components, provide components module in config.
-        \n\n\n
-        config: Schema of KpopsConfig.""",
+        - {KpopsFileType.PIPELINE.value}: Schema of PipelineComponents for KPOps {PIPELINE_YAML}
+        \n\n
+        - {KpopsFileType.DEFAULTS.value}: Schema of PipelineComponents for KPOps {DEFAULTS_YAML}
+        \n\n
+        - {KpopsFileType.CONFIG.value}: Schema for KPOps {CONFIG_YAML}""",
     ),
 ) -> None:
     match scope:
