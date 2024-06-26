@@ -2,14 +2,22 @@ import logging
 import os
 from collections.abc import Iterator
 from unittest import mock
+from unittest.mock import MagicMock
 
 import pytest
+from pytest_mock import MockerFixture
 
+from kpops.components import HelmApp
 from kpops.utils.environment import ENV, Environment
 from kpops.utils.yaml import load_yaml_file
 
 logger = logging.getLogger("faker")
 logger.setLevel(logging.INFO)  # quiet faker locale messages
+
+
+@pytest.fixture(autouse=True)
+def empty_helm_get_values(mocker: MockerFixture) -> MagicMock:
+    return mocker.patch.object(HelmApp, "helm_values", return_value=None)
 
 
 @pytest.fixture()
