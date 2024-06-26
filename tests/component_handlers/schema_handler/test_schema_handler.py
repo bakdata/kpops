@@ -4,7 +4,7 @@ from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
-from pydantic import AnyHttpUrl, BaseModel, TypeAdapter
+from pydantic import AnyHttpUrl, TypeAdapter
 from pytest_mock import MockerFixture
 from schema_registry.client.schema import AvroSchema
 from schema_registry.client.utils import SchemaVersion
@@ -20,7 +20,6 @@ from kpops.config import KpopsConfig, SchemaRegistryConfig
 from kpops.utils.colorify import greenify, magentaify, yellowify
 from tests.pipeline.test_components import TestSchemaProvider
 
-NON_EXISTING_PROVIDER_MODULE = BaseModel.__module__
 TEST_SCHEMA_PROVIDER_MODULE = TestSchemaProvider.__module__
 
 
@@ -87,7 +86,6 @@ def kpops_config() -> KpopsConfig:
             enabled=True,
             url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),  # pyright: ignore[reportCallIssue,reportArgumentType]
         ),
-        components_module=TEST_SCHEMA_PROVIDER_MODULE,
     )
 
 
@@ -123,7 +121,6 @@ def test_should_lazy_load_schema_provider(
 def test_should_raise_value_error_if_schema_provider_class_not_found(
     kpops_config: KpopsConfig,
 ):
-    kpops_config.components_module = NON_EXISTING_PROVIDER_MODULE
     schema_handler = SchemaHandler(kpops_config)
 
     with pytest.raises(
@@ -131,34 +128,6 @@ def test_should_raise_value_error_if_schema_provider_class_not_found(
         match="No schema provider found in components module pydantic.main. "
         "Please implement the abstract method in "
         f"{SchemaProvider.__module__}.{SchemaProvider.__name__}.",
-    ):
-        schema_handler.schema_provider.provide_schema(
-            "com.bakdata.kpops.test.SchemaHandlerTest", {}
-        )
-
-
-@pytest.mark.parametrize(
-    ("components_module"),
-    [
-        pytest.param(
-            None,
-            id="components_module = None",
-        ),
-        pytest.param(
-            "",
-            id="components_module = ''",
-        ),
-    ],
-)
-def test_should_raise_value_error_when_schema_provider_is_called_and_components_module_is_empty(
-    kpops_config: KpopsConfig, components_module: str | None
-):
-    kpops_config.components_module = components_module
-    schema_handler = SchemaHandler.load_schema_handler(kpops_config)
-    assert schema_handler is not None
-    with pytest.raises(
-        ValueError,
-        match="The Schema Registry URL is set but you haven't specified the component module path. Please provide a valid component module path where your SchemaProvider implementation exists.",
     ):
         schema_handler.schema_provider.provide_schema(
             "com.bakdata.kpops.test.SchemaHandlerTest", {}
