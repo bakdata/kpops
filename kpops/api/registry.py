@@ -5,6 +5,7 @@ import inspect
 import logging
 import pkgutil
 import sys
+from collections.abc import Iterable
 from dataclasses import dataclass, field
 from pathlib import Path
 from types import ModuleType
@@ -38,7 +39,7 @@ class Registry:
         :param module_name: name of the python module.
         """
         custom_modules = self.iter_component_modules()
-        for _class in _find_classes(*custom_modules, base=PipelineComponent):
+        for _class in _find_classes(custom_modules, base=PipelineComponent):
             self._classes[_class.type] = _class
 
     def __getitem__(self, component_type: str) -> type[PipelineComponent]:
@@ -56,9 +57,9 @@ class Registry:
             yield import_module(module_name)
 
 
-def find_class(*modules: ModuleType, base: type[T]) -> type[T]:
+def find_class(modules: Iterable[ModuleType], base: type[T]) -> type[T]:
     try:
-        return next(_find_classes(*modules, base=base))
+        return next(_find_classes(modules, base=base))
     except StopIteration as e:
         raise ClassNotFoundError from e
 
@@ -76,7 +77,7 @@ def import_module(module_name: str) -> ModuleType:
     return module
 
 
-def _find_classes(*modules: ModuleType, base: type[T]) -> Iterator[type[T]]:
+def _find_classes(modules: Iterable[ModuleType], base: type[T]) -> Iterator[type[T]]:
     for module in modules:
         for _, _class in inspect.getmembers(module, inspect.isclass):
             if not __filter_internal_kpops_classes(
