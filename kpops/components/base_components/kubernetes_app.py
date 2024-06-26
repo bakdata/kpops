@@ -25,7 +25,7 @@ class KubernetesAppValues(CamelCaseConfigModel, DescConfigModel):
     """
 
     image_tag: str = Field(
-        default="latest", description=describe_attr("imageTag", __doc__)
+        default="latest", description=describe_attr("image_tag", __doc__)
     )
 
     model_config = ConfigDict(
