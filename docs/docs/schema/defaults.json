@@ -1341,7 +1341,7 @@
                             "$ref": "#/$defs/StreamsBootstrapValues"
                         }
                     ],
-                    "description": ""
+                    "description": "Streams bootstrap app values"
                 },
                 "from": {
                     "anyOf": [
