@@ -67,12 +67,32 @@ class TestGenerate:
         )
 
     def test_load_pipeline(self, snapshot: Snapshot):
-        pipeline = kpops.generate(RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML)
-        snapshot.assert_match(pipeline.to_yaml(), PIPELINE_YAML)
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "first-pipeline" / PIPELINE_YAML),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0, result.stdout
+
+        snapshot.assert_match(result.stdout, PIPELINE_YAML)
 
     def test_load_pipeline_with_folder_path(self, snapshot: Snapshot):
-        pipeline = kpops.generate(RESOURCE_PATH / "pipeline-folders")
-        snapshot.assert_match(pipeline.to_yaml(), "pipeline.yaml")
+        result = runner.invoke(
+            app,
+            [
+                "generate",
+                str(RESOURCE_PATH / "pipeline-folders"),
+            ],
+            catch_exceptions=False,
+        )
+
+        assert result.exit_code == 0, result.stdout
+
+        snapshot.assert_match(result.stdout, "pipeline.yaml")
 
     def test_load_pipeline_with_multiple_pipeline_paths(self, snapshot: Snapshot):
         path_1 = RESOURCE_PATH / "pipeline-folders/pipeline-1/pipeline.yaml"
