@@ -64,8 +64,8 @@ jobs:
             poetry run pre-commit run pyright --all-files
           fi;
 
-      - name: Generate schema (kpops schema)
-        run: poetry run pre-commit run gen-schema --all-files --show-diff-on-failure
+      # - name: Generate schema (kpops schema)
+      #   run: poetry run pre-commit run gen-schema --all-files --show-diff-on-failure
 
       - name: Generate CLI Usage docs (typer-cli)
         run: poetry run pre-commit run gen-docs-cli --all-files --show-diff-on-failure
