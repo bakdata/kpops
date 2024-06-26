@@ -862,6 +862,6 @@ class TestGenerate:
         assert enriched_pipeline[0]["_resetter"]["name"] == "es-sink-connector"
         assert enriched_pipeline[0]["_resetter"]["app"]["label"] == "es-sink-connector"
         assert (
-            enriched_pipeline[1]["_resetter"]["app"]["imageTag"]
+            enriched_pipeline[0]["_resetter"]["app"]["imageTag"]
             == "override-default-image-tag"
         )
