@@ -67,7 +67,6 @@ class TestProducerApp:
                 "version": "2.4.2",
                 "namespace": "test-namespace",
                 "app": {
-                    "imageTag": "latest",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "clean_schemas": True,
@@ -109,7 +108,6 @@ class TestProducerApp:
             **{
                 "namespace": "test-namespace",
                 "app": {
-                    "imageTag": "latest",
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
@@ -326,7 +324,6 @@ class TestProducerApp:
             **{
                 "namespace": "test-namespace",
                 "app": {
-                    "imageTag": "latest",
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },

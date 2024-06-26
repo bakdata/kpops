@@ -1,8 +1,6 @@
 kubernetes-app:
   name: ${component.type}
   namespace: example-namespace
-  app:
-    imageTag: "latest"
 kafka-app:
   app:
     streams:
