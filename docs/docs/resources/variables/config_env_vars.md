@@ -2,7 +2,6 @@ These variables take precedence over the settings in `config.yaml`. Variables ma
 
 |                       Name                       |             Default Value              |Required|                                   Description                                    |               Setting name                |
 |--------------------------------------------------|----------------------------------------|--------|----------------------------------------------------------------------------------|-------------------------------------------|
-|KPOPS_COMPONENTS_MODULE                           |                                        |False   |Custom Python module defining project-specific KPOps components                   |components_module                          |
 |KPOPS_PIPELINE_BASE_DIR                           |.                                       |False   |Base directory to the pipelines (default is current working directory)            |pipeline_base_dir                          |
 |KPOPS_KAFKA_BROKERS                               |                                        |True    |The comma separated Kafka brokers address.                                        |kafka_brokers                              |
 |KPOPS_TOPIC_NAME_CONFIG__DEFAULT_OUTPUT_TOPIC_NAME|${pipeline.name}-${component.name}      |False   |Configures the value for the variable ${output_topic_name}                        |topic_name_config.default_output_topic_name|
