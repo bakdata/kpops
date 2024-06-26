@@ -10,7 +10,7 @@ from kpops import __version__
 from kpops.api.file_type import KpopsFileType
 from kpops.api.options import FilterType
 from kpops.cli.utils import collect_pipeline_paths
-from kpops.config import ENV_PREFIX, KpopsConfig
+from kpops.config import ENV_PREFIX
 from kpops.utils.gen_schema import (
     gen_config_schema,
     gen_defaults_schema,
@@ -136,22 +136,12 @@ def schema(
         \n\n\n
         config: Schema of KpopsConfig.""",
     ),
-    config: Path = CONFIG_PATH_OPTION,
-    include_stock_components: bool = typer.Option(
-        default=True, help="Include the built-in KPOps components."
-    ),
 ) -> None:
     match scope:
         case KpopsFileType.PIPELINE:
-            kpops_config = KpopsConfig.create(config)
-            gen_pipeline_schema(
-                kpops_config.components_module, include_stock_components
-            )
+            gen_pipeline_schema()
         case KpopsFileType.DEFAULTS:
-            kpops_config = KpopsConfig.create(config)
-            gen_defaults_schema(
-                kpops_config.components_module, include_stock_components
-            )
+            gen_defaults_schema()
         case KpopsFileType.CONFIG:
             gen_config_schema()
 
