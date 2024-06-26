@@ -1,9 +1,14 @@
 from __future__ import annotations
 
+import importlib
+import shutil
+from pathlib import Path
+
 import pytest
+from pytest_mock import MockerFixture
 
 from kpops.api.exception import ClassNotFoundError
-from kpops.api.registry import Registry, _find_classes, find_class
+from kpops.api.registry import Registry, _find_classes, find_class, iter_namespace
 from kpops.component_handlers.schema_handler.schema_provider import SchemaProvider
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from tests.cli.resources.custom_module import CustomSchemaProvider
@@ -17,6 +22,26 @@ class SubSubComponent(SubComponent): ...
 
 class Unrelated:
     pass
+
+
+@pytest.fixture(autouse=True)
+def custom_components(mocker: MockerFixture):
+    src = Path("tests/pipeline/test_components")
+    dst = Path("kpops/components/test_components")
+    try:
+        shutil.copytree(src, dst)
+        yield
+    finally:
+        shutil.rmtree(dst)
+
+
+def test_iter_namespace():
+    components_module = importlib.import_module("kpops.components")
+    assert [module_name for _, module_name, _ in iter_namespace(components_module)] == [
+        "base_components",
+        "streams_bootstrap",
+        "test_components",
+    ]
 
 
 @pytest.mark.skip()
