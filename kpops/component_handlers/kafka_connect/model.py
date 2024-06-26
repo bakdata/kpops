@@ -13,6 +13,7 @@ from pydantic import (
 from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
+from kpops.component_handlers.kubernetes.utils import validate_image_tag
 from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.pydantic import (
@@ -125,3 +126,8 @@ class KafkaConnectorResetterValues(HelmAppValues):
     connector_type: Literal["source", "sink"]
     config: KafkaConnectorResetterConfig
     image_tag: str = Field(default="latest")
+
+    @pydantic.field_validator("image_tag", mode="before")
+    @classmethod
+    def validate_image_tag_field(cls, image_tag: Any) -> str:
+        return validate_image_tag(image_tag)

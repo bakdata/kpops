@@ -1,11 +1,12 @@
 import logging
 from abc import ABC
-from typing import Self
+from typing import Any, Self
 
 import pydantic
 from pydantic import Field
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
+from kpops.component_handlers.kubernetes.utils import validate_image_tag
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.utils.docstring import describe_attr
 
@@ -25,6 +26,11 @@ class StreamsBootstrapValues(HelmAppValues):
     """
 
     image_tag: str = Field(default="latest")
+
+    @pydantic.field_validator("image_tag", mode="before")
+    @classmethod
+    def validate_image_tag_field(cls, image_tag: Any) -> str:
+        return validate_image_tag(image_tag)
 
 
 class StreamsBootstrap(HelmApp, ABC):
