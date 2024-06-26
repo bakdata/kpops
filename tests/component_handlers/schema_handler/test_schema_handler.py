@@ -1,5 +1,7 @@
 import json
 import logging
+import shutil
+from pathlib import Path
 from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
@@ -19,9 +21,6 @@ from kpops.components.base_components.models.topic import OutputTopicTypes, Topi
 from kpops.config import KpopsConfig, SchemaRegistryConfig
 from kpops.utils.colorify import greenify, magentaify, yellowify
 from tests.pipeline.test_components import TestSchemaProvider
-
-TEST_SCHEMA_PROVIDER_MODULE = TestSchemaProvider.__module__
-
 
 log = logging.getLogger("SchemaHandler")
 
@@ -44,13 +43,6 @@ def log_debug_mock(mocker: MockerFixture) -> MagicMock:
 def log_warning_mock(mocker: MockerFixture) -> MagicMock:
     return mocker.patch(
         "kpops.component_handlers.schema_handler.schema_handler.log.warning"
-    )
-
-
-@pytest.fixture(autouse=False)
-def find_class_mock(mocker: MockerFixture) -> MagicMock:
-    return mocker.patch(
-        "kpops.component_handlers.schema_handler.schema_handler.find_class"
     )
 
 
@@ -89,11 +81,19 @@ def kpops_config() -> KpopsConfig:
     )
 
 
+@pytest.fixture()
+def custom_components(mocker: MockerFixture):
+    src = Path("tests/pipeline/test_components")
+    dst = Path("kpops/components/test_components")
+    try:
+        shutil.copytree(src, dst)
+        yield
+    finally:
+        shutil.rmtree(dst)
+
+
 def test_load_schema_handler(kpops_config: KpopsConfig):
-    assert isinstance(
-        SchemaHandler.load_schema_handler(kpops_config),
-        SchemaHandler,
-    )
+    assert isinstance(SchemaHandler.load_schema_handler(kpops_config), SchemaHandler)
 
     config_disable = kpops_config.model_copy()
     config_disable.schema_registry = SchemaRegistryConfig(enabled=False)
@@ -101,9 +101,8 @@ def test_load_schema_handler(kpops_config: KpopsConfig):
     assert SchemaHandler.load_schema_handler(config_disable) is None
 
 
-def test_should_lazy_load_schema_provider(
-    find_class_mock: MagicMock, kpops_config: KpopsConfig
-):
+@pytest.mark.usefixtures("custom_components")
+def test_should_lazy_load_schema_provider(kpops_config: KpopsConfig):
     schema_handler = SchemaHandler.load_schema_handler(kpops_config)
 
     assert schema_handler is not None
@@ -115,7 +114,7 @@ def test_should_lazy_load_schema_provider(
         "com.bakdata.kpops.test.SomeOtherSchemaClass", {}
     )
 
-    find_class_mock.assert_called_once_with(TEST_SCHEMA_PROVIDER_MODULE, SchemaProvider)
+    assert isinstance(schema_handler.schema_provider, TestSchemaProvider)
 
 
 def test_should_raise_value_error_if_schema_provider_class_not_found(
@@ -125,7 +124,7 @@ def test_should_raise_value_error_if_schema_provider_class_not_found(
 
     with pytest.raises(
         ValueError,
-        match="No schema provider found in components module pydantic.main. "
+        match="No schema provider found. "
         "Please implement the abstract method in "
         f"{SchemaProvider.__module__}.{SchemaProvider.__name__}.",
     ):
@@ -135,6 +134,7 @@ def test_should_raise_value_error_if_schema_provider_class_not_found(
 
 
 @pytest.mark.asyncio()
+@pytest.mark.usefixtures("custom_components")
 async def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_true(
     to_section: ToSection,
     log_info_mock: MagicMock,
@@ -154,6 +154,7 @@ async def test_should_log_info_when_submit_schemas_that_not_exists_and_dry_run_t
 
 
 @pytest.mark.asyncio()
+@pytest.mark.usefixtures("custom_components")
 async def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
     topic_config: TopicConfig,
     to_section: ToSection,
@@ -176,6 +177,7 @@ async def test_should_log_info_when_submit_schemas_that_exists_and_dry_run_true(
 
 
 @pytest.mark.asyncio()
+@pytest.mark.usefixtures("custom_components")
 async def test_should_raise_exception_when_submit_schema_that_exists_and_not_compatible_and_dry_run_true(
     topic_config: TopicConfig,
     to_section: ToSection,
@@ -213,6 +215,7 @@ async def test_should_raise_exception_when_submit_schema_that_exists_and_not_com
 
 
 @pytest.mark.asyncio()
+@pytest.mark.usefixtures("custom_components")
 async def test_should_log_debug_when_submit_schema_that_exists_and_registered_under_version_and_dry_run_true(
     topic_config: TopicConfig,
     to_section: ToSection,
@@ -248,6 +251,7 @@ async def test_should_log_debug_when_submit_schema_that_exists_and_registered_un
 
 
 @pytest.mark.asyncio()
+@pytest.mark.usefixtures("custom_components")
 async def test_should_submit_non_existing_schema_when_not_dry(
     topic_config: TopicConfig,
     to_section: ToSection,
