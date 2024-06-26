@@ -7,9 +7,15 @@ import typer
 
 import kpops
 from kpops import __version__
+from kpops.api.file_type import KpopsFileType
 from kpops.api.options import FilterType
 from kpops.cli.utils import collect_pipeline_paths
-from kpops.config import ENV_PREFIX
+from kpops.config import ENV_PREFIX, KpopsConfig
+from kpops.utils.gen_schema import (
+    gen_config_schema,
+    gen_defaults_schema,
+    gen_pipeline_schema,
+)
 from kpops.utils.yaml import print_yaml
 
 app = typer.Typer(pretty_exceptions_enable=False)
@@ -112,42 +118,42 @@ def init(
     kpops.init(path, config_include_opt=config_include_opt)
 
 
-# @app.command(
-#     help="""
-#     Generate JSON schema.
+@app.command(
+    help="""
+    Generate JSON schema.
 
-#     The schemas can be used to enable support for KPOps files in a text editor.
-#     """
-# )
-# def schema(
-#     scope: KpopsFileType = typer.Argument(
-#         ...,
-#         show_default=False,
-#         help="""
-#         Scope of the generated schema
-#         \n\n\n
-#         pipeline: Schema of PipelineComponents. Includes the built-in KPOps components by default. To include custom components, provide components module in config.
-#         \n\n\n
-#         config: Schema of KpopsConfig.""",
-#     ),
-#     config: Path = CONFIG_PATH_OPTION,
-#     include_stock_components: bool = typer.Option(
-#         default=True, help="Include the built-in KPOps components."
-#     ),
-# ) -> None:
-#     match scope:
-#         case KpopsFileType.PIPELINE:
-#             kpops_config = KpopsConfig.create(config)
-#             gen_pipeline_schema(
-#                 kpops_config.components_module, include_stock_components
-#             )
-#         case KpopsFileType.DEFAULTS:
-#             kpops_config = KpopsConfig.create(config)
-#             gen_defaults_schema(
-#                 kpops_config.components_module, include_stock_components
-#             )
-#         case KpopsFileType.CONFIG:
-#             gen_config_schema()
+    The schemas can be used to enable support for KPOps files in a text editor.
+    """
+)
+def schema(
+    scope: KpopsFileType = typer.Argument(
+        ...,
+        show_default=False,
+        help="""
+        Scope of the generated schema
+        \n\n\n
+        pipeline: Schema of PipelineComponents. Includes the built-in KPOps components by default. To include custom components, provide components module in config.
+        \n\n\n
+        config: Schema of KpopsConfig.""",
+    ),
+    config: Path = CONFIG_PATH_OPTION,
+    include_stock_components: bool = typer.Option(
+        default=True, help="Include the built-in KPOps components."
+    ),
+) -> None:
+    match scope:
+        case KpopsFileType.PIPELINE:
+            kpops_config = KpopsConfig.create(config)
+            gen_pipeline_schema(
+                kpops_config.components_module, include_stock_components
+            )
+        case KpopsFileType.DEFAULTS:
+            kpops_config = KpopsConfig.create(config)
+            gen_defaults_schema(
+                kpops_config.components_module, include_stock_components
+            )
+        case KpopsFileType.CONFIG:
+            gen_config_schema()
 
 
 @app.command(

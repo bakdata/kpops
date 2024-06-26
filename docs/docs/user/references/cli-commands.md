@@ -22,6 +22,7 @@ $ kpops [OPTIONS] COMMAND [ARGS]...
 * `init`: Initialize a new KPOps project.
 * `manifest`: Render final resource representation
 * `reset`: Reset pipeline steps
+* `schema`: Generate JSON schema.
 
 ## `kpops clean`
 
@@ -192,4 +193,37 @@ $ kpops reset [OPTIONS] PIPELINE_PATHS...
 * `--dry-run / --execute`: Whether to dry run the command or execute it  [default: dry-run]
 * `--verbose / --no-verbose`: Enable verbose printing  [default: no-verbose]
 * `--parallel / --no-parallel`: Enable or disable parallel execution of pipeline steps. If enabled, multiple steps can be processed concurrently. If disabled, steps will be processed sequentially.  [default: no-parallel]
+* `--help`: Show this message and exit.
+
+## `kpops schema`
+
+Generate JSON schema.
+
+The schemas can be used to enable support for KPOps files in a text editor.
+
+**Usage**:
+
+```console
+$ kpops schema [OPTIONS] SCOPE:{pipeline|defaults|config}
+```
+
+**Arguments**:
+
+* `SCOPE:{pipeline|defaults|config}`: 
+        Scope of the generated schema
+        
+
+
+
+        pipeline: Schema of PipelineComponents. Includes the built-in KPOps components by default. To include custom components, provide components module in config.
+        
+
+
+
+        config: Schema of KpopsConfig.  [required]
+
+**Options**:
+
+* `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
+* `--include-stock-components / --no-include-stock-components`: Include the built-in KPOps components.  [default: include-stock-components]
 * `--help`: Show this message and exit.
