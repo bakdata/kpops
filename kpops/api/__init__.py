@@ -250,7 +250,7 @@ def create_pipeline(
     environment: str | None,
 ) -> Pipeline:
     registry = Registry()
-    registry.find_components()
+    registry.discover_components()
 
     handlers = setup_handlers(kpops_config)
     parser = PipelineGenerator(kpops_config, registry, handlers)

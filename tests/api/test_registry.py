@@ -80,7 +80,7 @@ def test_find_class(module: ModuleType):
 def test_registry():
     registry = Registry()
     assert registry._classes == {}
-    registry.find_components()
+    registry.discover_components()
     assert registry._classes == {
         "helm-app": HelmApp,
         "kafka-app": KafkaApp,

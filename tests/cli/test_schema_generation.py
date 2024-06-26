@@ -84,7 +84,7 @@ class TestGenSchema:
     @pytest.fixture
     def stock_components(self) -> list[type[PipelineComponent]]:
         registry = Registry()
-        registry.find_components()
+        registry.discover_components()
         return list(registry._classes.values())
 
     def test_gen_pipeline_schema_no_modules(self):

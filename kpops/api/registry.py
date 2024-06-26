@@ -33,10 +33,10 @@ class Registry:
 
     _classes: ClassDict[PipelineComponent] = field(default_factory=dict, init=False)
 
-    def find_components(self) -> None:
-        """Find all PipelineComponent subclasses in module.
+    def discover_components(self) -> None:
+        """Discover first- and third-party KPOps components.
 
-        :param module_name: name of the python module.
+        That is all classes inheriting from PipelineComponent.
         """
         custom_modules = self.iter_component_modules()
         for _class in _find_classes(custom_modules, base=PipelineComponent):
