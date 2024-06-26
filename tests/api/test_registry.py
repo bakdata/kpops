@@ -1,12 +1,9 @@
 from __future__ import annotations
 
 import importlib
-import shutil
-from pathlib import Path
 from types import ModuleType
 
 import pytest
-from pytest_mock import MockerFixture
 
 from kpops.api.exception import ClassNotFoundError
 from kpops.api.registry import Registry, _find_classes, _iter_namespace, find_class
@@ -37,17 +34,6 @@ class Unrelated:
 
 
 MODULE = SubComponent.__module__
-
-
-@pytest.fixture()
-def custom_components(mocker: MockerFixture):
-    src = Path("tests/pipeline/test_components")
-    dst = Path("kpops/components/test_components")
-    try:
-        shutil.copytree(src, dst)
-        yield
-    finally:
-        shutil.rmtree(dst)
 
 
 @pytest.mark.usefixtures("custom_components")

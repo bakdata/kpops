@@ -1,7 +1,5 @@
 import json
 import logging
-import shutil
-from pathlib import Path
 from unittest import mock
 from unittest.mock import AsyncMock, MagicMock
 
@@ -79,17 +77,6 @@ def kpops_config() -> KpopsConfig:
             url=TypeAdapter(AnyHttpUrl).validate_python("http://mock:8081"),  # pyright: ignore[reportCallIssue,reportArgumentType]
         ),
     )
-
-
-@pytest.fixture()
-def custom_components(mocker: MockerFixture):
-    src = Path("tests/pipeline/test_components")
-    dst = Path("kpops/components/test_components")
-    try:
-        shutil.copytree(src, dst)
-        yield
-    finally:
-        shutil.rmtree(dst)
 
 
 def test_load_schema_handler(kpops_config: KpopsConfig):
