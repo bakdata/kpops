@@ -157,7 +157,7 @@
             "properties": {
                 "imageTag": {
                     "default": "latest",
-                    "description": "Specifies the version or speci\ufb01c build of a container image to use.",
+                    "description": "Specifies the version or specific build of a container image to use.",
                     "title": "Imagetag",
                     "type": "string"
                 },
@@ -596,7 +596,7 @@
             "properties": {
                 "imageTag": {
                     "default": "latest",
-                    "description": "Specifies the version or speci\ufb01c build of a container image to use.",
+                    "description": "Specifies the version or specific build of a container image to use.",
                     "title": "Imagetag",
                     "type": "string"
                 },
@@ -955,7 +955,7 @@
                 },
                 "imageTag": {
                     "default": "latest",
-                    "description": "Specifies the version or speci\ufb01c build of a container image to use.",
+                    "description": "Specifies the version or specific build of a container image to use.",
                     "title": "Imagetag",
                     "type": "string"
                 },
