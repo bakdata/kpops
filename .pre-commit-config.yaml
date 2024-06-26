@@ -29,14 +29,14 @@ repos:
         language: system
         types: [python]
         require_serial: true # run once for all files
-      # - id: gen-schema
-      #   name: gen-schema
-      #   entry: python hooks/gen_schema.py
-      #   language: system
-      #   types: [python]
-      #   require_serial: true
-      #   pass_filenames: false
-      #   exclude: ^tests/.*snapshots/
+      - id: gen-schema
+        name: gen-schema
+        entry: python hooks/gen_schema.py
+        language: system
+        types: [python]
+        require_serial: true
+        pass_filenames: false
+        exclude: ^tests/.*snapshots/
       - id: gen-docs-cli
         name: gen-docs-cli
         entry: python hooks/gen_docs/gen_docs_cli_usage.py
