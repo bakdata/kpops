@@ -128,7 +128,7 @@ def test_registry():
         "streams-app": StreamsApp,
         "streams-bootstrap": StreamsBootstrap,
     }
-    assert registry["sub-component"] is SubComponent
-    assert registry["sub-sub-component"] is SubSubComponent
+    for _type, _class in registry._classes.items():
+        assert registry[_type] is _class
     with pytest.raises(ClassNotFoundError):
         registry["doesnt-exist"]

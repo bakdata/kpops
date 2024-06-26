@@ -87,7 +87,7 @@ def _find_classes(modules: Iterable[ModuleType], base: type[T]) -> Iterator[type
 
 
 def __filter_internal_kpops_classes(class_module: str, module_name: str) -> bool:
-    # filter out internal kpops classes and components unless specifically requested
+    """Filter out internal kpops classes and components unless specifically requested."""
     return class_module.startswith(KPOPS_MODULE) and not module_name.startswith(
         KPOPS_MODULE
     )
