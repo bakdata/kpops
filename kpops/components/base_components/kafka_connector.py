@@ -166,6 +166,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @override
     async def deploy(self, dry_run: bool) -> None:
+        """Deploy Kafka Connector (Source/Sink). Create output topics and register schemas if configured."""
         if self.to:
             for topic in self.to.kafka_topics:
                 await self.handlers.topic_handler.create_topic(topic, dry_run=dry_run)
@@ -181,12 +182,15 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @override
     async def destroy(self, dry_run: bool) -> None:
+        """Delete Kafka Connector (Source/Sink) from the Kafka connect cluster."""
         await self.handlers.connector_handler.destroy_connector(
             self.full_name, dry_run=dry_run
         )
 
     @override
     async def clean(self, dry_run: bool) -> None:
+        """Delete Kafka Connector. If schema handler is enabled, then remove schemas. Delete all the output topics."""
+        await super().clean(dry_run)
         if self.to:
             if self.handlers.schema_handler:
                 await self.handlers.schema_handler.delete_schemas(
@@ -229,10 +233,12 @@ class KafkaSourceConnector(KafkaConnector):
 
     @override
     async def reset(self, dry_run: bool) -> None:
+        """Reset state. Keep connector."""
         await self._resetter.reset(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
+        """Delete connector and reset state."""
         await super().clean(dry_run)
         await self._resetter.clean(dry_run)
 
@@ -266,11 +272,13 @@ class KafkaSinkConnector(KafkaConnector):
 
     @override
     async def reset(self, dry_run: bool) -> None:
+        """Reset state. Keep consumer group and connector."""
         self._resetter.app.config.delete_consumer_group = False
         await self._resetter.reset(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
+        """Delete connector and consumer group."""
         await super().clean(dry_run)
         self._resetter.app.config.delete_consumer_group = True
         await self._resetter.clean(dry_run)

@@ -251,6 +251,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         helm_mock: MagicMock,
         mocker: MockerFixture,
     ):
+        mock_destroy = mocker.patch.object(connector, "destroy")
         mock_delete_topic = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topic"
         )
@@ -260,12 +261,14 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         mock_resetter_reset = mocker.spy(connector._resetter, "reset")
 
         mock = mocker.MagicMock()
+        mock.attach_mock(mock_destroy, "destroy_connector")
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
         mock.attach_mock(helm_mock, "helm")
 
         dry_run = False
 
         await connector.reset(dry_run=dry_run)
+        mock_destroy.assert_not_called()
         mock_resetter_reset.assert_called_once_with(dry_run)
 
         mock.assert_has_calls(
@@ -335,6 +338,8 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         dry_run_handler_mock: MagicMock,
         mocker: MockerFixture,
     ):
+        mock_destroy = mocker.patch.object(connector, "destroy")
+
         mock_delete_topic = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topic"
         )
@@ -343,12 +348,14 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         )
 
         mock = mocker.MagicMock()
+        mock.attach_mock(mock_destroy, "destroy_connector")
         mock.attach_mock(mock_delete_topic, "mock_delete_topic")
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
         mock.attach_mock(helm_mock, "helm")
 
         dry_run = False
         await connector.clean(dry_run=dry_run)
+        mock_destroy.assert_not_called()
 
         assert log_info_mock.mock_calls == [
             call.log_info(
@@ -451,6 +458,8 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             resetter_namespace=RESETTER_NAMESPACE,
         )
 
+        mock_destroy = mocker.patch.object(connector, "destroy")
+
         mock_delete_topic = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topic"
         )
@@ -458,12 +467,14 @@ class TestKafkaSinkConnector(TestKafkaConnector):
             connector.handlers.connector_handler, "clean_connector"
         )
         mock = mocker.MagicMock()
+        mock.attach_mock(mock_destroy, "destroy_connector")
         mock.attach_mock(mock_delete_topic, "mock_delete_topic")
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
         mock.attach_mock(helm_mock, "helm")
 
         dry_run = False
         await connector.clean(dry_run)
+        mock_destroy.assert_not_called()
 
         assert mock.mock_calls == [
             mocker.call.helm.add_repo(

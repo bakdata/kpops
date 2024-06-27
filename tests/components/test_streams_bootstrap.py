@@ -101,3 +101,61 @@ class TestStreamsBootstrap:
             },
             HelmUpgradeInstallFlags(version="1.2.3"),
         )
+
+    @pytest.mark.asyncio()
+    async def test_should_call_destroy_when_reset_streams_bootstrap_app(
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
+        streams_bootstrap = StreamsBootstrap(
+            name="example-name",
+            config=config,
+            handlers=handlers,
+            **{
+                "namespace": "test-namespace",
+                "app": {
+                    "streams": {
+                        "outputTopic": "test",
+                        "brokers": "fake-broker:9092",
+                    },
+                },
+                "version": "1.2.3",
+            },
+        )
+        mock_destroy = mocker.patch.object(streams_bootstrap, "destroy")
+
+        dry_run = True
+        await streams_bootstrap.reset(dry_run)
+
+        mock_destroy.assert_called_once_with(dry_run)
+
+    @pytest.mark.asyncio()
+    async def test_should_call_destroy_when_clean_streams_bootstrap_app(
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
+        streams_bootstrap = StreamsBootstrap(
+            name="example-name",
+            config=config,
+            handlers=handlers,
+            **{
+                "namespace": "test-namespace",
+                "app": {
+                    "streams": {
+                        "outputTopic": "test",
+                        "brokers": "fake-broker:9092",
+                    },
+                },
+                "version": "1.2.3",
+            },
+        )
+        mock_destroy = mocker.patch.object(streams_bootstrap, "destroy")
+
+        dry_run = True
+        await streams_bootstrap.clean(dry_run)
+
+        mock_destroy.assert_called_once_with(dry_run)
