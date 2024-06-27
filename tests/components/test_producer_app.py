@@ -198,12 +198,11 @@ class TestProducerApp:
         )
 
     @pytest.mark.asyncio()
-    async def test_should_clean_producer_app(
+    async def test_should_not_reset_producer_app(
         self,
         producer_app: ProducerApp,
         mocker: MockerFixture,
     ):
-        # cleaner
         mock_helm_upgrade_install = mocker.patch.object(
             producer_app._cleaner.helm, "upgrade_install"
         )
@@ -215,8 +214,8 @@ class TestProducerApp:
         )
 
         mock = mocker.MagicMock()
-        mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+        mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
         mock.attach_mock(mock_helm_print_helm_diff, "print_helm_diff")
 
         await producer_app.clean(dry_run=True)
