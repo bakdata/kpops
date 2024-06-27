@@ -137,10 +137,6 @@ class TestStreamsApp:
             "kpops.components.base_components.helm_app.DryRunHandler"
         ).return_value
 
-    @pytest.fixture()
-    def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch.object(HelmApp, "helm_values", return_value=None)
-
     def test_cleaner(self, streams_app: StreamsApp):
         cleaner = streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
@@ -210,7 +206,6 @@ class TestStreamsApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        empty_helm_get_values: MagicMock,
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -263,7 +258,6 @@ class TestStreamsApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        empty_helm_get_values: MagicMock,
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -297,7 +291,6 @@ class TestStreamsApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        empty_helm_get_values: MagicMock,
     ):
         # An exception should be raised when both role and type are defined and type is input
         with pytest.raises(
@@ -351,7 +344,6 @@ class TestStreamsApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        empty_helm_get_values: MagicMock,
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -397,7 +389,6 @@ class TestStreamsApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        empty_helm_get_values: MagicMock,
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -441,7 +432,6 @@ class TestStreamsApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        empty_helm_get_values: MagicMock,
         mocker: MockerFixture,
     ):
         streams_app = StreamsApp(
@@ -560,7 +550,6 @@ class TestStreamsApp:
         self,
         streams_app: StreamsApp,
         mocker: MockerFixture,
-        empty_helm_get_values: MagicMock,
     ):
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
@@ -755,7 +744,6 @@ class TestStreamsApp:
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
-        empty_helm_get_values: MagicMock,
     ):
         streams_app = StreamsApp(
             name="my-app",
@@ -903,8 +891,6 @@ class TestStreamsApp:
         caplog: pytest.LogCaptureFixture,
     ):
         caplog.set_level(logging.INFO)
-        # actual component
-        mocker.patch.object(stateful_streams_app, "destroy")
 
         cleaner = stateful_streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
