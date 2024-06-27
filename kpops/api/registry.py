@@ -32,6 +32,10 @@ class Registry:
 
     _classes: ClassDict[PipelineComponent] = field(default_factory=dict, init=False)
 
+    @property
+    def components(self) -> Iterator[type[PipelineComponent]]:
+        yield from self._classes.values()
+
     def discover_components(self) -> None:
         """Discover first- and third-party KPOps components.
 

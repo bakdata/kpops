@@ -39,7 +39,7 @@ PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
     (PATH_DOCS_RESOURCES / "pipeline-defaults/headers").iterdir(),
 )
 
-KPOPS_COMPONENTS = tuple(registry._classes.values())
+KPOPS_COMPONENTS = tuple(registry.components)
 KPOPS_COMPONENTS_SECTIONS = {
     component.type: [
         field_name

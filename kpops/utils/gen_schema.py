@@ -34,7 +34,7 @@ log = logging.getLogger("")
 
 registry = Registry()
 registry.discover_components()
-COMPONENTS = tuple(registry._classes.values())
+COMPONENTS = tuple(registry.components)
 
 
 def print_schema(model: type[BaseModel]) -> None:

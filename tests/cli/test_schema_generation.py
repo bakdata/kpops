@@ -8,10 +8,10 @@ import pytest
 from pydantic import ConfigDict, Field
 from typer.testing import CliRunner
 
-from kpops.api.registry import Registry
 from kpops.cli.main import app
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.utils.docstring import describe_attr
+from kpops.utils.gen_schema import COMPONENTS
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
@@ -76,12 +76,6 @@ class SubPipelineComponentCorrectDocstr(SubPipelineComponent):
     "ignore:handlers", "ignore:config", "ignore:enrich", "ignore:validate"
 )
 class TestGenSchema:
-    @pytest.fixture
-    def stock_components(self) -> list[type[PipelineComponent]]:
-        registry = Registry()
-        registry.discover_components()
-        return list(registry._classes.values())
-
     def test_gen_pipeline_schema_stock_and_custom_module(self):
         result = runner.invoke(
             app,
@@ -109,7 +103,7 @@ class TestGenSchema:
         assert result.stdout
         schema = json.loads(result.stdout)
         assert schema["title"] == "DefaultsSchema"
-        assert schema["required"] == [component.type for component in stock_components]
+        assert schema["required"] == [component.type for component in COMPONENTS]
 
     def test_gen_config_schema(self):
         result = runner.invoke(
