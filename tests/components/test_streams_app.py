@@ -196,11 +196,7 @@ class TestStreamsApp:
             == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
         )
 
-    def test_set_topics(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ):
+    def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
             config=config,
@@ -249,9 +245,7 @@ class TestStreamsApp:
         assert "extraInputPatterns" in streams_config
 
     def test_no_empty_input_topic(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -281,11 +275,7 @@ class TestStreamsApp:
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" not in streams_config
 
-    def test_should_validate(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ):
+    def test_should_validate(self, config: KpopsConfig, handlers: ComponentHandlers):
         # An exception should be raised when both role and type are defined and type is input
         with pytest.raises(
             ValueError, match="Define role only if `type` is `pattern` or `None`"
@@ -335,9 +325,7 @@ class TestStreamsApp:
             )
 
     def test_set_streams_output_from_to(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -380,9 +368,7 @@ class TestStreamsApp:
         )
 
     def test_weave_inputs_from_prev_component(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -735,9 +721,7 @@ class TestStreamsApp:
 
     @pytest.mark.asyncio()
     async def test_get_input_output_topics(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
             name="my-app",
@@ -885,7 +869,6 @@ class TestStreamsApp:
         caplog: pytest.LogCaptureFixture,
     ):
         caplog.set_level(logging.INFO)
-
         cleaner = stateful_streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
 
