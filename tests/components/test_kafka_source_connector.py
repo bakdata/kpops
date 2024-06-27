@@ -166,6 +166,9 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         mocker: MockerFixture,
     ):
         assert connector.handlers.connector_handler
+
+        mock_destroy = mocker.patch.object(connector, "destroy")
+
         mock_delete_topic = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topic"
         )
@@ -174,12 +177,15 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         )
 
         mock = mocker.MagicMock()
+        mock.attach_mock(mock_destroy, "destroy_connector")
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
         mock.attach_mock(helm_mock, "helm")
 
-        await connector.reset(dry_run=False)
+        dry_run = False
+        await connector.reset(dry_run)
 
         assert mock.mock_calls == [
+            mocker.call.destroy_connector(dry_run),
             mocker.call.helm.add_repo(
                 "bakdata-kafka-connect-resetter",
                 "https://bakdata.github.io/kafka-connect-resetter/",
@@ -188,14 +194,14 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             mocker.call.helm.uninstall(
                 RESETTER_NAMESPACE,
                 CONNECTOR_CLEAN_RELEASE_NAME,
-                False,
+                dry_run,
             ),
             ANY,  # __bool__
             ANY,  # __str__
             mocker.call.helm.upgrade_install(
                 CONNECTOR_CLEAN_RELEASE_NAME,
                 "bakdata-kafka-connect-resetter/kafka-connect-resetter",
-                False,
+                dry_run,
                 RESETTER_NAMESPACE,
                 {
                     "connectorType": CONNECTOR_TYPE,
@@ -215,7 +221,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
             mocker.call.helm.uninstall(
                 RESETTER_NAMESPACE,
                 CONNECTOR_CLEAN_RELEASE_NAME,
-                False,
+                dry_run,
             ),
             ANY,  # __bool__
             ANY,  # __str__
@@ -245,6 +251,8 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     ):
         assert connector.handlers.connector_handler
 
+        mock_destroy = mocker.patch.object(connector, "destroy")
+
         mock_delete_topic = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topic"
         )
@@ -253,6 +261,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         )
 
         mock = mocker.MagicMock()
+        mock.attach_mock(mock_destroy, "destroy_connector")
         mock.attach_mock(mock_delete_topic, "mock_delete_topic")
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
         mock.attach_mock(helm_mock, "helm")
@@ -262,6 +271,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
         assert connector.to
         assert mock.mock_calls == [
+            mocker.call.destroy_connector(dry_run),
             *(
                 mocker.call.mock_delete_topic(topic, dry_run=dry_run)
                 for topic in connector.to.kafka_topics
@@ -331,6 +341,8 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
         assert connector.handlers.connector_handler
 
+        mock_destroy = mocker.patch.object(connector, "destroy")
+
         mock_delete_topic = mocker.patch.object(
             connector.handlers.topic_handler, "delete_topic"
         )
@@ -339,6 +351,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         )
 
         mock = mocker.MagicMock()
+        mock.attach_mock(mock_destroy, "destroy_connector")
         mock.attach_mock(mock_delete_topic, "mock_delete_topic")
         mock.attach_mock(mock_clean_connector, "mock_clean_connector")
         mock.attach_mock(helm_mock, "helm")
@@ -347,6 +360,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         await connector.clean(dry_run)
 
         assert mock.mock_calls == [
+            mocker.call.destroy_connector(dry_run),
             mocker.call.helm.add_repo(
                 "bakdata-kafka-connect-resetter",
                 "https://bakdata.github.io/kafka-connect-resetter/",

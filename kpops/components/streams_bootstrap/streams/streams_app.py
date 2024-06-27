@@ -123,10 +123,12 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
 
     @override
     async def reset(self, dry_run: bool) -> None:
+        await super().reset(dry_run)
         self._cleaner.app.streams.delete_output = False
         await self._cleaner.clean(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
+        await super().clean(dry_run)
         self._cleaner.app.streams.delete_output = True
         await self._cleaner.clean(dry_run)
