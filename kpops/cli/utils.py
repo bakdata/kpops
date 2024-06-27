@@ -3,9 +3,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Iterator
 from pathlib import Path
 
-from kpops.api.file_type import KpopsFileType
-
-PIPELINE_YAML = KpopsFileType.PIPELINE.as_yaml_file()
+from kpops.api.file_type import PIPELINE_YAML
 
 
 def collect_pipeline_paths(pipeline_paths: Iterable[Path]) -> Iterator[Path]:

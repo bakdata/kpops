@@ -4,7 +4,7 @@ from enum import Enum
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from kpops.components import PipelineComponent
+    from kpops.components.base_components.pipeline_component import PipelineComponent
     from kpops.pipeline import ComponentFilterPredicate
 
 

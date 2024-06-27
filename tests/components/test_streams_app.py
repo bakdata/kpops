@@ -12,7 +12,6 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components import StreamsApp
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     ToSection,
@@ -27,6 +26,7 @@ from kpops.components.streams_bootstrap.streams.model import (
     StreamsAppAutoScaling,
 )
 from kpops.components.streams_bootstrap.streams.streams_app import (
+    StreamsApp,
     StreamsAppCleaner,
 )
 from kpops.config import KpopsConfig, TopicNameConfig

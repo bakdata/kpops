@@ -8,11 +8,17 @@ from typing import NamedTuple, cast
 import yaml
 
 from hooks import ROOT
-from kpops.api.registry import _find_classes
-from kpops.components import KafkaConnector, PipelineComponent
+from kpops.api.registry import Registry
+from kpops.components.base_components.kafka_connector import KafkaConnector
+from kpops.components.base_components.pipeline_component import (
+    PipelineComponent,
+)
 from kpops.utils.colorify import redify, yellowify
 from kpops.utils.pydantic import issubclass_patched
 from kpops.utils.yaml import load_yaml_file
+
+registry = Registry()
+registry.discover_components()
 
 PATH_KPOPS_MAIN = ROOT / "kpops/cli/main.py"
 PATH_CLI_COMMANDS_DOC = ROOT / "docs/docs/user/references/cli-commands.md"
@@ -33,7 +39,7 @@ PIPELINE_COMPONENT_DEFAULTS_HEADER_FILES = sorted(
     (PATH_DOCS_RESOURCES / "pipeline-defaults/headers").iterdir(),
 )
 
-KPOPS_COMPONENTS = tuple(_find_classes("kpops.components", PipelineComponent))
+KPOPS_COMPONENTS = tuple(registry.components)
 KPOPS_COMPONENTS_SECTIONS = {
     component.type: [
         field_name

@@ -13,7 +13,7 @@ from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.components.streams_bootstrap import StreamsBootstrap
+from kpops.components.common.streams_bootstrap import StreamsBootstrap
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,

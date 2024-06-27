@@ -5,12 +5,14 @@ from typing import Optional
 
 import typer
 
-import kpops
-from kpops import __version__
-from kpops.api.file_type import KpopsFileType
+import kpops.api as kpops
+from kpops.api.file_type import CONFIG_YAML, DEFAULTS_YAML, PIPELINE_YAML, KpopsFileType
 from kpops.api.options import FilterType
-from kpops.cli.utils import collect_pipeline_paths
-from kpops.config import ENV_PREFIX, KpopsConfig
+from kpops.cli.utils import (
+    collect_pipeline_paths,
+)
+from kpops.config import ENV_PREFIX
+from kpops.const import KPOPS, __version__
 from kpops.utils.gen_schema import (
     gen_config_schema,
     gen_defaults_schema,
@@ -129,29 +131,21 @@ def schema(
     scope: KpopsFileType = typer.Argument(
         ...,
         show_default=False,
-        help="""
+        help=f"""
         Scope of the generated schema
         \n\n\n
-        pipeline: Schema of PipelineComponents. Includes the built-in KPOps components by default. To include custom components, provide components module in config.
-        \n\n\n
-        config: Schema of KpopsConfig.""",
-    ),
-    config: Path = CONFIG_PATH_OPTION,
-    include_stock_components: bool = typer.Option(
-        default=True, help="Include the built-in KPOps components."
+        - {KpopsFileType.PIPELINE.value}: Schema of PipelineComponents for KPOps {PIPELINE_YAML}
+        \n\n
+        - {KpopsFileType.DEFAULTS.value}: Schema of PipelineComponents for KPOps {DEFAULTS_YAML}
+        \n\n
+        - {KpopsFileType.CONFIG.value}: Schema for KPOps {CONFIG_YAML}""",
     ),
 ) -> None:
     match scope:
         case KpopsFileType.PIPELINE:
-            kpops_config = KpopsConfig.create(config)
-            gen_pipeline_schema(
-                kpops_config.components_module, include_stock_components
-            )
+            gen_pipeline_schema()
         case KpopsFileType.DEFAULTS:
-            kpops_config = KpopsConfig.create(config)
-            gen_defaults_schema(
-                kpops_config.components_module, include_stock_components
-            )
+            gen_defaults_schema()
         case KpopsFileType.CONFIG:
             gen_config_schema()
 
@@ -316,7 +310,7 @@ def clean(
 
 def version_callback(show_version: bool) -> None:
     if show_version:
-        typer.echo(f"KPOps {__version__}")
+        typer.echo(f"{KPOPS} {__version__}")
         raise typer.Exit
 
 

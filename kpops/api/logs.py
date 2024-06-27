@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 import typer
 
 if TYPE_CHECKING:
-    from kpops.components import PipelineComponent
+    from kpops.components.base_components.pipeline_component import PipelineComponent
 
 
 class CustomFormatter(logging.Formatter):

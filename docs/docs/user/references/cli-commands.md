@@ -215,15 +215,16 @@ $ kpops schema [OPTIONS] SCOPE:{pipeline|defaults|config}
 
 
 
-        pipeline: Schema of PipelineComponents. Includes the built-in KPOps components by default. To include custom components, provide components module in config.
+        - pipeline: Schema of PipelineComponents for KPOps pipeline.yaml
         
 
 
+        - defaults: Schema of PipelineComponents for KPOps defaults.yaml
+        
 
-        config: Schema of KpopsConfig.  [required]
+
+        - config: Schema for KPOps config.yaml  [required]
 
 **Options**:
 
-* `--config DIRECTORY`: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]
-* `--include-stock-components / --no-include-stock-components`: Include the built-in KPOps components.  [default: include-stock-components]
 * `--help`: Show this message and exit.

@@ -177,19 +177,6 @@
     "additionalProperties": false,
     "description": "Global configuration for KPOps project.",
     "properties": {
-        "components_module": {
-            "anyOf": [
-                {
-                    "type": "string"
-                },
-                {
-                    "type": "null"
-                }
-            ],
-            "default": null,
-            "description": "Custom Python module defining project-specific KPOps components",
-            "title": "Components Module"
-        },
         "create_namespace": {
             "default": false,
             "description": "Flag for `helm upgrade --install`. Create the release namespace if not present.",

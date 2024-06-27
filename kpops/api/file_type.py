@@ -33,3 +33,8 @@ class KpopsFileType(str, Enum):
             'pre_pipeline_suf.yaml'
         """
         return prefix + self.value + suffix + FILE_EXTENSION
+
+
+PIPELINE_YAML = KpopsFileType.PIPELINE.as_yaml_file()
+DEFAULTS_YAML = KpopsFileType.DEFAULTS.as_yaml_file()
+CONFIG_YAML = KpopsFileType.CONFIG.as_yaml_file()

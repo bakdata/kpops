@@ -20,8 +20,8 @@ from pydantic_core.core_schema import (
     ModelFieldsSchema,
 )
 
-from kpops.api.registry import _find_classes
-from kpops.components import (
+from kpops.api.registry import Registry
+from kpops.components.base_components.pipeline_component import (
     PipelineComponent,
 )
 from kpops.config import KpopsConfig
@@ -32,6 +32,10 @@ class MultiComponentGenerateJsonSchema(GenerateJsonSchema): ...
 
 log = logging.getLogger("")
 
+registry = Registry()
+registry.discover_components()
+COMPONENTS = tuple(registry.components)
+
 
 def print_schema(model: type[BaseModel]) -> None:
     schema = model_json_schema(model, by_alias=True)
@@ -39,14 +43,13 @@ def print_schema(model: type[BaseModel]) -> None:
 
 
 def _is_valid_component(
-    defined_component_types: set[str],
     component: type[PipelineComponent],
     allow_abstract: bool,
 ) -> bool:
     """Check whether a PipelineComponent subclass has a valid definition for the schema generation.
 
-    :param defined_component_types: types defined so far
     :param component: component type to be validated
+    :param allow_abstract: whether to include abstract components marked as ABC
     :return: Whether component is valid for schema generation
     """
     if not allow_abstract and (
@@ -54,85 +57,25 @@ def _is_valid_component(
     ):
         log.warning(f"SKIPPED {component.__name__}, component is abstract.")
         return False
-    if component.type in defined_component_types:
-        log.warning(f"SKIPPED {component.__name__}, component type must be unique.")
-        return False
-    defined_component_types.add(component.type)
     return True
 
 
-def _add_components(
-    components_module: str,
-    allow_abstract: bool,
-    components: tuple[type[PipelineComponent], ...] | None = None,
-) -> tuple[type[PipelineComponent], ...]:
-    """Add components to a components tuple.
-
-    If an empty tuple is provided or it is not provided at all, the components
-    types from the given module are 'tupled'
-
-    :param components_module: Python module. Only the classes that inherit from
-        PipelineComponent will be considered.
-    :param components: Tuple of components to which to add, defaults to ()
-    :return: Extended tuple
-    """
-    if components is None:
-        components = ()
-    # Set of existing types, against which to check the new ones
-    defined_component_types = {component.type for component in components}
-    custom_components = (
-        component
-        for component in _find_classes(components_module, PipelineComponent)
-        if _is_valid_component(defined_component_types, component, allow_abstract)
-    )
-    components += tuple(custom_components)
-    return components
-
-
-def find_components(
-    components_module: str | None,
-    include_stock_components: bool,
-    include_abstract: bool = False,
-) -> tuple[type[PipelineComponent], ...]:
-    if not (include_stock_components or components_module):
-        msg = "No components are provided, no schema is generated."
-        raise RuntimeError(msg)
-    # Add stock components if enabled
-    components: tuple[type[PipelineComponent], ...] = ()
-    if include_stock_components:
-        components = _add_components("kpops.components", include_abstract)
-    # Add custom components if provided
-    if components_module:
-        components = _add_components(components_module, include_abstract, components)
-    if not components:
-        msg = "No valid components found."
-        raise RuntimeError(msg)
-    return components
-
-
-def gen_pipeline_schema(
-    components_module: str | None = None, include_stock_components: bool = True
-) -> None:
-    """Generate a json schema from the models of pipeline components.
-
-    :param components_module: Python module. Only the classes that inherit from
-        PipelineComponent will be considered., defaults to None
-    :param include_stock_components: Whether to include the stock components,
-        defaults to True
-    """
-    components = find_components(components_module, include_stock_components)
-
+def gen_pipeline_schema() -> None:
+    """Generate a JSON schema from the models of pipeline components."""
+    components = [
+        component for component in COMPONENTS if _is_valid_component(component, False)
+    ]
     # re-assign component type as Literal to work as discriminator
     for component in components:
         component.model_fields["type"] = FieldInfo(
-            annotation=Literal[component.type],  # type:ignore[valid-type]
+            annotation=Literal[component.type],  # type: ignore[valid-type]
             default=component.type,
         )
-        core_schema: DefinitionsSchema = component.__pydantic_core_schema__  # pyright:ignore[reportAssignmentType]
+        core_schema: DefinitionsSchema = component.__pydantic_core_schema__  # pyright: ignore[reportAssignmentType]
         schema = core_schema
         while "schema" in schema:
             schema = schema["schema"]
-        model_schema: ModelFieldsSchema = schema  # pyright:ignore[reportAssignmentType]
+        model_schema: ModelFieldsSchema = schema  # pyright: ignore[reportAssignmentType]
         model_schema["fields"]["type"] = ModelField(
             type="model-field",
             schema=LiteralSchema(
@@ -141,23 +84,23 @@ def gen_pipeline_schema(
             ),
         )
 
-    PipelineComponents = Union[components]  # type: ignore[valid-type]
+    PipelineComponents = Union[tuple(components)]  # pyright: ignore[reportInvalidTypeArguments,reportGeneralTypeIssues]
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="type")
     ]
 
     class PipelineSchema(RootModel):
         root: Sequence[
-            AnnotatedPipelineComponents  # pyright:ignore[reportInvalidTypeForm]
+            AnnotatedPipelineComponents  # pyright: ignore[reportInvalidTypeForm]
         ]
 
     print_schema(PipelineSchema)
 
 
-def gen_defaults_schema(
-    components_module: str | None = None, include_stock_components: bool = True
-) -> None:
-    components = find_components(components_module, include_stock_components, True)
+def gen_defaults_schema() -> None:
+    components = [
+        component for component in COMPONENTS if _is_valid_component(component, True)
+    ]
     components_mapping: dict[str, Any] = {
         component.type: (component, ...) for component in components
     }

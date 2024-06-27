@@ -74,10 +74,6 @@ class KafkaConnectConfig(BaseSettings):
 class KpopsConfig(BaseSettings):
     """Global configuration for KPOps project."""
 
-    components_module: str | None = Field(
-        default=None,
-        description="Custom Python module defining project-specific KPOps components",
-    )
     pipeline_base_dir: Path = Field(
         default=Path(),
         description="Base directory to the pipelines (default is current working directory)",

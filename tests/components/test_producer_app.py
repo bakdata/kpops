@@ -7,13 +7,15 @@ from pytest_mock import MockerFixture
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components import ProducerApp
 from kpops.components.base_components.models.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap.producer.producer_app import ProducerAppCleaner
+from kpops.components.streams_bootstrap.producer.producer_app import (
+    ProducerApp,
+    ProducerAppCleaner,
+)
 from kpops.config import KpopsConfig, TopicNameConfig
 from tests.components import PIPELINE_BASE_DIR
 

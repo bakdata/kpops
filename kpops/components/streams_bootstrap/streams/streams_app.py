@@ -5,13 +5,10 @@ from pydantic import Field, computed_field
 from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
-from kpops.components import HelmApp
-from kpops.components.base_components.kafka_app import (
-    KafkaApp,
-    KafkaAppCleaner,
-)
+from kpops.components.base_components.helm_app import HelmApp
+from kpops.components.base_components.kafka_app import KafkaApp, KafkaAppCleaner
 from kpops.components.base_components.models.topic import KafkaTopic
-from kpops.components.streams_bootstrap import StreamsBootstrap
+from kpops.components.common.streams_bootstrap import StreamsBootstrap
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import (
     StreamsAppValues,
