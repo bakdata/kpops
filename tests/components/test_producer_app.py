@@ -7,7 +7,7 @@ from pytest_mock import MockerFixture
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components import ProducerApp
+from kpops.components import HelmApp, ProducerApp
 from kpops.components.base_components.models.topic import (
     KafkaTopic,
     OutputTopicTypes,
@@ -352,3 +352,69 @@ class TestProducerApp:
             KafkaTopic(name="producer-app-output-topic"),
             KafkaTopic(name="extra-topic-1"),
         ]
+
+    @pytest.mark.asyncio()
+    async def test_should_deploy_clean_up_job_with_image_tag_in_cluster(
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
+        image_tag_in_cluster = "1.1.1"
+        mocker.patch.object(
+            HelmApp,
+            "helm_values",
+            return_value={
+                "image": "registry/producer-app",
+                "imageTag": image_tag_in_cluster,
+                "nameOverride": PRODUCER_APP_NAME,
+                "replicaCount": 1,
+                "streams": {
+                    "brokers": "fake-broker:9092",
+                    "outputTopic": "test-output-topic",
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+        )
+        producer_app = ProducerApp(
+            name=PRODUCER_APP_NAME,
+            config=config,
+            handlers=handlers,
+            **{
+                "namespace": "test-namespace",
+                "app": {
+                    "imageTag": "2.2.2",
+                    "streams": {"brokers": "fake-broker:9092"},
+                },
+                "to": {
+                    "topics": {
+                        "test-output-topic": {"type": "output"},
+                    }
+                },
+            },
+        )
+        mocker.patch.object(producer_app._cleaner.dry_run_handler, "print_helm_diff")
+        mocker.patch.object(producer_app._cleaner.helm, "uninstall")
+
+        mock_helm_upgrade_install = mocker.patch.object(
+            producer_app._cleaner.helm, "upgrade_install"
+        )
+
+        dry_run = True
+        await producer_app.clean(dry_run)
+
+        mock_helm_upgrade_install.assert_called_once_with(
+            PRODUCER_APP_CLEAN_RELEASE_NAME,
+            "bakdata-streams-bootstrap/producer-app-cleanup-job",
+            dry_run,
+            "test-namespace",
+            {
+                "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
+                "imageTag": image_tag_in_cluster,
+                "streams": {
+                    "brokers": "fake-broker:9092",
+                    "outputTopic": "test-output-topic",
+                },
+            },
+            HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
+        )
