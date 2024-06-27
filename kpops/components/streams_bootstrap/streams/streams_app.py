@@ -63,9 +63,7 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
     @cached_property
     def _cleaner(self) -> StreamsAppCleaner:
         return StreamsAppCleaner(
-            config=self.config,
-            handlers=self.handlers,
-            **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"}),
+            config=self.config, handlers=self.handlers, **self.app_values
         )
 
     @property

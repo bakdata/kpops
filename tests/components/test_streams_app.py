@@ -7,6 +7,7 @@ from pytest_mock import MockerFixture
 
 from kpops.api.exception import ValidationError
 from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
     HelmUpgradeInstallFlags,
@@ -638,6 +639,81 @@ class TestStreamsApp:
                     dry_run,
                 ),
             ]
+        )
+
+    @pytest.mark.asyncio()
+    async def test_should_deploy_clean_up_job_with_image_tag_in_cluster(
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+        mocker: MockerFixture,
+    ):
+        image_tag_in_cluster = "1.1.1"
+        mocker.patch.object(
+            Helm,
+            "get_values",
+            return_value={
+                "image": "registry/streams-app",
+                "imageTag": image_tag_in_cluster,
+                "nameOverride": STREAMS_APP_NAME,
+                "replicaCount": 1,
+                "streams": {
+                    "brokers": "fake-broker:9092",
+                    "inputTopics": ["test-input-topic"],
+                    "schemaRegistryUrl": "http://localhost:8081",
+                },
+            },
+        )
+        streams_app = StreamsApp(
+            name=STREAMS_APP_NAME,
+            config=config,
+            handlers=handlers,
+            **{
+                "namespace": "test-namespace",
+                "app": {
+                    "imageTag": "2.2.2",
+                    "streams": {"brokers": "fake-broker:9092"},
+                },
+                "from": {
+                    "topics": {
+                        "test-input-topic": {"type": "input"},
+                    }
+                },
+                "to": {
+                    "topics": {
+                        "streams-app-output-topic": {"type": "output"},
+                    }
+                },
+            },
+        )
+
+        mock_helm_upgrade_install = mocker.patch.object(
+            streams_app._cleaner.helm, "upgrade_install"
+        )
+        mocker.patch.object(streams_app._cleaner.helm, "uninstall")
+
+        mock = mocker.MagicMock()
+        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
+
+        dry_run = False
+        await streams_app.clean(dry_run=dry_run)
+
+        mock_helm_upgrade_install.assert_called_once_with(
+            STREAMS_APP_CLEAN_RELEASE_NAME,
+            "bakdata-streams-bootstrap/streams-app-cleanup-job",
+            dry_run,
+            "test-namespace",
+            {
+                "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
+                "imageTag": image_tag_in_cluster,
+                "streams": {
+                    "brokers": "fake-broker:9092",
+                    "inputTopics": ["test-input-topic"],
+                    "outputTopic": "streams-app-output-topic",
+                    "deleteOutput": True,
+                },
+            },
+            HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
         )
 
     @pytest.mark.asyncio()
