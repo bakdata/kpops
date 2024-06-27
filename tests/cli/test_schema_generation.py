@@ -89,7 +89,7 @@ class TestGenSchema:
         assert result.exit_code == 0, result.stdout
         assert result.stdout
 
-    def test_gen_defaults_schema(self, stock_components: list[type[PipelineComponent]]):
+    def test_gen_defaults_schema(self):
         result = runner.invoke(
             app,
             [

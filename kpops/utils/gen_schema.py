@@ -48,8 +48,8 @@ def _is_valid_component(
 ) -> bool:
     """Check whether a PipelineComponent subclass has a valid definition for the schema generation.
 
-    :param defined_component_types: types defined so far
     :param component: component type to be validated
+    :param allow_abstract: whether to include abstract components marked as ABC
     :return: Whether component is valid for schema generation
     """
     if not allow_abstract and (
@@ -61,13 +61,7 @@ def _is_valid_component(
 
 
 def gen_pipeline_schema() -> None:
-    """Generate a json schema from the models of pipeline components.
-
-    :param components_module: Python module. Only the classes that inherit from
-        PipelineComponent will be considered., defaults to None
-    :param include_stock_components: Whether to include the stock components,
-        defaults to True
-    """
+    """Generate a JSON schema from the models of pipeline components."""
     components = [
         component for component in COMPONENTS if _is_valid_component(component, False)
     ]
@@ -103,10 +97,7 @@ def gen_pipeline_schema() -> None:
     print_schema(PipelineSchema)
 
 
-def gen_defaults_schema(
-    components_module: str | None = None, include_stock_components: bool = True
-) -> None:
-    # components = find_components(components_module, include_stock_components, True)
+def gen_defaults_schema() -> None:
     components = [
         component for component in COMPONENTS if _is_valid_component(component, True)
     ]
