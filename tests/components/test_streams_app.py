@@ -77,10 +77,7 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def streams_app(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        empty_helm_get_values: MagicMock,
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
             name=STREAMS_APP_NAME,
@@ -103,10 +100,7 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def stateful_streams_app(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        empty_helm_get_values: MagicMock,
+        self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
             name=STREAMS_APP_NAME,
