@@ -166,6 +166,7 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @override
     async def deploy(self, dry_run: bool) -> None:
+        """Deploy Kafka Connector (Source/Sink). Create output topics and register schemas if configured."""
         if self.to:
             for topic in self.to.kafka_topics:
                 await self.handlers.topic_handler.create_topic(topic, dry_run=dry_run)
@@ -181,12 +182,14 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @override
     async def destroy(self, dry_run: bool) -> None:
+        """Delete Kafka Connector (Source/Sink) from the Kafka connect cluster."""
         await self.handlers.connector_handler.destroy_connector(
             self.full_name, dry_run=dry_run
         )
 
     @override
     async def clean(self, dry_run: bool) -> None:
+        """Delete Kafka Connector. If schema handler is enabled, then remove schemas. Delete all the output topics."""
         await super().clean(dry_run)
         if self.to:
             if self.handlers.schema_handler:
@@ -230,11 +233,12 @@ class KafkaSourceConnector(KafkaConnector):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        await super().reset(dry_run)
+        """Reset the state of a Kafka Connect source connector. The source connector is kept."""
         await self._resetter.reset(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
+        """Delete the source connector. Reset the state of a Kafka Connect source connector."""
         await super().clean(dry_run)
         await self._resetter.clean(dry_run)
 
@@ -268,12 +272,13 @@ class KafkaSinkConnector(KafkaConnector):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        await super().reset(dry_run)
+        """Reset the consumer group offsets by deploying the sink resetter. The sink connector is kept."""
         self._resetter.app.config.delete_consumer_group = False
         await self._resetter.reset(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
+        """Delete sink connector. Delete the consumer group offsets by deploying the sink resetter."""
         await super().clean(dry_run)
         self._resetter.app.config.delete_consumer_group = True
         await self._resetter.clean(dry_run)

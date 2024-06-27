@@ -123,12 +123,14 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
 
     @override
     async def reset(self, dry_run: bool) -> None:
+        """Remove the streams app from the cluster. Deploy the cleanup job with delete output set to false."""
         await super().reset(dry_run)
         self._cleaner.app.streams.delete_output = False
         await self._cleaner.clean(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
+        """Remove the streams app from the cluster. Deploy the cleanup job with delete output set to true."""
         await super().clean(dry_run)
         self._cleaner.app.streams.delete_output = True
         await self._cleaner.clean(dry_run)
