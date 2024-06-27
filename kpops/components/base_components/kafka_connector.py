@@ -238,7 +238,7 @@ class KafkaSourceConnector(KafkaConnector):
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        """Destroy and reset state."""
+        """Delete connector and reset state."""
         await super().clean(dry_run)
         await self._resetter.clean(dry_run)
 
