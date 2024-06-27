@@ -526,11 +526,7 @@ class TestStreamsApp:
         ]
 
     @pytest.mark.asyncio()
-    async def test_destroy(
-        self,
-        streams_app: StreamsApp,
-        mocker: MockerFixture,
-    ):
+    async def test_destroy(self, streams_app: StreamsApp, mocker: MockerFixture):
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
         await streams_app.destroy(dry_run=True)
