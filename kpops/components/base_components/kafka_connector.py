@@ -187,7 +187,6 @@ class KafkaConnector(PipelineComponent, ABC):
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        await super().clean(dry_run)
         if self.to:
             if self.handlers.schema_handler:
                 await self.handlers.schema_handler.delete_schemas(
@@ -230,7 +229,6 @@ class KafkaSourceConnector(KafkaConnector):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        await super().reset(dry_run)
         await self._resetter.reset(dry_run)
 
     @override
@@ -268,7 +266,6 @@ class KafkaSinkConnector(KafkaConnector):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        await super().reset(dry_run)
         self._resetter.app.config.delete_consumer_group = False
         await self._resetter.reset(dry_run)
 

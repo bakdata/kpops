@@ -95,5 +95,4 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        await super().clean(dry_run)
         await self._cleaner.clean(dry_run)

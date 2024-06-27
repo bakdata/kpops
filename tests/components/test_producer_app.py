@@ -203,11 +203,6 @@ class TestProducerApp:
         producer_app: ProducerApp,
         mocker: MockerFixture,
     ):
-        # actual component
-        mock_helm_uninstall_producer_app = mocker.patch.object(
-            producer_app.helm, "uninstall"
-        )
-
         # cleaner
         mock_helm_upgrade_install = mocker.patch.object(
             producer_app._cleaner.helm, "upgrade_install"
@@ -220,9 +215,6 @@ class TestProducerApp:
         )
 
         mock = mocker.MagicMock()
-        mock.attach_mock(
-            mock_helm_uninstall_producer_app, "helm_uninstall_producer_app"
-        )
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_print_helm_diff, "print_helm_diff")
@@ -231,11 +223,6 @@ class TestProducerApp:
 
         mock.assert_has_calls(
             [
-                mocker.call.helm_uninstall_producer_app(
-                    "test-namespace", PRODUCER_APP_RELEASE_NAME, True
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
                 mocker.call.helm_uninstall(
                     "test-namespace",
                     PRODUCER_APP_CLEAN_RELEASE_NAME,
@@ -278,12 +265,6 @@ class TestProducerApp:
     async def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
         self, mocker: MockerFixture, producer_app: ProducerApp
     ):
-        # actual component
-        mock_helm_uninstall_producer_app = mocker.patch.object(
-            producer_app.helm, "uninstall"
-        )
-
-        # cleaner
         mock_helm_upgrade_install = mocker.patch.object(
             producer_app._cleaner.helm, "upgrade_install"
         )
@@ -292,9 +273,6 @@ class TestProducerApp:
         )
 
         mock = mocker.MagicMock()
-        mock.attach_mock(
-            mock_helm_uninstall_producer_app, "helm_uninstall_producer_app"
-        )
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
@@ -302,11 +280,6 @@ class TestProducerApp:
 
         mock.assert_has_calls(
             [
-                mocker.call.helm_uninstall_producer_app(
-                    "test-namespace", PRODUCER_APP_RELEASE_NAME, False
-                ),
-                ANY,  # __bool__
-                ANY,  # __str__
                 mocker.call.helm_uninstall(
                     "test-namespace",
                     PRODUCER_APP_CLEAN_RELEASE_NAME,
