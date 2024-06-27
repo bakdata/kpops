@@ -37,7 +37,22 @@ plugins:
       exclude:
         - resources/*
   - glightbox
-  - mkdocstrings
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [..]
+          options:
+            docstring_style: sphinx
+            show_if_no_docstring: true
+            line_length: 60
+            separate_signature: true
+            show_signature_annotations: true
+            docstring_section_style: spacy
+            show_root_heading: true
+            # TODO(Ivan Yortdanov): Uncomment when option becomes available
+            show_inheritance_diagram: true
+            modernize_annotations: true
+            parameter_headings: true
 
 extra:
   version:
