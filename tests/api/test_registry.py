@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import importlib
+from pathlib import Path
 from types import ModuleType
 
 import pytest
@@ -34,6 +35,12 @@ class Unrelated:
 
 
 MODULE = SubComponent.__module__
+
+
+def test_namespace():
+    """Ensure namespace package according to PEP 420."""
+    assert not Path("kpops/__init__.py").exists()
+    assert not Path("kpops/components/__init__.py").exists()
 
 
 @pytest.mark.usefixtures("custom_components")
