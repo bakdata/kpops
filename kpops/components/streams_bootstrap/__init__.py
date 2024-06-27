@@ -37,7 +37,7 @@ class StreamsBootstrap(HelmApp, ABC):
         streams_bootstrap_app_values = self.model_dump(
             by_alias=True, exclude={"_cleaner", "from_", "to"}
         )
-        cluster_values = self.helm_values()
+        cluster_values = self.helm.get_values(self.namespace, self.helm_release_name)
         return (
             streams_bootstrap_app_values
             if cluster_values is None

@@ -5,9 +5,10 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components import HelmApp, ProducerApp
+from kpops.components import ProducerApp
 from kpops.components.base_components.models.topic import (
     KafkaTopic,
     OutputTopicTypes,
@@ -362,8 +363,8 @@ class TestProducerApp:
     ):
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
-            HelmApp,
-            "helm_values",
+            Helm,
+            "get_values",
             return_value={
                 "image": "registry/producer-app",
                 "imageTag": image_tag_in_cluster,

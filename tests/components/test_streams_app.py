@@ -7,12 +7,13 @@ from pytest_mock import MockerFixture
 
 from kpops.api.exception import ValidationError
 from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components import HelmApp, StreamsApp
+from kpops.components import StreamsApp
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     ToSection,
@@ -649,8 +650,8 @@ class TestStreamsApp:
     ):
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
-            HelmApp,
-            "helm_values",
+            Helm,
+            "get_values",
             return_value={
                 "image": "registry/streams-app",
                 "imageTag": image_tag_in_cluster,

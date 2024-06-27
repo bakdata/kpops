@@ -141,9 +141,6 @@ class HelmApp(KubernetesApp):
             api_version=self.config.helm_config.api_version,
         )
 
-    def helm_values(self) -> dict[str, Any] | None:
-        return self.helm.get_values(self.namespace, self.helm_release_name)
-
     @override
     def manifest(self) -> Resource:
         return self.helm.template(
