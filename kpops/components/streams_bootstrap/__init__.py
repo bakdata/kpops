@@ -32,8 +32,6 @@ class StreamsBootstrap(HelmApp, ABC):
 
     async def clean(self, dry_run: bool) -> None:
         await self.destroy(dry_run)
-        await super().clean(dry_run)
 
     async def reset(self, dry_run: bool) -> None:
         await self.destroy(dry_run)
-        await super().reset(dry_run)
