@@ -12,6 +12,7 @@ from kpops.cli.utils import (
     collect_pipeline_paths,
 )
 from kpops.config import ENV_PREFIX
+from kpops.const import KPOPS, __version__
 from kpops.utils.gen_schema import (
     gen_config_schema,
     gen_defaults_schema,
@@ -309,7 +310,7 @@ def clean(
 
 def version_callback(show_version: bool) -> None:
     if show_version:
-        # typer.echo(f"KPOps {__version__}")  # FIXME: read version from package
+        typer.echo(f"{KPOPS} {__version__}")
         raise typer.Exit
 
 
