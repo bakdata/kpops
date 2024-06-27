@@ -68,14 +68,14 @@ def gen_pipeline_schema() -> None:
     # re-assign component type as Literal to work as discriminator
     for component in components:
         component.model_fields["type"] = FieldInfo(
-            annotation=Literal[component.type],  # type:ignore[valid-type]
+            annotation=Literal[component.type],  # type: ignore[valid-type]
             default=component.type,
         )
-        core_schema: DefinitionsSchema = component.__pydantic_core_schema__  # pyright:ignore[reportAssignmentType]
+        core_schema: DefinitionsSchema = component.__pydantic_core_schema__  # pyright: ignore[reportAssignmentType]
         schema = core_schema
         while "schema" in schema:
             schema = schema["schema"]
-        model_schema: ModelFieldsSchema = schema  # pyright:ignore[reportAssignmentType]
+        model_schema: ModelFieldsSchema = schema  # pyright: ignore[reportAssignmentType]
         model_schema["fields"]["type"] = ModelField(
             type="model-field",
             schema=LiteralSchema(
@@ -84,14 +84,14 @@ def gen_pipeline_schema() -> None:
             ),
         )
 
-    PipelineComponents = Union[tuple(components)]  # type: ignore[valid-type]
+    PipelineComponents = Union[tuple(components)]  # pyright: ignore[reportInvalidTypeArguments,reportGeneralTypeIssues]
     AnnotatedPipelineComponents = Annotated[
         PipelineComponents, Field(discriminator="type")
     ]
 
     class PipelineSchema(RootModel):
         root: Sequence[
-            AnnotatedPipelineComponents  # pyright:ignore[reportInvalidTypeForm]
+            AnnotatedPipelineComponents  # pyright: ignore[reportInvalidTypeForm]
         ]
 
     print_schema(PipelineSchema)
