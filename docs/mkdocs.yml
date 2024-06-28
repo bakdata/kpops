@@ -51,9 +51,8 @@ plugins:
             show_root_heading: true
             # The options below are not yet publicly available,
             # but would be a nice addition when released.
-            #show_inheritance_diagram: true
-            #modernize_annotations: true
-            #parameter_headings: true
+            #show_inheritance_diagram: true # https://mkdocstrings.github.io/python/usage/configuration/general/?h=show_inheri#show_inheritance_diagram
+            #modernize_annotations: true # https://mkdocstrings.github.io/python/usage/configuration/signatures/#modernize_annotations
 
 extra:
   version:
