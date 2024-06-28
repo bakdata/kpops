@@ -49,10 +49,11 @@ plugins:
             show_signature_annotations: true
             docstring_section_style: spacy
             show_root_heading: true
-            # TODO(Ivan Yortdanov): Uncomment when option becomes available
-            show_inheritance_diagram: true
-            modernize_annotations: true
-            parameter_headings: true
+            # The options below are not yet publicly available,
+            # but would be a nice addition when released.
+            #show_inheritance_diagram: true
+            #modernize_annotations: true
+            #parameter_headings: true
 
 extra:
   version:
