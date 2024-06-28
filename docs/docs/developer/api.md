@@ -3,11 +3,9 @@
 <!-- dprint-ignore-start -->
 
 ::: kpops.api
-
-<!-- dprint-ignore-end -->
-
-<!-- dprint-ignore-start -->
-
-::: kpops.pipeline.Pipeline
+    options:
+      filters:
+        - "!^setup_handlers$"
+        - "!^create_pipeline$"
 
 <!-- dprint-ignore-end -->
