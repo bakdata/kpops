@@ -8,5 +8,8 @@
         - "!^_"
 
 ::: kpops.pipeline.Pipeline
+    options:
+      filters:
+        - "!^_"
 
 <!-- dprint-ignore-end -->
