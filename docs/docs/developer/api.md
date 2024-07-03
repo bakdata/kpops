@@ -5,7 +5,6 @@
 ::: kpops.api
     options:
       filters:
-        - "!^setup_handlers$"
-        - "!^create_pipeline$"
+        - "!^_"
 
 <!-- dprint-ignore-end -->
