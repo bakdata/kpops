@@ -25,9 +25,6 @@ kafka_rest:
 kafka_connect:
   # Address of Kafka Connect.
   url: "http://localhost:8083"
-# The timeout in seconds that specifies when actions like deletion or deploy
-# timeout.
-timeout: 300
 # Flag for `helm upgrade --install`.
 # Create the release namespace if not present.
 create_namespace: false
