@@ -11,5 +11,6 @@
     options:
       filters:
         - "!^_"
+        - "!^model_config$"
 
 <!-- dprint-ignore-end -->
