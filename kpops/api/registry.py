@@ -13,11 +13,11 @@ from typing import TYPE_CHECKING, TypeVar
 
 from kpops.api.exception import ClassNotFoundError
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.const import KPOPS_MODULE
 
 if TYPE_CHECKING:
     from collections.abc import Iterator
 
-KPOPS_MODULE = "kpops."
 
 T = TypeVar("T")
 ClassDict = dict[str, type[T]]  # type -> class
