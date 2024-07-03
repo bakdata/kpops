@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://bakdata.github.io/kpops/dev/user/references/cli-commands/">
       
       
-        <link rel="prev" href="../../migration-guide/v6-v7/">
+        <link rel="prev" href="../../migration-guide/v5-v6/">
       
       
         <link rel="next" href="../editor-integration/">
@@ -44,6 +44,8 @@
         <style>:root{--md-text-font:"SF Pro";--md-code-font:"DejaVu Sans Mono"}</style>
       
     
+    
+      <link rel="stylesheet" href="../../../assets/_mkdocstrings.css">
     
       <link rel="stylesheet" href="../../../stylesheets/extra.css">
     
@@ -1165,8 +1167,6 @@
       
         
       
-        
-      
     
     
     
@@ -1288,26 +1288,6 @@
   
   <span class="md-ellipsis">
     Migrate from v5 to v6
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../migration-guide/v6-v7/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Migrate from v6 to v7
   </span>
   
 
@@ -1558,6 +1538,8 @@
       
         
       
+        
+      
     
     
     
@@ -1617,6 +1599,26 @@
   
   
     <li class="md-nav__item">
+      <a href="../../../developer/api/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    API
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../../../developer/contributing/" class="md-nav__link">
         
   
@@ -1653,10 +1655,10 @@
         
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_4" >
         
           
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3_4" id="__nav_3_4_label" tabindex="">
             
   
   <span class="md-ellipsis">
@@ -1667,8 +1669,8 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_4">
             <span class="md-nav__icon md-icon"></span>
             Code base
           </label>
@@ -1978,18 +1980,16 @@
 <li><code>SCOPE:{pipeline|defaults|config}</code>: 
         Scope of the generated schema<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>- pipeline: Schema of PipelineComponents for KPOps pipeline.yaml
+<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>pipeline: Schema of PipelineComponents. Includes the built-in KPOps components by default. To include custom components, provide components module in config.
 
-- defaults: Schema of PipelineComponents for KPOps defaults.yaml
-
-- config: Schema for KPOps config.yaml  [required]
+config: Schema of KpopsConfig.  [required]
 </code></pre></div></td></tr></table></div>
 </li>
 </ul>
 <p><strong>Options</strong>:</p>
 <ul>
+<li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
+<li><code>--include-stock-components / --no-include-stock-components</code>: Include the built-in KPOps components.  [default: include-stock-components]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 
