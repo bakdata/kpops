@@ -7,4 +7,6 @@
       filters:
         - "!^_"
 
+::: kpops.pipeline.Pipeline
+
 <!-- dprint-ignore-end -->
