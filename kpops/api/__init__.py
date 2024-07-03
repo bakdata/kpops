@@ -54,7 +54,7 @@ def generate(
         environment,
         verbose,
     )
-    pipeline = create_pipeline(pipeline_path, kpops_config, environment)
+    pipeline = _create_pipeline(pipeline_path, kpops_config, environment)
     log.info(f"Picked up pipeline '{pipeline_path.parent.name}'")
     if steps:
         component_names = steps
@@ -320,7 +320,7 @@ def init(
     init_project(path, config_include_opt)
 
 
-def create_pipeline(
+def _create_pipeline(
     pipeline_path: Path,
     kpops_config: KpopsConfig,
     environment: str | None,
@@ -337,12 +337,12 @@ def create_pipeline(
         registry.find_components(kpops_config.components_module)
     registry.find_components("kpops.components")
 
-    handlers = setup_handlers(kpops_config)
+    handlers = _setup_handlers(kpops_config)
     parser = PipelineGenerator(kpops_config, registry, handlers)
     return parser.load_yaml(pipeline_path, environment)
 
 
-def setup_handlers(config: KpopsConfig) -> ComponentHandlers:
+def _setup_handlers(config: KpopsConfig) -> ComponentHandlers:
     """Set up handlers for a component.
 
     :param config: KPOps config.
