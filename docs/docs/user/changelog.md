@@ -1,4 +1,20 @@
 # Changelog
+## [6.0.2](https://github.com/bakdata/kpops/releases/tag/6.0.2) - Release Date: [2024-07-04]
+
+### 📝 Documentation
+
+- Generate developer docs for Python API - [#503](https://github.com/bakdata/kpops/pull/503)
+
+
+### 🌀 Miscellaneous
+
+- Update codeowners - [#504](https://github.com/bakdata/kpops/pull/504)
+
+
+
+
+
+
 ## [6.0.1](https://github.com/bakdata/kpops/releases/tag/6.0.1) - Release Date: [2024-06-12]
 
 ### 🐛 Fixes
