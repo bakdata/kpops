@@ -590,6 +590,7 @@
             "properties": {
                 "imageTag": {
                     "default": "latest",
+                    "description": "Docker image tag of the Kafka Streams app.",
                     "title": "Imagetag",
                     "type": "string"
                 },
@@ -948,6 +949,7 @@
                 },
                 "imageTag": {
                     "default": "latest",
+                    "description": "Docker image tag of the Kafka Streams app.",
                     "title": "Imagetag",
                     "type": "string"
                 },

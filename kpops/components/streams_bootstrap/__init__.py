@@ -25,7 +25,9 @@ class StreamsBootstrapValues(HelmAppValues):
     :param image_tag: Docker image tag of the Kafka Streams app.
     """
 
-    image_tag: str = Field(default="latest")
+    image_tag: str = Field(
+        default="latest", description=describe_attr("image_tag", __doc__)
+    )
 
     @pydantic.field_validator("image_tag", mode="before")
     @classmethod
@@ -58,11 +60,8 @@ class StreamsBootstrap(HelmApp, ABC):
 
     @pydantic.model_validator(mode="after")
     def warning_for_latest_image_tag(self) -> Self:
-        if self.app.image_tag == "latest" and self.is_substituted():
+        if self.validate_ and self.app.image_tag == "latest":
             log.warning(
-                f"The imageTag for component '{self.name}' is not set and defaults to 'latest'. Please, consider providing a stable imageTag."
+                f"The imageTag for component '{self.name}' is set or defaulted to 'latest'. Please, consider providing a stable imageTag."
             )
         return self
-
-    def is_substituted(self):
-        return "$" not in self.name
