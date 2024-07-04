@@ -923,6 +923,7 @@
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
                     "title": "Imagetag",
                     "type": "string"
                 },
@@ -1282,6 +1283,7 @@
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
                     "title": "Imagetag",
                     "type": "string"
                 },
@@ -1433,6 +1435,7 @@
                 "imageTag": {
                     "default": "latest",
                     "description": "Docker image tag of the streams-bootstrap app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
                     "title": "Imagetag",
                     "type": "string"
                 },

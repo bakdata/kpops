@@ -1,9 +1,9 @@
 import hashlib
 import logging
-import re
 
 log = logging.getLogger("K8sUtils")
 
+# Source of the pattern: https://kubernetes.io/docs/concepts/containers/images/#image-names
 IMAGE_TAG_PATTERN = r"^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$"
 
 
@@ -29,12 +29,3 @@ def trim(max_len: int, name: str, suffix: str) -> str:
         )
         return new_name
     return name
-
-
-def is_valid_image_tag(image_tag: str) -> bool:
-    """Check if the image tag is valid according to the specified regex pattern.
-
-    Image tags consist of lowercase and uppercase letters, digits, underscores (_), periods (.), and dashes (-).
-    It can be up to 128 characters long and must follow the regex pattern: [a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}
-    """
-    return bool(re.match(IMAGE_TAG_PATTERN, image_tag))

@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pydantic
 from pydantic import Field
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.component_handlers.kubernetes.utils import (
-    is_valid_image_tag,
+    IMAGE_TAG_PATTERN,
 )
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.utils.docstring import describe_attr
@@ -19,7 +19,6 @@ if TYPE_CHECKING:
         from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
     except ImportError:
         from typing_extensions import Self
-
 
 STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     repository_name="bakdata-streams-bootstrap",
@@ -37,20 +36,10 @@ class StreamsBootstrapValues(HelmAppValues):
     """
 
     image_tag: str = Field(
-        default="latest", description=describe_attr("image_tag", __doc__)
+        default="latest",
+        pattern=IMAGE_TAG_PATTERN,
+        description=describe_attr("image_tag", __doc__),
     )
-
-    @pydantic.field_validator("image_tag", mode="before")
-    @classmethod
-    def validate_image_tag_field(cls, image_tag: Any) -> str:
-        if not (isinstance(image_tag, str) and is_valid_image_tag(image_tag)):
-            msg = (
-                "Image tag is not valid. "
-                "Image tags consist of lowercase and uppercase letters, digits, underscores (_), periods (.), and dashes (-). "
-                "It can be up to 128 characters long."
-            )
-            raise pydantic.ValidationError(msg)
-        return image_tag
 
 
 class StreamsBootstrap(HelmApp, ABC):
