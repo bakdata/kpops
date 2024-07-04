@@ -15,7 +15,7 @@ MAX_LENGTH = 128
         "v" * MAX_LENGTH,
     ],
 )
-def test_validate_image_tag_valid(tag):
+def test_validate_image_tag_valid(tag: str):
     assert is_valid_image_tag(tag) is True
 
 
@@ -29,5 +29,5 @@ def test_validate_image_tag_valid(tag):
         "@invalid",
     ],
 )
-def test_if_image_tag_is_invalid(tag):
+def test_if_image_tag_is_invalid(tag: str):
     assert is_valid_image_tag(tag) is False
