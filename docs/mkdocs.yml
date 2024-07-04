@@ -37,6 +37,22 @@ plugins:
       exclude:
         - resources/*
   - glightbox
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [..]
+          options:
+            docstring_style: sphinx
+            show_if_no_docstring: true
+            line_length: 60
+            separate_signature: true
+            show_signature_annotations: true
+            docstring_section_style: spacy
+            show_root_heading: true
+            # The options below are not yet publicly available,
+            # but would be a nice addition when released.
+            #show_inheritance_diagram: true # https://mkdocstrings.github.io/python/usage/configuration/general/?h=show_inheri#show_inheritance_diagram
+            #modernize_annotations: true # https://mkdocstrings.github.io/python/usage/configuration/signatures/#modernize_annotations
 
 extra:
   version:
@@ -120,6 +136,7 @@ nav:
               - GitHub Actions: user/references/ci-integration/github-actions.md
   - Developer Guide:
       - Getting Started: developer/getting-started.md
+      - API: developer/api.md
       - Contributing: developer/contributing.md
       - Code base:
           - Auto generation: developer/auto-generation.md
