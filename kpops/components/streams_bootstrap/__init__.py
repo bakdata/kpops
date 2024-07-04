@@ -1,7 +1,11 @@
 import logging
 from abc import ABC
-from typing import Any, Self
+from typing import Any
 
+try:
+    from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
+except ImportError:
+    from typing_extensions import Self
 import pydantic
 from pydantic import Field
 
