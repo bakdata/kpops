@@ -48,6 +48,7 @@ class TestStreamsBootstrap:
         )
         assert streams_bootstrap.version == "2.9.0"
         assert streams_bootstrap.namespace == "test-namespace"
+        assert streams_bootstrap.app.image_tag == "latest"
 
     @pytest.mark.asyncio()
     async def test_should_deploy_streams_bootstrap_app(
@@ -63,6 +64,7 @@ class TestStreamsBootstrap:
             **{
                 "namespace": "test-namespace",
                 "app": {
+                    "imageTag": "1.0.0",
                     "streams": {
                         "outputTopic": "test",
                         "brokers": "fake-broker:9092",
@@ -94,6 +96,7 @@ class TestStreamsBootstrap:
             "test-namespace",
             {
                 "nameOverride": "${pipeline.name}-example-name",
+                "imageTag": "1.0.0",
                 "streams": {
                     "brokers": "fake-broker:9092",
                     "outputTopic": "test",

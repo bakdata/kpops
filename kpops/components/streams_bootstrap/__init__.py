@@ -62,6 +62,6 @@ class StreamsBootstrap(HelmApp, ABC):
     def warning_for_latest_image_tag(self) -> Self:
         if self.validate_ and self.app.image_tag == "latest":
             log.warning(
-                f"The imageTag for component '{self.name}' is set or defaulted to 'latest'. Please, consider providing a stable imageTag."
+                f"The image tag for component '{self.name}' is set or defaulted to 'latest'. Please, consider providing a stable image tag."
             )
         return self
