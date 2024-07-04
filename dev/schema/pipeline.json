@@ -588,6 +588,12 @@
             "additionalProperties": true,
             "description": "Settings specific to producers.",
             "properties": {
+                "imageTag": {
+                    "default": "latest",
+                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
                 "nameOverride": {
                     "anyOf": [
                         {
@@ -940,6 +946,12 @@
                     ],
                     "default": null,
                     "description": "Kubernetes event-driven autoscaling config"
+                },
+                "imageTag": {
+                    "default": "latest",
+                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "title": "Imagetag",
+                    "type": "string"
                 },
                 "nameOverride": {
                     "anyOf": [
