@@ -142,7 +142,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: word-count-redis-sink-connector
       connectorType: sink
-      imageTag: latest
     name: redis-sink-connector
     namespace: ${NAMESPACE}
     prefix: word-count-

@@ -255,7 +255,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-pipeline-with-inflate-should-inflate-inflated-sink-connector
       connectorType: sink
-      imageTag: latest
     name: should-inflate-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-pipeline-with-inflate-

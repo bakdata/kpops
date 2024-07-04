@@ -1,9 +1,4 @@
-import pytest
-
-from kpops.api.exception import ValidationError
-from kpops.component_handlers.kubernetes.utils import (
-    validate_image_tag,
-)
+from kpops.component_handlers.kubernetes.utils import is_valid_image_tag
 
 MAX_LENGTH = 128
 
@@ -17,7 +12,7 @@ def test_validate_image_tag_valid():
         "v" * MAX_LENGTH,
     ]
     for tag in valid_tags:
-        validate_image_tag(tag)
+        assert is_valid_image_tag(tag) is True
 
 
 def test_if_image_tag_is_invalid():
@@ -27,11 +22,6 @@ def test_if_image_tag_is_invalid():
         " " * (MAX_LENGTH + 1),
         "a" * (MAX_LENGTH + 1),
         "@invalid",
-        None,
-        123,
-        {},
-        [],
     ]
     for tag in invalid_tags:
-        with pytest.raises(ValidationError):
-            validate_image_tag(tag)
+        assert is_valid_image_tag(tag) is False

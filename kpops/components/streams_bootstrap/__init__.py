@@ -8,7 +8,9 @@ import pydantic
 from pydantic import Field
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
-from kpops.component_handlers.kubernetes.utils import validate_image_tag
+from kpops.component_handlers.kubernetes.utils import (
+    is_valid_image_tag,
+)
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.utils.docstring import describe_attr
 
@@ -41,7 +43,13 @@ class StreamsBootstrapValues(HelmAppValues):
     @pydantic.field_validator("image_tag", mode="before")
     @classmethod
     def validate_image_tag_field(cls, image_tag: Any) -> str:
-        validate_image_tag(image_tag)
+        if not (isinstance(image_tag, str) and is_valid_image_tag(image_tag)):
+            msg = (
+                "Image tag is not valid. "
+                "Image tags consist of lowercase and uppercase letters, digits, underscores (_), periods (.), and dashes (-). "
+                "It can be up to 128 characters long."
+            )
+            raise pydantic.ValidationError(msg)
         return image_tag
 
 

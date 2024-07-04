@@ -393,7 +393,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: atm-fraud-postgresql-connector
       connectorType: sink
-      imageTag: latest
     name: postgresql-connector
     namespace: ${NAMESPACE}
     prefix: atm-fraud-

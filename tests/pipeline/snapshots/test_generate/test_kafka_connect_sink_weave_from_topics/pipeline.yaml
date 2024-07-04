@@ -73,7 +73,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-kafka-connect-sink-es-sink-connector
       connectorType: sink
-      imageTag: latest
     name: es-sink-connector
     namespace: example-namespace
     prefix: resources-kafka-connect-sink-

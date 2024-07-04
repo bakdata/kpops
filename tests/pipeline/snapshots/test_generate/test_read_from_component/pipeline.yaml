@@ -172,7 +172,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-read-from-component-inflate-step-inflated-sink-connector
       connectorType: sink
-      imageTag: latest
     name: inflate-step-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -367,7 +366,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector
       connectorType: sink
-      imageTag: latest
     name: inflate-step-without-prefix-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-read-from-component-

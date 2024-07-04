@@ -73,7 +73,6 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         connector: resources-pipeline-with-env-defaults-es-sink-connector
       connectorType: sink
-      imageTag: latest
     name: es-sink-connector
     namespace: development-namespace
     prefix: resources-pipeline-with-env-defaults-

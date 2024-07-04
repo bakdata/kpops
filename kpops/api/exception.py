@@ -11,8 +11,3 @@ class ParsingException(Exception):
 
 class ClassNotFoundError(Exception):
     """Similar to builtin `ModuleNotFoundError`; class doesn't exist inside module."""
-
-
-class InvalidImageTagError(ValidationError):
-    def __init__(self, *args):
-        super().__init__(*args)
