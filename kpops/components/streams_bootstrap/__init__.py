@@ -2,10 +2,6 @@ import logging
 from abc import ABC
 from typing import Any
 
-try:
-    from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
-except ImportError:
-    from typing_extensions import Self
 import pydantic
 from pydantic import Field
 
@@ -13,6 +9,12 @@ from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.component_handlers.kubernetes.utils import validate_image_tag
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.utils.docstring import describe_attr
+
+try:
+    from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
+except ImportError:
+    from typing_extensions import Self
+
 
 STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     repository_name="bakdata-streams-bootstrap",
