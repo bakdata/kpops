@@ -1,20 +1,37 @@
 import pytest
 
 from kpops.api.exception import ValidationError
-from kpops.component_handlers.kubernetes.utils import validate_image_tag
+from kpops.component_handlers.kubernetes.utils import (
+    validate_image_tag,
+)
+
+MAX_LENGTH = 128
 
 
-def test_is_valid_image_tag():
-    assert validate_image_tag("1.2.3") == "1.2.3"
-    assert validate_image_tag("123") == "123"
-    assert validate_image_tag("1_2_3") == "1_2_3"
-    assert validate_image_tag("1-2-3") == "1-2-3"
-    assert validate_image_tag("latest") == "latest"
-    assert (
-        validate_image_tag(
-            "1ff6c18fbef2045af6b9c16bf034cc421a29027b800e4f9b68ae9b1cb3e9ae07"
-        )
-        == "1ff6c18fbef2045af6b9c16bf034cc421a29027b800e4f9b68ae9b1cb3e9ae07"
-    )
-    with pytest.raises(ValidationError):
-        assert validate_image_tag("la!est") is False
+def test_validate_image_tag_valid():
+    valid_tags = [
+        "valid-tag",
+        "VALID_TAG",
+        "valid.tag",
+        "valid-tag_123",
+        "v" * MAX_LENGTH,
+    ]
+    for tag in valid_tags:
+        validate_image_tag(tag)
+
+
+def test_if_image_tag_is_invalid():
+    invalid_tags = [
+        "invalid tag!",
+        "",
+        " " * (MAX_LENGTH + 1),
+        "a" * (MAX_LENGTH + 1),
+        "@invalid",
+        None,
+        123,
+        {},
+        [],
+    ]
+    for tag in invalid_tags:
+        with pytest.raises(ValidationError):
+            validate_image_tag(tag)

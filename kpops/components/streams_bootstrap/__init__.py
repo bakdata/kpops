@@ -1,6 +1,8 @@
+from __future__ import annotations
+
 import logging
 from abc import ABC
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import pydantic
 from pydantic import Field
@@ -10,10 +12,11 @@ from kpops.component_handlers.kubernetes.utils import validate_image_tag
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.utils.docstring import describe_attr
 
-try:
-    from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
-except ImportError:
-    from typing_extensions import Self
+if TYPE_CHECKING:
+    try:
+        from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
+    except ImportError:
+        from typing_extensions import Self
 
 
 STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
@@ -28,7 +31,7 @@ log = logging.getLogger("StreamsBootstrap")
 class StreamsBootstrapValues(HelmAppValues):
     """Base value class for all streams bootstrap related components.
 
-    :param image_tag: Docker image tag of the Kafka Streams app.
+    :param image_tag: Docker image tag of the streams-bootstrap app.
     """
 
     image_tag: str = Field(
@@ -38,7 +41,8 @@ class StreamsBootstrapValues(HelmAppValues):
     @pydantic.field_validator("image_tag", mode="before")
     @classmethod
     def validate_image_tag_field(cls, image_tag: Any) -> str:
-        return validate_image_tag(image_tag)
+        validate_image_tag(image_tag)
+        return image_tag
 
 
 class StreamsBootstrap(HelmApp, ABC):

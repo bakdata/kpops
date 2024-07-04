@@ -1,10 +1,13 @@
 import hashlib
 import logging
 import re
+from typing import Any
 
 from kpops.api.exception import ValidationError
 
 log = logging.getLogger("K8sUtils")
+
+IMAGE_TAG_PATTERN = r"^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$"
 
 
 def trim(max_len: int, name: str, suffix: str) -> str:
@@ -31,25 +34,23 @@ def trim(max_len: int, name: str, suffix: str) -> str:
     return name
 
 
-def validate_image_tag(image_tag: str) -> str:
+def validate_image_tag(image_tag: Any) -> None:
     """Validate an image tag.
 
     Image tags consist of lowercase and uppercase letters, digits, underscores (_), periods (.), and dashes (-).
     It can be up to 128 characters long and must follow the regex pattern: [a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}
 
     :param image_tag: Docker image tag to be validated.
-    :return: The validated image tag.
     """
-    if isinstance(image_tag, str) and is_valid_image_tag(image_tag):
-        return image_tag
-    msg = (
-        "Image tag is not valid. "
-        "Image tags consist of lowercase and uppercase letters, digits, underscores (_), periods (.), and dashes (-). "
-        "It can be up to 128 characters long."
-    )
-    raise ValidationError(msg)
+    if not (isinstance(image_tag, str) and is_valid_image_tag(image_tag)):
+        msg = (
+            "Image tag is not valid. "
+            "Image tags consist of lowercase and uppercase letters, digits, underscores (_), periods (.), and dashes (-). "
+            "It can be up to 128 characters long."
+        )
+        raise ValidationError(msg)
 
 
 def is_valid_image_tag(image_tag: str) -> bool:
-    pattern = r"^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$"
-    return bool(re.match(pattern, image_tag))
+    """Check if the image tag is valid according to the specified regex pattern."""
+    return bool(re.match(IMAGE_TAG_PATTERN, image_tag))

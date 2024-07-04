@@ -130,4 +130,5 @@ class KafkaConnectorResetterValues(HelmAppValues):
     @pydantic.field_validator("image_tag", mode="before")
     @classmethod
     def validate_image_tag_field(cls, image_tag: Any) -> str:
-        return validate_image_tag(image_tag)
+        validate_image_tag(image_tag)
+        return image_tag
