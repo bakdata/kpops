@@ -181,7 +181,7 @@ class HelmApp(KubernetesApp):
             log.info(magentaify(stdout))
 
     def to_helm_values(self) -> dict[str, Any]:
-        """Generate a dictionary of values readable by Helm from `self.app`.
+        """Generate a dictionary of values readable by Helm from `self.values`.
 
         :returns: The values to be used by Helm
         """
