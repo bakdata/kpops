@@ -44,9 +44,7 @@
     models: # SchemaProvider is initiated with the values given here
       model: model
   namespace: namespace # required
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example.
-  app: # required
+  values: # required
     image: exampleImage # Example
     debug: false # Example
     commandLine: {} # Example
