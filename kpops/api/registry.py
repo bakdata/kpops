@@ -11,6 +11,8 @@ from pathlib import Path
 from types import ModuleType
 from typing import TYPE_CHECKING, TypeVar
 
+import typer
+
 from kpops.api.exception import ClassNotFoundError
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.const import KPOPS_MODULE
@@ -69,14 +71,10 @@ def find_class(modules: Iterable[ModuleType], base: type[T]) -> type[T]:
 
 def import_module(module_name: str) -> ModuleType:
     module = importlib.import_module(module_name)
-    # TODO: remove? unnecessary now
-    if module.__file__ and not module_name.startswith(KPOPS_MODULE):
-        file_path = Path(module.__file__)
-        try:
-            rel_path = file_path.relative_to(Path.cwd())
-            log.debug(f"Picked up: {rel_path}")
-        except ValueError:
-            log.debug(f"Picked up: {file_path}")
+    if module.__file__:
+        log.debug(
+            f"Loading {typer.style(module.__name__,bold=True)} ({module.__file__})"
+        )
     return module
 
 
