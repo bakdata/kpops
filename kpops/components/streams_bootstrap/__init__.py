@@ -45,7 +45,7 @@ class StreamsBootstrapValues(HelmAppValues):
 class StreamsBootstrap(HelmApp, ABC):
     """Base for components with a streams-bootstrap Helm chart.
 
-    :param app: Streams bootstrap app values
+    :param app: streams-bootstrap app values
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to streams-bootstrap Helm repo
     :param version: Helm chart version, defaults to "2.9.0"
