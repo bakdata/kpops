@@ -11,10 +11,10 @@ from typer.testing import CliRunner
 
 import kpops.api as kpops
 from kpops.api.exception import ParsingException, ValidationError
-from kpops.api.file_type import PIPELINE_YAML, KpopsFileType
 from kpops.cli.main import FilterType, app
 from kpops.components.base_components.kafka_connector import KafkaSinkConnector
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.const.file_type import PIPELINE_YAML, KpopsFileType
 
 runner = CliRunner()
 

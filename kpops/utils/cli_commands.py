@@ -6,8 +6,8 @@ from pydantic import BaseModel
 from pydantic.fields import FieldInfo
 from pydantic_core import PydanticUndefined
 
-from kpops.api.file_type import KpopsFileType
 from kpops.config import KpopsConfig
+from kpops.const.file_type import KpopsFileType
 from kpops.utils.docstring import describe_object
 from kpops.utils.json import is_jsonable
 from kpops.utils.pydantic import collect_fields, issubclass_patched

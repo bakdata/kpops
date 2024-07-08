@@ -2,7 +2,7 @@ from pathlib import Path
 
 import pytest
 
-from kpops.api.file_type import KpopsFileType
+from kpops.const.file_type import KpopsFileType
 from kpops.pipeline import PipelineGenerator
 from kpops.utils.environment import ENV
 

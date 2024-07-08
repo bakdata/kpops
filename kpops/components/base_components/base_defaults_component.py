@@ -20,9 +20,9 @@ from pydantic import (
 )
 from pydantic.json_schema import SkipJsonSchema
 
-from kpops.api.file_type import KpopsFileType
 from kpops.component_handlers import ComponentHandlers
 from kpops.config import KpopsConfig
+from kpops.const.file_type import KpopsFileType
 from kpops.utils import cached_classproperty
 from kpops.utils.dict_ops import (
     generate_substitution,

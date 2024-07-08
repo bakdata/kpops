@@ -5,7 +5,7 @@ from io import StringIO
 from pathlib import Path
 
 from hooks import ROOT
-from kpops.api.file_type import KpopsFileType
+from kpops.const.file_type import KpopsFileType
 from kpops.utils.gen_schema import (
     gen_config_schema,
     gen_defaults_schema,

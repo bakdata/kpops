@@ -6,13 +6,13 @@ from unittest.mock import MagicMock
 import pydantic
 import pytest
 
-from kpops.api.file_type import DEFAULTS_YAML, PIPELINE_YAML, KpopsFileType
 from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
     get_defaults_file_paths,
 )
 from kpops.config import KpopsConfig
+from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML, KpopsFileType
 from kpops.pipeline import PIPELINE_PATH
 from kpops.utils.environment import ENV
 from tests.components import PIPELINE_BASE_DIR, RESOURCES_PATH
