@@ -260,7 +260,7 @@ def fill_csv_pipeline_config(target: Path) -> None:
         strict=True,
     ):
         with suppress(KeyError):  # In case the prefix is ever removed from KpopsConfig
-            env_var_name = KpopsConfig.model_config["env_prefix"] + env_var_name
+            env_var_name = KpopsConfig.model_config["env_prefix"] + env_var_name  # pyright: ignore[reportTypedDictNotRequiredAccess]
         field_description: str = (
             field_value.description
             or "No description available, please refer to the pipeline config documentation."

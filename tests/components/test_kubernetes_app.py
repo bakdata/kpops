@@ -58,10 +58,10 @@ class TestKubernetesApp:
         app_values: KubernetesTestValues,
     ) -> KubernetesApp:
         return KubernetesApp(
+            _config=config,
+            _handlers=handlers,
             name="test-kubernetes-app",
-            config=config,
-            handlers=handlers,
-            app=app_values,
+            values=app_values,
             namespace="test-namespace",
         )
 
@@ -75,10 +75,10 @@ class TestKubernetesApp:
             ValueError, match=r"The component name .* is invalid for Kubernetes."
         ):
             KubernetesApp(
+                _config=config,
+                _handlers=handlers,
                 name="Not-Compatible*",
-                config=config,
-                handlers=handlers,
-                app=app_values,
+                values=app_values,
                 namespace="test-namespace",
             )
 
@@ -86,17 +86,17 @@ class TestKubernetesApp:
             ValueError, match=r"The component name .* is invalid for Kubernetes."
         ):
             KubernetesApp(
+                _config=config,
+                _handlers=handlers,
                 name="snake_case*",
-                config=config,
-                handlers=handlers,
-                app=app_values,
+                values=app_values,
                 namespace="test-namespace",
             )
 
         assert KubernetesApp(
+            _config=config,
+            _handlers=handlers,
             name="valid-name",
-            config=config,
-            handlers=handlers,
-            app=app_values,
+            values=app_values,
             namespace="test-namespace",
         )

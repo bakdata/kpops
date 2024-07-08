@@ -24,7 +24,7 @@ log = logging.getLogger("StreamsApp")
 class StreamsAppCleaner(KafkaAppCleaner):
     from_: None = None
     to: None = None
-    app: StreamsAppValues
+    values: StreamsAppValues
 
     @property
     @override
@@ -34,7 +34,7 @@ class StreamsAppCleaner(KafkaAppCleaner):
     @override
     async def clean(self, dry_run: bool) -> None:
         await super().clean(dry_run)
-        if self.app.stateful_set and self.app.persistence.enabled:
+        if self.values.stateful_set and self.values.persistence.enabled:
             await self.clean_pvcs(dry_run)
 
     async def clean_pvcs(self, dry_run: bool) -> None:
@@ -51,70 +51,70 @@ class StreamsAppCleaner(KafkaAppCleaner):
 class StreamsApp(KafkaApp, StreamsBootstrap):
     """StreamsApp component that configures a streams-bootstrap app.
 
-    :param app: Application-specific settings
+    :param values: streams-bootstrap Helm values
     """
 
-    app: StreamsAppValues = Field(
+    values: StreamsAppValues = Field(
         default=...,
-        description=describe_attr("app", __doc__),
+        description=describe_attr("values", __doc__),
     )
 
     @computed_field
     @cached_property
     def _cleaner(self) -> StreamsAppCleaner:
         return StreamsAppCleaner(
-            config=self.config,
-            handlers=self.handlers,
+            _config=self._config,
+            _handlers=self._handlers,
             **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"}),
         )
 
     @property
     @override
     def input_topics(self) -> list[KafkaTopic]:
-        return self.app.streams.input_topics
+        return self.values.streams.input_topics
 
     @property
     @override
     def extra_input_topics(self) -> dict[str, list[KafkaTopic]]:
-        return self.app.streams.extra_input_topics
+        return self.values.streams.extra_input_topics
 
     @property
     @override
     def output_topic(self) -> KafkaTopic | None:
-        return self.app.streams.output_topic
+        return self.values.streams.output_topic
 
     @property
     @override
     def extra_output_topics(self) -> dict[str, KafkaTopic]:
-        return self.app.streams.extra_output_topics
+        return self.values.streams.extra_output_topics
 
     @override
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:
-        self.app.streams.add_input_topics(topics)
+        self.values.streams.add_input_topics(topics)
 
     @override
     def add_extra_input_topics(self, role: str, topics: list[KafkaTopic]) -> None:
-        self.app.streams.add_extra_input_topics(role, topics)
+        self.values.streams.add_extra_input_topics(role, topics)
 
     @override
     def set_input_pattern(self, name: str) -> None:
-        self.app.streams.input_pattern = name
+        self.values.streams.input_pattern = name
 
     @override
     def add_extra_input_pattern(self, role: str, topic: str) -> None:
-        self.app.streams.extra_input_patterns[role] = topic
+        self.values.streams.extra_input_patterns[role] = topic
 
     @override
     def set_output_topic(self, topic: KafkaTopic) -> None:
-        self.app.streams.output_topic = topic
+        self.values.streams.output_topic = topic
 
     @override
     def set_error_topic(self, topic: KafkaTopic) -> None:
-        self.app.streams.error_topic = topic
+        self.values.streams.error_topic = topic
 
     @override
     def add_extra_output_topic(self, topic: KafkaTopic, role: str) -> None:
-        self.app.streams.extra_output_topics[role] = topic
+        self.values.streams.extra_output_topics[role] = topic
 
     @property
     @override
@@ -123,10 +123,10 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        self._cleaner.app.streams.delete_output = False
+        self._cleaner.values.streams.delete_output = False
         await self._cleaner.clean(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        self._cleaner.app.streams.delete_output = True
+        self._cleaner.values.streams.delete_output = True
         await self._cleaner.clean(dry_run)

@@ -64,10 +64,10 @@ class TestHelmApp:
         repo_config: HelmRepoConfig,
     ) -> HelmApp:
         return HelmApp(
+            _config=config,
+            _handlers=handlers,
             name="test-helm-app",
-            config=config,
-            handlers=handlers,
-            app=app_values,
+            values=app_values,
             namespace="test-namespace",
             repo_config=repo_config,
         )
@@ -115,10 +115,10 @@ class TestHelmApp:
             repository_name="test-repo", url="https://test.com/charts/"
         )
         helm_app = HelmApp(
+            _config=config,
+            _handlers=handlers,
             name="test-helm-app",
-            config=config,
-            handlers=handlers,
-            app=app_values,
+            values=app_values,
             namespace="test-namespace",
             repo_config=repo_config,
             version="3.4.5",
@@ -169,10 +169,10 @@ class TestHelmApp:
                 return "path/to/helm/charts/"
 
         app_with_local_chart = AppWithLocalChart(
+            _config=config,
+            _handlers=handlers,
             name="test-app-with-local-chart",
-            config=config,
-            handlers=handlers,
-            app=app_values,
+            values=app_values,
             namespace="test-namespace",
         )
 
@@ -231,11 +231,11 @@ class TestHelmApp:
         repo_config: HelmRepoConfig,
     ):
         helm_app = HelmApp(
+            _config=config,
+            _handlers=handlers,
             prefix="test-pipeline-prefix-with-a-long-name-",
             name="helm-app-name-is-very-long-as-well",
-            config=config,
-            handlers=handlers,
-            app=HelmAppValues(),
+            values=HelmAppValues(),
             namespace="test-namespace",
             repo_config=repo_config,
         )

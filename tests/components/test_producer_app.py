@@ -60,13 +60,13 @@ class TestProducerApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> ProducerApp:
         return ProducerApp(
+            _config=config,
+            _handlers=handlers,
             name=PRODUCER_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "version": "2.4.2",
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "clean_schemas": True,
@@ -86,7 +86,7 @@ class TestProducerApp:
         assert not hasattr(cleaner, "_cleaner")
 
     def test_cleaner_inheritance(self, producer_app: ProducerApp):
-        assert producer_app._cleaner.app == producer_app.app
+        assert producer_app._cleaner.values == producer_app.values
 
     def test_cleaner_helm_release_name(self, producer_app: ProducerApp):
         assert (
@@ -102,12 +102,12 @@ class TestProducerApp:
 
     def test_output_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
+            _config=config,
+            _handlers=handlers,
             name=PRODUCER_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
@@ -125,10 +125,10 @@ class TestProducerApp:
             },
         )
 
-        assert producer_app.app.streams.output_topic == KafkaTopic(
+        assert producer_app.values.streams.output_topic == KafkaTopic(
             name="producer-app-output-topic"
         )
-        assert producer_app.app.streams.extra_output_topics == {
+        assert producer_app.values.streams.extra_output_topics == {
             "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
 
@@ -139,7 +139,7 @@ class TestProducerApp:
         mocker: MockerFixture,
     ):
         mock_create_topic = mocker.patch.object(
-            producer_app.handlers.topic_handler, "create_topic"
+            producer_app._handlers.topic_handler, "create_topic"
         )
 
         mock_helm_upgrade_install = mocker.patch.object(
@@ -318,12 +318,12 @@ class TestProducerApp:
         handlers: ComponentHandlers,
     ):
         producer_app = ProducerApp(
+            _config=config,
+            _handlers=handlers,
             name="my-producer",
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
@@ -340,10 +340,10 @@ class TestProducerApp:
                 },
             },
         )
-        assert producer_app.app.streams.output_topic == KafkaTopic(
+        assert producer_app.values.streams.output_topic == KafkaTopic(
             name="producer-app-output-topic"
         )
-        assert producer_app.app.streams.extra_output_topics == {
+        assert producer_app.values.streams.extra_output_topics == {
             "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
         assert producer_app.input_topics == []

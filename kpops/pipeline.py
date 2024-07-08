@@ -306,8 +306,8 @@ class PipelineGenerator:
         :param component_data: Arguments for instantiation of pipeline component
         """
         component = component_class(
-            config=self.config,
-            handlers=self.handlers,
+            _config=self.config,
+            _handlers=self.handlers,
             **component_data,
         )
         component = self.enrich_component_with_env(component)
@@ -350,8 +350,8 @@ class PipelineGenerator:
         )
 
         return component.__class__(
-            config=self.config,
-            handlers=self.handlers,
+            _config=self.config,
+            _handlers=self.handlers,
             **env_component_as_dict,
         )
 

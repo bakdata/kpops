@@ -1,6 +1,6 @@
 - type: filter
   name: "a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name-a-long-name"
-  app:
+  values:
     commandLine:
       TYPE: "nothing"
     resources:

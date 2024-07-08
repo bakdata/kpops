@@ -40,10 +40,10 @@ class ShouldInflate(StreamsApp):
             for topic_name, topic_config in self.to.topics.items():
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
+                        _config=self._config,
+                        _handlers=self._handlers,
                         name=f"{self.name}-inflated-sink-connector",
-                        config=self.config,
-                        handlers=self.handlers,
-                        app={  # type: ignore[reportGeneralTypeIssues], required `connector.class` comes from defaults during enrichment
+                        config={  # type: ignore[reportGeneralTypeIssues], required `connector.class` comes from defaults during enrichment
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },
@@ -60,9 +60,9 @@ class ShouldInflate(StreamsApp):
                     )
                     inflate_steps.append(kafka_connector)
                     streams_app = StreamsApp(
+                        _config=self._config,
+                        _handlers=self._handlers,
                         name=f"{self.name}-inflated-streams-app",
-                        config=self.config,
-                        handlers=self.handlers,
                         to=ToSection(  # type: ignore[reportGeneralTypeIssues]
                             topics={
                                 TopicName(
@@ -95,9 +95,9 @@ class TestSchemaProvider(SchemaProvider):
 class SimpleInflateConnectors(StreamsApp):
     def inflate(self) -> list[PipelineComponent]:
         connector = KafkaSinkConnector(
+            _config=self._config,
+            _handlers=self._handlers,
             name="inflated-connector-name",
-            config=self.config,
-            handlers=self.handlers,
-            app={},  # type: ignore[reportArgumentType]
+            config={},  # type: ignore[reportArgumentType]
         )
         return [self, connector]

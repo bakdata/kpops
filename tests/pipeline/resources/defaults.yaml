@@ -5,7 +5,7 @@ kubernetes-app:
   namespace: example-namespace
 
 kafka-app:
-  app:
+  values:
     streams:
       brokers: ${config.kafka_brokers}
       schemaRegistryUrl: ${config.schema_registry.url}
@@ -14,7 +14,7 @@ kafka-app:
 producer-app: {} # inherits from kafka-app
 
 streams-app: # inherits from kafka-app
-  app:
+  values:
     streams:
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
@@ -28,7 +28,7 @@ streams-app: # inherits from kafka-app
           cleanup.policy: compact,delete
 
 scheduled-producer:
-  app:
+  values:
     image: "example-registry/fake-image"
     imageTag: "0.0.1"
   to:
@@ -43,7 +43,7 @@ scheduled-producer:
       "com/bakdata/kafka/fake": 1.0.0
 
 converter:
-  app:
+  values:
     resources:
       limits:
         memory: 3G
@@ -68,7 +68,7 @@ converter:
           cleanup.policy: compact,delete
 
 filter:
-  app:
+  values:
     image: "fake-registry/filter"
     imageTag: "2.4.1"
     autoscaling:
@@ -87,7 +87,7 @@ filter:
           retention.ms: "-1"
 
 should-inflate:
-  app:
+  values:
     image: "fake-registry/filter"
     imageTag: "2.4.1"
     autoscaling:
@@ -106,7 +106,7 @@ should-inflate:
           retention.ms: "-1"
 
 kafka-sink-connector:
-  app:
+  config:
     batch.size: "2000"
     behavior.on.malformed.documents: "warn"
     behavior.on.null.values: "delete"

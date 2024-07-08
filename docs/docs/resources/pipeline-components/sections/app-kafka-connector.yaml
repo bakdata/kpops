@@ -1,5 +1,0 @@
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example. Extensive documentation on
-  # connectors: https://kafka.apache.org/documentation/#connectconfigs
-  app: # required
-    tasks.max: 1

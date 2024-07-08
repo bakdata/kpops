@@ -19,7 +19,7 @@ from kpops.utils.docstring import describe_attr
 
 
 class ProducerAppCleaner(KafkaAppCleaner):
-    app: ProducerAppValues
+    values: ProducerAppValues
 
     @property
     @override
@@ -37,13 +37,13 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
 
     Note that the producer does not support error topics.
 
-    :param app: Application-specific settings
+    :param values: streams-bootstrap Helm values
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    app: ProducerAppValues = Field(
+    values: ProducerAppValues = Field(
         default=...,
-        description=describe_attr("app", __doc__),
+        description=describe_attr("values", __doc__),
     )
     from_: None = Field(
         default=None,
@@ -56,8 +56,8 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
     @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
         return ProducerAppCleaner(
-            config=self.config,
-            handlers=self.handlers,
+            _config=self._config,
+            _handlers=self._handlers,
             **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"}),
         )
 
@@ -73,20 +73,20 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
     @property
     @override
     def output_topic(self) -> KafkaTopic | None:
-        return self.app.streams.output_topic
+        return self.values.streams.output_topic
 
     @property
     @override
     def extra_output_topics(self) -> dict[str, KafkaTopic]:
-        return self.app.streams.extra_output_topics
+        return self.values.streams.extra_output_topics
 
     @override
     def set_output_topic(self, topic: KafkaTopic) -> None:
-        self.app.streams.output_topic = topic
+        self.values.streams.output_topic = topic
 
     @override
     def add_extra_output_topic(self, topic: KafkaTopic, role: str) -> None:
-        self.app.streams.extra_output_topics[role] = topic
+        self.values.streams.extra_output_topics[role] = topic
 
     @property
     @override

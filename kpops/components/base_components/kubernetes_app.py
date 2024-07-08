@@ -32,16 +32,16 @@ class KubernetesApp(PipelineComponent, ABC):
     All built-in components are Kubernetes apps, except for the Kafka connectors.
 
     :param namespace: Kubernetes namespace in which the component shall be deployed
-    :param app: Application-specific settings
+    :param values: Kubernetes app values
     """
 
     namespace: str = Field(
         default=...,
         description=describe_attr("namespace", __doc__),
     )
-    app: KubernetesAppValues = Field(
+    values: KubernetesAppValues = Field(
         default=...,
-        description=describe_attr("app", __doc__),
+        description=describe_attr("values", __doc__),
     )
 
     @override

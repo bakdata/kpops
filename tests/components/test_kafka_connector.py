@@ -77,10 +77,10 @@ class TestKafkaConnector:
         connector_config: KafkaConnectorConfig,
     ) -> KafkaConnector:
         return KafkaConnector(  # HACK: not supposed to be instantiated, because ABC
+            _config=config,
+            _handlers=handlers,
             name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app=connector_config,
+            config=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
         )
 
@@ -90,16 +90,16 @@ class TestKafkaConnector:
         config: KpopsConfig,
         handlers: ComponentHandlers,
     ):
-        assert connector.app.name == CONNECTOR_FULL_NAME
+        assert connector.config.name == CONNECTOR_FULL_NAME
 
         connector = KafkaConnector(
+            _config=config,
+            _handlers=handlers,
             name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues], gets enriched
+            config={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues], gets enriched
             resetter_namespace=RESETTER_NAMESPACE,
         )
-        assert connector.app.name == CONNECTOR_FULL_NAME
+        assert connector.config.name == CONNECTOR_FULL_NAME
 
         with pytest.raises(
             ValueError,
@@ -108,10 +108,10 @@ class TestKafkaConnector:
             ),
         ):
             KafkaConnector(
+                _config=config,
+                _handlers=handlers,
                 name=CONNECTOR_NAME,
-                config=config,
-                handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore[reportGeneralTypeIssues], gets enriched
+                config={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore[reportGeneralTypeIssues], gets enriched
             )
 
         with pytest.raises(
@@ -121,8 +121,8 @@ class TestKafkaConnector:
             ),
         ):
             KafkaConnector(
+                _config=config,
+                _handlers=handlers,
                 name=CONNECTOR_NAME,
-                config=config,
-                handlers=handlers,
-                app={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues], gets enriched
+                config={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues], gets enriched
             )

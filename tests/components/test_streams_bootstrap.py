@@ -36,9 +36,9 @@ class TestStreamsBootstrap:
 
     def test_default_configs(self, config: KpopsConfig, handlers: ComponentHandlers):
         streams_bootstrap = StreamsBootstrap(
+            _config=config,
+            _handlers=handlers,
             name="example-name",
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
                 "app": {},
@@ -50,7 +50,7 @@ class TestStreamsBootstrap:
         )
         assert streams_bootstrap.version == "2.9.0"
         assert streams_bootstrap.namespace == "test-namespace"
-        assert streams_bootstrap.app.image_tag == "latest"
+        assert streams_bootstrap.values.image_tag == "latest"
 
     @pytest.mark.asyncio()
     async def test_should_deploy_streams_bootstrap_app(
@@ -60,9 +60,9 @@ class TestStreamsBootstrap:
         mocker: MockerFixture,
     ):
         streams_bootstrap = StreamsBootstrap(
+            _config=config,
+            _handlers=handlers,
             name="example-name",
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
                 "app": {
