@@ -1,7 +1,7 @@
 - type: converter
   values:
     labels:
-      l_1: ${component.app.labels.l_2}
-      l_2: ${component.app.labels.l_3}
-      l_3: ${component.app.labels.l_1}
-      infinite_nesting: ${component.app.labels}
+      l_1: ${component.values.labels.l_2}
+      l_2: ${component.values.labels.l_3}
+      l_3: ${component.values.labels.l_1}
+      infinite_nesting: ${component.values.labels}
