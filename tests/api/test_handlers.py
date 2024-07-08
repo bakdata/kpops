@@ -1,6 +1,6 @@
 from pytest_mock import MockerFixture
 
-from kpops.api import setup_handlers
+from kpops.api import _setup_handlers
 from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
@@ -35,7 +35,7 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
         topic_handler=topic_handler,
     )
 
-    actual_handlers = setup_handlers(config)
+    actual_handlers = _setup_handlers(config)
 
     connector_handler_mock.from_kpops_config.assert_called_once_with(config)
 
@@ -72,7 +72,7 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
         topic_handler=topic_handler,
     )
 
-    actual_handlers = setup_handlers(config)
+    actual_handlers = _setup_handlers(config)
 
     schema_handler_mock.load_schema_handler.assert_called_once_with(config)
 
