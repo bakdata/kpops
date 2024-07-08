@@ -44,7 +44,7 @@ class TestStreamsBootstrap:
             name="example-name",
             **{
                 "namespace": "test-namespace",
-                "app": {},
+                "values": {},
             },
         )
         assert streams_bootstrap.repo_config == HelmRepoConfig(
@@ -68,7 +68,7 @@ class TestStreamsBootstrap:
             name="example-name",
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "imageTag": "1.0.0",
                     "streams": {
                         "outputTopic": "test",
