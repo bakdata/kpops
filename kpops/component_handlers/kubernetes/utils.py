@@ -3,9 +3,6 @@ import logging
 
 log = logging.getLogger("K8sUtils")
 
-# Source of the pattern: https://kubernetes.io/docs/concepts/containers/images/#image-names
-IMAGE_TAG_PATTERN = r"^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$"
-
 
 def trim(max_len: int, name: str, suffix: str) -> str:
     """Shortens long K8s identifiers.
