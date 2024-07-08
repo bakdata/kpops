@@ -12,8 +12,10 @@ from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
     KafkaConnectorType,
 )
-from kpops.components import KafkaSinkConnector
-from kpops.components.base_components.kafka_connector import KafkaConnectorResetter
+from kpops.components.base_components.kafka_connector import (
+    KafkaConnectorResetter,
+    KafkaSinkConnector,
+)
 from kpops.components.base_components.models.from_section import (
     FromSection,
     FromTopic,

@@ -1,6 +1,8 @@
 import logging
 import os
+import shutil
 from collections.abc import Iterator
+from pathlib import Path
 from unittest import mock
 
 import pytest
@@ -38,3 +40,14 @@ def mock_env() -> Iterator[Environment]:
 def load_yaml_file_clear_cache() -> Iterator[None]:
     yield
     load_yaml_file.cache.clear()  # pyright: ignore[reportFunctionMemberAccess]
+
+
+@pytest.fixture()
+def custom_components():
+    src = Path("tests/pipeline/test_components")
+    dst = Path("kpops/components/test_components")
+    try:
+        shutil.copytree(src, dst)
+        yield
+    finally:
+        shutil.rmtree(dst)

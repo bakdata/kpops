@@ -1,2 +1,0 @@
-kafka_brokers: http://127.0.0.1:9092
-components_module: tests.cli.resources.empty_module

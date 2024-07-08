@@ -4,7 +4,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
     KafkaStreamsConfig,
 )
-from kpops.components.streams_bootstrap import StreamsBootstrapValues
+from kpops.components.common.streams_bootstrap import StreamsBootstrapValues
 from kpops.utils.docstring import describe_attr
 
 

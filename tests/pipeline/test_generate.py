@@ -9,20 +9,19 @@ from pytest_mock import MockerFixture
 from pytest_snapshot.plugin import Snapshot
 from typer.testing import CliRunner
 
-import kpops
+import kpops.api as kpops
 from kpops.api.exception import ParsingException, ValidationError
-from kpops.api.file_type import KpopsFileType
+from kpops.api.file_type import PIPELINE_YAML, KpopsFileType
 from kpops.cli.main import FilterType, app
-from kpops.components import KafkaSinkConnector, PipelineComponent
-
-PIPELINE_YAML = KpopsFileType.PIPELINE.as_yaml_file()
+from kpops.components.base_components.kafka_connector import KafkaSinkConnector
+from kpops.components.base_components.pipeline_component import PipelineComponent
 
 runner = CliRunner()
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
-@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "custom_components")
 class TestGenerate:
     @pytest.fixture(autouse=True)
     def log_info(self, mocker: MockerFixture) -> MagicMock:

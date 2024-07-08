@@ -12,7 +12,10 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.streams_bootstrap import StreamsBootstrap, StreamsBootstrapValues
+from kpops.components.common.streams_bootstrap import (
+    StreamsBootstrap,
+    StreamsBootstrapValues,
+)
 from kpops.config import KpopsConfig
 from tests.components import PIPELINE_BASE_DIR
 
