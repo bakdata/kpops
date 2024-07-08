@@ -21,8 +21,8 @@ if TYPE_CHECKING:
     from collections.abc import Iterator
 
 
-T = TypeVar("T")
-ClassDict = dict[str, type[T]]  # type -> class
+_PluginT = TypeVar("_PluginT")
+ClassDict = dict[str, type[_PluginT]]  # type -> class
 
 sys.path.append(str(Path.cwd()))
 log = logging.getLogger("Registry")
@@ -62,7 +62,7 @@ class Registry:
         yield from _iter_namespace(kpops.components)
 
 
-def find_class(modules: Iterable[ModuleType], base: type[T]) -> type[T]:
+def find_class(modules: Iterable[ModuleType], base: type[_PluginT]) -> type[_PluginT]:
     try:
         return next(_find_classes(modules, base=base))
     except StopIteration as e:
@@ -78,7 +78,9 @@ def import_module(module_name: str) -> ModuleType:
     return module
 
 
-def _find_classes(modules: Iterable[ModuleType], base: type[T]) -> Iterator[type[T]]:
+def _find_classes(
+    modules: Iterable[ModuleType], base: type[_PluginT]
+) -> Iterator[type[_PluginT]]:
     for module in modules:
         for _, _class in inspect.getmembers(module, inspect.isclass):
             if not __filter_internal_kpops_classes(
