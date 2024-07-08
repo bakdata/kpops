@@ -107,14 +107,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ):
-        connector = KafkaSinkConnector(
-            name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app=connector_config,
-            resetter_namespace=RESETTER_NAMESPACE,
-        )
-
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
             name=CONNECTOR_NAME,

@@ -64,6 +64,7 @@
         topics: []
       commandLine:
         CONVERT_XML: true
+      imageTag: latest
       persistence:
         enabled: false
       resources:
@@ -105,6 +106,7 @@
       topics: []
     commandLine:
       CONVERT_XML: true
+    imageTag: latest
     persistence:
       enabled: false
     resources:
@@ -293,6 +295,7 @@
   type: kafka-sink-connector
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -317,6 +320,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
