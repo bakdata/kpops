@@ -1,10 +1,4 @@
 - _cleaner:
-    app:
-      imageTag: latest
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        outputTopic: resources-read-from-component-producer1
-        schemaRegistryUrl: http://localhost:8081/
     name: producer1
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -15,13 +9,13 @@
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: producer-app-cleaner
+    values:
+      imageTag: latest
+      streams:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        outputTopic: resources-read-from-component-producer1
+        schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
-  app:
-    imageTag: latest
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      outputTopic: resources-read-from-component-producer1
-      schemaRegistryUrl: http://localhost:8081/
   name: producer1
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -37,14 +31,14 @@
         configs: {}
         type: output
   type: producer-app
+  values:
+    imageTag: latest
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      outputTopic: resources-read-from-component-producer1
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
-    app:
-      imageTag: latest
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        outputTopic: resources-read-from-component-producer2
-        schemaRegistryUrl: http://localhost:8081/
     name: producer2
     namespace: example-namespace
     prefix: ''
@@ -55,13 +49,13 @@
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: producer-app-cleaner
+    values:
+      imageTag: latest
+      streams:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        outputTopic: resources-read-from-component-producer2
+        schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
-  app:
-    imageTag: latest
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      outputTopic: resources-read-from-component-producer2
-      schemaRegistryUrl: http://localhost:8081/
   name: producer2
   namespace: example-namespace
   prefix: ''
@@ -77,9 +71,25 @@
         configs: {}
         type: output
   type: producer-app
+  values:
+    imageTag: latest
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      outputTopic: resources-read-from-component-producer2
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
-    app:
+    name: inflate-step
+    namespace: example-namespace
+    prefix: resources-read-from-component-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       autoscaling:
         consumerGroup: filter-resources-read-from-component-inflate-step
         cooldownPeriod: 300
@@ -105,18 +115,31 @@
         - resources-read-from-component-producer2
         outputTopic: resources-read-from-component-inflate-step
         schemaRegistryUrl: http://localhost:8081/
-    name: inflate-step
-    namespace: example-namespace
-    prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
+  name: inflate-step
+  namespace: example-namespace
+  prefix: resources-read-from-component-
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      resources-read-from-component-inflate-step:
+        configs:
+          retention.ms: '-1'
+        partitions_count: 50
+        type: output
+      resources-read-from-component-inflate-step-error:
+        configs:
+          cleanup.policy: compact,delete
+        partitions_count: 1
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+  type: should-inflate
+  values:
     autoscaling:
       consumerGroup: filter-resources-read-from-component-inflate-step
       cooldownPeriod: 300
@@ -142,36 +165,8 @@
       - resources-read-from-component-producer2
       outputTopic: resources-read-from-component-inflate-step
       schemaRegistryUrl: http://localhost:8081/
-  name: inflate-step
-  namespace: example-namespace
-  prefix: resources-read-from-component-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
-  to:
-    models: {}
-    topics:
-      resources-read-from-component-inflate-step:
-        configs:
-          retention.ms: '-1'
-        partitions_count: 50
-        type: output
-      resources-read-from-component-inflate-step-error:
-        configs:
-          cleanup.policy: compact,delete
-        partitions_count: 1
-        type: error
-        value_schema: com.bakdata.kafka.DeadLetter
-  type: should-inflate
   version: 2.4.2
 - _resetter:
-    app:
-      config:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        connector: resources-read-from-component-inflate-step-inflated-sink-connector
-      connectorType: sink
     name: inflate-step-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -182,8 +177,13 @@
       url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
     type: kafka-connector-resetter
+    values:
+      config:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        connector: resources-read-from-component-inflate-step-inflated-sink-connector
+      connectorType: sink
     version: 1.0.4
-  app:
+  config:
     batch.size: '2000'
     behavior.on.malformed.documents: warn
     behavior.on.null.values: delete
@@ -211,7 +211,17 @@
         type: output
   type: kafka-sink-connector
 - _cleaner:
-    app:
+    name: inflate-step-inflated-streams-app
+    namespace: example-namespace
+    prefix: resources-read-from-component-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       imageTag: latest
       persistence:
         enabled: false
@@ -225,31 +235,7 @@
         - kafka-sink-connector
         outputTopic: resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
-    name: inflate-step-inflated-streams-app
-    namespace: example-namespace
-    prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
-    imageTag: latest
-    persistence:
-      enabled: false
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-read-from-component-inflate-step-inflated-streams-app-error
-      inputTopics:
-      - kafka-sink-connector
-      outputTopic: resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
-      schemaRegistryUrl: http://localhost:8081/
   name: inflate-step-inflated-streams-app
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -271,9 +257,33 @@
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
   type: streams-app
+  values:
+    imageTag: latest
+    persistence:
+      enabled: false
+    statefulSet: false
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-read-from-component-inflate-step-inflated-streams-app-error
+      inputTopics:
+      - kafka-sink-connector
+      outputTopic: resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
-    app:
+    name: inflate-step-without-prefix
+    namespace: example-namespace
+    prefix: ''
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       autoscaling:
         consumerGroup: filter-resources-read-from-component-inflate-step-without-prefix
         cooldownPeriod: 300
@@ -299,18 +309,31 @@
         - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
         outputTopic: resources-read-from-component-inflate-step-without-prefix
         schemaRegistryUrl: http://localhost:8081/
-    name: inflate-step-without-prefix
-    namespace: example-namespace
-    prefix: ''
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
+  name: inflate-step-without-prefix
+  namespace: example-namespace
+  prefix: ''
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      resources-read-from-component-inflate-step-without-prefix:
+        configs:
+          retention.ms: '-1'
+        partitions_count: 50
+        type: output
+      resources-read-from-component-inflate-step-without-prefix-error:
+        configs:
+          cleanup.policy: compact,delete
+        partitions_count: 1
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+  type: should-inflate
+  values:
     autoscaling:
       consumerGroup: filter-resources-read-from-component-inflate-step-without-prefix
       cooldownPeriod: 300
@@ -336,36 +359,8 @@
       - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
       outputTopic: resources-read-from-component-inflate-step-without-prefix
       schemaRegistryUrl: http://localhost:8081/
-  name: inflate-step-without-prefix
-  namespace: example-namespace
-  prefix: ''
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
-  to:
-    models: {}
-    topics:
-      resources-read-from-component-inflate-step-without-prefix:
-        configs:
-          retention.ms: '-1'
-        partitions_count: 50
-        type: output
-      resources-read-from-component-inflate-step-without-prefix-error:
-        configs:
-          cleanup.policy: compact,delete
-        partitions_count: 1
-        type: error
-        value_schema: com.bakdata.kafka.DeadLetter
-  type: should-inflate
   version: 2.4.2
 - _resetter:
-    app:
-      config:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        connector: resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector
-      connectorType: sink
     name: inflate-step-without-prefix-inflated-sink-connector
     namespace: example-namespace
     prefix: resources-read-from-component-
@@ -376,8 +371,13 @@
       url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
     type: kafka-connector-resetter
+    values:
+      config:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        connector: resources-read-from-component-inflate-step-without-prefix-inflated-sink-connector
+      connectorType: sink
     version: 1.0.4
-  app:
+  config:
     batch.size: '2000'
     behavior.on.malformed.documents: warn
     behavior.on.null.values: delete
@@ -405,7 +405,17 @@
         type: output
   type: kafka-sink-connector
 - _cleaner:
-    app:
+    name: inflate-step-without-prefix-inflated-streams-app
+    namespace: example-namespace
+    prefix: resources-read-from-component-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       imageTag: latest
       persistence:
         enabled: false
@@ -419,31 +429,7 @@
         - kafka-sink-connector
         outputTopic: inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
-    name: inflate-step-without-prefix-inflated-streams-app
-    namespace: example-namespace
-    prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
-    imageTag: latest
-    persistence:
-      enabled: false
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-read-from-component-inflate-step-without-prefix-inflated-streams-app-error
-      inputTopics:
-      - kafka-sink-connector
-      outputTopic: inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
-      schemaRegistryUrl: http://localhost:8081/
   name: inflate-step-without-prefix-inflated-streams-app
   namespace: example-namespace
   prefix: resources-read-from-component-
@@ -465,9 +451,33 @@
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
   type: streams-app
+  values:
+    imageTag: latest
+    persistence:
+      enabled: false
+    statefulSet: false
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-read-from-component-inflate-step-without-prefix-inflated-streams-app-error
+      inputTopics:
+      - kafka-sink-connector
+      outputTopic: inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
-    app:
+    name: consumer1
+    namespace: example-namespace
+    prefix: resources-read-from-component-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       imageTag: latest
       persistence:
         enabled: false
@@ -481,31 +491,7 @@
         - resources-read-from-component-producer1
         outputTopic: resources-read-from-component-consumer1
         schemaRegistryUrl: http://localhost:8081/
-    name: consumer1
-    namespace: example-namespace
-    prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
-    imageTag: latest
-    persistence:
-      enabled: false
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-read-from-component-consumer1-error
-      inputTopics:
-      - resources-read-from-component-producer1
-      outputTopic: resources-read-from-component-consumer1
-      schemaRegistryUrl: http://localhost:8081/
   from:
     components:
       producer1:
@@ -532,9 +518,33 @@
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
   type: streams-app
+  values:
+    imageTag: latest
+    persistence:
+      enabled: false
+    statefulSet: false
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-read-from-component-consumer1-error
+      inputTopics:
+      - resources-read-from-component-producer1
+      outputTopic: resources-read-from-component-consumer1
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
-    app:
+    name: consumer2
+    namespace: example-namespace
+    prefix: resources-read-from-component-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       imageTag: latest
       persistence:
         enabled: false
@@ -548,31 +558,7 @@
         - resources-read-from-component-producer1
         - resources-read-from-component-consumer1
         schemaRegistryUrl: http://localhost:8081/
-    name: consumer2
-    namespace: example-namespace
-    prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
-    imageTag: latest
-    persistence:
-      enabled: false
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-read-from-component-consumer2-error
-      inputTopics:
-      - resources-read-from-component-producer1
-      - resources-read-from-component-consumer1
-      schemaRegistryUrl: http://localhost:8081/
   from:
     components:
       consumer1:
@@ -598,9 +584,33 @@
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
   type: streams-app
+  values:
+    imageTag: latest
+    persistence:
+      enabled: false
+    statefulSet: false
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-read-from-component-consumer2-error
+      inputTopics:
+      - resources-read-from-component-producer1
+      - resources-read-from-component-consumer1
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
-    app:
+    name: consumer3
+    namespace: example-namespace
+    prefix: resources-read-from-component-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       imageTag: latest
       persistence:
         enabled: false
@@ -614,31 +624,7 @@
         - resources-read-from-component-producer1
         - resources-read-from-component-producer2
         schemaRegistryUrl: http://localhost:8081/
-    name: consumer3
-    namespace: example-namespace
-    prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
-    imageTag: latest
-    persistence:
-      enabled: false
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-read-from-component-consumer3-error
-      inputTopics:
-      - resources-read-from-component-producer1
-      - resources-read-from-component-producer2
-      schemaRegistryUrl: http://localhost:8081/
   from:
     components:
       producer2:
@@ -664,9 +650,33 @@
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
   type: streams-app
+  values:
+    imageTag: latest
+    persistence:
+      enabled: false
+    statefulSet: false
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-read-from-component-consumer3-error
+      inputTopics:
+      - resources-read-from-component-producer1
+      - resources-read-from-component-producer2
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
-    app:
+    name: consumer4
+    namespace: example-namespace
+    prefix: resources-read-from-component-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       imageTag: latest
       persistence:
         enabled: false
@@ -679,30 +689,7 @@
         inputTopics:
         - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
-    name: consumer4
-    namespace: example-namespace
-    prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
-    imageTag: latest
-    persistence:
-      enabled: false
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-read-from-component-consumer4-error
-      inputTopics:
-      - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
-      schemaRegistryUrl: http://localhost:8081/
   from:
     components:
       inflate-step:
@@ -726,9 +713,32 @@
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
   type: streams-app
+  values:
+    imageTag: latest
+    persistence:
+      enabled: false
+    statefulSet: false
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-read-from-component-consumer4-error
+      inputTopics:
+      - resources-read-from-component-inflate-step-inflate-step-inflated-streams-app
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
-    app:
+    name: consumer5
+    namespace: example-namespace
+    prefix: resources-read-from-component-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       imageTag: latest
       persistence:
         enabled: false
@@ -741,30 +751,7 @@
         inputTopics:
         - inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
         schemaRegistryUrl: http://localhost:8081/
-    name: consumer5
-    namespace: example-namespace
-    prefix: resources-read-from-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
-    imageTag: latest
-    persistence:
-      enabled: false
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-read-from-component-consumer5-error
-      inputTopics:
-      - inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
-      schemaRegistryUrl: http://localhost:8081/
   from:
     components:
       inflate-step-without-prefix:
@@ -788,5 +775,18 @@
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
   type: streams-app
+  values:
+    imageTag: latest
+    persistence:
+      enabled: false
+    statefulSet: false
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-read-from-component-consumer5-error
+      inputTopics:
+      - inflate-step-without-prefix-inflate-step-without-prefix-inflated-streams-app
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 

@@ -1,5 +1,15 @@
 - _cleaner:
-    app:
+    name: account-producer
+    namespace: ${NAMESPACE}
+    prefix: from-pipeline-component-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: producer-app-cleaner
+    values:
       debug: true
       image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
       imageTag: 1.0.0
@@ -12,18 +22,17 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         schemaRegistryUrl: http://localhost:8081/
       suspend: true
-    name: account-producer
-    namespace: ${NAMESPACE}
-    prefix: from-pipeline-component-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: producer-app-cleaner
     version: 2.9.0
-  app:
+  name: account-producer
+  namespace: ${NAMESPACE}
+  prefix: from-pipeline-component-
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  type: producer-app
+  values:
     debug: true
     image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
     imageTag: 1.0.0
@@ -36,14 +45,5 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       schemaRegistryUrl: http://localhost:8081/
     suspend: true
-  name: account-producer
-  namespace: ${NAMESPACE}
-  prefix: from-pipeline-component-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
-  type: producer-app
   version: 2.9.0
 
