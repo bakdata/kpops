@@ -113,7 +113,7 @@ class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
         log.info(f"Init cleanup job for {self.helm_release_name}")
         await self.deploy(dry_run)
 
-        if not self._config.retain_clean_jobs:
+        if not self.config_.retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {self.helm_release_name}")
             await self.destroy(dry_run)
 
@@ -135,10 +135,10 @@ class KafkaApp(PipelineComponent, ABC):
     async def deploy(self, dry_run: bool) -> None:
         if self.to:
             for topic in self.to.kafka_topics:
-                await self._handlers.topic_handler.create_topic(topic, dry_run=dry_run)
+                await self.handlers_.topic_handler.create_topic(topic, dry_run=dry_run)
 
-            if self._handlers.schema_handler:
-                await self._handlers.schema_handler.submit_schemas(
+            if self.handlers_.schema_handler:
+                await self.handlers_.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
 

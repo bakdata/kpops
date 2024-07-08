@@ -22,8 +22,8 @@ class ShouldInflate(StreamsApp):
             for topic_name, topic_config in self.to.topics.items():
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
-                        _config=self._config,
-                        _handlers=self._handlers,
+                        config_=self.config_,
+                        handlers_=self.handlers_,
                         name="sink-connector",
                         config=KafkaConnectorConfig(
                             **{

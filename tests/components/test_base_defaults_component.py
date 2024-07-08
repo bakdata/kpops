@@ -125,7 +125,7 @@ class TestBaseDefaultsComponent:
 
     def test_inherit_defaults(self, config: KpopsConfig, handlers: ComponentHandlers):
         ENV["environment"] = "development"
-        component = Child(_config=config, _handlers=handlers)
+        component = Child(config_=config, handlers_=handlers)
 
         assert (
             component.name == "fake-child-name"
@@ -145,8 +145,8 @@ class TestBaseDefaultsComponent:
 
     def test_inherit(self, config: KpopsConfig, handlers: ComponentHandlers):
         component = Child(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name="name-defined-in-pipeline_parser",
         )
 
@@ -169,7 +169,7 @@ class TestBaseDefaultsComponent:
     def test_multiple_generations(
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
-        component = GrandChild(_config=config, _handlers=handlers)
+        component = GrandChild(config_=config, handlers_=handlers)
 
         assert (
             component.name == "fake-child-name"
@@ -192,7 +192,7 @@ class TestBaseDefaultsComponent:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         ENV["pipeline_name"] = RESOURCES_PATH.as_posix()
-        component = EnvVarTest(_config=config, _handlers=handlers)
+        component = EnvVarTest(config_=config, handlers_=handlers)
 
         assert component.name
 
@@ -202,7 +202,7 @@ class TestBaseDefaultsComponent:
 
     def test_merge_defaults(self, config: KpopsConfig, handlers: ComponentHandlers):
         component = GrandChild(
-            _config=config, _handlers=handlers, nested=Nested(**{"bar": False})
+            config_=config, handlers_=handlers, nested=Nested(**{"bar": False})
         )
         assert isinstance(component.nested, Nested)
         assert component.nested == Nested(**{"foo": "foo", "bar": False})

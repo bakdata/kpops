@@ -15,7 +15,6 @@ from pydantic import (
     AliasChoices,
     ConfigDict,
     Field,
-    PrivateAttr,
     computed_field,
 )
 from pydantic.json_schema import SkipJsonSchema
@@ -51,8 +50,8 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     correctly to the component.
 
     :param enrich: Whether to enrich component with defaults, defaults to False
-    :param _config: KPOps configuration to be accessed by this component
-    :param _handlers: Component handlers to be accessed by this component
+    :param config_: KPOps configuration to be accessed by this component
+    :param handlers_: Component handlers to be accessed by this component
     :param validate: Whether to run custom validation on the component, defaults to True
     """
 
@@ -65,8 +64,16 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         description=describe_attr("enrich", __doc__),
         exclude=True,
     )
-    _config: KpopsConfig = PrivateAttr()
-    _handlers: ComponentHandlers = PrivateAttr()
+    config_: SkipJsonSchema[KpopsConfig] = Field(
+        default=...,
+        description=describe_attr("config_", __doc__),
+        exclude=True,
+    )
+    handlers_: SkipJsonSchema[ComponentHandlers] = Field(
+        default=...,
+        description=describe_attr("handlers_", __doc__),
+        exclude=True,
+    )
     validate_: SkipJsonSchema[bool] = Field(
         validation_alias=AliasChoices("validate", "validate_"),
         default=False,
@@ -74,26 +81,22 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         exclude=True,
     )
 
-    def __init__(
-        self, *, _config: KpopsConfig, _handlers: ComponentHandlers, **values: Any
-    ) -> None:
+    def __init__(self, **values: Any) -> None:
         if values.get("enrich", True):
             cls = self.__class__
-            values = cls.extend_with_defaults(_config, **values)
-            tmp_self = cls(_config=_config, _handlers=_handlers, **values, enrich=False)
+            values = cls.extend_with_defaults(**values)
+            tmp_self = cls(**values, enrich=False)
             values = tmp_self.model_dump(mode="json", by_alias=True)
-            values = cls.substitute_in_component(_config, **values)
+            values = cls.substitute_in_component(tmp_self.config_, **values)
             self.__init__(
                 enrich=False,
                 validate=True,
-                _config=_config,
-                _handlers=_handlers,
+                config_=tmp_self.config_,
+                handlers_=tmp_self.handlers_,
                 **values,
             )
         else:
             super().__init__(**values)
-            self._config = _config
-            self._handlers = _handlers
 
     @pydantic.model_validator(mode="after")
     def validate_component(self) -> Self:
@@ -128,7 +131,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
     @classmethod
     def substitute_in_component(
-        cls, _config: KpopsConfig, **component_data: Any
+        cls, config_: KpopsConfig, **component_data: Any
     ) -> dict[str, Any]:
         """Substitute all $-placeholders in a component in dict representation.
 
@@ -139,8 +142,8 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         # functions, still hardcoded, because of their names.
         # TODO(Ivan Yordanov): Get rid of them
         substitution_hardcoded: dict[str, JsonType] = {
-            "error_topic_name": _config.topic_name_config.default_error_topic_name,
-            "output_topic_name": _config.topic_name_config.default_output_topic_name,
+            "error_topic_name": config_.topic_name_config.default_error_topic_name,
+            "output_topic_name": config_.topic_name_config.default_output_topic_name,
         }
         component_substitution = generate_substitution(
             component_data,
@@ -149,7 +152,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             separator=".",
         )
         substitution = generate_substitution(
-            _config.model_dump(mode="json"),
+            config_.model_dump(mode="json"),
             "config",
             existing_substitution=component_substitution,
             separator=".",
@@ -164,7 +167,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
     @classmethod
     def extend_with_defaults(
-        cls, _config: KpopsConfig, **kwargs: Any
+        cls, config_: KpopsConfig, **kwargs: Any
     ) -> dict[str, Any]:
         """Merge parent components' defaults with own.
 
@@ -172,6 +175,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inherited defaults
         """
+        kwargs["config_"] = config_
         pipeline_path_str = ENV.get(PIPELINE_PATH)
         if not pipeline_path_str:
             return kwargs
@@ -183,7 +187,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
                 kwargs[k] = asdict(v)
 
         defaults_file_paths_ = get_defaults_file_paths(
-            pipeline_path, _config, ENV.get("environment")
+            pipeline_path, config_, ENV.get("environment")
         )
         defaults = cls.load_defaults(*defaults_file_paths_)
         log.debug(

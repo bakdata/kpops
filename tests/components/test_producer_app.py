@@ -62,8 +62,8 @@ class TestProducerApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> ProducerApp:
         return ProducerApp(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name=PRODUCER_APP_NAME,
             **{
                 "version": "2.4.2",
@@ -104,8 +104,8 @@ class TestProducerApp:
 
     def test_output_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name=PRODUCER_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -141,7 +141,7 @@ class TestProducerApp:
         mocker: MockerFixture,
     ):
         mock_create_topic = mocker.patch.object(
-            producer_app._handlers.topic_handler, "create_topic"
+            producer_app.handlers_.topic_handler, "create_topic"
         )
 
         mock_helm_upgrade_install = mocker.patch.object(
@@ -320,8 +320,8 @@ class TestProducerApp:
         handlers: ComponentHandlers,
     ):
         producer_app = ProducerApp(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name="my-producer",
             **{
                 "namespace": "test-namespace",

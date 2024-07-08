@@ -80,8 +80,8 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -103,8 +103,8 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -198,8 +198,8 @@ class TestStreamsApp:
 
     def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         streams_app = StreamsApp(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -248,8 +248,8 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -281,8 +281,8 @@ class TestStreamsApp:
             ValueError, match="Define role only if `type` is `pattern` or `None`"
         ):
             StreamsApp(
-                _config=config,
-                _handlers=handlers,
+                config_=config,
+                handlers_=handlers,
                 name=STREAMS_APP_NAME,
                 **{
                     "namespace": "test-namespace",
@@ -305,8 +305,8 @@ class TestStreamsApp:
             ValueError, match="Define `role` only if `type` is undefined"
         ):
             StreamsApp(
-                _config=config,
-                _handlers=handlers,
+                config_=config,
+                handlers_=handlers,
                 name=STREAMS_APP_NAME,
                 **{
                     "namespace": "test-namespace",
@@ -328,8 +328,8 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -371,8 +371,8 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -415,8 +415,8 @@ class TestStreamsApp:
         mocker: MockerFixture,
     ):
         streams_app = StreamsApp(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -444,7 +444,7 @@ class TestStreamsApp:
             },
         )
         mock_create_topic = mocker.patch.object(
-            streams_app._handlers.topic_handler, "create_topic"
+            streams_app.handlers_.topic_handler, "create_topic"
         )
         mock_helm_upgrade_install = mocker.patch.object(
             streams_app.helm, "upgrade_install"
@@ -645,8 +645,8 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name="my-app",
             **{
                 "namespace": "test-namespace",

@@ -51,8 +51,8 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector_config: KafkaConnectorConfig,
     ) -> KafkaSourceConnector:
         return KafkaSourceConnector(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
@@ -83,8 +83,8 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     ):
         with pytest.raises(NotImplementedError):
             KafkaSourceConnector(
-                _config=config,
-                _handlers=handlers,
+                config_=config,
+                handlers_=handlers,
                 name=CONNECTOR_NAME,
                 config=connector_config,
                 resetter_namespace=RESETTER_NAMESPACE,
@@ -104,11 +104,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         mocker: MockerFixture,
     ):
         mock_create_topic = mocker.patch.object(
-            connector._handlers.topic_handler, "create_topic"
+            connector.handlers_.topic_handler, "create_topic"
         )
 
         mock_create_connector = mocker.patch.object(
-            connector._handlers.connector_handler, "create_connector"
+            connector.handlers_.connector_handler, "create_connector"
         )
 
         mock = mocker.AsyncMock()
@@ -133,10 +133,10 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         mocker: MockerFixture,
     ):
         ENV["KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"] = OFFSETS_TOPIC
-        assert connector._handlers.connector_handler
+        assert connector.handlers_.connector_handler
 
         mock_destroy_connector = mocker.patch.object(
-            connector._handlers.connector_handler, "destroy_connector"
+            connector.handlers_.connector_handler, "destroy_connector"
         )
 
         await connector.destroy(dry_run=True)
@@ -151,7 +151,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector: KafkaSourceConnector,
         dry_run_handler_mock: MagicMock,
     ):
-        assert connector._handlers.connector_handler
+        assert connector.handlers_.connector_handler
 
         await connector.reset(dry_run=True)
 
@@ -165,12 +165,12 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         helm_mock: MagicMock,
         mocker: MockerFixture,
     ):
-        assert connector._handlers.connector_handler
+        assert connector.handlers_.connector_handler
         mock_delete_topic = mocker.patch.object(
-            connector._handlers.topic_handler, "delete_topic"
+            connector.handlers_.topic_handler, "delete_topic"
         )
         mock_clean_connector = mocker.spy(
-            connector._handlers.connector_handler, "clean_connector"
+            connector.handlers_.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
@@ -229,7 +229,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector: KafkaSourceConnector,
         dry_run_handler_mock: MagicMock,
     ):
-        assert connector._handlers.connector_handler
+        assert connector.handlers_.connector_handler
 
         await connector.clean(dry_run=True)
 
@@ -243,13 +243,13 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         dry_run_handler_mock: MagicMock,
         mocker: MockerFixture,
     ):
-        assert connector._handlers.connector_handler
+        assert connector.handlers_.connector_handler
 
         mock_delete_topic = mocker.patch.object(
-            connector._handlers.topic_handler, "delete_topic"
+            connector.handlers_.topic_handler, "delete_topic"
         )
         mock_clean_connector = mocker.spy(
-            connector._handlers.connector_handler, "clean_connector"
+            connector.handlers_.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
@@ -320,8 +320,8 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSourceConnector(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
@@ -329,13 +329,13 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         )
         assert connector.to is None
 
-        assert connector._handlers.connector_handler
+        assert connector.handlers_.connector_handler
 
         mock_delete_topic = mocker.patch.object(
-            connector._handlers.topic_handler, "delete_topic"
+            connector.handlers_.topic_handler, "delete_topic"
         )
         mock_clean_connector = mocker.spy(
-            connector._handlers.connector_handler, "clean_connector"
+            connector.handlers_.connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
@@ -400,8 +400,8 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSourceConnector(
-            _config=config,
-            _handlers=handlers,
+            config_=config,
+            handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
@@ -409,7 +409,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         )
         assert connector.to is None
 
-        assert connector._handlers.connector_handler
+        assert connector.handlers_.connector_handler
 
         await connector.clean(dry_run=True)
 

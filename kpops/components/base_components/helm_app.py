@@ -84,7 +84,7 @@ class HelmApp(KubernetesApp):
     @cached_property
     def helm(self) -> Helm:
         """Helm object that contains component-specific config such as repo."""
-        helm = Helm(self._config.helm_config)
+        helm = Helm(self.config_.helm_config)
         if self.repo_config is not None:
             helm.add_repo(
                 self.repo_config.repository_name,
@@ -96,11 +96,11 @@ class HelmApp(KubernetesApp):
     @cached_property
     def helm_diff(self) -> HelmDiff:
         """Helm diff object of last and current release of this component."""
-        return HelmDiff(self._config.helm_diff_config)
+        return HelmDiff(self.config_.helm_diff_config)
 
     @cached_property
     def dry_run_handler(self) -> DryRunHandler:
-        helm_diff = HelmDiff(self._config.helm_diff_config)
+        helm_diff = HelmDiff(self.config_.helm_diff_config)
         return DryRunHandler(self.helm, helm_diff, self.namespace)
 
     @property
@@ -130,7 +130,7 @@ class HelmApp(KubernetesApp):
         return HelmFlags(
             **auth_flags,
             version=self.version,
-            create_namespace=self._config.create_namespace,
+            create_namespace=self.config_.create_namespace,
         )
 
     @property
@@ -138,7 +138,7 @@ class HelmApp(KubernetesApp):
         """Return flags for Helm template command."""
         return HelmTemplateFlags(
             **self.helm_flags.model_dump(),
-            api_version=self._config.helm_config.api_version,
+            api_version=self.config_.helm_config.api_version,
         )
 
     @override

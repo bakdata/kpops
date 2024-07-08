@@ -34,7 +34,7 @@ class Cleaner(HelmApp, ABC):
     @override
     def helm_flags(self) -> HelmFlags:
         return HelmFlags(
-            create_namespace=self._config.create_namespace,
+            create_namespace=self.config_.create_namespace,
             version=self.version,
             wait=True,
             wait_for_jobs=True,

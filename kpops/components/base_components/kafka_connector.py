@@ -84,7 +84,7 @@ class KafkaConnectorResetter(Cleaner, ABC):
         )
         await self.deploy(dry_run)
 
-        if not self._config.retain_clean_jobs:
+        if not self.config_.retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
             await self.destroy(dry_run)
 
@@ -140,8 +140,8 @@ class KafkaConnector(PipelineComponent, ABC):
         if self.resetter_namespace:
             kwargs["namespace"] = self.resetter_namespace
         return KafkaConnectorResetter(
-            _config=self._config,
-            _handlers=self._handlers,
+            config_=self.config_,
+            handlers_=self.handlers_,
             **kwargs,
             **self.model_dump(
                 by_alias=True,
@@ -158,7 +158,7 @@ class KafkaConnector(PipelineComponent, ABC):
                 connector_type=self._connector_type.value,
                 config=KafkaConnectorResetterConfig(
                     connector=self.full_name,
-                    brokers=self._config.kafka_brokers,
+                    brokers=self.config_.kafka_brokers,
                 ),
                 **self.resetter_values.model_dump(),
             ),
@@ -168,32 +168,32 @@ class KafkaConnector(PipelineComponent, ABC):
     async def deploy(self, dry_run: bool) -> None:
         if self.to:
             for topic in self.to.kafka_topics:
-                await self._handlers.topic_handler.create_topic(topic, dry_run=dry_run)
+                await self.handlers_.topic_handler.create_topic(topic, dry_run=dry_run)
 
-            if self._handlers.schema_handler:
-                await self._handlers.schema_handler.submit_schemas(
+            if self.handlers_.schema_handler:
+                await self.handlers_.schema_handler.submit_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
 
-        await self._handlers.connector_handler.create_connector(
+        await self.handlers_.connector_handler.create_connector(
             self.config, dry_run=dry_run
         )
 
     @override
     async def destroy(self, dry_run: bool) -> None:
-        await self._handlers.connector_handler.destroy_connector(
+        await self.handlers_.connector_handler.destroy_connector(
             self.full_name, dry_run=dry_run
         )
 
     @override
     async def clean(self, dry_run: bool) -> None:
         if self.to:
-            if self._handlers.schema_handler:
-                await self._handlers.schema_handler.delete_schemas(
+            if self.handlers_.schema_handler:
+                await self.handlers_.schema_handler.delete_schemas(
                     to_section=self.to, dry_run=dry_run
                 )
             for topic in self.to.kafka_topics:
-                await self._handlers.topic_handler.delete_topic(topic, dry_run=dry_run)
+                await self.handlers_.topic_handler.delete_topic(topic, dry_run=dry_run)
 
 
 class KafkaSourceConnector(KafkaConnector):
