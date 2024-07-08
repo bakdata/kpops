@@ -11,6 +11,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaStreamsConfig,
 )
 from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
+from kpops.components.common.streams_bootstrap import StreamsBootstrapValues
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
@@ -237,7 +238,7 @@ class PersistenceConfig(BaseModel):
         return self
 
 
-class StreamsAppValues(KafkaAppValues):
+class StreamsAppValues(StreamsBootstrapValues, KafkaAppValues):
     """streams-bootstrap app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.

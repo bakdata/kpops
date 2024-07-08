@@ -4,6 +4,7 @@ from kpops.components.base_components.kafka_app import (
     KafkaAppValues,
     KafkaStreamsConfig,
 )
+from kpops.components.common.streams_bootstrap import StreamsBootstrapValues
 from kpops.utils.docstring import describe_attr
 
 
@@ -11,7 +12,7 @@ class ProducerStreamsConfig(KafkaStreamsConfig):
     """Kafka Streams settings specific to Producer."""
 
 
-class ProducerAppValues(KafkaAppValues):
+class ProducerAppValues(StreamsBootstrapValues, KafkaAppValues):
     """Settings specific to producers.
 
     :param streams: Kafka Streams settings
