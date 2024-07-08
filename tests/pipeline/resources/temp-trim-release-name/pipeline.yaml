@@ -1,6 +1,6 @@
 - type: streams-app
   name: in-order-to-have-len-fifty-two-name-should-end--here
-  app:
+  values:
     streams:
       config:
         max.poll.records: 100

@@ -3,7 +3,7 @@
     topics:
       example-topic:
         type: input
-  app:
+  values:
     image: fake-image
   to:
     topics:

@@ -1,11 +1,11 @@
 - type: scheduled-producer
   name: input-producer
-  app:
+  values:
     commandLine:
       FAKE_ARG: fake-arg-value
     schedule: 30 3/8 * * *
 - type: converter
-  app:
+  values:
     commandLine:
       CONVERT_XML: true
     resources:
@@ -14,7 +14,7 @@
       requests:
         memory: 2G
 - type: filter
-  app:
+  values:
     commandLine:
       TYPE: nothing
     resources:

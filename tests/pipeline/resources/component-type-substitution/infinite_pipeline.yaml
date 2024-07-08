@@ -1,5 +1,5 @@
 - type: converter
-  app:
+  values:
     labels:
       l_1: ${component.app.labels.l_2}
       l_2: ${component.app.labels.l_3}

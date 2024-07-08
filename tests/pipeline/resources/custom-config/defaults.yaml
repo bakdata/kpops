@@ -1,7 +1,7 @@
 kafka-app:
   version: 2.9.0
   namespace: development-namespace
-  app:
+  values:
     streams:
       brokers: "${config.kafka_brokers}"
       schemaRegistryUrl: "${config.schema_registry.url}"
@@ -14,7 +14,7 @@ producer-app:
         partitions_count: 3
 
 streams-app:
-  app:
+  values:
     labels:
       pipeline: ${pipeline.name}
   to:

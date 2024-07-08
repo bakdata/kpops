@@ -4,17 +4,14 @@ pipeline-component:
 kubernetes-app:
   namespace: ${NAMESPACE}
 
-kafka-connector:
-  namespace: ${NAMESPACE}
-
 kafka-app:
-  app:
+  values:
     streams:
       brokers: ${config.kafka_brokers}
       schemaRegistryUrl: ${config.schema_registry.url}
 
 streams-app:
-  app:
+  values:
     labels:
       pipeline: ${pipeline.name}
   to:

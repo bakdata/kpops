@@ -2,14 +2,14 @@ kubernetes-app:
   namespace: example-namespace
 
 kafka-app:
-  app:
+  values:
     streams:
       brokers: "${config.kafka_brokers}"
       schema_registry_url: "${schema_registry_url}"
   version: "2.4.2"
 
 streams-app: # inherits from kafka-app
-  app:
+  values:
     streams:
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator

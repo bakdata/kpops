@@ -2,7 +2,7 @@ kubernetes-app:
   name: ${component.type}
   namespace: example-namespace
 kafka-app:
-  app:
+  values:
     streams:
       brokers: "${config.kafka_brokers}"
       schemaRegistryUrl: "${config.schema_registry.url}"
@@ -11,7 +11,7 @@ producer-app: {} # inherits from kafka-app
 
 streams-app: # inherits from kafka-app
   version: 2.9.0
-  app:
+  values:
     streams:
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
@@ -26,7 +26,7 @@ streams-app: # inherits from kafka-app
 
 kafka-connector:
   name: sink-connector
-  app:
+  config:
     batch.size: "2000"
     behavior.on.malformed.documents: "warn"
     behavior.on.null.values: "delete"

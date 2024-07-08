@@ -41,7 +41,7 @@
     topics:
       account-linker-test-topic:
         type: input
-  app:
+  config:
     connector.class: io.confluent.connect.s3.S3SinkConnector
 
 
@@ -51,7 +51,7 @@
     topics:
       account-linker-test-topic:
         type: input
-  app:
+  config:
     connector.class: io.confluent.connect.s3.S3SinkConnector
 
 - type: kafka-sink-connector
@@ -60,5 +60,5 @@
     topics:
       account-linker-test-topic:
         type: input
-  app:
+  config:
     connector.class: io.confluent.connect.s3.S3SinkConnector

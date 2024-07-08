@@ -1,6 +1,6 @@
 - type: streams-app
   name: app2-processor
-  app:
+  values:
     image: some-image
   to:
     topics:

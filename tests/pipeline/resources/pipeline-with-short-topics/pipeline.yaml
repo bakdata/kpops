@@ -14,12 +14,12 @@
   name: simple-app
   from:
     components:
-          component-input:
-            type: null
-          component-extra:
-            role: role
-          component-input-pattern:
-            type: pattern
-          component-extra-pattern:
-            type: pattern
-            role: role
+      component-input:
+        type: null
+      component-extra:
+        role: role
+      component-input-pattern:
+        type: pattern
+      component-extra-pattern:
+        type: pattern
+        role: role
