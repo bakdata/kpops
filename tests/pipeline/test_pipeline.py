@@ -20,13 +20,16 @@ class TestComponentFactory(ModelFactory[PipelineComponent]):
     from_ = FromSection()
     enrich = False
     validate = False
-    handlers = ComponentHandlers(None, MagicMock(), MagicMock())
 
 
 run_validation = False
-test_component_1 = TestComponentFactory.build(run_validation)
-test_component_2 = TestComponentFactory.build(run_validation)
-test_component_3 = TestComponentFactory.build(run_validation)
+kwargs = {
+    "_config": MagicMock(),
+    "_handlers": ComponentHandlers(None, MagicMock(), MagicMock()),
+}
+test_component_1 = TestComponentFactory.build(run_validation, **kwargs)
+test_component_2 = TestComponentFactory.build(run_validation, **kwargs)
+test_component_3 = TestComponentFactory.build(run_validation, **kwargs)
 
 test_component_1.name = "example1"
 test_component_2.name = "example2"
