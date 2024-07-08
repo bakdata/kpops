@@ -1,6 +1,8 @@
+import re
 from unittest.mock import MagicMock
 
 import pytest
+from pydantic import ValidationError
 from pytest_mock import MockerFixture
 
 from kpops.component_handlers import ComponentHandlers
@@ -10,7 +12,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.streams_bootstrap import StreamsBootstrap
+from kpops.components.streams_bootstrap import StreamsBootstrap, StreamsBootstrapValues
 from kpops.config import KpopsConfig
 from tests.components import PIPELINE_BASE_DIR
 
@@ -48,6 +50,7 @@ class TestStreamsBootstrap:
         )
         assert streams_bootstrap.version == "2.9.0"
         assert streams_bootstrap.namespace == "test-namespace"
+        assert streams_bootstrap.app.image_tag == "latest"
 
     @pytest.mark.asyncio()
     async def test_should_deploy_streams_bootstrap_app(
@@ -63,6 +66,7 @@ class TestStreamsBootstrap:
             **{
                 "namespace": "test-namespace",
                 "app": {
+                    "imageTag": "1.0.0",
                     "streams": {
                         "outputTopic": "test",
                         "brokers": "fake-broker:9092",
@@ -94,6 +98,7 @@ class TestStreamsBootstrap:
             "test-namespace",
             {
                 "nameOverride": "${pipeline.name}-example-name",
+                "imageTag": "1.0.0",
                 "streams": {
                     "brokers": "fake-broker:9092",
                     "outputTopic": "test",
@@ -101,3 +106,21 @@ class TestStreamsBootstrap:
             },
             HelmUpgradeInstallFlags(version="1.2.3"),
         )
+
+    @pytest.mark.asyncio()
+    async def test_should_raise_validation_error_for_invalid_image_tag(
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+    ):
+        with pytest.raises(
+            ValidationError,
+            match=re.escape(
+                "1 validation error for StreamsBootstrapValues\nimageTag\n  String should match pattern '^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$'"
+            ),
+        ):
+            StreamsBootstrapValues(
+                **{
+                    "imageTag": "invalid image tag!",
+                }
+            )

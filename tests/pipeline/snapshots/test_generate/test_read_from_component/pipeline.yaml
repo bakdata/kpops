@@ -1,5 +1,6 @@
 - _cleaner:
     app:
+      imageTag: latest
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-read-from-component-producer1
@@ -16,6 +17,7 @@
     type: producer-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-read-from-component-producer1
@@ -38,6 +40,7 @@
   version: 2.4.2
 - _cleaner:
     app:
+      imageTag: latest
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-read-from-component-producer2
@@ -54,6 +57,7 @@
     type: producer-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-read-from-component-producer2
@@ -208,6 +212,7 @@
   type: kafka-sink-connector
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -232,6 +237,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -400,6 +406,7 @@
   type: kafka-sink-connector
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -424,6 +431,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -460,6 +468,7 @@
   version: 2.4.2
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -484,6 +493,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -525,6 +535,7 @@
   version: 2.4.2
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -549,6 +560,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -589,6 +601,7 @@
   version: 2.4.2
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -613,6 +626,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -653,6 +667,7 @@
   version: 2.4.2
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -676,6 +691,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
@@ -713,6 +729,7 @@
   version: 2.4.2
 - _cleaner:
     app:
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -736,6 +753,7 @@
     type: streams-app-cleaner
     version: 2.4.2
   app:
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false

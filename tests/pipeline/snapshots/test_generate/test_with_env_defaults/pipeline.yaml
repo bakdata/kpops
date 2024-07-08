@@ -1,6 +1,7 @@
 - _cleaner:
     app:
       image: fake-image
+      imageTag: latest
       persistence:
         enabled: false
       statefulSet: false
@@ -26,6 +27,7 @@
     version: 2.9.0
   app:
     image: fake-image
+    imageTag: latest
     persistence:
       enabled: false
     statefulSet: false
