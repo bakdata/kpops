@@ -70,25 +70,6 @@ class StreamsBootstrap(HelmApp, ABC):
     def cleaner_values(self) -> dict[str, Any]:
         return self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
 
-    async def fetch_image_tag(self) -> str:
-        """Fetch the image tag of the streams-bootstrap app using the 'helm get values' command.
-
-        If the release doesn't exist, it will fall back to the specified imageTag in the default.yaml/pipeline.yaml
-
-        :return: Image tag of the streams-bootstrap app
-        """
-        cluster_values = await self.helm.get_values(
-            self.namespace, self.helm_release_name
-        )
-        streams_bootstrap_app_values = StreamsBootstrapValues(
-            **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
-        )
-        return (
-            cluster_values["imageTag"]
-            if cluster_values
-            else streams_bootstrap_app_values.image_tag
-        )
-
     @pydantic.model_validator(mode="after")
     def warning_for_latest_image_tag(self) -> Self:
         if self.validate_ and self.app.image_tag == "latest":

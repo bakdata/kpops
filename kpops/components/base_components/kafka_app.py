@@ -101,7 +101,6 @@ class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
     def helm_chart(self) -> str:
         raise NotImplementedError
 
-    # TODO: Write test
     @override
     async def clean(self, dry_run: bool) -> None:
         """Clean an app using a cleanup job.
@@ -120,6 +119,18 @@ class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
         if not self.config.retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {self.helm_release_name}")
             await self.destroy(dry_run)
+
+    async def fetch_image_tag(self) -> str:
+        """Fetch the image tag of the streams-bootstrap app using the 'helm get values' command.
+
+        If the release doesn't exist, it will fall back to the specified imageTag in the default.yaml/pipeline.yaml
+
+        :return: Image tag of the streams-bootstrap app
+        """
+        cluster_values = await self.helm.get_values(
+            self.namespace, self.helm_release_name
+        )
+        return cluster_values["imageTag"] if cluster_values else self.app.image_tag
 
 
 class KafkaApp(PipelineComponent, ABC):
