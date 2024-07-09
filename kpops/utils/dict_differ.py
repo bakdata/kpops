@@ -105,7 +105,6 @@ def render_diff(
         return None
 
     d2_filtered: Mapping = patch(differences, d1)
-
     return "".join(
         colorize_diff(
             differ.compare(
