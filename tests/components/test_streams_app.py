@@ -132,6 +132,10 @@ class TestStreamsApp:
             "kpops.components.base_components.helm_app.DryRunHandler"
         ).return_value
 
+    @pytest.fixture(autouse=True)
+    def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch.object(Helm, "get_values", return_value=None)
+
     def test_cleaner(self, streams_app: StreamsApp):
         cleaner = streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
@@ -538,7 +542,10 @@ class TestStreamsApp:
 
     @pytest.mark.asyncio()
     async def test_reset_when_dry_run_is_false(
-        self, streams_app: StreamsApp, mocker: MockerFixture
+        self,
+        streams_app: StreamsApp,
+        empty_helm_get_values: MockerFixture,
+        mocker: MockerFixture,
     ):
         cleaner = streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
@@ -591,6 +598,7 @@ class TestStreamsApp:
     async def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
         streams_app: StreamsApp,
+        empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
         mock_helm_upgrade_install = mocker.patch.object(
@@ -794,7 +802,10 @@ class TestStreamsApp:
 
     @pytest.mark.asyncio()
     async def test_stateful_clean_with_dry_run_false(
-        self, stateful_streams_app: StreamsApp, mocker: MockerFixture
+        self,
+        stateful_streams_app: StreamsApp,
+        empty_helm_get_values: MockerFixture,
+        mocker: MockerFixture,
     ):
         cleaner = stateful_streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
@@ -862,6 +873,7 @@ class TestStreamsApp:
     async def test_stateful_clean_with_dry_run_true(
         self,
         stateful_streams_app: StreamsApp,
+        empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
         caplog: pytest.LogCaptureFixture,
     ):

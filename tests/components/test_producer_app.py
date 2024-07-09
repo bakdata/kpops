@@ -1,5 +1,5 @@
 import logging
-from unittest.mock import ANY, AsyncMock
+from unittest.mock import ANY, AsyncMock, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
@@ -80,6 +80,10 @@ class TestProducerApp:
                 },
             },
         )
+
+    @pytest.fixture(autouse=True)
+    def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch.object(Helm, "get_values", return_value=None)
 
     def test_cleaner(self, producer_app: ProducerApp):
         cleaner = producer_app._cleaner
@@ -202,6 +206,7 @@ class TestProducerApp:
     async def test_should_not_reset_producer_app(
         self,
         producer_app: ProducerApp,
+        empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
         mock_helm_upgrade_install = mocker.patch.object(
@@ -263,7 +268,10 @@ class TestProducerApp:
 
     @pytest.mark.asyncio()
     async def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
-        self, mocker: MockerFixture, producer_app: ProducerApp
+        self,
+        mocker: MockerFixture,
+        producer_app: ProducerApp,
+        empty_helm_get_values: MockerFixture,
     ):
         mock_helm_upgrade_install = mocker.patch.object(
             producer_app._cleaner.helm, "upgrade_install"
