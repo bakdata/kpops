@@ -129,7 +129,6 @@ class Helm:
                 f"Release with name {release_name} not found. Could not uninstall app."
             )
 
-    # TODO: write tests
     async def get_values(
         self,
         namespace: str,
