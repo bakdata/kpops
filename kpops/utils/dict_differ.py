@@ -100,7 +100,7 @@ def render_diff(
     del_ignored_keys(d1)
     del_ignored_keys(d2)
 
-    differences = list(diff(d1, d2, ignore=ignore))
+    differences = list(diff(d1, d2))
     if not differences:
         return None
 
