@@ -11,7 +11,7 @@ from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
     get_defaults_file_paths,
 )
-from kpops.config import KpopsConfig
+from kpops.config import KpopsConfig, set_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML, KpopsFileType
 from kpops.pipeline import PIPELINE_PATH
 from kpops.utils.environment import ENV
@@ -49,7 +49,8 @@ class EnvVarTest(BaseDefaultsComponent):
 @pytest.fixture(autouse=True)
 def config() -> None:
     ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipeline.yaml")
-    KpopsConfig(pipeline_base_dir=PIPELINE_BASE_DIR)
+    config = KpopsConfig(pipeline_base_dir=PIPELINE_BASE_DIR)
+    set_config(config)
 
 
 @pytest.fixture()

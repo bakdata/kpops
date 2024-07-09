@@ -20,7 +20,7 @@ from pydantic import (
 from pydantic.json_schema import SkipJsonSchema
 
 from kpops.component_handlers import ComponentHandlers
-from kpops.config import KpopsConfig
+from kpops.config import KpopsConfig, get_config
 from kpops.const.file_type import KpopsFileType
 from kpops.utils import cached_classproperty
 from kpops.utils.dict_ops import (
@@ -129,12 +129,13 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         :param component_as_dict: Component represented as dict
         :return: Updated component
         """
+        config = get_config()
         # Leftover variables that were previously introduced in the component by the substitution
         # functions, still hardcoded, because of their names.
         # TODO(Ivan Yordanov): Get rid of them
         substitution_hardcoded: dict[str, JsonType] = {
-            "error_topic_name": KpopsConfig.topic_name_config.default_error_topic_name,
-            "output_topic_name": KpopsConfig.topic_name_config.default_output_topic_name,
+            "error_topic_name": config.topic_name_config.default_error_topic_name,
+            "output_topic_name": config.topic_name_config.default_output_topic_name,
         }
         component_substitution = generate_substitution(
             component_data,
@@ -143,7 +144,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             separator=".",
         )
         substitution = generate_substitution(
-            KpopsConfig.model_dump(mode="json"),
+            config.model_dump(mode="json"),
             "config",
             existing_substitution=component_substitution,
             separator=".",
@@ -164,6 +165,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inherited defaults
         """
+        config = get_config()
         pipeline_path_str = ENV.get(PIPELINE_PATH)
         if not pipeline_path_str:
             return kwargs
@@ -175,7 +177,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
                 kwargs[k] = asdict(v)
 
         defaults_file_paths_ = get_defaults_file_paths(
-            pipeline_path, ENV.get("environment")
+            pipeline_path, config, ENV.get("environment")
         )
         defaults = cls.load_defaults(*defaults_file_paths_)
         log.debug(
@@ -236,7 +238,9 @@ def defaults_from_yaml(path: Path, key: str) -> dict:
     return value
 
 
-def get_defaults_file_paths(pipeline_path: Path, environment: str | None) -> list[Path]:
+def get_defaults_file_paths(
+    pipeline_path: Path, config: KpopsConfig, environment: str | None
+) -> list[Path]:
     """Return a list of default file paths related to the given pipeline.
 
     This function traverses the directory hierarchy upwards till the `pipeline_base_dir`,
@@ -256,7 +260,7 @@ def get_defaults_file_paths(pipeline_path: Path, environment: str | None) -> lis
         raise FileNotFoundError(message)
 
     path = pipeline_path.resolve()
-    pipeline_base_dir = KpopsConfig.pipeline_base_dir.resolve()
+    pipeline_base_dir = config.pipeline_base_dir.resolve()
     if pipeline_base_dir not in path.parents:
         message = f"The given pipeline base path {pipeline_base_dir} is not part of the pipeline path {path}"
         raise RuntimeError(message)

@@ -10,7 +10,7 @@ from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components.base_components.kafka_connector import (
     KafkaConnector,
 )
-from kpops.config import KpopsConfig, TopicNameConfig
+from kpops.config import KpopsConfig, TopicNameConfig, set_config
 from tests.components import PIPELINE_BASE_DIR
 
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
@@ -30,7 +30,7 @@ RESETTER_NAMESPACE = "test-namespace"
 class TestKafkaConnector:
     @pytest.fixture(autouse=True)
     def config(self) -> None:
-        KpopsConfig(
+        config = KpopsConfig(
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component.type}-error-topic",
                 default_output_topic_name="${component.type}-output-topic",
@@ -39,6 +39,7 @@ class TestKafkaConnector:
             helm_diff_config=HelmDiffConfig(),
             pipeline_base_dir=PIPELINE_BASE_DIR,
         )
+        set_config(config)
 
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
