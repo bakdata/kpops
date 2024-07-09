@@ -110,6 +110,9 @@ class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
         log.info(f"Uninstall old cleanup job for {self.helm_release_name}")
         await self.destroy(dry_run)
 
+        image_tag = self.fetch_image_tag()
+        self.app.image_tag = image_tag
+
         log.info(f"Init cleanup job for {self.helm_release_name}")
         await self.deploy(dry_run)
 

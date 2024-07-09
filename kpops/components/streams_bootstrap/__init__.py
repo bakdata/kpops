@@ -67,28 +67,25 @@ class StreamsBootstrap(HelmApp, ABC):
     )
 
     @cached_property
-    def app_values(self) -> dict[str, Any]:
-        streams_bootstrap_app_values = self.model_dump(
-            by_alias=True, exclude={"_cleaner", "from_", "to"}
-        )
+    def cleaner_values(self) -> dict[str, Any]:
+        return self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
+
+    def fetch_image_tag(self) -> str:
+        """Fetch the image tag of the streams-bootstrap app using the 'helm get values' command.
+
+        If the release doesn't exist, it will fall back to the specified imageTag in the default.yaml/pipeline.yaml
+
+        :return: Image tag of the streams-bootstrap app
+        """
         cluster_values = self.helm.get_values(self.namespace, self.helm_release_name)
-        return (
-            streams_bootstrap_app_values
-            if cluster_values is None
-            else self.replace_image_tag_with_cluster_image_tag(
-                cluster_values, streams_bootstrap_app_values
-            )
+        streams_bootstrap_app_values = StreamsBootstrapValues(
+            **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
         )
-
-    @staticmethod
-    def replace_image_tag_with_cluster_image_tag(
-        cluster_values: dict[str, Any], streams_bootstrap_app_values: dict[str, Any]
-    ) -> dict[str, Any]:
-        app_values = streams_bootstrap_app_values.get("app")
-        if app_values:
-            app_values["imageTag"] = cluster_values["imageTag"]
-
-        return streams_bootstrap_app_values
+        return (
+            cluster_values["imageTag"]
+            if cluster_values
+            else streams_bootstrap_app_values.image_tag
+        )
 
     @pydantic.model_validator(mode="after")
     def warning_for_latest_image_tag(self) -> Self:
