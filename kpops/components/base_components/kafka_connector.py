@@ -23,7 +23,7 @@ from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.models.from_section import FromTopic
 from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.config import get_config
+from kpops.config import KpopsConfig
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
 
@@ -85,7 +85,7 @@ class KafkaConnectorResetter(Cleaner, ABC):
         )
         await self.deploy(dry_run)
 
-        if not get_config().retain_clean_jobs:
+        if not KpopsConfig.retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
             await self.destroy(dry_run)
 
@@ -158,7 +158,7 @@ class KafkaConnector(PipelineComponent, ABC):
                 connector_type=self._connector_type.value,
                 config=KafkaConnectorResetterConfig(
                     connector=self.full_name,
-                    brokers=get_config().kafka_brokers,
+                    brokers=KpopsConfig.kafka_brokers,
                 ),
                 **self.resetter_values.model_dump(),
             ),

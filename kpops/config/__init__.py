@@ -1,8 +1,9 @@
 from __future__ import annotations
 
 import logging
+from functools import lru_cache
 from pathlib import Path
-from typing import ClassVar
+from typing import ClassVar, TypeVar
 
 from pydantic import AnyHttpUrl, Field, PrivateAttr, TypeAdapter
 from pydantic_settings import (
@@ -15,6 +16,11 @@ from typing_extensions import override
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, HelmDiffConfig
 from kpops.utils.docstring import describe_object
 from kpops.utils.pydantic import YamlConfigSettingsSource
+
+try:
+    from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
+except ImportError:
+    from typing_extensions import Self
 
 ENV_PREFIX = "KPOPS_"
 
@@ -72,10 +78,14 @@ class KafkaConnectConfig(BaseSettings):
     )
 
 
+@lru_cache(maxsize=1)
+def singleton(cls: type[KpopsConfig]) -> KpopsConfig:
+    return cls()
+
+
+@singleton
 class KpopsConfig(BaseSettings):
     """Global configuration for KPOps project."""
-
-    _config: ClassVar[KpopsConfig] = PrivateAttr()
 
     pipeline_base_dir: Path = Field(
         default=Path(),
@@ -130,14 +140,13 @@ class KpopsConfig(BaseSettings):
         dotenv: list[Path] | None = None,
         environment: str | None = None,
         verbose: bool = False,
-    ) -> KpopsConfig:
+    ) -> Self:
         cls.setup_logging_level(verbose)
         YamlConfigSettingsSource.config_dir = config
         YamlConfigSettingsSource.environment = environment
-        cls._config = KpopsConfig(
+        return cls(
             _env_file=dotenv  # pyright: ignore[reportCallIssue]
         )
-        return cls._config
 
     @staticmethod
     def setup_logging_level(verbose: bool):
@@ -166,14 +175,3 @@ class KpopsConfig(BaseSettings):
             dotenv_settings,
             file_secret_settings,
         )
-
-
-def get_config() -> KpopsConfig:
-    if KpopsConfig._config is None:
-        msg = f"{KpopsConfig.__name__} has not been initialized, call {KpopsConfig.__name__}.{KpopsConfig.create.__name__}"
-        raise RuntimeError(msg)
-    return KpopsConfig._config
-
-
-def set_config(config: KpopsConfig) -> None:
-    KpopsConfig._config = config
