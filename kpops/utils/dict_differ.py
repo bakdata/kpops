@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, MutableMapping
 from dataclasses import dataclass
 from difflib import Differ
 from enum import Enum
-from typing import TYPE_CHECKING, Generic, TypeVar
+from typing import TYPE_CHECKING, Any, Generic, TypeVar
 
 import typer
 import yaml
@@ -79,8 +79,28 @@ class Diff(Generic[T]):
         return f"{key_1}.{key_2}"
 
 
-def render_diff(d1: Mapping, d2: Mapping, ignore: set[str] | None = None) -> str | None:
-    differences = list(diff(d1, d2, ignore=ignore))
+def render_diff(
+    d1: MutableMapping[str, Any],
+    d2: MutableMapping[str, Any],
+    ignore: set[str] | None = None,
+) -> str | None:
+    def del_ignored_keys(d: MutableMapping[str, Any]) -> None:
+        """Delete key to be ignored, dictionary is modified in-place."""
+        if ignore:
+            for i in ignore:
+                key_path = i.split(".")
+                nested = d
+                try:
+                    for key in key_path[:-1]:
+                        nested = nested[key]
+                    del nested[key_path[-1]]
+                except KeyError:
+                    continue
+
+    del_ignored_keys(d1)
+    del_ignored_keys(d2)
+
+    differences = list(diff(d1, d2))
     if not differences:
         return None
 
