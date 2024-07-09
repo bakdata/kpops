@@ -70,14 +70,16 @@ class StreamsBootstrap(HelmApp, ABC):
     def cleaner_values(self) -> dict[str, Any]:
         return self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
 
-    def fetch_image_tag(self) -> str:
+    async def fetch_image_tag(self) -> str:
         """Fetch the image tag of the streams-bootstrap app using the 'helm get values' command.
 
         If the release doesn't exist, it will fall back to the specified imageTag in the default.yaml/pipeline.yaml
 
         :return: Image tag of the streams-bootstrap app
         """
-        cluster_values = self.helm.get_values(self.namespace, self.helm_release_name)
+        cluster_values = await self.helm.get_values(
+            self.namespace, self.helm_release_name
+        )
         streams_bootstrap_app_values = StreamsBootstrapValues(
             **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
         )

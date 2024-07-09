@@ -129,7 +129,7 @@ class Helm:
                 f"Release with name {release_name} not found. Could not uninstall app."
             )
 
-    def get_values(
+    async def get_values(
         self,
         namespace: str,
         release_name: str,
@@ -146,7 +146,7 @@ class Helm:
             "yaml",
         ]
         try:
-            return yaml.safe_load(self.__execute(command))
+            return yaml.safe_load(await self.__async_execute(command))
         except ReleaseNotFoundException:
             log.warning(
                 f"Release with name {release_name} not found. Could not get values."

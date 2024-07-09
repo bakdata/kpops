@@ -101,6 +101,7 @@ class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
     def helm_chart(self) -> str:
         raise NotImplementedError
 
+    # TODO: Write test
     @override
     async def clean(self, dry_run: bool) -> None:
         """Clean an app using a cleanup job.
@@ -110,7 +111,7 @@ class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
         log.info(f"Uninstall old cleanup job for {self.helm_release_name}")
         await self.destroy(dry_run)
 
-        image_tag = self.fetch_image_tag()
+        image_tag = await self.fetch_image_tag()
         self.app.image_tag = image_tag
 
         log.info(f"Init cleanup job for {self.helm_release_name}")
