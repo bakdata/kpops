@@ -1,0 +1,16 @@
+{
+    "yaml.schemas": {
+        "https://bakdata.github.io/kpops/4.0/schema/pipeline.json": [
+            "pipeline.yaml",
+            "pipeline_*.yaml"
+        ],
+        "https://bakdata.github.io/kpops/4.0/schema/defaults.json": [
+            "defaults.yaml",
+            "defaults_*.yaml"
+        ],
+        "https://bakdata.github.io/kpops/4.0/schema/config.json": [
+            "config.yaml",
+            "config_*.yaml"
+        ]
+    }
+}
