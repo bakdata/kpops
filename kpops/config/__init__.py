@@ -75,7 +75,7 @@ class KafkaConnectConfig(BaseSettings):
 class KpopsConfig(BaseSettings):
     """Global configuration for KPOps project."""
 
-    _config: ClassVar[KpopsConfig] = PrivateAttr()
+    _config: ClassVar[KpopsConfig | None] = PrivateAttr()
 
     pipeline_base_dir: Path = Field(
         default=Path(),
