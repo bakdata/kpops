@@ -147,7 +147,8 @@ class Helm:
             "yaml",
         ]
         try:
-            return yaml.safe_load(await self.__async_execute(command))
+            command_result = await self.__async_execute(command)
+            return yaml.safe_load(command_result)
         except ReleaseNotFoundException:
             log.warning(
                 f"Release with name {release_name} not found. Could not get values."
