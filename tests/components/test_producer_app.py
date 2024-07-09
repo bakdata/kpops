@@ -62,7 +62,6 @@ class TestProducerApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> ProducerApp:
         return ProducerApp(
-            config_=config,
             handlers_=handlers,
             name=PRODUCER_APP_NAME,
             **{
@@ -104,7 +103,6 @@ class TestProducerApp:
 
     def test_output_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
-            config_=config,
             handlers_=handlers,
             name=PRODUCER_APP_NAME,
             **{
@@ -320,7 +318,6 @@ class TestProducerApp:
         handlers: ComponentHandlers,
     ):
         producer_app = ProducerApp(
-            config_=config,
             handlers_=handlers,
             name="my-producer",
             **{

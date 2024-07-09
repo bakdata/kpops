@@ -10,7 +10,7 @@ from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components.base_components.kafka_connector import (
     KafkaConnector,
 )
-from kpops.config import KpopsConfig, TopicNameConfig
+from kpops.config import KpopsConfig, TopicNameConfig, set_config
 from tests.components import PIPELINE_BASE_DIR
 
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
@@ -28,9 +28,9 @@ RESETTER_NAMESPACE = "test-namespace"
 
 @pytest.mark.usefixtures("mock_env")
 class TestKafkaConnector:
-    @pytest.fixture()
-    def config(self) -> KpopsConfig:
-        return KpopsConfig(
+    @pytest.fixture(autouse=True)
+    def config(self) -> None:
+        config = KpopsConfig(
             topic_name_config=TopicNameConfig(
                 default_error_topic_name="${component.type}-error-topic",
                 default_output_topic_name="${component.type}-output-topic",
@@ -39,6 +39,7 @@ class TestKafkaConnector:
             helm_diff_config=HelmDiffConfig(),
             pipeline_base_dir=PIPELINE_BASE_DIR,
         )
+        set_config(config)
 
     @pytest.fixture()
     def handlers(self) -> ComponentHandlers:
@@ -72,12 +73,10 @@ class TestKafkaConnector:
     @pytest.fixture()
     def connector(
         self,
-        config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ) -> KafkaConnector:
         return KafkaConnector(  # HACK: not supposed to be instantiated, because ABC
-            config_=config,
             handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,
@@ -87,13 +86,11 @@ class TestKafkaConnector:
     def test_connector_config_name_override(
         self,
         connector: KafkaConnector,
-        config: KpopsConfig,
         handlers: ComponentHandlers,
     ):
         assert connector.config.name == CONNECTOR_FULL_NAME
 
         connector = KafkaConnector(
-            config_=config,
             handlers_=handlers,
             name=CONNECTOR_NAME,
             config={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues], gets enriched
@@ -108,7 +105,6 @@ class TestKafkaConnector:
             ),
         ):
             KafkaConnector(
-                config_=config,
                 handlers_=handlers,
                 name=CONNECTOR_NAME,
                 config={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore[reportGeneralTypeIssues], gets enriched
@@ -121,7 +117,6 @@ class TestKafkaConnector:
             ),
         ):
             KafkaConnector(
-                config_=config,
                 handlers_=handlers,
                 name=CONNECTOR_NAME,
                 config={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues], gets enriched

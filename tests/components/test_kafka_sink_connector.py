@@ -30,7 +30,6 @@ from kpops.components.base_components.models.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.config import KpopsConfig
 from kpops.utils.colorify import magentaify
 from tests.components.test_kafka_connector import (
     CONNECTOR_CLEAN_FULL_NAME,
@@ -53,12 +52,10 @@ class TestKafkaSinkConnector(TestKafkaConnector):
     @pytest.fixture()
     def connector(
         self,
-        config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ) -> KafkaSinkConnector:
         return KafkaSinkConnector(
-            config_=config,
             handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,
@@ -105,13 +102,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
     def test_connector_config_parsing(
         self,
-        config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ):
         topic_pattern = ".*"
         connector = KafkaSinkConnector(
-            config_=config,
             handlers_=handlers,
             name=CONNECTOR_NAME,
             config=KafkaConnectorConfig(
@@ -124,14 +119,12 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
     def test_from_section_parsing_input_topic(
         self,
-        config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ):
         topic1 = TopicName("connector-topic1")
         topic2 = TopicName("connector-topic2")
         connector = KafkaSinkConnector(
-            config_=config,
             handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,
@@ -165,13 +158,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
     def test_from_section_parsing_input_pattern(
         self,
-        config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ):
         topic_pattern = TopicName(".*")
         connector = KafkaSinkConnector(
-            config_=config,
             handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,
@@ -409,13 +400,11 @@ class TestKafkaSinkConnector(TestKafkaConnector):
     @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_true(
         self,
-        config: KpopsConfig,
         handlers: ComponentHandlers,
         dry_run_handler_mock: MagicMock,
         connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSinkConnector(
-            config_=config,
             handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,
@@ -430,7 +419,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
     @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_false(
         self,
-        config: KpopsConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         dry_run_handler_mock: MagicMock,
@@ -438,7 +426,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
         connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSinkConnector(
-            config_=config,
             handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,

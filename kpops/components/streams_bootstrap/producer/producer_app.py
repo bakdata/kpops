@@ -56,7 +56,6 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
     @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
         return ProducerAppCleaner(
-            config_=self.config_,
             handlers_=self.handlers_,
             **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"}),
         )

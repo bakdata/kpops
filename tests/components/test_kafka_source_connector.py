@@ -26,7 +26,6 @@ from kpops.components.base_components.models.to_section import (
     ToSection,
 )
 from kpops.components.base_components.models.topic import OutputTopicTypes, TopicConfig
-from kpops.config import KpopsConfig
 from kpops.utils.environment import ENV
 from tests.components.test_kafka_connector import (
     CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
@@ -46,12 +45,10 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     @pytest.fixture()
     def connector(
         self,
-        config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ) -> KafkaSourceConnector:
         return KafkaSourceConnector(
-            config_=config,
             handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,
@@ -77,13 +74,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
 
     def test_from_section_raises_exception(
         self,
-        config: KpopsConfig,
         handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ):
         with pytest.raises(NotImplementedError):
             KafkaSourceConnector(
-                config_=config,
                 handlers_=handlers,
                 name=CONNECTOR_NAME,
                 config=connector_config,
@@ -312,7 +307,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_false(
         self,
-        config: KpopsConfig,
         handlers: ComponentHandlers,
         helm_mock: MagicMock,
         dry_run_handler_mock: MagicMock,
@@ -320,7 +314,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSourceConnector(
-            config_=config,
             handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,
@@ -394,13 +387,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_true(
         self,
-        config: KpopsConfig,
         handlers: ComponentHandlers,
         dry_run_handler_mock: MagicMock,
         connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSourceConnector(
-            config_=config,
             handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,

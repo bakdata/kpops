@@ -8,6 +8,7 @@ from kpops.component_handlers.helm_wrapper.utils import (
     create_helm_release_name,
 )
 from kpops.components.base_components.helm_app import HelmApp
+from kpops.config import get_config
 
 
 class Cleaner(HelmApp, ABC):
@@ -34,7 +35,7 @@ class Cleaner(HelmApp, ABC):
     @override
     def helm_flags(self) -> HelmFlags:
         return HelmFlags(
-            create_namespace=self.config_.create_namespace,
+            create_namespace=get_config().create_namespace,
             version=self.version,
             wait=True,
             wait_for_jobs=True,

@@ -20,7 +20,7 @@ from pydantic import (
 from pydantic.json_schema import SkipJsonSchema
 
 from kpops.component_handlers import ComponentHandlers
-from kpops.config import KpopsConfig
+from kpops.config import KpopsConfig, get_config
 from kpops.const.file_type import KpopsFileType
 from kpops.utils import cached_classproperty
 from kpops.utils.dict_ops import (
@@ -50,7 +50,6 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     correctly to the component.
 
     :param enrich: Whether to enrich component with defaults, defaults to False
-    :param config_: KPOps configuration to be accessed by this component
     :param handlers_: Component handlers to be accessed by this component
     :param validate: Whether to run custom validation on the component, defaults to True
     """
@@ -62,11 +61,6 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     enrich: SkipJsonSchema[bool] = Field(
         default=True,
         description=describe_attr("enrich", __doc__),
-        exclude=True,
-    )
-    config_: SkipJsonSchema[KpopsConfig] = Field(
-        default=...,
-        description=describe_attr("config_", __doc__),
         exclude=True,
     )
     handlers_: SkipJsonSchema[ComponentHandlers] = Field(
@@ -87,11 +81,10 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             values = cls.extend_with_defaults(**values)
             tmp_self = cls(**values, enrich=False)
             values = tmp_self.model_dump(mode="json", by_alias=True)
-            values = cls.substitute_in_component(tmp_self.config_, **values)
+            values = cls.substitute_in_component(**values)
             self.__init__(
                 enrich=False,
                 validate=True,
-                config_=tmp_self.config_,
                 handlers_=tmp_self.handlers_,
                 **values,
             )
@@ -130,20 +123,19 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         return tuple(gen_parents())
 
     @classmethod
-    def substitute_in_component(
-        cls, config_: KpopsConfig, **component_data: Any
-    ) -> dict[str, Any]:
+    def substitute_in_component(cls, **component_data: Any) -> dict[str, Any]:
         """Substitute all $-placeholders in a component in dict representation.
 
         :param component_as_dict: Component represented as dict
         :return: Updated component
         """
+        config = get_config()
         # Leftover variables that were previously introduced in the component by the substitution
         # functions, still hardcoded, because of their names.
         # TODO(Ivan Yordanov): Get rid of them
         substitution_hardcoded: dict[str, JsonType] = {
-            "error_topic_name": config_.topic_name_config.default_error_topic_name,
-            "output_topic_name": config_.topic_name_config.default_output_topic_name,
+            "error_topic_name": config.topic_name_config.default_error_topic_name,
+            "output_topic_name": config.topic_name_config.default_output_topic_name,
         }
         component_substitution = generate_substitution(
             component_data,
@@ -152,7 +144,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             separator=".",
         )
         substitution = generate_substitution(
-            config_.model_dump(mode="json"),
+            config.model_dump(mode="json"),
             "config",
             existing_substitution=component_substitution,
             separator=".",
@@ -166,16 +158,14 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         )
 
     @classmethod
-    def extend_with_defaults(
-        cls, config_: KpopsConfig, **kwargs: Any
-    ) -> dict[str, Any]:
+    def extend_with_defaults(cls, **kwargs: Any) -> dict[str, Any]:
         """Merge parent components' defaults with own.
 
         :param config: KPOps configuration
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inherited defaults
         """
-        kwargs["config_"] = config_
+        config = get_config()
         pipeline_path_str = ENV.get(PIPELINE_PATH)
         if not pipeline_path_str:
             return kwargs
@@ -187,7 +177,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
                 kwargs[k] = asdict(v)
 
         defaults_file_paths_ = get_defaults_file_paths(
-            pipeline_path, config_, ENV.get("environment")
+            pipeline_path, config, ENV.get("environment")
         )
         defaults = cls.load_defaults(*defaults_file_paths_)
         log.debug(

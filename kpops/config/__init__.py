@@ -2,8 +2,9 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from typing import ClassVar
 
-from pydantic import AnyHttpUrl, Field, TypeAdapter
+from pydantic import AnyHttpUrl, Field, PrivateAttr, TypeAdapter
 from pydantic_settings import (
     BaseSettings,
     PydanticBaseSettingsSource,
@@ -74,6 +75,8 @@ class KafkaConnectConfig(BaseSettings):
 class KpopsConfig(BaseSettings):
     """Global configuration for KPOps project."""
 
+    _config: ClassVar[KpopsConfig] = PrivateAttr()
+
     pipeline_base_dir: Path = Field(
         default=Path(),
         description="Base directory to the pipelines (default is current working directory)",
@@ -131,9 +134,10 @@ class KpopsConfig(BaseSettings):
         cls.setup_logging_level(verbose)
         YamlConfigSettingsSource.config_dir = config
         YamlConfigSettingsSource.environment = environment
-        return KpopsConfig(
+        cls._config = KpopsConfig(
             _env_file=dotenv  # pyright: ignore[reportCallIssue]
         )
+        return cls._config
 
     @staticmethod
     def setup_logging_level(verbose: bool):
@@ -162,3 +166,14 @@ class KpopsConfig(BaseSettings):
             dotenv_settings,
             file_secret_settings,
         )
+
+
+def get_config() -> KpopsConfig:
+    if KpopsConfig._config is None:
+        msg = f"{KpopsConfig.__name__} has not been initialized, call {KpopsConfig.__name__}.{KpopsConfig.create.__name__}"
+        raise RuntimeError(msg)
+    return KpopsConfig._config
+
+
+def set_config(config: KpopsConfig) -> None:
+    KpopsConfig._config = config

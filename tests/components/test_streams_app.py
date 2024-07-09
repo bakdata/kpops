@@ -80,7 +80,6 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
-            config_=config,
             handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
@@ -103,7 +102,6 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
-            config_=config,
             handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
@@ -198,7 +196,6 @@ class TestStreamsApp:
 
     def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         streams_app = StreamsApp(
-            config_=config,
             handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
@@ -248,7 +245,6 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            config_=config,
             handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
@@ -281,7 +277,6 @@ class TestStreamsApp:
             ValueError, match="Define role only if `type` is `pattern` or `None`"
         ):
             StreamsApp(
-                config_=config,
                 handlers_=handlers,
                 name=STREAMS_APP_NAME,
                 **{
@@ -305,7 +300,6 @@ class TestStreamsApp:
             ValueError, match="Define `role` only if `type` is undefined"
         ):
             StreamsApp(
-                config_=config,
                 handlers_=handlers,
                 name=STREAMS_APP_NAME,
                 **{
@@ -328,7 +322,6 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            config_=config,
             handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
@@ -371,7 +364,6 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            config_=config,
             handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
@@ -415,7 +407,6 @@ class TestStreamsApp:
         mocker: MockerFixture,
     ):
         streams_app = StreamsApp(
-            config_=config,
             handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
@@ -645,7 +636,6 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            config_=config,
             handlers_=handlers,
             name="my-app",
             **{
