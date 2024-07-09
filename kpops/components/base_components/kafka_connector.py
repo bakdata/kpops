@@ -149,6 +149,7 @@ class KafkaConnector(PipelineComponent, ABC):
                     "_resetter",
                     "resetter_values",
                     "resetter_namespace",
+                    "values",
                     "config",
                     "from_",
                     "to",
