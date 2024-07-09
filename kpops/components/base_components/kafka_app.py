@@ -13,7 +13,7 @@ from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.components.streams_bootstrap import StreamsBootstrap
+from kpops.components.streams_bootstrap import StreamsBootstrap, StreamsBootstrapValues
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
@@ -110,8 +110,9 @@ class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
         log.info(f"Uninstall old cleanup job for {self.helm_release_name}")
         await self.destroy(dry_run)
 
-        image_tag = await self.fetch_image_tag()
-        self.app.image_tag = image_tag
+        cluster_image_tag = await self.fetch_image_tag_from_cluster()
+        if cluster_image_tag:
+            self.app.image_tag = cluster_image_tag
 
         log.info(f"Init cleanup job for {self.helm_release_name}")
         await self.deploy(dry_run)
@@ -120,17 +121,17 @@ class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
             log.info(f"Uninstall cleanup job for {self.helm_release_name}")
             await self.destroy(dry_run)
 
-    async def fetch_image_tag(self) -> str:
+    async def fetch_image_tag_from_cluster(self) -> str | None:
         """Fetch the image tag of the streams-bootstrap app using the 'helm get values' command.
-
-        If the release doesn't exist, it will fall back to the specified imageTag in the default.yaml/pipeline.yaml
 
         :return: Image tag of the streams-bootstrap app
         """
         cluster_values = await self.helm.get_values(
             self.namespace, self.helm_release_name
         )
-        return cluster_values["imageTag"] if cluster_values else self.app.image_tag
+        if cluster_values:
+            return StreamsBootstrapValues.model_validate(cluster_values).image_tag
+        return None
 
 
 class KafkaApp(PipelineComponent, ABC):
