@@ -80,11 +80,31 @@ class Diff(Generic[T]):
 
 
 def render_diff(d1: Mapping, d2: Mapping, ignore: set[str] | None = None) -> str | None:
+    d1 = dict(d1)
+    d2 = dict(d2)
+
+    def del_ignored_keys(d: dict) -> None:
+        """Delete key to be ignored, dictionary is modified in-place."""
+        if ignore:
+            for i in ignore:
+                key_path = i.split(".")
+                nested = d1
+                try:
+                    for key in key_path[:-1]:
+                        nested = nested[key]
+                    del nested[key_path[-1]]
+                except KeyError:
+                    continue
+
+    del_ignored_keys(d1)
+    del_ignored_keys(d2)
+
     differences = list(diff(d1, d2, ignore=ignore))
     if not differences:
         return None
 
     d2_filtered: Mapping = patch(differences, d1)
+
     return "".join(
         colorize_diff(
             differ.compare(
