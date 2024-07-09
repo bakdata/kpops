@@ -4,7 +4,7 @@ from unittest.mock import ANY, AsyncMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers import ComponentHandlers, get_handlers
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.models.topic import (
@@ -62,7 +62,6 @@ class TestProducerApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> ProducerApp:
         return ProducerApp(
-            handlers_=handlers,
             name=PRODUCER_APP_NAME,
             **{
                 "version": "2.4.2",
@@ -103,7 +102,6 @@ class TestProducerApp:
 
     def test_output_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         producer_app = ProducerApp(
-            handlers_=handlers,
             name=PRODUCER_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -139,7 +137,7 @@ class TestProducerApp:
         mocker: MockerFixture,
     ):
         mock_create_topic = mocker.patch.object(
-            producer_app.handlers_.topic_handler, "create_topic"
+            get_handlers().topic_handler, "create_topic"
         )
 
         mock_helm_upgrade_install = mocker.patch.object(
@@ -318,7 +316,6 @@ class TestProducerApp:
         handlers: ComponentHandlers,
     ):
         producer_app = ProducerApp(
-            handlers_=handlers,
             name="my-producer",
             **{
                 "namespace": "test-namespace",

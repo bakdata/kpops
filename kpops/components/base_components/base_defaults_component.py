@@ -19,7 +19,6 @@ from pydantic import (
 )
 from pydantic.json_schema import SkipJsonSchema
 
-from kpops.component_handlers import ComponentHandlers
 from kpops.config import KpopsConfig, get_config
 from kpops.const.file_type import KpopsFileType
 from kpops.utils import cached_classproperty
@@ -50,7 +49,6 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     correctly to the component.
 
     :param enrich: Whether to enrich component with defaults, defaults to False
-    :param handlers_: Component handlers to be accessed by this component
     :param validate: Whether to run custom validation on the component, defaults to True
     """
 
@@ -61,11 +59,6 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     enrich: SkipJsonSchema[bool] = Field(
         default=True,
         description=describe_attr("enrich", __doc__),
-        exclude=True,
-    )
-    handlers_: SkipJsonSchema[ComponentHandlers] = Field(
-        default=...,
-        description=describe_attr("handlers_", __doc__),
         exclude=True,
     )
     validate_: SkipJsonSchema[bool] = Field(
@@ -85,7 +78,6 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             self.__init__(
                 enrich=False,
                 validate=True,
-                handlers_=tmp_self.handlers_,
                 **values,
             )
         else:

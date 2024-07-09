@@ -305,10 +305,7 @@ class PipelineGenerator:
         :param component_class: Type of pipeline component
         :param component_data: Arguments for instantiation of pipeline component
         """
-        component = component_class(
-            handlers_=self.handlers,
-            **component_data,
-        )
+        component = component_class(**component_data)
         component = self.enrich_component_with_env(component)
         # inflate & enrich components
         for inflated_component in component.inflate():  # TODO: recursively
@@ -348,10 +345,7 @@ class PipelineGenerator:
             component.model_dump(mode="json", by_alias=True),
         )
 
-        return component.__class__(
-            handlers_=self.handlers,
-            **env_component_as_dict,
-        )
+        return component.__class__(**env_component_as_dict)
 
     @staticmethod
     def pipeline_filename_environment(pipeline_path: Path, environment: str) -> Path:

@@ -77,7 +77,6 @@ class TestKafkaConnector:
         connector_config: KafkaConnectorConfig,
     ) -> KafkaConnector:
         return KafkaConnector(  # HACK: not supposed to be instantiated, because ABC
-            handlers_=handlers,
             name=CONNECTOR_NAME,
             config=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
@@ -91,7 +90,6 @@ class TestKafkaConnector:
         assert connector.config.name == CONNECTOR_FULL_NAME
 
         connector = KafkaConnector(
-            handlers_=handlers,
             name=CONNECTOR_NAME,
             config={"connector.class": CONNECTOR_CLASS},  # type: ignore[reportGeneralTypeIssues], gets enriched
             resetter_namespace=RESETTER_NAMESPACE,
@@ -105,7 +103,6 @@ class TestKafkaConnector:
             ),
         ):
             KafkaConnector(
-                handlers_=handlers,
                 name=CONNECTOR_NAME,
                 config={"connector.class": CONNECTOR_CLASS, "name": "different-name"},  # type: ignore[reportGeneralTypeIssues], gets enriched
             )
@@ -117,7 +114,6 @@ class TestKafkaConnector:
             ),
         ):
             KafkaConnector(
-                handlers_=handlers,
                 name=CONNECTOR_NAME,
                 config={"connector.class": CONNECTOR_CLASS, "name": ""},  # type: ignore[reportGeneralTypeIssues], gets enriched
             )

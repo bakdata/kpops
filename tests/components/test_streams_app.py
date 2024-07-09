@@ -6,7 +6,7 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.api.exception import ValidationError
-from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers import ComponentHandlers, get_handlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmDiffConfig,
     HelmUpgradeInstallFlags,
@@ -80,7 +80,6 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
-            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -102,7 +101,6 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ) -> StreamsApp:
         return StreamsApp(
-            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -196,7 +194,6 @@ class TestStreamsApp:
 
     def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
         streams_app = StreamsApp(
-            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -245,7 +242,6 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -277,7 +273,6 @@ class TestStreamsApp:
             ValueError, match="Define role only if `type` is `pattern` or `None`"
         ):
             StreamsApp(
-                handlers_=handlers,
                 name=STREAMS_APP_NAME,
                 **{
                     "namespace": "test-namespace",
@@ -300,7 +295,6 @@ class TestStreamsApp:
             ValueError, match="Define `role` only if `type` is undefined"
         ):
             StreamsApp(
-                handlers_=handlers,
                 name=STREAMS_APP_NAME,
                 **{
                     "namespace": "test-namespace",
@@ -322,7 +316,6 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -364,7 +357,6 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -407,7 +399,6 @@ class TestStreamsApp:
         mocker: MockerFixture,
     ):
         streams_app = StreamsApp(
-            handlers_=handlers,
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -435,7 +426,7 @@ class TestStreamsApp:
             },
         )
         mock_create_topic = mocker.patch.object(
-            streams_app.handlers_.topic_handler, "create_topic"
+            get_handlers().topic_handler, "create_topic"
         )
         mock_helm_upgrade_install = mocker.patch.object(
             streams_app.helm, "upgrade_install"
@@ -636,7 +627,6 @@ class TestStreamsApp:
         self, config: KpopsConfig, handlers: ComponentHandlers
     ):
         streams_app = StreamsApp(
-            handlers_=handlers,
             name="my-app",
             **{
                 "namespace": "test-namespace",

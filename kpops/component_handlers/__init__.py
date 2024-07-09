@@ -11,6 +11,18 @@ if TYPE_CHECKING:
 
 
 class ComponentHandlers:
+    def __new__(
+        cls,
+        schema_handler,
+        connector_handler,
+        topic_handler,
+        *args,
+        **kwargs,
+    ):
+        if not hasattr(cls, "_instance"):
+            cls._instance = super().__new__(cls, *args, **kwargs)
+        return cls._instance
+
     def __init__(
         self,
         schema_handler: SchemaHandler | None,
@@ -20,3 +32,7 @@ class ComponentHandlers:
         self.schema_handler = schema_handler
         self.connector_handler = connector_handler
         self.topic_handler = topic_handler
+
+
+def get_handlers() -> ComponentHandlers:
+    return ComponentHandlers._instance

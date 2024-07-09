@@ -126,7 +126,7 @@ class TestBaseDefaultsComponent:
 
     def test_inherit_defaults(self, handlers: ComponentHandlers):
         ENV["environment"] = "development"
-        component = Child(handlers_=handlers)
+        component = Child()
 
         assert (
             component.name == "fake-child-name"
@@ -146,7 +146,6 @@ class TestBaseDefaultsComponent:
 
     def test_inherit(self, handlers: ComponentHandlers):
         component = Child(
-            handlers_=handlers,
             name="name-defined-in-pipeline_parser",
         )
 
@@ -167,7 +166,7 @@ class TestBaseDefaultsComponent:
         ), "Defaults in code should be kept for parents"
 
     def test_multiple_generations(self, handlers: ComponentHandlers):
-        component = GrandChild(handlers_=handlers)
+        component = GrandChild()
 
         assert (
             component.name == "fake-child-name"
@@ -188,7 +187,7 @@ class TestBaseDefaultsComponent:
 
     def test_env_var_substitution(self, handlers: ComponentHandlers):
         ENV["pipeline_name"] = RESOURCES_PATH.as_posix()
-        component = EnvVarTest(handlers_=handlers)
+        component = EnvVarTest()
 
         assert component.name
 
@@ -197,7 +196,7 @@ class TestBaseDefaultsComponent:
         ), "Environment variables should be substituted"
 
     def test_merge_defaults(self, handlers: ComponentHandlers):
-        component = GrandChild(handlers_=handlers, nested=Nested(**{"bar": False}))
+        component = GrandChild(nested=Nested(**{"bar": False}))
         assert isinstance(component.nested, Nested)
         assert component.nested == Nested(**{"foo": "foo", "bar": False})
 

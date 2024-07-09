@@ -39,7 +39,6 @@ class TestStreamsBootstrap:
 
     def test_default_configs(self, config: KpopsConfig, handlers: ComponentHandlers):
         streams_bootstrap = StreamsBootstrap(
-            handlers_=handlers,
             name="example-name",
             **{
                 "namespace": "test-namespace",
@@ -62,7 +61,6 @@ class TestStreamsBootstrap:
         mocker: MockerFixture,
     ):
         streams_bootstrap = StreamsBootstrap(
-            handlers_=handlers,
             name="example-name",
             **{
                 "namespace": "test-namespace",

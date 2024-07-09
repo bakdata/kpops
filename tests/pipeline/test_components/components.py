@@ -38,7 +38,6 @@ class ShouldInflate(StreamsApp):
             for topic_name, topic_config in self.to.topics.items():
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
-                        handlers_=self.handlers_,
                         name=f"{self.name}-inflated-sink-connector",
                         config={  # type: ignore[reportGeneralTypeIssues], required `connector.class` comes from defaults during enrichment
                             "topics": topic_name,
@@ -57,7 +56,6 @@ class ShouldInflate(StreamsApp):
                     )
                     inflate_steps.append(kafka_connector)
                     streams_app = StreamsApp(
-                        handlers_=self.handlers_,
                         name=f"{self.name}-inflated-streams-app",
                         to=ToSection(  # type: ignore[reportGeneralTypeIssues]
                             topics={
@@ -91,7 +89,6 @@ class TestSchemaProvider(SchemaProvider):
 class SimpleInflateConnectors(StreamsApp):
     def inflate(self) -> list[PipelineComponent]:
         connector = KafkaSinkConnector(
-            handlers_=self.handlers_,
             name="inflated-connector-name",
             config={},  # type: ignore[reportArgumentType]
         )

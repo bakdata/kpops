@@ -9,6 +9,7 @@ import pydantic
 from pydantic import Field, PrivateAttr, ValidationInfo, computed_field, field_validator
 from typing_extensions import override
 
+from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
 )
@@ -141,7 +142,6 @@ class KafkaConnector(PipelineComponent, ABC):
         if self.resetter_namespace:
             kwargs["namespace"] = self.resetter_namespace
         return KafkaConnectorResetter(
-            handlers_=self.handlers_,
             **kwargs,
             **self.model_dump(
                 by_alias=True,
@@ -168,32 +168,28 @@ class KafkaConnector(PipelineComponent, ABC):
     async def deploy(self, dry_run: bool) -> None:
         if self.to:
             for topic in self.to.kafka_topics:
-                await self.handlers_.topic_handler.create_topic(topic, dry_run=dry_run)
+                await get_handlers().topic_handler.create_topic(topic, dry_run=dry_run)
 
-            if self.handlers_.schema_handler:
-                await self.handlers_.schema_handler.submit_schemas(
-                    to_section=self.to, dry_run=dry_run
-                )
+            if schema_handler := get_handlers().schema_handler:
+                await schema_handler.submit_schemas(to_section=self.to, dry_run=dry_run)
 
-        await self.handlers_.connector_handler.create_connector(
+        await get_handlers().connector_handler.create_connector(
             self.config, dry_run=dry_run
         )
 
     @override
     async def destroy(self, dry_run: bool) -> None:
-        await self.handlers_.connector_handler.destroy_connector(
+        await get_handlers().connector_handler.destroy_connector(
             self.full_name, dry_run=dry_run
         )
 
     @override
     async def clean(self, dry_run: bool) -> None:
         if self.to:
-            if self.handlers_.schema_handler:
-                await self.handlers_.schema_handler.delete_schemas(
-                    to_section=self.to, dry_run=dry_run
-                )
+            if schema_handler := get_handlers().schema_handler:
+                await schema_handler.delete_schemas(to_section=self.to, dry_run=dry_run)
             for topic in self.to.kafka_topics:
-                await self.handlers_.topic_handler.delete_topic(topic, dry_run=dry_run)
+                await get_handlers().topic_handler.delete_topic(topic, dry_run=dry_run)
 
 
 class KafkaSourceConnector(KafkaConnector):
