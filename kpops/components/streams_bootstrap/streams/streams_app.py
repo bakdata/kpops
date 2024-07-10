@@ -32,10 +32,28 @@ class StreamsAppCleaner(KafkaAppCleaner):
         return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
     @override
-    async def clean(self, dry_run: bool) -> None:
+    async def reset(self, dry_run: bool) -> None:
+        await self.update_cleaner_with_cluster_values()
+
+        self.app.streams.delete_output = False
         await super().clean(dry_run)
+
+    @override
+    async def clean(self, dry_run: bool) -> None:
+        await self.update_cleaner_with_cluster_values()
+
+        self.app.streams.delete_output = True
+        await super().clean(dry_run)
+
         if self.app.stateful_set and self.app.persistence.enabled:
             await self.clean_pvcs(dry_run)
+
+    async def update_cleaner_with_cluster_values(self) -> None:
+        """Update cleaner with cluster values if the release exists."""
+        cluster_values = await self.fetch_values_from_cluster()
+        if cluster_values:
+            self.app = StreamsAppValues.model_validate(cluster_values)
+            self.app.name_override = self.helm_name_override
 
     async def clean_pvcs(self, dry_run: bool) -> None:
         app_full_name = super(HelmApp, self).full_name
@@ -121,10 +139,8 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        self._cleaner.app.streams.delete_output = False
-        await self._cleaner.clean(dry_run)
+        await self._cleaner.reset(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        self._cleaner.app.streams.delete_output = True
         await self._cleaner.clean(dry_run)

@@ -650,7 +650,7 @@ class TestStreamsApp:
         )
 
     @pytest.mark.asyncio()
-    async def test_should_deploy_clean_up_job_with_image_tag_in_cluster(
+    async def test_should_deploy_clean_up_job_with_values_in_cluster(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
@@ -665,9 +665,12 @@ class TestStreamsApp:
                 "imageTag": image_tag_in_cluster,
                 "nameOverride": STREAMS_APP_NAME,
                 "replicaCount": 1,
+                "persistence": {"enabled": False, "size": "1Gi"},
+                "statefulSet": False,
                 "streams": {
                     "brokers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
+                    "outputTopic": "streams-app-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
@@ -712,13 +715,17 @@ class TestStreamsApp:
             dry_run,
             "test-namespace",
             {
+                "image": "registry/streams-app",
                 "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                 "imageTag": image_tag_in_cluster,
+                "persistence": {"size": "1Gi"},
+                "replicaCount": 1,
                 "streams": {
                     "brokers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
                     "outputTopic": "streams-app-output-topic",
                     "deleteOutput": True,
+                    "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
             HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),

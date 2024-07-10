@@ -245,6 +245,7 @@ class TestProducerApp:
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
+                            "delete_output": True,
                         },
                     },
                     HelmUpgradeInstallFlags(
@@ -305,6 +306,7 @@ class TestProducerApp:
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
+                            "delete_output": True,
                         },
                     },
                     HelmUpgradeInstallFlags(
@@ -363,7 +365,7 @@ class TestProducerApp:
         ]
 
     @pytest.mark.asyncio()
-    async def test_should_deploy_clean_up_job_with_image_tag_in_cluster(
+    async def test_should_deploy_clean_up_job_with_values_in_cluster_when_clean(
         self,
         config: KpopsConfig,
         handlers: ComponentHandlers,
@@ -418,11 +420,15 @@ class TestProducerApp:
             dry_run,
             "test-namespace",
             {
+                "image": "registry/producer-app",
                 "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                 "imageTag": image_tag_in_cluster,
+                "replicaCount": 1,
                 "streams": {
                     "brokers": "fake-broker:9092",
+                    "delete_output": True,
                     "outputTopic": "test-output-topic",
+                    "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
             HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
