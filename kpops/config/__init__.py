@@ -75,7 +75,7 @@ class KafkaConnectConfig(BaseSettings):
 class KpopsConfig(BaseSettings):
     """Global configuration for KPOps project."""
 
-    _config: ClassVar[KpopsConfig | None] = PrivateAttr()
+    _instance: ClassVar[KpopsConfig | None] = PrivateAttr()
 
     pipeline_base_dir: Path = Field(
         default=Path(),
@@ -134,10 +134,10 @@ class KpopsConfig(BaseSettings):
         cls.setup_logging_level(verbose)
         YamlConfigSettingsSource.config_dir = config
         YamlConfigSettingsSource.environment = environment
-        cls._config = KpopsConfig(
+        cls._instance = KpopsConfig(
             _env_file=dotenv  # pyright: ignore[reportCallIssue]
         )
-        return cls._config
+        return cls._instance
 
     @staticmethod
     def setup_logging_level(verbose: bool):
@@ -169,11 +169,11 @@ class KpopsConfig(BaseSettings):
 
 
 def get_config() -> KpopsConfig:
-    if KpopsConfig._config is None:
+    if KpopsConfig._instance is None:
         msg = f"{KpopsConfig.__name__} has not been initialized, call {KpopsConfig.__name__}.{KpopsConfig.create.__name__}"
         raise RuntimeError(msg)
-    return KpopsConfig._config
+    return KpopsConfig._instance
 
 
 def set_config(config: KpopsConfig) -> None:
-    KpopsConfig._config = config
+    KpopsConfig._instance = config

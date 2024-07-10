@@ -11,6 +11,8 @@ if TYPE_CHECKING:
 
 
 class ComponentHandlers:
+    _instance: ComponentHandlers | None = None
+
     def __new__(
         cls,
         schema_handler,
@@ -19,7 +21,7 @@ class ComponentHandlers:
         *args,
         **kwargs,
     ):
-        if not hasattr(cls, "_instance"):
+        if not cls._instance:
             cls._instance = super().__new__(cls, *args, **kwargs)
         return cls._instance
 
@@ -35,4 +37,7 @@ class ComponentHandlers:
 
 
 def get_handlers() -> ComponentHandlers:
+    if not ComponentHandlers._instance:
+        msg = f"{ComponentHandlers.__name__} has not been initialized"
+        raise RuntimeError(msg)
     return ComponentHandlers._instance
