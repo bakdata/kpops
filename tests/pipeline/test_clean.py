@@ -16,11 +16,10 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 class TestClean:
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
-        async_mock = AsyncMock()
         return mocker.patch(
-            "kpops.components.base_components.helm_app.Helm",
-            return_value=async_mock,
-        ).return_value
+            "kpops.component_handlers.helm_wrapper.helm.Helm",
+            return_value=AsyncMock(),
+        )
 
     # TODO: test using public Pipeline API
     # @pytest.fixture()

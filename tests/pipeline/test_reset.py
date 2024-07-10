@@ -15,11 +15,11 @@ RESOURCE_PATH = Path(__file__).parent / "resources"
 @pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
 class TestReset:
     @pytest.fixture(autouse=True)
-    def mock_helm(self, mocker: MockerFixture) -> MagicMock:
+    def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch(
-            "kpops.components.base_components.helm_app.Helm",
+            "kpops.component_handlers.helm_wrapper.helm.Helm",
             return_value=AsyncMock(),
-        ).return_value
+        )
 
     def test_order(self, mocker: MockerFixture):
         producer_app_mock_reset = mocker.patch(
