@@ -54,6 +54,7 @@ class StreamsAppCleaner(KafkaAppCleaner):
         if cluster_values:
             self.app = StreamsAppValues.model_validate(cluster_values)
             self.app.name_override = self.helm_name_override
+            log.debug("Updated streams cleaner with cluster values")
 
     async def clean_pvcs(self, dry_run: bool) -> None:
         app_full_name = super(HelmApp, self).full_name

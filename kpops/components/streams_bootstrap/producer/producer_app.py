@@ -1,3 +1,4 @@
+import logging
 from functools import cached_property
 
 from pydantic import Field, computed_field
@@ -16,6 +17,8 @@ from kpops.components.streams_bootstrap import StreamsBootstrap
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
+
+log = logging.getLogger("ProducerApp")
 
 
 class ProducerAppCleaner(KafkaAppCleaner):
@@ -40,6 +43,7 @@ class ProducerAppCleaner(KafkaAppCleaner):
         if cluster_values:
             self.app = ProducerAppValues.model_validate(cluster_values)
             self.app.name_override = self.helm_name_override
+            log.debug("Updated producer cleaner with cluster values")
 
 
 class ProducerApp(KafkaApp, StreamsBootstrap):
