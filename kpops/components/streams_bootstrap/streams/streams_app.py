@@ -48,14 +48,6 @@ class StreamsAppCleaner(KafkaAppCleaner):
         if self.app.stateful_set and self.app.persistence.enabled:
             await self.clean_pvcs(dry_run)
 
-    async def update_cleaner_with_cluster_values(self) -> None:
-        """Update cleaner with cluster values if the release exists."""
-        cluster_values = await self.fetch_values_from_cluster()
-        if cluster_values:
-            self.app = StreamsAppValues.model_validate(cluster_values)
-            self.app.name_override = self.helm_name_override
-            log.debug("Updated streams cleaner with cluster values")
-
     async def clean_pvcs(self, dry_run: bool) -> None:
         app_full_name = super(HelmApp, self).full_name
         pvc_handler = await PVCHandler.create(app_full_name, self.namespace)

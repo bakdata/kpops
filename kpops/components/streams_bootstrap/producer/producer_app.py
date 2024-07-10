@@ -37,14 +37,6 @@ class ProducerAppCleaner(KafkaAppCleaner):
         self.app.streams.delete_output = True
         await super().clean(dry_run)
 
-    async def update_cleaner_with_cluster_values(self):
-        """Update cleaner with cluster values if the release exists."""
-        cluster_values = await self.fetch_values_from_cluster()
-        if cluster_values:
-            self.app = ProducerAppValues.model_validate(cluster_values)
-            self.app.name_override = self.helm_name_override
-            log.debug("Updated producer cleaner with cluster values")
-
 
 class ProducerApp(KafkaApp, StreamsBootstrap):
     """Producer component.
