@@ -245,7 +245,6 @@ class TestProducerApp:
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
-                            "delete_output": True,
                         },
                     },
                     HelmUpgradeInstallFlags(
@@ -306,7 +305,6 @@ class TestProducerApp:
                         "streams": {
                             "brokers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
-                            "delete_output": True,
                         },
                     },
                     HelmUpgradeInstallFlags(
@@ -426,7 +424,6 @@ class TestProducerApp:
                 "replicaCount": 1,
                 "streams": {
                     "brokers": "fake-broker:9092",
-                    "delete_output": True,
                     "outputTopic": "test-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },

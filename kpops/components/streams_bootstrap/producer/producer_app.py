@@ -34,7 +34,6 @@ class ProducerAppCleaner(KafkaAppCleaner):
     @override
     async def clean(self, dry_run: bool) -> None:
         await self.update_cleaner_with_cluster_values()
-        self.app.streams.delete_output = True
         await super().clean(dry_run)
 
 
