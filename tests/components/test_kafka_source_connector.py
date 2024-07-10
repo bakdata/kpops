@@ -25,7 +25,7 @@ from kpops.components.base_components.models.from_section import (
 from kpops.components.base_components.models.to_section import (
     ToSection,
 )
-from kpops.components.base_components.models.topic import OutputTopicTypes, TopicConfig
+from kpops.components.common.topic import OutputTopicTypes, TopicConfig
 from kpops.utils.environment import ENV
 from tests.components.test_kafka_connector import (
     CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,

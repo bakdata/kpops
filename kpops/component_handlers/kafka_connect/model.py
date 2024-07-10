@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Literal
+from typing import Any
 
 import pydantic
 from pydantic import (
@@ -12,10 +12,8 @@ from pydantic import (
 from pydantic.json_schema import SkipJsonSchema
 from typing_extensions import override
 
-from kpops.components.base_components.helm_app import HelmAppValues
-from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
+from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.pydantic import (
-    CamelCaseConfigModel,
     DescConfigModel,
     by_alias,
     exclude_by_value,
@@ -111,15 +109,3 @@ class KafkaConnectConfigErrorResponse(BaseModel):
     name: str
     error_count: int
     configs: list[KafkaConnectConfigDescription]
-
-
-class KafkaConnectorResetterConfig(CamelCaseConfigModel):
-    brokers: str
-    connector: str
-    delete_consumer_group: bool | None = None
-    offset_topic: str | None = None
-
-
-class KafkaConnectorResetterValues(HelmAppValues):
-    connector_type: Literal["source", "sink"]
-    config: KafkaConnectorResetterConfig

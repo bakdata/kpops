@@ -3,7 +3,7 @@ from collections.abc import Iterable
 import pydantic
 import pytest
 
-from kpops.components.base_components.models.topic import (
+from kpops.components.common.topic import (
     KafkaTopic,
     KafkaTopicStr,
     OutputTopicTypes,

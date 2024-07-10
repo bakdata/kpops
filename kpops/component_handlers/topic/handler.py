@@ -17,7 +17,7 @@ from kpops.component_handlers.topic.utils import (
     parse_and_compare_topic_configs,
     parse_rest_proxy_topic_config,
 )
-from kpops.components.base_components.models.topic import KafkaTopic
+from kpops.components.common.topic import KafkaTopic
 from kpops.utils.colorify import greenify, magentaify
 from kpops.utils.dict_differ import Diff, DiffType, render_diff
 

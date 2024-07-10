@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Any, NoReturn
+from typing import Any, Literal, NoReturn
 
 import pydantic
 from pydantic import Field, PrivateAttr, ValidationInfo, computed_field, field_validator
@@ -15,18 +15,17 @@ from kpops.component_handlers.helm_wrapper.model import (
 )
 from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
-    KafkaConnectorResetterConfig,
-    KafkaConnectorResetterValues,
     KafkaConnectorType,
 )
 from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.models.from_section import FromTopic
-from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.common.topic import KafkaTopic
 from kpops.config import get_config
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import CamelCaseConfigModel
 
 try:
     from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
@@ -34,6 +33,18 @@ except ImportError:
     from typing_extensions import Self
 
 log = logging.getLogger("KafkaConnector")
+
+
+class KafkaConnectorResetterConfig(CamelCaseConfigModel):
+    brokers: str
+    connector: str
+    delete_consumer_group: bool | None = None
+    offset_topic: str | None = None
+
+
+class KafkaConnectorResetterValues(HelmAppValues):
+    connector_type: Literal["source", "sink"]
+    config: KafkaConnectorResetterConfig
 
 
 class KafkaConnectorResetter(Cleaner, ABC):

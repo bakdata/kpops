@@ -19,7 +19,7 @@ from kpops.component_handlers.topic.model import (
     TopicResponse,
     TopicSpec,
 )
-from kpops.components.base_components.models.topic import (
+from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,

@@ -3,7 +3,7 @@ from __future__ import annotations
 from pydantic import ConfigDict, Field
 
 from kpops.components.base_components.models import ModelName, ModelVersion, TopicName
-from kpops.components.base_components.models.topic import KafkaTopic, TopicConfig
+from kpops.components.common.topic import KafkaTopic, TopicConfig
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import DescConfigModel
 
