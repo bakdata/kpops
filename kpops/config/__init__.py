@@ -169,7 +169,7 @@ class KpopsConfig(BaseSettings):
 
 
 def get_config() -> KpopsConfig:
-    if KpopsConfig._instance is None:
+    if not KpopsConfig._instance:
         msg = f"{KpopsConfig.__name__} has not been initialized, call {KpopsConfig.__name__}.{KpopsConfig.create.__name__}"
         raise RuntimeError(msg)
     return KpopsConfig._instance
