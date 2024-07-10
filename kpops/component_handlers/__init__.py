@@ -9,14 +9,9 @@ if TYPE_CHECKING:
     from kpops.component_handlers.schema_handler.schema_handler import SchemaHandler
     from kpops.component_handlers.topic.handler import TopicHandler
 
-    try:
-        from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
-    except ImportError:
-        from typing_extensions import Self
-
 
 class ComponentHandlers:
-    _instance: Self | None = None
+    _instance: ComponentHandlers | None = None
 
     def __new__(
         cls,
@@ -25,7 +20,7 @@ class ComponentHandlers:
         topic_handler,
         *args,
         **kwargs,
-    ) -> Self:
+    ) -> ComponentHandlers:
         if not cls._instance:
             cls._instance = super().__new__(cls, *args, **kwargs)
         return cls._instance
