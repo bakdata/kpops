@@ -105,9 +105,5 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
         return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
     @override
-    async def reset(self, dry_run: bool) -> None:
-        await self._cleaner.reset(dry_run)
-
-    @override
     async def clean(self, dry_run: bool) -> None:
         await self._cleaner.clean(dry_run)
