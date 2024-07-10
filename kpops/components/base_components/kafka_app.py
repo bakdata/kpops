@@ -119,7 +119,9 @@ class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
 
     async def update_cleaner_with_cluster_values(self) -> None:
         """Update cleaner with cluster values if the release exists."""
-        cluster_values = await self.fetch_values_from_cluster()
+        cluster_values = await self.helm.get_values(
+            self.namespace, self.helm_release_name
+        )
         if cluster_values:
             self.app = self.app.__class__.model_validate(cluster_values)
             self.app.name_override = self.helm_name_override

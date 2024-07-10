@@ -209,10 +209,3 @@ class HelmApp(KubernetesApp):
     @model_serializer(mode="wrap", when_used="always")
     def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
         return exclude_by_name(handler(self), "helm", "helm_diff")
-
-    async def fetch_values_from_cluster(self) -> dict[str, Any] | None:
-        """Fetch the released streams-bootstrap values from the cluster using the 'helm get values' command.
-
-        :return: dict of Helm values or None if no release was found
-        """
-        return await self.helm.get_values(self.namespace, self.helm_release_name)
