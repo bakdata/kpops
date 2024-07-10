@@ -2,8 +2,7 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from functools import cached_property
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 import pydantic
 from pydantic import Field
@@ -65,10 +64,6 @@ class StreamsBootstrap(HelmApp, ABC):
         default=STREAMS_BOOTSTRAP_VERSION,
         description=describe_attr("version", __doc__),
     )
-
-    @cached_property
-    def cleaner_values(self) -> dict[str, Any]:
-        return self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
 
     @pydantic.model_validator(mode="after")
     def warning_for_latest_image_tag(self) -> Self:
