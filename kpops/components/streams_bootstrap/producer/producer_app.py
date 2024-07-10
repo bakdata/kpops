@@ -1,3 +1,4 @@
+import logging
 from functools import cached_property
 
 from pydantic import Field, computed_field
@@ -17,6 +18,8 @@ from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
 
+log = logging.getLogger("ProducerApp")
+
 
 class ProducerAppCleaner(KafkaAppCleaner):
     app: ProducerAppValues
@@ -30,7 +33,6 @@ class ProducerAppCleaner(KafkaAppCleaner):
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        await self.update_cleaner_with_cluster_values()
         await super().clean(dry_run)
 
 
@@ -97,6 +99,19 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
     @override
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
+
+    @override
+    async def destroy(self, dry_run: bool) -> None:
+        cluster_values = await self.helm.get_values(
+            self.namespace, self.helm_release_name
+        )
+        if cluster_values:
+            release_name = self._cleaner.helm_release_name
+            self._cleaner.app = self.app.model_validate(cluster_values)
+            self._cleaner.app.name_override = release_name
+            log.debug("Fetched helm chart values from cluster")
+
+        await super().destroy(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:

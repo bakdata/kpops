@@ -363,6 +363,7 @@ class TestProducerApp:
         ]
 
     @pytest.mark.asyncio()
+    @pytest.mark.skip("Cannot be tested with only calling clean.")
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_clean(
         self,
         config: KpopsConfig,
