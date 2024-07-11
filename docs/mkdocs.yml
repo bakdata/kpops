@@ -130,6 +130,7 @@ nav:
               - Migrate from v3 to v4: user/migration-guide/v3-v4.md
               - Migrate from v4 to v5: user/migration-guide/v4-v5.md
               - Migrate from v5 to v6: user/migration-guide/v5-v6.md
+              - Migrate from v6 to v7: user/migration-guide/v6-v7.md
           - CLI usage: user/references/cli-commands.md
           - Editor integration: user/references/editor-integration.md
           - CI integration:
