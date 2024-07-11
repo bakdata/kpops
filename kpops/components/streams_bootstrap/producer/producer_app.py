@@ -95,6 +95,6 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        """Remove the producer app from the cluster. Deploy the cleanup job."""
+        """Destroy and clean."""
         await super().clean(dry_run)
         await self._cleaner.clean(dry_run)
