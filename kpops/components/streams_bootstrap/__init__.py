@@ -7,8 +7,3 @@ __all__ = (
     "StreamsApp",
     "ProducerApp",
 )
-# async def clean(self, dry_run: bool) -> None:
-#     await self.destroy(dry_run)
-#
-# async def reset(self, dry_run: bool) -> None:
-#     await self.destroy(dry_run)
