@@ -1,3 +1,0 @@
-  # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
-  config: # required
-    tasks.max: 1

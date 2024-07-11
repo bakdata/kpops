@@ -1,4 +1,0 @@
-  values: # required
-    image: exampleImage # Example
-    debug: false # Example
-    commandLine: {} # Example

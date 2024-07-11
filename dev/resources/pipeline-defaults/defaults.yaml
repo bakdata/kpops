@@ -3,7 +3,9 @@
 # Parent of: KafkaApp
 # Child of: KubernetesApp
 helm-app:
-  values: # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example.
+  app: # required
     image: exampleImage # Example
     debug: false # Example
     commandLine: {} # Example
@@ -64,7 +66,9 @@ kafka-app:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  values: # required
+  # `app` can contain application-specific settings, hence  the user is free to
+  # add the key-value pairs they need.
+  app: # required
     streams: # required
       brokers: ${config.kafka_brokers} # required
       schemaRegistryUrl: ${config.schema_registry.url}
@@ -117,8 +121,10 @@ kafka-connector:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
-  config: # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example. Extensive documentation on
+  # connectors: https://kafka.apache.org/documentation/#connectconfigs
+  app: # required
     tasks.max: 1
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
@@ -186,7 +192,9 @@ kubernetes-app:
     models: # SchemaProvider is initiated with the values given here
       model: model
   namespace: namespace # required
-  values: # required
+  # `app` contains application-specific settings, hence it does not have a rigid
+  # structure. The fields below are just an example.
+  app: # required
     image: exampleImage # Example
     debug: false # Example
     commandLine: {} # Example
@@ -200,7 +208,7 @@ producer-app:
   # `from` section, hence it does not support it.
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
-  values: # required
+  app: # required
     streams: # required, producer-app-specific
       brokers: ${config.kafka_brokers} # required
       schemaRegistryUrl: ${config.schema_registry.url}
@@ -217,7 +225,7 @@ streams-app:
   # No arbitrary keys are allowed under `app`here
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
-  values: # required
+  app: # required
     # Streams Bootstrap streams section
     streams: # required, streams-app-specific
       brokers: ${config.kafka_brokers} # required

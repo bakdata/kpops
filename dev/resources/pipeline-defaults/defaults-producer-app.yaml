@@ -8,7 +8,7 @@ producer-app:
   # `from` section, hence it does not support it.
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
-  values: # required
+  app: # required
     streams: # required, producer-app-specific
       brokers: ${config.kafka_brokers} # required
       schemaRegistryUrl: ${config.schema_registry.url}

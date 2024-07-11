@@ -1999,7 +1999,9 @@ KPOps starts from reading the default files from where the pipeline path is defi
 <span class="normal"><a href="#__codelineno-1-49">49</a></span>
 <span class="normal"><a href="#__codelineno-1-50">50</a></span>
 <span class="normal"><a href="#__codelineno-1-51">51</a></span>
-<span class="normal"><a href="#__codelineno-1-52">52</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="c1"># Base Kubernetes App</span>
+<span class="normal"><a href="#__codelineno-1-52">52</a></span>
+<span class="normal"><a href="#__codelineno-1-53">53</a></span>
+<span class="normal"><a href="#__codelineno-1-54">54</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="c1"># Base Kubernetes App</span>
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="c1">#</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="c1"># Parent of: HelmApp</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="c1"># Child of: PipelineComponent</span>
@@ -2047,10 +2049,12 @@ KPOps starts from reading the default files from where the pipeline path is defi
 </span><span id="__span-1-46"><a id="__codelineno-1-46" name="__codelineno-1-46"></a><span class="w">    </span><span class="nt">models</span><span class="p">:</span><span class="w"> </span><span class="c1"># SchemaProvider is initiated with the values given here</span>
 </span><span id="__span-1-47"><a id="__codelineno-1-47" name="__codelineno-1-47"></a><span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">model</span>
 </span><span id="__span-1-48"><a id="__codelineno-1-48" name="__codelineno-1-48"></a><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">namespace</span><span class="w"> </span><span class="c1"># required</span>
-</span><span id="__span-1-49"><a id="__codelineno-1-49" name="__codelineno-1-49"></a><span class="w">  </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
-</span><span id="__span-1-50"><a id="__codelineno-1-50" name="__codelineno-1-50"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exampleImage</span><span class="w"> </span><span class="c1"># Example</span>
-</span><span id="__span-1-51"><a id="__codelineno-1-51" name="__codelineno-1-51"></a><span class="w">    </span><span class="nt">debug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span><span class="c1"># Example</span>
-</span><span id="__span-1-52"><a id="__codelineno-1-52" name="__codelineno-1-52"></a><span class="w">    </span><span class="nt">commandLine</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"> </span><span class="c1"># Example</span>
+</span><span id="__span-1-49"><a id="__codelineno-1-49" name="__codelineno-1-49"></a><span class="w">  </span><span class="c1"># `app` contains application-specific settings, hence it does not have a rigid</span>
+</span><span id="__span-1-50"><a id="__codelineno-1-50" name="__codelineno-1-50"></a><span class="w">  </span><span class="c1"># structure. The fields below are just an example.</span>
+</span><span id="__span-1-51"><a id="__codelineno-1-51" name="__codelineno-1-51"></a><span class="w">  </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
+</span><span id="__span-1-52"><a id="__codelineno-1-52" name="__codelineno-1-52"></a><span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">exampleImage</span><span class="w"> </span><span class="c1"># Example</span>
+</span><span id="__span-1-53"><a id="__codelineno-1-53" name="__codelineno-1-53"></a><span class="w">    </span><span class="nt">debug</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span><span class="c1"># Example</span>
+</span><span id="__span-1-54"><a id="__codelineno-1-54" name="__codelineno-1-54"></a><span class="w">    </span><span class="nt">commandLine</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"> </span><span class="c1"># Example</span>
 </span></code></pre></div></td></tr></table></div>
 </details>
 <!-- dprint-ignore-end -->
@@ -2112,7 +2116,9 @@ KPOps starts from reading the default files from where the pipeline path is defi
 <span class="normal"><a href="#__codelineno-2-50">50</a></span>
 <span class="normal"><a href="#__codelineno-2-51">51</a></span>
 <span class="normal"><a href="#__codelineno-2-52">52</a></span>
-<span class="normal"><a href="#__codelineno-2-53">53</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1"># Base component for Kafka-based components.</span>
+<span class="normal"><a href="#__codelineno-2-53">53</a></span>
+<span class="normal"><a href="#__codelineno-2-54">54</a></span>
+<span class="normal"><a href="#__codelineno-2-55">55</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="c1"># Base component for Kafka-based components.</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2"></a><span class="c1">#</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3"></a><span class="c1"># Parent of: ProducerApp, StreamsApp</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4"></a><span class="c1"># Child of: KubernetesApp</span>
@@ -2159,12 +2165,14 @@ KPOps starts from reading the default files from where the pipeline path is defi
 </span><span id="__span-2-45"><a id="__codelineno-2-45" name="__codelineno-2-45"></a><span class="w">          </span><span class="nt">cleanup.policy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compact</span>
 </span><span id="__span-2-46"><a id="__codelineno-2-46" name="__codelineno-2-46"></a><span class="w">    </span><span class="nt">models</span><span class="p">:</span><span class="w"> </span><span class="c1"># SchemaProvider is initiated with the values given here</span>
 </span><span id="__span-2-47"><a id="__codelineno-2-47" name="__codelineno-2-47"></a><span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">model</span>
-</span><span id="__span-2-48"><a id="__codelineno-2-48" name="__codelineno-2-48"></a><span class="w">  </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
-</span><span id="__span-2-49"><a id="__codelineno-2-49" name="__codelineno-2-49"></a><span class="w">    </span><span class="nt">streams</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
-</span><span id="__span-2-50"><a id="__codelineno-2-50" name="__codelineno-2-50"></a><span class="w">      </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${config.kafka_brokers}</span><span class="w"> </span><span class="c1"># required</span>
-</span><span id="__span-2-51"><a id="__codelineno-2-51" name="__codelineno-2-51"></a><span class="w">      </span><span class="nt">schemaRegistryUrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${config.schema_registry.url}</span>
-</span><span id="__span-2-52"><a id="__codelineno-2-52" name="__codelineno-2-52"></a><span class="w">    </span><span class="nt">nameOverride</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">override-with-this-name</span><span class="w"> </span><span class="c1"># kafka-app-specific</span>
-</span><span id="__span-2-53"><a id="__codelineno-2-53" name="__codelineno-2-53"></a><span class="w">    </span><span class="nt">imageTag</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.0.0&quot;</span><span class="w"> </span><span class="c1"># Example values that are shared between streams-app and producer-app</span>
+</span><span id="__span-2-48"><a id="__codelineno-2-48" name="__codelineno-2-48"></a><span class="w">  </span><span class="c1"># `app` can contain application-specific settings, hence  the user is free to</span>
+</span><span id="__span-2-49"><a id="__codelineno-2-49" name="__codelineno-2-49"></a><span class="w">  </span><span class="c1"># add the key-value pairs they need.</span>
+</span><span id="__span-2-50"><a id="__codelineno-2-50" name="__codelineno-2-50"></a><span class="w">  </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
+</span><span id="__span-2-51"><a id="__codelineno-2-51" name="__codelineno-2-51"></a><span class="w">    </span><span class="nt">streams</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
+</span><span id="__span-2-52"><a id="__codelineno-2-52" name="__codelineno-2-52"></a><span class="w">      </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${config.kafka_brokers}</span><span class="w"> </span><span class="c1"># required</span>
+</span><span id="__span-2-53"><a id="__codelineno-2-53" name="__codelineno-2-53"></a><span class="w">      </span><span class="nt">schemaRegistryUrl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${config.schema_registry.url}</span>
+</span><span id="__span-2-54"><a id="__codelineno-2-54" name="__codelineno-2-54"></a><span class="w">    </span><span class="nt">nameOverride</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">override-with-this-name</span><span class="w"> </span><span class="c1"># kafka-app-specific</span>
+</span><span id="__span-2-55"><a id="__codelineno-2-55" name="__codelineno-2-55"></a><span class="w">    </span><span class="nt">imageTag</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.0.0&quot;</span><span class="w"> </span><span class="c1"># Example values that are shared between streams-app and producer-app</span>
 </span></code></pre></div></td></tr></table></div>
 </details>
 <!-- dprint-ignore-end -->
@@ -2242,7 +2250,7 @@ KPOps starts from reading the default files from where the pipeline path is defi
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6"></a><span class="w">  </span><span class="c1"># No arbitrary keys are allowed under `app`here</span>
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7"></a><span class="w">  </span><span class="c1"># Allowed configs:</span>
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8"></a><span class="w">  </span><span class="c1"># https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="w">  </span><span class="nt">values</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9"></a><span class="w">  </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10"></a><span class="w">    </span><span class="c1"># Streams Bootstrap streams section</span>
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11"></a><span class="w">    </span><span class="nt">streams</span><span class="p">:</span><span class="w"> </span><span class="c1"># required, streams-app-specific</span>
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12"></a><span class="w">      </span><span class="nt">brokers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${config.kafka_brokers}</span><span class="w"> </span><span class="c1"># required</span>
@@ -2367,7 +2375,9 @@ KPOps starts from reading the default files from where the pipeline path is defi
 <span class="normal"><a href="#__codelineno-5-51">51</a></span>
 <span class="normal"><a href="#__codelineno-5-52">52</a></span>
 <span class="normal"><a href="#__codelineno-5-53">53</a></span>
-<span class="normal"><a href="#__codelineno-5-54">54</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="c1"># Kafka connector</span>
+<span class="normal"><a href="#__codelineno-5-54">54</a></span>
+<span class="normal"><a href="#__codelineno-5-55">55</a></span>
+<span class="normal"><a href="#__codelineno-5-56">56</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a><span class="c1"># Kafka connector</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="c1">#</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="c1"># Parent of: KafkaSinkConnector, KafkaSourceConnector</span>
 </span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="c1"># Child of: PipelineComponent</span>
@@ -2414,13 +2424,15 @@ KPOps starts from reading the default files from where the pipeline path is defi
 </span><span id="__span-5-45"><a id="__codelineno-5-45" name="__codelineno-5-45"></a><span class="w">          </span><span class="nt">cleanup.policy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">compact</span>
 </span><span id="__span-5-46"><a id="__codelineno-5-46" name="__codelineno-5-46"></a><span class="w">    </span><span class="nt">models</span><span class="p">:</span><span class="w"> </span><span class="c1"># SchemaProvider is initiated with the values given here</span>
 </span><span id="__span-5-47"><a id="__codelineno-5-47" name="__codelineno-5-47"></a><span class="w">      </span><span class="nt">model</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">model</span>
-</span><span id="__span-5-48"><a id="__codelineno-5-48" name="__codelineno-5-48"></a><span class="w">  </span><span class="c1"># Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs</span>
-</span><span id="__span-5-49"><a id="__codelineno-5-49" name="__codelineno-5-49"></a><span class="w">  </span><span class="nt">config</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
-</span><span id="__span-5-50"><a id="__codelineno-5-50" name="__codelineno-5-50"></a><span class="w">    </span><span class="nt">tasks.max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
-</span><span id="__span-5-51"><a id="__codelineno-5-51" name="__codelineno-5-51"></a><span class="w">  </span><span class="c1"># Overriding Kafka Connect Resetter Helm values. E.g. to override the</span>
-</span><span id="__span-5-52"><a id="__codelineno-5-52" name="__codelineno-5-52"></a><span class="w">  </span><span class="c1"># Image Tag etc.</span>
-</span><span id="__span-5-53"><a id="__codelineno-5-53" name="__codelineno-5-53"></a><span class="w">  </span><span class="nt">resetter_values</span><span class="p">:</span>
-</span><span id="__span-5-54"><a id="__codelineno-5-54" name="__codelineno-5-54"></a><span class="w">    </span><span class="nt">imageTag</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
+</span><span id="__span-5-48"><a id="__codelineno-5-48" name="__codelineno-5-48"></a><span class="w">  </span><span class="c1"># `app` contains application-specific settings, hence it does not have a rigid</span>
+</span><span id="__span-5-49"><a id="__codelineno-5-49" name="__codelineno-5-49"></a><span class="w">  </span><span class="c1"># structure. The fields below are just an example. Extensive documentation on</span>
+</span><span id="__span-5-50"><a id="__codelineno-5-50" name="__codelineno-5-50"></a><span class="w">  </span><span class="c1"># connectors: https://kafka.apache.org/documentation/#connectconfigs</span>
+</span><span id="__span-5-51"><a id="__codelineno-5-51" name="__codelineno-5-51"></a><span class="w">  </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="c1"># required</span>
+</span><span id="__span-5-52"><a id="__codelineno-5-52" name="__codelineno-5-52"></a><span class="w">    </span><span class="nt">tasks.max</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+</span><span id="__span-5-53"><a id="__codelineno-5-53" name="__codelineno-5-53"></a><span class="w">  </span><span class="c1"># Overriding Kafka Connect Resetter Helm values. E.g. to override the</span>
+</span><span id="__span-5-54"><a id="__codelineno-5-54" name="__codelineno-5-54"></a><span class="w">  </span><span class="c1"># Image Tag etc.</span>
+</span><span id="__span-5-55"><a id="__codelineno-5-55" name="__codelineno-5-55"></a><span class="w">  </span><span class="nt">resetter_values</span><span class="p">:</span>
+</span><span id="__span-5-56"><a id="__codelineno-5-56" name="__codelineno-5-56"></a><span class="w">    </span><span class="nt">imageTag</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.2.3&quot;</span>
 </span></code></pre></div></td></tr></table></div>
 </details>
 <!-- dprint-ignore-end -->

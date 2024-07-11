@@ -63,6 +63,14 @@
             "additionalProperties": true,
             "description": "Kubernetes app managed through Helm with an associated Helm chart.",
             "properties": {
+                "app": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/HelmAppValues"
+                        }
+                    ],
+                    "description": "Helm app values"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -120,14 +128,6 @@
                     "const": "helm-app",
                     "title": "Type"
                 },
-                "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/HelmAppValues"
-                        }
-                    ],
-                    "description": "Helm app values"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -145,7 +145,7 @@
             "required": [
                 "name",
                 "namespace",
-                "values",
+                "app",
                 "type"
             ],
             "title": "HelmApp",
@@ -271,13 +271,13 @@
             "additionalProperties": true,
             "description": "Kafka sink connector model.",
             "properties": {
-                "config": {
+                "app": {
                     "allOf": [
                         {
                             "$ref": "#/$defs/KafkaConnectorConfig"
                         }
                     ],
-                    "description": "Connector config"
+                    "description": "Application-specific settings"
                 },
                 "from": {
                     "anyOf": [
@@ -343,7 +343,7 @@
             },
             "required": [
                 "name",
-                "config",
+                "app",
                 "type"
             ],
             "title": "KafkaSinkConnector",
@@ -353,13 +353,13 @@
             "additionalProperties": true,
             "description": "Kafka source connector model.",
             "properties": {
-                "config": {
+                "app": {
                     "allOf": [
                         {
                             "$ref": "#/$defs/KafkaConnectorConfig"
                         }
                     ],
-                    "description": "Connector config"
+                    "description": "Application-specific settings"
                 },
                 "from": {
                     "anyOf": [
@@ -438,7 +438,7 @@
             },
             "required": [
                 "name",
-                "config",
+                "app",
                 "type"
             ],
             "title": "KafkaSourceConnector",
@@ -496,6 +496,14 @@
             "additionalProperties": true,
             "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
             "properties": {
+                "app": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ProducerAppValues"
+                        }
+                    ],
+                    "description": "Application-specific settings"
+                },
                 "from": {
                     "default": null,
                     "description": "Producer doesn't support FromSection",
@@ -553,14 +561,6 @@
                     "const": "producer-app",
                     "title": "Type"
                 },
-                "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProducerAppValues"
-                        }
-                    ],
-                    "description": "streams-bootstrap Helm values"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -578,7 +578,7 @@
             "required": [
                 "name",
                 "namespace",
-                "values",
+                "app",
                 "type"
             ],
             "title": "ProducerApp",
@@ -745,6 +745,14 @@
             "additionalProperties": true,
             "description": "StreamsApp component that configures a streams-bootstrap app.",
             "properties": {
+                "app": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/StreamsAppValues"
+                        }
+                    ],
+                    "description": "Application-specific settings"
+                },
                 "from": {
                     "anyOf": [
                         {
@@ -809,14 +817,6 @@
                     "const": "streams-app",
                     "title": "Type"
                 },
-                "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/StreamsAppValues"
-                        }
-                    ],
-                    "description": "streams-bootstrap Helm values"
-                },
                 "version": {
                     "anyOf": [
                         {
@@ -834,7 +834,7 @@
             "required": [
                 "name",
                 "namespace",
-                "values",
+                "app",
                 "type"
             ],
             "title": "StreamsApp",
