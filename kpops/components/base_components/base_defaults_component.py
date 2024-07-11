@@ -4,7 +4,7 @@ import json
 import logging
 from abc import ABC
 from collections.abc import Hashable, Sequence
-from dataclasses import asdict, is_dataclass
+from dataclasses import asdict
 from functools import cached_property
 from pathlib import Path
 from typing import Any, TypeVar
@@ -23,6 +23,7 @@ from kpops.api.file_type import KpopsFileType
 from kpops.component_handlers import ComponentHandlers
 from kpops.config import KpopsConfig
 from kpops.utils import cached_classproperty
+from kpops.utils.dataclasses import is_dataclass_instance
 from kpops.utils.dict_ops import (
     generate_substitution,
     update_nested,
@@ -181,7 +182,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         for k, v in kwargs.items():
             if isinstance(v, pydantic.BaseModel):
                 kwargs[k] = v.model_dump(exclude_unset=True)
-            elif is_dataclass(v):
+            elif is_dataclass_instance(v):
                 kwargs[k] = asdict(v)
 
         defaults_file_paths_ = get_defaults_file_paths(

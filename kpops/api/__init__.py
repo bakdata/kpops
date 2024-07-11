@@ -37,13 +37,24 @@ def generate(
     environment: str | None = None,
     verbose: bool = False,
 ) -> Pipeline:
+    """Generate enriched pipeline representation.
+
+    :param pipeline_path: Path to pipeline definition yaml file.
+    :param dotenv: Paths to dotenv files.
+    :param config: Path to the dir containing config.yaml files.
+    :param steps: Set of steps (components) to apply the command on.
+    :param filter_type: Whether `steps` should include/exclude the steps.
+    :param environment: The environment to generate and deploy the pipeline to.
+    :param verbose: Enable verbose printing.
+    :return: Generated `Pipeline` object.
+    """
     kpops_config = KpopsConfig.create(
         config,
         dotenv,
         environment,
         verbose,
     )
-    pipeline = create_pipeline(pipeline_path, kpops_config, environment)
+    pipeline = _create_pipeline(pipeline_path, kpops_config, environment)
     log.info(f"Picked up pipeline '{pipeline_path.parent.name}'")
     if steps:
         component_names = steps
@@ -68,6 +79,17 @@ def manifest(
     environment: str | None = None,
     verbose: bool = False,
 ) -> list[Resource]:
+    """Generate pipeline, return final resource representations for each step.
+
+    :param pipeline_path: Path to pipeline definition yaml file.
+    :param dotenv: Paths to dotenv files.
+    :param config: Path to the dir containing config.yaml files.
+    :param steps: Set of steps (components) to apply the command on.
+    :param filter_type: Whether `steps` should include/exclude the steps.
+    :param environment: The environment to generate and deploy the pipeline to.
+    :param verbose: Enable verbose printing.
+    :return: Resources.
+    """
     pipeline = kpops.generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
@@ -95,6 +117,18 @@ def deploy(
     verbose: bool = True,
     parallel: bool = False,
 ):
+    """Deploy pipeline steps.
+
+    :param pipeline_path: Path to pipeline definition yaml file.
+    :param dotenv: Paths to dotenv files.
+    :param config: Path to the dir containing config.yaml files.
+    :param steps: Set of steps (components) to apply the command on.
+    :param filter_type: Whether `steps` should include/exclude the steps.
+    :param dry_run: Whether to dry run the command or execute it.
+    :param environment: The environment to generate and deploy the pipeline to.
+    :param verbose: Enable verbose printing.
+    :param parallel: Enable or disable parallel execution of pipeline steps.
+    """
     pipeline = kpops.generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
@@ -131,6 +165,18 @@ def destroy(
     verbose: bool = True,
     parallel: bool = False,
 ):
+    """Destroy pipeline steps.
+
+    :param pipeline_path: Path to pipeline definition yaml file.
+    :param dotenv: Paths to dotenv files.
+    :param config: Path to the dir containing config.yaml files.
+    :param steps: Set of steps (components) to apply the command on.
+    :param filter_type: Whether `steps` should include/exclude the steps.
+    :param dry_run: Whether to dry run the command or execute it.
+    :param environment: The environment to generate and deploy the pipeline to.
+    :param verbose: Enable verbose printing.
+    :param parallel: Enable or disable parallel execution of pipeline steps.
+    """
     pipeline = kpops.generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
@@ -169,6 +215,18 @@ def reset(
     verbose: bool = True,
     parallel: bool = False,
 ):
+    """Reset pipeline steps.
+
+    :param pipeline_path: Path to pipeline definition yaml file.
+    :param dotenv: Paths to dotenv files.
+    :param config: Path to the dir containing config.yaml files.
+    :param steps: Set of steps (components) to apply the command on.
+    :param filter_type: Whether `steps` should include/exclude the steps.
+    :param dry_run: Whether to dry run the command or execute it.
+    :param environment: The environment to generate and deploy the pipeline to.
+    :param verbose: Enable verbose printing.
+    :param parallel: Enable or disable parallel execution of pipeline steps.
+    """
     pipeline = kpops.generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
@@ -205,6 +263,18 @@ def clean(
     verbose: bool = True,
     parallel: bool = False,
 ):
+    """Clean pipeline steps.
+
+    :param pipeline_path: Path to pipeline definition yaml file.
+    :param dotenv: Paths to dotenv files.
+    :param config: Path to the dir containing config.yaml files.
+    :param steps: Set of steps (components) to apply the command on.
+    :param filter_type: Whether `steps` should include/exclude the steps.
+    :param dry_run: Whether to dry run the command or execute it.
+    :param environment: The environment to generate and deploy the pipeline to.
+    :param verbose: Enable verbose printing.
+    :param parallel: Enable or disable parallel execution of pipeline steps.
+    """
     pipeline = kpops.generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
@@ -234,6 +304,12 @@ def init(
     path: Path,
     config_include_opt: bool = False,
 ):
+    """Initiate a default empty project.
+
+    :param path: Directory in which the project should be initiated.
+    :param conf_incl_opt: Whether to include non-required settings
+        in the generated config file.
+    """
     if not path.exists():
         path.mkdir(parents=False)
     elif next(path.iterdir(), False):
@@ -242,22 +318,34 @@ def init(
     init_project(path, config_include_opt)
 
 
-def create_pipeline(
+def _create_pipeline(
     pipeline_path: Path,
     kpops_config: KpopsConfig,
     environment: str | None,
 ) -> Pipeline:
+    """Create pipeline.
+
+    :param pipeline_path: Path to pipeline definition yaml file.
+    :param config: KPOps Config.
+    :param environment: The environment to generate and deploy the pipeline to.
+    :return: Created `Pipeline` object.
+    """
     registry = Registry()
     if kpops_config.components_module:
         registry.find_components(kpops_config.components_module)
     registry.find_components("kpops.components")
 
-    handlers = setup_handlers(kpops_config)
+    handlers = _setup_handlers(kpops_config)
     parser = PipelineGenerator(kpops_config, registry, handlers)
     return parser.load_yaml(pipeline_path, environment)
 
 
-def setup_handlers(config: KpopsConfig) -> ComponentHandlers:
+def _setup_handlers(config: KpopsConfig) -> ComponentHandlers:
+    """Set up handlers for a component.
+
+    :param config: KPOps config.
+    :return: Handlers for a component.
+    """
     schema_handler = SchemaHandler.load_schema_handler(config)
     connector_handler = KafkaConnectHandler.from_kpops_config(config)
     proxy_wrapper = ProxyWrapper(config.kafka_rest)

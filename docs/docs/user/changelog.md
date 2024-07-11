@@ -1,4 +1,38 @@
 # Changelog
+## [6.1.0](https://github.com/bakdata/kpops/releases/tag/6.1.0) - Release Date: [2024-07-09]
+
+### 🚀 Features
+
+- Add image tag field to streams-bootstrap app values - [#499](https://github.com/bakdata/kpops/pull/499)
+
+- Delete ignored keys from diff - [#510](https://github.com/bakdata/kpops/pull/510)
+
+
+### 🏭 Refactor
+
+- Improve dataclass instance check - [#507](https://github.com/bakdata/kpops/pull/507)
+
+
+
+
+
+
+## [6.0.2](https://github.com/bakdata/kpops/releases/tag/6.0.2) - Release Date: [2024-07-04]
+
+### 📝 Documentation
+
+- Generate developer docs for Python API - [#503](https://github.com/bakdata/kpops/pull/503)
+
+
+### 🌀 Miscellaneous
+
+- Update codeowners - [#504](https://github.com/bakdata/kpops/pull/504)
+
+
+
+
+
+
 ## [6.0.1](https://github.com/bakdata/kpops/releases/tag/6.0.1) - Release Date: [2024-06-12]
 
 ### 🐛 Fixes

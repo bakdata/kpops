@@ -840,6 +840,10 @@ class TestGenerate:
             enriched_pipeline[1]["_resetter"]["app"]["label"]
             == "inflated-connector-name"
         )
+        assert (
+            enriched_pipeline[1]["_resetter"]["app"]["imageTag"]
+            == "override-default-image-tag"
+        )
 
     def test_substitution_in_resetter(self):
         pipeline = kpops.generate(
@@ -857,3 +861,7 @@ class TestGenerate:
         assert enriched_pipeline[0]["name"] == "es-sink-connector"
         assert enriched_pipeline[0]["_resetter"]["name"] == "es-sink-connector"
         assert enriched_pipeline[0]["_resetter"]["app"]["label"] == "es-sink-connector"
+        assert (
+            enriched_pipeline[0]["_resetter"]["app"]["imageTag"]
+            == "override-default-image-tag"
+        )
