@@ -349,7 +349,6 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
         dry_run = False
         await connector.clean(dry_run=dry_run)
-        mock_destroy.assert_not_called()
 
         assert log_info_mock.mock_calls == [
             call.log_info(
@@ -367,6 +366,7 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
         assert connector.to
         assert mock.mock_calls == [
+            mocker.call.destroy_connector(dry_run),
             *(
                 mocker.call.mock_delete_topic(topic, dry_run=dry_run)
                 for topic in connector.to.kafka_topics
@@ -468,9 +468,9 @@ class TestKafkaSinkConnector(TestKafkaConnector):
 
         dry_run = False
         await connector.clean(dry_run)
-        mock_destroy.assert_not_called()
 
         assert mock.mock_calls == [
+            mocker.call.destroy_connector(dry_run),
             mocker.call.helm.add_repo(
                 "bakdata-kafka-connect-resetter",
                 "https://bakdata.github.io/kafka-connect-resetter/",
