@@ -1920,33 +1920,48 @@
 </span></code></pre></div></td></tr></table></div>
 <h2 id="call-destroy-from-inside-of-reset-or-clean"><a href="https://github.com/bakdata/kpops/pull/501">Call destroy from inside of reset or clean</a><a class="headerlink" href="#call-destroy-from-inside-of-reset-or-clean" title="Permanent link">&para;</a></h2>
 <p>Before v7, the KPOps CLI executed <code>destroy</code> before running <code>reset/clean</code> to ensure the component was destroyed.</p>
-<p>This logic has changed. From now on, the <code>destroy</code> method should be called within the <code>reset/clean</code> method if needed by the user.</p>
-<p>During the migration to v7, you should check your custom components and see if they are overriding the <code>reset/clean</code> methods. If so, you would need to add the <code>destroy</code> method at the beginning of your <code>reset/clean</code> override.</p>
+<p>This logic has changed. The <code>destroy</code> method is now called within the <code>PipelineComponent</code>'s <code>reset/clean</code>.</p>
+<p>During migrating to v7, you should check your custom components and see if they override the <code>reset/clean</code> methods. If so, you need to call the supermethod <code>reset/clean</code> to trigger the <code>destroy</code> inside the parent class. Alternatively, if you are implementing the <code>PipelineComponent</code> class, you need to call the <code>destroy</code> method at the beginning of the method.</p>
 <h4 id="componentspy">components.py<a class="headerlink" href="#componentspy" title="Permanent link">&para;</a></h4>
-<p>In the following example, we must call the <code>destroy</code> method inside the <code>clean</code> method. <strong>Otherwise, the logic of destroy will not be executed!</strong></p>
-<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1"> 1</a></span>
-<span class="normal"><a href="#__codelineno-4-2"> 2</a></span>
-<span class="normal"><a href="#__codelineno-4-3"> 3</a></span>
-<span class="normal"><a href="#__codelineno-4-4"> 4</a></span>
-<span class="normal"><a href="#__codelineno-4-5"> 5</a></span>
-<span class="normal"><a href="#__codelineno-4-6"> 6</a></span>
-<span class="normal"><a href="#__codelineno-4-7"> 7</a></span>
-<span class="normal"><a href="#__codelineno-4-8"> 8</a></span>
-<span class="normal"><a href="#__codelineno-4-9"> 9</a></span>
-<span class="normal"><a href="#__codelineno-4-10">10</a></span>
-<span class="normal"><a href="#__codelineno-4-11">11</a></span>
-<span class="normal"><a href="#__codelineno-4-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>class MyCustomComponent(PipelineComponent):
+<p>For example, when creating a custom <code>StreamsApp</code> or <code>ProducerApp</code>, you <strong>must</strong> call the supermethod <code>rest/clean</code> to execute the <code>destroy</code> in the parent class. <strong>Otherwise, the logic of destroy will not be executed!</strong></p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1">1</a></span>
+<span class="normal"><a href="#__codelineno-4-2">2</a></span>
+<span class="normal"><a href="#__codelineno-4-3">3</a></span>
+<span class="normal"><a href="#__codelineno-4-4">4</a></span>
+<span class="normal"><a href="#__codelineno-4-5">5</a></span>
+<span class="normal"><a href="#__codelineno-4-6">6</a></span>
+<span class="normal"><a href="#__codelineno-4-7">7</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>class MyStreamsApp(StreamsApp):
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="w"> </span>   
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="w"> </span>   @override
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w"> </span>   async def destroy(self, dry_run: bool) -&gt; None:
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w"> </span>       # Some custom destroy logic
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w"> </span>       # ...
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7"></a>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="w"> </span>   @override
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w"> </span>   async def clean(self, dry_run: bool) -&gt; None:
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="gi">+       await destroy(dry_run)</span>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="w"> </span>       # Some custom clean logic
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="w"> </span>       # ...
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w"> </span>   async def clean(self, dry_run: bool) -&gt; None:
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="gi">+       await super().clean(dry_run)</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w"> </span>       # Some custom clean logic
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="w"> </span>       # ...
+</span></code></pre></div></td></tr></table></div>
+<p>If you implement the <code>PipelineComponent</code> you <strong>must</strong> call the <code>destroy</code> method inside the <code>clean</code> method.</p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-5-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-5-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-5-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-5-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-5-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-5-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-5-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-5-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-5-10">10</a></span>
+<span class="normal"><a href="#__codelineno-5-11">11</a></span>
+<span class="normal"><a href="#__codelineno-5-12">12</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a>class MyCustomComponent(PipelineComponent):
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a><span class="w"> </span>   
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="w"> </span>   @override
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="w"> </span>   async def destroy(self, dry_run: bool) -&gt; None:
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="w"> </span>       # Some custom destroy logic
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="w"> </span>       # ...
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7"></a>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="w"> </span>   @override
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9"></a><span class="w"> </span>   async def clean(self, dry_run: bool) -&gt; None:
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10"></a><span class="gi">+       await self.destroy(dry_run)</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11"></a><span class="w"> </span>       # Some custom clean logic
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12"></a><span class="w"> </span>       # ...
 </span></code></pre></div></td></tr></table></div>
 
 
