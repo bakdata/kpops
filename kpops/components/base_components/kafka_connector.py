@@ -190,7 +190,7 @@ class KafkaConnector(PipelineComponent, ABC):
     @override
     async def clean(self, dry_run: bool) -> None:
         """Delete Kafka Connector. If schema handler is enabled, then remove schemas. Delete all the output topics."""
-        await self.destroy(dry_run)
+        await super().clean(dry_run)
         if self.to:
             if self.handlers.schema_handler:
                 await self.handlers.schema_handler.delete_schemas(

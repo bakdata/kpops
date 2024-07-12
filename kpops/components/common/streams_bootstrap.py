@@ -6,7 +6,6 @@ from typing import TYPE_CHECKING
 
 import pydantic
 from pydantic import Field
-from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
@@ -73,11 +72,3 @@ class StreamsBootstrap(HelmApp, ABC):
                 f"The image tag for component '{self.name}' is set or defaulted to 'latest'. Please, consider providing a stable image tag."
             )
         return self
-
-    @override
-    async def reset(self, dry_run: bool) -> None:
-        await self.destroy(dry_run)
-
-    @override
-    async def clean(self, dry_run: bool) -> None:
-        await self.destroy(dry_run)

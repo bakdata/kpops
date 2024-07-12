@@ -98,6 +98,7 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
 
         The producer app doesn't have consumer group offsets to be reset.
         """
+        await super().reset(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
