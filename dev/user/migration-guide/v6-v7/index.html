@@ -1923,7 +1923,7 @@
 <p>This logic has changed. From now on, the <code>destroy</code> method should be called within the <code>reset/clean</code> method if needed by the user.</p>
 <p>During the migration to v7, you should check your custom components and see if they are overriding the <code>reset/clean</code> methods. If so, you would need to add the <code>destroy</code> method at the beginning of your <code>reset/clean</code> override.</p>
 <h4 id="componentspy">components.py<a class="headerlink" href="#componentspy" title="Permanent link">&para;</a></h4>
-<p>In the following example, we must call the <code>destroy</code> method inside the <code>clean</code> method. <strong> Otherwise, the logic of destroy will not be executed!</strong></p>
+<p>In the following example, we must call the <code>destroy</code> method inside the <code>clean</code> method. <strong>Otherwise, the logic of destroy will not be executed!</strong></p>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-4-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-4-3"> 3</a></span>
@@ -1944,7 +1944,7 @@
 </span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7"></a>
 </span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="w"> </span>   @override
 </span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w"> </span>   async def clean(self, dry_run: bool) -&gt; None:
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="gi">+       destroy(dry_run)</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="gi">+       await destroy(dry_run)</span>
 </span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="w"> </span>       # Some custom clean logic
 </span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="w"> </span>       # ...
 </span></code></pre></div></td></tr></table></div>
