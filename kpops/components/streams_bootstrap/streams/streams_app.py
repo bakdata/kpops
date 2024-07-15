@@ -29,7 +29,13 @@ class StreamsAppCleaner(KafkaAppCleaner):
         return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
     @override
+    async def reset(self, dry_run: bool) -> None:
+        self.app.streams.delete_output = False
+        await super().clean(dry_run)
+
+    @override
     async def clean(self, dry_run: bool) -> None:
+        self.app.streams.delete_output = True
         await super().clean(dry_run)
         if self.app.stateful_set and self.app.persistence.enabled:
             await self.clean_pvcs(dry_run)
@@ -120,10 +126,12 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        self._cleaner.app.streams.delete_output = False
-        await self._cleaner.clean(dry_run)
+        """Destroy and reset."""
+        await super().reset(dry_run)
+        await self._cleaner.reset(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        self._cleaner.app.streams.delete_output = True
+        """Destroy and clean."""
+        await super().clean(dry_run)
         await self._cleaner.clean(dry_run)
