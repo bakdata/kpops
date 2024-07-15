@@ -224,6 +224,42 @@ class TestHelmApp:
 
         log_info_mock.assert_called_once_with(magentaify(stdout))
 
+    @pytest.mark.asyncio()
+    async def test_should_call_helm_uninstall_when_resetting_helm_app(
+        self,
+        helm_app: HelmApp,
+        helm_mock: MagicMock,
+        log_info_mock: MagicMock,
+    ):
+        stdout = 'HelmApp - release "test-helm-app" uninstalled'
+        helm_mock.uninstall.return_value = stdout
+
+        await helm_app.reset(True)
+
+        helm_mock.uninstall.assert_called_once_with(
+            "test-namespace", "${pipeline.name}-test-helm-app", True
+        )
+
+        log_info_mock.assert_called_once_with(magentaify(stdout))
+
+    @pytest.mark.asyncio()
+    async def test_should_call_helm_uninstall_when_cleaning_helm_app(
+        self,
+        helm_app: HelmApp,
+        helm_mock: MagicMock,
+        log_info_mock: MagicMock,
+    ):
+        stdout = 'HelmApp - release "test-helm-app" uninstalled'
+        helm_mock.uninstall.return_value = stdout
+
+        await helm_app.clean(True)
+
+        helm_mock.uninstall.assert_called_once_with(
+            "test-namespace", "${pipeline.name}-test-helm-app", True
+        )
+
+        log_info_mock.assert_called_once_with(magentaify(stdout))
+
     def test_helm_name_override(
         self,
         config: KpopsConfig,

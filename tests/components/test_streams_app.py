@@ -13,7 +13,6 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components import StreamsApp
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     ToSection,
@@ -28,6 +27,7 @@ from kpops.components.streams_bootstrap.streams.model import (
     StreamsAppAutoScaling,
 )
 from kpops.components.streams_bootstrap.streams.streams_app import (
+    StreamsApp,
     StreamsAppCleaner,
 )
 from kpops.config import KpopsConfig, TopicNameConfig
@@ -78,7 +78,9 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def streams_app(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
     ) -> StreamsApp:
         return StreamsApp(
             name=STREAMS_APP_NAME,
@@ -101,7 +103,9 @@ class TestStreamsApp:
 
     @pytest.fixture()
     def stateful_streams_app(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
     ) -> StreamsApp:
         return StreamsApp(
             name=STREAMS_APP_NAME,
@@ -201,7 +205,11 @@ class TestStreamsApp:
             == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
         )
 
-    def test_set_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
+    def test_set_topics(
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+    ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
             config=config,
@@ -250,7 +258,9 @@ class TestStreamsApp:
         assert "extraInputPatterns" in streams_config
 
     def test_no_empty_input_topic(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -280,7 +290,11 @@ class TestStreamsApp:
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" not in streams_config
 
-    def test_should_validate(self, config: KpopsConfig, handlers: ComponentHandlers):
+    def test_should_validate(
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
+    ):
         # An exception should be raised when both role and type are defined and type is input
         with pytest.raises(
             ValueError, match="Define role only if `type` is `pattern` or `None`"
@@ -330,7 +344,9 @@ class TestStreamsApp:
             )
 
     def test_set_streams_output_from_to(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -373,7 +389,9 @@ class TestStreamsApp:
         )
 
     def test_weave_inputs_from_prev_component(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
     ):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
@@ -457,7 +475,7 @@ class TestStreamsApp:
 
         mock = mocker.AsyncMock()
         mock.attach_mock(mock_create_topic, "mock_create_topic")
-        mock.attach_mock(mock_helm_upgrade_install, "mock_helm_upgrade_install")
+        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
 
         dry_run = False
         await streams_app.deploy(dry_run=dry_run)
@@ -498,7 +516,7 @@ class TestStreamsApp:
                 mocker.call.mock_create_topic(topic, dry_run=dry_run)
                 for topic in streams_app.to.kafka_topics
             ),
-            mocker.call.mock_helm_upgrade_install(
+            mocker.call.helm_upgrade_install(
                 STREAMS_APP_RELEASE_NAME,
                 "bakdata-streams-bootstrap/streams-app",
                 dry_run,
@@ -531,7 +549,11 @@ class TestStreamsApp:
         ]
 
     @pytest.mark.asyncio()
-    async def test_destroy(self, streams_app: StreamsApp, mocker: MockerFixture):
+    async def test_destroy(
+        self,
+        streams_app: StreamsApp,
+        mocker: MockerFixture,
+    ):
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
 
         await streams_app.destroy(dry_run=True)
@@ -547,6 +569,11 @@ class TestStreamsApp:
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
+        # actual component
+        mock_helm_uninstall_streams_app = mocker.patch.object(
+            streams_app.helm, "uninstall"
+        )
+
         cleaner = streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
 
@@ -554,6 +581,9 @@ class TestStreamsApp:
         mock_helm_uninstall = mocker.patch.object(cleaner.helm, "uninstall")
 
         mock = mocker.MagicMock()
+        mock.attach_mock(
+            mock_helm_uninstall_streams_app, "mock_helm_uninstall_streams_app"
+        )
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
@@ -562,6 +592,11 @@ class TestStreamsApp:
 
         mock.assert_has_calls(
             [
+                mocker.call.mock_helm_uninstall_streams_app(
+                    "test-namespace", STREAMS_APP_RELEASE_NAME, dry_run
+                ),
+                ANY,  # __bool__
+                ANY,  # __str__
                 mocker.call.helm_uninstall(
                     "test-namespace",
                     STREAMS_APP_CLEAN_RELEASE_NAME,
@@ -601,6 +636,11 @@ class TestStreamsApp:
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
+        # actual component
+        mock_helm_uninstall_streams_app = mocker.patch.object(
+            streams_app.helm, "uninstall"
+        )
+
         mock_helm_upgrade_install = mocker.patch.object(
             streams_app._cleaner.helm, "upgrade_install"
         )
@@ -609,6 +649,7 @@ class TestStreamsApp:
         )
 
         mock = mocker.MagicMock()
+        mock.attach_mock(mock_helm_uninstall_streams_app, "helm_uninstall_streams_app")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
 
@@ -617,6 +658,11 @@ class TestStreamsApp:
 
         mock.assert_has_calls(
             [
+                mocker.call.helm_uninstall_streams_app(
+                    "test-namespace", STREAMS_APP_RELEASE_NAME, dry_run
+                ),
+                ANY,  # __bool__
+                ANY,  # __str__
                 mocker.call.helm_uninstall(
                     "test-namespace",
                     STREAMS_APP_CLEAN_RELEASE_NAME,
@@ -734,7 +780,9 @@ class TestStreamsApp:
 
     @pytest.mark.asyncio()
     async def test_get_input_output_topics(
-        self, config: KpopsConfig, handlers: ComponentHandlers
+        self,
+        config: KpopsConfig,
+        handlers: ComponentHandlers,
     ):
         streams_app = StreamsApp(
             name="my-app",
@@ -815,6 +863,10 @@ class TestStreamsApp:
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
+        # actual component
+        mock_helm_uninstall_streams_app = mocker.patch.object(
+            stateful_streams_app.helm, "uninstall"
+        )
         cleaner = stateful_streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
 
@@ -831,6 +883,7 @@ class TestStreamsApp:
         )
 
         mock = MagicMock()
+        mock.attach_mock(mock_helm_uninstall_streams_app, "helm_uninstall_streams_app")
         mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
         mock.attach_mock(mock_helm_uninstall, "helm_uninstall")
         mock.attach_mock(mock_delete_pvcs, "delete_pvcs")
@@ -840,6 +893,11 @@ class TestStreamsApp:
 
         mock.assert_has_calls(
             [
+                mocker.call.helm_uninstall_streams_app(
+                    "test-namespace", STREAMS_APP_RELEASE_NAME, dry_run
+                ),
+                ANY,  # __bool__
+                ANY,  # __str__
                 mocker.call.helm_uninstall(
                     "test-namespace",
                     STREAMS_APP_CLEAN_RELEASE_NAME,
@@ -886,6 +944,9 @@ class TestStreamsApp:
         caplog: pytest.LogCaptureFixture,
     ):
         caplog.set_level(logging.INFO)
+        # actual component
+        mocker.patch.object(stateful_streams_app, "destroy")
+
         cleaner = stateful_streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
 

@@ -4,7 +4,6 @@ import asyncio
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-import kpops
 from kpops.api.logs import log, log_action
 from kpops.api.options import FilterType
 from kpops.api.registry import Registry
@@ -23,8 +22,8 @@ from kpops.pipeline import (
 from kpops.utils.cli_commands import init_project
 
 if TYPE_CHECKING:
-    from kpops.components import PipelineComponent
     from kpops.components.base_components.models.resource import Resource
+    from kpops.components.base_components.pipeline_component import PipelineComponent
     from kpops.config import KpopsConfig
 
 
@@ -90,7 +89,7 @@ def manifest(
     :param verbose: Enable verbose printing.
     :return: Resources.
     """
-    pipeline = kpops.generate(
+    pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
@@ -129,7 +128,7 @@ def deploy(
     :param verbose: Enable verbose printing.
     :param parallel: Enable or disable parallel execution of pipeline steps.
     """
-    pipeline = kpops.generate(
+    pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
@@ -177,7 +176,7 @@ def destroy(
     :param verbose: Enable verbose printing.
     :param parallel: Enable or disable parallel execution of pipeline steps.
     """
-    pipeline = kpops.generate(
+    pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
@@ -227,7 +226,7 @@ def reset(
     :param verbose: Enable verbose printing.
     :param parallel: Enable or disable parallel execution of pipeline steps.
     """
-    pipeline = kpops.generate(
+    pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
@@ -238,7 +237,6 @@ def reset(
     )
 
     async def reset_runner(component: PipelineComponent):
-        await component.destroy(dry_run)
         log_action("Reset", component)
         await component.reset(dry_run)
 
@@ -276,7 +274,7 @@ def clean(
     :param verbose: Enable verbose printing.
     :param parallel: Enable or disable parallel execution of pipeline steps.
     """
-    pipeline = kpops.generate(
+    pipeline = generate(
         pipeline_path=pipeline_path,
         dotenv=dotenv,
         config=config,
@@ -287,7 +285,6 @@ def clean(
     )
 
     async def clean_runner(component: PipelineComponent):
-        await component.destroy(dry_run)
         log_action("Clean", component)
         await component.clean(dry_run)
 
@@ -333,9 +330,7 @@ def _create_pipeline(
     :return: Created `Pipeline` object.
     """
     registry = Registry()
-    if kpops_config.components_module:
-        registry.find_components(kpops_config.components_module)
-    registry.find_components("kpops.components")
+    registry.discover_components()
 
     handlers = _setup_handlers(kpops_config)
     parser = PipelineGenerator(kpops_config, registry, handlers)

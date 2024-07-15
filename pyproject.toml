@@ -64,7 +64,7 @@ mkdocs-exclude-search = "^0.6.5"
 mike = "^1.1.2"
 mkdocstrings = { extras = ["python"], version = "^0.25.1" }
 
-[tool.poetry_bumpversion.file."kpops/__init__.py"]
+[tool.poetry_bumpversion.file."kpops/const/__init__.py"]
 
 [tool.pyright]
 reportUnknownParameterType = "warning"
