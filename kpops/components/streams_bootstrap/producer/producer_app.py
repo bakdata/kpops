@@ -94,10 +94,7 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
         return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
     async def reset(self, dry_run: bool) -> None:
-        """Not supported. Producer App cannot be reset.
-
-        The producer app doesn't have consumer group offsets to be reset.
-        """
+        """Reset not necessary, since producer app has no consumer group offsets."""
         await super().reset(dry_run)
 
     @override
