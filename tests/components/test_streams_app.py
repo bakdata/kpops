@@ -696,7 +696,6 @@ class TestStreamsApp:
         )
 
     @pytest.mark.asyncio()
-    @pytest.mark.skip("Cannot be tested with only calling clean.")
     async def test_should_deploy_clean_up_job_with_values_in_cluster(
         self,
         config: KpopsConfig,
@@ -744,6 +743,8 @@ class TestStreamsApp:
                 },
             },
         )
+
+        mocker.patch.object(streams_app.helm, "uninstall")
 
         mock_helm_upgrade_install = mocker.patch.object(
             streams_app._cleaner.helm, "upgrade_install"

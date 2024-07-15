@@ -393,7 +393,6 @@ class TestProducerApp:
         ]
 
     @pytest.mark.asyncio()
-    @pytest.mark.skip("Cannot be tested with only calling clean.")
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_clean(
         self,
         config: KpopsConfig,
@@ -433,6 +432,7 @@ class TestProducerApp:
                 },
             },
         )
+        mocker.patch.object(producer_app.helm, "uninstall")
         mocker.patch.object(producer_app._cleaner.dry_run_handler, "print_helm_diff")
         mocker.patch.object(producer_app._cleaner.helm, "uninstall")
 

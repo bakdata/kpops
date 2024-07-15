@@ -31,10 +31,6 @@ class ProducerAppCleaner(KafkaAppCleaner):
             f"{self.repo_config.repository_name}/{AppType.CLEANUP_PRODUCER_APP.value}"
         )
 
-    @override
-    async def clean(self, dry_run: bool) -> None:
-        await super().clean(dry_run)
-
 
 class ProducerApp(KafkaApp, StreamsBootstrap):
     """Producer component.
@@ -110,10 +106,10 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
             self.namespace, self.helm_release_name
         )
         if cluster_values:
-            release_name = self._cleaner.helm_release_name
-            self._cleaner.app = self.app.model_validate(cluster_values)
-            self._cleaner.app.name_override = release_name
             log.debug("Fetched helm chart values from cluster")
+            name_override = self._cleaner.helm_name_override
+            self._cleaner.app = self.app.model_validate(cluster_values)
+            self._cleaner.app.name_override = name_override
 
         await super().destroy(dry_run)
 
