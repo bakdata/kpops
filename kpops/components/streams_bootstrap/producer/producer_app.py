@@ -106,7 +106,7 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
             self.namespace, self.helm_release_name
         )
         if cluster_values:
-            log.debug("Fetched helm chart values from cluster")
+            log.debug("Fetched Helm chart values from cluster")
             name_override = self._cleaner.helm_name_override
             self._cleaner.app = self.app.model_validate(cluster_values)
             self._cleaner.app.name_override = name_override
