@@ -37,6 +37,7 @@ class StreamsAppCleaner(KafkaAppCleaner):
     async def clean(self, dry_run: bool) -> None:
         self.app.streams.delete_output = True
         await super().clean(dry_run)
+
         if self.app.stateful_set and self.app.persistence.enabled:
             await self.clean_pvcs(dry_run)
 
@@ -123,6 +124,19 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
     @override
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.STREAMS_APP.value}"
+
+    @override
+    async def destroy(self, dry_run: bool) -> None:
+        cluster_values = await self.helm.get_values(
+            self.namespace, self.helm_release_name
+        )
+        if cluster_values:
+            log.debug("Fetched Helm chart values from cluster")
+            name_override = self._cleaner.helm_name_override
+            self._cleaner.app = self.app.model_validate(cluster_values)
+            self._cleaner.app.name_override = name_override
+
+        await super().destroy(dry_run)
 
     @override
     async def reset(self, dry_run: bool) -> None:
