@@ -1,3 +1,4 @@
+import logging
 from functools import cached_property
 
 from pydantic import Field, computed_field
@@ -16,6 +17,8 @@ from kpops.components.common.topic import (
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
+
+log = logging.getLogger("ProducerApp")
 
 
 class ProducerAppCleaner(KafkaAppCleaner):
@@ -91,6 +94,25 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
     def helm_chart(self) -> str:
         return f"{self.repo_config.repository_name}/{AppType.PRODUCER_APP.value}"
 
+    async def reset(self, dry_run: bool) -> None:
+        """Reset not necessary, since producer app has no consumer group offsets."""
+        await super().reset(dry_run)
+
+    @override
+    async def destroy(self, dry_run: bool) -> None:
+        cluster_values = await self.helm.get_values(
+            self.namespace, self.helm_release_name
+        )
+        if cluster_values:
+            log.debug("Fetched Helm chart values from cluster")
+            name_override = self._cleaner.helm_name_override
+            self._cleaner.values = self.values.model_validate(cluster_values)
+            self._cleaner.values.name_override = name_override
+
+        await super().destroy(dry_run)
+
     @override
     async def clean(self, dry_run: bool) -> None:
+        """Destroy and clean."""
+        await super().clean(dry_run)
         await self._cleaner.clean(dry_run)

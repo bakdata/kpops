@@ -41,7 +41,7 @@ class TestKafkaConnector:
         )
         set_config(config)
 
-    @pytest.fixture()
+    @pytest.fixture(autouse=True)
     def handlers(self) -> ComponentHandlers:
         return ComponentHandlers(
             schema_handler=AsyncMock(),
@@ -73,7 +73,6 @@ class TestKafkaConnector:
     @pytest.fixture()
     def connector(
         self,
-        handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ) -> KafkaConnector:
         return KafkaConnector(  # HACK: not supposed to be instantiated, because ABC
@@ -85,7 +84,6 @@ class TestKafkaConnector:
     def test_connector_config_name_override(
         self,
         connector: KafkaConnector,
-        handlers: ComponentHandlers,
     ):
         assert connector.config.name == CONNECTOR_FULL_NAME
 

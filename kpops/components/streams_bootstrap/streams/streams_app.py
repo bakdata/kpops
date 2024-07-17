@@ -29,8 +29,15 @@ class StreamsAppCleaner(KafkaAppCleaner):
         return f"{self.repo_config.repository_name}/{AppType.CLEANUP_STREAMS_APP.value}"
 
     @override
-    async def clean(self, dry_run: bool) -> None:
+    async def reset(self, dry_run: bool) -> None:
+        self.values.streams.delete_output = False
         await super().clean(dry_run)
+
+    @override
+    async def clean(self, dry_run: bool) -> None:
+        self.values.streams.delete_output = True
+        await super().clean(dry_run)
+
         if self.values.stateful_set and self.values.persistence.enabled:
             await self.clean_pvcs(dry_run)
 
@@ -117,11 +124,26 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
         return f"{self.repo_config.repository_name}/{AppType.STREAMS_APP.value}"
 
     @override
+    async def destroy(self, dry_run: bool) -> None:
+        cluster_values = await self.helm.get_values(
+            self.namespace, self.helm_release_name
+        )
+        if cluster_values:
+            log.debug("Fetched Helm chart values from cluster")
+            name_override = self._cleaner.helm_name_override
+            self._cleaner.values = self.values.model_validate(cluster_values)
+            self._cleaner.values.name_override = name_override
+
+        await super().destroy(dry_run)
+
+    @override
     async def reset(self, dry_run: bool) -> None:
-        self._cleaner.values.streams.delete_output = False
-        await self._cleaner.clean(dry_run)
+        """Destroy and reset."""
+        await super().reset(dry_run)
+        await self._cleaner.reset(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        self._cleaner.values.streams.delete_output = True
+        """Destroy and clean."""
+        await super().clean(dry_run)
         await self._cleaner.clean(dry_run)

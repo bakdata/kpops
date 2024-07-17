@@ -250,9 +250,11 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
 
         :param dry_run: Whether to do a dry run of the command
         """
+        await self.destroy(dry_run)
 
     async def clean(self, dry_run: bool) -> None:
         """Destroy component including related states.
 
         :param dry_run: Whether to do a dry run of the command
         """
+        await self.destroy(dry_run)

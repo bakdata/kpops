@@ -237,7 +237,6 @@ def reset(
     )
 
     async def reset_runner(component: PipelineComponent):
-        await component.destroy(dry_run)
         log_action("Reset", component)
         await component.reset(dry_run)
 
@@ -286,7 +285,6 @@ def clean(
     )
 
     async def clean_runner(component: PipelineComponent):
-        await component.destroy(dry_run)
         log_action("Clean", component)
         await component.clean(dry_run)
 

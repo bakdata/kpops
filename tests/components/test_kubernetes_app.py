@@ -1,9 +1,8 @@
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
 )
@@ -31,14 +30,6 @@ class TestKubernetesApp:
         return KpopsConfig(pipeline_base_dir=PIPELINE_BASE_DIR)
 
     @pytest.fixture()
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=AsyncMock(),
-            connector_handler=AsyncMock(),
-            topic_handler=AsyncMock(),
-        )
-
-    @pytest.fixture()
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kubernetes_app.log.info")
 
@@ -51,12 +42,7 @@ class TestKubernetesApp:
         return HelmRepoConfig(repository_name="test", url="https://bakdata.com")
 
     @pytest.fixture()
-    def kubernetes_app(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        app_values: KubernetesTestValues,
-    ) -> KubernetesApp:
+    def kubernetes_app(self, app_values: KubernetesTestValues) -> KubernetesApp:
         return KubernetesApp(
             name="test-kubernetes-app",
             values=app_values,
@@ -64,10 +50,7 @@ class TestKubernetesApp:
         )
 
     def test_should_raise_value_error_when_name_is_not_valid(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        app_values: KubernetesTestValues,
+        self, app_values: KubernetesTestValues
     ):
         with pytest.raises(
             ValueError, match=r"The component name .* is invalid for Kubernetes."

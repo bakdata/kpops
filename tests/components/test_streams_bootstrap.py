@@ -1,13 +1,10 @@
 import re
-from unittest.mock import MagicMock
 
 import pytest
 from pydantic import ValidationError
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
-    HelmDiffConfig,
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
 )
@@ -16,28 +13,11 @@ from kpops.components.common.streams_bootstrap import (
     StreamsBootstrap,
     StreamsBootstrapValues,
 )
-from kpops.config import KpopsConfig
-from tests.components import PIPELINE_BASE_DIR
 
 
 @pytest.mark.usefixtures("mock_env")
 class TestStreamsBootstrap:
-    @pytest.fixture()
-    def config(self) -> KpopsConfig:
-        return KpopsConfig(
-            helm_diff_config=HelmDiffConfig(),
-            pipeline_base_dir=PIPELINE_BASE_DIR,
-        )
-
-    @pytest.fixture()
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=MagicMock(),
-            connector_handler=MagicMock(),
-            topic_handler=MagicMock(),
-        )
-
-    def test_default_configs(self, config: KpopsConfig, handlers: ComponentHandlers):
+    def test_default_configs(self):
         streams_bootstrap = StreamsBootstrap(
             name="example-name",
             **{
@@ -54,12 +34,7 @@ class TestStreamsBootstrap:
         assert streams_bootstrap.values.image_tag == "latest"
 
     @pytest.mark.asyncio()
-    async def test_should_deploy_streams_bootstrap_app(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        mocker: MockerFixture,
-    ):
+    async def test_should_deploy_streams_bootstrap_app(self, mocker: MockerFixture):
         streams_bootstrap = StreamsBootstrap(
             name="example-name",
             **{
@@ -107,11 +82,7 @@ class TestStreamsBootstrap:
         )
 
     @pytest.mark.asyncio()
-    async def test_should_raise_validation_error_for_invalid_image_tag(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ):
+    async def test_should_raise_validation_error_for_invalid_image_tag(self):
         with pytest.raises(
             ValidationError,
             match=re.escape(

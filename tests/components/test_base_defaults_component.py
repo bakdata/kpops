@@ -1,12 +1,10 @@
 from __future__ import annotations
 
 from pathlib import Path
-from unittest.mock import MagicMock
 
 import pydantic
 import pytest
 
-from kpops.component_handlers import ComponentHandlers
 from kpops.components.base_components.base_defaults_component import (
     BaseDefaultsComponent,
     get_defaults_file_paths,
@@ -51,15 +49,6 @@ def config() -> None:
     ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipeline.yaml")
     config = KpopsConfig(pipeline_base_dir=PIPELINE_BASE_DIR)
     set_config(config)
-
-
-@pytest.fixture()
-def handlers() -> ComponentHandlers:
-    return ComponentHandlers(
-        schema_handler=MagicMock(),
-        connector_handler=MagicMock(),
-        topic_handler=MagicMock(),
-    )
 
 
 class TestBaseDefaultsComponent:
@@ -124,7 +113,7 @@ class TestBaseDefaultsComponent:
             == defaults
         )
 
-    def test_inherit_defaults(self, handlers: ComponentHandlers):
+    def test_inherit_defaults(self):
         ENV["environment"] = "development"
         component = Child()
 
@@ -144,7 +133,7 @@ class TestBaseDefaultsComponent:
             component.hard_coded == "hard_coded_value"
         ), "Defaults in code should be kept for parents"
 
-    def test_inherit(self, handlers: ComponentHandlers):
+    def test_inherit(self):
         component = Child(
             name="name-defined-in-pipeline_parser",
         )
@@ -165,7 +154,7 @@ class TestBaseDefaultsComponent:
             component.hard_coded == "hard_coded_value"
         ), "Defaults in code should be kept for parents"
 
-    def test_multiple_generations(self, handlers: ComponentHandlers):
+    def test_multiple_generations(self):
         component = GrandChild()
 
         assert (
@@ -185,7 +174,7 @@ class TestBaseDefaultsComponent:
         ), "Defaults in code should be kept for parents"
         assert component.grand_child == "grand-child-value"
 
-    def test_env_var_substitution(self, handlers: ComponentHandlers):
+    def test_env_var_substitution(self):
         ENV["pipeline_name"] = RESOURCES_PATH.as_posix()
         component = EnvVarTest()
 
@@ -195,7 +184,7 @@ class TestBaseDefaultsComponent:
             Path(component.name) == RESOURCES_PATH
         ), "Environment variables should be substituted"
 
-    def test_merge_defaults(self, handlers: ComponentHandlers):
+    def test_merge_defaults(self):
         component = GrandChild(nested=Nested(**{"bar": False}))
         assert isinstance(component.nested, Nested)
         assert component.nested == Nested(**{"foo": "foo", "bar": False})

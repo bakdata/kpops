@@ -4,38 +4,18 @@ import pytest
 from pytest_mock import MockerFixture
 from typing_extensions import override
 
-from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
-    HelmDiffConfig,
     HelmRepoConfig,
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
 )
 from kpops.component_handlers.kubernetes.model import K8S_LABEL_MAX_LEN
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
-from kpops.config import KpopsConfig
 from kpops.utils.colorify import magentaify
-from tests.components.test_base_defaults_component import (
-    PIPELINE_BASE_DIR,
-)
 
 
 @pytest.mark.usefixtures("mock_env")
 class TestHelmApp:
-    @pytest.fixture()
-    def config(self) -> KpopsConfig:
-        return KpopsConfig(
-            helm_diff_config=HelmDiffConfig(), pipeline_base_dir=PIPELINE_BASE_DIR
-        )
-
-    @pytest.fixture()
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=AsyncMock(),
-            connector_handler=AsyncMock(),
-            topic_handler=AsyncMock(),
-        )
-
     @pytest.fixture()
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         async_mock = AsyncMock()
@@ -58,8 +38,6 @@ class TestHelmApp:
     @pytest.fixture()
     def helm_app(
         self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
         app_values: HelmAppValues,
         repo_config: HelmRepoConfig,
     ) -> HelmApp:
@@ -103,8 +81,6 @@ class TestHelmApp:
     @pytest.mark.asyncio()
     async def test_should_lazy_load_helm_wrapper_and_call_repo_add_when_implemented(
         self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
         helm_mock: MagicMock,
         mocker: MockerFixture,
         app_values: HelmAppValues,
@@ -151,8 +127,6 @@ class TestHelmApp:
     @pytest.mark.asyncio()
     async def test_should_deploy_app_with_local_helm_chart(
         self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
         helm_mock: MagicMock,
         app_values: HelmAppValues,
     ):
@@ -218,10 +192,44 @@ class TestHelmApp:
 
         log_info_mock.assert_called_once_with(magentaify(stdout))
 
+    @pytest.mark.asyncio()
+    async def test_should_call_helm_uninstall_when_resetting_helm_app(
+        self,
+        helm_app: HelmApp,
+        helm_mock: MagicMock,
+        log_info_mock: MagicMock,
+    ):
+        stdout = 'HelmApp - release "test-helm-app" uninstalled'
+        helm_mock.uninstall.return_value = stdout
+
+        await helm_app.reset(True)
+
+        helm_mock.uninstall.assert_called_once_with(
+            "test-namespace", "${pipeline.name}-test-helm-app", True
+        )
+
+        log_info_mock.assert_called_once_with(magentaify(stdout))
+
+    @pytest.mark.asyncio()
+    async def test_should_call_helm_uninstall_when_cleaning_helm_app(
+        self,
+        helm_app: HelmApp,
+        helm_mock: MagicMock,
+        log_info_mock: MagicMock,
+    ):
+        stdout = 'HelmApp - release "test-helm-app" uninstalled'
+        helm_mock.uninstall.return_value = stdout
+
+        await helm_app.clean(True)
+
+        helm_mock.uninstall.assert_called_once_with(
+            "test-namespace", "${pipeline.name}-test-helm-app", True
+        )
+
+        log_info_mock.assert_called_once_with(magentaify(stdout))
+
     def test_helm_name_override(
         self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
         repo_config: HelmRepoConfig,
     ):
         helm_app = HelmApp(

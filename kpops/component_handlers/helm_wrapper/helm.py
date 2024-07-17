@@ -129,6 +129,30 @@ class Helm:
                 f"Release with name {release_name} not found. Could not uninstall app."
             )
 
+    async def get_values(
+        self,
+        namespace: str,
+        release_name: str,
+    ) -> dict[str, Any] | None:
+        """Prepare and execute the `helm get values` command."""
+        command = [
+            "helm",
+            "get",
+            "values",
+            release_name,
+            "--namespace",
+            namespace,
+            "--output",
+            "yaml",
+        ]
+        try:
+            command_result = await self.__async_execute(command)
+            return yaml.safe_load(command_result)
+        except ReleaseNotFoundException:
+            log.warning(
+                f"Release with name {release_name} not found. Could not get values."
+            )
+
     def template(
         self,
         release_name: str,
