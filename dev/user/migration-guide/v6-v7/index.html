@@ -1393,6 +1393,26 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#rename-app-field" class="md-nav__link">
+    Rename app field
+  </a>
+  
+    <nav class="md-nav" aria-label="Rename app field">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defaultsyaml" class="md-nav__link">
+    defaults.yaml
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#call-destroy-from-inside-of-reset-or-clean" class="md-nav__link">
     Call destroy from inside of reset or clean
   </a>
@@ -1806,6 +1826,26 @@
 </li>
       
         <li class="md-nav__item">
+  <a href="#rename-app-field" class="md-nav__link">
+    Rename app field
+  </a>
+  
+    <nav class="md-nav" aria-label="Rename app field">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#defaultsyaml" class="md-nav__link">
+    defaults.yaml
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#call-destroy-from-inside-of-reset-or-clean" class="md-nav__link">
     Call destroy from inside of reset or clean
   </a>
@@ -1849,8 +1889,8 @@
 <p>As a result of the restructure, some imports need to be adjusted:</p>
 <p><strong>KPOps Python API</strong></p>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-1">1</a></span>
-<span class="normal"><a href="#__codelineno-0-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="gd">-import kpops</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="gi">+import kpops.api as kpops</span>
+<span class="normal"><a href="#__codelineno-0-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1"></a><span class="gd">- import kpops</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2"></a><span class="gi">+ import kpops.api as kpops</span>
 </span></code></pre></div></td></tr></table></div>
 <p><strong>builtin KPOps components</strong></p>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-1-1"> 1</a></span>
@@ -1880,50 +1920,47 @@
 <span class="normal"><a href="#__codelineno-1-25">25</a></span>
 <span class="normal"><a href="#__codelineno-1-26">26</a></span>
 <span class="normal"><a href="#__codelineno-1-27">27</a></span>
-<span class="normal"><a href="#__codelineno-1-28">28</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="gd">-from kpops.components import (</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="gd">-    HelmApp,</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="gd">-    KafkaApp,</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="gd">-    KafkaConnector,</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="gd">-    KafkaSinkConnector,</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="gd">-    KafkaSourceConnector,</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="gd">-    KubernetesApp,</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="gd">-    StreamsBootstrap,</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="gd">-    ProducerApp,</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="gd">-    StreamsApp,</span>
-</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="gd">-    PipelineComponent,</span>
-</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="gd">-    StreamsApp,</span>
-</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="gd">-    ProducerApp,</span>
-</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="gd">-)</span>
-</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="gi">+from kpops.components.base_components import (</span>
-</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="gi">+    HelmApp,</span>
-</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="gi">+    KafkaApp,</span>
-</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="gi">+    KafkaConnector,</span>
-</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="gi">+    KafkaSinkConnector,</span>
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="gi">+    KafkaSourceConnector,</span>
-</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="gi">+    KubernetesApp,</span>
-</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="gi">+    PipelineComponent,</span>
-</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="gi">+)</span>
-</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24"></a><span class="gi">+from kpops.components.streams_bootstrap import (</span>
-</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25"></a><span class="gi">+    StreamsBootstrap,</span>
-</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26"></a><span class="gi">+    StreamsApp,</span>
-</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27"></a><span class="gi">+    ProducerApp,</span>
-</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28"></a><span class="gi">+)</span>
+<span class="normal"><a href="#__codelineno-1-28">28</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1"></a><span class="gd">- from kpops.components import (</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="gd">-     HelmApp,</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="gd">-     KafkaApp,</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a><span class="gd">-     KafkaConnector,</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="gd">-     KafkaSinkConnector,</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="gd">-     KafkaSourceConnector,</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7"></a><span class="gd">-     KubernetesApp,</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8"></a><span class="gd">-     StreamsBootstrap,</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9"></a><span class="gd">-     ProducerApp,</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10"></a><span class="gd">-     StreamsApp,</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11"></a><span class="gd">-     PipelineComponent,</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12"></a><span class="gd">-     StreamsApp,</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13"></a><span class="gd">-     ProducerApp,</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14"></a><span class="gd">- )</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15"></a><span class="gi">+ from kpops.components.base_components import (</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16"></a><span class="gi">+     HelmApp,</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17"></a><span class="gi">+     KafkaApp,</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18"></a><span class="gi">+     KafkaConnector,</span>
+</span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19"></a><span class="gi">+     KafkaSinkConnector,</span>
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20"></a><span class="gi">+     KafkaSourceConnector,</span>
+</span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21"></a><span class="gi">+     KubernetesApp,</span>
+</span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22"></a><span class="gi">+     PipelineComponent,</span>
+</span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23"></a><span class="gi">+ )</span>
+</span><span id="__span-1-24"><a id="__codelineno-1-24" name="__codelineno-1-24"></a><span class="gi">+ from kpops.components.streams_bootstrap import (</span>
+</span><span id="__span-1-25"><a id="__codelineno-1-25" name="__codelineno-1-25"></a><span class="gi">+     StreamsBootstrap,</span>
+</span><span id="__span-1-26"><a id="__codelineno-1-26" name="__codelineno-1-26"></a><span class="gi">+     StreamsApp,</span>
+</span><span id="__span-1-27"><a id="__codelineno-1-27" name="__codelineno-1-27"></a><span class="gi">+     ProducerApp,</span>
+</span><span id="__span-1-28"><a id="__codelineno-1-28" name="__codelineno-1-28"></a><span class="gi">+ )</span>
 </span></code></pre></div></td></tr></table></div>
 <h3 id="your-custom-kpops-components">your custom KPOps components<a class="headerlink" href="#your-custom-kpops-components" title="Permanent link">&para;</a></h3>
 <h4 id="configyaml">config.yaml<a class="headerlink" href="#configyaml" title="Permanent link">&para;</a></h4>
-<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="gd">-components_module: components</span>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-2-1">1</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1"></a><span class="gd">- components_module: components</span>
 </span></code></pre></div></td></tr></table></div>
 <h4 id="python-module">Python module<a class="headerlink" href="#python-module" title="Permanent link">&para;</a></h4>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-3-1">1</a></span>
-<span class="normal"><a href="#__codelineno-3-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="gd">-components/__init__.py</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="gi">+kpops/components/custom/__init__.py</span>
+<span class="normal"><a href="#__codelineno-3-2">2</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1"></a><span class="gd">- components/__init__.py</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2"></a><span class="gi">+ kpops/components/custom/__init__.py</span>
 </span></code></pre></div></td></tr></table></div>
-<h2 id="call-destroy-from-inside-of-reset-or-clean"><a href="https://github.com/bakdata/kpops/pull/501">Call destroy from inside of reset or clean</a><a class="headerlink" href="#call-destroy-from-inside-of-reset-or-clean" title="Permanent link">&para;</a></h2>
-<p>Before v7, the KPOps CLI executed <code>destroy</code> before running <code>reset/clean</code> to ensure the component was destroyed.</p>
-<p>This logic has changed. The <code>destroy</code> method is now called within the <code>PipelineComponent</code>'s <code>reset/clean</code>.</p>
-<p>During migrating to v7, you should check your custom components and see if they override the <code>reset/clean</code> methods. If so, you need to call the supermethod <code>reset/clean</code> to trigger the <code>destroy</code> inside the parent class. Alternatively, if you are implementing the <code>PipelineComponent</code> class, you need to call the <code>destroy</code> method at the beginning of the method.</p>
-<h4 id="componentspy">components.py<a class="headerlink" href="#componentspy" title="Permanent link">&para;</a></h4>
-<p>For example, when creating a custom <code>StreamsApp</code> or <code>ProducerApp</code> (or any other custom component), you <strong>must</strong> call the supermethod <code>rest/clean</code> to execute the <code>destroy</code> in the parent class. <strong>Otherwise, the logic of destroy will not be executed!</strong></p>
+<h2 id="rename-app-field"><a href="https://github.com/bakdata/kpops/pull/506">Rename app field</a><a class="headerlink" href="#rename-app-field" title="Permanent link">&para;</a></h2>
+<p>The <code>app</code> attribute of the builtin KPOps components has been renamed to better differentiate them. Both your <code>pipeline.yaml</code> and <code>defaults.yaml</code> files have to be updated, e.g.:</p>
+<h4 id="defaultsyaml">defaults.yaml<a class="headerlink" href="#defaultsyaml" title="Permanent link">&para;</a></h4>
 <div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-4-1"> 1</a></span>
 <span class="normal"><a href="#__codelineno-4-2"> 2</a></span>
 <span class="normal"><a href="#__codelineno-4-3"> 3</a></span>
@@ -1945,28 +1982,96 @@
 <span class="normal"><a href="#__codelineno-4-19">19</a></span>
 <span class="normal"><a href="#__codelineno-4-20">20</a></span>
 <span class="normal"><a href="#__codelineno-4-21">21</a></span>
-<span class="normal"><a href="#__codelineno-4-22">22</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a>class MyStreamsApp(StreamsApp):
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2"></a>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="w"> </span>   @override
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4"></a><span class="w"> </span>   async def clean(self, dry_run: bool) -&gt; None:
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="gi">+       await super().clean(dry_run)</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="w"> </span>       # Some custom clean logic
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="w"> </span>       # ...
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8"></a><span class="w"> </span>       ```diff
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w"> </span>       
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="w"> </span>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11"></a>class MyCustomComponent(PipelineComponent):
-</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12"></a><span class="w"> </span>   
-</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="w"> </span>   @override
-</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14"></a><span class="w"> </span>   async def destroy(self, dry_run: bool) -&gt; None:
-</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15"></a><span class="w"> </span>       # Some custom destroy logic
-</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16"></a><span class="w"> </span>       # ...
-</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17"></a>
-</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18"></a><span class="w"> </span>   @override
-</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19"></a><span class="w"> </span>   async def clean(self, dry_run: bool) -&gt; None:
-</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20"></a><span class="gi">+       await super().clean(dry_run)</span>
-</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21"></a><span class="w"> </span>       # Some custom clean logic
-</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22"></a><span class="w"> </span>       # ...
+<span class="normal"><a href="#__codelineno-4-22">22</a></span>
+<span class="normal"><a href="#__codelineno-4-23">23</a></span>
+<span class="normal"><a href="#__codelineno-4-24">24</a></span>
+<span class="normal"><a href="#__codelineno-4-25">25</a></span>
+<span class="normal"><a href="#__codelineno-4-26">26</a></span>
+<span class="normal"><a href="#__codelineno-4-27">27</a></span>
+<span class="normal"><a href="#__codelineno-4-28">28</a></span>
+<span class="normal"><a href="#__codelineno-4-29">29</a></span>
+<span class="normal"><a href="#__codelineno-4-30">30</a></span>
+<span class="normal"><a href="#__codelineno-4-31">31</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1"></a><span class="w"> </span> kubernetes-app:
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2"></a><span class="gd">-   app: {}</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3"></a><span class="gi">+   values: {}</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5"></a><span class="w"> </span> helm-app:
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6"></a><span class="gd">-   app: {}</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7"></a><span class="gi">+   values: {}</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9"></a><span class="w"> </span> kafka-app:
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10"></a><span class="gd">-   app: {}</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11"></a><span class="gi">+   values: {}</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12"></a>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13"></a><span class="w"> </span> streams-app:
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14"></a><span class="gd">-   app: {}</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15"></a><span class="gi">+   values: {}</span>
+</span><span id="__span-4-16"><a id="__codelineno-4-16" name="__codelineno-4-16"></a>
+</span><span id="__span-4-17"><a id="__codelineno-4-17" name="__codelineno-4-17"></a><span class="w"> </span> producer-app:
+</span><span id="__span-4-18"><a id="__codelineno-4-18" name="__codelineno-4-18"></a><span class="gd">-   app: {}</span>
+</span><span id="__span-4-19"><a id="__codelineno-4-19" name="__codelineno-4-19"></a><span class="gi">+   values: {}</span>
+</span><span id="__span-4-20"><a id="__codelineno-4-20" name="__codelineno-4-20"></a>
+</span><span id="__span-4-21"><a id="__codelineno-4-21" name="__codelineno-4-21"></a><span class="w"> </span> kafka-connector:
+</span><span id="__span-4-22"><a id="__codelineno-4-22" name="__codelineno-4-22"></a><span class="gd">-   app: {}</span>
+</span><span id="__span-4-23"><a id="__codelineno-4-23" name="__codelineno-4-23"></a><span class="gi">+   config: {}</span>
+</span><span id="__span-4-24"><a id="__codelineno-4-24" name="__codelineno-4-24"></a>
+</span><span id="__span-4-25"><a id="__codelineno-4-25" name="__codelineno-4-25"></a><span class="w"> </span> kafka-source-connector:
+</span><span id="__span-4-26"><a id="__codelineno-4-26" name="__codelineno-4-26"></a><span class="gd">-   app: {}</span>
+</span><span id="__span-4-27"><a id="__codelineno-4-27" name="__codelineno-4-27"></a><span class="gi">+   config: {}</span>
+</span><span id="__span-4-28"><a id="__codelineno-4-28" name="__codelineno-4-28"></a>
+</span><span id="__span-4-29"><a id="__codelineno-4-29" name="__codelineno-4-29"></a><span class="w"> </span> kafka-sink-connector:
+</span><span id="__span-4-30"><a id="__codelineno-4-30" name="__codelineno-4-30"></a><span class="gd">-   app: {}</span>
+</span><span id="__span-4-31"><a id="__codelineno-4-31" name="__codelineno-4-31"></a><span class="gi">+   config: {}</span>
+</span></code></pre></div></td></tr></table></div>
+<h2 id="call-destroy-from-inside-of-reset-or-clean"><a href="https://github.com/bakdata/kpops/pull/501">Call destroy from inside of reset or clean</a><a class="headerlink" href="#call-destroy-from-inside-of-reset-or-clean" title="Permanent link">&para;</a></h2>
+<p>Before v7, the KPOps CLI executed <code>destroy</code> before running <code>reset/clean</code> to ensure the component was destroyed.</p>
+<p>This logic has changed. The <code>destroy</code> method is now called within the <code>PipelineComponent</code>'s <code>reset</code>/<code>clean</code>.</p>
+<p>During migrating to v7, you should check your custom components and see if they override the <code>reset</code>/<code>clean</code> methods. If so, you need to call the supermethod <code>reset</code>/<code>clean</code> to trigger the <code>destroy</code> inside the parent class. Alternatively, if you are implementing the <code>PipelineComponent</code> class, you need to call the <code>destroy</code> method at the beginning of the method.</p>
+<h4 id="componentspy">components.py<a class="headerlink" href="#componentspy" title="Permanent link">&para;</a></h4>
+<p>For example, when creating a custom <code>StreamsApp</code> or <code>ProducerApp</code> (or any other custom component), you <strong>must</strong> call the supermethod <code>reset</code>/<code>clean</code> to execute the <code>destroy</code> in the parent class. <strong>Otherwise, the logic of destroy will not be executed!</strong></p>
+<div class="language-diff highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-5-1"> 1</a></span>
+<span class="normal"><a href="#__codelineno-5-2"> 2</a></span>
+<span class="normal"><a href="#__codelineno-5-3"> 3</a></span>
+<span class="normal"><a href="#__codelineno-5-4"> 4</a></span>
+<span class="normal"><a href="#__codelineno-5-5"> 5</a></span>
+<span class="normal"><a href="#__codelineno-5-6"> 6</a></span>
+<span class="normal"><a href="#__codelineno-5-7"> 7</a></span>
+<span class="normal"><a href="#__codelineno-5-8"> 8</a></span>
+<span class="normal"><a href="#__codelineno-5-9"> 9</a></span>
+<span class="normal"><a href="#__codelineno-5-10">10</a></span>
+<span class="normal"><a href="#__codelineno-5-11">11</a></span>
+<span class="normal"><a href="#__codelineno-5-12">12</a></span>
+<span class="normal"><a href="#__codelineno-5-13">13</a></span>
+<span class="normal"><a href="#__codelineno-5-14">14</a></span>
+<span class="normal"><a href="#__codelineno-5-15">15</a></span>
+<span class="normal"><a href="#__codelineno-5-16">16</a></span>
+<span class="normal"><a href="#__codelineno-5-17">17</a></span>
+<span class="normal"><a href="#__codelineno-5-18">18</a></span>
+<span class="normal"><a href="#__codelineno-5-19">19</a></span>
+<span class="normal"><a href="#__codelineno-5-20">20</a></span>
+<span class="normal"><a href="#__codelineno-5-21">21</a></span>
+<span class="normal"><a href="#__codelineno-5-22">22</a></span></pre></div></td><td class="code"><div><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1"></a>class MyStreamsApp(StreamsApp):
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2"></a>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3"></a><span class="w"> </span>   @override
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4"></a><span class="w"> </span>   async def clean(self, dry_run: bool) -&gt; None:
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5"></a><span class="gi">+       await super().clean(dry_run)</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6"></a><span class="w"> </span>       # Some custom clean logic
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7"></a><span class="w"> </span>       # ...
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8"></a><span class="w"> </span>       ```diff
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9"></a><span class="w"> </span>       
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10"></a><span class="w"> </span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11"></a>class MyCustomComponent(PipelineComponent):
+</span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12"></a><span class="w"> </span>   
+</span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13"></a><span class="w"> </span>   @override
+</span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14"></a><span class="w"> </span>   async def destroy(self, dry_run: bool) -&gt; None:
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15"></a><span class="w"> </span>       # Some custom destroy logic
+</span><span id="__span-5-16"><a id="__codelineno-5-16" name="__codelineno-5-16"></a><span class="w"> </span>       # ...
+</span><span id="__span-5-17"><a id="__codelineno-5-17" name="__codelineno-5-17"></a>
+</span><span id="__span-5-18"><a id="__codelineno-5-18" name="__codelineno-5-18"></a><span class="w"> </span>   @override
+</span><span id="__span-5-19"><a id="__codelineno-5-19" name="__codelineno-5-19"></a><span class="w"> </span>   async def clean(self, dry_run: bool) -&gt; None:
+</span><span id="__span-5-20"><a id="__codelineno-5-20" name="__codelineno-5-20"></a><span class="gi">+       await super().clean(dry_run)</span>
+</span><span id="__span-5-21"><a id="__codelineno-5-21" name="__codelineno-5-21"></a><span class="w"> </span>       # Some custom clean logic
+</span><span id="__span-5-22"><a id="__codelineno-5-22" name="__codelineno-5-22"></a><span class="w"> </span>       # ...
 </span></code></pre></div></td></tr></table></div>
 
 
