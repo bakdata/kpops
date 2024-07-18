@@ -45,15 +45,15 @@ class StreamsBootstrapValues(HelmAppValues):
 class StreamsBootstrap(HelmApp, ABC):
     """Base for components with a streams-bootstrap Helm chart.
 
-    :param app: streams-bootstrap app values
+    :param values: streams-bootstrap Helm values
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to streams-bootstrap Helm repo
     :param version: Helm chart version, defaults to "2.9.0"
     """
 
-    app: StreamsBootstrapValues = Field(
+    values: StreamsBootstrapValues = Field(
         default_factory=StreamsBootstrapValues,
-        description=describe_attr("app", __doc__),
+        description=describe_attr("values", __doc__),
     )
 
     repo_config: HelmRepoConfig = Field(
@@ -67,7 +67,7 @@ class StreamsBootstrap(HelmApp, ABC):
 
     @pydantic.model_validator(mode="after")
     def warning_for_latest_image_tag(self) -> Self:
-        if self.validate_ and self.app.image_tag == "latest":
+        if self.validate_ and self.values.image_tag == "latest":
             log.warning(
                 f"The image tag for component '{self.name}' is set or defaulted to 'latest'. Please, consider providing a stable image tag."
             )

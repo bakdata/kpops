@@ -1,9 +1,8 @@
-from unittest.mock import AsyncMock, MagicMock
+from unittest.mock import MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers import ComponentHandlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
 )
@@ -12,10 +11,6 @@ from kpops.components.base_components.kubernetes_app import (
     KubernetesApp,
     KubernetesAppValues,
 )
-from kpops.config import KpopsConfig
-from kpops.pipeline import PIPELINE_PATH
-from kpops.utils.environment import ENV
-from tests.components import PIPELINE_BASE_DIR, RESOURCES_PATH
 
 HELM_RELEASE_NAME = create_helm_release_name("${pipeline.name}-test-kubernetes-app")
 
@@ -25,19 +20,6 @@ class KubernetesTestValues(KubernetesAppValues):
 
 
 class TestKubernetesApp:
-    @pytest.fixture()
-    def config(self) -> KpopsConfig:
-        ENV[PIPELINE_PATH] = str(RESOURCES_PATH / "pipeline.yaml")
-        return KpopsConfig(pipeline_base_dir=PIPELINE_BASE_DIR)
-
-    @pytest.fixture()
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=AsyncMock(),
-            connector_handler=AsyncMock(),
-            topic_handler=AsyncMock(),
-        )
-
     @pytest.fixture()
     def log_info_mock(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch("kpops.components.base_components.kubernetes_app.log.info")
@@ -51,34 +33,22 @@ class TestKubernetesApp:
         return HelmRepoConfig(repository_name="test", url="https://bakdata.com")
 
     @pytest.fixture()
-    def kubernetes_app(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        app_values: KubernetesTestValues,
-    ) -> KubernetesApp:
+    def kubernetes_app(self, app_values: KubernetesTestValues) -> KubernetesApp:
         return KubernetesApp(
             name="test-kubernetes-app",
-            config=config,
-            handlers=handlers,
-            app=app_values,
+            values=app_values,
             namespace="test-namespace",
         )
 
     def test_should_raise_value_error_when_name_is_not_valid(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        app_values: KubernetesTestValues,
+        self, app_values: KubernetesTestValues
     ):
         with pytest.raises(
             ValueError, match=r"The component name .* is invalid for Kubernetes."
         ):
             KubernetesApp(
                 name="Not-Compatible*",
-                config=config,
-                handlers=handlers,
-                app=app_values,
+                values=app_values,
                 namespace="test-namespace",
             )
 
@@ -87,16 +57,12 @@ class TestKubernetesApp:
         ):
             KubernetesApp(
                 name="snake_case*",
-                config=config,
-                handlers=handlers,
-                app=app_values,
+                values=app_values,
                 namespace="test-namespace",
             )
 
         assert KubernetesApp(
             name="valid-name",
-            config=config,
-            handlers=handlers,
-            app=app_values,
+            values=app_values,
             namespace="test-namespace",
         )

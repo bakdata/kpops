@@ -1,5 +1,15 @@
 - _cleaner:
-    app:
+    name: app1
+    namespace: example-namespace
+    prefix: resources-no-input-topic-pipeline-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       commandLine:
         CONVERT_XML: true
       imageTag: latest
@@ -19,37 +29,7 @@
         inputPattern: .*
         outputTopic: example-output
         schemaRegistryUrl: http://localhost:8081/
-    name: app1
-    namespace: example-namespace
-    prefix: resources-no-input-topic-pipeline-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
-    commandLine:
-      CONVERT_XML: true
-    imageTag: latest
-    persistence:
-      enabled: false
-    resources:
-      limits:
-        memory: 2G
-      requests:
-        memory: 2G
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-no-input-topic-pipeline-app1-error
-      inputPattern: .*
-      outputTopic: example-output
-      schemaRegistryUrl: http://localhost:8081/
   from:
     components: {}
     topics:
@@ -76,9 +56,39 @@
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
   type: streams-app
+  values:
+    commandLine:
+      CONVERT_XML: true
+    imageTag: latest
+    persistence:
+      enabled: false
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+    statefulSet: false
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-no-input-topic-pipeline-app1-error
+      inputPattern: .*
+      outputTopic: example-output
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
-    app:
+    name: app2
+    namespace: example-namespace
+    prefix: resources-no-input-topic-pipeline-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       imageTag: latest
       persistence:
         enabled: false
@@ -94,33 +104,7 @@
         inputTopics:
         - example-output
         schemaRegistryUrl: http://localhost:8081/
-    name: app2
-    namespace: example-namespace
-    prefix: resources-no-input-topic-pipeline-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
-    imageTag: latest
-    persistence:
-      enabled: false
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-no-input-topic-pipeline-app2-error
-      extraOutputTopics:
-        extra: example-output-extra
-        test-output: test-output-extra
-      inputTopics:
-      - example-output
-      schemaRegistryUrl: http://localhost:8081/
   name: app2
   namespace: example-namespace
   prefix: resources-no-input-topic-pipeline-
@@ -145,5 +129,21 @@
         configs: {}
         role: test-output
   type: streams-app
+  values:
+    imageTag: latest
+    persistence:
+      enabled: false
+    statefulSet: false
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-no-input-topic-pipeline-app2-error
+      extraOutputTopics:
+        extra: example-output-extra
+        test-output: test-output-extra
+      inputTopics:
+      - example-output
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 

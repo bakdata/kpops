@@ -1,4 +1,3 @@
-defaults_path: ../no-topics-defaults
 kafka_brokers: "http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092"
 kafka_connect:
   url: "http://localhost:8083"

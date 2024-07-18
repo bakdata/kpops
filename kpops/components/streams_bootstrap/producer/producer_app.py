@@ -8,12 +8,12 @@ from kpops.components.base_components.kafka_app import (
     KafkaApp,
     KafkaAppCleaner,
 )
-from kpops.components.base_components.models.topic import (
+from kpops.components.common.streams_bootstrap import StreamsBootstrap
+from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.common.streams_bootstrap import StreamsBootstrap
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
@@ -22,7 +22,7 @@ log = logging.getLogger("ProducerApp")
 
 
 class ProducerAppCleaner(KafkaAppCleaner):
-    app: ProducerAppValues
+    values: ProducerAppValues
 
     @property
     @override
@@ -40,13 +40,13 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
 
     Note that the producer does not support error topics.
 
-    :param app: Application-specific settings
+    :param values: streams-bootstrap Helm values
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    app: ProducerAppValues = Field(
+    values: ProducerAppValues = Field(
         default=...,
-        description=describe_attr("app", __doc__),
+        description=describe_attr("values", __doc__),
     )
     from_: None = Field(
         default=None,
@@ -59,9 +59,7 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
     @cached_property
     def _cleaner(self) -> ProducerAppCleaner:
         return ProducerAppCleaner(
-            config=self.config,
-            handlers=self.handlers,
-            **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"}),
+            **self.model_dump(by_alias=True, exclude={"_cleaner", "from_", "to"})
         )
 
     @override
@@ -76,20 +74,20 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
     @property
     @override
     def output_topic(self) -> KafkaTopic | None:
-        return self.app.streams.output_topic
+        return self.values.streams.output_topic
 
     @property
     @override
     def extra_output_topics(self) -> dict[str, KafkaTopic]:
-        return self.app.streams.extra_output_topics
+        return self.values.streams.extra_output_topics
 
     @override
     def set_output_topic(self, topic: KafkaTopic) -> None:
-        self.app.streams.output_topic = topic
+        self.values.streams.output_topic = topic
 
     @override
     def add_extra_output_topic(self, topic: KafkaTopic, role: str) -> None:
-        self.app.streams.extra_output_topics[role] = topic
+        self.values.streams.extra_output_topics[role] = topic
 
     @property
     @override
@@ -108,8 +106,8 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
         if cluster_values:
             log.debug("Fetched Helm chart values from cluster")
             name_override = self._cleaner.helm_name_override
-            self._cleaner.app = self.app.model_validate(cluster_values)
-            self._cleaner.app.name_override = name_override
+            self._cleaner.values = self.values.model_validate(cluster_values)
+            self._cleaner.values.name_override = name_override
 
         await super().destroy(dry_run)
 

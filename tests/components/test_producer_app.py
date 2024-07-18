@@ -1,14 +1,14 @@
 import logging
-from unittest.mock import ANY, AsyncMock, MagicMock
+from unittest.mock import ANY, MagicMock
 
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.base_components.models.topic import (
+from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
@@ -17,8 +17,6 @@ from kpops.components.streams_bootstrap.producer.producer_app import (
     ProducerApp,
     ProducerAppCleaner,
 )
-from kpops.config import KpopsConfig, TopicNameConfig
-from tests.components import PIPELINE_BASE_DIR
 
 PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
 PRODUCER_APP_FULL_NAME = "${pipeline.name}-" + PRODUCER_APP_NAME
@@ -41,35 +39,13 @@ class TestProducerApp:
         assert PRODUCER_APP_CLEAN_RELEASE_NAME.endswith("-clean")
 
     @pytest.fixture()
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=AsyncMock(),
-            connector_handler=AsyncMock(),
-            topic_handler=AsyncMock(),
-        )
-
-    @pytest.fixture()
-    def config(self) -> KpopsConfig:
-        return KpopsConfig(
-            topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component.type}-error-topic",
-                default_output_topic_name="${component.type}-output-topic",
-            ),
-            pipeline_base_dir=PIPELINE_BASE_DIR,
-        )
-
-    @pytest.fixture()
-    def producer_app(
-        self, config: KpopsConfig, handlers: ComponentHandlers
-    ) -> ProducerApp:
+    def producer_app(self) -> ProducerApp:
         return ProducerApp(
             name=PRODUCER_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "version": "2.4.2",
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "clean_schemas": True,
@@ -93,7 +69,7 @@ class TestProducerApp:
         assert not hasattr(cleaner, "_cleaner")
 
     def test_cleaner_inheritance(self, producer_app: ProducerApp):
-        assert producer_app._cleaner.app == producer_app.app
+        assert producer_app._cleaner.values == producer_app.values
 
     def test_cleaner_helm_release_name(self, producer_app: ProducerApp):
         assert (
@@ -107,14 +83,12 @@ class TestProducerApp:
             == PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE
         )
 
-    def test_output_topics(self, config: KpopsConfig, handlers: ComponentHandlers):
+    def test_output_topics(self):
         producer_app = ProducerApp(
             name=PRODUCER_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
@@ -132,10 +106,10 @@ class TestProducerApp:
             },
         )
 
-        assert producer_app.app.streams.output_topic == KafkaTopic(
+        assert producer_app.values.streams.output_topic == KafkaTopic(
             name="producer-app-output-topic"
         )
-        assert producer_app.app.streams.extra_output_topics == {
+        assert producer_app.values.streams.extra_output_topics == {
             "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
 
@@ -146,7 +120,7 @@ class TestProducerApp:
         mocker: MockerFixture,
     ):
         mock_create_topic = mocker.patch.object(
-            producer_app.handlers.topic_handler, "create_topic"
+            get_handlers().topic_handler, "create_topic"
         )
 
         mock_helm_upgrade_install = mocker.patch.object(
@@ -351,18 +325,12 @@ class TestProducerApp:
             ]
         )
 
-    def test_get_output_topics(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ):
+    def test_get_output_topics(self):
         producer_app = ProducerApp(
             name="my-producer",
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "namespace": "test-namespace",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
@@ -379,10 +347,10 @@ class TestProducerApp:
                 },
             },
         )
-        assert producer_app.app.streams.output_topic == KafkaTopic(
+        assert producer_app.values.streams.output_topic == KafkaTopic(
             name="producer-app-output-topic"
         )
-        assert producer_app.app.streams.extra_output_topics == {
+        assert producer_app.values.streams.extra_output_topics == {
             "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
         assert producer_app.input_topics == []
@@ -393,12 +361,7 @@ class TestProducerApp:
         ]
 
     @pytest.mark.asyncio()
-    async def test_should_not_deploy_clean_up_when_rest(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        mocker: MockerFixture,
-    ):
+    async def test_should_not_deploy_clean_up_when_rest(self, mocker: MockerFixture):
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
             Helm,
@@ -417,11 +380,9 @@ class TestProducerApp:
         )
         producer_app = ProducerApp(
             name=PRODUCER_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "imageTag": "2.2.2",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
@@ -449,10 +410,7 @@ class TestProducerApp:
 
     @pytest.mark.asyncio()
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_clean(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        mocker: MockerFixture,
+        self, mocker: MockerFixture
     ):
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
@@ -472,11 +430,9 @@ class TestProducerApp:
         )
         producer_app = ProducerApp(
             name=PRODUCER_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "imageTag": "2.2.2",
                     "streams": {"brokers": "fake-broker:9092"},
                 },

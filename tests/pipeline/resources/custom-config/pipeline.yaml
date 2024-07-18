@@ -1,6 +1,6 @@
 - type: producer-app
   name: app1
-  app:
+  values:
     resources:
       limits:
         memory: 2G
@@ -9,5 +9,5 @@
 
 - type: streams-app
   name: app2
-  app:
+  values:
     image: some-image

@@ -11,6 +11,20 @@ if TYPE_CHECKING:
 
 
 class ComponentHandlers:
+    _instance: ComponentHandlers | None = None
+
+    def __new__(
+        cls,
+        schema_handler,
+        connector_handler,
+        topic_handler,
+        *args,
+        **kwargs,
+    ) -> ComponentHandlers:
+        if not cls._instance:
+            cls._instance = super().__new__(cls, *args, **kwargs)
+        return cls._instance
+
     def __init__(
         self,
         schema_handler: SchemaHandler | None,
@@ -20,3 +34,10 @@ class ComponentHandlers:
         self.schema_handler = schema_handler
         self.connector_handler = connector_handler
         self.topic_handler = topic_handler
+
+
+def get_handlers() -> ComponentHandlers:
+    if not ComponentHandlers._instance:
+        msg = f"{ComponentHandlers.__name__} has not been initialized"
+        raise RuntimeError(msg)
+    return ComponentHandlers._instance

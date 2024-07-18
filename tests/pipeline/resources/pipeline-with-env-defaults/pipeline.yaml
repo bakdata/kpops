@@ -4,7 +4,7 @@
     topics:
       example-topic:
         type: input
-  app:
+  values:
     image: fake-image
   to:
     topics:
@@ -13,5 +13,5 @@
 
 - type: kafka-sink-connector
   name: es-sink-connector
-  app:
+  config:
     connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector

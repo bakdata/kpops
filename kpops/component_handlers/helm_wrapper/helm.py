@@ -81,7 +81,7 @@ class Helm:
         chart: str,
         dry_run: bool,
         namespace: str,
-        values: dict,
+        values: dict[str, Any],
         flags: HelmUpgradeInstallFlags | None = None,
     ) -> str:
         """Prepare and execute the `helm upgrade --install` command."""
@@ -158,7 +158,7 @@ class Helm:
         release_name: str,
         chart: str,
         namespace: str,
-        values: dict,
+        values: dict[str, Any],
         flags: HelmTemplateFlags | None = None,
     ) -> Resource:
         """From Helm: Render chart templates locally and display the output.

@@ -4,7 +4,7 @@
     topics:
       ".*":
         type: pattern
-  app:
+  values:
     commandLine:
       CONVERT_XML: true
     resources:

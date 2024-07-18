@@ -1,12 +1,7 @@
-from unittest.mock import MagicMock
-
 import pytest
 from polyfactory.factories.pydantic_factory import ModelFactory
 
 from kpops.api.options import FilterType
-from kpops.component_handlers import (
-    ComponentHandlers,
-)
 from kpops.components.base_components.models.from_section import FromSection
 from kpops.components.base_components.models.to_section import ToSection
 from kpops.components.base_components.pipeline_component import PipelineComponent
@@ -20,7 +15,6 @@ class TestComponentFactory(ModelFactory[PipelineComponent]):
     from_ = FromSection()
     enrich = False
     validate = False
-    handlers = ComponentHandlers(None, MagicMock(), MagicMock())
 
 
 run_validation = False

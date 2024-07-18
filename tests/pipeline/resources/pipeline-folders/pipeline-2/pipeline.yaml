@@ -1,5 +1,5 @@
 - type: converter
-  app:
+  values:
     commandLine:
       CONVERT_XML: true
     resources:

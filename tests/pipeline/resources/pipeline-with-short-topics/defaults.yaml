@@ -3,7 +3,7 @@ kubernetes-app:
   namespace: example-namespace
 
 kafka-app:
-  app:
+  values:
     streams:
       brokers: "${config.kafka_brokers}"
       schema_registry_url: "${config.schema_registry.url}"
@@ -17,7 +17,7 @@ producer-app:
 
 
 streams-app: # inherits from kafka-app
-  app:
+  values:
     streams:
       brokers: test
   to:

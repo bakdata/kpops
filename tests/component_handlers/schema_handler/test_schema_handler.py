@@ -15,7 +15,7 @@ from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     ToSection,
 )
-from kpops.components.base_components.models.topic import OutputTopicTypes, TopicConfig
+from kpops.components.common.topic import OutputTopicTypes, TopicConfig
 from kpops.config import KpopsConfig, SchemaRegistryConfig
 from kpops.utils.colorify import greenify, magentaify, yellowify
 from tests.pipeline.test_components import TestSchemaProvider

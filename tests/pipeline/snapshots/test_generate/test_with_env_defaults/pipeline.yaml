@@ -1,5 +1,15 @@
 - _cleaner:
-    app:
+    name: streams-app-development
+    namespace: development-namespace
+    prefix: resources-pipeline-with-env-defaults-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       image: fake-image
       imageTag: latest
       persistence:
@@ -14,32 +24,7 @@
         - example-topic
         outputTopic: example-output
         schemaRegistryUrl: http://localhost:8081/
-    name: streams-app-development
-    namespace: development-namespace
-    prefix: resources-pipeline-with-env-defaults-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.9.0
-  app:
-    image: fake-image
-    imageTag: latest
-    persistence:
-      enabled: false
-    statefulSet: false
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      config:
-        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-pipeline-with-env-defaults-streams-app-development-error
-      inputTopics:
-      - example-topic
-      outputTopic: example-output
-      schemaRegistryUrl: http://localhost:8081/
   from:
     components: {}
     topics:
@@ -66,13 +51,23 @@
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
   type: streams-app
+  values:
+    image: fake-image
+    imageTag: latest
+    persistence:
+      enabled: false
+    statefulSet: false
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-pipeline-with-env-defaults-streams-app-development-error
+      inputTopics:
+      - example-topic
+      outputTopic: example-output
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.9.0
 - _resetter:
-    app:
-      config:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        connector: resources-pipeline-with-env-defaults-es-sink-connector
-      connectorType: sink
     name: es-sink-connector
     namespace: development-namespace
     prefix: resources-pipeline-with-env-defaults-
@@ -83,8 +78,13 @@
       url: https://bakdata.github.io/kafka-connect-resetter/
     suffix: -clean
     type: kafka-connector-resetter
+    values:
+      config:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        connector: resources-pipeline-with-env-defaults-es-sink-connector
+      connectorType: sink
     version: 1.0.4
-  app:
+  config:
     batch.size: '2000'
     behavior.on.malformed.documents: warn
     behavior.on.null.values: delete

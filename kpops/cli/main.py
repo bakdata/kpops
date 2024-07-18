@@ -6,13 +6,18 @@ from typing import Optional
 import typer
 
 import kpops.api as kpops
-from kpops.api.file_type import CONFIG_YAML, DEFAULTS_YAML, PIPELINE_YAML, KpopsFileType
 from kpops.api.options import FilterType
 from kpops.cli.utils import (
     collect_pipeline_paths,
 )
 from kpops.config import ENV_PREFIX
 from kpops.const import KPOPS, __version__
+from kpops.const.file_type import (
+    CONFIG_YAML,
+    DEFAULTS_YAML,
+    PIPELINE_YAML,
+    KpopsFileType,
+)
 from kpops.utils.gen_schema import (
     gen_config_schema,
     gen_defaults_schema,

@@ -6,10 +6,9 @@ import pytest
 from pytest_mock import MockerFixture
 
 from kpops.api.exception import ValidationError
-from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import (
-    HelmDiffConfig,
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
@@ -17,7 +16,7 @@ from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     ToSection,
 )
-from kpops.components.base_components.models.topic import (
+from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
@@ -30,8 +29,6 @@ from kpops.components.streams_bootstrap.streams.streams_app import (
     StreamsApp,
     StreamsAppCleaner,
 )
-from kpops.config import KpopsConfig, TopicNameConfig
-from tests.components import PIPELINE_BASE_DIR
 
 RESOURCES_PATH = Path(__file__).parent / "resources"
 
@@ -58,37 +55,12 @@ class TestStreamsApp:
         assert STREAMS_APP_CLEAN_RELEASE_NAME.endswith("-clean")
 
     @pytest.fixture()
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=AsyncMock(),
-            connector_handler=AsyncMock(),
-            topic_handler=AsyncMock(),
-        )
-
-    @pytest.fixture()
-    def config(self) -> KpopsConfig:
-        return KpopsConfig(
-            topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component.type}-error-topic",
-                default_output_topic_name="${component.type}-output-topic",
-            ),
-            helm_diff_config=HelmDiffConfig(),
-            pipeline_base_dir=PIPELINE_BASE_DIR,
-        )
-
-    @pytest.fixture()
-    def streams_app(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ) -> StreamsApp:
+    def streams_app(self) -> StreamsApp:
         return StreamsApp(
             name=STREAMS_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "to": {
@@ -102,18 +74,12 @@ class TestStreamsApp:
         )
 
     @pytest.fixture()
-    def stateful_streams_app(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ) -> StreamsApp:
+    def stateful_streams_app(self) -> StreamsApp:
         return StreamsApp(
             name=STREAMS_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "statefulSet": True,
                     "persistence": {"enabled": True, "size": "5Gi"},
                     "streams": {
@@ -146,19 +112,19 @@ class TestStreamsApp:
         assert not hasattr(cleaner, "_cleaner")
 
     def test_cleaner_inheritance(self, streams_app: StreamsApp):
-        streams_app.app.autoscaling = StreamsAppAutoScaling(
+        streams_app.values.autoscaling = StreamsAppAutoScaling(
             enabled=True,
             consumer_group="foo",
             lag_threshold=100,
             idle_replicas=1,
         )
-        assert streams_app._cleaner.app == streams_app.app
+        assert streams_app._cleaner.values == streams_app.values
 
     def test_raise_validation_error_when_autoscaling_enabled_and_mandatory_fields_not_set(
         self, streams_app: StreamsApp
     ):
         with pytest.raises(ValidationError) as error:
-            streams_app.app.autoscaling = StreamsAppAutoScaling(
+            streams_app.values.autoscaling = StreamsAppAutoScaling(
                 enabled=True,
             )
         msg = (
@@ -171,7 +137,7 @@ class TestStreamsApp:
         self, streams_app: StreamsApp
     ):
         with pytest.raises(ValidationError) as error:
-            streams_app.app.autoscaling = StreamsAppAutoScaling(
+            streams_app.values.autoscaling = StreamsAppAutoScaling(
                 enabled=True, consumer_group="a-test-group"
             )
         msg = (
@@ -184,7 +150,7 @@ class TestStreamsApp:
         self, streams_app: StreamsApp
     ):
         with pytest.raises(ValidationError) as error:
-            streams_app.app.autoscaling = StreamsAppAutoScaling(
+            streams_app.values.autoscaling = StreamsAppAutoScaling(
                 enabled=True, lag_threshold=1000
             )
         msg = (
@@ -205,18 +171,12 @@ class TestStreamsApp:
             == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
         )
 
-    def test_set_topics(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ):
+    def test_set_topics(self):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "from": {
@@ -236,17 +196,17 @@ class TestStreamsApp:
                 },
             },
         )
-        assert streams_app.app.streams.input_topics == [
+        assert streams_app.values.streams.input_topics == [
             KafkaTopic(name="example-input"),
             KafkaTopic(name="b"),
             KafkaTopic(name="a"),
         ]
-        assert streams_app.app.streams.extra_input_topics == {
+        assert streams_app.values.streams.extra_input_topics == {
             "role1": [KafkaTopic(name="topic-extra")],
             "role2": [KafkaTopic(name="topic-extra2"), KafkaTopic(name="topic-extra3")],
         }
-        assert streams_app.app.streams.input_pattern == ".*"
-        assert streams_app.app.streams.extra_input_patterns == {
+        assert streams_app.values.streams.input_pattern == ".*"
+        assert streams_app.values.streams.extra_input_patterns == {
             "another-pattern": "example.*"
         }
 
@@ -257,18 +217,12 @@ class TestStreamsApp:
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" in streams_config
 
-    def test_no_empty_input_topic(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ):
+    def test_no_empty_input_topic(self):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "from": {
@@ -278,10 +232,10 @@ class TestStreamsApp:
                 },
             },
         )
-        assert not streams_app.app.streams.extra_input_topics
-        assert not streams_app.app.streams.input_topics
-        assert streams_app.app.streams.input_pattern == ".*"
-        assert not streams_app.app.streams.extra_input_patterns
+        assert not streams_app.values.streams.extra_input_topics
+        assert not streams_app.values.streams.input_topics
+        assert streams_app.values.streams.input_pattern == ".*"
+        assert not streams_app.values.streams.extra_input_patterns
 
         helm_values = streams_app.to_helm_values()
         streams_config = helm_values["streams"]
@@ -290,22 +244,16 @@ class TestStreamsApp:
         assert "inputPattern" in streams_config
         assert "extraInputPatterns" not in streams_config
 
-    def test_should_validate(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ):
+    def test_should_validate(self):
         # An exception should be raised when both role and type are defined and type is input
         with pytest.raises(
             ValueError, match="Define role only if `type` is `pattern` or `None`"
         ):
             StreamsApp(
                 name=STREAMS_APP_NAME,
-                config=config,
-                handlers=handlers,
                 **{
                     "namespace": "test-namespace",
-                    "app": {
+                    "values": {
                         "streams": {"brokers": "fake-broker:9092"},
                     },
                     "from": {
@@ -325,11 +273,9 @@ class TestStreamsApp:
         ):
             StreamsApp(
                 name=STREAMS_APP_NAME,
-                config=config,
-                handlers=handlers,
                 **{
                     "namespace": "test-namespace",
-                    "app": {
+                    "values": {
                         "streams": {"brokers": "fake-broker:9092"},
                     },
                     "to": {
@@ -343,18 +289,12 @@ class TestStreamsApp:
                 },
             )
 
-    def test_set_streams_output_from_to(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ):
+    def test_set_streams_output_from_to(self):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "to": {
@@ -377,29 +317,23 @@ class TestStreamsApp:
                 },
             },
         )
-        assert streams_app.app.streams.extra_output_topics == {
+        assert streams_app.values.streams.extra_output_topics == {
             "first-extra-role": KafkaTopic(name="extra-topic-1"),
             "second-extra-role": KafkaTopic(name="extra-topic-2"),
         }
-        assert streams_app.app.streams.output_topic == KafkaTopic(
+        assert streams_app.values.streams.output_topic == KafkaTopic(
             name="streams-app-output-topic"
         )
-        assert streams_app.app.streams.error_topic == KafkaTopic(
+        assert streams_app.values.streams.error_topic == KafkaTopic(
             name="streams-app-error-topic"
         )
 
-    def test_weave_inputs_from_prev_component(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ):
+    def test_weave_inputs_from_prev_component(self):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "streams": {"brokers": "fake-broker:9092"},
                 },
             },
@@ -424,26 +358,19 @@ class TestStreamsApp:
             )
         )
 
-        assert streams_app.app.streams.input_topics == [
+        assert streams_app.values.streams.input_topics == [
             KafkaTopic(name="prev-output-topic"),
             KafkaTopic(name="b"),
             KafkaTopic(name="a"),
         ]
 
     @pytest.mark.asyncio()
-    async def test_deploy_order_when_dry_run_is_false(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        mocker: MockerFixture,
-    ):
+    async def test_deploy_order_when_dry_run_is_false(self, mocker: MockerFixture):
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "to": {
@@ -467,7 +394,7 @@ class TestStreamsApp:
             },
         )
         mock_create_topic = mocker.patch.object(
-            streams_app.handlers.topic_handler, "create_topic"
+            get_handlers().topic_handler, "create_topic"
         )
         mock_helm_upgrade_install = mocker.patch.object(
             streams_app.helm, "upgrade_install"
@@ -697,10 +624,7 @@ class TestStreamsApp:
 
     @pytest.mark.asyncio()
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_reset(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        mocker: MockerFixture,
+        self, mocker: MockerFixture
     ):
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
@@ -723,11 +647,9 @@ class TestStreamsApp:
         )
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "imageTag": "2.2.2",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
@@ -781,10 +703,7 @@ class TestStreamsApp:
 
     @pytest.mark.asyncio()
     async def test_should_deploy_clean_up_job_with_values_in_cluster_when_clean(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-        mocker: MockerFixture,
+        self, mocker: MockerFixture
     ):
         image_tag_in_cluster = "1.1.1"
         mocker.patch.object(
@@ -807,11 +726,9 @@ class TestStreamsApp:
         )
         streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "imageTag": "2.2.2",
                     "streams": {"brokers": "fake-broker:9092"},
                 },
@@ -864,18 +781,12 @@ class TestStreamsApp:
         )
 
     @pytest.mark.asyncio()
-    async def test_get_input_output_topics(
-        self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
-    ):
+    async def test_get_input_output_topics(self):
         streams_app = StreamsApp(
             name="my-app",
-            config=config,
-            handlers=handlers,
             **{
                 "namespace": "test-namespace",
-                "app": {
+                "values": {
                     "streams": {"brokers": "fake-broker:9092"},
                 },
                 "from": {
@@ -902,12 +813,12 @@ class TestStreamsApp:
             },
         )
 
-        assert streams_app.app.streams.input_topics == [
+        assert streams_app.values.streams.input_topics == [
             KafkaTopic(name="example-input"),
             KafkaTopic(name="b"),
             KafkaTopic(name="a"),
         ]
-        assert streams_app.app.streams.extra_input_topics == {
+        assert streams_app.values.streams.extra_input_topics == {
             "role1": [KafkaTopic(name="topic-extra")],
             "role2": [KafkaTopic(name="topic-extra2"), KafkaTopic(name="topic-extra3")],
         }
@@ -932,7 +843,7 @@ class TestStreamsApp:
         self, stateful_streams_app: StreamsApp
     ):
         with pytest.raises(ValidationError) as error:
-            stateful_streams_app.app.persistence = PersistenceConfig(
+            stateful_streams_app.values.persistence = PersistenceConfig(
                 enabled=True,
             )
         msg = (

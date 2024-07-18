@@ -19,9 +19,8 @@ from pydantic import (
 )
 from pydantic.json_schema import SkipJsonSchema
 
-from kpops.api.file_type import KpopsFileType
-from kpops.component_handlers import ComponentHandlers
-from kpops.config import KpopsConfig
+from kpops.config import KpopsConfig, get_config
+from kpops.const.file_type import KpopsFileType
 from kpops.utils import cached_classproperty
 from kpops.utils.dataclasses import is_dataclass_instance
 from kpops.utils.dict_ops import (
@@ -51,8 +50,6 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     correctly to the component.
 
     :param enrich: Whether to enrich component with defaults, defaults to False
-    :param config: KPOps configuration to be accessed by this component
-    :param handlers: Component handlers to be accessed by this component
     :param validate: Whether to run custom validation on the component, defaults to True
     """
 
@@ -63,16 +60,6 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
     enrich: SkipJsonSchema[bool] = Field(
         default=True,
         description=describe_attr("enrich", __doc__),
-        exclude=True,
-    )
-    config: SkipJsonSchema[KpopsConfig] = Field(
-        default=...,
-        description=describe_attr("config", __doc__),
-        exclude=True,
-    )
-    handlers: SkipJsonSchema[ComponentHandlers] = Field(
-        default=...,
-        description=describe_attr("handlers", __doc__),
         exclude=True,
     )
     validate_: SkipJsonSchema[bool] = Field(
@@ -88,12 +75,10 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             values = cls.extend_with_defaults(**values)
             tmp_self = cls(**values, enrich=False)
             values = tmp_self.model_dump(mode="json", by_alias=True)
-            values = cls.substitute_in_component(tmp_self.config, **values)
+            values = cls.substitute_in_component(**values)
             self.__init__(
                 enrich=False,
                 validate=True,
-                config=tmp_self.config,
-                handlers=tmp_self.handlers,
                 **values,
             )
         else:
@@ -131,14 +116,13 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         return tuple(gen_parents())
 
     @classmethod
-    def substitute_in_component(
-        cls, config: KpopsConfig, **component_data: Any
-    ) -> dict[str, Any]:
+    def substitute_in_component(cls, **component_data: Any) -> dict[str, Any]:
         """Substitute all $-placeholders in a component in dict representation.
 
         :param component_as_dict: Component represented as dict
         :return: Updated component
         """
+        config = get_config()
         # Leftover variables that were previously introduced in the component by the substitution
         # functions, still hardcoded, because of their names.
         # TODO(Ivan Yordanov): Get rid of them
@@ -167,15 +151,15 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         )
 
     @classmethod
-    def extend_with_defaults(cls, config: KpopsConfig, **kwargs: Any) -> dict[str, Any]:
+    def extend_with_defaults(cls, **kwargs: Any) -> dict[str, Any]:
         """Merge parent components' defaults with own.
 
         :param config: KPOps configuration
         :param kwargs: The init kwargs for pydantic
         :returns: Enriched kwargs with inherited defaults
         """
+        config = get_config()
         pipeline_path_str = ENV.get(PIPELINE_PATH)
-        kwargs["config"] = config
         if not pipeline_path_str:
             return kwargs
         pipeline_path = Path(pipeline_path_str)
@@ -265,14 +249,14 @@ def get_defaults_file_paths(
     default_paths = []
 
     if not pipeline_path.is_file():
-        message = f"{pipeline_path} is not a valid pipeline file."
-        raise FileNotFoundError(message)
+        msg = f"{pipeline_path} is not a valid pipeline file."
+        raise FileNotFoundError(msg)
 
     path = pipeline_path.resolve()
     pipeline_base_dir = config.pipeline_base_dir.resolve()
     if pipeline_base_dir not in path.parents:
-        message = f"The given pipeline base path {pipeline_base_dir} is not part of the pipeline path {path}"
-        raise RuntimeError(message)
+        msg = f"The given pipeline base path {pipeline_base_dir} is not part of the pipeline path {path}"
+        raise RuntimeError(msg)
     while pipeline_base_dir != path:
         environment_default_file_path = (
             path.parent / KpopsFileType.DEFAULTS.as_yaml_file(suffix=f"_{environment}")

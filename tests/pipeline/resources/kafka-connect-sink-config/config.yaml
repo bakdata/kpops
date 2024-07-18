@@ -1,4 +1,3 @@
-defaults_path: ..
 kafka_brokers: "broker:9092"
 topic_name_config: 
   default_error_topic_name: ${component.type}-error-topic

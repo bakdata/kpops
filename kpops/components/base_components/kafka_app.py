@@ -9,11 +9,13 @@ import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
 from typing_extensions import override
 
+from kpops.component_handlers import get_handlers
 from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmAppValues
-from kpops.components.base_components.models.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.common.streams_bootstrap import StreamsBootstrap
+from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
+from kpops.config import get_config
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
@@ -113,7 +115,7 @@ class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
         log.info(f"Init cleanup job for {self.helm_release_name}")
         await self.deploy(dry_run)
 
-        if not self.config.retain_clean_jobs:
+        if not get_config().retain_clean_jobs:
             log.info(f"Uninstall cleanup job for {self.helm_release_name}")
             await self.destroy(dry_run)
 
@@ -123,23 +125,21 @@ class KafkaApp(PipelineComponent, ABC):
 
     Producer or streaming apps should inherit from this class.
 
-    :param app: Application-specific settings
+    :param values: Application-specific settings
     """
 
-    app: KafkaAppValues = Field(
+    values: KafkaAppValues = Field(
         default=...,
-        description=describe_attr("app", __doc__),
+        description=describe_attr("values", __doc__),
     )
 
     @override
     async def deploy(self, dry_run: bool) -> None:
         if self.to:
             for topic in self.to.kafka_topics:
-                await self.handlers.topic_handler.create_topic(topic, dry_run=dry_run)
+                await get_handlers().topic_handler.create_topic(topic, dry_run=dry_run)
 
-            if self.handlers.schema_handler:
-                await self.handlers.schema_handler.submit_schemas(
-                    to_section=self.to, dry_run=dry_run
-                )
+            if schema_handler := get_handlers().schema_handler:
+                await schema_handler.submit_schemas(to_section=self.to, dry_run=dry_run)
 
         await super().deploy(dry_run)

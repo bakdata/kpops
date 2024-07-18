@@ -1,4 +1,3 @@
-
 schema_registry:
   enabled: false
   url: "http://localhost:8081"
@@ -8,5 +7,4 @@ kafka_connect:
 kafka_rest:
   url: "http://kafka_rest_url:8082"
 
-defaults_path: ..
 kafka_brokers: "broker:9092"

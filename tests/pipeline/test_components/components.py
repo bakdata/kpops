@@ -10,8 +10,8 @@ from kpops.components.base_components.models import ModelName, ModelVersion, Top
 from kpops.components.base_components.models.to_section import (
     ToSection,
 )
-from kpops.components.base_components.models.topic import OutputTopicTypes, TopicConfig
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.common.topic import OutputTopicTypes, TopicConfig
 from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
 
@@ -39,9 +39,7 @@ class ShouldInflate(StreamsApp):
                 if topic_config.type == OutputTopicTypes.OUTPUT:
                     kafka_connector = KafkaSinkConnector(
                         name=f"{self.name}-inflated-sink-connector",
-                        config=self.config,
-                        handlers=self.handlers,
-                        app={  # type: ignore[reportGeneralTypeIssues], required `connector.class` comes from defaults during enrichment
+                        config={  # type: ignore[reportGeneralTypeIssues], required `connector.class` comes from defaults during enrichment
                             "topics": topic_name,
                             "transforms.changeTopic.replacement": f"{topic_name}-index-v1",
                         },
@@ -59,8 +57,6 @@ class ShouldInflate(StreamsApp):
                     inflate_steps.append(kafka_connector)
                     streams_app = StreamsApp(
                         name=f"{self.name}-inflated-streams-app",
-                        config=self.config,
-                        handlers=self.handlers,
                         to=ToSection(  # type: ignore[reportGeneralTypeIssues]
                             topics={
                                 TopicName(
@@ -94,8 +90,6 @@ class SimpleInflateConnectors(StreamsApp):
     def inflate(self) -> list[PipelineComponent]:
         connector = KafkaSinkConnector(
             name="inflated-connector-name",
-            config=self.config,
-            handlers=self.handlers,
-            app={},  # type: ignore[reportArgumentType]
+            config={},  # type: ignore[reportArgumentType]
         )
         return [self, connector]

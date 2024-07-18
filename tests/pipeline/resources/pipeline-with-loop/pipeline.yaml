@@ -1,6 +1,6 @@
 - type: producer-app
   name: app1
-  app:
+  values:
     image: producer-image
   to:
     topics:
@@ -9,7 +9,7 @@
 
 - type: streams-app
   name: app2
-  app:
+  values:
     image: app2-image
   from:
     topics:
@@ -22,7 +22,7 @@
 
 - type: streams-app
   name: app3
-  app:
+  values:
     image: app3-image
   from:
     topics:

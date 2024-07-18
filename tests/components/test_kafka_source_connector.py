@@ -3,7 +3,7 @@ from unittest.mock import ANY, MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
     RepoAuthFlags,
@@ -25,8 +25,7 @@ from kpops.components.base_components.models.from_section import (
 from kpops.components.base_components.models.to_section import (
     ToSection,
 )
-from kpops.components.base_components.models.topic import OutputTopicTypes, TopicConfig
-from kpops.config import KpopsConfig
+from kpops.components.common.topic import OutputTopicTypes, TopicConfig
 from kpops.utils.environment import ENV
 from tests.components.test_kafka_connector import (
     CONNECTOR_CLEAN_HELM_NAMEOVERRIDE,
@@ -46,15 +45,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     @pytest.fixture()
     def connector(
         self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ) -> KafkaSourceConnector:
         return KafkaSourceConnector(
             name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app=connector_config,
+            config=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
             to=ToSection(
                 topics={
@@ -67,26 +62,22 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         )
 
     def test_resetter_release_name(self, connector: KafkaSourceConnector):
-        assert connector.app.name == CONNECTOR_FULL_NAME
+        assert connector.config.name == CONNECTOR_FULL_NAME
         resetter = connector._resetter
         assert isinstance(resetter, KafkaConnectorResetter)
         assert connector._resetter.helm_release_name == CONNECTOR_CLEAN_RELEASE_NAME
 
     def test_resetter_offset_topic(self, connector: KafkaSourceConnector):
-        assert connector._resetter.app.config.offset_topic == OFFSETS_TOPIC
+        assert connector._resetter.values.config.offset_topic == OFFSETS_TOPIC
 
     def test_from_section_raises_exception(
         self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
         connector_config: KafkaConnectorConfig,
     ):
         with pytest.raises(NotImplementedError):
             KafkaSourceConnector(
                 name=CONNECTOR_NAME,
-                config=config,
-                handlers=handlers,
-                app=connector_config,
+                config=connector_config,
                 resetter_namespace=RESETTER_NAMESPACE,
                 from_=FromSection(  # pyright: ignore[reportGeneralTypeIssues] wrong diagnostic when using TopicName as topics key type
                     topics={
@@ -104,11 +95,11 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         mocker: MockerFixture,
     ):
         mock_create_topic = mocker.patch.object(
-            connector.handlers.topic_handler, "create_topic"
+            get_handlers().topic_handler, "create_topic"
         )
 
         mock_create_connector = mocker.patch.object(
-            connector.handlers.connector_handler, "create_connector"
+            get_handlers().connector_handler, "create_connector"
         )
 
         mock = mocker.AsyncMock()
@@ -123,7 +114,7 @@ class TestKafkaSourceConnector(TestKafkaConnector):
                 mocker.call.mock_create_topic(topic, dry_run=dry_run)
                 for topic in connector.to.kafka_topics
             ),
-            mocker.call.mock_create_connector(connector.app, dry_run=dry_run),
+            mocker.call.mock_create_connector(connector.config, dry_run=dry_run),
         ]
 
     @pytest.mark.asyncio()
@@ -133,10 +124,10 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         mocker: MockerFixture,
     ):
         ENV["KPOPS_KAFKA_CONNECT_RESETTER_OFFSET_TOPIC"] = OFFSETS_TOPIC
-        assert connector.handlers.connector_handler
+        assert get_handlers().connector_handler
 
         mock_destroy_connector = mocker.patch.object(
-            connector.handlers.connector_handler, "destroy_connector"
+            get_handlers().connector_handler, "destroy_connector"
         )
 
         await connector.destroy(dry_run=True)
@@ -151,8 +142,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector: KafkaSourceConnector,
         dry_run_handler_mock: MagicMock,
     ):
-        assert connector.handlers.connector_handler
-
         await connector.reset(dry_run=True)
 
         dry_run_handler_mock.print_helm_diff.assert_called_once()
@@ -165,15 +154,13 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         helm_mock: MagicMock,
         mocker: MockerFixture,
     ):
-        assert connector.handlers.connector_handler
-
         mock_destroy = mocker.patch.object(connector, "destroy")
 
         mock_delete_topic = mocker.patch.object(
-            connector.handlers.topic_handler, "delete_topic"
+            get_handlers().topic_handler, "delete_topic"
         )
         mock_clean_connector = mocker.spy(
-            connector.handlers.connector_handler, "clean_connector"
+            get_handlers().connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
@@ -235,8 +222,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         connector: KafkaSourceConnector,
         dry_run_handler_mock: MagicMock,
     ):
-        assert connector.handlers.connector_handler
-
         await connector.clean(dry_run=True)
 
         dry_run_handler_mock.print_helm_diff.assert_called_once()
@@ -249,15 +234,13 @@ class TestKafkaSourceConnector(TestKafkaConnector):
         dry_run_handler_mock: MagicMock,
         mocker: MockerFixture,
     ):
-        assert connector.handlers.connector_handler
-
         mock_destroy = mocker.patch.object(connector, "destroy")
 
         mock_delete_topic = mocker.patch.object(
-            connector.handlers.topic_handler, "delete_topic"
+            get_handlers().topic_handler, "delete_topic"
         )
         mock_clean_connector = mocker.spy(
-            connector.handlers.connector_handler, "clean_connector"
+            get_handlers().connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
@@ -322,8 +305,6 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_false(
         self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
         helm_mock: MagicMock,
         dry_run_handler_mock: MagicMock,
         mocker: MockerFixture,
@@ -331,23 +312,21 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app=connector_config,
+            config=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
             offset_topic=OFFSETS_TOPIC,
         )
         assert connector.to is None
 
-        assert connector.handlers.connector_handler
+        assert get_handlers().connector_handler
 
         mock_destroy = mocker.patch.object(connector, "destroy")
 
         mock_delete_topic = mocker.patch.object(
-            connector.handlers.topic_handler, "delete_topic"
+            get_handlers().topic_handler, "delete_topic"
         )
         mock_clean_connector = mocker.spy(
-            connector.handlers.connector_handler, "clean_connector"
+            get_handlers().connector_handler, "clean_connector"
         )
 
         mock = mocker.MagicMock()
@@ -408,22 +387,18 @@ class TestKafkaSourceConnector(TestKafkaConnector):
     @pytest.mark.asyncio()
     async def test_clean_without_to_when_dry_run_is_true(
         self,
-        config: KpopsConfig,
-        handlers: ComponentHandlers,
         dry_run_handler_mock: MagicMock,
         connector_config: KafkaConnectorConfig,
     ):
         connector = KafkaSourceConnector(
             name=CONNECTOR_NAME,
-            config=config,
-            handlers=handlers,
-            app=connector_config,
+            config=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
             offset_topic=OFFSETS_TOPIC,
         )
         assert connector.to is None
 
-        assert connector.handlers.connector_handler
+        assert get_handlers().connector_handler
 
         await connector.clean(dry_run=True)
 

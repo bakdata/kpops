@@ -1,14 +1,4 @@
 - _cleaner:
-    app:
-      commandLine:
-        FAKE_ARG: override-arg
-      image: example-registry/fake-image
-      imageTag: 0.0.1
-      schedule: 20 3/8 * * *
-      streams:
-        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        outputTopic: resources-pipeline-with-envs-input-producer
-        schemaRegistryUrl: http://localhost:8081/
     name: input-producer
     namespace: example-namespace
     prefix: resources-pipeline-with-envs-
@@ -19,17 +9,17 @@
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
     type: producer-app-cleaner
+    values:
+      commandLine:
+        FAKE_ARG: override-arg
+      image: example-registry/fake-image
+      imageTag: 0.0.1
+      schedule: 20 3/8 * * *
+      streams:
+        brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        outputTopic: resources-pipeline-with-envs-input-producer
+        schemaRegistryUrl: http://localhost:8081/
     version: 2.4.2
-  app:
-    commandLine:
-      FAKE_ARG: override-arg
-    image: example-registry/fake-image
-    imageTag: 0.0.1
-    schedule: 20 3/8 * * *
-    streams:
-      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      outputTopic: resources-pipeline-with-envs-input-producer
-      schemaRegistryUrl: http://localhost:8081/
   name: input-producer
   namespace: example-namespace
   prefix: resources-pipeline-with-envs-
@@ -49,9 +39,29 @@
         type: output
         value_schema: com.bakdata.fake.Produced
   type: scheduled-producer
+  values:
+    commandLine:
+      FAKE_ARG: override-arg
+    image: example-registry/fake-image
+    imageTag: 0.0.1
+    schedule: 20 3/8 * * *
+    streams:
+      brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      outputTopic: resources-pipeline-with-envs-input-producer
+      schemaRegistryUrl: http://localhost:8081/
   version: 2.4.2
 - _cleaner:
-    app:
+    name: converter
+    namespace: example-namespace
+    prefix: resources-pipeline-with-envs-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       autoscaling:
         consumerGroup: converter-resources-pipeline-with-envs-converter
         cooldownPeriod: 300
@@ -82,18 +92,32 @@
         - resources-pipeline-with-envs-input-producer
         outputTopic: resources-pipeline-with-envs-converter
         schemaRegistryUrl: http://localhost:8081/
-    name: converter
-    namespace: example-namespace
-    prefix: resources-pipeline-with-envs-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
+  name: converter
+  namespace: example-namespace
+  prefix: resources-pipeline-with-envs-
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      resources-pipeline-with-envs-converter:
+        configs:
+          cleanup.policy: compact,delete
+          retention.ms: '-1'
+        partitions_count: 50
+        type: output
+      resources-pipeline-with-envs-converter-error:
+        configs:
+          cleanup.policy: compact,delete
+        partitions_count: 10
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+  type: converter
+  values:
     autoscaling:
       consumerGroup: converter-resources-pipeline-with-envs-converter
       cooldownPeriod: 300
@@ -124,33 +148,19 @@
       - resources-pipeline-with-envs-input-producer
       outputTopic: resources-pipeline-with-envs-converter
       schemaRegistryUrl: http://localhost:8081/
-  name: converter
-  namespace: example-namespace
-  prefix: resources-pipeline-with-envs-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
-  to:
-    models: {}
-    topics:
-      resources-pipeline-with-envs-converter:
-        configs:
-          cleanup.policy: compact,delete
-          retention.ms: '-1'
-        partitions_count: 50
-        type: output
-      resources-pipeline-with-envs-converter-error:
-        configs:
-          cleanup.policy: compact,delete
-        partitions_count: 10
-        type: error
-        value_schema: com.bakdata.kafka.DeadLetter
-  type: converter
   version: 2.4.2
 - _cleaner:
-    app:
+    name: filter
+    namespace: example-namespace
+    prefix: resources-pipeline-with-envs-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
       autoscaling:
         consumerGroup: filter-resources-pipeline-with-envs-filter
         cooldownPeriod: 300
@@ -182,18 +192,31 @@
         - resources-pipeline-with-envs-converter
         outputTopic: resources-pipeline-with-envs-filter
         schemaRegistryUrl: http://localhost:8081/
-    name: filter
-    namespace: example-namespace
-    prefix: resources-pipeline-with-envs-
-    repo_config:
-      repo_auth_flags:
-        insecure_skip_tls_verify: false
-      repository_name: bakdata-streams-bootstrap
-      url: https://bakdata.github.io/streams-bootstrap/
-    suffix: -clean
-    type: streams-app-cleaner
     version: 2.4.2
-  app:
+  name: filter
+  namespace: example-namespace
+  prefix: resources-pipeline-with-envs-
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      resources-pipeline-with-envs-filter:
+        configs:
+          retention.ms: '-1'
+        partitions_count: 50
+        type: output
+      resources-pipeline-with-envs-filter-error:
+        configs:
+          cleanup.policy: compact,delete
+        partitions_count: 1
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+  type: filter
+  values:
     autoscaling:
       consumerGroup: filter-resources-pipeline-with-envs-filter
       cooldownPeriod: 300
@@ -225,28 +248,5 @@
       - resources-pipeline-with-envs-converter
       outputTopic: resources-pipeline-with-envs-filter
       schemaRegistryUrl: http://localhost:8081/
-  name: filter
-  namespace: example-namespace
-  prefix: resources-pipeline-with-envs-
-  repo_config:
-    repo_auth_flags:
-      insecure_skip_tls_verify: false
-    repository_name: bakdata-streams-bootstrap
-    url: https://bakdata.github.io/streams-bootstrap/
-  to:
-    models: {}
-    topics:
-      resources-pipeline-with-envs-filter:
-        configs:
-          retention.ms: '-1'
-        partitions_count: 50
-        type: output
-      resources-pipeline-with-envs-filter-error:
-        configs:
-          cleanup.policy: compact,delete
-        partitions_count: 1
-        type: error
-        value_schema: com.bakdata.kafka.DeadLetter
-  type: filter
   version: 2.4.2
 

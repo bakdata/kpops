@@ -3,28 +3,29 @@ from __future__ import annotations
 import logging
 from abc import ABC
 from functools import cached_property
-from typing import Any, NoReturn
+from typing import Any, Literal, NoReturn
 
 import pydantic
 from pydantic import Field, PrivateAttr, ValidationInfo, computed_field, field_validator
 from typing_extensions import override
 
+from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.model import (
     HelmRepoConfig,
 )
 from kpops.component_handlers.kafka_connect.model import (
     KafkaConnectorConfig,
-    KafkaConnectorResetterConfig,
-    KafkaConnectorResetterValues,
     KafkaConnectorType,
 )
 from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.models.from_section import FromTopic
-from kpops.components.base_components.models.topic import KafkaTopic
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.components.common.topic import KafkaTopic
+from kpops.config import get_config
 from kpops.utils.colorify import magentaify
 from kpops.utils.docstring import describe_attr
+from kpops.utils.pydantic import CamelCaseConfigModel
 
 try:
     from typing import Self  # pyright: ignore[reportAttributeAccessIssue]
@@ -32,6 +33,18 @@ except ImportError:
     from typing_extensions import Self
 
 log = logging.getLogger("KafkaConnector")
+
+
+class KafkaConnectorResetterConfig(CamelCaseConfigModel):
+    brokers: str
+    connector: str
+    delete_consumer_group: bool | None = None
+    offset_topic: str | None = None
+
+
+class KafkaConnectorResetterValues(HelmAppValues):
+    connector_type: Literal["source", "sink"]
+    config: KafkaConnectorResetterConfig
 
 
 class KafkaConnectorResetter(Cleaner, ABC):
@@ -44,7 +57,7 @@ class KafkaConnectorResetter(Cleaner, ABC):
 
     from_: None = None
     to: None = None
-    app: KafkaConnectorResetterValues
+    values: KafkaConnectorResetterValues
     repo_config: HelmRepoConfig = Field(
         default=HelmRepoConfig(
             repository_name="bakdata-kafka-connect-resetter",
@@ -72,19 +85,19 @@ class KafkaConnectorResetter(Cleaner, ABC):
         """
         log.info(
             magentaify(
-                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {self.app.config.connector}"
+                f"Connector Cleanup: uninstalling cleanup job Helm release from previous runs for {self.values.config.connector}"
             )
         )
         await self.destroy(dry_run)
 
         log.info(
             magentaify(
-                f"Connector Cleanup: deploy Connect {self.app.connector_type} resetter for {self.app.config.connector}"
+                f"Connector Cleanup: deploy Connect {self.values.connector_type} resetter for {self.values.config.connector}"
             )
         )
         await self.deploy(dry_run)
 
-        if not self.config.retain_clean_jobs:
+        if not get_config().retain_clean_jobs:
             log.info(magentaify("Connector Cleanup: uninstall Kafka Resetter."))
             await self.destroy(dry_run)
 
@@ -98,15 +111,15 @@ class KafkaConnector(PipelineComponent, ABC):
 
     Should only be used to set defaults
 
-    :param app: Application-specific settings
+    :param config: Connector config
     :param resetter_namespace: Kubernetes namespace in which the Kafka Connect resetter shall be deployed
     :param resetter_values: Overriding Kafka Connect resetter Helm values, e.g. to override the image tag etc.,
         defaults to empty HelmAppValues
     """
 
-    app: KafkaConnectorConfig = Field(
+    config: KafkaConnectorConfig = Field(
         default=...,
-        description=describe_attr("app", __doc__),
+        description=describe_attr("config", __doc__),
     )
     resetter_namespace: str | None = Field(
         default=None, description=describe_attr("resetter_namespace", __doc__)
@@ -117,22 +130,22 @@ class KafkaConnector(PipelineComponent, ABC):
     )
     _connector_type: KafkaConnectorType = PrivateAttr()
 
-    @field_validator("app", mode="before")
+    @field_validator("config", mode="before")
     @classmethod
     def connector_config_should_have_component_name(
         cls,
-        app: KafkaConnectorConfig | dict[str, Any],
+        config: KafkaConnectorConfig | dict[str, Any],
         info: ValidationInfo,
     ) -> KafkaConnectorConfig:
-        if isinstance(app, KafkaConnectorConfig):
-            app = app.model_dump()
+        if isinstance(config, KafkaConnectorConfig):
+            config = config.model_dump()
         component_name: str = info.data["prefix"] + info.data["name"]
-        connector_name: str | None = app.get("name")
+        connector_name: str | None = config.get("name")
         if connector_name is not None and connector_name != component_name:
             msg = f"Connector name '{connector_name}' should be the same as component name '{component_name}'"
             raise ValueError(msg)
-        app["name"] = component_name
-        return KafkaConnectorConfig(**app)
+        config["name"] = component_name
+        return KafkaConnectorConfig(**config)
 
     @cached_property
     def _resetter(self) -> KafkaConnectorResetter:
@@ -140,8 +153,6 @@ class KafkaConnector(PipelineComponent, ABC):
         if self.resetter_namespace:
             kwargs["namespace"] = self.resetter_namespace
         return KafkaConnectorResetter(
-            config=self.config,
-            handlers=self.handlers,
             **kwargs,
             **self.model_dump(
                 by_alias=True,
@@ -149,16 +160,17 @@ class KafkaConnector(PipelineComponent, ABC):
                     "_resetter",
                     "resetter_values",
                     "resetter_namespace",
-                    "app",
+                    "values",
+                    "config",
                     "from_",
                     "to",
                 },
             ),
-            app=KafkaConnectorResetterValues(
+            values=KafkaConnectorResetterValues(
                 connector_type=self._connector_type.value,
                 config=KafkaConnectorResetterConfig(
                     connector=self.full_name,
-                    brokers=self.config.kafka_brokers,
+                    brokers=get_config().kafka_brokers,
                 ),
                 **self.resetter_values.model_dump(),
             ),
@@ -169,21 +181,19 @@ class KafkaConnector(PipelineComponent, ABC):
         """Deploy Kafka Connector (Source/Sink). Create output topics and register schemas if configured."""
         if self.to:
             for topic in self.to.kafka_topics:
-                await self.handlers.topic_handler.create_topic(topic, dry_run=dry_run)
+                await get_handlers().topic_handler.create_topic(topic, dry_run=dry_run)
 
-            if self.handlers.schema_handler:
-                await self.handlers.schema_handler.submit_schemas(
-                    to_section=self.to, dry_run=dry_run
-                )
+            if schema_handler := get_handlers().schema_handler:
+                await schema_handler.submit_schemas(to_section=self.to, dry_run=dry_run)
 
-        await self.handlers.connector_handler.create_connector(
-            self.app, dry_run=dry_run
+        await get_handlers().connector_handler.create_connector(
+            self.config, dry_run=dry_run
         )
 
     @override
     async def destroy(self, dry_run: bool) -> None:
         """Delete Kafka Connector (Source/Sink) from the Kafka connect cluster."""
-        await self.handlers.connector_handler.destroy_connector(
+        await get_handlers().connector_handler.destroy_connector(
             self.full_name, dry_run=dry_run
         )
 
@@ -192,12 +202,10 @@ class KafkaConnector(PipelineComponent, ABC):
         """Delete Kafka Connector. If schema handler is enabled, then remove schemas. Delete all the output topics."""
         await super().clean(dry_run)
         if self.to:
-            if self.handlers.schema_handler:
-                await self.handlers.schema_handler.delete_schemas(
-                    to_section=self.to, dry_run=dry_run
-                )
+            if schema_handler := get_handlers().schema_handler:
+                await schema_handler.delete_schemas(to_section=self.to, dry_run=dry_run)
             for topic in self.to.kafka_topics:
-                await self.handlers.topic_handler.delete_topic(topic, dry_run=dry_run)
+                await get_handlers().topic_handler.delete_topic(topic, dry_run=dry_run)
 
 
 class KafkaSourceConnector(KafkaConnector):
@@ -218,7 +226,7 @@ class KafkaSourceConnector(KafkaConnector):
     @pydantic.model_validator(mode="after")
     def populate_offset_topic(self) -> Self:
         if self.offset_topic:
-            self._resetter.app.config.offset_topic = self.offset_topic
+            self._resetter.values.config.offset_topic = self.offset_topic
         return self
 
     @computed_field
@@ -256,29 +264,29 @@ class KafkaSinkConnector(KafkaConnector):
     @property
     @override
     def input_topics(self) -> list[KafkaTopic]:
-        return self.app.topics
+        return self.config.topics
 
     @override
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:
-        self.app.topics = KafkaTopic.deduplicate(self.app.topics + topics)
+        self.config.topics = KafkaTopic.deduplicate(self.config.topics + topics)
 
     @override
     def set_input_pattern(self, name: str) -> None:
-        self.app.topics_regex = name
+        self.config.topics_regex = name
 
     @override
     def set_error_topic(self, topic: KafkaTopic) -> None:
-        self.app.errors_deadletterqueue_topic_name = topic
+        self.config.errors_deadletterqueue_topic_name = topic
 
     @override
     async def reset(self, dry_run: bool) -> None:
         """Reset state. Keep consumer group and connector."""
-        self._resetter.app.config.delete_consumer_group = False
+        self._resetter.values.config.delete_consumer_group = False
         await self._resetter.reset(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
         """Delete connector and consumer group."""
         await super().clean(dry_run)
-        self._resetter.app.config.delete_consumer_group = True
+        self._resetter.values.config.delete_consumer_group = True
         await self._resetter.clean(dry_run)

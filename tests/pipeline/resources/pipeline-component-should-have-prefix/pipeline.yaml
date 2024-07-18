@@ -1,6 +1,6 @@
 - type: producer-app
   name: account-producer
-  app:
+  values:
     replicaCount: 1
     image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
     imageTag: 1.0.0

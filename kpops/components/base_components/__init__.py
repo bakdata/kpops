@@ -1,12 +1,12 @@
-from kpops.components.base_components.helm_app import HelmApp
-from kpops.components.base_components.kafka_app import KafkaApp
-from kpops.components.base_components.kafka_connector import (
+from .helm_app import HelmApp
+from .kafka_app import KafkaApp
+from .kafka_connector import (
     KafkaConnector,
     KafkaSinkConnector,
     KafkaSourceConnector,
 )
-from kpops.components.base_components.kubernetes_app import KubernetesApp
-from kpops.components.base_components.pipeline_component import PipelineComponent
+from .kubernetes_app import KubernetesApp
+from .pipeline_component import PipelineComponent
 
 __all__ = (
     "HelmApp",

@@ -1,7 +1,7 @@
 - type: producer-app
   name: account-producer
   namespace: test
-  app:
+  values:
     streams:
       brokers: test
       output_topic: out

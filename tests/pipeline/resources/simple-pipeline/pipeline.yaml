@@ -3,4 +3,4 @@
 - type: streams-app
 
 - type: helm-app
-  app: {}
+  values: {}

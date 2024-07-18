@@ -32,29 +32,15 @@ class TestClean:
 
     # TODO: test using public Pipeline API
     # @pytest.fixture()
-    # def config(self) -> KpopsConfig:
-    #     return KpopsConfig()
-
-    # @pytest.fixture()
-    # def handlers(self) -> ComponentHandlers:
-    #     return ComponentHandlers(
-    #         schema_handler=AsyncMock(),
-    #         connector_handler=AsyncMock(),
-    #         topic_handler=AsyncMock(),
-    #     )
-
-    # @pytest.fixture()
-    # def pipeline(self, config: KpopsConfig, handlers: ComponentHandlers) -> Pipeline:
-    #     kwargs = {"config": config, "handlers": handlers}
+    # def pipeline(self) -> Pipeline:
     #     pipeline = Pipeline()
     #     pipeline.add(
     #         ProducerApp(
     #             name="producer",
     #             namespace="test-namespace",
-    #             app=ProducerAppValues(
-    #                 streams=ProducerStreamsConfig(brokers=config.kafka_brokers)
+    #             values=ProducerAppValues(
+    #                 streams=ProducerStreamsConfig(brokers=get_config().kafka_brokers)
     #             ),
-    #             **kwargs,
     #         )
     #     )
     #     return pipeline

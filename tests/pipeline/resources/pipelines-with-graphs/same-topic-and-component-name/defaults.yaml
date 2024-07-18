@@ -8,13 +8,13 @@ kafka-connector:
   namespace: example-namespace
 
 kafka-app:
-  app:
+  values:
     streams:
       brokers: 127.0.0.1:9092
       schemaRegistryUrl: 127.0.0.1:8081
 
 streams-app:
-  app:
+  values:
     labels:
       pipeline: ${pipeline.name}
 

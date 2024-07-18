@@ -11,10 +11,10 @@ from typer.testing import CliRunner
 
 import kpops.api as kpops
 from kpops.api.exception import ParsingException, ValidationError
-from kpops.api.file_type import PIPELINE_YAML, KpopsFileType
 from kpops.cli.main import FilterType, app
 from kpops.components.base_components.kafka_connector import KafkaSinkConnector
 from kpops.components.base_components.pipeline_component import PipelineComponent
+from kpops.const.file_type import PIPELINE_YAML, KpopsFileType
 
 runner = CliRunner()
 
@@ -171,12 +171,12 @@ class TestGenerate:
         )
         assert enriched_pipeline[0]["name"] == "scheduled-producer"
 
-        labels = enriched_pipeline[0]["app"]["labels"]
+        labels = enriched_pipeline[0]["values"]["labels"]
         assert labels["app_name"] == "scheduled-producer"
         assert labels["app_type"] == "scheduled-producer"
         assert labels["app_schedule"] == "30 3/8 * * *"
         assert (
-            enriched_pipeline[2]["app"]["labels"]["app_resources_requests_memory"]
+            enriched_pipeline[2]["values"]["labels"]["app_resources_requests_memory"]
             == "3G"
         )
         assert (
@@ -188,7 +188,7 @@ class TestGenerate:
             in enriched_pipeline[1]["to"]["topics"]
         )
         assert (
-            enriched_pipeline[2]["app"]["labels"]["test_placeholder_in_placeholder"]
+            enriched_pipeline[2]["values"]["labels"]["test_placeholder_in_placeholder"]
             == "filter-app-filter"
         )
 
@@ -224,7 +224,7 @@ class TestGenerate:
         enriched_pipeline: list = yaml.safe_load(result.stdout)
         sink_connector = enriched_pipeline[0]
         assert (
-            sink_connector["app"]["errors.deadletterqueue.topic.name"]
+            sink_connector["config"]["errors.deadletterqueue.topic.name"]
             == "kafka-sink-connector-error-topic"
         )
 
@@ -340,13 +340,13 @@ class TestGenerate:
 
         enriched_pipeline: list = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline[0]
-        output_topic = producer_details["app"]["streams"]["outputTopic"]
+        output_topic = producer_details["values"]["streams"]["outputTopic"]
         assert output_topic == "app1-test-topic"
 
         streams_app_details = enriched_pipeline[1]
-        output_topic = streams_app_details["app"]["streams"]["outputTopic"]
+        output_topic = streams_app_details["values"]["streams"]["outputTopic"]
         assert output_topic == "app2-test-topic"
-        error_topic = streams_app_details["app"]["streams"]["errorTopic"]
+        error_topic = streams_app_details["values"]["streams"]["errorTopic"]
         assert error_topic == "app2-dead-letter-topic"
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
@@ -383,13 +383,13 @@ class TestGenerate:
 
             enriched_pipeline: list = yaml.safe_load(result.stdout)
             producer_details = enriched_pipeline[0]
-            output_topic = producer_details["app"]["streams"]["outputTopic"]
+            output_topic = producer_details["values"]["streams"]["outputTopic"]
             assert output_topic == "app1-test-topic"
 
             streams_app_details = enriched_pipeline[1]
-            output_topic = streams_app_details["app"]["streams"]["outputTopic"]
+            output_topic = streams_app_details["values"]["streams"]["outputTopic"]
             assert output_topic == "app2-test-topic"
-            error_topic = streams_app_details["app"]["streams"]["errorTopic"]
+            error_topic = streams_app_details["values"]["streams"]["errorTopic"]
             assert error_topic == "app2-dead-letter-topic"
 
             snapshot.assert_match(result.stdout, PIPELINE_YAML)
@@ -412,13 +412,13 @@ class TestGenerate:
 
         enriched_pipeline: list = yaml.safe_load(result.stdout)
         producer_details = enriched_pipeline[0]
-        output_topic = producer_details["app"]["streams"]["outputTopic"]
+        output_topic = producer_details["values"]["streams"]["outputTopic"]
         assert output_topic == "resources-custom-config-app1"
 
         streams_app_details = enriched_pipeline[1]
-        output_topic = streams_app_details["app"]["streams"]["outputTopic"]
+        output_topic = streams_app_details["values"]["streams"]["outputTopic"]
         assert output_topic == "resources-custom-config-app2"
-        error_topic = streams_app_details["app"]["streams"]["errorTopic"]
+        error_topic = streams_app_details["values"]["streams"]["errorTopic"]
         assert error_topic == "resources-custom-config-app2-error"
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
@@ -440,7 +440,7 @@ class TestGenerate:
         )
         assert result.exit_code == 0, result.stdout
         enriched_pipeline: list = yaml.safe_load(result.stdout)
-        assert enriched_pipeline[0]["app"]["streams"]["brokers"] == "env_broker"
+        assert enriched_pipeline[0]["values"]["streams"]["brokers"] == "env_broker"
 
     def test_nested_config_env_vars(self, monkeypatch: pytest.MonkeyPatch):
         monkeypatch.setenv(
@@ -462,7 +462,7 @@ class TestGenerate:
         assert result.exit_code == 0, result.stdout
         enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"]
+            enriched_pipeline[0]["values"]["streams"]["schemaRegistryUrl"]
             == "http://somename:1234/"
         )
 
@@ -484,7 +484,7 @@ class TestGenerate:
         assert result.exit_code == 0, result.stdout
         enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"]
+            enriched_pipeline[0]["values"]["streams"]["schemaRegistryUrl"]
             == "http://production:8081/"
         )
 
@@ -518,7 +518,8 @@ class TestGenerate:
         assert result.exit_code == 0, result.stdout
         enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[0]["app"]["streams"]["schemaRegistryUrl"] == expected_url
+            enriched_pipeline[0]["values"]["streams"]["schemaRegistryUrl"]
+            == expected_url
         )
 
     def test_config_dir_doesnt_exist(self):
@@ -570,7 +571,7 @@ class TestGenerate:
 
         enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[1]["app"]["streams"]["schemaRegistryUrl"]
+            enriched_pipeline[1]["values"]["streams"]["schemaRegistryUrl"]
             == "http://notlocalhost:8081/"
         )
 
@@ -836,11 +837,11 @@ class TestGenerate:
         assert result.exit_code == 0, result.stdout
         enriched_pipeline: list = yaml.safe_load(result.stdout)
         assert (
-            enriched_pipeline[1]["_resetter"]["app"]["label"]
+            enriched_pipeline[1]["_resetter"]["values"]["label"]
             == "inflated-connector-name"
         )
         assert (
-            enriched_pipeline[1]["_resetter"]["app"]["imageTag"]
+            enriched_pipeline[1]["_resetter"]["values"]["imageTag"]
             == "override-default-image-tag"
         )
 
@@ -853,14 +854,16 @@ class TestGenerate:
         assert isinstance(pipeline.components[0], KafkaSinkConnector)
         assert pipeline.components[0].name == "es-sink-connector"
         assert pipeline.components[0]._resetter.name == "es-sink-connector"
-        assert hasattr(pipeline.components[0]._resetter.app, "label")
-        assert pipeline.components[0]._resetter.app.label == "es-sink-connector"  # type: ignore[reportGeneralTypeIssues]
+        assert hasattr(pipeline.components[0]._resetter.values, "label")
+        assert pipeline.components[0]._resetter.values.label == "es-sink-connector"  # type: ignore[reportGeneralTypeIssues]
 
         enriched_pipeline: list = yaml.safe_load(pipeline.to_yaml())
         assert enriched_pipeline[0]["name"] == "es-sink-connector"
         assert enriched_pipeline[0]["_resetter"]["name"] == "es-sink-connector"
-        assert enriched_pipeline[0]["_resetter"]["app"]["label"] == "es-sink-connector"
         assert (
-            enriched_pipeline[0]["_resetter"]["app"]["imageTag"]
+            enriched_pipeline[0]["_resetter"]["values"]["label"] == "es-sink-connector"
+        )
+        assert (
+            enriched_pipeline[0]["_resetter"]["values"]["imageTag"]
             == "override-default-image-tag"
         )
