@@ -4,14 +4,10 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.component_handlers import ComponentHandlers
-from kpops.component_handlers.helm_wrapper.model import HelmDiffConfig
 from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components.base_components.kafka_connector import (
     KafkaConnector,
 )
-from kpops.config import KpopsConfig, TopicNameConfig, set_config
-from tests.components import PIPELINE_BASE_DIR
 
 CONNECTOR_NAME = "test-connector-with-long-name-0123456789abcdefghijklmnop"
 CONNECTOR_FULL_NAME = "${pipeline.name}-" + CONNECTOR_NAME
@@ -28,27 +24,6 @@ RESETTER_NAMESPACE = "test-namespace"
 
 @pytest.mark.usefixtures("mock_env")
 class TestKafkaConnector:
-    @pytest.fixture(autouse=True)
-    def config(self) -> None:
-        config = KpopsConfig(
-            topic_name_config=TopicNameConfig(
-                default_error_topic_name="${component.type}-error-topic",
-                default_output_topic_name="${component.type}-output-topic",
-            ),
-            kafka_brokers="broker:9092",
-            helm_diff_config=HelmDiffConfig(),
-            pipeline_base_dir=PIPELINE_BASE_DIR,
-        )
-        set_config(config)
-
-    @pytest.fixture(autouse=True)
-    def handlers(self) -> ComponentHandlers:
-        return ComponentHandlers(
-            schema_handler=AsyncMock(),
-            connector_handler=AsyncMock(),
-            topic_handler=AsyncMock(),
-        )
-
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
         async_mock = AsyncMock()
@@ -71,20 +46,14 @@ class TestKafkaConnector:
         )
 
     @pytest.fixture()
-    def connector(
-        self,
-        connector_config: KafkaConnectorConfig,
-    ) -> KafkaConnector:
+    def connector(self, connector_config: KafkaConnectorConfig) -> KafkaConnector:
         return KafkaConnector(  # HACK: not supposed to be instantiated, because ABC
             name=CONNECTOR_NAME,
             config=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
         )
 
-    def test_connector_config_name_override(
-        self,
-        connector: KafkaConnector,
-    ):
+    def test_connector_config_name_override(self, connector: KafkaConnector):
         assert connector.config.name == CONNECTOR_FULL_NAME
 
         connector = KafkaConnector(

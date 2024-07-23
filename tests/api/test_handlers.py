@@ -1,7 +1,11 @@
+from collections.abc import Generator
+from unittest import mock
+
+import pytest
 from pytest_mock import MockerFixture
 
 from kpops.api import _setup_handlers
-from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers import ComponentHandlers, get_handlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
 )
@@ -15,6 +19,29 @@ HANDLER_MODULE = "kpops.api"
 MODULE = CustomSchemaProvider.__module__
 
 
+@pytest.fixture()
+def handlers() -> Generator[ComponentHandlers, None, None]:
+    handlers = ComponentHandlers(
+        schema_handler=mock.AsyncMock(),
+        connector_handler=mock.AsyncMock(),
+        topic_handler=mock.AsyncMock(),
+    )
+    yield handlers
+    ComponentHandlers._instance = None
+
+
+def test_global_handlers_not_initialized():
+    with pytest.raises(
+        RuntimeError, match="ComponentHandlers has not been initialized"
+    ):
+        get_handlers()
+
+
+def test_create_global_handlers(handlers: ComponentHandlers):
+    assert get_handlers() == handlers
+
+
+@pytest.mark.usefixtures("handlers")
 def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
     config = KpopsConfig(kafka_brokers="broker:9092")
     connector_handler_mock = mocker.patch(f"{HANDLER_MODULE}.KafkaConnectHandler")
@@ -45,6 +72,7 @@ def test_set_up_handlers_with_no_schema_handler(mocker: MockerFixture):
     assert isinstance(actual_handlers.topic_handler, TopicHandler)
 
 
+@pytest.mark.usefixtures("handlers")
 def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     config = KpopsConfig(
         schema_registry=SchemaRegistryConfig(enabled=True),
