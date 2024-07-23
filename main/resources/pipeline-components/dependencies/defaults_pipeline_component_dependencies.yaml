@@ -1,16 +1,16 @@
 helm-app.yaml:
-- app-helm-app.yaml
+- values-helm-app.yaml
 - repo_config-helm-app.yaml
 kafka-app.yaml:
 - prefix.yaml
 - from_.yaml
 - to.yaml
-- app-kafka-app.yaml
+- values-kafka-app.yaml
 kafka-connector.yaml:
 - prefix.yaml
 - from_.yaml
 - to.yaml
-- app-kafka-connector.yaml
+- config-kafka-connector.yaml
 - resetter_values.yaml
 kafka-sink-connector.yaml: []
 kafka-source-connector.yaml:
@@ -21,9 +21,9 @@ kubernetes-app.yaml:
 - from_.yaml
 - to.yaml
 - namespace.yaml
-- app-kubernetes-app.yaml
+- values-kubernetes-app.yaml
 producer-app.yaml:
 - from_-producer-app.yaml
-- app-producer-app.yaml
+- values-producer-app.yaml
 streams-app.yaml:
-- app-streams-app.yaml
+- values-streams-app.yaml

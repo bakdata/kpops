@@ -11,7 +11,7 @@
         <link rel="canonical" href="https://bakdata.github.io/kpops/main/user/references/cli-commands/">
       
       
-        <link rel="prev" href="../../migration-guide/v5-v6/">
+        <link rel="prev" href="../../migration-guide/v6-v7/">
       
       
         <link rel="next" href="../editor-integration/">
@@ -1167,6 +1167,8 @@
       
         
       
+        
+      
     
     
     
@@ -1288,6 +1290,26 @@
   
   <span class="md-ellipsis">
     Migrate from v5 to v6
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../migration-guide/v6-v7/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v6 to v7
   </span>
   
 
@@ -1980,16 +2002,18 @@
 <li><code>SCOPE:{pipeline|defaults|config}</code>: 
         Scope of the generated schema<div class="language-text highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
-<span class="normal">3</span></pre></div></td><td class="code"><div><pre><span></span><code>pipeline: Schema of PipelineComponents. Includes the built-in KPOps components by default. To include custom components, provide components module in config.
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div><pre><span></span><code>- pipeline: Schema of PipelineComponents for KPOps pipeline.yaml
 
-config: Schema of KpopsConfig.  [required]
+- defaults: Schema of PipelineComponents for KPOps defaults.yaml
+
+- config: Schema for KPOps config.yaml  [required]
 </code></pre></div></td></tr></table></div>
 </li>
 </ul>
 <p><strong>Options</strong>:</p>
 <ul>
-<li><code>--config DIRECTORY</code>: Path to the dir containing config.yaml files  [env var: KPOPS_CONFIG_PATH; default: .]</li>
-<li><code>--include-stock-components / --no-include-stock-components</code>: Include the built-in KPOps components.  [default: include-stock-components]</li>
 <li><code>--help</code>: Show this message and exit.</li>
 </ul>
 

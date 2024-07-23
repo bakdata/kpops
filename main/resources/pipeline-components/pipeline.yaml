@@ -44,9 +44,7 @@
     models: # SchemaProvider is initiated with the values given here
       model: model
   namespace: namespace # required
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example.
-  app: # required
+  values: # required
     image: exampleImage # Example
     debug: false # Example
     commandLine: {} # Example
@@ -107,9 +105,7 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # `app` can contain application-specific settings, hence  the user is free to
-  # add the key-value pairs they need.
-  app: # required
+  values: # required
     streams: # required
       brokers: ${config.kafka_brokers} # required
       schemaRegistryUrl: ${config.schema_registry.url}
@@ -160,10 +156,8 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example. Extensive documentation on
-  # connectors: https://kafka.apache.org/documentation/#connectconfigs
-  app: # required
+  # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
+  config: # required
     tasks.max: 1
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
@@ -195,10 +189,8 @@
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example. Extensive documentation on
-  # connectors: https://kafka.apache.org/documentation/#connectconfigs
-  app: # required
+  # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
+  config: # required
     tasks.max: 1
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
@@ -253,9 +245,7 @@
     models: # SchemaProvider is initiated with the values given here
       model: model
   namespace: namespace # required
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example.
-  app: # required
+  values: # required
     image: exampleImage # Example
     debug: false # Example
     commandLine: {} # Example
@@ -291,7 +281,7 @@
   namespace: namespace # required
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/producer-app
-  app: # required
+  values: # required
     streams: # required, producer-app-specific
       brokers: ${config.kafka_brokers} # required
       schemaRegistryUrl: ${config.schema_registry.url}
@@ -361,7 +351,7 @@
   # No arbitrary keys are allowed under `app`here
   # Allowed configs:
   # https://github.com/bakdata/streams-bootstrap/tree/master/charts/streams-app
-  app: # required
+  values: # required
     # Streams Bootstrap streams section
     streams: # required, streams-app-specific
       brokers: ${config.kafka_brokers} # required

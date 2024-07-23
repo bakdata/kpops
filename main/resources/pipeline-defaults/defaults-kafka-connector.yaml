@@ -45,10 +45,8 @@ kafka-connector:
           cleanup.policy: compact
     models: # SchemaProvider is initiated with the values given here
       model: model
-  # `app` contains application-specific settings, hence it does not have a rigid
-  # structure. The fields below are just an example. Extensive documentation on
-  # connectors: https://kafka.apache.org/documentation/#connectconfigs
-  app: # required
+  # Full documentation on connectors: https://kafka.apache.org/documentation/#connectconfigs
+  config: # required
     tasks.max: 1
   # Overriding Kafka Connect Resetter Helm values. E.g. to override the
   # Image Tag etc.
