@@ -46,20 +46,14 @@ class TestKafkaConnector:
         )
 
     @pytest.fixture()
-    def connector(
-        self,
-        connector_config: KafkaConnectorConfig,
-    ) -> KafkaConnector:
+    def connector(self, connector_config: KafkaConnectorConfig) -> KafkaConnector:
         return KafkaConnector(  # HACK: not supposed to be instantiated, because ABC
             name=CONNECTOR_NAME,
             config=connector_config,
             resetter_namespace=RESETTER_NAMESPACE,
         )
 
-    def test_connector_config_name_override(
-        self,
-        connector: KafkaConnector,
-    ):
+    def test_connector_config_name_override(self, connector: KafkaConnector):
         assert connector.config.name == CONNECTOR_FULL_NAME
 
         connector = KafkaConnector(
