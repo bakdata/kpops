@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pytest
 from pydantic import AnyHttpUrl, AnyUrl, TypeAdapter, ValidationError
 
@@ -7,7 +9,10 @@ from kpops.config import (
     KpopsConfig,
     SchemaRegistryConfig,
     get_config,
+    set_config,
 )
+
+RESOURCES_PATH = Path(__file__).parent / "cli" / "resources"
 
 
 def test_kpops_config_with_default_values():
@@ -63,9 +68,22 @@ def test_kpops_config_with_different_invalid_urls():
         )
 
 
-def test_kpops_config_not_initialized_error():
+def test_global_kpops_config_not_initialized_error():
     with pytest.raises(
         RuntimeError,
         match=r"KpopsConfig has not been initialized, call KpopsConfig.create\(\) first.",
     ):
         get_config()
+
+
+def test_create_global_kpops_config():
+    config = KpopsConfig.create(RESOURCES_PATH)
+    assert get_config() == config
+
+
+def test_set_global_kpops_config():
+    config = KpopsConfig(
+        kafka_brokers="broker:9092",
+    )
+    set_config(config)
+    assert get_config() == config
