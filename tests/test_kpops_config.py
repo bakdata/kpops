@@ -6,6 +6,7 @@ from kpops.config import (
     KafkaRestConfig,
     KpopsConfig,
     SchemaRegistryConfig,
+    get_config,
 )
 
 
@@ -60,3 +61,11 @@ def test_kpops_config_with_different_invalid_urls():
                 url=TypeAdapter(AnyHttpUrl).validate_python("invalid-host"),  # pyright: ignore[reportCallIssue,reportArgumentType]
             ),
         )
+
+
+def test_kpops_config_not_initialized_error():
+    with pytest.raises(
+        RuntimeError,
+        match="^KpopsConfig has not been initialized, call KpopsConfig.create() first.",
+    ):
+        get_config()
