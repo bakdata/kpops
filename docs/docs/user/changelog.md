@@ -1,4 +1,31 @@
 # Changelog
+## [7.0.0](https://github.com/bakdata/kpops/releases/tag/7.0.0) - Release Date: [2024-07-23]
+
+### 🏗️ Breaking changes
+
+- Automatic loading of namespaced custom components - [#500](https://github.com/bakdata/kpops/pull/500)
+
+- Call destroy from inside of reset or clean - [#501](https://github.com/bakdata/kpops/pull/501)
+
+- Rename app field - [#506](https://github.com/bakdata/kpops/pull/506)
+
+
+### 🚀 Features
+
+- clean/reset streams-bootstrap components with cluster values - [#498](https://github.com/bakdata/kpops/pull/498)
+
+
+### 🏭 Refactor
+
+- Call destroy from inside of reset or clean - [#501](https://github.com/bakdata/kpops/pull/501)
+
+- Rename app field - [#506](https://github.com/bakdata/kpops/pull/506)
+
+
+
+
+
+
 ## [6.1.0](https://github.com/bakdata/kpops/releases/tag/6.1.0) - Release Date: [2024-07-09]
 
 ### 🚀 Features
