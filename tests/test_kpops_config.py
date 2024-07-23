@@ -66,6 +66,6 @@ def test_kpops_config_with_different_invalid_urls():
 def test_kpops_config_not_initialized_error():
     with pytest.raises(
         RuntimeError,
-        match="^KpopsConfig has not been initialized, call KpopsConfig.create() first.",
+        match=r"KpopsConfig has not been initialized, call KpopsConfig.create\(\) first.",
     ):
         get_config()
