@@ -11,8 +11,7 @@ from kpops.components.base_components.base_defaults_component import (
 )
 from kpops.config import KpopsConfig, set_config
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML, KpopsFileType
-from kpops.pipeline import PIPELINE_PATH
-from kpops.utils.environment import ENV
+from kpops.utils.environment import ENV, PIPELINE_PATH
 from tests.components import PIPELINE_BASE_DIR, RESOURCES_PATH
 
 
