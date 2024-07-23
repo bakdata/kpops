@@ -1,7 +1,10 @@
+from unittest import mock
+
+import pytest
 from pytest_mock import MockerFixture
 
 from kpops.api import _setup_handlers
-from kpops.component_handlers import ComponentHandlers
+from kpops.component_handlers import ComponentHandlers, get_handlers
 from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
     KafkaConnectHandler,
 )
@@ -82,3 +85,19 @@ def test_set_up_handlers_with_schema_handler(mocker: MockerFixture):
     assert isinstance(actual_handlers.schema_handler, SchemaHandler)
     assert isinstance(actual_handlers.connector_handler, KafkaConnectHandler)
     assert isinstance(actual_handlers.topic_handler, TopicHandler)
+
+
+def test_global_handlers_not_initialized():
+    with pytest.raises(
+        RuntimeError, match="ComponentHandlers has not been initialized"
+    ):
+        get_handlers()
+
+
+def test_create_global_handlers():
+    handlers = ComponentHandlers(
+        schema_handler=mock.AsyncMock(),
+        connector_handler=mock.AsyncMock(),
+        topic_handler=mock.AsyncMock(),
+    )
+    assert get_handlers() == handlers
