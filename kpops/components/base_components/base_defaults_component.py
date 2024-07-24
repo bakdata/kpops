@@ -246,7 +246,7 @@ def get_defaults_file_paths(
     :param environment: Optional. The environment for which default configuration files are sought.
     :returns: A list of Path objects representing the default configuration file paths.
     """
-    default_paths = []
+    default_paths: list[Path] = []
 
     if not pipeline_path.is_file():
         msg = f"{pipeline_path} is not a valid pipeline file."
