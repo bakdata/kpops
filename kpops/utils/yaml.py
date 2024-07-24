@@ -1,6 +1,6 @@
 import json
 import logging
-from collections.abc import Mapping
+from collections.abc import Hashable, Mapping
 from pathlib import Path
 from typing import Any
 
@@ -17,7 +17,7 @@ log = logging.getLogger("Yaml")
 
 def generate_hashkey(
     file_path: Path, substitution: Mapping[str, Any] | None = None
-) -> tuple:
+) -> tuple[Hashable, ...]:
     if substitution is None:
         substitution = {}
     return hashkey(str(file_path) + str(sorted(substitution.items())))
@@ -26,7 +26,7 @@ def generate_hashkey(
 @cached(cache={}, key=generate_hashkey)
 def load_yaml_file(
     file_path: Path, *, substitution: Mapping[str, Any] | None = None
-) -> dict | list[dict]:
+) -> dict[str, Any] | list[dict[str, Any]]:
     with file_path.open() as yaml_file:
         log.debug(f"Picked up: {file_path.resolve().relative_to(Path.cwd())}")
         return yaml.load(substitute(yaml_file.read(), substitution), Loader=yaml.Loader)
@@ -61,7 +61,7 @@ def _diff_substituted_str(s1: str, s2: str):
         raise ValueError(msg)
 
 
-def substitute_nested(input: str, **kwargs) -> str:
+def substitute_nested(input: str, **kwargs: Any) -> str:
     """Allow for multiple substitutions to be passed.
 
     Will make as many passes as needed to substitute all possible placeholders.
@@ -87,7 +87,7 @@ def substitute_nested(input: str, **kwargs) -> str:
         return input
     kwargs = substitute_in_self(kwargs)
     old_str, new_str = "", substitute(input, kwargs)
-    steps = set()
+    steps: set[str] = set()
     while new_str not in steps:
         steps.add(new_str)
         old_str, new_str = new_str, substitute(new_str, kwargs)
@@ -105,7 +105,7 @@ def substitute_in_self(input: dict[str, Any]) -> dict[str, Any]:
     :return: Substituted input mapping as dict
     """
     old_str, new_str = "", substitute(json.dumps(input), input)
-    steps = set()
+    steps: set[str] = set()
     while new_str not in steps:
         steps.add(new_str)
         old_str, new_str = new_str, substitute(new_str, json.loads(new_str))
@@ -113,7 +113,9 @@ def substitute_in_self(input: dict[str, Any]) -> dict[str, Any]:
     return json.loads(old_str)
 
 
-def print_yaml(data: Mapping | str, *, substitution: dict | None = None) -> None:
+def print_yaml(
+    data: Mapping[str, Any] | str, *, substitution: dict[str, Any] | None = None
+) -> None:
     """Print YAML object with syntax highlighting.
 
     :param data: YAML document
