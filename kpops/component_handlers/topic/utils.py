@@ -52,9 +52,9 @@ def populate_default_configs(
 
 def parse_rest_proxy_topic_config(
     topic_config_in_cluster: TopicConfigResponse,
-) -> tuple[dict, dict]:
-    comparable_in_cluster_config_dict = {}
-    default_configs = {}
+) -> tuple[dict[str, str], dict[str, str]]:
+    comparable_in_cluster_config_dict: dict[str, str] = {}
+    default_configs: dict[str, str] = {}
     for config in topic_config_in_cluster.data:
         if config.source == KafkaTopicConfigSource.DYNAMIC_TOPIC_CONFIG:
             comparable_in_cluster_config_dict[config.name] = config.value
