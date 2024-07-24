@@ -119,7 +119,7 @@ class TopicHandler:
             )
 
             if differences:
-                json_body = []
+                json_body: list[dict[str, str]] = []
                 for difference in differences:
                     if difference.diff_type is DiffType.REMOVE:
                         json_body.append(
