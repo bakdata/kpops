@@ -5,7 +5,7 @@ from functools import cached_property
 from typing import Annotated, Any
 
 import pydantic
-from pydantic import Field, SerializationInfo, model_serializer
+from pydantic import Field, model_serializer
 from typing_extensions import override
 
 from kpops.component_handlers.helm_wrapper.dry_run_handler import DryRunHandler
@@ -208,5 +208,9 @@ class HelmApp(KubernetesApp):
     # HACK: workaround for Pydantic to exclude cached properties during model export
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
-        return exclude_by_name(handler(self), "helm", "helm_diff")
+    def serialize_model(
+        self,
+        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
+        info: pydantic.SerializationInfo,
+    ) -> dict[str, Any]:
+        return exclude_by_name(default_serialize_handler(self), "helm", "helm_diff")
