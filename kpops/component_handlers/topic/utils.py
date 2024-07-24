@@ -36,9 +36,9 @@ def parse_and_compare_topic_configs(
 
 
 def populate_default_configs(
-    config_overwrites: set,
-    default_configs: dict,
-    config_to_populate: dict,
+    config_overwrites: set[str],
+    default_configs: dict[str, str],
+    config_to_populate: dict[str, str],
     description_text: str,
 ):
     for overwrite in config_overwrites:
