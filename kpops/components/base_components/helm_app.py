@@ -53,7 +53,7 @@ class HelmAppValues(KubernetesAppValues):
     # BEWARE! All default values are enforced, hard to replicate without
     # access to ``model_dump``
     @override
-    def model_dump(self, **_) -> dict[str, Any]:
+    def model_dump(self, **_: Any) -> dict[str, Any]:
         return super().model_dump(
             by_alias=True, exclude_none=True, exclude_defaults=True
         )
