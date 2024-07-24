@@ -90,7 +90,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             self._validate_custom()
         return self
 
-    @computed_field
+    @computed_field()
     @cached_classproperty
     def type(cls: type[Self]) -> str:  # pyright: ignore[reportGeneralTypeIssues]
         """Return calling component's type.
