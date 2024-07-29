@@ -24,8 +24,8 @@ kpops = "kpops.cli.main:app"
 [tool.poetry.dependencies]
 python = ">=3.10, <3.13"
 anyio = "^4.3.0"
-pydantic = "^2.8.2"
-pydantic-settings = "^2.3.4"
+pydantic = "^2.5.3"
+pydantic-settings = "^2.0.3"
 rich = "^12.4.4"
 PyYAML = "^6.0"
 typer = { extras = ["all"], version = "^0.6.1" }
