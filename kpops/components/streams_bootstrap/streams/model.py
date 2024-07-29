@@ -55,7 +55,9 @@ class StreamsConfig(KafkaStreamsConfig):
 
     @pydantic.field_validator("input_topics", mode="before")
     @classmethod
-    def deserialize_input_topics(cls, input_topics: Any) -> list[KafkaTopic] | Any:
+    def deserialize_input_topics(
+        cls, input_topics: list[str] | Any
+    ) -> list[KafkaTopic] | Any:
         if isinstance(input_topics, list):
             return [KafkaTopic(name=topic_name) for topic_name in input_topics]
         return input_topics
@@ -63,7 +65,7 @@ class StreamsConfig(KafkaStreamsConfig):
     @pydantic.field_validator("extra_input_topics", mode="before")
     @classmethod
     def deserialize_extra_input_topics(
-        cls, extra_input_topics: Any
+        cls, extra_input_topics: dict[str, str] | Any
     ) -> dict[str, list[KafkaTopic]] | Any:
         if isinstance(extra_input_topics, dict):
             return {
