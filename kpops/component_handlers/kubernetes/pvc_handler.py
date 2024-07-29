@@ -1,49 +1,51 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import AsyncIterator
 
-from kubernetes_asyncio import client, config
-from kubernetes_asyncio.client import ApiClient
+from lightkube.config.kubeconfig import KubeConfig
+from lightkube.core.async_client import AsyncClient
+from lightkube.resources.core_v1 import PersistentVolumeClaim
 
 log = logging.getLogger("PVC_handler")
 
 
 class PVCHandler:
-    def __init__(self, app_name: str, namespace: str):
+    def __init__(self, app_name: str, namespace: str) -> None:
         self.app_name = app_name
         self.namespace = namespace
-
-    @classmethod
-    async def create(cls, app_name: str, namespace: str) -> PVCHandler:
-        self = cls(app_name, namespace)
-        await config.load_kube_config()
-        return self
+        config = KubeConfig.from_env()
+        self.client = AsyncClient(config=config)
 
     async def list_pvcs(self) -> list[str]:
-        async with ApiClient() as api:
-            core_v1_api = client.CoreV1Api(api)
-            pvc_list = await core_v1_api.list_namespaced_persistent_volume_claim(
-                namespace=self.namespace, label_selector=f"app={self.app_name}"
-            )
+        async def read_pvcs() -> AsyncIterator[str]:
+            async for pvc in self.client.list(
+                PersistentVolumeClaim,
+                namespace=self.namespace,
+                labels={"app": self.app_name},
+            ):
+                if not pvc.metadata or not pvc.metadata.name:
+                    continue
+                yield pvc.metadata.name
 
-            pvc_names = [pvc.metadata.name for pvc in pvc_list.items]
-            if not pvc_names:
-                log.warning(
-                    f"No PVCs found for app '{self.app_name}', in namespace '{self.namespace}'"
-                )
-            log.debug(
-                f"In namespace '{self.namespace}' StatefulSet '{self.app_name}' has corresponding PVCs: '{pvc_names}'"
+        pvc_names = [pvc async for pvc in read_pvcs()]
+
+        if not pvc_names:
+            log.warning(
+                f"No PVCs found for app '{self.app_name}', in namespace '{self.namespace}'"
             )
-            return pvc_names
+        log.debug(
+            f"In namespace '{self.namespace}' StatefulSet '{self.app_name}' has corresponding PVCs: '{pvc_names}'"
+        )
+        return pvc_names
 
     async def delete_pvcs(self) -> None:
-        async with ApiClient() as api:
-            core_v1_api = client.CoreV1Api(api)
-            pvc_names = await self.list_pvcs()
-            log.debug(
-                f"Deleting in namespace '{self.namespace}' StatefulSet '{self.app_name}' PVCs '{pvc_names}'"
+        pvc_names = await self.list_pvcs()
+
+        log.debug(
+            f"Deleting in namespace '{self.namespace}' StatefulSet '{self.app_name}' PVCs '{pvc_names}'"
+        )
+        for pvc in pvc_names:
+            await self.client.delete(
+                PersistentVolumeClaim, pvc, namespace=self.namespace
             )
-            for pvc_name in pvc_names:
-                await core_v1_api.delete_namespaced_persistent_volume_claim(
-                    pvc_name, self.namespace
-                )  # type: ignore [reportGeneralTypeIssues]
