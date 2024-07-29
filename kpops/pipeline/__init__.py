@@ -132,7 +132,7 @@ class Pipeline(BaseModel):
 
         layers_graph: list[list[str]] = list(nx.bfs_layers(graph, root_node))
 
-        sorted_tasks = []
+        sorted_tasks: list[Awaitable[None]] = []
         for layer in layers_graph[1:]:
             if parallel_tasks := self.__get_parallel_tasks_from(layer, runner):
                 sorted_tasks.append(run_parallel_tasks(parallel_tasks))
