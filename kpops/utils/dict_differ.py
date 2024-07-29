@@ -26,17 +26,19 @@ class DiffType(str, Enum):
         return DiffType[label.upper()]
 
 
-T = TypeVar("T")
-N = TypeVar("N")
+_O = TypeVar("_O")
+_N = TypeVar("_N")
 
 
 @dataclass
-class Change(Generic[T, N]):  # Generic NamedTuple requires Python 3.11+
-    old_value: T
-    new_value: N
+class Change(Generic[_O, _N]):  # Generic NamedTuple requires Python 3.11+
+    old_value: _O
+    new_value: _N
 
     @staticmethod
-    def factory(type: DiffType, change: N | tuple[T, N]) -> Change[T | None, N | None]:
+    def factory(
+        type: DiffType, change: _N | tuple[_O, _N]
+    ) -> Change[_O | None, _N | None]:
         match type:
             case DiffType.ADD:
                 return Change(None, change)
@@ -49,10 +51,10 @@ class Change(Generic[T, N]):  # Generic NamedTuple requires Python 3.11+
 
 
 @dataclass
-class Diff(Generic[T, N]):
+class Diff(Generic[_O, _N]):
     diff_type: DiffType
     key: str
-    change: Change[T, N]
+    change: Change[_O, _N]
 
     @staticmethod
     def from_dicts(
