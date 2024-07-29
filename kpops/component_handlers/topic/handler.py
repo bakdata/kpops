@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from kpops.component_handlers.topic.exception import (
     TopicNotFoundException,
@@ -118,7 +119,7 @@ class TopicHandler:
             )
 
             if differences:
-                json_body = []
+                json_body: list[dict[str, str]] = []
                 for difference in differences:
                     if difference.diff_type is DiffType.REMOVE:
                         json_body.append(
@@ -216,7 +217,7 @@ class TopicHandler:
         :param topic_config: The topic config
         :return: Topic specification
         """
-        topic_spec_json: dict = topic.config.model_dump(
+        topic_spec_json: dict[str, Any] = topic.config.model_dump(
             include={
                 "partitions_count": True,
                 "replication_factor": True,
@@ -224,7 +225,7 @@ class TopicHandler:
             },
             exclude_none=True,
         )
-        configs = []
+        configs: list[dict[str, Any]] = []
         for config_name, config_value in topic_spec_json["configs"].items():
             configs.append({"name": config_name, "value": config_value})
         topic_spec_json["configs"] = configs

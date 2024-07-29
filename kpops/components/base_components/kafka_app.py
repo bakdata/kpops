@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 from abc import ABC
-from collections.abc import Callable
 from typing import Any
 
 import pydantic
@@ -58,7 +57,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     @pydantic.field_validator("extra_output_topics", mode="before")
     @classmethod
     def deserialize_extra_output_topics(
-        cls, extra_output_topics: Any
+        cls, extra_output_topics: dict[str, str] | Any
     ) -> dict[str, KafkaTopic] | Any:
         if isinstance(extra_output_topics, dict):
             return {
@@ -76,9 +75,13 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @pydantic.model_serializer(mode="wrap", when_used="always")
     def serialize_model(
-        self, handler: Callable, info: pydantic.SerializationInfo
+        self,
+        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
+        info: pydantic.SerializationInfo,
     ) -> dict[str, Any]:
-        return exclude_defaults(self, exclude_by_value(handler(self), None))
+        return exclude_defaults(
+            self, exclude_by_value(default_serialize_handler(self), None)
+        )
 
 
 class KafkaAppValues(HelmAppValues):

@@ -5,7 +5,6 @@ import pydantic
 from pydantic import (
     BaseModel,
     ConfigDict,
-    SerializationInfo,
     field_validator,
     model_serializer,
 )
@@ -77,8 +76,12 @@ class KafkaConnectorConfig(DescConfigModel):
 
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @model_serializer(mode="wrap", when_used="always")
-    def serialize_model(self, handler, info: SerializationInfo) -> dict[str, Any]:
-        result = exclude_by_value(handler(self), None)
+    def serialize_model(
+        self,
+        default_serialize_handler: pydantic.SerializerFunctionWrapHandler,
+        info: pydantic.SerializationInfo,
+    ) -> dict[str, Any]:
+        result = exclude_by_value(default_serialize_handler(self), None)
         return {by_alias(self, name): value for name, value in result.items()}
 
 

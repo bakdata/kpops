@@ -55,7 +55,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
-        ignored_types=(cached_property, cached_classproperty),
+        ignored_types=(cached_property, cached_classproperty),  # pyright: ignore[reportArgumentType]
     )
     enrich: SkipJsonSchema[bool] = Field(
         default=True,
@@ -189,7 +189,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         """
         defaults: dict[str, Any] = {}
         for base in (cls, *cls.parents):
-            component_type: str = base.type
+            component_type = base.type
             defaults = update_nested(
                 defaults,
                 *(
@@ -204,7 +204,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         """Run custom validation on component."""
 
 
-def defaults_from_yaml(path: Path, key: str) -> dict:
+def defaults_from_yaml(path: Path, key: str) -> dict[str, Any]:
     """Read component-specific settings from a ``defaults*.yaml`` file and return @default if not found.
 
     :param path: Path to ``defaults*.yaml`` file
@@ -246,7 +246,7 @@ def get_defaults_file_paths(
     :param environment: Optional. The environment for which default configuration files are sought.
     :returns: A list of Path objects representing the default configuration file paths.
     """
-    default_paths = []
+    default_paths: list[Path] = []
 
     if not pipeline_path.is_file():
         msg = f"{pipeline_path} is not a valid pipeline file."

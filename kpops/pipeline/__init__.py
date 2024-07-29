@@ -109,7 +109,7 @@ class Pipeline(BaseModel):
         async def run_parallel_tasks(
             coroutines: list[Coroutine[Any, Any, None]],
         ) -> None:
-            tasks = []
+            tasks: list[asyncio.Task[None]] = []
             for coro in coroutines:
                 tasks.append(asyncio.create_task(coro))
             await asyncio.gather(*tasks)
@@ -132,7 +132,7 @@ class Pipeline(BaseModel):
 
         layers_graph: list[list[str]] = list(nx.bfs_layers(graph, root_node))
 
-        sorted_tasks = []
+        sorted_tasks: list[Awaitable[None]] = []
         for layer in layers_graph[1:]:
             if parallel_tasks := self.__get_parallel_tasks_from(layer, runner):
                 sorted_tasks.append(run_parallel_tasks(parallel_tasks))
@@ -220,8 +220,8 @@ class PipelineGenerator:
 
     def parse(
         self,
-        components: list[dict],
-        environment_components: list[dict],
+        components: list[dict[str, Any]],
+        environment_components: list[dict[str, Any]],
     ) -> Pipeline:
         """Parse pipeline from sequence of component dictionaries.
 
@@ -271,7 +271,7 @@ class PipelineGenerator:
 
         return self.parse(main_content, env_content)
 
-    def parse_components(self, components: list[dict]) -> None:
+    def parse_components(self, components: list[dict[str, Any]]) -> None:
         """Instantiate, enrich and inflate a list of components.
 
         :param components: List of components
@@ -288,7 +288,7 @@ class PipelineGenerator:
                     raise ValueError(msg) from ke
                 component_class = self.registry[component_type]
                 self.apply_component(component_class, component_data)
-            except Exception as ex:  # noqa: BLE001
+            except Exception as ex:
                 if "name" in component_data:
                     msg = f"Error enriching {component_data['type']} component {component_data['name']}"
                     raise ParsingException(msg) from ex

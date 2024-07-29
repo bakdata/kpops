@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from functools import cached_property
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import httpx
 
@@ -163,7 +163,7 @@ class ProxyWrapper:
         raise KafkaRestProxyError(response)
 
     async def batch_alter_topic_config(
-        self, topic_name: str, json_body: list[dict]
+        self, topic_name: str, json_body: list[dict[str, Any]]
     ) -> None:
         """Reset config of given config_name param to the default value on the Kafka server.
 

@@ -16,7 +16,7 @@ class HelmDiff:
     def calculate_changes(
         current_release: Iterable[HelmTemplate],
         new_release: Iterable[HelmTemplate],
-    ) -> Iterator[Change[KubernetesManifest]]:
+    ) -> Iterator[Change[KubernetesManifest, KubernetesManifest]]:
         """Compare 2 releases and generate a Change object for each difference.
 
         :param current_release: Iterable containing HelmTemplate objects for the current release

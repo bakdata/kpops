@@ -26,43 +26,47 @@ class DiffType(str, Enum):
         return DiffType[label.upper()]
 
 
-T = TypeVar("T")
+_O = TypeVar("_O")
+_N = TypeVar("_N")
 
 
 @dataclass
-class Change(Generic[T]):  # Generic NamedTuple requires Python 3.11+
-    old_value: T
-    new_value: T
+class Change(Generic[_O, _N]):  # Generic NamedTuple requires Python 3.11+
+    old_value: _O
+    new_value: _N
 
     @staticmethod
-    def factory(type: DiffType, change: T | tuple[T, T]) -> Change:
+    def factory(
+        type: DiffType, change: _N | tuple[_O, _N]
+    ) -> Change[_O | None, _N | None]:
         match type:
             case DiffType.ADD:
                 return Change(None, change)
             case DiffType.REMOVE:
                 return Change(change, None)
             case DiffType.CHANGE if isinstance(change, tuple):
-                return Change(*change)
+                return Change(*change)  # pyright: ignore[reportUnknownArgumentType]
         msg = f"{type} is not part of {DiffType}"
         raise ValueError(msg)
 
 
 @dataclass
-class Diff(Generic[T]):
+class Diff(Generic[_O, _N]):
     diff_type: DiffType
     key: str
-    change: Change[T]
+    change: Change[_O, _N]
 
     @staticmethod
     def from_dicts(
-        d1: dict, d2: dict, ignore: set[str] | None = None
-    ) -> Iterator[Diff]:
+        d1: dict[str, Any], d2: dict[str, Any], ignore: set[str] | None = None
+    ) -> Iterator[Diff[Any, Any]]:
         for diff_type, keys, changes in diff(d1, d2, ignore=ignore):
+            diff_type = DiffType.from_str(diff_type)
             if not isinstance(changes_tmp := changes, list):
-                changes_tmp = [("", changes)]
+                changes_tmp: list[tuple[str, Any]] = [("", changes)]
             for key, change in changes_tmp:
                 yield Diff(
-                    DiffType.from_str(diff_type),
+                    diff_type,
                     Diff.__find_changed_key(keys, key),
                     Change.factory(diff_type, change),
                 )

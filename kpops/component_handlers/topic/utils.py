@@ -1,3 +1,5 @@
+from typing import Any
+
 from kpops.component_handlers.topic.model import (
     BrokerConfigResponse,
     KafkaTopicConfigSource,
@@ -6,8 +8,8 @@ from kpops.component_handlers.topic.model import (
 
 
 def parse_and_compare_topic_configs(
-    topic_config_in_cluster: TopicConfigResponse, topic_config: dict
-) -> tuple[dict, dict]:
+    topic_config_in_cluster: TopicConfigResponse, topic_config: dict[str, Any]
+) -> tuple[dict[str, str], dict[str, Any]]:
     comparable_in_cluster_config_dict, default_configs = parse_rest_proxy_topic_config(
         topic_config_in_cluster
     )
@@ -36,9 +38,9 @@ def parse_and_compare_topic_configs(
 
 
 def populate_default_configs(
-    config_overwrites: set,
-    default_configs: dict,
-    config_to_populate: dict,
+    config_overwrites: set[str],
+    default_configs: dict[str, str],
+    config_to_populate: dict[str, str],
     description_text: str,
 ):
     for overwrite in config_overwrites:
@@ -52,9 +54,9 @@ def populate_default_configs(
 
 def parse_rest_proxy_topic_config(
     topic_config_in_cluster: TopicConfigResponse,
-) -> tuple[dict, dict]:
-    comparable_in_cluster_config_dict = {}
-    default_configs = {}
+) -> tuple[dict[str, str], dict[str, str]]:
+    comparable_in_cluster_config_dict: dict[str, str] = {}
+    default_configs: dict[str, str] = {}
     for config in topic_config_in_cluster.data:
         if config.source == KafkaTopicConfigSource.DYNAMIC_TOPIC_CONFIG:
             comparable_in_cluster_config_dict[config.name] = config.value

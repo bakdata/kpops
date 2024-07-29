@@ -1,3 +1,5 @@
+from typing import Any
+
 import pytest
 
 from kpops.utils.dict_differ import Change, Diff, DiffType, render_diff
@@ -47,7 +49,9 @@ from kpops.utils.dict_differ import Change, Diff, DiffType, render_diff
         ),
     ],
 )
-def test_render_diff(d1: dict, d2: dict, ignore: set[str] | None, output: str | None):
+def test_render_diff(
+    d1: dict[str, Any], d2: dict[str, Any], ignore: set[str] | None, output: str | None
+):
     assert render_diff(d1, d2, ignore) == output
 
 
@@ -189,5 +193,5 @@ def test_render_diff(d1: dict, d2: dict, ignore: set[str] | None, output: str | 
         ),
     ],
 )
-def test_get_diff(d1: dict, d2: dict, output: list[Diff]):
+def test_get_diff(d1: dict[str, Any], d2: dict[str, Any], output: list[Diff[Any, Any]]):
     assert list(Diff.from_dicts(d1, d2)) == output

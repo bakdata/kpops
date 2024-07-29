@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import httpx
 
@@ -46,8 +46,11 @@ class ConnectWrapper:
         :param connector_config: The config of the connector
         :return: The current connector info if successful.
         """
-        config_json = connector_config.model_dump()
-        connect_data = {"name": connector_config.name, "config": config_json}
+        config_json: dict[str, Any] = connector_config.model_dump()
+        connect_data: dict[str, Any] = {
+            "name": connector_config.name,
+            "config": config_json,
+        }
         response = await self._client.post(
             url=f"{self.url}connectors", headers=HEADERS, json=connect_data
         )
@@ -112,7 +115,7 @@ class ConnectWrapper:
             json=config_json,
         )
 
-        data: dict = response.json()
+        data: dict[str, Any] = response.json()
         if response.status_code == httpx.codes.OK:
             log.info(f"Config for connector {connector_name} updated.")
             log.debug(data)

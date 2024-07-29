@@ -45,8 +45,7 @@ jobs:
         run: |
           if [[ "$RUNNER_OS" == "Linux" && "${{ matrix.python-version }}" == "3.10" ]]
           then
-            echo "::add-matcher::.github/ruff-matcher.json"
-            poetry run ruff check . --config pyproject.toml --output-format text --no-fix
+            poetry run ruff check . --config pyproject.toml --output-format=github --no-fix
           else
             poetry run pre-commit run ruff-lint --all-files --show-diff-on-failure
           fi;

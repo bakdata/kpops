@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from kpops.component_handlers.kafka_connect.kafka_connect_handler import (
@@ -15,11 +15,11 @@ class ComponentHandlers:
 
     def __new__(
         cls,
-        schema_handler,
-        connector_handler,
-        topic_handler,
-        *args,
-        **kwargs,
+        schema_handler: SchemaHandler | None,
+        connector_handler: KafkaConnectHandler,
+        topic_handler: TopicHandler,
+        *args: Any,
+        **kwargs: Any,
     ) -> ComponentHandlers:
         if not cls._instance:
             cls._instance = super().__new__(cls, *args, **kwargs)
