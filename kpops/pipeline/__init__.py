@@ -220,8 +220,8 @@ class PipelineGenerator:
 
     def parse(
         self,
-        components: list[dict],
-        environment_components: list[dict],
+        components: list[dict[str, Any]],
+        environment_components: list[dict[str, Any]],
     ) -> Pipeline:
         """Parse pipeline from sequence of component dictionaries.
 
@@ -271,7 +271,7 @@ class PipelineGenerator:
 
         return self.parse(main_content, env_content)
 
-    def parse_components(self, components: list[dict]) -> None:
+    def parse_components(self, components: list[dict[str, Any]]) -> None:
         """Instantiate, enrich and inflate a list of components.
 
         :param components: List of components
