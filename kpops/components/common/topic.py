@@ -100,7 +100,9 @@ class KafkaTopic(BaseModel):
         return list({topic.name: topic for topic in topics}.values())
 
 
-def deserialize_kafka_topic_from_str(topic: Any) -> KafkaTopic | dict:
+def deserialize_kafka_topic_from_str(
+    topic: str | dict[str, str] | Any,
+) -> KafkaTopic | dict[str, str]:
     if topic and isinstance(topic, str):
         return KafkaTopic(name=topic)
     if isinstance(topic, KafkaTopic | dict):
