@@ -55,7 +55,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
 
     model_config = ConfigDict(
         arbitrary_types_allowed=True,
-        ignored_types=(cached_property, cached_classproperty),
+        ignored_types=(cached_property, cached_classproperty),  # pyright: ignore[reportArgumentType]
     )
     enrich: SkipJsonSchema[bool] = Field(
         default=True,
@@ -90,7 +90,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
             self._validate_custom()
         return self
 
-    @computed_field()
+    @computed_field
     @cached_classproperty
     def type(cls: type[Self]) -> str:  # pyright: ignore[reportGeneralTypeIssues]
         """Return calling component's type.
@@ -189,7 +189,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         """
         defaults: dict[str, Any] = {}
         for base in (cls, *cls.parents):
-            component_type: str = base.type
+            component_type = base.type
             defaults = update_nested(
                 defaults,
                 *(
