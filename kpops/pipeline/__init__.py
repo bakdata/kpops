@@ -118,7 +118,7 @@ class Pipeline(BaseModel):
             for pending_task in pending_tasks:
                 await pending_task
 
-        graph = self._graph.copy()  # pyright: ignore[reportAssignmentType, reportGeneralTypeIssues] imprecise type hint in networkx
+        graph = self._graph.copy()
 
         # We add an extra node to the graph, connecting all the leaf nodes to it
         # in that way we make this node the root of the graph, avoiding backtracking
