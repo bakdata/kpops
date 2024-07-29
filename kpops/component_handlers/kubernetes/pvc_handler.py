@@ -34,9 +34,10 @@ class PVCHandler:
             log.warning(
                 f"No PVCs found for app '{self.app_name}', in namespace '{self.namespace}'"
             )
-        log.debug(
-            f"In namespace '{self.namespace}' StatefulSet '{self.app_name}' has corresponding PVCs: '{pvc_names}'"
-        )
+        else:
+            log.debug(
+                f"In namespace '{self.namespace}' StatefulSet '{self.app_name}' has corresponding PVCs: '{pvc_names}'"
+            )
         return pvc_names
 
     async def delete_pvcs(self) -> None:
