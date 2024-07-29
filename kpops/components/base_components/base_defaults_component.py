@@ -204,7 +204,7 @@ class BaseDefaultsComponent(DescConfigModel, ABC):
         """Run custom validation on component."""
 
 
-def defaults_from_yaml(path: Path, key: str) -> dict:
+def defaults_from_yaml(path: Path, key: str) -> dict[str, Any]:
     """Read component-specific settings from a ``defaults*.yaml`` file and return @default if not found.
 
     :param path: Path to ``defaults*.yaml`` file
