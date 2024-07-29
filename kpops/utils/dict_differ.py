@@ -27,31 +27,32 @@ class DiffType(str, Enum):
 
 
 T = TypeVar("T")
+N = TypeVar("N")
 
 
 @dataclass
-class Change(Generic[T]):  # Generic NamedTuple requires Python 3.11+
+class Change(Generic[T, N]):  # Generic NamedTuple requires Python 3.11+
     old_value: T
-    new_value: T
+    new_value: N
 
     @staticmethod
-    def factory(type: DiffType, change: T | tuple[T, T]) -> Change:
+    def factory(type: DiffType, change: N | tuple[T, N]) -> Change[T | None, N | None]:
         match type:
             case DiffType.ADD:
                 return Change(None, change)
             case DiffType.REMOVE:
                 return Change(change, None)
             case DiffType.CHANGE if isinstance(change, tuple):
-                return Change(*change)
+                return Change(*change)  # pyright: ignore[reportUnknownArgumentType]
         msg = f"{type} is not part of {DiffType}"
         raise ValueError(msg)
 
 
 @dataclass
-class Diff(Generic[T]):
+class Diff(Generic[T, N]):
     diff_type: DiffType
     key: str
-    change: Change[T]
+    change: Change[T, N]
 
     @staticmethod
     def from_dicts(
