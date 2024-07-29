@@ -43,7 +43,7 @@ class StreamsAppCleaner(KafkaAppCleaner):
 
     async def clean_pvcs(self, dry_run: bool) -> None:
         app_full_name = super(HelmApp, self).full_name
-        pvc_handler = await PVCHandler.create(app_full_name, self.namespace)
+        pvc_handler = PVCHandler(app_full_name, self.namespace)
         if dry_run:
             pvc_names = await pvc_handler.list_pvcs()
             log.info(f"Deleting the PVCs {pvc_names} for StatefulSet '{app_full_name}'")
