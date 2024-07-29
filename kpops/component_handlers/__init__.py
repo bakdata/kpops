@@ -15,7 +15,7 @@ class ComponentHandlers:
 
     def __new__(
         cls,
-        schema_handler: SchemaHandler,
+        schema_handler: SchemaHandler | None,
         connector_handler: KafkaConnectHandler,
         topic_handler: TopicHandler,
         *args: Any,

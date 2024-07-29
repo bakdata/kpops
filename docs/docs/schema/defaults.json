@@ -118,11 +118,7 @@
                 },
                 "type": {
                     "const": "helm-app",
-                    "enum": [
-                        "helm-app"
-                    ],
-                    "title": "Type",
-                    "type": "string"
+                    "title": "Type"
                 },
                 "values": {
                     "allOf": [
@@ -508,11 +504,7 @@
                 },
                 "type": {
                     "const": "kafka-sink-connector",
-                    "enum": [
-                        "kafka-sink-connector"
-                    ],
-                    "title": "Type",
-                    "type": "string"
+                    "title": "Type"
                 }
             },
             "required": [
@@ -607,11 +599,7 @@
                 },
                 "type": {
                     "const": "kafka-source-connector",
-                    "enum": [
-                        "kafka-source-connector"
-                    ],
-                    "title": "Type",
-                    "type": "string"
+                    "title": "Type"
                 }
             },
             "required": [
@@ -895,11 +883,7 @@
                 },
                 "type": {
                     "const": "producer-app",
-                    "enum": [
-                        "producer-app"
-                    ],
-                    "title": "Type",
-                    "type": "string"
+                    "title": "Type"
                 },
                 "values": {
                     "allOf": [
@@ -1155,11 +1139,7 @@
                 },
                 "type": {
                     "const": "streams-app",
-                    "enum": [
-                        "streams-app"
-                    ],
-                    "title": "Type",
-                    "type": "string"
+                    "title": "Type"
                 },
                 "values": {
                     "allOf": [
