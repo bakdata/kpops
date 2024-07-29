@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import logging
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterable
 
 from lightkube.config.kubeconfig import KubeConfig
 from lightkube.core.async_client import AsyncClient
@@ -17,18 +17,19 @@ class PVCHandler:
         config = KubeConfig.from_env()
         self._client = AsyncClient(config=config)
 
-    async def list_pvcs(self) -> AsyncIterator[str]:
-        async for pvc in self._client.list(
+    async def list_pvcs(self) -> AsyncIterable[PersistentVolumeClaim]:
+        return self._client.list(
             PersistentVolumeClaim,
             namespace=self.namespace,
             labels={"app": self.app_name},
-        ):
-            if not pvc.metadata or not pvc.metadata.name:
-                continue
-            yield pvc.metadata.name
+        )
 
     async def delete_pvcs(self, dry_run: bool) -> None:
-        pvc_names = [pvc_name async for pvc_name in self.list_pvcs()]
+        pvc_names: list[str] = [
+            pvc.metadata.name
+            async for pvc in await self.list_pvcs()
+            if pvc.metadata and pvc.metadata.name
+        ]
         if not pvc_names:
             log.warning(
                 f"No PVCs found for app '{self.app_name}', in namespace '{self.namespace}'"
@@ -39,7 +40,7 @@ class PVCHandler:
         )
         if dry_run:
             return
-        for pvc in pvc_names:
+        for pvc_name in pvc_names:
             await self._client.delete(
-                PersistentVolumeClaim, pvc, namespace=self.namespace
+                PersistentVolumeClaim, pvc_name, namespace=self.namespace
             )
