@@ -15,14 +15,10 @@ class PVCHandler:
         self.app_name = app_name
         self.namespace = namespace
         config = KubeConfig.from_env()
-        self._client = AsyncClient(config=config)
+        self._client = AsyncClient(config, namespace)
 
     async def list_pvcs(self) -> AsyncIterable[PersistentVolumeClaim]:
-        return self._client.list(
-            PersistentVolumeClaim,
-            namespace=self.namespace,
-            labels={"app": self.app_name},
-        )
+        return self._client.list(PersistentVolumeClaim, labels={"app": self.app_name})
 
     async def delete_pvcs(self, dry_run: bool) -> None:
         pvc_names: list[str] = [
@@ -41,6 +37,4 @@ class PVCHandler:
         if dry_run:
             return
         for pvc_name in pvc_names:
-            await self._client.delete(
-                PersistentVolumeClaim, pvc_name, namespace=self.namespace
-            )
+            await self._client.delete(PersistentVolumeClaim, pvc_name)
