@@ -109,7 +109,7 @@ class Pipeline(BaseModel):
         async def run_parallel_tasks(
             coroutines: list[Coroutine[Any, Any, None]],
         ) -> None:
-            tasks = []
+            tasks: list[asyncio.Task[None]] = []
             for coro in coroutines:
                 tasks.append(asyncio.create_task(coro))
             await asyncio.gather(*tasks)
