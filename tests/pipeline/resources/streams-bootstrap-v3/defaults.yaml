@@ -1,0 +1,41 @@
+pipeline-component:
+  name: ${component.type}
+
+kubernetes-app:
+  namespace: example-namespace
+
+kafka-app-v3:
+  values:
+    kafka:
+      bootstrapServers: ${config.kafka_brokers}
+      schemaRegistryUrl: ${config.schema_registry.url}
+  version: "3.0.0-SNAPSHOT"
+
+producer-app-v3: {} # inherits from kafka-app
+
+streams-app-v3: # inherits from kafka-app
+  values:
+    kafka:
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+  to:
+    topics:
+      ${error_topic_name}:
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete
+
+kafka-sink-connector:
+  config:
+    batch.size: "2000"
+    behavior.on.malformed.documents: "warn"
+    behavior.on.null.values: "delete"
+    connection.compression: "true"
+    connector.class: "io.confluent.connect.elasticsearch.ElasticsearchSinkConnector"
+    key.ignore: "false"
+    linger.ms: "5000"
+    max.buffered.records: "20000"
+    read.timeout.ms: "120000"
+    tasks.max: "1"

@@ -59,20 +59,20 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     @pydantic.field_validator("labeled_output_topics", mode="before")
     @classmethod
     def deserialize_extra_output_topics(
-        cls, extra_output_topics: dict[str, str] | Any
+        cls, labeled_output_topics: dict[str, str] | Any
     ) -> dict[str, KafkaTopic] | Any:
-        if isinstance(extra_output_topics, dict):
+        if isinstance(labeled_output_topics, dict):
             return {
-                role: KafkaTopic(name=topic_name)
-                for role, topic_name in extra_output_topics.items()
+                label: KafkaTopic(name=topic_name)
+                for label, topic_name in labeled_output_topics.items()
             }
-        return extra_output_topics
+        return labeled_output_topics
 
     @pydantic.field_serializer("labeled_output_topics")
     def serialize_extra_output_topics(
-        self, extra_topics: dict[str, KafkaTopic]
+        self, labeled_output_topics: dict[str, KafkaTopic]
     ) -> dict[str, str]:
-        return {role: topic.name for role, topic in extra_topics.items()}
+        return {label: topic.name for label, topic in labeled_output_topics.items()}
 
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @pydantic.model_serializer(mode="wrap", when_used="always")

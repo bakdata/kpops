@@ -153,10 +153,10 @@ kpops_components_inheritance_ref:
     - base-defaults-component
   producer-app-v3:
     bases:
-    - kafka-app
+    - kafka-app-v3
     - streams-bootstrap
     parents:
-    - kafka-app
+    - kafka-app-v3
     - streams-bootstrap
     - helm-app
     - kubernetes-app

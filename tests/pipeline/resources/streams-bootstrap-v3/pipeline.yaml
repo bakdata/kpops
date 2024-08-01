@@ -1,0 +1,52 @@
+- type: my-producer-app
+  values:
+    image: "my-registry/my-producer-image"
+    imageTag: "1.0.0"
+    commandLine:
+      FAKE_ARG: "fake-arg-value"
+    schedule: "30 3/8 * * *"
+
+  to:
+    topics:
+      my-producer-app-output-topic:
+        type: output
+      my-labeled-producer-app-topic-output:
+        role: my-producer-app-output-topic-label
+
+
+- type: my-streams-app
+  values:
+    image: "my-registry/my-streams-app-image"
+    imageTag: "1.0.0"
+    kafka:
+      applicationId: "my-streams-app-id"
+    commandLine:
+      CONVERT_XML: true
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+  from:
+    topics:
+      my-input-topic:
+        type: input
+      my-labeled-input-topic:
+        role: my-input-topic-label
+      my-input-pattern:
+        type: pattern
+    # TODO: not working, for some reason the extra pattern is not serialized as Topic object but as str
+    #  pydantic_core._pydantic_core.PydanticSerializationError:
+    # Error calling function `serialize_labeled_input_topics`: AttributeError: 'str' object has no attribute 'name'
+#      my-labeled-input-pattern:
+#        type: pattern
+#        role: my-input-topic-labeled-pattern
+
+  to:
+    topics:
+      my-output-topic:
+        type: output
+      my-error-topic:
+        type: error
+      my-labeled-topic-output:
+        role: my-output-topic-label

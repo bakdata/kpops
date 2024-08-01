@@ -5,7 +5,6 @@ from pydantic import Field, computed_field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import (
-    KafkaApp,
     KafkaAppCleaner,
 )
 from kpops.components.common.streams_bootstrap import StreamsBootstrap
@@ -15,6 +14,7 @@ from kpops.components.common.topic import (
     TopicConfig,
 )
 from kpops.components.streams_bootstrap_v3.app_type import AppType
+from kpops.components.streams_bootstrap_v3.kafka_app import KafkaAppV3
 from kpops.components.streams_bootstrap_v3.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
 
@@ -33,7 +33,7 @@ class ProducerAppCleaner(KafkaAppCleaner):
         )
 
 
-class ProducerAppV3(KafkaApp, StreamsBootstrap):
+class ProducerAppV3(KafkaAppV3, StreamsBootstrap):
     """Producer component.
 
     This producer holds configuration to use as values for the streams-bootstrap

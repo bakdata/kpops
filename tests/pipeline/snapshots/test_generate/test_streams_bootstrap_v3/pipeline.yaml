@@ -1,0 +1,163 @@
+- _cleaner:
+    name: my-producer-app
+    namespace: example-namespace
+    prefix: resources-streams-bootstrap-v3-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: producer-app-cleaner
+    values:
+      commandLine:
+        FAKE_ARG: fake-arg-value
+      image: my-registry/my-producer-image
+      imageTag: 1.0.0
+      kafka:
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        labeledOutputTopics:
+          my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
+        outputTopic: my-producer-app-output-topic
+        schemaRegistryUrl: http://localhost:8081/
+      schedule: 30 3/8 * * *
+    version: 3.0.0-SNAPSHOT
+  name: my-producer-app
+  namespace: example-namespace
+  prefix: resources-streams-bootstrap-v3-
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      my-labeled-producer-app-topic-output:
+        configs: {}
+        role: my-producer-app-output-topic-label
+      my-producer-app-output-topic:
+        configs: {}
+        type: output
+  type: my-producer-app
+  values:
+    commandLine:
+      FAKE_ARG: fake-arg-value
+    image: my-registry/my-producer-image
+    imageTag: 1.0.0
+    kafka:
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      labeledOutputTopics:
+        my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
+      outputTopic: my-producer-app-output-topic
+      schemaRegistryUrl: http://localhost:8081/
+    schedule: 30 3/8 * * *
+  version: 3.0.0-SNAPSHOT
+- _cleaner:
+    name: my-streams-app
+    namespace: example-namespace
+    prefix: resources-streams-bootstrap-v3-
+    repo_config:
+      repo_auth_flags:
+        insecure_skip_tls_verify: false
+      repository_name: bakdata-streams-bootstrap
+      url: https://bakdata.github.io/streams-bootstrap/
+    suffix: -clean
+    type: streams-app-cleaner
+    values:
+      commandLine:
+        CONVERT_XML: true
+      image: my-registry/my-streams-app-image
+      imageTag: 1.0.0
+      kafka:
+        applicationId: my-streams-app-id
+        bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        config:
+          large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+        errorTopic: resources-streams-bootstrap-v3-my-streams-app-error
+        inputPattern: my-input-pattern
+        inputTopics:
+        - my-input-topic
+        labeledInputTopics:
+          my-input-topic-label:
+          - my-labeled-input-topic
+        labeledOutputTopics:
+          my-output-topic-label: my-labeled-topic-output
+        outputTopic: my-output-topic
+        schemaRegistryUrl: http://localhost:8081/
+      persistence:
+        enabled: false
+      resources:
+        limits:
+          memory: 2G
+        requests:
+          memory: 2G
+      statefulSet: false
+    version: 3.0.0-SNAPSHOT
+  from:
+    components: {}
+    topics:
+      my-input-pattern:
+        type: pattern
+      my-input-topic:
+        type: input
+      my-labeled-input-topic:
+        role: my-input-topic-label
+  name: my-streams-app
+  namespace: example-namespace
+  prefix: resources-streams-bootstrap-v3-
+  repo_config:
+    repo_auth_flags:
+      insecure_skip_tls_verify: false
+    repository_name: bakdata-streams-bootstrap
+    url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      my-error-topic:
+        configs: {}
+        type: error
+      my-labeled-topic-output:
+        configs: {}
+        role: my-output-topic-label
+      my-output-topic:
+        configs: {}
+        type: output
+      resources-streams-bootstrap-v3-my-streams-app-error:
+        configs:
+          cleanup.policy: compact,delete
+        partitions_count: 1
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+  type: my-streams-app
+  values:
+    commandLine:
+      CONVERT_XML: true
+    image: my-registry/my-streams-app-image
+    imageTag: 1.0.0
+    kafka:
+      applicationId: my-streams-app-id
+      bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+      errorTopic: resources-streams-bootstrap-v3-my-streams-app-error
+      inputPattern: my-input-pattern
+      inputTopics:
+      - my-input-topic
+      labeledInputTopics:
+        my-input-topic-label:
+        - my-labeled-input-topic
+      labeledOutputTopics:
+        my-output-topic-label: my-labeled-topic-output
+      outputTopic: my-output-topic
+      schemaRegistryUrl: http://localhost:8081/
+    persistence:
+      enabled: false
+    resources:
+      limits:
+        memory: 2G
+      requests:
+        memory: 2G
+    statefulSet: false
+  version: 3.0.0-SNAPSHOT
+
