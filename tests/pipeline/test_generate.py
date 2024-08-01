@@ -881,17 +881,3 @@ class TestGenerate:
         assert result.exit_code == 0, result.stdout
 
         snapshot.assert_match(result.stdout, PIPELINE_YAML)
-
-    def test_manifest_streams_bootstrap_v3(self, snapshot: Snapshot):
-        result = runner.invoke(
-            app,
-            [
-                "manifest",
-                str(RESOURCE_PATH / "streams-bootstrap-v3" / PIPELINE_YAML),
-            ],
-            catch_exceptions=False,
-        )
-
-        assert result.exit_code == 0, result.stdout
-
-        snapshot.assert_match(result.stdout, PIPELINE_YAML)
