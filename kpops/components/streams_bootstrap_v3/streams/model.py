@@ -71,14 +71,14 @@ class StreamsConfig(KafkaStreamsConfig):
     @pydantic.field_validator("labeled_input_topics", mode="before")
     @classmethod
     def deserialize_labeled_input_topics(
-        cls, extra_input_topics: dict[str, str] | Any
+        cls, labeled_input_topics: dict[str, str] | Any
     ) -> dict[str, list[KafkaTopic]] | Any:
-        if isinstance(extra_input_topics, dict):
+        if isinstance(labeled_input_topics, dict):
             return {
                 label: [KafkaTopic(name=topic_name) for topic_name in topics]
-                for label, topics in extra_input_topics.items()
+                for label, topics in labeled_input_topics.items()
             }
-        return extra_input_topics
+        return labeled_input_topics
 
     @pydantic.field_serializer("input_topics")
     def serialize_topics(self, topics: list[KafkaTopic]) -> list[str]:
@@ -86,11 +86,11 @@ class StreamsConfig(KafkaStreamsConfig):
 
     @pydantic.field_serializer("labeled_input_patterns")
     def serialize_labeled_input_topics(
-        self, extra_topics: dict[str, list[KafkaTopic]]
+        self, labeled_input_topics: dict[str, list[KafkaTopic]]
     ) -> dict[str, list[str]]:
         return {
             label: self.serialize_topics(topics)
-            for label, topics in extra_topics.items()
+            for label, topics in labeled_input_topics.items()
         }
 
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:

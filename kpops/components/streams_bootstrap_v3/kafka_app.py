@@ -58,7 +58,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
 
     @pydantic.field_validator("labeled_output_topics", mode="before")
     @classmethod
-    def deserialize_extra_output_topics(
+    def deserialize_labeled_output_topics(
         cls, labeled_output_topics: dict[str, str] | Any
     ) -> dict[str, KafkaTopic] | Any:
         if isinstance(labeled_output_topics, dict):
@@ -69,7 +69,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
         return labeled_output_topics
 
     @pydantic.field_serializer("labeled_output_topics")
-    def serialize_extra_output_topics(
+    def serialize_labeled_output_topics(
         self, labeled_output_topics: dict[str, KafkaTopic]
     ) -> dict[str, str]:
         return {label: topic.name for label, topic in labeled_output_topics.items()}
