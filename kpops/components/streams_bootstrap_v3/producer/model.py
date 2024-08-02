@@ -18,7 +18,7 @@ class ProducerAppValues(StreamsBootstrapV3Values):
     """
 
     kafka: ProducerConfig = Field(
-        default=..., description=describe_attr("streams", __doc__)
+        default=..., description=describe_attr("kafka", __doc__)
     )
 
     model_config = ConfigDict(extra="allow")

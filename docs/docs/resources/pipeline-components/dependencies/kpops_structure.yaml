@@ -13,7 +13,6 @@ kpops_components_fields:
   - prefix
   - from_
   - to
-  - values
   kafka-connector:
   - name
   - prefix
@@ -156,6 +155,7 @@ kpops_components_inheritance_ref:
     - streams-bootstrap-v3
     parents:
     - streams-bootstrap-v3
+    - kafka-app
     - helm-app
     - kubernetes-app
     - pipeline-component
@@ -176,6 +176,7 @@ kpops_components_inheritance_ref:
     - streams-bootstrap-v3
     parents:
     - streams-bootstrap-v3
+    - kafka-app
     - helm-app
     - kubernetes-app
     - pipeline-component

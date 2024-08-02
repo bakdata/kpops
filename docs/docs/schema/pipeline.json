@@ -1511,7 +1511,7 @@
                             "$ref": "#/$defs/ProducerConfig"
                         }
                     ],
-                    "description": ""
+                    "description": "Kafka Streams settings"
                 },
                 "nameOverride": {
                     "anyOf": [
@@ -1642,7 +1642,7 @@
                             "$ref": "#/$defs/kpops__components__streams_bootstrap_v3__streams__model__StreamsConfig"
                         }
                     ],
-                    "description": ""
+                    "description": "streams-bootstrap kafka section"
                 },
                 "nameOverride": {
                     "anyOf": [

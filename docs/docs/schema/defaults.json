@@ -257,54 +257,12 @@
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
-                },
-                "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/KafkaAppValues"
-                        }
-                    ],
-                    "description": "Application-specific settings"
                 }
             },
             "required": [
-                "name",
-                "values"
+                "name"
             ],
             "title": "KafkaApp",
-            "type": "object"
-        },
-        "KafkaAppValues": {
-            "additionalProperties": true,
-            "description": "Settings specific to Kafka Apps.",
-            "properties": {
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "maxLength": 63,
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
-                },
-                "streams": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/KafkaStreamsConfig"
-                        }
-                    ],
-                    "description": "Kafka streams config"
-                }
-            },
-            "required": [
-                "streams"
-            ],
-            "title": "KafkaAppValues",
             "type": "object"
         },
         "KafkaConnector": {
@@ -608,56 +566,6 @@
                 "type"
             ],
             "title": "KafkaSourceConnector",
-            "type": "object"
-        },
-        "KafkaStreamsConfig": {
-            "additionalProperties": true,
-            "description": "Kafka Streams config.",
-            "properties": {
-                "brokers": {
-                    "description": "Brokers",
-                    "title": "Brokers",
-                    "type": "string"
-                },
-                "extraOutputTopics": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "default": {},
-                    "description": "Extra output topics",
-                    "title": "Extraoutputtopics",
-                    "type": "object"
-                },
-                "outputTopic": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Output topic"
-                },
-                "schema_registry_url": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
-                }
-            },
-            "required": [
-                "brokers"
-            ],
-            "title": "KafkaStreamsConfig",
             "type": "object"
         },
         "KubernetesApp": {
@@ -1965,7 +1873,7 @@
                             "$ref": "#/$defs/ProducerConfig"
                         }
                     ],
-                    "description": ""
+                    "description": "Kafka Streams settings"
                 },
                 "nameOverride": {
                     "anyOf": [
@@ -2096,7 +2004,7 @@
                             "$ref": "#/$defs/kpops__components__streams_bootstrap_v3__streams__model__StreamsConfig"
                         }
                     ],
-                    "description": ""
+                    "description": "streams-bootstrap kafka section"
                 },
                 "nameOverride": {
                     "anyOf": [

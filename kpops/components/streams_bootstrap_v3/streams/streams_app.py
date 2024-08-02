@@ -6,11 +6,11 @@ from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
+from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap_v3.app_type import AppType
 from kpops.components.streams_bootstrap_v3.base import (
     StreamsBootstrapV3,
-    StreamsBootstrapV3Cleaner,
 )
 from kpops.components.streams_bootstrap_v3.streams.model import (
     StreamsAppValues,
@@ -22,7 +22,7 @@ log = logging.getLogger("StreamsApp")
 STREAMS_BOOTSTRAP_V3 = "3.0.0"
 
 
-class StreamsAppCleaner(StreamsBootstrapV3Cleaner):
+class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrapV3):
     from_: None = None
     to: None = None
     values: StreamsAppValues

@@ -6,14 +6,11 @@ from typing import TYPE_CHECKING, Any
 
 import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
-from typing_extensions import override
 
-from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
-from kpops.components.base_components.cleaner import Cleaner
+from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
-from kpops.config import get_config
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
     CamelCaseConfigModel,
@@ -53,10 +50,8 @@ class StreamsBootstrapV3Values(HelmAppValues):
         description=describe_attr("image_tag", __doc__),
     )
 
-    kafka: KafkaConfig = Field(default=..., description=describe_attr("kafka", __doc__))
 
-
-class StreamsBootstrapV3(HelmApp, ABC):
+class StreamsBootstrapV3(KafkaApp, HelmApp, ABC):
     """Base for components with a streams-bootstrap Helm chart.
 
     :param values: streams-bootstrap Helm values
@@ -80,17 +75,6 @@ class StreamsBootstrapV3(HelmApp, ABC):
         default=STREAMS_BOOTSTRAP_VERSION,
         description=describe_attr("version", __doc__),
     )
-
-    @override
-    async def deploy(self, dry_run: bool) -> None:
-        if self.to:
-            for topic in self.to.kafka_topics:
-                await get_handlers().topic_handler.create_topic(topic, dry_run=dry_run)
-
-            if schema_handler := get_handlers().schema_handler:
-                await schema_handler.submit_schemas(to_section=self.to, dry_run=dry_run)
-
-        await super().deploy(dry_run)
 
     @pydantic.model_validator(mode="after")
     def warning_for_latest_image_tag(self) -> Self:
@@ -159,31 +143,3 @@ class KafkaConfig(CamelCaseConfigModel, DescConfigModel):
         return exclude_defaults(
             self, exclude_by_value(default_serialize_handler(self), None)
         )
-
-
-class StreamsBootstrapV3Cleaner(Cleaner, StreamsBootstrapV3, ABC):
-    """Helm app for resetting and cleaning a streams-bootstrap app."""
-
-    from_: None = None
-    to: None = None
-
-    @property
-    @override
-    def helm_chart(self) -> str:
-        raise NotImplementedError
-
-    @override
-    async def clean(self, dry_run: bool) -> None:
-        """Clean an app using a cleanup job.
-
-        :param dry_run: Dry run command
-        """
-        log.info(f"Uninstall old cleanup job for {self.helm_release_name}")
-        await self.destroy(dry_run)
-
-        log.info(f"Init cleanup job for {self.helm_release_name}")
-        await self.deploy(dry_run)
-
-        if not get_config().retain_clean_jobs:
-            log.info(f"Uninstall cleanup job for {self.helm_release_name}")
-            await self.destroy(dry_run)

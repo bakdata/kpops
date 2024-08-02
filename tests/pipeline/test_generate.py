@@ -874,6 +874,7 @@ class TestGenerate:
             [
                 "generate",
                 str(RESOURCE_PATH / "streams-bootstrap-v3" / PIPELINE_YAML),
+                "--verbose",
             ],
             catch_exceptions=False,
         )

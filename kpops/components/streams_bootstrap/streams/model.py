@@ -7,7 +7,6 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from kpops.api.exception import ValidationError
 from kpops.components.base_components.kafka_app import (
-    KafkaAppValues,
     KafkaStreamsConfig,
 )
 from kpops.components.common.streams_bootstrap import StreamsBootstrapValues
@@ -240,7 +239,7 @@ class PersistenceConfig(BaseModel):
         return self
 
 
-class StreamsAppValues(StreamsBootstrapValues, KafkaAppValues):
+class StreamsAppValues(StreamsBootstrapValues):
     """streams-bootstrap app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.

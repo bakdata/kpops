@@ -4,9 +4,7 @@ from functools import cached_property
 from pydantic import Field, computed_field
 from typing_extensions import override
 
-from kpops.components.base_components.kafka_app import (
-    KafkaAppCleaner,
-)
+from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
@@ -23,7 +21,7 @@ log = logging.getLogger("ProducerApp")
 STREAMS_BOOTSTRAP_V3 = "3.0.0"
 
 
-class ProducerAppCleaner(KafkaAppCleaner):
+class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrapV3):
     values: ProducerAppValues
 
     @property

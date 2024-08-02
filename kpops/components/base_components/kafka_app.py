@@ -10,9 +10,7 @@ from typing_extensions import override
 
 from kpops.component_handlers import get_handlers
 from kpops.components.base_components.cleaner import Cleaner
-from kpops.components.base_components.helm_app import HelmAppValues
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.components.common.streams_bootstrap import StreamsBootstrap
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.config import get_config
 from kpops.utils.docstring import describe_attr
@@ -84,18 +82,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
         )
 
 
-class KafkaAppValues(HelmAppValues):
-    """Settings specific to Kafka Apps.
-
-    :param streams: Kafka streams config
-    """
-
-    streams: KafkaStreamsConfig = Field(
-        default=..., description=describe_attr("streams", __doc__)
-    )
-
-
-class KafkaAppCleaner(Cleaner, StreamsBootstrap, ABC):
+class KafkaAppCleaner(Cleaner, ABC):
     """Helm app for resetting and cleaning a streams-bootstrap app."""
 
     from_: None = None
@@ -128,13 +115,7 @@ class KafkaApp(PipelineComponent, ABC):
 
     Producer or streaming apps should inherit from this class.
 
-    :param values: Application-specific settings
     """
-
-    values: KafkaAppValues = Field(
-        default=...,
-        description=describe_attr("values", __doc__),
-    )
 
     @override
     async def deploy(self, dry_run: bool) -> None:

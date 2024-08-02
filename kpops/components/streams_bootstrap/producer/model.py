@@ -1,7 +1,6 @@
 from pydantic import ConfigDict, Field
 
 from kpops.components.base_components.kafka_app import (
-    KafkaAppValues,
     KafkaStreamsConfig,
 )
 from kpops.components.common.streams_bootstrap import StreamsBootstrapValues
@@ -12,7 +11,7 @@ class ProducerStreamsConfig(KafkaStreamsConfig):
     """Kafka Streams settings specific to Producer."""
 
 
-class ProducerAppValues(StreamsBootstrapValues, KafkaAppValues):
+class ProducerAppValues(StreamsBootstrapValues):
     """Settings specific to producers.
 
     :param streams: Kafka Streams settings
