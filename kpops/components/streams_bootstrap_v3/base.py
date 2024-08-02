@@ -8,6 +8,7 @@ import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
 from typing_extensions import override
 
+from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components.cleaner import Cleaner
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
@@ -79,6 +80,17 @@ class StreamsBootstrapV3(HelmApp, ABC):
         default=STREAMS_BOOTSTRAP_VERSION,
         description=describe_attr("version", __doc__),
     )
+
+    @override
+    async def deploy(self, dry_run: bool) -> None:
+        if self.to:
+            for topic in self.to.kafka_topics:
+                await get_handlers().topic_handler.create_topic(topic, dry_run=dry_run)
+
+            if schema_handler := get_handlers().schema_handler:
+                await schema_handler.submit_schemas(to_section=self.to, dry_run=dry_run)
+
+        await super().deploy(dry_run)
 
     @pydantic.model_validator(mode="after")
     def warning_for_latest_image_tag(self) -> Self:
