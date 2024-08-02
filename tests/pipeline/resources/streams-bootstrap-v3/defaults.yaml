@@ -4,7 +4,7 @@ pipeline-component:
 kubernetes-app:
   namespace: example-namespace
 
-kafka-app-v3:
+streams-bootstrap-v3:
   values:
     kafka:
       bootstrapServers: ${config.kafka_brokers}

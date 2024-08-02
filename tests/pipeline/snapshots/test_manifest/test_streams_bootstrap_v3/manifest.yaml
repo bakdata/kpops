@@ -113,6 +113,8 @@ spec:
           value: my-output-topic-label=my-labeled-topic-output,
         - name: APP_LABELED_INPUT_TOPICS
           value: my-input-topic-label=my-labeled-input-topic,
+        - name: APP_LABELED_INPUT_PATTERNS
+          value: my-input-topic-labeled-pattern=my-labeled-input-pattern,
         - name: APP_APPLICATION_ID
           value: my-streams-app-id
         - name: APP_CONVERT_XML

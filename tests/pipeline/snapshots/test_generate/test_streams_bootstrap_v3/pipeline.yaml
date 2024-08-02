@@ -78,6 +78,8 @@
         inputPattern: my-input-pattern
         inputTopics:
         - my-input-topic
+        labeledInputPatterns:
+          my-input-topic-labeled-pattern: my-labeled-input-pattern
         labeledInputTopics:
           my-input-topic-label:
           - my-labeled-input-topic
@@ -101,6 +103,9 @@
         type: pattern
       my-input-topic:
         type: input
+      my-labeled-input-pattern:
+        role: my-input-topic-labeled-pattern
+        type: pattern
       my-labeled-input-topic:
         role: my-input-topic-label
   name: my-streams-app
@@ -144,6 +149,8 @@
       inputPattern: my-input-pattern
       inputTopics:
       - my-input-topic
+      labeledInputPatterns:
+        my-input-topic-labeled-pattern: my-labeled-input-pattern
       labeledInputTopics:
         my-input-topic-label:
         - my-labeled-input-topic

@@ -6,11 +6,10 @@ import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from kpops.api.exception import ValidationError
-from kpops.components.common.streams_bootstrap import StreamsBootstrapValues
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
-from kpops.components.streams_bootstrap_v3.kafka_app import (
-    KafkaAppValues,
-    KafkaStreamsConfig,
+from kpops.components.streams_bootstrap_v3.base import (
+    KafkaConfig,
+    StreamsBootstrapV3Values,
 )
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
@@ -19,7 +18,7 @@ from kpops.utils.pydantic import (
 )
 
 
-class StreamsConfig(KafkaStreamsConfig):
+class StreamsConfig(KafkaConfig):
     """Streams Bootstrap kafka section.
 
     :param application_id: Unique application ID for Kafka Streams. Required for auto-scaling
@@ -44,10 +43,10 @@ class StreamsConfig(KafkaStreamsConfig):
         default=None, description=describe_attr("input_pattern", __doc__)
     )
     labeled_input_topics: dict[str, list[KafkaTopicStr]] = Field(
-        default={}, description=describe_attr("extra_input_topics", __doc__)
+        default={}, description=describe_attr("labeled_input_topics", __doc__)
     )
     labeled_input_patterns: dict[str, str] = Field(
-        default={}, description=describe_attr("extra_input_patterns", __doc__)
+        default={}, description=describe_attr("labeled_input_patterns", __doc__)
     )
     error_topic: KafkaTopicStr | None = Field(
         default=None, description=describe_attr("error_topic", __doc__)
@@ -71,7 +70,7 @@ class StreamsConfig(KafkaStreamsConfig):
     @pydantic.field_validator("labeled_input_topics", mode="before")
     @classmethod
     def deserialize_labeled_input_topics(
-        cls, labeled_input_topics: dict[str, str] | Any
+        cls, labeled_input_topics: Any
     ) -> dict[str, list[KafkaTopic]] | Any:
         if isinstance(labeled_input_topics, dict):
             return {
@@ -81,10 +80,10 @@ class StreamsConfig(KafkaStreamsConfig):
         return labeled_input_topics
 
     @pydantic.field_serializer("input_topics")
-    def serialize_topics(self, topics: list[KafkaTopic]) -> list[str]:
-        return [topic.name for topic in topics]
+    def serialize_topics(self, input_topics: list[KafkaTopic]) -> list[str]:
+        return [topic.name for topic in input_topics]
 
-    @pydantic.field_serializer("labeled_input_patterns")
+    @pydantic.field_serializer("labeled_input_topics")
     def serialize_labeled_input_topics(
         self, labeled_input_topics: dict[str, list[KafkaTopic]]
     ) -> dict[str, list[str]]:
@@ -239,7 +238,7 @@ class PersistenceConfig(BaseModel):
         return self
 
 
-class StreamsAppValues(StreamsBootstrapValues, KafkaAppValues):
+class StreamsAppValues(StreamsBootstrapV3Values):
     """streams-bootstrap app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.

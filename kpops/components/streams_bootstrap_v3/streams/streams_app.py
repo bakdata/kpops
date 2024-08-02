@@ -6,10 +6,12 @@ from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
-from kpops.components.common.streams_bootstrap import StreamsBootstrap
 from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap_v3.app_type import AppType
-from kpops.components.streams_bootstrap_v3.kafka_app import KafkaAppCleaner, KafkaAppV3
+from kpops.components.streams_bootstrap_v3.base import (
+    StreamsBootstrapV3,
+    StreamsBootstrapV3Cleaner,
+)
 from kpops.components.streams_bootstrap_v3.streams.model import (
     StreamsAppValues,
 )
@@ -20,7 +22,7 @@ log = logging.getLogger("StreamsApp")
 STREAMS_BOOTSTRAP_V3 = "3.0.0"
 
 
-class StreamsAppCleaner(KafkaAppCleaner):
+class StreamsAppCleaner(StreamsBootstrapV3Cleaner):
     from_: None = None
     to: None = None
     values: StreamsAppValues
@@ -54,7 +56,7 @@ class StreamsAppCleaner(KafkaAppCleaner):
             await pvc_handler.delete_pvcs()
 
 
-class StreamsAppV3(KafkaAppV3, StreamsBootstrap):
+class StreamsAppV3(StreamsBootstrapV3):
     """StreamsApp component that configures a streams-bootstrap app.
 
     :param values: streams-bootstrap Helm values

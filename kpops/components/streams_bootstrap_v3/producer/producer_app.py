@@ -7,14 +7,15 @@ from typing_extensions import override
 from kpops.components.base_components.kafka_app import (
     KafkaAppCleaner,
 )
-from kpops.components.common.streams_bootstrap import StreamsBootstrap
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
 )
 from kpops.components.streams_bootstrap_v3.app_type import AppType
-from kpops.components.streams_bootstrap_v3.kafka_app import KafkaAppV3
+from kpops.components.streams_bootstrap_v3.base import (
+    StreamsBootstrapV3,
+)
 from kpops.components.streams_bootstrap_v3.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
 
@@ -33,7 +34,7 @@ class ProducerAppCleaner(KafkaAppCleaner):
         )
 
 
-class ProducerAppV3(KafkaAppV3, StreamsBootstrap):
+class ProducerAppV3(StreamsBootstrapV3):
     """Producer component.
 
     This producer holds configuration to use as values for the streams-bootstrap

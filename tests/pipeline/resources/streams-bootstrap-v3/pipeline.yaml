@@ -35,12 +35,9 @@
         role: my-input-topic-label
       my-input-pattern:
         type: pattern
-    # TODO: not working, for some reason the extra pattern is not serialized as Topic object but as str
-    #  pydantic_core._pydantic_core.PydanticSerializationError:
-    # Error calling function `serialize_labeled_input_topics`: AttributeError: 'str' object has no attribute 'name'
-#      my-labeled-input-pattern:
-#        type: pattern
-#        role: my-input-topic-labeled-pattern
+      my-labeled-input-pattern:
+        type: pattern
+        role: my-input-topic-labeled-pattern
 
   to:
     topics:
