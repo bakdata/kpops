@@ -675,6 +675,106 @@
             "title": "ProducerAppV3",
             "type": "object"
         },
+        "ProducerConfig": {
+            "additionalProperties": true,
+            "description": "Kafka Streams settings specific to Producer.",
+            "properties": {
+                "bootstrapServers": {
+                    "description": "Brokers",
+                    "title": "Bootstrapservers",
+                    "type": "string"
+                },
+                "labeledOutputTopics": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra output topics",
+                    "title": "Labeledoutputtopics",
+                    "type": "object"
+                },
+                "outputTopic": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Output topic"
+                },
+                "schema_registry_url": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "URL of the schema registry",
+                    "title": "Schema Registry Url"
+                }
+            },
+            "required": [
+                "bootstrapServers"
+            ],
+            "title": "ProducerConfig",
+            "type": "object"
+        },
+        "ProducerStreamsConfig": {
+            "additionalProperties": true,
+            "description": "Kafka Streams settings specific to Producer.",
+            "properties": {
+                "brokers": {
+                    "description": "Brokers",
+                    "title": "Brokers",
+                    "type": "string"
+                },
+                "extraOutputTopics": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra output topics",
+                    "title": "Extraoutputtopics",
+                    "type": "object"
+                },
+                "outputTopic": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Output topic"
+                },
+                "schema_registry_url": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "URL of the schema registry",
+                    "title": "Schema Registry Url"
+                }
+            },
+            "required": [
+                "brokers"
+            ],
+            "title": "ProducerStreamsConfig",
+            "type": "object"
+        },
         "RepoAuthFlags": {
             "description": "Authorisation-related flags for `helm repo`.",
             "properties": {
@@ -1095,7 +1195,7 @@
                 "streams": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap__producer__model__ProducerStreamsConfig"
+                            "$ref": "#/$defs/ProducerStreamsConfig"
                         }
                     ],
                     "description": "Kafka Streams settings"
@@ -1105,56 +1205,6 @@
                 "streams"
             ],
             "title": "ProducerAppValues",
-            "type": "object"
-        },
-        "kpops__components__streams_bootstrap__producer__model__ProducerStreamsConfig": {
-            "additionalProperties": true,
-            "description": "Kafka Streams settings specific to Producer.",
-            "properties": {
-                "brokers": {
-                    "description": "Brokers",
-                    "title": "Brokers",
-                    "type": "string"
-                },
-                "extraOutputTopics": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "default": {},
-                    "description": "Extra output topics",
-                    "title": "Extraoutputtopics",
-                    "type": "object"
-                },
-                "outputTopic": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Output topic"
-                },
-                "schema_registry_url": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
-                }
-            },
-            "required": [
-                "brokers"
-            ],
-            "title": "ProducerStreamsConfig",
             "type": "object"
         },
         "kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling": {
@@ -1458,7 +1508,7 @@
                 "kafka": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v3__producer__model__ProducerStreamsConfig"
+                            "$ref": "#/$defs/ProducerConfig"
                         }
                     ],
                     "description": ""
@@ -1482,56 +1532,6 @@
                 "kafka"
             ],
             "title": "ProducerAppValues",
-            "type": "object"
-        },
-        "kpops__components__streams_bootstrap_v3__producer__model__ProducerStreamsConfig": {
-            "additionalProperties": true,
-            "description": "Kafka Streams settings specific to Producer.",
-            "properties": {
-                "bootstrapServers": {
-                    "description": "Brokers",
-                    "title": "Bootstrapservers",
-                    "type": "string"
-                },
-                "labeledOutputTopics": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "default": {},
-                    "description": "Extra output topics",
-                    "title": "Labeledoutputtopics",
-                    "type": "object"
-                },
-                "outputTopic": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Output topic"
-                },
-                "schema_registry_url": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
-                }
-            },
-            "required": [
-                "bootstrapServers"
-            ],
-            "title": "ProducerStreamsConfig",
             "type": "object"
         },
         "kpops__components__streams_bootstrap_v3__streams__model__StreamsAppAutoScaling": {
@@ -1764,7 +1764,7 @@
                         "type": "string"
                     },
                     "default": {},
-                    "description": "",
+                    "description": "Extra input patterns",
                     "title": "Labeledinputpatterns",
                     "type": "object"
                 },
@@ -1776,7 +1776,7 @@
                         "type": "array"
                     },
                     "default": {},
-                    "description": "",
+                    "description": "Extra input topics",
                     "title": "Labeledinputtopics",
                     "type": "object"
                 },

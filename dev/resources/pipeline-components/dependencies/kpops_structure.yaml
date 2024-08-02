@@ -153,11 +153,9 @@ kpops_components_inheritance_ref:
     - base-defaults-component
   producer-app-v3:
     bases:
-    - kafka-app-v3
-    - streams-bootstrap
+    - streams-bootstrap-v3
     parents:
-    - kafka-app-v3
-    - streams-bootstrap
+    - streams-bootstrap-v3
     - helm-app
     - kubernetes-app
     - pipeline-component
@@ -175,11 +173,9 @@ kpops_components_inheritance_ref:
     - base-defaults-component
   streams-app-v3:
     bases:
-    - kafka-app-v3
-    - streams-bootstrap
+    - streams-bootstrap-v3
     parents:
-    - kafka-app-v3
-    - streams-bootstrap
+    - streams-bootstrap-v3
     - helm-app
     - kubernetes-app
     - pipeline-component
