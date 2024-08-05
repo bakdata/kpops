@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import logging
+import re
 from abc import ABC
 from typing import TYPE_CHECKING, Any
 
@@ -31,6 +32,8 @@ STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     url="https://bakdata.github.io/streams-bootstrap/",
 )
 STREAMS_BOOTSTRAP_VERSION = "3.0.0"
+STREAMS_BOOTSTRAP_VERSION_PATTERN = r"^(\d+)\.(\d+)\.(\d+)(-[a-zA-Z]+(\.[a-zA-Z]+)?)?$"
+COMPILED_VERSION_PATTERN = re.compile(STREAMS_BOOTSTRAP_VERSION_PATTERN)
 
 # Source of the pattern: https://kubernetes.io/docs/concepts/containers/images/#image-names
 IMAGE_TAG_PATTERN = r"^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$"
@@ -42,12 +45,18 @@ class StreamsBootstrapV3Values(HelmAppValues):
     """Base value class for all streams bootstrap related components.
 
     :param image_tag: Docker image tag of the streams-bootstrap app.
+    :param kafka: Kafka configuration for the streams-bootstrap app.
     """
 
     image_tag: str = Field(
         default="latest",
         pattern=IMAGE_TAG_PATTERN,
         description=describe_attr("image_tag", __doc__),
+    )
+
+    kafka: KafkaConfig = Field(
+        default=...,
+        description=describe_attr("kafka", __doc__),
     )
 
 
@@ -70,11 +79,28 @@ class StreamsBootstrapV3(KafkaApp, HelmApp, ABC):
         description=describe_attr("repo_config", __doc__),
     )
 
-    # TODO: validate that version is higher than 3.x.x
-    version: str | None = Field(
+    version: str = Field(
         default=STREAMS_BOOTSTRAP_VERSION,
+        pattern=STREAMS_BOOTSTRAP_VERSION_PATTERN,
         description=describe_attr("version", __doc__),
     )
+
+    @pydantic.model_validator(mode="after")
+    def version_validator(self) -> Self:
+        pattern_match = COMPILED_VERSION_PATTERN.match(self.version)
+
+        if not pattern_match:
+            msg = f"Invalid version format: {self.version}"
+            raise ValueError(msg)
+
+        major, minor, patch, suffix, _ = pattern_match.groups()
+        major = int(major)
+
+        if major < 3:
+            msg = f"The streams bootstrap version '{self.version}' must be at least 3.0.0."
+            raise ValueError(msg)
+
+        return self
 
     @pydantic.model_validator(mode="after")
     def warning_for_latest_image_tag(self) -> Self:

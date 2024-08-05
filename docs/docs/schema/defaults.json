@@ -1900,6 +1900,15 @@
             "additionalProperties": true,
             "description": "Kubernetes Event-driven Autoscaling config.",
             "properties": {
+                "additionalTriggers": {
+                    "default": [],
+                    "description": "List of additional KEDA triggers, see https://keda.sh/docs/latest/scalers/",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Additionaltriggers",
+                    "type": "array"
+                },
                 "cooldownPeriod": {
                     "default": 300,
                     "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
@@ -1908,7 +1917,7 @@
                 },
                 "enabled": {
                     "default": false,
-                    "description": "",
+                    "description": "Whether to enable auto-scaling using KEDA.",
                     "title": "Enabled",
                     "type": "boolean"
                 },
@@ -1924,6 +1933,15 @@
                     "default": null,
                     "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount",
                     "title": "Idle replica count"
+                },
+                "internalTopics": {
+                    "default": [],
+                    "description": "List of auto-generated Kafka Streams topics used by the streams app",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Internaltopics",
+                    "type": "array"
                 },
                 "lagThreshold": {
                     "anyOf": [
@@ -1964,7 +1982,7 @@
                 },
                 "topics": {
                     "default": [],
-                    "description": "List of auto-generated Kafka Streams topics used by the streams app.",
+                    "description": "List of topics used by the streams app",
                     "items": {
                         "type": "string"
                     },
