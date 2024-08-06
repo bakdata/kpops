@@ -25,6 +25,8 @@ spec:
               value: APP_
             - name: APP_BOOTSTRAP_SERVERS
               value: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+            - name: APP_SCHEMA_REGISTRY_URL
+              value: http://localhost:8081/
             - name: APP_OUTPUT_TOPIC
               value: my-producer-app-output-topic
             - name: APP_LABELED_OUTPUT_TOPICS
@@ -101,6 +103,8 @@ spec:
           value: 'true'
         - name: APP_BOOTSTRAP_SERVERS
           value: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        - name: APP_SCHEMA_REGISTRY_URL
+          value: http://localhost:8081/
         - name: APP_INPUT_TOPICS
           value: my-input-topic
         - name: APP_INPUT_PATTERN
