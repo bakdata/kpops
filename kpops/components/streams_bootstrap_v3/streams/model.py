@@ -7,7 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from kpops.api.exception import ValidationError
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
-from kpops.components.streams_bootstrap_v3.base import (
+from kpops.components.streams_bootstrap_v3.model import (
     KafkaConfig,
     StreamsBootstrapV3Values,
 )
@@ -202,18 +202,6 @@ class StreamsAppAutoScaling(CamelCaseConfigModel, DescConfigModel):
     )
     model_config = ConfigDict(extra="allow")
 
-    @model_validator(mode="after")
-    def validate_mandatory_fields_are_set(
-        self: StreamsAppAutoScaling,
-    ) -> StreamsAppAutoScaling:  # TODO: typing.Self for Python 3.11+
-        if self.enabled and self.lag_threshold is None:
-            msg = (
-                "If app.autoscaling.enabled is set to true, "
-                "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
-            )
-            raise ValidationError(msg)
-        return self
-
 
 class PersistenceConfig(BaseModel):
     """streams-bootstrap persistence configurations.
@@ -275,3 +263,22 @@ class StreamsAppValues(StreamsBootstrapV3Values):
         description=describe_attr("persistence", __doc__),
     )
     model_config = ConfigDict(extra="allow")
+
+    @model_validator(mode="after")
+    def validate_mandatory_fields_are_set(
+        self: StreamsAppValues,
+    ) -> StreamsAppValues:  # TODO: typing.Self for Python 3.11+
+        if (
+            self.autoscaling
+            and self.autoscaling.enabled
+            and (
+                self.kafka.application_id is None
+                or self.autoscaling.lag_threshold is None
+            )
+        ):
+            msg = (
+                "If values.autoscaling.enabled is set to true, "
+                "the fields values.kafka.application_id and values.autoscaling.lag_threshold should be set."
+            )
+            raise ValidationError(msg)
+        return self
