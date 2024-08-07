@@ -8,9 +8,7 @@ from pytest_mock import MockerFixture
 from kpops.api.exception import ValidationError
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.model import (
-    HelmUpgradeInstallFlags,
-)
+from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
@@ -95,12 +93,6 @@ class TestStreamsApp:
                 },
             },
         )
-
-    @pytest.fixture()
-    def dry_run_handler_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.helm_app.DryRunHandler"
-        ).return_value
 
     @pytest.fixture(autouse=True)
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
