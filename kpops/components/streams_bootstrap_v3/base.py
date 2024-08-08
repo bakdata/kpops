@@ -57,22 +57,23 @@ class StreamsBootstrapV3(KafkaApp, HelmApp, ABC):
         description=describe_attr("version", __doc__),
     )
 
-    @pydantic.model_validator(mode="after")
-    def version_validator(self) -> Self:
-        pattern_match = COMPILED_VERSION_PATTERN.match(self.version)
+    @pydantic.field_validator("version", mode="after")
+    @classmethod
+    def version_validator(cls, version: str) -> str:
+        pattern_match = COMPILED_VERSION_PATTERN.match(version)
 
         if not pattern_match:
-            msg = f"Invalid version format: {self.version}"
+            msg = f"Invalid version format: {version}"
             raise ValueError(msg)
 
         major, minor, patch, suffix, _ = pattern_match.groups()
         major = int(major)
 
         if major < 3:
-            msg = f"When using the streams bootstrap v3 component your version ('{self.version}') must be at least 3.0.0."
+            msg = f"When using the streams bootstrap v3 component your version ('{version}') must be at least 3.0.0."
             raise ValueError(msg)
 
-        return self
+        return version
 
     @pydantic.model_validator(mode="after")
     def warning_for_latest_image_tag(self) -> Self:
