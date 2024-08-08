@@ -16,6 +16,7 @@ from kpops.components.common.topic import (
 )
 from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
+from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("ProducerApp")
@@ -110,7 +111,7 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
                 self._cleaner.values = self.values.model_validate(cluster_values)
                 self._cleaner.values.name_override = name_override
             except ValidationError as validation_error:
-                warning_msg = "The values in the cluster are invalid with the current model. Falling back to the enriched values of pipeline.yaml and defaults.yaml"
+                warning_msg = f"The values in the cluster are invalid with the current model. Falling back to the enriched values of {PIPELINE_YAML} and {DEFAULTS_YAML}"
                 log.warning(warning_msg)
                 debug_msg = f"Cluster values: {cluster_values}"
                 log.debug(debug_msg)
