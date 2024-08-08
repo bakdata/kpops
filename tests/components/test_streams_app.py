@@ -96,12 +96,6 @@ class TestStreamsApp:
             },
         )
 
-    @pytest.fixture()
-    def dry_run_handler_mock(self, mocker: MockerFixture) -> MagicMock:
-        return mocker.patch(
-            "kpops.components.base_components.helm_app.DryRunHandler"
-        ).return_value
-
     @pytest.fixture(autouse=True)
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "get_values", return_value=None)
