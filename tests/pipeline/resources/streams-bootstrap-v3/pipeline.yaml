@@ -4,7 +4,6 @@
     imageTag: "1.0.0"
     commandLine:
       FAKE_ARG: "fake-arg-value"
-    schedule: "30 3/8 * * *"
 
   to:
     topics:
@@ -22,11 +21,7 @@
       applicationId: "my-streams-app-id"
     commandLine:
       CONVERT_XML: true
-    resources:
-      limits:
-        memory: 2G
-      requests:
-        memory: 2G
+
   from:
     topics:
       my-input-topic:

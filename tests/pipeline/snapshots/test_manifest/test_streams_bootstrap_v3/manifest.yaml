@@ -1,6 +1,6 @@
 ---
-apiVersion: batch/v1beta1
-kind: CronJob
+apiVersion: batch/v1
+kind: Job
 metadata:
   labels:
     app: resources-streams-bootstrap-v3-my-producer-app
@@ -8,47 +8,40 @@ metadata:
     release: resources-streams-bootstrap-v3-my-producer-app
   name: resources-streams-bootstrap-v3-my-producer-app
 spec:
-  concurrencyPolicy: Replace
-  failedJobsHistoryLimit: 1
-  jobTemplate:
+  backoffLimit: 6
+  template:
+    metadata:
+      labels:
+        app: resources-streams-bootstrap-v3-my-producer-app
+        release: resources-streams-bootstrap-v3-my-producer-app
     spec:
-      backoffLimit: 6
-      template:
-        metadata:
-          labels:
-            app: resources-streams-bootstrap-v3-my-producer-app
-            release: resources-streams-bootstrap-v3-my-producer-app
-        spec:
-          containers:
-          - env:
-            - name: ENV_PREFIX
-              value: APP_
-            - name: APP_BOOTSTRAP_SERVERS
-              value: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-            - name: APP_SCHEMA_REGISTRY_URL
-              value: http://localhost:8081/
-            - name: APP_OUTPUT_TOPIC
-              value: my-producer-app-output-topic
-            - name: APP_LABELED_OUTPUT_TOPICS
-              value: my-producer-app-output-topic-label=my-labeled-producer-app-topic-output,
-            - name: APP_FAKE_ARG
-              value: fake-arg-value
-            - name: JAVA_TOOL_OPTIONS
-              value: '-XX:MaxRAMPercentage=75.0 '
-            image: my-registry/my-producer-image:1.0.0
-            imagePullPolicy: Always
-            name: resources-streams-bootstrap-v3-my-producer-app
-            resources:
-              limits:
-                cpu: 500m
-                memory: 2G
-              requests:
-                cpu: 200m
-                memory: 300Mi
-          restartPolicy: OnFailure
-  schedule: 30 3/8 * * *
-  successfulJobsHistoryLimit: 1
-  suspend: false
+      containers:
+      - env:
+        - name: ENV_PREFIX
+          value: APP_
+        - name: APP_BOOTSTRAP_SERVERS
+          value: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        - name: APP_SCHEMA_REGISTRY_URL
+          value: http://localhost:8081/
+        - name: APP_OUTPUT_TOPIC
+          value: my-producer-app-output-topic
+        - name: APP_LABELED_OUTPUT_TOPICS
+          value: my-producer-app-output-topic-label=my-labeled-producer-app-topic-output,
+        - name: APP_FAKE_ARG
+          value: fake-arg-value
+        - name: JAVA_TOOL_OPTIONS
+          value: '-XX:MaxRAMPercentage=75.0 '
+        image: my-registry/my-producer-image:1.0.0
+        imagePullPolicy: Always
+        name: resources-streams-bootstrap-v3-my-producer-app
+        resources:
+          limits:
+            cpu: 500m
+            memory: 2G
+          requests:
+            cpu: 200m
+            memory: 300Mi
+      restartPolicy: OnFailure
 
 ---
 apiVersion: v1
@@ -138,7 +131,7 @@ spec:
             memory: 2G
           requests:
             cpu: 200m
-            memory: 2G
+            memory: 300Mi
       - command:
         - java
         - -XX:+UnlockExperimentalVMOptions

@@ -101,6 +101,7 @@ def test_registry():
         "kafka-source-connector": KafkaSourceConnector,
         "kubernetes-app": KubernetesApp,
         "pipeline-component": PipelineComponent,
+        # TODO: change the old sterams bootstrap to -v2  and remove -v3
         "producer-app": ProducerApp,
         "producer-app-v3": ProducerAppV3,
         "streams-app": StreamsApp,

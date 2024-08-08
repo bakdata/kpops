@@ -3,6 +3,7 @@ streams-bootstrap-v3:
     kafka:
       bootstrapServers: ${config.kafka_brokers}
       schemaRegistryUrl: ${config.schema_registry.url}
+  # TODO: change to stable version after the PR is merged
   version: "3.0.0-SNAPSHOT"
 
 producer-app-v3: {} # inherits from streams-bootstrap-v3
