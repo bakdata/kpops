@@ -968,7 +968,7 @@ class TestStreamsApp:
         )
 
     @pytest.mark.asyncio()
-    async def test_should_fall_back_to_local_values_when_validation_of_cluster_values_fails(
+    async def test_clean_should_fall_back_to_local_values_when_validation_of_cluster_values_fails(
         self,
         mocker: MockerFixture,
         caplog: pytest.LogCaptureFixture,
