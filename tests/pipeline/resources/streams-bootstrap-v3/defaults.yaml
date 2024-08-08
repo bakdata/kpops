@@ -1,0 +1,23 @@
+streams-bootstrap-v3:
+  values:
+    kafka:
+      bootstrapServers: ${config.kafka_brokers}
+      schemaRegistryUrl: ${config.schema_registry.url}
+  # TODO: change to stable version after the PR is merged
+  version: "3.0.0-SNAPSHOT"
+
+producer-app-v3: {} # inherits from streams-bootstrap-v3
+
+streams-app-v3: # inherits from streams-bootstrap-v3
+  values:
+    kafka:
+      config:
+        large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
+  to:
+    topics:
+      ${error_topic_name}:
+        type: error
+        value_schema: com.bakdata.kafka.DeadLetter
+        partitions_count: 1
+        configs:
+          cleanup.policy: compact,delete

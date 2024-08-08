@@ -14,6 +14,13 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 from kpops.components.common.topic import OutputTopicTypes, TopicConfig
 from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
+from kpops.components.streams_bootstrap_v3 import ProducerAppV3, StreamsAppV3
+
+
+class MyProducerApp(ProducerAppV3): ...
+
+
+class MyStreamsApp(StreamsAppV3): ...
 
 
 class ScheduledProducer(ProducerApp): ...
