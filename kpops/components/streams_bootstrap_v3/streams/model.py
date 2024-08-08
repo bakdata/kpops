@@ -3,9 +3,8 @@ from __future__ import annotations
 from typing import Any
 
 import pydantic
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import BaseModel, ConfigDict, Field
 
-from kpops.api.exception import ValidationError
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.streams_bootstrap_v3.model import (
     KafkaConfig,
@@ -224,18 +223,6 @@ class PersistenceConfig(BaseModel):
         description="Storage class to use for the persistent volume.",
     )
 
-    @model_validator(mode="after")
-    def validate_mandatory_fields_are_set(
-        self: PersistenceConfig,
-    ) -> PersistenceConfig:  # TODO: typing.Self for Python 3.11+
-        if self.enabled and self.size is None:
-            msg = (
-                "If app.persistence.enabled is set to true, "
-                "the field app.persistence.size needs to be set."
-            )
-            raise ValidationError(msg)
-        return self
-
 
 class StreamsAppValues(StreamsBootstrapV3Values):
     """streams-bootstrap app configurations.
@@ -263,22 +250,3 @@ class StreamsAppValues(StreamsBootstrapV3Values):
         description=describe_attr("persistence", __doc__),
     )
     model_config = ConfigDict(extra="allow")
-
-    @model_validator(mode="after")
-    def validate_mandatory_fields_are_set(
-        self: StreamsAppValues,
-    ) -> StreamsAppValues:  # TODO: typing.Self for Python 3.11+
-        if (
-            self.autoscaling
-            and self.autoscaling.enabled
-            and (
-                self.kafka.application_id is None
-                or self.autoscaling.lag_threshold is None
-            )
-        ):
-            msg = (
-                "If values.autoscaling.enabled is set to true, "
-                "the fields values.kafka.application_id and values.autoscaling.lag_threshold should be set."
-            )
-            raise ValidationError(msg)
-        return self

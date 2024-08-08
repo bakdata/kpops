@@ -5,7 +5,6 @@ from unittest.mock import ANY, AsyncMock, MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.api.exception import ValidationError
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import (
@@ -23,7 +22,6 @@ from kpops.components.common.topic import (
 )
 from kpops.components.streams_bootstrap_v3 import StreamsAppV3
 from kpops.components.streams_bootstrap_v3.streams.model import (
-    PersistenceConfig,
     StreamsAppAutoScaling,
 )
 from kpops.components.streams_bootstrap_v3.streams.streams_app import (
@@ -119,90 +117,6 @@ class TestStreamsApp:
             idle_replicas=1,
         )
         assert streams_app._cleaner.values == streams_app.values
-
-    def test_raise_validation_error_when_autoscaling_enabled_and_mandatory_fields_not_set(
-        self, streams_app: StreamsAppV3
-    ):
-        with pytest.raises(ValidationError) as error:
-            StreamsAppV3(
-                name=STREAMS_APP_NAME,
-                **{
-                    "namespace": "test-namespace",
-                    "values": {
-                        "kafka": {"bootstrapServers": "fake-broker:9092"},
-                        "autoscaling": {"enabled": True},
-                    },
-                    "to": {
-                        "topics": {
-                            "streams-app-output-topic": TopicConfig(
-                                type=OutputTopicTypes.OUTPUT, partitions_count=10
-                            ),
-                        }
-                    },
-                },
-            )
-        msg = (
-            "If values.autoscaling.enabled is set to true, "
-            "the fields values.kafka.application_id and values.autoscaling.lag_threshold should be set."
-        )
-        assert str(error.value) == msg
-
-    def test_raise_validation_error_when_autoscaling_enabled_and_only_consumer_group_set(
-        self, streams_app: StreamsAppV3
-    ):
-        with pytest.raises(ValidationError) as error:
-            StreamsAppV3(
-                name=STREAMS_APP_NAME,
-                **{
-                    "namespace": "test-namespace",
-                    "values": {
-                        "kafka": {
-                            "bootstrapServers": "fake-broker:9092",
-                            "applicationId": "test-application-id",
-                        },
-                        "autoscaling": {"enabled": True},
-                    },
-                    "to": {
-                        "topics": {
-                            "streams-app-output-topic": TopicConfig(
-                                type=OutputTopicTypes.OUTPUT, partitions_count=10
-                            ),
-                        }
-                    },
-                },
-            )
-        msg = (
-            "If values.autoscaling.enabled is set to true, "
-            "the fields values.kafka.application_id and values.autoscaling.lag_threshold should be set."
-        )
-        assert str(error.value) == msg
-
-    def test_raise_validation_error_when_autoscaling_enabled_and_only_lag_threshold_is_set(
-        self,
-    ):
-        with pytest.raises(ValidationError) as error:
-            StreamsAppV3(
-                name=STREAMS_APP_NAME,
-                **{
-                    "namespace": "test-namespace",
-                    "values": {
-                        "kafka": {"bootstrapServers": "fake-broker:9092"},
-                        "autoscaling": {"enabled": True, "lagThreshold": 100},
-                    },
-                    "to": {
-                        "topics": {
-                            "streams-app-output-topic": TopicConfig(
-                                type=OutputTopicTypes.OUTPUT, partitions_count=10
-                            ),
-                        }
-                    },
-                },
-            )
-        msg = (
-            "If values.autoscaling.enabled is set to true, "
-            "the fields values.kafka.application_id and values.autoscaling.lag_threshold should be set."
-        )
-        assert str(error.value) == msg
 
     def test_cleaner_helm_release_name(self, streams_app: StreamsAppV3):
         assert (
@@ -883,19 +797,6 @@ class TestStreamsApp:
             KafkaTopic(name="topic-extra3"),
             KafkaTopic(name="topic-extra"),
         ]
-
-    def test_raise_validation_error_when_persistence_enabled_and_size_not_set(
-        self, stateful_streams_app: StreamsAppV3
-    ):
-        with pytest.raises(ValidationError) as error:
-            stateful_streams_app.values.persistence = PersistenceConfig(
-                enabled=True,
-            )
-        msg = (
-            "If app.persistence.enabled is set to true, "
-            "the field app.persistence.size needs to be set."
-        )
-        assert str(error.value) == msg
 
     @pytest.mark.asyncio()
     async def test_stateful_clean_with_dry_run_false(
