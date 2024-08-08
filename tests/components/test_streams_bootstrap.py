@@ -22,7 +22,11 @@ class TestStreamsBootstrap:
             name="example-name",
             **{
                 "namespace": "test-namespace",
-                "values": {},
+                "values": {
+                    "streams": {
+                        "brokers": "localhost:9092",
+                    }
+                },
             },
         )
         assert streams_bootstrap.repo_config == HelmRepoConfig(
@@ -92,5 +96,8 @@ class TestStreamsBootstrap:
             StreamsBootstrapValues(
                 **{
                     "imageTag": "invalid image tag!",
+                    "streams": {
+                        "brokers": "localhost:9092",
+                    },
                 }
             )
