@@ -1,9 +1,9 @@
 from pydantic import ConfigDict, Field
 
-from kpops.components.base_components.kafka_app import (
+from kpops.components.common.streams_bootstrap import (
     KafkaStreamsConfig,
+    StreamsBootstrapValues,
 )
-from kpops.components.common.streams_bootstrap import StreamsBootstrapValues
 from kpops.utils.docstring import describe_attr
 
 

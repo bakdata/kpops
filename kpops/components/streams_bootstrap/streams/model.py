@@ -6,10 +6,10 @@ import pydantic
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from kpops.api.exception import ValidationError
-from kpops.components.base_components.kafka_app import (
+from kpops.components.common.streams_bootstrap import (
     KafkaStreamsConfig,
+    StreamsBootstrapValues,
 )
-from kpops.components.common.streams_bootstrap import StreamsBootstrapValues
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (

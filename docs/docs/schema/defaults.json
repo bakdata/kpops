@@ -568,6 +568,56 @@
             "title": "KafkaSourceConnector",
             "type": "object"
         },
+        "KafkaStreamsConfig": {
+            "additionalProperties": true,
+            "description": "Kafka Streams config.",
+            "properties": {
+                "brokers": {
+                    "description": "Brokers",
+                    "title": "Brokers",
+                    "type": "string"
+                },
+                "extraOutputTopics": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra output topics",
+                    "title": "Extraoutputtopics",
+                    "type": "object"
+                },
+                "outputTopic": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Output topic"
+                },
+                "schema_registry_url": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "URL of the schema registry",
+                    "title": "Schema Registry Url"
+                }
+            },
+            "required": [
+                "brokers"
+            ],
+            "title": "KafkaStreamsConfig",
+            "type": "object"
+        },
         "KubernetesApp": {
             "additionalProperties": true,
             "description": "Base class for all Kubernetes apps.\nAll built-in components are Kubernetes apps, except for the Kafka connectors.",
@@ -1396,8 +1446,19 @@
                     "default": null,
                     "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
+                },
+                "streams": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/KafkaStreamsConfig"
+                        }
+                    ],
+                    "description": ""
                 }
             },
+            "required": [
+                "streams"
+            ],
             "title": "StreamsBootstrapValues",
             "type": "object"
         },
