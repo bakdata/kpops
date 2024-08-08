@@ -19,7 +19,7 @@ from kpops.utils.docstring import describe_attr
 log = logging.getLogger("StreamsApp")
 
 
-class StreamsAppCleaner(KafkaAppCleaner):
+class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
     from_: None = None
     to: None = None
     values: StreamsAppValues
