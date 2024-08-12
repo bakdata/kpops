@@ -118,7 +118,6 @@ class KafkaConnector(PipelineComponent, ABC):
     """
 
     config: KafkaConnectorConfig = Field(
-        default=...,
         description=describe_attr("config", __doc__),
     )
     resetter_namespace: str | None = Field(

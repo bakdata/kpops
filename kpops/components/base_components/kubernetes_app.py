@@ -36,7 +36,6 @@ class KubernetesApp(PipelineComponent, ABC):
     """
 
     namespace: str = Field(
-        default=...,
         description=describe_attr("namespace", __doc__),
     )
     values: KubernetesAppValues = Field(

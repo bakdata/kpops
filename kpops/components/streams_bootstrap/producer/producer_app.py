@@ -45,7 +45,6 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
     """
 
     values: ProducerAppValues = Field(
-        default=...,
         description=describe_attr("values", __doc__),
     )
     from_: None = Field(
