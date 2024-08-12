@@ -20,11 +20,12 @@ if TYPE_CHECKING:
     except ImportError:
         from typing_extensions import Self
 
-
 STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     repository_name="bakdata-streams-bootstrap",
     url="https://bakdata.github.io/streams-bootstrap/",
 )
+
+# TODO: Update this with the latest stable version release
 STREAMS_BOOTSTRAP_VERSION = "3.0.0"
 STREAMS_BOOTSTRAP_VERSION_PATTERN = r"^(\d+)\.(\d+)\.(\d+)(-[a-zA-Z]+(\.[a-zA-Z]+)?)?$"
 COMPILED_VERSION_PATTERN = re.compile(STREAMS_BOOTSTRAP_VERSION_PATTERN)
