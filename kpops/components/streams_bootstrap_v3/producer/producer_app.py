@@ -12,13 +12,13 @@ from kpops.components.common.topic import (
     TopicConfig,
 )
 from kpops.components.streams_bootstrap_v3.base import (
+    STREAMS_BOOTSTRAP_VERSION,
     StreamsBootstrapV3,
 )
 from kpops.components.streams_bootstrap_v3.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
 
-log = logging.getLogger("ProducerApp")
-STREAMS_BOOTSTRAP_V3 = "3.0.0"
+log = logging.getLogger("ProducerAppV3")
 
 
 class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrapV3):
@@ -55,7 +55,7 @@ class ProducerAppV3(StreamsBootstrapV3):
         description=describe_attr("from_", __doc__),
     )
 
-    version: str | None = STREAMS_BOOTSTRAP_V3
+    version: str | None = STREAMS_BOOTSTRAP_VERSION
 
     @computed_field
     @cached_property

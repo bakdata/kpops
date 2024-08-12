@@ -10,6 +10,7 @@ from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap_v3.base import (
+    STREAMS_BOOTSTRAP_VERSION,
     StreamsBootstrapV3,
 )
 from kpops.components.streams_bootstrap_v3.streams.model import (
@@ -17,9 +18,7 @@ from kpops.components.streams_bootstrap_v3.streams.model import (
 )
 from kpops.utils.docstring import describe_attr
 
-log = logging.getLogger("StreamsApp")
-
-STREAMS_BOOTSTRAP_V3 = "3.0.0"
+log = logging.getLogger("StreamsAppV3")
 
 
 class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrapV3):
@@ -67,7 +66,7 @@ class StreamsAppV3(StreamsBootstrapV3):
         description=describe_attr("values", __doc__),
     )
 
-    version: str | None = STREAMS_BOOTSTRAP_V3
+    version: str | None = STREAMS_BOOTSTRAP_VERSION
 
     @computed_field
     @cached_property

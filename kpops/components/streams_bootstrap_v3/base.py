@@ -70,8 +70,8 @@ class StreamsBootstrapV3(KafkaApp, HelmApp, ABC):
         major, minor, patch, suffix, _ = pattern_match.groups()
         major = int(major)
 
-        if major < 3:
-            msg = f"When using the streams bootstrap v3 component your version ('{version}') must be at least 3.0.0."
+        if major == 3:
+            msg = f"When using the streams-bootstrap v3 component your version ('{version}') must be at least 3.0.0."
             raise ValueError(msg)
 
         return version
