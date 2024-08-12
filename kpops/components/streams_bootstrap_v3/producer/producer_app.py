@@ -5,12 +5,12 @@ from pydantic import Field, computed_field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
+from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap_v3.app_type import AppType
 from kpops.components.streams_bootstrap_v3.base import (
     StreamsBootstrapV3,
 )
