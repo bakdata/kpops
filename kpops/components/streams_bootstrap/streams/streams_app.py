@@ -1,7 +1,7 @@
 import logging
 from functools import cached_property
 
-from pydantic import Field, computed_field
+from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
@@ -13,6 +13,7 @@ from kpops.components.streams_bootstrap.app_type import AppType
 from kpops.components.streams_bootstrap.streams.model import (
     StreamsAppValues,
 )
+from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("StreamsApp")
@@ -131,8 +132,16 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
         if cluster_values:
             log.debug("Fetched Helm chart values from cluster")
             name_override = self._cleaner.helm_name_override
-            self._cleaner.values = self.values.model_validate(cluster_values)
-            self._cleaner.values.name_override = name_override
+            try:
+                self._cleaner.values = self.values.model_validate(cluster_values)
+                self._cleaner.values.name_override = name_override
+            except ValidationError as validation_error:
+                warning_msg = f"The values in the cluster are invalid with the current model. Falling back to the enriched values of {PIPELINE_YAML} and {DEFAULTS_YAML}"
+                log.warning(warning_msg)
+                debug_msg = f"Cluster values: {cluster_values}"
+                log.debug(debug_msg)
+                debug_msg = f"Validation error: {validation_error}"
+                log.debug(debug_msg)
 
         await super().destroy(dry_run)
 
