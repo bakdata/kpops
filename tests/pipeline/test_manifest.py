@@ -11,12 +11,16 @@ import kpops.api as kpops
 from kpops.cli.main import app
 from kpops.component_handlers.helm_wrapper.helm import Helm
 from kpops.component_handlers.helm_wrapper.model import HelmConfig, Version
+from kpops.const.file_type import PIPELINE_YAML
+
+MANIFEST_YAML = "manifest.yaml"
 
 runner = CliRunner()
 
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "custom_components")
 class TestManifest:
     @pytest.fixture()
     def mock_execute(self, mocker: MockerFixture) -> MagicMock:
@@ -110,7 +114,7 @@ class TestManifest:
             catch_exceptions=False,
         )
         assert result.exit_code == 0, result.stdout
-        snapshot.assert_match(result.stdout, "manifest.yaml")
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
 
     def test_python_api(self, snapshot: Snapshot):
         resources = kpops.manifest(
@@ -120,3 +124,15 @@ class TestManifest:
         assert isinstance(resources, list)
         assert len(resources) == 2
         snapshot.assert_match(yaml.dump_all(resources), "resources")
+
+    def test_streams_bootstrap_v3(self, snapshot: Snapshot):
+        result = runner.invoke(
+            app,
+            [
+                "manifest",
+                str(RESOURCE_PATH / "streams-bootstrap-v3" / PIPELINE_YAML),
+            ],
+            catch_exceptions=False,
+        )
+        assert result.exit_code == 0, result.stdout
+        snapshot.assert_match(result.stdout, MANIFEST_YAML)
