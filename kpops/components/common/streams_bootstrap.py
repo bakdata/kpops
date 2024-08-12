@@ -52,8 +52,6 @@ class StreamsBootstrap(HelmApp, ABC):
     """
 
     values: StreamsBootstrapValues = Field(
-        # default=...,
-        # default_factory=StreamsBootstrapValues,
         description=describe_attr("values", __doc__),
     )
 

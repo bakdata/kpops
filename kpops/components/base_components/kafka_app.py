@@ -132,7 +132,6 @@ class KafkaApp(PipelineComponent, ABC):
     """
 
     values: KafkaAppValues = Field(
-        default=...,
         description=describe_attr("values", __doc__),
     )
 
