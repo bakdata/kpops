@@ -5,10 +5,11 @@ from unittest.mock import ANY, AsyncMock, MagicMock
 import pytest
 from pytest_mock import MockerFixture
 
-from kpops.api.exception import ValidationError
 from kpops.component_handlers import get_handlers
 from kpops.component_handlers.helm_wrapper.helm import Helm
-from kpops.component_handlers.helm_wrapper.model import HelmUpgradeInstallFlags
+from kpops.component_handlers.helm_wrapper.model import (
+    HelmUpgradeInstallFlags,
+)
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
@@ -19,12 +20,11 @@ from kpops.components.common.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap.streams.model import (
-    PersistenceConfig,
+from kpops.components.streams_bootstrap_v3 import StreamsAppV3
+from kpops.components.streams_bootstrap_v3.streams.model import (
     StreamsAppAutoScaling,
 )
-from kpops.components.streams_bootstrap.streams.streams_app import (
-    StreamsApp,
+from kpops.components.streams_bootstrap_v3.streams.streams_app import (
     StreamsAppCleaner,
 )
 
@@ -53,13 +53,13 @@ class TestStreamsApp:
         assert STREAMS_APP_CLEAN_RELEASE_NAME.endswith("-clean")
 
     @pytest.fixture()
-    def streams_app(self) -> StreamsApp:
-        return StreamsApp(
+    def streams_app(self) -> StreamsAppV3:
+        return StreamsAppV3(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
                 "values": {
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
                     "topics": {
@@ -72,16 +72,16 @@ class TestStreamsApp:
         )
 
     @pytest.fixture()
-    def stateful_streams_app(self) -> StreamsApp:
-        return StreamsApp(
+    def stateful_streams_app(self) -> StreamsAppV3:
+        return StreamsAppV3(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
                 "values": {
                     "statefulSet": True,
                     "persistence": {"enabled": True, "size": "5Gi"},
-                    "streams": {
-                        "brokers": "fake-broker:9092",
+                    "kafka": {
+                        "bootstrapServers": "fake-broker:9092",
                     },
                 },
                 "to": {
@@ -94,82 +94,49 @@ class TestStreamsApp:
             },
         )
 
+    @pytest.fixture()
+    def dry_run_handler_mock(self, mocker: MockerFixture) -> MagicMock:
+        return mocker.patch(
+            "kpops.components.base_components.helm_app.DryRunHandler"
+        ).return_value
+
     @pytest.fixture(autouse=True)
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "get_values", return_value=None)
 
-    def test_cleaner(self, streams_app: StreamsApp):
+    def test_cleaner(self, streams_app: StreamsAppV3):
         cleaner = streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
         assert not hasattr(cleaner, "_cleaner")
 
-    def test_cleaner_inheritance(self, streams_app: StreamsApp):
+    def test_cleaner_inheritance(self, streams_app: StreamsAppV3):
+        streams_app.values.kafka.application_id = "test-application-id"
         streams_app.values.autoscaling = StreamsAppAutoScaling(
             enabled=True,
-            consumer_group="foo",
             lag_threshold=100,
             idle_replicas=1,
         )
         assert streams_app._cleaner.values == streams_app.values
 
-    def test_raise_validation_error_when_autoscaling_enabled_and_mandatory_fields_not_set(
-        self, streams_app: StreamsApp
-    ):
-        with pytest.raises(ValidationError) as error:
-            streams_app.values.autoscaling = StreamsAppAutoScaling(
-                enabled=True,
-            )
-        msg = (
-            "If app.autoscaling.enabled is set to true, "
-            "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
-        )
-        assert str(error.value) == msg
-
-    def test_raise_validation_error_when_autoscaling_enabled_and_only_consumer_group_set(
-        self, streams_app: StreamsApp
-    ):
-        with pytest.raises(ValidationError) as error:
-            streams_app.values.autoscaling = StreamsAppAutoScaling(
-                enabled=True, consumer_group="a-test-group"
-            )
-        msg = (
-            "If app.autoscaling.enabled is set to true, "
-            "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
-        )
-        assert str(error.value) == msg
-
-    def test_raise_validation_error_when_autoscaling_enabled_and_only_lag_threshold_is_set(
-        self, streams_app: StreamsApp
-    ):
-        with pytest.raises(ValidationError) as error:
-            streams_app.values.autoscaling = StreamsAppAutoScaling(
-                enabled=True, lag_threshold=1000
-            )
-        msg = (
-            "If app.autoscaling.enabled is set to true, "
-            "the fields app.autoscaling.consumer_group and app.autoscaling.lag_threshold should be set."
-        )
-        assert str(error.value) == msg
-
-    def test_cleaner_helm_release_name(self, streams_app: StreamsApp):
+    def test_cleaner_helm_release_name(self, streams_app: StreamsAppV3):
         assert (
             streams_app._cleaner.helm_release_name
             == "${pipeline.name}-test-streams-app-with-lo-c98c5-clean"
         )
 
-    def test_cleaner_helm_name_override(self, streams_app: StreamsApp):
+    def test_cleaner_helm_name_override(self, streams_app: StreamsAppV3):
         assert (
             streams_app._cleaner.to_helm_values()["nameOverride"]
             == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
         )
 
     def test_set_topics(self):
-        streams_app = StreamsApp(
+        streams_app = StreamsAppV3(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
                 "values": {
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "from": {
                     "topics": {
@@ -188,34 +155,34 @@ class TestStreamsApp:
                 },
             },
         )
-        assert streams_app.values.streams.input_topics == [
+        assert streams_app.values.kafka.input_topics == [
             KafkaTopic(name="example-input"),
             KafkaTopic(name="b"),
             KafkaTopic(name="a"),
         ]
-        assert streams_app.values.streams.extra_input_topics == {
+        assert streams_app.values.kafka.labeled_input_topics == {
             "role1": [KafkaTopic(name="topic-extra")],
             "role2": [KafkaTopic(name="topic-extra2"), KafkaTopic(name="topic-extra3")],
         }
-        assert streams_app.values.streams.input_pattern == ".*"
-        assert streams_app.values.streams.extra_input_patterns == {
+        assert streams_app.values.kafka.input_pattern == ".*"
+        assert streams_app.values.kafka.labeled_input_patterns == {
             "another-pattern": "example.*"
         }
 
         helm_values = streams_app.to_helm_values()
-        streams_config = helm_values["streams"]
-        assert streams_config["inputTopics"]
-        assert "extraInputTopics" in streams_config
-        assert "inputPattern" in streams_config
-        assert "extraInputPatterns" in streams_config
+        kafka_config = helm_values["kafka"]
+        assert kafka_config["inputTopics"]
+        assert "labeledInputTopics" in kafka_config
+        assert "inputPattern" in kafka_config
+        assert "labeledInputPatterns" in kafka_config
 
     def test_no_empty_input_topic(self):
-        streams_app = StreamsApp(
+        streams_app = StreamsAppV3(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
                 "values": {
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "from": {
                     "topics": {
@@ -224,13 +191,13 @@ class TestStreamsApp:
                 },
             },
         )
-        assert not streams_app.values.streams.extra_input_topics
-        assert not streams_app.values.streams.input_topics
-        assert streams_app.values.streams.input_pattern == ".*"
-        assert not streams_app.values.streams.extra_input_patterns
+        assert not streams_app.values.kafka.labeled_input_topics
+        assert not streams_app.values.kafka.input_topics
+        assert streams_app.values.kafka.input_pattern == ".*"
+        assert not streams_app.values.kafka.labeled_input_patterns
 
         helm_values = streams_app.to_helm_values()
-        streams_config = helm_values["streams"]
+        streams_config = helm_values["kafka"]
         assert "inputTopics" not in streams_config
         assert "extraInputTopics" not in streams_config
         assert "inputPattern" in streams_config
@@ -241,12 +208,12 @@ class TestStreamsApp:
         with pytest.raises(
             ValueError, match="Define role only if `type` is `pattern` or `None`"
         ):
-            StreamsApp(
+            StreamsAppV3(
                 name=STREAMS_APP_NAME,
                 **{
                     "namespace": "test-namespace",
                     "values": {
-                        "streams": {"brokers": "fake-broker:9092"},
+                        "kafka": {"bootstrapServers": "fake-broker:9092"},
                     },
                     "from": {
                         "topics": {
@@ -263,12 +230,12 @@ class TestStreamsApp:
         with pytest.raises(
             ValueError, match="Define `role` only if `type` is undefined"
         ):
-            StreamsApp(
+            StreamsAppV3(
                 name=STREAMS_APP_NAME,
                 **{
                     "namespace": "test-namespace",
                     "values": {
-                        "streams": {"brokers": "fake-broker:9092"},
+                        "kafka": {"bootstrapServers": "fake-broker:9092"},
                     },
                     "to": {
                         "topics": {
@@ -282,12 +249,12 @@ class TestStreamsApp:
             )
 
     def test_set_streams_output_from_to(self):
-        streams_app = StreamsApp(
+        streams_app = StreamsAppV3(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
                 "values": {
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
                     "topics": {
@@ -309,24 +276,24 @@ class TestStreamsApp:
                 },
             },
         )
-        assert streams_app.values.streams.extra_output_topics == {
+        assert streams_app.values.kafka.labeled_output_topics == {
             "first-extra-role": KafkaTopic(name="extra-topic-1"),
             "second-extra-role": KafkaTopic(name="extra-topic-2"),
         }
-        assert streams_app.values.streams.output_topic == KafkaTopic(
+        assert streams_app.values.kafka.output_topic == KafkaTopic(
             name="streams-app-output-topic"
         )
-        assert streams_app.values.streams.error_topic == KafkaTopic(
+        assert streams_app.values.kafka.error_topic == KafkaTopic(
             name="streams-app-error-topic"
         )
 
     def test_weave_inputs_from_prev_component(self):
-        streams_app = StreamsApp(
+        streams_app = StreamsAppV3(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
                 "values": {
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
             },
         )
@@ -350,7 +317,7 @@ class TestStreamsApp:
             )
         )
 
-        assert streams_app.values.streams.input_topics == [
+        assert streams_app.values.kafka.input_topics == [
             KafkaTopic(name="prev-output-topic"),
             KafkaTopic(name="b"),
             KafkaTopic(name="a"),
@@ -358,12 +325,12 @@ class TestStreamsApp:
 
     @pytest.mark.asyncio()
     async def test_deploy_order_when_dry_run_is_false(self, mocker: MockerFixture):
-        streams_app = StreamsApp(
+        streams_app = StreamsAppV3(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
                 "values": {
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
                     "topics": {
@@ -442,9 +409,9 @@ class TestStreamsApp:
                 "test-namespace",
                 {
                     "nameOverride": STREAMS_APP_HELM_NAME_OVERRIDE,
-                    "streams": {
-                        "brokers": "fake-broker:9092",
-                        "extraOutputTopics": {
+                    "kafka": {
+                        "bootstrapServers": "fake-broker:9092",
+                        "labeledOutputTopics": {
                             "first-extra-topic": "extra-topic-1",
                             "second-extra-topic": "extra-topic-2",
                         },
@@ -460,7 +427,7 @@ class TestStreamsApp:
                     ca_file=None,
                     insecure_skip_tls_verify=False,
                     timeout="5m0s",
-                    version="2.9.0",
+                    version="3.0.0",
                     wait=True,
                     wait_for_jobs=False,
                 ),
@@ -470,7 +437,7 @@ class TestStreamsApp:
     @pytest.mark.asyncio()
     async def test_destroy(
         self,
-        streams_app: StreamsApp,
+        streams_app: StreamsAppV3,
         mocker: MockerFixture,
     ):
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
@@ -484,7 +451,7 @@ class TestStreamsApp:
     @pytest.mark.asyncio()
     async def test_reset_when_dry_run_is_false(
         self,
-        streams_app: StreamsApp,
+        streams_app: StreamsAppV3,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
@@ -530,14 +497,14 @@ class TestStreamsApp:
                     "test-namespace",
                     {
                         "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                        "streams": {
-                            "brokers": "fake-broker:9092",
+                        "kafka": {
+                            "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
                             "deleteOutput": False,
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="2.9.0", wait=True, wait_for_jobs=True
+                        version="3.0.0", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.helm_uninstall(
@@ -551,7 +518,7 @@ class TestStreamsApp:
     @pytest.mark.asyncio()
     async def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
-        streams_app: StreamsApp,
+        streams_app: StreamsAppV3,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
@@ -596,14 +563,14 @@ class TestStreamsApp:
                     "test-namespace",
                     {
                         "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                        "streams": {
-                            "brokers": "fake-broker:9092",
+                        "kafka": {
+                            "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
                             "deleteOutput": True,
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="2.9.0", wait=True, wait_for_jobs=True
+                        version="3.0.0", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.helm_uninstall(
@@ -629,21 +596,21 @@ class TestStreamsApp:
                 "replicaCount": 1,
                 "persistence": {"enabled": False, "size": "1Gi"},
                 "statefulSet": False,
-                "streams": {
-                    "brokers": "fake-broker:9092",
+                "kafka": {
+                    "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
                     "outputTopic": "streams-app-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
         )
-        streams_app = StreamsApp(
+        streams_app = StreamsAppV3(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
                 "values": {
                     "imageTag": "2.2.2",
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "from": {
                     "topics": {
@@ -682,15 +649,15 @@ class TestStreamsApp:
                 "imageTag": image_tag_in_cluster,
                 "persistence": {"size": "1Gi"},
                 "replicaCount": 1,
-                "streams": {
-                    "brokers": "fake-broker:9092",
+                "kafka": {
+                    "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
                     "outputTopic": "streams-app-output-topic",
                     "deleteOutput": False,
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
+            HelmUpgradeInstallFlags(version="3.0.0", wait=True, wait_for_jobs=True),
         )
 
     @pytest.mark.asyncio()
@@ -708,21 +675,21 @@ class TestStreamsApp:
                 "replicaCount": 1,
                 "persistence": {"enabled": False, "size": "1Gi"},
                 "statefulSet": False,
-                "streams": {
-                    "brokers": "fake-broker:9092",
+                "kafka": {
+                    "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
                     "outputTopic": "streams-app-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
         )
-        streams_app = StreamsApp(
+        streams_app = StreamsAppV3(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
                 "values": {
                     "imageTag": "2.2.2",
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "from": {
                     "topics": {
@@ -761,25 +728,25 @@ class TestStreamsApp:
                 "imageTag": image_tag_in_cluster,
                 "persistence": {"size": "1Gi"},
                 "replicaCount": 1,
-                "streams": {
-                    "brokers": "fake-broker:9092",
+                "kafka": {
+                    "bootstrapServers": "fake-broker:9092",
                     "inputTopics": ["test-input-topic"],
                     "outputTopic": "streams-app-output-topic",
                     "deleteOutput": True,
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
+            HelmUpgradeInstallFlags(version="3.0.0", wait=True, wait_for_jobs=True),
         )
 
     @pytest.mark.asyncio()
     async def test_get_input_output_topics(self):
-        streams_app = StreamsApp(
+        streams_app = StreamsAppV3(
             name="my-app",
             **{
                 "namespace": "test-namespace",
                 "values": {
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "from": {
                     "topics": {
@@ -805,12 +772,12 @@ class TestStreamsApp:
             },
         )
 
-        assert streams_app.values.streams.input_topics == [
+        assert streams_app.values.kafka.input_topics == [
             KafkaTopic(name="example-input"),
             KafkaTopic(name="b"),
             KafkaTopic(name="a"),
         ]
-        assert streams_app.values.streams.extra_input_topics == {
+        assert streams_app.values.kafka.labeled_input_topics == {
             "role1": [KafkaTopic(name="topic-extra")],
             "role2": [KafkaTopic(name="topic-extra2"), KafkaTopic(name="topic-extra3")],
         }
@@ -831,23 +798,10 @@ class TestStreamsApp:
             KafkaTopic(name="topic-extra"),
         ]
 
-    def test_raise_validation_error_when_persistence_enabled_and_size_not_set(
-        self, stateful_streams_app: StreamsApp
-    ):
-        with pytest.raises(ValidationError) as error:
-            stateful_streams_app.values.persistence = PersistenceConfig(
-                enabled=True,
-            )
-        msg = (
-            "If app.persistence.enabled is set to true, "
-            "the field app.persistence.size needs to be set."
-        )
-        assert str(error.value) == msg
-
     @pytest.mark.asyncio()
     async def test_stateful_clean_with_dry_run_false(
         self,
-        stateful_streams_app: StreamsApp,
+        stateful_streams_app: StreamsAppV3,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
@@ -902,14 +856,14 @@ class TestStreamsApp:
                         "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
                         "statefulSet": True,
                         "persistence": {"enabled": True, "size": "5Gi"},
-                        "streams": {
-                            "brokers": "fake-broker:9092",
+                        "kafka": {
+                            "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "streams-app-output-topic",
                             "deleteOutput": True,
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="2.9.0", wait=True, wait_for_jobs=True
+                        version="3.0.0", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.helm_uninstall(
@@ -926,7 +880,7 @@ class TestStreamsApp:
     @pytest.mark.asyncio()
     async def test_stateful_clean_with_dry_run_true(
         self,
-        stateful_streams_app: StreamsApp,
+        stateful_streams_app: StreamsAppV3,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
         caplog: pytest.LogCaptureFixture,
@@ -963,88 +917,4 @@ class TestStreamsApp:
         assert (
             f"Deleting the PVCs {pvc_names} for StatefulSet '{STREAMS_APP_FULL_NAME}'"
             in caplog.text
-        )
-
-    @pytest.mark.asyncio()
-    async def test_clean_should_fall_back_to_local_values_when_validation_of_cluster_values_fails(
-        self,
-        mocker: MockerFixture,
-        caplog: pytest.LogCaptureFixture,
-    ):
-        caplog.set_level(logging.WARNING)
-
-        # invalid model
-        mocker.patch.object(
-            Helm,
-            "get_values",
-            return_value={
-                "image": "registry/producer-app",
-                "imageTag": "1.1.1",
-                "nameOverride": STREAMS_APP_NAME,
-                "kafka": {
-                    "bootstrapServers": "fake-broker:9092",
-                    "inputTopics": ["test-input-topic"],
-                    "outputTopic": "streams-app-output-topic",
-                    "schemaRegistryUrl": "http://localhost:8081",
-                },
-            },
-        )
-
-        streams_app = StreamsApp(
-            name=STREAMS_APP_NAME,
-            **{
-                "namespace": "test-namespace",
-                "values": {
-                    "image": "registry/streams-app",
-                    "imageTag": "2.2.2",
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "from": {
-                    "topics": {
-                        "test-input-topic": {"type": "input"},
-                    }
-                },
-                "to": {
-                    "topics": {
-                        "streams-app-output-topic": {"type": "output"},
-                    }
-                },
-            },
-        )
-
-        mocker.patch.object(streams_app.helm, "uninstall")
-
-        mock_helm_upgrade_install = mocker.patch.object(
-            streams_app._cleaner.helm, "upgrade_install"
-        )
-        mocker.patch.object(streams_app._cleaner.helm, "uninstall")
-
-        mock = mocker.MagicMock()
-        mock.attach_mock(mock_helm_upgrade_install, "helm_upgrade_install")
-
-        dry_run = False
-        await streams_app.clean(dry_run=dry_run)
-
-        assert (
-            "The values in the cluster are invalid with the current model. Falling back to the enriched values of pipeline.yaml and defaults.yaml"
-            in caplog.text
-        )
-
-        mock_helm_upgrade_install.assert_called_once_with(
-            STREAMS_APP_CLEAN_RELEASE_NAME,
-            "bakdata-streams-bootstrap/streams-app-cleanup-job",
-            dry_run,
-            "test-namespace",
-            {
-                "image": "registry/streams-app",
-                "nameOverride": STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE,
-                "imageTag": "2.2.2",
-                "streams": {
-                    "brokers": "fake-broker:9092",
-                    "inputTopics": ["test-input-topic"],
-                    "outputTopic": "streams-app-output-topic",
-                    "deleteOutput": True,
-                },
-            },
-            HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
         )

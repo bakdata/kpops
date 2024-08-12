@@ -13,9 +13,9 @@ from kpops.components.common.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap.producer.producer_app import (
-    ProducerApp,
+from kpops.components.streams_bootstrap_v3.producer.producer_app import (
     ProducerAppCleaner,
+    ProducerAppV3,
 )
 
 PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
@@ -39,14 +39,14 @@ class TestProducerApp:
         assert PRODUCER_APP_CLEAN_RELEASE_NAME.endswith("-clean")
 
     @pytest.fixture()
-    def producer_app(self) -> ProducerApp:
-        return ProducerApp(
+    def producer_app(self) -> ProducerAppV3:
+        return ProducerAppV3(
             name=PRODUCER_APP_NAME,
             **{
-                "version": "2.4.2",
+                "version": "3.2.1",
                 "namespace": "test-namespace",
                 "values": {
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "clean_schemas": True,
                 "to": {
@@ -63,34 +63,34 @@ class TestProducerApp:
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "get_values", return_value=None)
 
-    def test_cleaner(self, producer_app: ProducerApp):
+    def test_cleaner(self, producer_app: ProducerAppV3):
         cleaner = producer_app._cleaner
         assert isinstance(cleaner, ProducerAppCleaner)
         assert not hasattr(cleaner, "_cleaner")
 
-    def test_cleaner_inheritance(self, producer_app: ProducerApp):
+    def test_cleaner_inheritance(self, producer_app: ProducerAppV3):
         assert producer_app._cleaner.values == producer_app.values
 
-    def test_cleaner_helm_release_name(self, producer_app: ProducerApp):
+    def test_cleaner_helm_release_name(self, producer_app: ProducerAppV3):
         assert (
             producer_app._cleaner.helm_release_name
             == "${pipeline.name}-test-producer-app-with-l-abc43-clean"
         )
 
-    def test_cleaner_helm_name_override(self, producer_app: ProducerApp):
+    def test_cleaner_helm_name_override(self, producer_app: ProducerAppV3):
         assert (
             producer_app._cleaner.to_helm_values()["nameOverride"]
             == PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE
         )
 
     def test_output_topics(self):
-        producer_app = ProducerApp(
+        producer_app = ProducerAppV3(
             name=PRODUCER_APP_NAME,
             **{
                 "namespace": "test-namespace",
                 "values": {
                     "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
                     "topics": {
@@ -106,17 +106,17 @@ class TestProducerApp:
             },
         )
 
-        assert producer_app.values.streams.output_topic == KafkaTopic(
+        assert producer_app.values.kafka.output_topic == KafkaTopic(
             name="producer-app-output-topic"
         )
-        assert producer_app.values.streams.extra_output_topics == {
+        assert producer_app.values.kafka.labeled_output_topics == {
             "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
 
     @pytest.mark.asyncio()
     async def test_deploy_order_when_dry_run_is_false(
         self,
-        producer_app: ProducerApp,
+        producer_app: ProducerAppV3,
         mocker: MockerFixture,
     ):
         mock_create_topic = mocker.patch.object(
@@ -145,8 +145,8 @@ class TestProducerApp:
                 "test-namespace",
                 {
                     "nameOverride": PRODUCER_APP_HELM_NAME_OVERRIDE,
-                    "streams": {
-                        "brokers": "fake-broker:9092",
+                    "kafka": {
+                        "bootstrapServers": "fake-broker:9092",
                         "outputTopic": "producer-app-output-topic",
                     },
                 },
@@ -157,7 +157,7 @@ class TestProducerApp:
                     ca_file=None,
                     insecure_skip_tls_verify=False,
                     timeout="5m0s",
-                    version="2.4.2",
+                    version="3.2.1",
                     wait=True,
                     wait_for_jobs=False,
                 ),
@@ -167,7 +167,7 @@ class TestProducerApp:
     @pytest.mark.asyncio()
     async def test_destroy(
         self,
-        producer_app: ProducerApp,
+        producer_app: ProducerAppV3,
         mocker: MockerFixture,
     ):
         mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
@@ -181,7 +181,7 @@ class TestProducerApp:
     @pytest.mark.asyncio()
     async def test_should_clean_producer_app(
         self,
-        producer_app: ProducerApp,
+        producer_app: ProducerAppV3,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
@@ -232,13 +232,13 @@ class TestProducerApp:
                     "test-namespace",
                     {
                         "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
-                        "streams": {
-                            "brokers": "fake-broker:9092",
+                        "kafka": {
+                            "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="2.4.2", wait=True, wait_for_jobs=True
+                        version="3.2.1", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.print_helm_diff(
@@ -260,7 +260,7 @@ class TestProducerApp:
     async def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
         self,
         mocker: MockerFixture,
-        producer_app: ProducerApp,
+        producer_app: ProducerAppV3,
         empty_helm_get_values: MockerFixture,
     ):
         # actual component
@@ -306,13 +306,13 @@ class TestProducerApp:
                     "test-namespace",
                     {
                         "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
-                        "streams": {
-                            "brokers": "fake-broker:9092",
+                        "kafka": {
+                            "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="2.4.2", wait=True, wait_for_jobs=True
+                        version="3.2.1", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.helm_uninstall(
@@ -326,13 +326,13 @@ class TestProducerApp:
         )
 
     def test_get_output_topics(self):
-        producer_app = ProducerApp(
+        producer_app = ProducerAppV3(
             name="my-producer",
             **{
                 "namespace": "test-namespace",
                 "values": {
                     "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
                     "topics": {
@@ -347,10 +347,10 @@ class TestProducerApp:
                 },
             },
         )
-        assert producer_app.values.streams.output_topic == KafkaTopic(
+        assert producer_app.values.kafka.output_topic == KafkaTopic(
             name="producer-app-output-topic"
         )
-        assert producer_app.values.streams.extra_output_topics == {
+        assert producer_app.values.kafka.labeled_output_topics == {
             "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
         assert producer_app.input_topics == []
@@ -371,20 +371,20 @@ class TestProducerApp:
                 "imageTag": image_tag_in_cluster,
                 "nameOverride": PRODUCER_APP_NAME,
                 "replicaCount": 1,
-                "streams": {
-                    "brokers": "fake-broker:9092",
+                "kafka": {
+                    "bootstrapServers": "fake-broker:9092",
                     "outputTopic": "test-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
         )
-        producer_app = ProducerApp(
+        producer_app = ProducerAppV3(
             name=PRODUCER_APP_NAME,
             **{
                 "namespace": "test-namespace",
                 "values": {
                     "imageTag": "2.2.2",
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
                     "topics": {
@@ -421,20 +421,20 @@ class TestProducerApp:
                 "imageTag": image_tag_in_cluster,
                 "nameOverride": PRODUCER_APP_NAME,
                 "replicaCount": 1,
-                "streams": {
-                    "brokers": "fake-broker:9092",
+                "kafka": {
+                    "bootstrapServers": "fake-broker:9092",
                     "outputTopic": "test-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
         )
-        producer_app = ProducerApp(
+        producer_app = ProducerAppV3(
             name=PRODUCER_APP_NAME,
             **{
                 "namespace": "test-namespace",
                 "values": {
                     "imageTag": "2.2.2",
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
                     "topics": {
@@ -464,82 +464,11 @@ class TestProducerApp:
                 "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                 "imageTag": image_tag_in_cluster,
                 "replicaCount": 1,
-                "streams": {
-                    "brokers": "fake-broker:9092",
-                    "outputTopic": "test-output-topic",
-                    "schemaRegistryUrl": "http://localhost:8081",
-                },
-            },
-            HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
-        )
-
-    @pytest.mark.asyncio()
-    async def test_clean_should_fall_back_to_local_values_when_validation_of_cluster_values_fails(
-        self, mocker: MockerFixture, caplog: pytest.LogCaptureFixture
-    ):
-        caplog.set_level(logging.WARNING)
-
-        # invalid model
-        mocker.patch.object(
-            Helm,
-            "get_values",
-            return_value={
-                "image": "registry/producer-app",
-                "imageTag": "1.1.1",
-                "nameOverride": PRODUCER_APP_NAME,
                 "kafka": {
-                    "boostrapServers": "fake-broker:9092",
+                    "bootstrapServers": "fake-broker:9092",
                     "outputTopic": "test-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-        )
-
-        # user defined model
-        producer_app = ProducerApp(
-            name=PRODUCER_APP_NAME,
-            **{
-                "namespace": "test-namespace",
-                "values": {
-                    "image": "registry/producer-app",
-                    "imageTag": "2.2.2",
-                    "streams": {"brokers": "fake-broker:9092"},
-                },
-                "to": {
-                    "topics": {
-                        "test-output-topic": {"type": "output"},
-                    }
-                },
-            },
-        )
-        mocker.patch.object(producer_app.helm, "uninstall")
-        mocker.patch.object(producer_app._cleaner.dry_run_handler, "print_helm_diff")
-        mocker.patch.object(producer_app._cleaner.helm, "uninstall")
-
-        mock_helm_upgrade_install = mocker.patch.object(
-            producer_app._cleaner.helm, "upgrade_install"
-        )
-
-        dry_run = True
-        await producer_app.clean(dry_run)
-        assert (
-            "The values in the cluster are invalid with the current model. Falling back to the enriched values of pipeline.yaml and defaults.yaml"
-            in caplog.text
-        )
-
-        mock_helm_upgrade_install.assert_called_once_with(
-            PRODUCER_APP_CLEAN_RELEASE_NAME,
-            "bakdata-streams-bootstrap/producer-app-cleanup-job",
-            dry_run,
-            "test-namespace",
-            {
-                "image": "registry/producer-app",
-                "imageTag": "2.2.2",
-                "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
-                "streams": {
-                    "brokers": "fake-broker:9092",
-                    "outputTopic": "test-output-topic",
-                },
-            },
-            HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
+            HelmUpgradeInstallFlags(version="3.0.0", wait=True, wait_for_jobs=True),
         )
