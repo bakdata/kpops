@@ -68,8 +68,8 @@ class StreamsConfig(KafkaStreamsConfig):
     ) -> dict[str, list[KafkaTopic]] | Any:
         if isinstance(extra_input_topics, dict):
             return {
-                role: [KafkaTopic(name=topic_name) for topic_name in topics]
-                for role, topics in extra_input_topics.items()
+                label: [KafkaTopic(name=topic_name) for topic_name in topics]
+                for label, topics in extra_input_topics.items()
             }
         return extra_input_topics
 
@@ -82,7 +82,8 @@ class StreamsConfig(KafkaStreamsConfig):
         self, extra_topics: dict[str, list[KafkaTopic]]
     ) -> dict[str, list[str]]:
         return {
-            role: self.serialize_topics(topics) for role, topics in extra_topics.items()
+            label: self.serialize_topics(topics)
+            for label, topics in extra_topics.items()
         }
 
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:
@@ -94,16 +95,16 @@ class StreamsConfig(KafkaStreamsConfig):
         """
         self.input_topics = KafkaTopic.deduplicate(self.input_topics + topics)
 
-    def add_extra_input_topics(self, role: str, topics: list[KafkaTopic]) -> None:
+    def add_extra_input_topics(self, label: str, topics: list[KafkaTopic]) -> None:
         """Add given extra topics that share a role to the list of extra input topics.
 
         Ensures no duplicate topics in the list.
 
         :param topics: Extra input topics
-        :param role: Topic role
+        :param label: Topic role
         """
-        self.extra_input_topics[role] = KafkaTopic.deduplicate(
-            self.extra_input_topics.get(role, []) + topics
+        self.extra_input_topics[label] = KafkaTopic.deduplicate(
+            self.extra_input_topics.get(label, []) + topics
         )
 
 

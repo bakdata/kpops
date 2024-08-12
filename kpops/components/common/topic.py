@@ -31,7 +31,7 @@ class TopicConfig(DescConfigModel):
     :param partitions_count: Number of partitions into which the topic is divided
     :param replication_factor: Replication factor of the topic
     :param configs: Topic configs
-    :param role: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`
+    :param label: Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`
     """
 
     type: OutputTopicTypes | None = Field(
@@ -61,7 +61,7 @@ class TopicConfig(DescConfigModel):
         default={}, description=describe_attr("configs", __doc__)
     )
     # TODO: We can rename this but this would be a breaking change
-    role: str | None = Field(default=None, description=describe_attr("role", __doc__))
+    label: str | None = Field(default=None, description=describe_attr("label", __doc__))
     # TODO: Alternatively, we can define label and use both. Double checks everywhere.
     # label: str | None = Field(default=None, description=describe_attr("label", __doc__))
 
@@ -73,8 +73,8 @@ class TopicConfig(DescConfigModel):
 
     @model_validator(mode="after")
     def extra_topic_role(self) -> Any:
-        """Ensure that `cls.role` is used correctly, assign type if needed."""
-        if self.type and self.role:
+        """Ensure that `cls.label` is used correctly, assign type if needed."""
+        if self.type and self.label:
             msg = "Define `role` only if `type` is undefined"
             raise ValueError(msg)
         return self

@@ -118,7 +118,7 @@
     topics:
       example-output-extra:
         configs: {}
-        role: extra
+        label: extra
       resources-no-input-topic-pipeline-app2-error:
         configs:
           cleanup.policy: compact,delete
@@ -127,7 +127,7 @@
         value_schema: com.bakdata.kafka.DeadLetter
       test-output-extra:
         configs: {}
-        role: test-output
+        label: test-output
   type: streams-app
   values:
     imageTag: latest
