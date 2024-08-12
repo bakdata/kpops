@@ -105,7 +105,7 @@ class TestStreamsBootstrap:
         with pytest.raises(
             ValueError,
             match=re.escape(
-                "When using the streams bootstrap v3 component your version ('2.1.0') must be at least 3.0.0."
+                "When using the streams-bootstrap v3 component your version ('2.1.0') must be at least 3.0.0."
             ),
         ):
             StreamsBootstrapV3(
