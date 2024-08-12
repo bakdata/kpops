@@ -40,7 +40,6 @@ class KubernetesApp(PipelineComponent, ABC):
         description=describe_attr("namespace", __doc__),
     )
     values: KubernetesAppValues = Field(
-        default=...,
         description=describe_attr("values", __doc__),
     )
 

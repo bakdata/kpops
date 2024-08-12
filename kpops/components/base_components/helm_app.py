@@ -78,7 +78,6 @@ class HelmApp(KubernetesApp):
         description=describe_attr("version", __doc__),
     )
     values: HelmAppValues = Field(
-        default=...,
         description=describe_attr("values", __doc__),
     )
 

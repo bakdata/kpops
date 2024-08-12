@@ -1423,7 +1423,8 @@
             },
             "required": [
                 "name",
-                "namespace"
+                "namespace",
+                "values"
             ],
             "title": "StreamsBootstrap",
             "type": "object"
