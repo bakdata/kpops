@@ -22,7 +22,7 @@ from kpops.utils.docstring import describe_attr
 log = logging.getLogger("ProducerApp")
 
 
-class ProducerAppCleaner(KafkaAppCleaner):
+class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
     values: ProducerAppValues
 
     @property

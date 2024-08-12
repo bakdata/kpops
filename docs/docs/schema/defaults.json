@@ -257,54 +257,12 @@
                     ],
                     "default": null,
                     "description": "Topic(s) into which the component will write output"
-                },
-                "values": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/KafkaAppValues"
-                        }
-                    ],
-                    "description": "Application-specific settings"
                 }
             },
             "required": [
-                "name",
-                "values"
+                "name"
             ],
             "title": "KafkaApp",
-            "type": "object"
-        },
-        "KafkaAppValues": {
-            "additionalProperties": true,
-            "description": "Settings specific to Kafka Apps.",
-            "properties": {
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "maxLength": 63,
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
-                },
-                "streams": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/KafkaStreamsConfig"
-                        }
-                    ],
-                    "description": "Kafka streams config"
-                }
-            },
-            "required": [
-                "streams"
-            ],
-            "title": "KafkaAppValues",
             "type": "object"
         },
         "KafkaConnector": {
@@ -1453,8 +1411,19 @@
                     "default": null,
                     "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
+                },
+                "streams": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/KafkaStreamsConfig"
+                        }
+                    ],
+                    "description": ""
                 }
             },
+            "required": [
+                "streams"
+            ],
             "title": "StreamsBootstrapValues",
             "type": "object"
         },

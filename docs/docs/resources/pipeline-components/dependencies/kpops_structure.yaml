@@ -13,7 +13,6 @@ kpops_components_fields:
   - prefix
   - from_
   - to
-  - values
   kafka-connector:
   - name
   - prefix
