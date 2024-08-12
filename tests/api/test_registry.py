@@ -21,7 +21,11 @@ from kpops.components.base_components.pipeline_component import PipelineComponen
 from kpops.components.common.streams_bootstrap import StreamsBootstrap
 from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
 from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
-from kpops.components.streams_bootstrap_v3 import ProducerAppV3, StreamsAppV3
+from kpops.components.streams_bootstrap_v3 import (
+    ProducerAppV3,
+    StreamsAppV3,
+    StreamsBootstrapV3,
+)
 from tests.cli.resources.custom_module import CustomSchemaProvider
 
 
@@ -107,6 +111,7 @@ def test_registry():
         "streams-app": StreamsApp,
         "streams-app-v3": StreamsAppV3,
         "streams-bootstrap": StreamsBootstrap,
+        "streams-bootstrap-v3": StreamsBootstrapV3,
     }
     for _type, _class in registry._classes.items():
         assert registry[_type] is _class
