@@ -96,12 +96,12 @@ class StreamsConfig(KafkaStreamsConfig):
         self.input_topics = KafkaTopic.deduplicate(self.input_topics + topics)
 
     def add_extra_input_topics(self, label: str, topics: list[KafkaTopic]) -> None:
-        """Add given extra topics that share a role to the list of extra input topics.
+        """Add given extra topics that share a label to the list of extra input topics.
 
         Ensures no duplicate topics in the list.
 
         :param topics: Extra input topics
-        :param label: Topic role
+        :param label: Topic label
         """
         self.extra_input_topics[label] = KafkaTopic.deduplicate(
             self.extra_input_topics.get(label, []) + topics

@@ -110,10 +110,10 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
 
     def add_extra_input_topics(self, label: str, topics: list[KafkaTopic]) -> None:
-        """Add given extra topics that share a role to the list of extra input topics.
+        """Add given extra topics that share a label to the list of extra input topics.
 
         :param topics: Extra input topics
-        :param label: Topic role
+        :param label: Topic label
         """
 
     def set_input_pattern(self, name: str) -> None:
@@ -145,13 +145,13 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """Add an output topic of type extra.
 
         :param topic: Output topic
-        :param label: Role that is unique to the extra output topic
+        :param label: Label that is unique to the extra output topic
         """
 
     def set_input_topics(self) -> None:
         """Put values of config.from into the streams config section of streams bootstrap.
 
-        Supports extra_input_topics (topics by role) or input_topics.
+        Supports extra_input_topics (topics by label) or input_topics.
         """
         if self.from_:
             for name, topic in self.from_.topics.items():
@@ -177,7 +177,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     def set_output_topics(self) -> None:
         """Put values of `to` section into the producer config section of streams bootstrap.
 
-        Supports extra_output_topics (topics by role) or output_topics.
+        Supports extra_output_topics (topics by label) or output_topics.
         """
         if self.to:
             for name, topic in self.to.topics.items():

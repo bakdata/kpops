@@ -72,10 +72,10 @@ class TopicConfig(DescConfigModel):
     )
 
     @model_validator(mode="after")
-    def extra_topic_role(self) -> Any:
+    def extra_topic_label(self) -> Any:
         """Ensure that `cls.label` is used correctly, assign type if needed."""
         if self.type and self.label:
-            msg = "Define `role` only if `type` is undefined"
+            msg = "Define `label` only if `type` is undefined"
             raise ValueError(msg)
         return self
 

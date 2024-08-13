@@ -237,7 +237,7 @@ class TestStreamsApp:
         assert "extraInputPatterns" not in streams_config
 
     def test_should_validate(self):
-        # An exception should be raised when both role and type are defined and type is input
+        # An exception should be raised when both label and type are defined and type is input
         with pytest.raises(
             ValueError, match="Define label only if `type` is `pattern` or `None`"
         ):
@@ -259,9 +259,9 @@ class TestStreamsApp:
                 },
             )
 
-        # An exception should be raised when both role and type are defined and type is error
+        # An exception should be raised when both label and type are defined and type is error
         with pytest.raises(
-            ValueError, match="Define `role` only if `type` is undefined"
+            ValueError, match="Define `label` only if `type` is undefined"
         ):
             StreamsApp(
                 name=STREAMS_APP_NAME,
