@@ -6,7 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, TypeAlias
 
-import networkx as nx
+import rustworkx as rx
 import yaml
 from pydantic import (
     BaseModel,
@@ -38,7 +38,7 @@ class Pipeline(BaseModel):
     """Pipeline representation."""
 
     _component_index: dict[str, PipelineComponent] = {}
-    _graph: nx.DiGraph = nx.DiGraph()
+    _graph: rx.PyDiGraph[str, None] = rx.PyDiGraph()
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -118,19 +118,19 @@ class Pipeline(BaseModel):
             for pending_task in pending_tasks:
                 await pending_task
 
-        graph: nx.DiGraph = self._graph.copy()  # pyright: ignore[reportAssignmentType, reportGeneralTypeIssues] imprecise type hint in networkx
+        graph = self._graph.copy()
 
         # We add an extra node to the graph, connecting all the leaf nodes to it
         # in that way we make this node the root of the graph, avoiding backtracking
-        root_node = "root_node_bfs"
-        graph.add_node(root_node)
+        root_node = graph.add_node("root_node_bfs")
 
-        for node in graph:
+        for node in graph.node_indices():
             predecessors = list(graph.predecessors(node))
             if not predecessors:
-                graph.add_edge(root_node, node)
+                graph.add_edge(root_node, node, None)
 
-        layers_graph: list[list[str]] = list(nx.bfs_layers(graph, root_node))
+        # TODO: blocker, not implemented in rustworkx
+        layers_graph: list[list[str]] = list(rx.bfs_layers(graph, root_node))
 
         sorted_tasks: list[Awaitable[None]] = []
         for layer in layers_graph[1:]:
@@ -159,21 +159,21 @@ class Pipeline(BaseModel):
         return len(self.components)
 
     def __add_to_graph(self, component: PipelineComponent):
-        self._graph.add_node(component.id)
+        node = self._graph.add_node(component.id)
 
         for input_topic in component.inputs:
-            self.__add_input(input_topic.id, component.id)
+            self.__add_input(input_topic.id, node)
 
         for output_topic in component.outputs:
-            self.__add_output(output_topic.id, component.id)
+            self.__add_output(output_topic.id, node)
 
-    def __add_output(self, topic_id: str, source: str) -> None:
-        self._graph.add_node(topic_id)
-        self._graph.add_edge(source, topic_id)
+    def __add_output(self, topic_id: str, source: int) -> None:
+        topic = self._graph.add_node(topic_id)
+        self._graph.add_edge(source, topic, None)
 
-    def __add_input(self, topic_id: str, target: str) -> None:
-        self._graph.add_node(topic_id)
-        self._graph.add_edge(topic_id, target)
+    def __add_input(self, topic_id: str, target: int) -> None:
+        topic = self._graph.add_node(topic_id)
+        self._graph.add_edge(topic, target, None)
 
     def __get_parallel_tasks_from(
         self,
@@ -189,7 +189,7 @@ class Pipeline(BaseModel):
         return list(gen_parallel_tasks())
 
     def __validate_graph(self) -> None:
-        if not nx.is_directed_acyclic_graph(self._graph):
+        if not rx.is_directed_acyclic_graph(self._graph):
             msg = "Pipeline is not a valid DAG."
             raise ValueError(msg)
 
