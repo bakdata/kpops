@@ -1,3 +1,4 @@
+import logging
 from collections.abc import AsyncIterator
 from pathlib import Path
 from unittest.mock import AsyncMock
@@ -86,6 +87,7 @@ async def test_delete_pvcs_dry_run(
     mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
 ):
+    caplog.set_level(logging.DEBUG)
     mock_delete = mocker.patch.object(
         pvc_handler._client, "delete", return_value=AsyncMock()
     )
@@ -103,6 +105,7 @@ async def test_delete_pvcs_dry_run_no_pvcs(
     mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
 ):
+    caplog.set_level(logging.DEBUG)
     mock_list = mocker.patch.object(
         pvc_handler._client, "list", return_value=AsyncMock()
     )
@@ -124,6 +127,7 @@ async def test_delete_pvcs(
     mocker: MockerFixture,
     caplog: pytest.LogCaptureFixture,
 ):
+    caplog.set_level(logging.DEBUG)
     mock_delete = mocker.patch.object(
         pvc_handler._client, "delete", return_value=AsyncMock()
     )
