@@ -86,8 +86,8 @@ class ProducerAppV2(StreamsBootstrapV2):
         self.values.streams.output_topic = topic
 
     @override
-    def add_extra_output_topic(self, topic: KafkaTopic, role: str) -> None:
-        self.values.streams.extra_output_topics[role] = topic
+    def add_extra_output_topic(self, topic: KafkaTopic, label: str) -> None:
+        self.values.streams.extra_output_topics[label] = topic
 
     @property
     @override

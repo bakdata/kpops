@@ -337,7 +337,7 @@
   from:
     components:
       account-producer:
-        role: accounts
+        label: accounts
       fraud-detector:
         type: input
     topics: {}

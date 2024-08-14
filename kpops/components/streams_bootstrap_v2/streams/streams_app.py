@@ -96,16 +96,16 @@ class StreamsAppV2(StreamsBootstrapV2):
         self.values.streams.add_input_topics(topics)
 
     @override
-    def add_extra_input_topics(self, role: str, topics: list[KafkaTopic]) -> None:
-        self.values.streams.add_extra_input_topics(role, topics)
+    def add_extra_input_topics(self, label: str, topics: list[KafkaTopic]) -> None:
+        self.values.streams.add_extra_input_topics(label, topics)
 
     @override
     def set_input_pattern(self, name: str) -> None:
         self.values.streams.input_pattern = name
 
     @override
-    def add_extra_input_pattern(self, role: str, topic: str) -> None:
-        self.values.streams.extra_input_patterns[role] = topic
+    def add_extra_input_pattern(self, label: str, topic: str) -> None:
+        self.values.streams.extra_input_patterns[label] = topic
 
     @override
     def set_output_topic(self, topic: KafkaTopic) -> None:
@@ -116,8 +116,8 @@ class StreamsAppV2(StreamsBootstrapV2):
         self.values.streams.error_topic = topic
 
     @override
-    def add_extra_output_topic(self, topic: KafkaTopic, role: str) -> None:
-        self.values.streams.extra_output_topics[role] = topic
+    def add_extra_output_topic(self, topic: KafkaTopic, label: str) -> None:
+        self.values.streams.extra_output_topics[label] = topic
 
     @property
     @override

@@ -98,7 +98,7 @@ class TestProducerApp:
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            role="first-extra-topic",
+                            label="first-extra-topic",
                             partitions_count=10,
                         ),
                     }
@@ -340,7 +340,7 @@ class TestProducerApp:
                             type=OutputTopicTypes.OUTPUT, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            role="first-extra-topic",
+                            label="first-extra-topic",
                             partitions_count=10,
                         ),
                     }

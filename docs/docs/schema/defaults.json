@@ -30,7 +30,7 @@
             "additionalProperties": false,
             "description": "Input topic.",
             "properties": {
-                "role": {
+                "label": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -41,7 +41,7 @@
                     ],
                     "default": null,
                     "description": "Custom identifier belonging to a topic; define only if `type` is `pattern` or `None`",
-                    "title": "Role"
+                    "title": "Label"
                 },
                 "type": {
                     "anyOf": [
@@ -1910,6 +1910,19 @@
                     "description": "Key schema class name",
                     "title": "Key schema"
                 },
+                "label": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+                    "title": "Label"
+                },
                 "partitions_count": {
                     "anyOf": [
                         {
@@ -1935,19 +1948,6 @@
                     "default": null,
                     "description": "Replication factor of the topic",
                     "title": "Replication factor"
-                },
-                "role": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
-                    "title": "Role"
                 },
                 "type": {
                     "anyOf": [
