@@ -54,7 +54,7 @@ def custom_components():
         shutil.rmtree(dst)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="module")
 def clear_kpops_config():
     yield
     KpopsConfig._instance = None
