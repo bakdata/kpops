@@ -1004,7 +1004,7 @@ class TestStreamsApp:
 
         mock_list_pvcs.assert_called_once()
         assert (
-            f"Deleting in namespace 'test-namespace' StatefulSet '{STREAMS_APP_FULL_NAME}' PVCs 'test-pvc1', 'test-pvc2', 'test-pvc3'"
+            f"Deleting in namespace 'test-namespace' StatefulSet '{STREAMS_APP_FULL_NAME}' PVCs ['test-pvc1', 'test-pvc2', 'test-pvc3']"
             in caplog.text
         )
 
