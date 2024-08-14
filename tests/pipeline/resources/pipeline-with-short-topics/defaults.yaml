@@ -27,15 +27,15 @@ streams-app: # inherits from kafka-app
       error-topic:
         type: error
       extra-topic-output:
-        role: role
+        label: role
   from:
     topics:
       input-topic:
         type: input
       extra-topic:
-        role: role
+        label: role
       input-pattern:
         type: pattern
       extra-pattern:
         type: pattern
-        role: role
+        label: role

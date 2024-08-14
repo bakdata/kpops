@@ -291,7 +291,7 @@
         type: output
       should-inflate-inflated-sink-connector:
         configs: {}
-        role: test
+        label: test
   type: kafka-sink-connector
 - _cleaner:
     name: should-inflate-inflated-streams-app

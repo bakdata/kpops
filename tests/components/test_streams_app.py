@@ -176,13 +176,13 @@ class TestStreamsApp:
                         "example-input": {"type": "input"},
                         "b": {"type": "input"},
                         "a": {"type": "input"},
-                        "topic-extra2": {"role": "role2"},
-                        "topic-extra3": {"role": "role2"},
-                        "topic-extra": {"role": "role1"},
+                        "topic-extra2": {"label": "role2"},
+                        "topic-extra3": {"label": "role2"},
+                        "topic-extra": {"label": "role1"},
                         ".*": {"type": "pattern"},
                         "example.*": {
                             "type": "pattern",
-                            "role": "another-pattern",
+                            "label": "another-pattern",
                         },
                     }
                 },
@@ -237,9 +237,9 @@ class TestStreamsApp:
         assert "extraInputPatterns" not in streams_config
 
     def test_should_validate(self):
-        # An exception should be raised when both role and type are defined and type is input
+        # An exception should be raised when both label and type are defined and type is input
         with pytest.raises(
-            ValueError, match="Define role only if `type` is `pattern` or `None`"
+            ValueError, match="Define label only if `type` is `pattern` or `None`"
         ):
             StreamsApp(
                 name=STREAMS_APP_NAME,
@@ -252,16 +252,16 @@ class TestStreamsApp:
                         "topics": {
                             "topic-input": {
                                 "type": "input",
-                                "role": "role",
+                                "label": "role",
                             }
                         }
                     },
                 },
             )
 
-        # An exception should be raised when both role and type are defined and type is error
+        # An exception should be raised when both label and type are defined and type is error
         with pytest.raises(
-            ValueError, match="Define `role` only if `type` is undefined"
+            ValueError, match="Define `label` only if `type` is undefined"
         ):
             StreamsApp(
                 name=STREAMS_APP_NAME,
@@ -274,7 +274,7 @@ class TestStreamsApp:
                         "topics": {
                             "topic-input": {
                                 "type": "error",
-                                "role": "role",
+                                "label": "role",
                             }
                         }
                     },
@@ -298,11 +298,11 @@ class TestStreamsApp:
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            role="first-extra-role",
+                            label="first-extra-role",
                             partitions_count=10,
                         ),
                         "extra-topic-2": TopicConfig(
-                            role="second-extra-role",
+                            label="second-extra-role",
                             partitions_count=10,
                         ),
                     }
@@ -374,11 +374,11 @@ class TestStreamsApp:
                             type=OutputTopicTypes.ERROR, partitions_count=10
                         ),
                         "extra-topic-1": TopicConfig(
-                            role="first-extra-topic",
+                            label="first-extra-topic",
                             partitions_count=10,
                         ),
                         "extra-topic-2": TopicConfig(
-                            role="second-extra-topic",
+                            label="second-extra-topic",
                             partitions_count=10,
                         ),
                     }
@@ -419,14 +419,14 @@ class TestStreamsApp:
                 name="extra-topic-1",
                 config=TopicConfig(
                     partitions_count=10,
-                    role="first-extra-topic",
+                    label="first-extra-topic",
                 ),
             ),
             KafkaTopic(
                 name="extra-topic-2",
                 config=TopicConfig(
                     partitions_count=10,
-                    role="second-extra-topic",
+                    label="second-extra-topic",
                 ),
             ),
         ]
@@ -786,20 +786,20 @@ class TestStreamsApp:
                         "example-input": {"type": "input"},
                         "b": {"type": "input"},
                         "a": {"type": "input"},
-                        "topic-extra2": {"role": "role2"},
-                        "topic-extra3": {"role": "role2"},
-                        "topic-extra": {"role": "role1"},
+                        "topic-extra2": {"label": "role2"},
+                        "topic-extra3": {"label": "role2"},
+                        "topic-extra": {"label": "role1"},
                         ".*": {"type": "pattern"},
                         "example.*": {
                             "type": "pattern",
-                            "role": "another-pattern",
+                            "label": "another-pattern",
                         },
                     }
                 },
                 "to": {
                     "topics": {
                         "example-output": {"type": "output"},
-                        "extra-topic": {"role": "fake-role"},
+                        "extra-topic": {"label": "fake-role"},
                     }
                 },
             },
