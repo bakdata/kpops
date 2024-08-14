@@ -18,7 +18,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     RepoAuthFlags,
     Version,
 )
-from kpops.components.streams_bootstrap.app_type import AppType
+from kpops.components.common.app_type import AppType
 
 
 class TestHelmWrapper:
