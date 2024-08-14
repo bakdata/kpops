@@ -1,13 +1,13 @@
+from collections.abc import AsyncIterator
 from unittest.mock import AsyncMock
 
 import pytest
-from kubernetes_asyncio.client import (
-    V1ObjectMeta,
-    V1PersistentVolumeClaim,
-    V1PersistentVolumeClaimList,
-    V1PersistentVolumeClaimSpec,
-    V1PersistentVolumeClaimStatus,
+from lightkube.models.core_v1 import (
+    PersistentVolumeClaimSpec,
+    PersistentVolumeClaimStatus,
 )
+from lightkube.models.meta_v1 import ObjectMeta
+from lightkube.resources.core_v1 import PersistentVolumeClaim
 from pytest_mock import MockerFixture
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
@@ -16,64 +16,93 @@ MODULE = "kpops.component_handlers.kubernetes.pvc_handler"
 
 
 @pytest.fixture
-def pvc_handler():
+def pvc_handler() -> PVCHandler:
     return PVCHandler("test-app", "test-namespace")
 
 
-@pytest.mark.asyncio
-async def test_create(pvc_handler: PVCHandler, mocker: MockerFixture):
-    mock_load_kube_config = mocker.patch(f"{MODULE}.config.load_kube_config")
-    pvc_handler = await PVCHandler.create("test-app", "test-namespace")
-    mock_load_kube_config.assert_called_once()
+def test_init(pvc_handler: PVCHandler, mocker: MockerFixture):
     assert isinstance(pvc_handler, PVCHandler)
     assert pvc_handler.namespace == "test-namespace"
     assert pvc_handler.app_name == "test-app"
 
 
 @pytest.mark.asyncio
+async def test_list_pvcs(pvc_handler: PVCHandler, mocker: MockerFixture):
+    mock_list_pvcs = mocker.patch.object(pvc_handler._client, "list")
+    await pvc_handler.list_pvcs()
+    mock_list_pvcs.assert_called_with(PersistentVolumeClaim, labels={"app": "test-app"})
+
+
+@pytest.mark.asyncio
 async def test_pvc_names(pvc_handler: PVCHandler, mocker: MockerFixture):
-    test_pvc1 = V1PersistentVolumeClaim(
-        api_version="v1",
+    test_pvc1 = PersistentVolumeClaim(
+        apiVersion="v1",
         kind="PersistentVolumeClaim",
-        metadata=V1ObjectMeta(name="datadir-test-app-1"),
-        spec=V1PersistentVolumeClaimSpec(),
-        status=V1PersistentVolumeClaimStatus(),
+        metadata=ObjectMeta(name="datadir-test-app-1"),
+        spec=PersistentVolumeClaimSpec(),
+        status=PersistentVolumeClaimStatus(),
     )
-    test_pvc2 = V1PersistentVolumeClaim(
-        api_version="v1",
+    test_pvc2 = PersistentVolumeClaim(
+        apiVersion="v1",
         kind="PersistentVolumeClaim",
-        metadata=V1ObjectMeta(name="datadir-test-app-2"),
-        spec=V1PersistentVolumeClaimSpec(),
-        status=V1PersistentVolumeClaimStatus(),
+        metadata=ObjectMeta(name="datadir-test-app-2"),
+        spec=PersistentVolumeClaimSpec(),
+        status=PersistentVolumeClaimStatus(),
     )
-    volume_claim_list = V1PersistentVolumeClaimList(items=[test_pvc1, test_pvc2])
 
-    async_mock = AsyncMock()
-    async_mock.list_namespaced_persistent_volume_claim.return_value = volume_claim_list
+    async def async_generator_side_effect() -> AsyncIterator[PersistentVolumeClaim]:
+        yield test_pvc1
+        yield test_pvc2
 
-    mocker.patch(f"{MODULE}.client.CoreV1Api", return_value=async_mock)
+    mocker.patch.object(
+        pvc_handler,
+        "list_pvcs",
+        side_effect=async_generator_side_effect,
+    )
 
     pvcs = await pvc_handler.list_pvcs()
-
-    assert pvcs == ["datadir-test-app-1", "datadir-test-app-2"]
+    assert isinstance(pvcs, AsyncIterator)
+    assert [pvc async for pvc in pvcs] == [test_pvc1, test_pvc2]
 
 
 @pytest.mark.asyncio
 async def test_delete_pvcs(pvc_handler: PVCHandler, mocker: MockerFixture):
+    test_pvc1 = PersistentVolumeClaim(
+        apiVersion="v1",
+        kind="PersistentVolumeClaim",
+        metadata=ObjectMeta(name="datadir-test-app-1"),
+        spec=PersistentVolumeClaimSpec(),
+        status=PersistentVolumeClaimStatus(),
+    )
+    test_pvc2 = PersistentVolumeClaim(
+        apiVersion="v1",
+        kind="PersistentVolumeClaim",
+        metadata=ObjectMeta(name="datadir-test-app-2"),
+        spec=PersistentVolumeClaimSpec(),
+        status=PersistentVolumeClaimStatus(),
+    )
+
+    async def async_generator_side_effect() -> AsyncIterator[PersistentVolumeClaim]:
+        yield test_pvc1
+        yield test_pvc2
+
     mocker.patch.object(
-        pvc_handler, "list_pvcs", return_value=["test-pvc-1", "test-pvc-2"]
+        pvc_handler,
+        "list_pvcs",
+        side_effect=async_generator_side_effect,
     )
-    mock_core_v1_api = mocker.patch(
-        f"{MODULE}.client.CoreV1Api", return_value=AsyncMock()
+
+    pvcs = await pvc_handler.list_pvcs()
+    assert isinstance(pvcs, AsyncIterator)
+    assert [pvc async for pvc in pvcs] == [test_pvc1, test_pvc2]
+
+    mock_client = mocker.patch.object(
+        pvc_handler._client, "delete", return_value=AsyncMock()
     )
-    await pvc_handler.delete_pvcs()
-    mock_core_v1_api.return_value.assert_has_calls(
+    await pvc_handler.delete_pvcs(False)
+    mock_client.assert_has_calls(
         [
-            mocker.call.delete_namespaced_persistent_volume_claim(
-                "test-pvc-1", "test-namespace"
-            ),
-            mocker.call.delete_namespaced_persistent_volume_claim(
-                "test-pvc-2", "test-namespace"
-            ),
+            mocker.call.delete(PersistentVolumeClaim, "datadir-test-app-1"),
+            mocker.call.delete(PersistentVolumeClaim, "datadir-test-app-2"),
         ]
     )
