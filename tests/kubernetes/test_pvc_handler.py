@@ -94,7 +94,7 @@ async def test_delete_pvcs_dry_run(
     await pvc_handler.delete_pvcs(True)
     mock_delete.assert_not_called()
     assert (
-        "Deleting in namespace 'test-namespace' StatefulSet 'test-app' PVCs 'datadir-test-app-1', 'datadir-test-app-2'"
+        "Deleting in namespace 'test-namespace' StatefulSet 'test-app' PVCs ['datadir-test-app-1', 'datadir-test-app-2']"
         in caplog.text
     )
 
@@ -139,6 +139,6 @@ async def test_delete_pvcs(
         ]
     )
     assert (
-        "Deleting in namespace 'test-namespace' StatefulSet 'test-app' PVCs 'datadir-test-app-1', 'datadir-test-app-2'"
+        "Deleting in namespace 'test-namespace' StatefulSet 'test-app' PVCs ['datadir-test-app-1', 'datadir-test-app-2']"
         in caplog.text
     )
