@@ -16,7 +16,7 @@ runner = CliRunner()
 RESOURCE_PATH = Path(__file__).parent / "resources"
 
 
-@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_kpops_config")
 class TestReset:
     @pytest.fixture(autouse=True)
     def helm_mock(self, mocker: MockerFixture) -> MagicMock:
