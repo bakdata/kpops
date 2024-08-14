@@ -1,5 +1,5 @@
 - _cleaner:
-    name: streams-app
+    name: streams-app-v2
     namespace: example-namespace
     prefix: resources-kafka-connect-sink-
     repo_config:
@@ -30,7 +30,7 @@
     topics:
       example-topic:
         type: input
-  name: streams-app
+  name: streams-app-v2
   namespace: example-namespace
   prefix: resources-kafka-connect-sink-
   repo_config:

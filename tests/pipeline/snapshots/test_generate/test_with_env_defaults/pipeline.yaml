@@ -1,5 +1,5 @@
 - _cleaner:
-    name: streams-app-development
+    name: streams-app-v2-development
     namespace: development-namespace
     prefix: resources-pipeline-with-env-defaults-
     repo_config:
@@ -30,7 +30,7 @@
     topics:
       example-topic:
         type: input
-  name: streams-app-development
+  name: streams-app-v2-development
   namespace: development-namespace
   prefix: resources-pipeline-with-env-defaults-
   repo_config:
