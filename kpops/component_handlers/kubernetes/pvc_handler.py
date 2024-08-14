@@ -1,7 +1,6 @@
 import logging
 from collections.abc import AsyncIterable
 
-from lightkube.config.kubeconfig import KubeConfig
 from lightkube.core.async_client import AsyncClient
 from lightkube.resources.core_v1 import PersistentVolumeClaim
 
@@ -12,8 +11,7 @@ class PVCHandler:
     def __init__(self, app_name: str, namespace: str) -> None:
         self.app_name = app_name
         self.namespace = namespace
-        config = KubeConfig.from_env()
-        self._client = AsyncClient(config, namespace)
+        self._client = AsyncClient(namespace=namespace)  # pyright: ignore[reportArgumentType]
 
     async def list_pvcs(self) -> AsyncIterable[PersistentVolumeClaim]:
         return self._client.list(PersistentVolumeClaim, labels={"app": self.app_name})
