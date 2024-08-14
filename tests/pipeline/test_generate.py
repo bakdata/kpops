@@ -597,27 +597,27 @@ class TestGenerate:
         assert "type" not in output_topics["output-topic"]
         assert output_topics["error-topic"]["type"] == "error"
         assert "type" not in output_topics["extra-topic-output"]
-        assert "role" not in output_topics["output-topic"]
-        assert "role" not in output_topics["error-topic"]
-        assert output_topics["extra-topic-output"]["role"] == "role"
+        assert "label" not in output_topics["output-topic"]
+        assert "label" not in output_topics["error-topic"]
+        assert output_topics["extra-topic-output"]["label"] == "role"
 
         assert "type" not in ["input-topic"]
         assert "type" not in input_topics["extra-topic"]
         assert input_topics["input-pattern"]["type"] == "pattern"
         assert input_topics["extra-pattern"]["type"] == "pattern"
-        assert "role" not in input_topics["input-topic"]
-        assert "role" not in input_topics["input-pattern"]
-        assert input_topics["extra-topic"]["role"] == "role"
-        assert input_topics["extra-pattern"]["role"] == "role"
+        assert "label" not in input_topics["input-topic"]
+        assert "label" not in input_topics["input-pattern"]
+        assert input_topics["extra-topic"]["label"] == "role"
+        assert input_topics["extra-pattern"]["label"] == "role"
 
         assert "type" not in input_components["component-input"]
         assert "type" not in input_components["component-extra"]
         assert input_components["component-input-pattern"]["type"] == "pattern"
         assert input_components["component-extra-pattern"]["type"] == "pattern"
-        assert "role" not in input_components["component-input"]
-        assert "role" not in input_components["component-input-pattern"]
-        assert input_components["component-extra"]["role"] == "role"
-        assert input_components["component-extra-pattern"]["role"] == "role"
+        assert "label" not in input_components["component-input"]
+        assert "label" not in input_components["component-input-pattern"]
+        assert input_components["component-extra"]["label"] == "role"
+        assert input_components["component-extra-pattern"]["label"] == "role"
 
     def test_kubernetes_app_name_validation(self):
         with (

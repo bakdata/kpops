@@ -205,7 +205,7 @@
     topics:
       inflate-step-inflated-sink-connector:
         configs: {}
-        role: test
+        label: test
       kafka-sink-connector:
         configs: {}
         type: output
@@ -399,7 +399,7 @@
     topics:
       inflate-step-without-prefix-inflated-sink-connector:
         configs: {}
-        role: test
+        label: test
       kafka-sink-connector:
         configs: {}
         type: output

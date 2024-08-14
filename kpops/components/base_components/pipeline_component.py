@@ -74,8 +74,8 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     @property
     def inputs(self) -> Iterator[KafkaTopic]:
         yield from self.input_topics
-        for role_topics in self.extra_input_topics.values():
-            yield from role_topics
+        for labeled_topics in self.extra_input_topics.values():
+            yield from labeled_topics
 
     @property
     def outputs(self) -> Iterator[KafkaTopic]:
@@ -109,11 +109,11 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         :param topics: Input topics
         """
 
-    def add_extra_input_topics(self, role: str, topics: list[KafkaTopic]) -> None:
-        """Add given extra topics that share a role to the list of extra input topics.
+    def add_extra_input_topics(self, label: str, topics: list[KafkaTopic]) -> None:
+        """Add given extra topics that share a label to the list of extra input topics.
 
         :param topics: Extra input topics
-        :param role: Topic role
+        :param label: Topic label
         """
 
     def set_input_pattern(self, name: str) -> None:
@@ -122,10 +122,10 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         :param name: Input pattern name
         """
 
-    def add_extra_input_pattern(self, role: str, topic: str) -> None:
+    def add_extra_input_pattern(self, label: str, topic: str) -> None:
         """Add an input pattern of type extra.
 
-        :param role: Custom identifier belonging to one or multiple topics
+        :param label: Custom identifier belonging to one or multiple topics
         :param topic: Topic name
         """
 
@@ -141,17 +141,17 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         :param topic: Error topic
         """
 
-    def add_extra_output_topic(self, topic: KafkaTopic, role: str) -> None:
+    def add_extra_output_topic(self, topic: KafkaTopic, label: str) -> None:
         """Add an output topic of type extra.
 
         :param topic: Output topic
-        :param role: Role that is unique to the extra output topic
+        :param label: Label that is unique to the extra output topic
         """
 
     def set_input_topics(self) -> None:
         """Put values of config.from into the streams config section of streams bootstrap.
 
-        Supports extra_input_topics (topics by role) or input_topics.
+        Supports extra_input_topics (topics by label) or input_topics.
         """
         if self.from_:
             for name, topic in self.from_.topics.items():
@@ -165,10 +165,10 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
         kafka_topic = KafkaTopic(name=name)
         match topic.type:
-            case None if topic.role:
-                self.add_extra_input_topics(topic.role, [kafka_topic])
-            case InputTopicTypes.PATTERN if topic.role:
-                self.add_extra_input_pattern(topic.role, name)
+            case None if topic.label:
+                self.add_extra_input_topics(topic.label, [kafka_topic])
+            case InputTopicTypes.PATTERN if topic.label:
+                self.add_extra_input_pattern(topic.label, name)
             case InputTopicTypes.PATTERN:
                 self.set_input_pattern(name)
             case _:
@@ -177,7 +177,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
     def set_output_topics(self) -> None:
         """Put values of `to` section into the producer config section of streams bootstrap.
 
-        Supports extra_output_topics (topics by role) or output_topics.
+        Supports extra_output_topics (topics by label) or output_topics.
         """
         if self.to:
             for name, topic in self.to.topics.items():
@@ -191,8 +191,8 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         """
         kafka_topic = KafkaTopic(name=name)
         match topic.type:
-            case None if topic.role:
-                self.add_extra_output_topic(kafka_topic, topic.role)
+            case None if topic.label:
+                self.add_extra_output_topic(kafka_topic, topic.label)
             case OutputTopicTypes.ERROR:
                 self.set_error_topic(kafka_topic)
             case _:
@@ -214,7 +214,7 @@ class PipelineComponent(BaseDefaultsComponent, ABC):
         input_topics = [
             topic_name
             for topic_name, topic_config in to.topics.items()
-            if topic_config.type != OutputTopicTypes.ERROR and not topic_config.role
+            if topic_config.type != OutputTopicTypes.ERROR and not topic_config.label
         ]
         for input_topic in input_topics:
             self.apply_from_inputs(input_topic, from_topic)

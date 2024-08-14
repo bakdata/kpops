@@ -71,8 +71,8 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     ) -> dict[str, KafkaTopic] | Any:
         if isinstance(extra_output_topics, dict):
             return {
-                role: KafkaTopic(name=topic_name)
-                for role, topic_name in extra_output_topics.items()
+                label: KafkaTopic(name=topic_name)
+                for label, topic_name in extra_output_topics.items()
             }
         return extra_output_topics
 
@@ -80,7 +80,7 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
     def serialize_extra_output_topics(
         self, extra_topics: dict[str, KafkaTopic]
     ) -> dict[str, str]:
-        return {role: topic.name for role, topic in extra_topics.items()}
+        return {label: topic.name for label, topic in extra_topics.items()}
 
     # TODO(Ivan Yordanov): Currently hacky and potentially unsafe. Find cleaner solution
     @pydantic.model_serializer(mode="wrap", when_used="always")

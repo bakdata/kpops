@@ -34,7 +34,7 @@
     topics:
       my-labeled-producer-app-topic-output:
         configs: {}
-        role: my-producer-app-output-topic-label
+        label: my-producer-app-output-topic-label
       my-producer-app-output-topic:
         configs: {}
         type: output
@@ -97,10 +97,10 @@
       my-input-topic:
         type: input
       my-labeled-input-pattern:
-        role: my-input-topic-labeled-pattern
+        label: my-input-topic-labeled-pattern
         type: pattern
       my-labeled-input-topic:
-        role: my-input-topic-label
+        label: my-input-topic-label
   name: my-streams-app
   namespace: example-namespace
   prefix: resources-streams-bootstrap-v3-
@@ -117,7 +117,7 @@
         type: error
       my-labeled-topic-output:
         configs: {}
-        role: my-output-topic-label
+        label: my-output-topic-label
       my-output-topic:
         configs: {}
         type: output
