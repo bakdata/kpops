@@ -7,6 +7,7 @@ from unittest import mock
 
 import pytest
 
+from kpops.config import KpopsConfig
 from kpops.utils.environment import ENV, Environment
 from kpops.utils.yaml import load_yaml_file
 
@@ -43,7 +44,7 @@ def load_yaml_file_clear_cache() -> Iterator[None]:
 
 
 @pytest.fixture()
-def custom_components():
+def custom_components() -> Iterator[None]:
     src = Path("tests/pipeline/test_components")
     dst = Path("kpops/components/test_components")
     try:
@@ -51,6 +52,12 @@ def custom_components():
         yield
     finally:
         shutil.rmtree(dst)
+
+
+@pytest.fixture(scope="module")
+def clear_kpops_config() -> Iterator[None]:
+    yield
+    KpopsConfig._instance = None
 
 
 KUBECONFIG = """
