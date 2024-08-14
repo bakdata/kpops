@@ -1,3 +1,4 @@
+import re
 from pathlib import Path
 
 import pytest
@@ -71,7 +72,9 @@ def test_kpops_config_with_different_invalid_urls():
 def test_global_kpops_config_not_initialized_error():
     with pytest.raises(
         RuntimeError,
-        match=r"KpopsConfig has not been initialized, call KpopsConfig.create\(\) first.",
+        match=re.escape(
+            "KpopsConfig has not been initialized, call KpopsConfig.create() first."
+        ),
     ):
         get_config()
 
