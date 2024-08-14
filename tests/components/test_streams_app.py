@@ -998,10 +998,6 @@ class TestStreamsApp:
         dry_run = True
         await stateful_streams_app.clean(dry_run=dry_run)
 
-        # pvc_handler_create.assert_called_once_with(
-        #     STREAMS_APP_FULL_NAME, "test-namespace"
-        # )
-
         mock_list_pvcs.assert_called_once()
         assert (
             f"Deleting in namespace 'test-namespace' StatefulSet '{STREAMS_APP_FULL_NAME}' PVCs ['test-pvc1', 'test-pvc2', 'test-pvc3']"
