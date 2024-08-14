@@ -119,7 +119,11 @@ async def test_delete_pvcs_dry_run_no_pvcs(
 
 @pytest.mark.usefixtures("mock_list_pvcs")
 @pytest.mark.asyncio
-async def test_delete_pvcs(pvc_handler: PVCHandler, mocker: MockerFixture):
+async def test_delete_pvcs(
+    pvc_handler: PVCHandler,
+    mocker: MockerFixture,
+    caplog: pytest.LogCaptureFixture,
+):
     mock_delete = mocker.patch.object(
         pvc_handler._client, "delete", return_value=AsyncMock()
     )
@@ -129,4 +133,8 @@ async def test_delete_pvcs(pvc_handler: PVCHandler, mocker: MockerFixture):
             mocker.call.delete(PersistentVolumeClaim, "datadir-test-app-1"),
             mocker.call.delete(PersistentVolumeClaim, "datadir-test-app-2"),
         ]
+    )
+    assert (
+        "Deleting in namespace 'test-namespace' StatefulSet 'test-app' PVCs 'datadir-test-app-1', 'datadir-test-app-2'"
+        in caplog.text
     )
