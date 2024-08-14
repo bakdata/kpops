@@ -60,10 +60,7 @@ class TopicConfig(DescConfigModel):
     configs: dict[str, str | int] = Field(
         default={}, description=describe_attr("configs", __doc__)
     )
-    # TODO: We can rename this but this would be a breaking change
     label: str | None = Field(default=None, description=describe_attr("label", __doc__))
-    # TODO: Alternatively, we can define label and use both. Double checks everywhere.
-    # label: str | None = Field(default=None, description=describe_attr("label", __doc__))
 
     model_config = ConfigDict(
         extra="forbid",
