@@ -12,7 +12,7 @@ runner = CliRunner()
 EXAMPLES_PATH = Path("examples").absolute()
 
 
-@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache")
+@pytest.mark.usefixtures("mock_env", "load_yaml_file_clear_cache", "clear_kpops_config")
 class TestExample:
     @pytest.fixture(scope="class", autouse=True)
     def cd(self):
