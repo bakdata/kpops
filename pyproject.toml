@@ -38,7 +38,7 @@ networkx = "^3.1"
 kubernetes-asyncio = "^29.0.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.1.2"
+pytest = "^8.3.2"
 pytest-mock = "^3.10.0"
 pytest-timeout = "^2.1.0"
 pytest-snapshot = "^0.9.0"
