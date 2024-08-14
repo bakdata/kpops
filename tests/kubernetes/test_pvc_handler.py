@@ -1,3 +1,4 @@
+import os
 from collections.abc import AsyncIterator
 from pathlib import Path
 from unittest.mock import AsyncMock
@@ -32,16 +33,16 @@ users:
 """
 
 
-@pytest.fixture()
-def kubeconfig(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
-    kubeconfig = tmp_path / "kubeconfig"
+@pytest.fixture(scope="session")
+def kubeconfig(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    kubeconfig = tmp_path_factory.mktemp("kpops") / "kubeconfig"
     kubeconfig.write_text(KUBECONFIG)
-    monkeypatch.setenv("KUBECONFIG", str(kubeconfig))
+    os.environ["KUBECONFIG"] = str(kubeconfig)
     return kubeconfig
 
 
 @pytest.fixture()
-def pvc_handler() -> PVCHandler:
+def pvc_handler(kubeconfig: Path) -> PVCHandler:
     return PVCHandler("test-app", "test-namespace")
 
 
@@ -49,6 +50,7 @@ def test_init(pvc_handler: PVCHandler, mocker: MockerFixture):
     assert isinstance(pvc_handler, PVCHandler)
     assert pvc_handler.namespace == "test-namespace"
     assert pvc_handler.app_name == "test-app"
+    assert pvc_handler._client.config.context_name == "test"
 
 
 @pytest.fixture()
