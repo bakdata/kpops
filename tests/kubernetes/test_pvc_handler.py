@@ -81,12 +81,50 @@ async def test_list_pvcs(
 
 @pytest.mark.usefixtures("mock_list_pvcs")
 @pytest.mark.asyncio
+async def test_delete_pvcs_dry_run(
+    pvc_handler: PVCHandler,
+    mocker: MockerFixture,
+    caplog: pytest.LogCaptureFixture,
+):
+    mock_delete = mocker.patch.object(
+        pvc_handler._client, "delete", return_value=AsyncMock()
+    )
+    await pvc_handler.delete_pvcs(True)
+    mock_delete.assert_not_called()
+    assert (
+        "Deleting in namespace 'test-namespace' StatefulSet 'test-app' PVCs '['datadir-test-app-1', 'datadir-test-app-2']'"
+        in caplog.text
+    )
+
+
+@pytest.mark.asyncio
+async def test_delete_pvcs_dry_run_no_pvcs(
+    pvc_handler: PVCHandler,
+    mocker: MockerFixture,
+    caplog: pytest.LogCaptureFixture,
+):
+    mock_list = mocker.patch.object(
+        pvc_handler._client, "list", return_value=AsyncMock()
+    )
+    mock_delete = mocker.patch.object(
+        pvc_handler._client, "delete", return_value=AsyncMock()
+    )
+    await pvc_handler.delete_pvcs(True)
+    mock_list.assert_called_once()
+    mock_delete.assert_not_called()
+    assert (
+        "No PVCs found for app 'test-app', in namespace 'test-namespace'" in caplog.text
+    )
+
+
+@pytest.mark.usefixtures("mock_list_pvcs")
+@pytest.mark.asyncio
 async def test_delete_pvcs(pvc_handler: PVCHandler, mocker: MockerFixture):
-    mock_client = mocker.patch.object(
+    mock_delete = mocker.patch.object(
         pvc_handler._client, "delete", return_value=AsyncMock()
     )
     await pvc_handler.delete_pvcs(False)
-    mock_client.assert_has_calls(
+    mock_delete.assert_has_calls(
         [
             mocker.call.delete(PersistentVolumeClaim, "datadir-test-app-1"),
             mocker.call.delete(PersistentVolumeClaim, "datadir-test-app-2"),
