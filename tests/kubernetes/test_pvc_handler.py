@@ -1,4 +1,3 @@
-import os
 from collections.abc import AsyncIterator
 from pathlib import Path
 from unittest.mock import AsyncMock
@@ -13,32 +12,6 @@ from lightkube.resources.core_v1 import PersistentVolumeClaim
 from pytest_mock import MockerFixture
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
-
-MODULE = "kpops.component_handlers.kubernetes.pvc_handler"
-
-KUBECONFIG = """
-apiVersion: v1
-clusters:
-- cluster: {server: 'https://localhost:9443'}
-  name: test
-contexts:
-- context: {cluster: test, user: test}
-  name: test
-current-context: test
-kind: Config
-preferences: {}
-users:
-- name: test
-  user: {token: testtoken}
-"""
-
-
-@pytest.fixture(scope="session")
-def kubeconfig(tmp_path_factory: pytest.TempPathFactory) -> Path:
-    kubeconfig = tmp_path_factory.mktemp("kpops") / "kubeconfig"
-    kubeconfig.write_text(KUBECONFIG)
-    os.environ["KUBECONFIG"] = str(kubeconfig)
-    return kubeconfig
 
 
 @pytest.fixture()

@@ -902,6 +902,7 @@ class TestStreamsApp:
         )
 
     @pytest.mark.asyncio()
+    @pytest.mark.usefixtures("kubeconfig")
     async def test_stateful_clean_with_dry_run_false(
         self,
         stateful_streams_app: StreamsApp,
@@ -975,6 +976,7 @@ class TestStreamsApp:
         )
 
     @pytest.mark.asyncio()
+    @pytest.mark.usefixtures("kubeconfig")
     async def test_stateful_clean_with_dry_run_true(
         self,
         stateful_streams_app: StreamsApp,
