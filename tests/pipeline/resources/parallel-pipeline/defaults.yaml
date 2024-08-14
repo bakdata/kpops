@@ -10,7 +10,7 @@ kafka-app:
       brokers: ${config.kafka_brokers}
       schemaRegistryUrl: ${config.schema_registry.url}
 
-streams-app:
+streams-app-v2:
   values:
     labels:
       pipeline: ${pipeline.name}

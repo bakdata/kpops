@@ -20,7 +20,7 @@ from kpops.components.common.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap_v3 import StreamsAppV3
+from kpops.components.streams_bootstrap_v3 import StreamsApp
 from kpops.components.streams_bootstrap_v3.streams.model import (
     StreamsAppAutoScaling,
 )
@@ -53,8 +53,8 @@ class TestStreamsApp:
         assert STREAMS_APP_CLEAN_RELEASE_NAME.endswith("-clean")
 
     @pytest.fixture()
-    def streams_app(self) -> StreamsAppV3:
-        return StreamsAppV3(
+    def streams_app(self) -> StreamsApp:
+        return StreamsApp(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -72,8 +72,8 @@ class TestStreamsApp:
         )
 
     @pytest.fixture()
-    def stateful_streams_app(self) -> StreamsAppV3:
-        return StreamsAppV3(
+    def stateful_streams_app(self) -> StreamsApp:
+        return StreamsApp(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -104,12 +104,12 @@ class TestStreamsApp:
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "get_values", return_value=None)
 
-    def test_cleaner(self, streams_app: StreamsAppV3):
+    def test_cleaner(self, streams_app: StreamsApp):
         cleaner = streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
         assert not hasattr(cleaner, "_cleaner")
 
-    def test_cleaner_inheritance(self, streams_app: StreamsAppV3):
+    def test_cleaner_inheritance(self, streams_app: StreamsApp):
         streams_app.values.kafka.application_id = "test-application-id"
         streams_app.values.autoscaling = StreamsAppAutoScaling(
             enabled=True,
@@ -118,20 +118,20 @@ class TestStreamsApp:
         )
         assert streams_app._cleaner.values == streams_app.values
 
-    def test_cleaner_helm_release_name(self, streams_app: StreamsAppV3):
+    def test_cleaner_helm_release_name(self, streams_app: StreamsApp):
         assert (
             streams_app._cleaner.helm_release_name
             == "${pipeline.name}-test-streams-app-with-lo-c98c5-clean"
         )
 
-    def test_cleaner_helm_name_override(self, streams_app: StreamsAppV3):
+    def test_cleaner_helm_name_override(self, streams_app: StreamsApp):
         assert (
             streams_app._cleaner.to_helm_values()["nameOverride"]
             == STREAMS_APP_CLEAN_HELM_NAME_OVERRIDE
         )
 
     def test_set_topics(self):
-        streams_app = StreamsAppV3(
+        streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -177,7 +177,7 @@ class TestStreamsApp:
         assert "labeledInputPatterns" in kafka_config
 
     def test_no_empty_input_topic(self):
-        streams_app = StreamsAppV3(
+        streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -208,7 +208,7 @@ class TestStreamsApp:
         with pytest.raises(
             ValueError, match="Define role only if `type` is `pattern` or `None`"
         ):
-            StreamsAppV3(
+            StreamsApp(
                 name=STREAMS_APP_NAME,
                 **{
                     "namespace": "test-namespace",
@@ -230,7 +230,7 @@ class TestStreamsApp:
         with pytest.raises(
             ValueError, match="Define `role` only if `type` is undefined"
         ):
-            StreamsAppV3(
+            StreamsApp(
                 name=STREAMS_APP_NAME,
                 **{
                     "namespace": "test-namespace",
@@ -249,7 +249,7 @@ class TestStreamsApp:
             )
 
     def test_set_streams_output_from_to(self):
-        streams_app = StreamsAppV3(
+        streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -288,7 +288,7 @@ class TestStreamsApp:
         )
 
     def test_weave_inputs_from_prev_component(self):
-        streams_app = StreamsAppV3(
+        streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -325,7 +325,7 @@ class TestStreamsApp:
 
     @pytest.mark.asyncio()
     async def test_deploy_order_when_dry_run_is_false(self, mocker: MockerFixture):
-        streams_app = StreamsAppV3(
+        streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -437,7 +437,7 @@ class TestStreamsApp:
     @pytest.mark.asyncio()
     async def test_destroy(
         self,
-        streams_app: StreamsAppV3,
+        streams_app: StreamsApp,
         mocker: MockerFixture,
     ):
         mock_helm_uninstall = mocker.patch.object(streams_app.helm, "uninstall")
@@ -451,7 +451,7 @@ class TestStreamsApp:
     @pytest.mark.asyncio()
     async def test_reset_when_dry_run_is_false(
         self,
-        streams_app: StreamsAppV3,
+        streams_app: StreamsApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
@@ -518,7 +518,7 @@ class TestStreamsApp:
     @pytest.mark.asyncio()
     async def test_should_clean_streams_app_and_deploy_clean_up_job_and_delete_clean_up(
         self,
-        streams_app: StreamsAppV3,
+        streams_app: StreamsApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
@@ -604,7 +604,7 @@ class TestStreamsApp:
                 },
             },
         )
-        streams_app = StreamsAppV3(
+        streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -683,7 +683,7 @@ class TestStreamsApp:
                 },
             },
         )
-        streams_app = StreamsAppV3(
+        streams_app = StreamsApp(
             name=STREAMS_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -741,7 +741,7 @@ class TestStreamsApp:
 
     @pytest.mark.asyncio()
     async def test_get_input_output_topics(self):
-        streams_app = StreamsAppV3(
+        streams_app = StreamsApp(
             name="my-app",
             **{
                 "namespace": "test-namespace",
@@ -801,7 +801,7 @@ class TestStreamsApp:
     @pytest.mark.asyncio()
     async def test_stateful_clean_with_dry_run_false(
         self,
-        stateful_streams_app: StreamsAppV3,
+        stateful_streams_app: StreamsApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
@@ -880,7 +880,7 @@ class TestStreamsApp:
     @pytest.mark.asyncio()
     async def test_stateful_clean_with_dry_run_true(
         self,
-        stateful_streams_app: StreamsAppV3,
+        stateful_streams_app: StreamsApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
         caplog: pytest.LogCaptureFixture,

@@ -7,9 +7,9 @@ kafka-app:
       brokers: "${config.kafka_brokers}"
       schemaRegistryUrl: "${config.schema_registry.url}"
 
-producer-app: {} # inherits from kafka-app
+producer-app-v2: {} # inherits from streams-bootstrap-v2
 
-streams-app: # inherits from kafka-app
+streams-app-v2: # inherits from streams-bootstrap-v2
   version: 2.9.0
   values:
     streams:

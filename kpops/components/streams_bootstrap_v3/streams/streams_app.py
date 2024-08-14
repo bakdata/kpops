@@ -10,7 +10,7 @@ from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
 from kpops.components.streams_bootstrap_v3.base import (
-    StreamsBootstrapV3,
+    StreamsBootstrap,
 )
 from kpops.components.streams_bootstrap_v3.streams.model import (
     StreamsAppValues,
@@ -20,7 +20,7 @@ from kpops.utils.docstring import describe_attr
 log = logging.getLogger("StreamsAppV3")
 
 
-class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrapV3):
+class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
     from_: None = None
     to: None = None
     values: StreamsAppValues
@@ -54,7 +54,7 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrapV3):
             await pvc_handler.delete_pvcs()
 
 
-class StreamsAppV3(StreamsBootstrapV3):
+class StreamsApp(StreamsBootstrap):
     """StreamsApp component that configures a streams-bootstrap app.
 
     :param values: streams-bootstrap Helm values

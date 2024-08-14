@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.components.streams_bootstrap_v3.model import (
     KafkaConfig,
-    StreamsBootstrapV3Values,
+    StreamsBootstrapValues,
 )
 from kpops.utils.docstring import describe_attr
 from kpops.utils.pydantic import (
@@ -224,7 +224,7 @@ class PersistenceConfig(BaseModel):
     )
 
 
-class StreamsAppValues(StreamsBootstrapV3Values):
+class StreamsAppValues(StreamsBootstrapValues):
     """streams-bootstrap app configurations.
 
     The attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.

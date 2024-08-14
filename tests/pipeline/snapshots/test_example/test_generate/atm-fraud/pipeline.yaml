@@ -42,7 +42,7 @@
       atm-fraud-account-producer-topic:
         configs: {}
         partitions_count: 3
-  type: producer-app
+  type: producer-app-v2
   values:
     image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
     imageTag: 1.0.0
@@ -107,7 +107,7 @@
       atm-fraud-transaction-avro-producer-topic:
         configs: {}
         partitions_count: 3
-  type: producer-app
+  type: producer-app-v2
   values:
     commandLine:
       ITERATION: 20
@@ -139,6 +139,7 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
+    # TODO: do we need to version this -> yes
     type: streams-app-cleaner
     values:
       annotations:
@@ -184,7 +185,7 @@
       atm-fraud-transaction-joiner-topic:
         configs: {}
         partitions_count: 3
-  type: streams-app
+  type: streams-app-v2
   values:
     annotations:
       consumerGroup: atm-transactionjoiner-atm-fraud-joinedtransactions-topic
@@ -266,7 +267,7 @@
       atm-fraud-fraud-detector-topic:
         configs: {}
         partitions_count: 3
-  type: streams-app
+  type: streams-app-v2
   values:
     annotations:
       consumerGroup: atm-frauddetector-atm-fraud-possiblefraudtransactions-topic
@@ -358,7 +359,7 @@
       atm-fraud-account-linker-topic:
         configs: {}
         partitions_count: 3
-  type: streams-app
+  type: streams-app-v2
   values:
     annotations:
       consumerGroup: atm-accountlinker-atm-fraud-output-topic

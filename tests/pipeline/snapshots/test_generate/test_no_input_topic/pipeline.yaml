@@ -55,7 +55,7 @@
         partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app
+  type: streams-app-v2
   values:
     commandLine:
       CONVERT_XML: true
@@ -128,7 +128,7 @@
       test-output-extra:
         configs: {}
         role: test-output
-  type: streams-app
+  type: streams-app-v2
   values:
     imageTag: latest
     persistence:

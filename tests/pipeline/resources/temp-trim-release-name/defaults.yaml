@@ -8,7 +8,7 @@ kafka-app:
       schema_registry_url: "${schema_registry_url}"
   version: "2.4.2"
 
-streams-app: # inherits from kafka-app
+streams-app-v2: # inherits from streams-bootstrap-v2
   values:
     streams:
       config:

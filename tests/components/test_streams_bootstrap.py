@@ -9,16 +9,14 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.common.streams_bootstrap import (
-    StreamsBootstrap,
-    StreamsBootstrapValues,
-)
+from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
+from kpops.components.streams_bootstrap_v2.base import StreamsBootstrapV2Values
 
 
 @pytest.mark.usefixtures("mock_env")
 class TestStreamsBootstrap:
     def test_default_configs(self):
-        streams_bootstrap = StreamsBootstrap(
+        streams_bootstrap = StreamsBootstrapV2(
             name="example-name",
             **{
                 "namespace": "test-namespace",
@@ -39,7 +37,7 @@ class TestStreamsBootstrap:
 
     @pytest.mark.asyncio()
     async def test_should_deploy_streams_bootstrap_app(self, mocker: MockerFixture):
-        streams_bootstrap = StreamsBootstrap(
+        streams_bootstrap = StreamsBootstrapV2(
             name="example-name",
             **{
                 "namespace": "test-namespace",
@@ -60,7 +58,7 @@ class TestStreamsBootstrap:
             streams_bootstrap.dry_run_handler, "print_helm_diff"
         )
         mocker.patch.object(
-            StreamsBootstrap,
+            StreamsBootstrapV2,
             "helm_chart",
             return_value="test/test-chart",
             new_callable=mocker.PropertyMock,
@@ -90,10 +88,10 @@ class TestStreamsBootstrap:
         with pytest.raises(
             ValidationError,
             match=re.escape(
-                "1 validation error for StreamsBootstrapValues\nimageTag\n  String should match pattern '^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$'"
+                "1 validation error for StreamsBootstrapV2Values\nimageTag\n  String should match pattern '^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$'"
             ),
         ):
-            StreamsBootstrapValues(
+            StreamsBootstrapV2Values(
                 **{
                     "imageTag": "invalid image tag!",
                     "streams": {

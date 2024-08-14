@@ -1,4 +1,4 @@
-streams-bootstrap-v3:
+streams-bootstrap:
   values:
     kafka:
       bootstrapServers: ${config.kafka_brokers}
@@ -6,9 +6,9 @@ streams-bootstrap-v3:
   # TODO: change to stable version after the PR is merged
   version: "3.0.0-SNAPSHOT"
 
-producer-app-v3: {} # inherits from streams-bootstrap-v3
+producer-app: {} # inherits from streams-bootstrap
 
-streams-app-v3: # inherits from streams-bootstrap-v3
+streams-app: # inherits from streams-bootstrap
   values:
     kafka:
       config:

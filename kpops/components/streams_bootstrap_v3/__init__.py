@@ -1,6 +1,6 @@
-from kpops.components.streams_bootstrap_v3.base import StreamsBootstrapV3
+from kpops.components.streams_bootstrap_v3.base import StreamsBootstrap
 
-from .producer.producer_app import ProducerAppV3
-from .streams.streams_app import StreamsAppV3
+from .producer.producer_app import ProducerApp
+from .streams.streams_app import StreamsApp
 
-__all__ = ("StreamsBootstrapV3", "StreamsAppV3", "ProducerAppV3")
+__all__ = ("StreamsBootstrap", "StreamsApp", "ProducerApp")

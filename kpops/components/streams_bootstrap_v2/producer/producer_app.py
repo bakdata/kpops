@@ -5,25 +5,24 @@ from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
 from kpops.components.base_components.kafka_app import (
-    KafkaApp,
     KafkaAppCleaner,
 )
 from kpops.components.common.app_type import AppType
-from kpops.components.common.streams_bootstrap import StreamsBootstrap
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
+from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
+from kpops.components.streams_bootstrap_v2.producer.model import ProducerAppV2Values
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.utils.docstring import describe_attr
 
-log = logging.getLogger("ProducerApp")
+log = logging.getLogger("ProducerAppV2")
 
 
-class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
-    values: ProducerAppValues
+class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrapV2):
+    values: ProducerAppV2Values
 
     @property
     @override
@@ -33,7 +32,7 @@ class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
         )
 
 
-class ProducerApp(KafkaApp, StreamsBootstrap):
+class ProducerAppV2(StreamsBootstrapV2):
     """Producer component.
 
     This producer holds configuration to use as values for the streams-bootstrap
@@ -45,7 +44,7 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    values: ProducerAppValues = Field(
+    values: ProducerAppV2Values = Field(
         default=...,
         description=describe_attr("values", __doc__),
     )

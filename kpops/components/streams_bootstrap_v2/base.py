@@ -8,6 +8,7 @@ import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
+from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.docstring import describe_attr
@@ -94,10 +95,10 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
         )
 
 
-class StreamsBootstrapValues(HelmAppValues):
-    """Base value class for all streams bootstrap related components.
+class StreamsBootstrapV2Values(HelmAppValues):
+    """Base value class for all streams bootstrap v2 related components.
 
-    :param image_tag: Docker image tag of the streams-bootstrap app.
+    :param image_tag: Docker image tag of the streams-bootstrap-v2 app.
     """
 
     image_tag: str = Field(
@@ -111,17 +112,17 @@ class StreamsBootstrapValues(HelmAppValues):
     )
 
 
-class StreamsBootstrap(HelmApp, ABC):
-    """Base for components with a streams-bootstrap Helm chart.
+class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
+    """Base for components with a streams-bootstrap-v2 Helm chart.
 
-    :param values: streams-bootstrap Helm values
+    :param values: streams-bootstrap-v2 Helm values
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to streams-bootstrap Helm repo
     :param version: Helm chart version, defaults to "2.9.0"
     """
 
-    values: StreamsBootstrapValues = Field(
-        default_factory=StreamsBootstrapValues,
+    values: StreamsBootstrapV2Values = Field(
+        default_factory=StreamsBootstrapV2Values,
         description=describe_attr("values", __doc__),
     )
 

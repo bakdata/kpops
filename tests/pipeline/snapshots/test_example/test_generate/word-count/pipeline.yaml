@@ -40,7 +40,7 @@
       word-count-data-producer-topic:
         configs: {}
         partitions_count: 3
-  type: producer-app
+  type: producer-app-v2
   values:
     image: bakdata/kpops-demo-sentence-producer
     imageTag: 1.0.0
@@ -112,7 +112,7 @@
           cleanup.policy: compact
         partitions_count: 3
         type: output
-  type: streams-app
+  type: streams-app-v2
   values:
     commandLine:
       PRODUCTIVE: false

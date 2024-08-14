@@ -1,19 +1,17 @@
-kafka-app:
-  version: 2.9.0
-  namespace: development-namespace
+streams-bootstrap-v2:
   values:
     streams:
       brokers: "${config.kafka_brokers}"
       schemaRegistryUrl: "${config.schema_registry.url}"
 
-producer-app:
+producer-app-v2:
   to:
     topics:
       ${output_topic_name}:
         type: output
         partitions_count: 3
 
-streams-app:
+streams-app-v2:
   values:
     labels:
       pipeline: ${pipeline.name}

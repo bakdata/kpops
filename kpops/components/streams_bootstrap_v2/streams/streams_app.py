@@ -6,23 +6,23 @@ from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
-from kpops.components.base_components.kafka_app import KafkaApp, KafkaAppCleaner
+from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
-from kpops.components.common.streams_bootstrap import StreamsBootstrap
 from kpops.components.common.topic import KafkaTopic
-from kpops.components.streams_bootstrap.streams.model import (
-    StreamsAppValues,
+from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
+from kpops.components.streams_bootstrap_v2.streams.model import (
+    StreamsAppV2Values,
 )
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.utils.docstring import describe_attr
 
-log = logging.getLogger("StreamsApp")
+log = logging.getLogger("StreamsAppV2")
 
 
-class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
+class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrapV2):
     from_: None = None
     to: None = None
-    values: StreamsAppValues
+    values: StreamsAppV2Values
 
     @property
     @override
@@ -53,13 +53,13 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
             await pvc_handler.delete_pvcs()
 
 
-class StreamsApp(KafkaApp, StreamsBootstrap):
-    """StreamsApp component that configures a streams-bootstrap app.
+class StreamsAppV2(StreamsBootstrapV2):
+    """StreamsAppV2 component that configures a streams-bootstrap-v2 app.
 
-    :param values: streams-bootstrap Helm values
+    :param values: streams-bootstrap-v2 Helm values
     """
 
-    values: StreamsAppValues = Field(
+    values: StreamsAppV2Values = Field(
         default=...,
         description=describe_attr("values", __doc__),
     )

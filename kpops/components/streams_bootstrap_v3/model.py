@@ -19,7 +19,7 @@ from kpops.utils.pydantic import (
 IMAGE_TAG_PATTERN = r"^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$"
 
 
-class StreamsBootstrapV3Values(HelmAppValues):
+class StreamsBootstrapValues(HelmAppValues):
     """Base value class for all streams bootstrap related components.
 
     :param image_tag: Docker image tag of the streams-bootstrap app.

@@ -14,12 +14,12 @@ kafka-app:
       schemaRegistryUrl: 127.0.0.1:8081
 
 
-streams-app:
+streams-app-v2:
   values:
     labels:
       pipeline: ${pipeline.name}
 
-producer-app:
+producer-app-v2:
   to:
     topics:
       ${output_topic_name}:

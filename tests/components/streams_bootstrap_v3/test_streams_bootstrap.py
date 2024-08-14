@@ -9,14 +9,14 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.streams_bootstrap_v3.base import StreamsBootstrapV3
-from kpops.components.streams_bootstrap_v3.model import StreamsBootstrapV3Values
+from kpops.components.streams_bootstrap_v3.base import StreamsBootstrap
+from kpops.components.streams_bootstrap_v3.model import StreamsBootstrapValues
 
 
 @pytest.mark.usefixtures("mock_env")
 class TestStreamsBootstrap:
     def test_default_configs(self):
-        streams_bootstrap = StreamsBootstrapV3(
+        streams_bootstrap = StreamsBootstrap(
             name="example-name",
             **{
                 "namespace": "test-namespace",
@@ -37,7 +37,7 @@ class TestStreamsBootstrap:
 
     @pytest.mark.asyncio()
     async def test_should_deploy_streams_bootstrap_app(self, mocker: MockerFixture):
-        streams_bootstrap = StreamsBootstrapV3(
+        streams_bootstrap = StreamsBootstrap(
             name="example-name",
             **{
                 "namespace": "test-namespace",
@@ -58,7 +58,7 @@ class TestStreamsBootstrap:
             streams_bootstrap.dry_run_handler, "print_helm_diff"
         )
         mocker.patch.object(
-            StreamsBootstrapV3,
+            StreamsBootstrap,
             "helm_chart",
             return_value="test/test-chart",
             new_callable=mocker.PropertyMock,
@@ -88,10 +88,10 @@ class TestStreamsBootstrap:
         with pytest.raises(
             ValidationError,
             match=re.escape(
-                "1 validation error for StreamsBootstrapV3Values\nimageTag\n  String should match pattern '^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$'"
+                "1 validation error for StreamsBootstrapValues\nimageTag\n  String should match pattern '^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$'"
             ),
         ):
-            StreamsBootstrapV3Values(
+            StreamsBootstrapValues(
                 **{
                     "imageTag": "invalid image tag!",
                     "kafka": {
@@ -108,7 +108,7 @@ class TestStreamsBootstrap:
                 "When using the streams-bootstrap v3 component your version ('2.1.0') must be at least 3.0.0."
             ),
         ):
-            StreamsBootstrapV3(
+            StreamsBootstrap(
                 name="example-name",
                 **{
                     "namespace": "test-namespace",

@@ -556,23 +556,17 @@
                 "values": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap__producer__model__ProducerAppValues"
+                            "$ref": "#/$defs/ProducerAppValues"
                         }
                     ],
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": "2.9.0",
+                    "default": "3.0.0",
                     "description": "Helm chart version",
-                    "title": "Version"
+                    "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
+                    "title": "Version",
+                    "type": "string"
                 }
             },
             "required": [
@@ -584,7 +578,7 @@
             "title": "ProducerApp",
             "type": "object"
         },
-        "ProducerAppV3": {
+        "ProducerAppV2": {
             "additionalProperties": true,
             "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
             "properties": {
@@ -642,23 +636,29 @@
                     "description": "Topic(s) into which the component will write output"
                 },
                 "type": {
-                    "const": "producer-app-v3",
+                    "const": "producer-app-v2",
                     "title": "Type"
                 },
                 "values": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v3__producer__model__ProducerAppValues"
+                            "$ref": "#/$defs/ProducerAppV2Values"
                         }
                     ],
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.0.0",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": "2.9.0",
                     "description": "Helm chart version",
-                    "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
-                    "title": "Version",
-                    "type": "string"
+                    "title": "Version"
                 }
             },
             "required": [
@@ -667,7 +667,87 @@
                 "values",
                 "type"
             ],
-            "title": "ProducerAppV3",
+            "title": "ProducerAppV2",
+            "type": "object"
+        },
+        "ProducerAppV2Values": {
+            "additionalProperties": true,
+            "description": "Settings specific to producers.",
+            "properties": {
+                "imageTag": {
+                    "default": "latest",
+                    "description": "Docker image tag of the streams-bootstrap-v2 app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "Nameoverride"
+                },
+                "streams": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ProducerStreamsConfig"
+                        }
+                    ],
+                    "description": "Kafka Streams settings"
+                }
+            },
+            "required": [
+                "streams"
+            ],
+            "title": "ProducerAppV2Values",
+            "type": "object"
+        },
+        "ProducerAppValues": {
+            "additionalProperties": true,
+            "description": "Settings specific to producers.",
+            "properties": {
+                "imageTag": {
+                    "default": "latest",
+                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
+                "kafka": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ProducerConfig"
+                        }
+                    ],
+                    "description": "Kafka Streams settings"
+                },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "Nameoverride"
+                }
+            },
+            "required": [
+                "kafka"
+            ],
+            "title": "ProducerAppValues",
             "type": "object"
         },
         "ProducerConfig": {
@@ -908,23 +988,17 @@
                 "values": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsAppValues"
+                            "$ref": "#/$defs/StreamsAppValues"
                         }
                     ],
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": "2.9.0",
+                    "default": "3.0.0",
                     "description": "Helm chart version",
-                    "title": "Version"
+                    "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
+                    "title": "Version",
+                    "type": "string"
                 }
             },
             "required": [
@@ -936,9 +1010,9 @@
             "title": "StreamsApp",
             "type": "object"
         },
-        "StreamsAppV3": {
+        "StreamsAppV2": {
             "additionalProperties": true,
-            "description": "StreamsApp component that configures a streams-bootstrap app.",
+            "description": "StreamsAppV2 component that configures a streams-bootstrap-v2 app.",
             "properties": {
                 "from": {
                     "anyOf": [
@@ -1001,23 +1075,29 @@
                     "description": "Topic(s) into which the component will write output"
                 },
                 "type": {
-                    "const": "streams-app-v3",
+                    "const": "streams-app-v2",
                     "title": "Type"
                 },
                 "values": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v3__streams__model__StreamsAppValues"
+                            "$ref": "#/$defs/StreamsAppV2Values"
                         }
                     ],
-                    "description": "streams-bootstrap Helm values"
+                    "description": "streams-bootstrap-v2 Helm values"
                 },
                 "version": {
-                    "default": "3.0.0",
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": "2.9.0",
                     "description": "Helm chart version",
-                    "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
-                    "title": "Version",
-                    "type": "string"
+                    "title": "Version"
                 }
             },
             "required": [
@@ -1026,7 +1106,149 @@
                 "values",
                 "type"
             ],
-            "title": "StreamsAppV3",
+            "title": "StreamsAppV2",
+            "type": "object"
+        },
+        "StreamsAppV2Values": {
+            "additionalProperties": true,
+            "description": "streams-bootstrap-v2 app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "properties": {
+                "autoscaling": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__StreamsAppAutoScaling"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Kubernetes event-driven autoscaling config"
+                },
+                "imageTag": {
+                    "default": "latest",
+                    "description": "Docker image tag of the streams-bootstrap-v2 app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "Nameoverride"
+                },
+                "persistence": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/PersistenceConfig"
+                        }
+                    ],
+                    "default": {
+                        "enabled": false,
+                        "size": null,
+                        "storage_class": null
+                    },
+                    "description": ""
+                },
+                "statefulSet": {
+                    "default": false,
+                    "description": "Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
+                    "title": "Statefulset",
+                    "type": "boolean"
+                },
+                "streams": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__StreamsConfig"
+                        }
+                    ],
+                    "description": "streams-bootstrap-v2 streams section"
+                }
+            },
+            "required": [
+                "streams"
+            ],
+            "title": "StreamsAppV2Values",
+            "type": "object"
+        },
+        "StreamsAppValues": {
+            "additionalProperties": true,
+            "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "properties": {
+                "autoscaling": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v3__streams__model__StreamsAppAutoScaling"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Kubernetes event-driven autoscaling config"
+                },
+                "imageTag": {
+                    "default": "latest",
+                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
+                "kafka": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v3__streams__model__StreamsConfig"
+                        }
+                    ],
+                    "description": "streams-bootstrap kafka section"
+                },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "Nameoverride"
+                },
+                "persistence": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/PersistenceConfig"
+                        }
+                    ],
+                    "default": {
+                        "enabled": false,
+                        "size": null,
+                        "storage_class": null
+                    },
+                    "description": ""
+                },
+                "statefulSet": {
+                    "default": false,
+                    "description": "Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
+                    "title": "Statefulset",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "kafka"
+            ],
+            "title": "StreamsAppValues",
             "type": "object"
         },
         "ToSection": {
@@ -1157,47 +1379,7 @@
             "title": "TopicConfig",
             "type": "object"
         },
-        "kpops__components__streams_bootstrap__producer__model__ProducerAppValues": {
-            "additionalProperties": true,
-            "description": "Settings specific to producers.",
-            "properties": {
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "maxLength": 63,
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
-                },
-                "streams": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProducerStreamsConfig"
-                        }
-                    ],
-                    "description": "Kafka Streams settings"
-                }
-            },
-            "required": [
-                "streams"
-            ],
-            "title": "ProducerAppValues",
-            "type": "object"
-        },
-        "kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling": {
+        "kpops__components__streams_bootstrap_v2__streams__model__StreamsAppAutoScaling": {
             "additionalProperties": true,
             "description": "Kubernetes Event-driven Autoscaling config.",
             "properties": {
@@ -1289,78 +1471,7 @@
             "title": "StreamsAppAutoScaling",
             "type": "object"
         },
-        "kpops__components__streams_bootstrap__streams__model__StreamsAppValues": {
-            "additionalProperties": true,
-            "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
-            "properties": {
-                "autoscaling": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Kubernetes event-driven autoscaling config"
-                },
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "maxLength": 63,
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
-                },
-                "persistence": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/PersistenceConfig"
-                        }
-                    ],
-                    "default": {
-                        "enabled": false,
-                        "size": null,
-                        "storage_class": null
-                    },
-                    "description": ""
-                },
-                "statefulSet": {
-                    "default": false,
-                    "description": "Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
-                    "title": "Statefulset",
-                    "type": "boolean"
-                },
-                "streams": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsConfig"
-                        }
-                    ],
-                    "description": "streams-bootstrap streams section"
-                }
-            },
-            "required": [
-                "streams"
-            ],
-            "title": "StreamsAppValues",
-            "type": "object"
-        },
-        "kpops__components__streams_bootstrap__streams__model__StreamsConfig": {
+        "kpops__components__streams_bootstrap_v2__streams__model__StreamsConfig": {
             "additionalProperties": true,
             "description": "Streams Bootstrap streams section.",
             "properties": {
@@ -1484,46 +1595,6 @@
             "title": "StreamsConfig",
             "type": "object"
         },
-        "kpops__components__streams_bootstrap_v3__producer__model__ProducerAppValues": {
-            "additionalProperties": true,
-            "description": "Settings specific to producers.",
-            "properties": {
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "kafka": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/ProducerConfig"
-                        }
-                    ],
-                    "description": "Kafka Streams settings"
-                },
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "maxLength": 63,
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
-                }
-            },
-            "required": [
-                "kafka"
-            ],
-            "title": "ProducerAppValues",
-            "type": "object"
-        },
         "kpops__components__streams_bootstrap_v3__streams__model__StreamsAppAutoScaling": {
             "additionalProperties": true,
             "description": "Kubernetes Event-driven Autoscaling config.",
@@ -1619,77 +1690,6 @@
                 }
             },
             "title": "StreamsAppAutoScaling",
-            "type": "object"
-        },
-        "kpops__components__streams_bootstrap_v3__streams__model__StreamsAppValues": {
-            "additionalProperties": true,
-            "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
-            "properties": {
-                "autoscaling": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v3__streams__model__StreamsAppAutoScaling"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Kubernetes event-driven autoscaling config"
-                },
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "kafka": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v3__streams__model__StreamsConfig"
-                        }
-                    ],
-                    "description": "streams-bootstrap kafka section"
-                },
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "maxLength": 63,
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
-                },
-                "persistence": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/PersistenceConfig"
-                        }
-                    ],
-                    "default": {
-                        "enabled": false,
-                        "size": null,
-                        "storage_class": null
-                    },
-                    "description": ""
-                },
-                "statefulSet": {
-                    "default": false,
-                    "description": "Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
-                    "title": "Statefulset",
-                    "type": "boolean"
-                }
-            },
-            "required": [
-                "kafka"
-            ],
-            "title": "StreamsAppValues",
             "type": "object"
         },
         "kpops__components__streams_bootstrap_v3__streams__model__StreamsConfig": {
@@ -1837,9 +1837,9 @@
                 "kafka-sink-connector": "#/$defs/KafkaSinkConnector",
                 "kafka-source-connector": "#/$defs/KafkaSourceConnector",
                 "producer-app": "#/$defs/ProducerApp",
-                "producer-app-v3": "#/$defs/ProducerAppV3",
+                "producer-app-v2": "#/$defs/ProducerAppV2",
                 "streams-app": "#/$defs/StreamsApp",
-                "streams-app-v3": "#/$defs/StreamsAppV3"
+                "streams-app-v2": "#/$defs/StreamsAppV2"
             },
             "propertyName": "type"
         },
@@ -1854,16 +1854,16 @@
                 "$ref": "#/$defs/KafkaSourceConnector"
             },
             {
+                "$ref": "#/$defs/ProducerAppV2"
+            },
+            {
+                "$ref": "#/$defs/StreamsAppV2"
+            },
+            {
                 "$ref": "#/$defs/ProducerApp"
             },
             {
                 "$ref": "#/$defs/StreamsApp"
-            },
-            {
-                "$ref": "#/$defs/ProducerAppV3"
-            },
-            {
-                "$ref": "#/$defs/StreamsAppV3"
             }
         ]
     },

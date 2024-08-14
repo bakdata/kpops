@@ -1,4 +1,4 @@
-- type: streams-app
+- type: streams-app-v2
   name: in-order-to-have-len-fifty-two-name-should-end--here
   values:
     streams:

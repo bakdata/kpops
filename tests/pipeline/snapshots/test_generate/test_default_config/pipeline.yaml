@@ -1,6 +1,6 @@
 - _cleaner:
     name: app1
-    namespace: development-namespace
+    namespace: example-namespace
     prefix: resources-custom-config-
     repo_config:
       repo_auth_flags:
@@ -20,9 +20,9 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: resources-custom-config-app1
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.9.0
+    version: 2.4.2
   name: app1
-  namespace: development-namespace
+  namespace: example-namespace
   prefix: resources-custom-config-
   repo_config:
     repo_auth_flags:
@@ -36,7 +36,7 @@
         configs: {}
         partitions_count: 3
         type: output
-  type: producer-app
+  type: producer-app-v2
   values:
     imageTag: latest
     resources:
@@ -48,10 +48,10 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: resources-custom-config-app1
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.9.0
+  version: 2.4.2
 - _cleaner:
     name: app2
-    namespace: development-namespace
+    namespace: example-namespace
     prefix: resources-custom-config-
     repo_config:
       repo_auth_flags:
@@ -77,9 +77,9 @@
         - resources-custom-config-app1
         outputTopic: resources-custom-config-app2
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.9.0
+    version: 2.4.2
   name: app2
-  namespace: development-namespace
+  namespace: example-namespace
   prefix: resources-custom-config-
   repo_config:
     repo_auth_flags:
@@ -99,7 +99,7 @@
         partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app
+  type: streams-app-v2
   values:
     image: some-image
     imageTag: latest
@@ -117,5 +117,5 @@
       - resources-custom-config-app1
       outputTopic: resources-custom-config-app2
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.9.0
+  version: 2.4.2
 

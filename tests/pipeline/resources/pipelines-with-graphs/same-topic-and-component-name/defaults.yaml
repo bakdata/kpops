@@ -13,7 +13,7 @@ kafka-app:
       brokers: 127.0.0.1:9092
       schemaRegistryUrl: 127.0.0.1:8081
 
-streams-app:
+streams-app-v2:
   values:
     labels:
       pipeline: ${pipeline.name}

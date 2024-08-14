@@ -1,4 +1,4 @@
-- type: producer-app
+- type: producer-app-v2
   name: app1
   values:
     resources:
@@ -7,7 +7,7 @@
       requests:
         memory: 2G
 
-- type: streams-app
+- type: streams-app-v2
   name: app2
   values:
     image: some-image

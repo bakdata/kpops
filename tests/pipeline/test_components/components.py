@@ -12,24 +12,24 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.common.topic import OutputTopicTypes, TopicConfig
-from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
-from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
-from kpops.components.streams_bootstrap_v3 import ProducerAppV3, StreamsAppV3
+from kpops.components.streams_bootstrap_v2.producer.producer_app import ProducerAppV2
+from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
+from kpops.components.streams_bootstrap_v3 import ProducerApp, StreamsApp
 
 
-class MyProducerApp(ProducerAppV3): ...
+class MyProducerApp(ProducerApp): ...
 
 
-class MyStreamsApp(StreamsAppV3): ...
+class MyStreamsApp(StreamsApp): ...
 
 
-class ScheduledProducer(ProducerApp): ...
+class ScheduledProducer(ProducerAppV2): ...
 
 
-class Converter(StreamsApp): ...
+class Converter(StreamsAppV2): ...
 
 
-class SubStreamsApp(StreamsApp):
+class SubStreamsApp(StreamsAppV2):
     """Intermediary subclass of StreamsApp used for Filter."""
 
 
@@ -37,7 +37,7 @@ class Filter(SubStreamsApp):
     """Subsubclass of StreamsApp to test inheritance."""
 
 
-class ShouldInflate(StreamsApp):
+class ShouldInflate(StreamsAppV2):
     @override
     def inflate(self) -> list[PipelineComponent]:
         inflate_steps = super().inflate()
@@ -62,7 +62,7 @@ class ShouldInflate(StreamsApp):
                         ),
                     )
                     inflate_steps.append(kafka_connector)
-                    streams_app = StreamsApp(
+                    streams_app = StreamsAppV2(
                         name=f"{self.name}-inflated-streams-app",
                         to=ToSection(  # type: ignore[reportGeneralTypeIssues]
                             topics={
@@ -93,7 +93,7 @@ class TestSchemaProvider(SchemaProvider):
         return AvroSchema(schema)
 
 
-class SimpleInflateConnectors(StreamsApp):
+class SimpleInflateConnectors(StreamsAppV2):
     def inflate(self) -> list[PipelineComponent]:
         connector = KafkaSinkConnector(
             name="inflated-connector-name",

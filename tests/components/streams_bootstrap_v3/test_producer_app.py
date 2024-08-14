@@ -14,8 +14,8 @@ from kpops.components.common.topic import (
     TopicConfig,
 )
 from kpops.components.streams_bootstrap_v3.producer.producer_app import (
+    ProducerApp,
     ProducerAppCleaner,
-    ProducerAppV3,
 )
 
 PRODUCER_APP_NAME = "test-producer-app-with-long-name-0123456789abcdefghijklmnop"
@@ -39,8 +39,8 @@ class TestProducerApp:
         assert PRODUCER_APP_CLEAN_RELEASE_NAME.endswith("-clean")
 
     @pytest.fixture()
-    def producer_app(self) -> ProducerAppV3:
-        return ProducerAppV3(
+    def producer_app(self) -> ProducerApp:
+        return ProducerApp(
             name=PRODUCER_APP_NAME,
             **{
                 "version": "3.2.1",
@@ -63,28 +63,28 @@ class TestProducerApp:
     def empty_helm_get_values(self, mocker: MockerFixture) -> MagicMock:
         return mocker.patch.object(Helm, "get_values", return_value=None)
 
-    def test_cleaner(self, producer_app: ProducerAppV3):
+    def test_cleaner(self, producer_app: ProducerApp):
         cleaner = producer_app._cleaner
         assert isinstance(cleaner, ProducerAppCleaner)
         assert not hasattr(cleaner, "_cleaner")
 
-    def test_cleaner_inheritance(self, producer_app: ProducerAppV3):
+    def test_cleaner_inheritance(self, producer_app: ProducerApp):
         assert producer_app._cleaner.values == producer_app.values
 
-    def test_cleaner_helm_release_name(self, producer_app: ProducerAppV3):
+    def test_cleaner_helm_release_name(self, producer_app: ProducerApp):
         assert (
             producer_app._cleaner.helm_release_name
             == "${pipeline.name}-test-producer-app-with-l-abc43-clean"
         )
 
-    def test_cleaner_helm_name_override(self, producer_app: ProducerAppV3):
+    def test_cleaner_helm_name_override(self, producer_app: ProducerApp):
         assert (
             producer_app._cleaner.to_helm_values()["nameOverride"]
             == PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE
         )
 
     def test_output_topics(self):
-        producer_app = ProducerAppV3(
+        producer_app = ProducerApp(
             name=PRODUCER_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -116,7 +116,7 @@ class TestProducerApp:
     @pytest.mark.asyncio()
     async def test_deploy_order_when_dry_run_is_false(
         self,
-        producer_app: ProducerAppV3,
+        producer_app: ProducerApp,
         mocker: MockerFixture,
     ):
         mock_create_topic = mocker.patch.object(
@@ -167,7 +167,7 @@ class TestProducerApp:
     @pytest.mark.asyncio()
     async def test_destroy(
         self,
-        producer_app: ProducerAppV3,
+        producer_app: ProducerApp,
         mocker: MockerFixture,
     ):
         mock_helm_uninstall = mocker.patch.object(producer_app.helm, "uninstall")
@@ -181,7 +181,7 @@ class TestProducerApp:
     @pytest.mark.asyncio()
     async def test_should_clean_producer_app(
         self,
-        producer_app: ProducerAppV3,
+        producer_app: ProducerApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
     ):
@@ -260,7 +260,7 @@ class TestProducerApp:
     async def test_should_clean_producer_app_and_deploy_clean_up_job_and_delete_clean_up_with_dry_run_false(
         self,
         mocker: MockerFixture,
-        producer_app: ProducerAppV3,
+        producer_app: ProducerApp,
         empty_helm_get_values: MockerFixture,
     ):
         # actual component
@@ -326,7 +326,7 @@ class TestProducerApp:
         )
 
     def test_get_output_topics(self):
-        producer_app = ProducerAppV3(
+        producer_app = ProducerApp(
             name="my-producer",
             **{
                 "namespace": "test-namespace",
@@ -378,7 +378,7 @@ class TestProducerApp:
                 },
             },
         )
-        producer_app = ProducerAppV3(
+        producer_app = ProducerApp(
             name=PRODUCER_APP_NAME,
             **{
                 "namespace": "test-namespace",
@@ -428,7 +428,7 @@ class TestProducerApp:
                 },
             },
         )
-        producer_app = ProducerAppV3(
+        producer_app = ProducerApp(
             name=PRODUCER_APP_NAME,
             **{
                 "namespace": "test-namespace",

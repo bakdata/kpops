@@ -12,7 +12,7 @@ from kpops.components.common.topic import (
     TopicConfig,
 )
 from kpops.components.streams_bootstrap_v3.base import (
-    StreamsBootstrapV3,
+    StreamsBootstrap,
 )
 from kpops.components.streams_bootstrap_v3.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
@@ -20,7 +20,7 @@ from kpops.utils.docstring import describe_attr
 log = logging.getLogger("ProducerAppV3")
 
 
-class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrapV3):
+class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
     values: ProducerAppValues
 
     @property
@@ -31,7 +31,7 @@ class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrapV3):
         )
 
 
-class ProducerAppV3(StreamsBootstrapV3):
+class ProducerApp(StreamsBootstrap):
     """Producer component.
 
     This producer holds configuration to use as values for the streams-bootstrap
