@@ -23,14 +23,14 @@ class FromTopic(DescConfigModel):
     """Input topic.
 
     :param type: Topic type, defaults to None
-    :param role: Custom identifier belonging to a topic;
+    :param label: Custom identifier belonging to a topic;
         define only if `type` is `pattern` or `None`, defaults to None
     """
 
     type: InputTopicTypes | None = Field(
         default=None, description=describe_attr("type", __doc__)
     )
-    role: str | None = Field(default=None, description=describe_attr("role", __doc__))
+    label: str | None = Field(default=None, description=describe_attr("label", __doc__))
 
     model_config = ConfigDict(
         extra="forbid",
@@ -38,10 +38,10 @@ class FromTopic(DescConfigModel):
     )
 
     @model_validator(mode="after")
-    def extra_topic_role(self) -> Any:
-        """Ensure that `cls.role` is used correctly, assign type if needed."""
-        if self.type == InputTopicTypes.INPUT and self.role:
-            msg = "Define role only if `type` is `pattern` or `None`"
+    def extra_topic_label(self) -> Any:
+        """Ensure that `cls.label` is used correctly, assign type if needed."""
+        if self.type == InputTopicTypes.INPUT and self.label:
+            msg = "Define label only if `type` is `pattern` or `None`"
             raise ValueError(msg)
         return self
 
