@@ -28,7 +28,7 @@ class PVCHandler:
             )
             return
         log.debug(
-            f"Deleting in namespace '{self.namespace}' StatefulSet '{self.app_name}' PVCs '{pvc_names}'"
+            f"Deleting in namespace '{self.namespace}' StatefulSet '{self.app_name}' PVCs {', '.join([f"'{pvc_name}'" for pvc_name in pvc_names])}"
         )
         if dry_run:
             return
