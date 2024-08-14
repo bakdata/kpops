@@ -1,4 +1,5 @@
 from collections.abc import AsyncIterator
+from pathlib import Path
 from unittest.mock import AsyncMock
 
 import pytest
@@ -14,8 +15,32 @@ from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 
 MODULE = "kpops.component_handlers.kubernetes.pvc_handler"
 
+KUBECONFIG = """
+apiVersion: v1
+clusters:
+- cluster: {server: 'https://localhost:9443'}
+  name: test
+contexts:
+- context: {cluster: test, user: test}
+  name: test
+current-context: test
+kind: Config
+preferences: {}
+users:
+- name: test
+  user: {token: testtoken}
+"""
 
-@pytest.fixture
+
+@pytest.fixture()
+def kubeconfig(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
+    kubeconfig = tmp_path / "kubeconfig"
+    kubeconfig.write_text(KUBECONFIG)
+    monkeypatch.setenv("KUBECONFIG", str(kubeconfig))
+    return kubeconfig
+
+
+@pytest.fixture()
 def pvc_handler() -> PVCHandler:
     return PVCHandler("test-app", "test-namespace")
 
