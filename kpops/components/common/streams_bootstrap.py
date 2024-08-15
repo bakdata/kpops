@@ -107,7 +107,7 @@ class StreamsBootstrapValues(HelmAppValues):
     )
 
     streams: KafkaStreamsConfig = Field(
-        default=..., description=describe_attr("streams", __doc__)
+        description=describe_attr("streams", __doc__),
     )
 
 
@@ -121,7 +121,6 @@ class StreamsBootstrap(HelmApp, ABC):
     """
 
     values: StreamsBootstrapValues = Field(
-        default_factory=StreamsBootstrapValues,
         description=describe_attr("values", __doc__),
     )
 

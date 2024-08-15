@@ -60,7 +60,6 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
     """
 
     values: StreamsAppValues = Field(
-        default=...,
         description=describe_attr("values", __doc__),
     )
 

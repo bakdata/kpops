@@ -234,7 +234,6 @@ class StreamsAppValues(StreamsBootstrapV3Values):
     """
 
     kafka: StreamsConfig = Field(
-        default=...,
         description=describe_attr("kafka", __doc__),
     )
     autoscaling: StreamsAppAutoScaling | None = Field(
