@@ -12,18 +12,14 @@
     type: producer-app-cleaner
     values:
       image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
-      imageTag: 1.0.0
-      labels:
-        pipeline: atm-fraud
+      imageTag: latest
       prometheus:
         jmx:
           enabled: false
-      replicaCount: 1
       schedule: 0 12 * * *
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         optimizeLeaveGroupBehavior: false
-        outputTopic: atm-fraud-account-producer-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
       suspend: true
     version: 2.9.0
@@ -36,27 +32,17 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  to:
-    models: {}
-    topics:
-      atm-fraud-account-producer-topic:
-        configs: {}
-        partitions_count: 3
   type: producer-app-v2
   values:
     image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
-    imageTag: 1.0.0
-    labels:
-      pipeline: atm-fraud
+    imageTag: latest
     prometheus:
       jmx:
         enabled: false
-    replicaCount: 1
     schedule: 0 12 * * *
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       optimizeLeaveGroupBehavior: false
-      outputTopic: atm-fraud-account-producer-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     suspend: true
   version: 2.9.0
@@ -77,18 +63,14 @@
         ITERATION: 20
         REAL_TX: 19
       image: ${DOCKER_REGISTRY}/atm-demo-transactionavroproducer
-      imageTag: 1.0.0
-      labels:
-        pipeline: atm-fraud
+      imageTag: latest
       prometheus:
         jmx:
           enabled: false
-      replicaCount: 1
       schedule: 0 12 * * *
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         optimizeLeaveGroupBehavior: false
-        outputTopic: atm-fraud-transaction-avro-producer-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
       suspend: true
     version: 2.9.0
@@ -101,30 +83,20 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  to:
-    models: {}
-    topics:
-      atm-fraud-transaction-avro-producer-topic:
-        configs: {}
-        partitions_count: 3
   type: producer-app-v2
   values:
     commandLine:
       ITERATION: 20
       REAL_TX: 19
     image: ${DOCKER_REGISTRY}/atm-demo-transactionavroproducer
-    imageTag: 1.0.0
-    labels:
-      pipeline: atm-fraud
+    imageTag: latest
     prometheus:
       jmx:
         enabled: false
-    replicaCount: 1
     schedule: 0 12 * * *
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       optimizeLeaveGroupBehavior: false
-      outputTopic: atm-fraud-transaction-avro-producer-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     suspend: true
   version: 2.9.0
@@ -139,31 +111,21 @@
       repository_name: bakdata-streams-bootstrap
       url: https://bakdata.github.io/streams-bootstrap/
     suffix: -clean
-    # TODO: do we need to version this -> yes
     type: streams-app-cleaner
     values:
       annotations:
         consumerGroup: atm-transactionjoiner-atm-fraud-joinedtransactions-topic
-      commandLine:
-        PRODUCTIVE: false
       image: ${DOCKER_REGISTRY}/atm-demo-transactionjoiner
-      imageTag: 1.0.0
-      labels:
-        pipeline: atm-fraud
+      imageTag: latest
       persistence:
         enabled: false
       prometheus:
         jmx:
           enabled: false
-      replicaCount: 1
       statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        errorTopic: atm-fraud-transaction-joiner-dead-letter-topic
-        inputTopics:
-        - atm-fraud-transaction-avro-producer-topic
         optimizeLeaveGroupBehavior: false
-        outputTopic: atm-fraud-transaction-joiner-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     version: 2.9.0
   debug: true
@@ -175,40 +137,21 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  to:
-    models: {}
-    topics:
-      atm-fraud-transaction-joiner-dead-letter-topic:
-        configs: {}
-        partitions_count: 1
-        type: error
-      atm-fraud-transaction-joiner-topic:
-        configs: {}
-        partitions_count: 3
   type: streams-app-v2
   values:
     annotations:
       consumerGroup: atm-transactionjoiner-atm-fraud-joinedtransactions-topic
-    commandLine:
-      PRODUCTIVE: false
     image: ${DOCKER_REGISTRY}/atm-demo-transactionjoiner
-    imageTag: 1.0.0
-    labels:
-      pipeline: atm-fraud
+    imageTag: latest
     persistence:
       enabled: false
     prometheus:
       jmx:
         enabled: false
-    replicaCount: 1
     statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      errorTopic: atm-fraud-transaction-joiner-dead-letter-topic
-      inputTopics:
-      - atm-fraud-transaction-avro-producer-topic
       optimizeLeaveGroupBehavior: false
-      outputTopic: atm-fraud-transaction-joiner-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
 - _cleaner:
@@ -226,26 +169,17 @@
     values:
       annotations:
         consumerGroup: atm-frauddetector-atm-fraud-possiblefraudtransactions-topic
-      commandLine:
-        PRODUCTIVE: false
       image: ${DOCKER_REGISTRY}/atm-demo-frauddetector
-      imageTag: 1.0.0
-      labels:
-        pipeline: atm-fraud
+      imageTag: latest
       persistence:
         enabled: false
       prometheus:
         jmx:
           enabled: false
-      replicaCount: 1
       statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        errorTopic: atm-fraud-fraud-detector-dead-letter-topic
-        inputTopics:
-        - atm-fraud-transaction-joiner-topic
         optimizeLeaveGroupBehavior: false
-        outputTopic: atm-fraud-fraud-detector-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     version: 2.9.0
   debug: true
@@ -257,40 +191,21 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  to:
-    models: {}
-    topics:
-      atm-fraud-fraud-detector-dead-letter-topic:
-        configs: {}
-        partitions_count: 1
-        type: error
-      atm-fraud-fraud-detector-topic:
-        configs: {}
-        partitions_count: 3
   type: streams-app-v2
   values:
     annotations:
       consumerGroup: atm-frauddetector-atm-fraud-possiblefraudtransactions-topic
-    commandLine:
-      PRODUCTIVE: false
     image: ${DOCKER_REGISTRY}/atm-demo-frauddetector
-    imageTag: 1.0.0
-    labels:
-      pipeline: atm-fraud
+    imageTag: latest
     persistence:
       enabled: false
     prometheus:
       jmx:
         enabled: false
-    replicaCount: 1
     statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      errorTopic: atm-fraud-fraud-detector-dead-letter-topic
-      inputTopics:
-      - atm-fraud-transaction-joiner-topic
       optimizeLeaveGroupBehavior: false
-      outputTopic: atm-fraud-fraud-detector-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
 - _cleaner:
@@ -308,29 +223,17 @@
     values:
       annotations:
         consumerGroup: atm-accountlinker-atm-fraud-output-topic
-      commandLine:
-        PRODUCTIVE: false
       image: ${DOCKER_REGISTRY}/atm-demo-accountlinker
-      imageTag: 1.0.0
-      labels:
-        pipeline: atm-fraud
+      imageTag: latest
       persistence:
         enabled: false
       prometheus:
         jmx:
           enabled: false
-      replicaCount: 1
       statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-        errorTopic: atm-fraud-account-linker-dead-letter-topic
-        extraInputTopics:
-          accounts:
-          - atm-fraud-account-producer-topic
-        inputTopics:
-        - atm-fraud-fraud-detector-topic
         optimizeLeaveGroupBehavior: false
-        outputTopic: atm-fraud-account-linker-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     version: 2.9.0
   debug: true
@@ -349,43 +252,21 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  to:
-    models: {}
-    topics:
-      atm-fraud-account-linker-dead-letter-topic:
-        configs: {}
-        partitions_count: 1
-        type: error
-      atm-fraud-account-linker-topic:
-        configs: {}
-        partitions_count: 3
   type: streams-app-v2
   values:
     annotations:
       consumerGroup: atm-accountlinker-atm-fraud-output-topic
-    commandLine:
-      PRODUCTIVE: false
     image: ${DOCKER_REGISTRY}/atm-demo-accountlinker
-    imageTag: 1.0.0
-    labels:
-      pipeline: atm-fraud
+    imageTag: latest
     persistence:
       enabled: false
     prometheus:
       jmx:
         enabled: false
-    replicaCount: 1
     statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
-      errorTopic: atm-fraud-account-linker-dead-letter-topic
-      extraInputTopics:
-        accounts:
-        - atm-fraud-account-producer-topic
-      inputTopics:
-      - atm-fraud-fraud-detector-topic
       optimizeLeaveGroupBehavior: false
-      outputTopic: atm-fraud-account-linker-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
 - _resetter:
@@ -423,7 +304,6 @@
     pk.mode: record_value
     table.name.format: fraud_transactions
     tasks.max: 1
-    topics: atm-fraud-account-linker-topic
     transforms: flatten
     transforms.flatten.type: org.apache.kafka.connect.transforms.Flatten$Value
     value.converter: io.confluent.connect.avro.AvroConverter
