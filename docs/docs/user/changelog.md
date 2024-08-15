@@ -1,4 +1,29 @@
 # Changelog
+## [7.1.0](https://github.com/bakdata/kpops/releases/tag/7.1.0) - Release Date: [2024-08-15]
+
+### 🧪 Dependencies
+
+- Update pytest - [#527](https://github.com/bakdata/kpops/pull/527)
+
+
+### 🏭 Refactor
+
+- Improve incomplete type hints - [#515](https://github.com/bakdata/kpops/pull/515)
+
+- Fallback to user defined model when the validation of cluster model fails - [#521](https://github.com/bakdata/kpops/pull/521)
+
+- Replace kubernetes-asyncio with lightkube - [#517](https://github.com/bakdata/kpops/pull/517)
+
+
+### 🌀 Miscellaneous
+
+- Fix incorrect parameter type annotation - [#523](https://github.com/bakdata/kpops/pull/523)
+
+
+
+
+
+
 ## [7.0.0](https://github.com/bakdata/kpops/releases/tag/7.0.0) - Release Date: [2024-07-23]
 
 ### 🏗️ Breaking changes
