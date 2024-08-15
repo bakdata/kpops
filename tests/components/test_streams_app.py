@@ -1,8 +1,15 @@
 import logging
+from collections.abc import AsyncIterator
 from pathlib import Path
-from unittest.mock import ANY, AsyncMock, MagicMock
+from unittest.mock import ANY, MagicMock
 
 import pytest
+from lightkube.models.core_v1 import (
+    PersistentVolumeClaimSpec,
+    PersistentVolumeClaimStatus,
+)
+from lightkube.models.meta_v1 import ObjectMeta
+from lightkube.resources.core_v1 import PersistentVolumeClaim
 from pytest_mock import MockerFixture
 
 from kpops.api.exception import ValidationError
@@ -12,6 +19,7 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
+from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.models import TopicName
 from kpops.components.base_components.models.to_section import (
     ToSection,
@@ -846,11 +854,60 @@ class TestStreamsApp:
         )
         assert str(error.value) == msg
 
+    @pytest.fixture()
+    def pvc1(self) -> PersistentVolumeClaim:
+        return PersistentVolumeClaim(
+            apiVersion="v1",
+            kind="PersistentVolumeClaim",
+            metadata=ObjectMeta(name="test-pvc1"),
+            spec=PersistentVolumeClaimSpec(),
+            status=PersistentVolumeClaimStatus(),
+        )
+
+    @pytest.fixture()
+    def pvc2(self) -> PersistentVolumeClaim:
+        return PersistentVolumeClaim(
+            apiVersion="v1",
+            kind="PersistentVolumeClaim",
+            metadata=ObjectMeta(name="test-pvc2"),
+            spec=PersistentVolumeClaimSpec(),
+            status=PersistentVolumeClaimStatus(),
+        )
+
+    @pytest.fixture()
+    def pvc3(self) -> PersistentVolumeClaim:
+        return PersistentVolumeClaim(
+            apiVersion="v1",
+            kind="PersistentVolumeClaim",
+            metadata=ObjectMeta(name="test-pvc3"),
+            spec=PersistentVolumeClaimSpec(),
+            status=PersistentVolumeClaimStatus(),
+        )
+
+    @pytest.fixture()
+    def mock_list_pvcs(
+        self,
+        mocker: MockerFixture,
+        pvc1: PersistentVolumeClaim,
+        pvc2: PersistentVolumeClaim,
+        pvc3: PersistentVolumeClaim,
+    ) -> MagicMock:
+        async def async_generator_side_effect() -> AsyncIterator[PersistentVolumeClaim]:
+            yield pvc1
+            yield pvc2
+            yield pvc3
+
+        return mocker.patch.object(
+            PVCHandler, "list_pvcs", side_effect=async_generator_side_effect
+        )
+
     @pytest.mark.asyncio()
+    @pytest.mark.usefixtures("kubeconfig")
     async def test_stateful_clean_with_dry_run_false(
         self,
         stateful_streams_app: StreamsApp,
         empty_helm_get_values: MockerFixture,
+        mock_list_pvcs: MagicMock,
         mocker: MockerFixture,
     ):
         # actual component
@@ -863,14 +920,7 @@ class TestStreamsApp:
         mock_helm_upgrade_install = mocker.patch.object(cleaner.helm, "upgrade_install")
         mock_helm_uninstall = mocker.patch.object(cleaner.helm, "uninstall")
 
-        module = StreamsAppCleaner.__module__
-        mock_pvc_handler_instance = AsyncMock()
-        mock_delete_pvcs = mock_pvc_handler_instance.delete_pvcs
-        mock_delete_pvcs.return_value = AsyncMock()
-
-        mocker.patch(
-            f"{module}.PVCHandler.create", return_value=mock_pvc_handler_instance
-        )
+        mock_delete_pvcs = mocker.patch.object(PVCHandler, "delete_pvcs")
 
         mock = MagicMock()
         mock.attach_mock(mock_helm_uninstall_streams_app, "helm_uninstall_streams_app")
@@ -921,49 +971,36 @@ class TestStreamsApp:
                 ),
                 ANY,  # __bool__
                 ANY,  # __str__
-                mocker.call.delete_pvcs(),
+                mocker.call.delete_pvcs(False),
             ]
         )
 
     @pytest.mark.asyncio()
+    @pytest.mark.usefixtures("kubeconfig")
     async def test_stateful_clean_with_dry_run_true(
         self,
         stateful_streams_app: StreamsApp,
         empty_helm_get_values: MockerFixture,
         mocker: MockerFixture,
+        mock_list_pvcs: MagicMock,
         caplog: pytest.LogCaptureFixture,
     ):
-        caplog.set_level(logging.INFO)
+        caplog.set_level(logging.DEBUG)
         # actual component
         mocker.patch.object(stateful_streams_app, "destroy")
 
         cleaner = stateful_streams_app._cleaner
         assert isinstance(cleaner, StreamsAppCleaner)
 
-        pvc_names = ["test-pvc1", "test-pvc2", "test-pvc3"]
-
-        mock_pvc_handler_instance = AsyncMock()
-        mock_list_pvcs = mock_pvc_handler_instance.list_pvcs
-        mock_list_pvcs.return_value = pvc_names
-
-        module = StreamsAppCleaner.__module__
-        pvc_handler_create = mocker.patch(
-            f"{module}.PVCHandler.create", return_value=mock_pvc_handler_instance
-        )
         mocker.patch.object(cleaner, "destroy")
         mocker.patch.object(cleaner, "deploy")
-        mocker.patch.object(mock_list_pvcs, "list_pvcs")
 
         dry_run = True
         await stateful_streams_app.clean(dry_run=dry_run)
 
-        pvc_handler_create.assert_called_once_with(
-            STREAMS_APP_FULL_NAME, "test-namespace"
-        )
-
         mock_list_pvcs.assert_called_once()
         assert (
-            f"Deleting the PVCs {pvc_names} for StatefulSet '{STREAMS_APP_FULL_NAME}'"
+            f"Deleting in namespace 'test-namespace' StatefulSet '{STREAMS_APP_FULL_NAME}' PVCs ['test-pvc1', 'test-pvc2', 'test-pvc3']"
             in caplog.text
         )
 

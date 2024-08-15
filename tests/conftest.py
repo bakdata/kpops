@@ -44,7 +44,7 @@ def load_yaml_file_clear_cache() -> Iterator[None]:
 
 
 @pytest.fixture()
-def custom_components():
+def custom_components() -> Iterator[None]:
     src = Path("tests/pipeline/test_components")
     dst = Path("kpops/components/test_components")
     try:
@@ -55,6 +55,31 @@ def custom_components():
 
 
 @pytest.fixture(scope="module")
-def clear_kpops_config():
+def clear_kpops_config() -> Iterator[None]:
     yield
     KpopsConfig._instance = None
+
+
+KUBECONFIG = """
+apiVersion: v1
+clusters:
+- cluster: {server: 'https://localhost:9443'}
+  name: test
+contexts:
+- context: {cluster: test, user: test}
+  name: test
+current-context: test
+kind: Config
+preferences: {}
+users:
+- name: test
+  user: {token: testtoken}
+"""
+
+
+@pytest.fixture(scope="session")
+def kubeconfig(tmp_path_factory: pytest.TempPathFactory) -> Path:
+    kubeconfig = tmp_path_factory.mktemp("kpops") / "kubeconfig"
+    kubeconfig.write_text(KUBECONFIG)
+    os.environ["KUBECONFIG"] = str(kubeconfig)
+    return kubeconfig
