@@ -71,7 +71,7 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
         major = int(major)
 
         if major != 3:
-            msg = f"When using the streams-bootstrap v3 component your version ('{version}') must be at least 3.0.0."
+            msg = f"When using the streams-bootstrap component your version ('{version}') must be at least 3.0.0."
             raise ValueError(msg)
 
         return version

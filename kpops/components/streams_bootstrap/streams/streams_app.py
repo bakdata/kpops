@@ -17,7 +17,7 @@ from kpops.components.streams_bootstrap.streams.model import (
 )
 from kpops.utils.docstring import describe_attr
 
-log = logging.getLogger("StreamsAppV3")
+log = logging.getLogger("StreamsApp")
 
 
 class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):

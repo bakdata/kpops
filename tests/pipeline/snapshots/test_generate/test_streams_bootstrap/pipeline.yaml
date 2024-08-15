@@ -1,7 +1,7 @@
 - _cleaner:
     name: my-producer-app
     namespace: example-namespace
-    prefix: resources-streams-bootstrap-v3-
+    prefix: resources-streams-bootstrap-
     repo_config:
       repo_auth_flags:
         insecure_skip_tls_verify: false
@@ -23,7 +23,7 @@
     version: 3.0.0-SNAPSHOT
   name: my-producer-app
   namespace: example-namespace
-  prefix: resources-streams-bootstrap-v3-
+  prefix: resources-streams-bootstrap-
   repo_config:
     repo_auth_flags:
       insecure_skip_tls_verify: false
@@ -54,7 +54,7 @@
 - _cleaner:
     name: my-streams-app
     namespace: example-namespace
-    prefix: resources-streams-bootstrap-v3-
+    prefix: resources-streams-bootstrap-
     repo_config:
       repo_auth_flags:
         insecure_skip_tls_verify: false
@@ -72,7 +72,7 @@
         bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-        errorTopic: resources-streams-bootstrap-v3-my-streams-app-error
+        errorTopic: resources-streams-bootstrap-my-streams-app-error
         inputPattern: my-input-pattern
         inputTopics:
         - my-input-topic
@@ -103,7 +103,7 @@
         label: my-input-topic-label
   name: my-streams-app
   namespace: example-namespace
-  prefix: resources-streams-bootstrap-v3-
+  prefix: resources-streams-bootstrap-
   repo_config:
     repo_auth_flags:
       insecure_skip_tls_verify: false
@@ -121,7 +121,7 @@
       my-output-topic:
         configs: {}
         type: output
-      resources-streams-bootstrap-v3-my-streams-app-error:
+      resources-streams-bootstrap-my-streams-app-error:
         configs:
           cleanup.policy: compact,delete
         partitions_count: 1
@@ -138,7 +138,7 @@
       bootstrapServers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-streams-bootstrap-v3-my-streams-app-error
+      errorTopic: resources-streams-bootstrap-my-streams-app-error
       inputPattern: my-input-pattern
       inputTopics:
       - my-input-topic

@@ -125,12 +125,12 @@ class TestManifest:
         assert len(resources) == 2
         snapshot.assert_match(yaml.dump_all(resources), "resources")
 
-    def test_streams_bootstrap_v3(self, snapshot: Snapshot):
+    def test_streams_bootstrap(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
                 "manifest",
-                str(RESOURCE_PATH / "streams-bootstrap-v3" / PIPELINE_YAML),
+                str(RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )

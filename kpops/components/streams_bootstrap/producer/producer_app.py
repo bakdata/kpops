@@ -17,7 +17,7 @@ from kpops.components.streams_bootstrap.base import (
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
 
-log = logging.getLogger("ProducerAppV3")
+log = logging.getLogger("ProducerApp")
 
 
 class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
