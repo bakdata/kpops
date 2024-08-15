@@ -3,17 +3,17 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   labels:
-    app: resources-streams-bootstrap-v3-my-producer-app
+    app: resources-streams-bootstrap-my-producer-app
     chart: producer-app-3.0.0-SNAPSHOT
-    release: resources-streams-bootstrap-v3-my-producer-app
-  name: resources-streams-bootstrap-v3-my-producer-app
+    release: resources-streams-bootstrap-my-producer-app
+  name: resources-streams-bootstrap-my-producer-app
 spec:
   backoffLimit: 6
   template:
     metadata:
       labels:
-        app: resources-streams-bootstrap-v3-my-producer-app
-        release: resources-streams-bootstrap-v3-my-producer-app
+        app: resources-streams-bootstrap-my-producer-app
+        release: resources-streams-bootstrap-my-producer-app
     spec:
       containers:
       - env:
@@ -33,7 +33,7 @@ spec:
           value: '-XX:MaxRAMPercentage=75.0 '
         image: my-registry/my-producer-image:1.0.0
         imagePullPolicy: Always
-        name: resources-streams-bootstrap-v3-my-producer-app
+        name: resources-streams-bootstrap-my-producer-app
         resources:
           limits:
             cpu: 500m
@@ -52,11 +52,11 @@ data:
 kind: ConfigMap
 metadata:
   labels:
-    app: resources-streams-bootstrap-v3-my-streams-app
+    app: resources-streams-bootstrap-my-streams-app
     chart: streams-app-3.0.0-SNAPSHOT
     heritage: Helm
-    release: resources-streams-bootstrap-v3-my-streams-app
-  name: resources-streams-bootstrap-v3-my-streams-app-jmx-configmap
+    release: resources-streams-bootstrap-my-streams-app
+  name: resources-streams-bootstrap-my-streams-app-jmx-configmap
 
 ---
 apiVersion: apps/v1
@@ -65,24 +65,24 @@ metadata:
   annotations:
     consumerGroup: my-streams-app-id
   labels:
-    app: resources-streams-bootstrap-v3-my-streams-app
+    app: resources-streams-bootstrap-my-streams-app
     chart: streams-app-3.0.0-SNAPSHOT
-    release: resources-streams-bootstrap-v3-my-streams-app
-  name: resources-streams-bootstrap-v3-my-streams-app
+    release: resources-streams-bootstrap-my-streams-app
+  name: resources-streams-bootstrap-my-streams-app
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: resources-streams-bootstrap-v3-my-streams-app
-      release: resources-streams-bootstrap-v3-my-streams-app
+      app: resources-streams-bootstrap-my-streams-app
+      release: resources-streams-bootstrap-my-streams-app
   template:
     metadata:
       annotations:
         prometheus.io/port: '5556'
         prometheus.io/scrape: 'true'
       labels:
-        app: resources-streams-bootstrap-v3-my-streams-app
-        release: resources-streams-bootstrap-v3-my-streams-app
+        app: resources-streams-bootstrap-my-streams-app
+        release: resources-streams-bootstrap-my-streams-app
     spec:
       containers:
       - env:
@@ -105,7 +105,7 @@ spec:
         - name: APP_OUTPUT_TOPIC
           value: my-output-topic
         - name: APP_ERROR_TOPIC
-          value: resources-streams-bootstrap-v3-my-streams-app-error
+          value: resources-streams-bootstrap-my-streams-app-error
         - name: APP_LABELED_OUTPUT_TOPICS
           value: my-output-topic-label=my-labeled-topic-output,
         - name: APP_LABELED_INPUT_TOPICS
@@ -121,7 +121,7 @@ spec:
             -Dcom.sun.management.jmxremote.ssl=false -XX:MaxRAMPercentage=75.0 '
         image: my-registry/my-streams-app-image:1.0.0
         imagePullPolicy: Always
-        name: resources-streams-bootstrap-v3-my-streams-app
+        name: resources-streams-bootstrap-my-streams-app
         ports:
         - containerPort: 5555
           name: jmx
@@ -159,6 +159,6 @@ spec:
       terminationGracePeriodSeconds: 300
       volumes:
       - configMap:
-          name: resources-streams-bootstrap-v3-my-streams-app-jmx-configmap
+          name: resources-streams-bootstrap-my-streams-app-jmx-configmap
         name: jmx-config
 
