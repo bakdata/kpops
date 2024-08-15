@@ -11,10 +11,10 @@ from kpops.components.common.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap_v3.base import (
+from kpops.components.streams_bootstrap.base import (
     StreamsBootstrap,
 )
-from kpops.components.streams_bootstrap_v3.producer.model import ProducerAppValues
+from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.utils.docstring import describe_attr
 
 log = logging.getLogger("ProducerAppV3")

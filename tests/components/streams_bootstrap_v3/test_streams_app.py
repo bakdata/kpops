@@ -20,11 +20,11 @@ from kpops.components.common.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap_v3 import StreamsApp
-from kpops.components.streams_bootstrap_v3.streams.model import (
+from kpops.components.streams_bootstrap import StreamsApp
+from kpops.components.streams_bootstrap.streams.model import (
     StreamsAppAutoScaling,
 )
-from kpops.components.streams_bootstrap_v3.streams.streams_app import (
+from kpops.components.streams_bootstrap.streams.streams_app import (
     StreamsAppCleaner,
 )
 

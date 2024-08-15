@@ -12,9 +12,9 @@ from kpops.components.base_components.models.to_section import (
 )
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.common.topic import OutputTopicTypes, TopicConfig
+from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
 from kpops.components.streams_bootstrap_v2.producer.producer_app import ProducerAppV2
 from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
-from kpops.components.streams_bootstrap_v3 import ProducerApp, StreamsApp
 
 
 class MyProducerApp(ProducerApp): ...

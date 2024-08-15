@@ -9,10 +9,10 @@ from kpops.components.base_components.helm_app import HelmApp
 from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import KafkaTopic
-from kpops.components.streams_bootstrap_v3.base import (
+from kpops.components.streams_bootstrap.base import (
     StreamsBootstrap,
 )
-from kpops.components.streams_bootstrap_v3.streams.model import (
+from kpops.components.streams_bootstrap.streams.model import (
     StreamsAppValues,
 )
 from kpops.utils.docstring import describe_attr

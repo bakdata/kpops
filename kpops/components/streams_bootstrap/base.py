@@ -11,7 +11,7 @@ from pydantic import Field
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp
-from kpops.components.streams_bootstrap_v3.model import StreamsBootstrapValues
+from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 from kpops.utils.docstring import describe_attr
 
 if TYPE_CHECKING:

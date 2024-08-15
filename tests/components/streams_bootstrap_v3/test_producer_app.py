@@ -13,7 +13,7 @@ from kpops.components.common.topic import (
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap_v3.producer.producer_app import (
+from kpops.components.streams_bootstrap.producer.producer_app import (
     ProducerApp,
     ProducerAppCleaner,
 )

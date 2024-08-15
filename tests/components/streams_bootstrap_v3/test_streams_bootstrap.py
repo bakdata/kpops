@@ -9,8 +9,8 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.streams_bootstrap_v3.base import StreamsBootstrap
-from kpops.components.streams_bootstrap_v3.model import StreamsBootstrapValues
+from kpops.components.streams_bootstrap.base import StreamsBootstrap
+from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 
 
 @pytest.mark.usefixtures("mock_env")

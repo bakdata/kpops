@@ -1187,7 +1187,7 @@
                 "autoscaling": {
                     "anyOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v3__streams__model__StreamsAppAutoScaling"
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling"
                         },
                         {
                             "type": "null"
@@ -1206,7 +1206,7 @@
                 "kafka": {
                     "allOf": [
                         {
-                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v3__streams__model__StreamsConfig"
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsConfig"
                         }
                     ],
                     "description": "streams-bootstrap kafka section"
@@ -1377,6 +1377,240 @@
                 }
             },
             "title": "TopicConfig",
+            "type": "object"
+        },
+        "kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling": {
+            "additionalProperties": true,
+            "description": "Kubernetes Event-driven Autoscaling config.",
+            "properties": {
+                "additionalTriggers": {
+                    "default": [],
+                    "description": "List of additional KEDA triggers, see https://keda.sh/docs/latest/scalers/",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Additionaltriggers",
+                    "type": "array"
+                },
+                "cooldownPeriod": {
+                    "default": 300,
+                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
+                    "title": "Cooldown period",
+                    "type": "integer"
+                },
+                "enabled": {
+                    "default": false,
+                    "description": "Whether to enable auto-scaling using KEDA.",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "idleReplicas": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount",
+                    "title": "Idle replica count"
+                },
+                "internalTopics": {
+                    "default": [],
+                    "description": "List of auto-generated Kafka Streams topics used by the streams app",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Internaltopics",
+                    "type": "array"
+                },
+                "lagThreshold": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Average target value to trigger scaling actions. Mandatory to set when auto-scaling is enabled.",
+                    "title": "Lag threshold"
+                },
+                "maxReplicas": {
+                    "default": 1,
+                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
+                    "title": "Max replica count",
+                    "type": "integer"
+                },
+                "minReplicas": {
+                    "default": 0,
+                    "description": "Minimum number of replicas KEDA will scale the resource down to. \"https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount\"",
+                    "title": "Min replica count",
+                    "type": "integer"
+                },
+                "offsetResetPolicy": {
+                    "default": "earliest",
+                    "description": "The offset reset policy for the consumer if the consumer group is not yet subscribed to a partition.",
+                    "title": "Offset reset policy",
+                    "type": "string"
+                },
+                "pollingInterval": {
+                    "default": 30,
+                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
+                    "title": "Polling interval",
+                    "type": "integer"
+                },
+                "topics": {
+                    "default": [],
+                    "description": "List of topics used by the streams app",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Topics",
+                    "type": "array"
+                }
+            },
+            "title": "StreamsAppAutoScaling",
+            "type": "object"
+        },
+        "kpops__components__streams_bootstrap__streams__model__StreamsConfig": {
+            "additionalProperties": true,
+            "description": "Streams Bootstrap kafka section.",
+            "properties": {
+                "applicationId": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Unique application ID for Kafka Streams. Required for auto-scaling",
+                    "title": "Unique application ID"
+                },
+                "bootstrapServers": {
+                    "description": "Brokers",
+                    "title": "Bootstrapservers",
+                    "type": "string"
+                },
+                "config": {
+                    "default": {},
+                    "description": "Configuration",
+                    "title": "Config",
+                    "type": "object"
+                },
+                "deleteOutput": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup",
+                    "title": "Deleteoutput"
+                },
+                "errorTopic": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Error topic"
+                },
+                "inputPattern": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Input pattern",
+                    "title": "Inputpattern"
+                },
+                "inputTopics": {
+                    "default": [],
+                    "description": "Input topics",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Inputtopics",
+                    "type": "array"
+                },
+                "labeledInputPatterns": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra input patterns",
+                    "title": "Labeledinputpatterns",
+                    "type": "object"
+                },
+                "labeledInputTopics": {
+                    "additionalProperties": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "default": {},
+                    "description": "Extra input topics",
+                    "title": "Labeledinputtopics",
+                    "type": "object"
+                },
+                "labeledOutputTopics": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra output topics",
+                    "title": "Labeledoutputtopics",
+                    "type": "object"
+                },
+                "outputTopic": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Output topic"
+                },
+                "schema_registry_url": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "URL of the schema registry",
+                    "title": "Schema Registry Url"
+                }
+            },
+            "required": [
+                "bootstrapServers"
+            ],
+            "title": "StreamsConfig",
             "type": "object"
         },
         "kpops__components__streams_bootstrap_v2__streams__model__StreamsAppAutoScaling": {
@@ -1594,240 +1828,6 @@
             ],
             "title": "StreamsConfig",
             "type": "object"
-        },
-        "kpops__components__streams_bootstrap_v3__streams__model__StreamsAppAutoScaling": {
-            "additionalProperties": true,
-            "description": "Kubernetes Event-driven Autoscaling config.",
-            "properties": {
-                "additionalTriggers": {
-                    "default": [],
-                    "description": "List of additional KEDA triggers, see https://keda.sh/docs/latest/scalers/",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Additionaltriggers",
-                    "type": "array"
-                },
-                "cooldownPeriod": {
-                    "default": 300,
-                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
-                    "title": "Cooldown period",
-                    "type": "integer"
-                },
-                "enabled": {
-                    "default": false,
-                    "description": "Whether to enable auto-scaling using KEDA.",
-                    "title": "Enabled",
-                    "type": "boolean"
-                },
-                "idleReplicas": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount",
-                    "title": "Idle replica count"
-                },
-                "internalTopics": {
-                    "default": [],
-                    "description": "List of auto-generated Kafka Streams topics used by the streams app",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Internaltopics",
-                    "type": "array"
-                },
-                "lagThreshold": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Average target value to trigger scaling actions. Mandatory to set when auto-scaling is enabled.",
-                    "title": "Lag threshold"
-                },
-                "maxReplicas": {
-                    "default": 1,
-                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
-                    "title": "Max replica count",
-                    "type": "integer"
-                },
-                "minReplicas": {
-                    "default": 0,
-                    "description": "Minimum number of replicas KEDA will scale the resource down to. \"https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount\"",
-                    "title": "Min replica count",
-                    "type": "integer"
-                },
-                "offsetResetPolicy": {
-                    "default": "earliest",
-                    "description": "The offset reset policy for the consumer if the consumer group is not yet subscribed to a partition.",
-                    "title": "Offset reset policy",
-                    "type": "string"
-                },
-                "pollingInterval": {
-                    "default": 30,
-                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
-                    "title": "Polling interval",
-                    "type": "integer"
-                },
-                "topics": {
-                    "default": [],
-                    "description": "List of topics used by the streams app",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Topics",
-                    "type": "array"
-                }
-            },
-            "title": "StreamsAppAutoScaling",
-            "type": "object"
-        },
-        "kpops__components__streams_bootstrap_v3__streams__model__StreamsConfig": {
-            "additionalProperties": true,
-            "description": "Streams Bootstrap kafka section.",
-            "properties": {
-                "applicationId": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Unique application ID for Kafka Streams. Required for auto-scaling",
-                    "title": "Unique application ID"
-                },
-                "bootstrapServers": {
-                    "description": "Brokers",
-                    "title": "Bootstrapservers",
-                    "type": "string"
-                },
-                "config": {
-                    "default": {},
-                    "description": "Configuration",
-                    "title": "Config",
-                    "type": "object"
-                },
-                "deleteOutput": {
-                    "anyOf": [
-                        {
-                            "type": "boolean"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup",
-                    "title": "Deleteoutput"
-                },
-                "errorTopic": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Error topic"
-                },
-                "inputPattern": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Input pattern",
-                    "title": "Inputpattern"
-                },
-                "inputTopics": {
-                    "default": [],
-                    "description": "Input topics",
-                    "items": {
-                        "type": "string"
-                    },
-                    "title": "Inputtopics",
-                    "type": "array"
-                },
-                "labeledInputPatterns": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "default": {},
-                    "description": "Extra input patterns",
-                    "title": "Labeledinputpatterns",
-                    "type": "object"
-                },
-                "labeledInputTopics": {
-                    "additionalProperties": {
-                        "items": {
-                            "type": "string"
-                        },
-                        "type": "array"
-                    },
-                    "default": {},
-                    "description": "Extra input topics",
-                    "title": "Labeledinputtopics",
-                    "type": "object"
-                },
-                "labeledOutputTopics": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "default": {},
-                    "description": "Extra output topics",
-                    "title": "Labeledoutputtopics",
-                    "type": "object"
-                },
-                "outputTopic": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Output topic"
-                },
-                "schema_registry_url": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "URL of the schema registry",
-                    "title": "Schema Registry Url"
-                }
-            },
-            "required": [
-                "bootstrapServers"
-            ],
-            "title": "StreamsConfig",
-            "type": "object"
         }
     },
     "items": {
@@ -1854,16 +1854,16 @@
                 "$ref": "#/$defs/KafkaSourceConnector"
             },
             {
-                "$ref": "#/$defs/ProducerAppV2"
-            },
-            {
-                "$ref": "#/$defs/StreamsAppV2"
-            },
-            {
                 "$ref": "#/$defs/ProducerApp"
             },
             {
                 "$ref": "#/$defs/StreamsApp"
+            },
+            {
+                "$ref": "#/$defs/ProducerAppV2"
+            },
+            {
+                "$ref": "#/$defs/StreamsAppV2"
             }
         ]
     },

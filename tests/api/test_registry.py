@@ -18,14 +18,14 @@ from kpops.components.base_components.kafka_connector import (
 )
 from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
-from kpops.components.streams_bootstrap_v2.producer.producer_app import ProducerAppV2
-from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
-from kpops.components.streams_bootstrap_v3 import (
+from kpops.components.streams_bootstrap import (
     ProducerApp,
     StreamsApp,
     StreamsBootstrap,
 )
+from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
+from kpops.components.streams_bootstrap_v2.producer.producer_app import ProducerAppV2
+from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
 from tests.cli.resources.custom_module import CustomSchemaProvider
 
 
@@ -105,7 +105,6 @@ def test_registry():
         "kafka-source-connector": KafkaSourceConnector,
         "kubernetes-app": KubernetesApp,
         "pipeline-component": PipelineComponent,
-        # TODO: change the old sterams bootstrap to -v2  and remove -v3
         "producer-app-v2": ProducerAppV2,
         "producer-app": ProducerApp,
         "streams-app-v2": StreamsAppV2,

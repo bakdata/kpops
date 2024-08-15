@@ -1,6 +1,6 @@
 from pydantic import ConfigDict, Field
 
-from kpops.components.streams_bootstrap_v3.model import (
+from kpops.components.streams_bootstrap.model import (
     KafkaConfig,
     StreamsBootstrapValues,
 )

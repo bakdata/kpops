@@ -6,7 +6,7 @@ import pydantic
 from pydantic import BaseModel, ConfigDict, Field
 
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
-from kpops.components.streams_bootstrap_v3.model import (
+from kpops.components.streams_bootstrap.model import (
     KafkaConfig,
     StreamsBootstrapValues,
 )
