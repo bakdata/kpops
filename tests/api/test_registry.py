@@ -54,8 +54,8 @@ def test_iter_namespace():
     assert [module.__name__ for module in _iter_namespace(components_module)] == [
         "kpops.components.base_components",
         "kpops.components.common",
+        "kpops.components.streams_bootstrap",
         "kpops.components.streams_bootstrap_v2",
-        "kpops.components.streams_bootstrap_v3",
         "kpops.components.test_components",
     ]
 
@@ -66,8 +66,8 @@ def test_iter_component_modules():
         "kpops.components",
         "kpops.components.base_components",
         "kpops.components.common",
+        "kpops.components.streams_bootstrap",
         "kpops.components.streams_bootstrap_v2",
-        "kpops.components.streams_bootstrap_v3",
         "kpops.components.test_components",
     ]
 
