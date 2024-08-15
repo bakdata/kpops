@@ -61,7 +61,6 @@ class StreamsAppV3(StreamsBootstrapV3):
     """
 
     values: StreamsAppValues = Field(
-        default=...,
         description=describe_attr("values", __doc__),
     )
 

@@ -1457,7 +1457,8 @@
             },
             "required": [
                 "name",
-                "namespace"
+                "namespace",
+                "values"
             ],
             "title": "StreamsBootstrap",
             "type": "object"
@@ -1544,7 +1545,8 @@
             },
             "required": [
                 "name",
-                "namespace"
+                "namespace",
+                "values"
             ],
             "title": "StreamsBootstrapV3",
             "type": "object"
