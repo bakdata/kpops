@@ -143,3 +143,9 @@ class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
                 f"The image tag for component '{self.name}' is set or defaulted to 'latest'. Please, consider providing a stable image tag."
             )
         return self
+
+    @pydantic.model_validator(mode="before")
+    @classmethod
+    def deprecation_warning(cls, model: Any) -> Any:
+        log.warning("StreamsBootstrapV2 is deprecated, use StreamsBootstrap instead.")
+        return model
