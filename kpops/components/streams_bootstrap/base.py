@@ -43,7 +43,6 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     """
 
     values: StreamsBootstrapValues = Field(
-        default_factory=StreamsBootstrapValues,
         description=describe_attr("values", __doc__),
     )
 

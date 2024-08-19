@@ -33,7 +33,6 @@ class StreamsBootstrapValues(HelmAppValues):
     )
 
     kafka: KafkaConfig = Field(
-        default=...,
         description=describe_attr("kafka", __doc__),
     )
 

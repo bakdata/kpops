@@ -17,8 +17,6 @@ class ProducerAppValues(StreamsBootstrapValues):
     :param kafka: Kafka Streams settings
     """
 
-    kafka: ProducerConfig = Field(
-        default=..., description=describe_attr("kafka", __doc__)
-    )
+    kafka: ProducerConfig = Field(description=describe_attr("kafka", __doc__))
 
     model_config = ConfigDict(extra="allow")

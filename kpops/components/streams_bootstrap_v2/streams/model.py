@@ -250,7 +250,6 @@ class StreamsAppV2Values(StreamsBootstrapV2Values):
     """
 
     streams: StreamsConfig = Field(
-        default=...,
         description=describe_attr("streams", __doc__),
     )
     autoscaling: StreamsAppAutoScaling | None = Field(

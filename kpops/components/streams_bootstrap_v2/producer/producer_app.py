@@ -45,7 +45,6 @@ class ProducerAppV2(StreamsBootstrapV2):
     """
 
     values: ProducerAppV2Values = Field(
-        default=...,
         description=describe_attr("values", __doc__),
     )
     from_: None = Field(

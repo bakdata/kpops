@@ -1,4 +1,22 @@
 kpops_components_fields:
+  converter:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - version
+  filter:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - version
   helm-app:
   - name
   - prefix
@@ -45,6 +63,24 @@ kpops_components_fields:
   - to
   - namespace
   - values
+  my-producer-app:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - version
+  my-streams-app:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - version
   pipeline-component:
   - name
   - prefix
@@ -60,6 +96,33 @@ kpops_components_fields:
   - repo_config
   - version
   producer-app-v2:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - version
+  scheduled-producer:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - version
+  should-inflate:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - version
+  simple-inflate-connectors:
   - name
   - prefix
   - from_
@@ -105,6 +168,29 @@ kpops_components_fields:
   - repo_config
   - version
 kpops_components_inheritance_ref:
+  converter:
+    bases:
+    - streams-app-v2
+    parents:
+    - streams-app-v2
+    - streams-bootstrap-v2
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  filter:
+    bases:
+    - sub-streams-app
+    parents:
+    - sub-streams-app
+    - streams-app-v2
+    - streams-bootstrap-v2
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
   helm-app:
     bases:
     - kubernetes-app
@@ -144,6 +230,28 @@ kpops_components_inheritance_ref:
     parents:
     - pipeline-component
     - base-defaults-component
+  my-producer-app:
+    bases:
+    - producer-app
+    parents:
+    - producer-app
+    - streams-bootstrap
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  my-streams-app:
+    bases:
+    - streams-app
+    parents:
+    - streams-app
+    - streams-bootstrap
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
   pipeline-component:
     bases: []
     parents:
@@ -162,6 +270,39 @@ kpops_components_inheritance_ref:
     bases:
     - streams-bootstrap-v2
     parents:
+    - streams-bootstrap-v2
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  scheduled-producer:
+    bases:
+    - producer-app-v2
+    parents:
+    - producer-app-v2
+    - streams-bootstrap-v2
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  should-inflate:
+    bases:
+    - streams-app-v2
+    parents:
+    - streams-app-v2
+    - streams-bootstrap-v2
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  simple-inflate-connectors:
+    bases:
+    - streams-app-v2
+    parents:
+    - streams-app-v2
     - streams-bootstrap-v2
     - kafka-app
     - helm-app
