@@ -2,7 +2,7 @@ import logging
 from functools import cached_property
 
 from pydantic import Field, ValidationError, computed_field
-from typing_extensions import override
+from typing_extensions import deprecated, override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
@@ -53,6 +53,7 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrapV2):
             await pvc_handler.delete_pvcs()
 
 
+@deprecated("StreamsAppV2 component is deprecated, use StreamsApp instead.")
 class StreamsAppV2(StreamsBootstrapV2):
     """StreamsAppV2 component that configures a streams-bootstrap-v2 app.
 

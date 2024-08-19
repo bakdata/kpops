@@ -2,7 +2,7 @@ import logging
 from functools import cached_property
 
 from pydantic import Field, ValidationError, computed_field
-from typing_extensions import override
+from typing_extensions import deprecated, override
 
 from kpops.components.base_components.kafka_app import (
     KafkaAppCleaner,
@@ -32,6 +32,7 @@ class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrapV2):
         )
 
 
+@deprecated("ProducerAppV2 component is deprecated, use ProducerApp instead.")
 class ProducerAppV2(StreamsBootstrapV2):
     """Producer component.
 

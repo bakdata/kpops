@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
+from typing_extensions import deprecated
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp
@@ -112,6 +113,7 @@ class StreamsBootstrapV2Values(HelmAppValues):
     )
 
 
+@deprecated("StreamsBootstrapV2 component is deprecated, use StreamsBootstrap instead.")
 class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
     """Base for components with a streams-bootstrap-v2 Helm chart.
 
