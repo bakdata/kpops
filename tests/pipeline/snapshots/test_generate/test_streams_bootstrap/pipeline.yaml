@@ -20,7 +20,7 @@
           my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
         outputTopic: my-producer-app-output-topic
         schemaRegistryUrl: http://localhost:8081/
-    version: 3.0.0-SNAPSHOT
+    version: 3.0.1
   name: my-producer-app
   namespace: example-namespace
   prefix: resources-streams-bootstrap-
@@ -50,7 +50,7 @@
         my-producer-app-output-topic-label: my-labeled-producer-app-topic-output
       outputTopic: my-producer-app-output-topic
       schemaRegistryUrl: http://localhost:8081/
-  version: 3.0.0-SNAPSHOT
+  version: 3.0.1
 - _cleaner:
     name: my-streams-app
     namespace: example-namespace
@@ -88,7 +88,7 @@
       persistence:
         enabled: false
       statefulSet: false
-    version: 3.0.0-SNAPSHOT
+    version: 3.0.1
   from:
     components: {}
     topics:
@@ -154,5 +154,5 @@
     persistence:
       enabled: false
     statefulSet: false
-  version: 3.0.0-SNAPSHOT
+  version: 3.0.1
 

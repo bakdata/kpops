@@ -31,7 +31,7 @@ class TestStreamsBootstrap:
             repository_name="bakdata-streams-bootstrap",
             url="https://bakdata.github.io/streams-bootstrap/",
         )
-        assert streams_bootstrap.version == "3.0.0"
+        assert streams_bootstrap.version == "3.0.1"
         assert streams_bootstrap.namespace == "test-namespace"
         assert streams_bootstrap.values.image_tag == "latest"
 
@@ -105,7 +105,7 @@ class TestStreamsBootstrap:
         with pytest.raises(
             ValueError,
             match=re.escape(
-                "When using the streams-bootstrap component your version ('2.1.0') must be at least 3.0.0."
+                "When using the streams-bootstrap component your version ('2.1.0') must be at least 3.0.1."
             ),
         ):
             StreamsBootstrap(

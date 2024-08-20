@@ -470,7 +470,7 @@ class TestProducerApp:
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            HelmUpgradeInstallFlags(version="3.0.0", wait=True, wait_for_jobs=True),
+            HelmUpgradeInstallFlags(version="3.0.1", wait=True, wait_for_jobs=True),
         )
 
     @pytest.mark.asyncio()
@@ -541,5 +541,5 @@ class TestProducerApp:
                     "outputTopic": "test-output-topic",
                 },
             },
-            HelmUpgradeInstallFlags(version="3.0.0", wait=True, wait_for_jobs=True),
+            HelmUpgradeInstallFlags(version="3.0.1", wait=True, wait_for_jobs=True),
         )

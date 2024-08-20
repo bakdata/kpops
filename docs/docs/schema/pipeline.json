@@ -562,7 +562,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.0.0",
+                    "default": "3.0.1",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",
@@ -994,7 +994,7 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
-                    "default": "3.0.0",
+                    "default": "3.0.1",
                     "description": "Helm chart version",
                     "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
                     "title": "Version",

@@ -25,8 +25,7 @@ STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     url="https://bakdata.github.io/streams-bootstrap/",
 )
 
-# TODO: Update this with the latest stable version release
-STREAMS_BOOTSTRAP_VERSION = "3.0.0"
+STREAMS_BOOTSTRAP_VERSION = "3.0.1"
 STREAMS_BOOTSTRAP_VERSION_PATTERN = r"^(\d+)\.(\d+)\.(\d+)(-[a-zA-Z]+(\.[a-zA-Z]+)?)?$"
 COMPILED_VERSION_PATTERN = re.compile(STREAMS_BOOTSTRAP_VERSION_PATTERN)
 
@@ -70,7 +69,7 @@ class StreamsBootstrap(KafkaApp, HelmApp, ABC):
         major = int(major)
 
         if major != 3:
-            msg = f"When using the streams-bootstrap component your version ('{version}') must be at least 3.0.0."
+            msg = f"When using the streams-bootstrap component your version ('{version}') must be at least 3.0.1."
             raise ValueError(msg)
 
         return version
