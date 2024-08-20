@@ -1,7 +1,8 @@
 kubernetes-app:
   name: ${component.type}
   namespace: example-namespace
-kafka-app:
+
+stream-bootstrap-v2:
   values:
     streams:
       brokers: "${config.kafka_brokers}"

@@ -1,4 +1,4 @@
-kafka-app:
+streams-bootstrap-v2:
   values:
     streams:
       brokers: "${config.kafka_brokers}"

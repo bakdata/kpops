@@ -22,7 +22,7 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         schemaRegistryUrl: http://localhost:8081/
       suspend: true
-    version: 2.4.2
+    version: 2.9.0
   name: account-producer
   namespace: ${NAMESPACE}
   prefix: from-pipeline-component-
@@ -45,5 +45,5 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       schemaRegistryUrl: http://localhost:8081/
     suspend: true
-  version: 2.4.2
+  version: 2.9.0
 
