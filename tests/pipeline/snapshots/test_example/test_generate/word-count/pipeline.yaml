@@ -12,13 +12,17 @@
     type: producer-app-cleaner
     values:
       image: bakdata/kpops-demo-sentence-producer
-      imageTag: latest
+      imageTag: 1.0.0
+      labels:
+        pipeline: word-count
       prometheus:
         jmx:
           enabled: false
+      replicaCount: 1
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         optimizeLeaveGroupBehavior: false
+        outputTopic: word-count-data-producer-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
     version: 2.9.0
   debug: true
@@ -30,16 +34,26 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
+  to:
+    models: {}
+    topics:
+      word-count-data-producer-topic:
+        configs: {}
+        partitions_count: 3
   type: producer-app-v2
   values:
     image: bakdata/kpops-demo-sentence-producer
-    imageTag: latest
+    imageTag: 1.0.0
+    labels:
+      pipeline: word-count
     prometheus:
       jmx:
         enabled: false
+    replicaCount: 1
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       optimizeLeaveGroupBehavior: false
+      outputTopic: word-count-data-producer-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
   version: 2.9.0
 - _cleaner:
@@ -55,8 +69,12 @@
     suffix: -clean
     type: streams-app-cleaner
     values:
+      commandLine:
+        PRODUCTIVE: false
       image: bakdata/kpops-demo-word-count-app
-      imageTag: latest
+      imageTag: 1.0.0
+      labels:
+        pipeline: word-count
       persistence:
         enabled: false
       prometheus:
@@ -66,6 +84,9 @@
       statefulSet: false
       streams:
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+        errorTopic: word-count-word-counter-dead-letter-topic
+        inputTopics:
+        - word-count-data-producer-topic
         optimizeLeaveGroupBehavior: false
         outputTopic: word-count-word-counter-topic
         schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/
@@ -82,14 +103,23 @@
   to:
     models: {}
     topics:
+      word-count-word-counter-dead-letter-topic:
+        configs: {}
+        partitions_count: 1
+        type: error
       word-count-word-counter-topic:
         configs:
           cleanup.policy: compact
+        partitions_count: 3
         type: output
   type: streams-app-v2
   values:
+    commandLine:
+      PRODUCTIVE: false
     image: bakdata/kpops-demo-word-count-app
-    imageTag: latest
+    imageTag: 1.0.0
+    labels:
+      pipeline: word-count
     persistence:
       enabled: false
     prometheus:
@@ -99,6 +129,9 @@
     statefulSet: false
     streams:
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
+      errorTopic: word-count-word-counter-dead-letter-topic
+      inputTopics:
+      - word-count-data-producer-topic
       optimizeLeaveGroupBehavior: false
       outputTopic: word-count-word-counter-topic
       schemaRegistryUrl: http://k8kafka-cp-schema-registry.kpops.svc.cluster.local:8081/

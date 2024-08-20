@@ -1,6 +1,6 @@
 - _cleaner:
     name: app1
-    namespace: example-namespace
+    namespace: development-namespace
     prefix: resources-custom-config-
     repo_config:
       repo_auth_flags:
@@ -20,9 +20,9 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         outputTopic: app1-test-topic
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+    version: 2.9.0
   name: app1
-  namespace: example-namespace
+  namespace: development-namespace
   prefix: resources-custom-config-
   repo_config:
     repo_auth_flags:
@@ -48,10 +48,10 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       outputTopic: app1-test-topic
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+  version: 2.9.0
 - _cleaner:
     name: app2
-    namespace: example-namespace
+    namespace: development-namespace
     prefix: resources-custom-config-
     repo_config:
       repo_auth_flags:
@@ -77,9 +77,9 @@
         - app1-test-topic
         outputTopic: app2-test-topic
         schemaRegistryUrl: http://localhost:8081/
-    version: 2.4.2
+    version: 2.9.0
   name: app2
-  namespace: example-namespace
+  namespace: development-namespace
   prefix: resources-custom-config-
   repo_config:
     repo_auth_flags:
@@ -117,5 +117,5 @@
       - app1-test-topic
       outputTopic: app2-test-topic
       schemaRegistryUrl: http://localhost:8081/
-  version: 2.4.2
+  version: 2.9.0
 

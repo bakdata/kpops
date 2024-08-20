@@ -5,7 +5,7 @@
     metadata:
       labels:
         app: resources-custom-config-app1
-        chart: producer-app-2.4.2
+        chart: producer-app-2.9.0
         release: resources-custom-config-app1
       name: resources-custom-config-app1
     spec:
@@ -54,7 +54,7 @@
     metadata:
       labels:
         app: resources-custom-config-app2
-        chart: streams-app-2.4.2
+        chart: streams-app-2.9.0
         heritage: Helm
         release: resources-custom-config-app2
       name: resources-custom-config-app2-jmx-configmap
@@ -65,7 +65,7 @@
     metadata:
       labels:
         app: resources-custom-config-app2
-        chart: streams-app-2.4.2
+        chart: streams-app-2.9.0
         pipeline: resources-custom-config
         release: resources-custom-config-app2
       name: resources-custom-config-app2
@@ -105,6 +105,8 @@
               value: com.bakdata.kafka.MurmurHashIdGenerator
             - name: KAFKA_JMX_PORT
               value: '5555'
+            - name: APP_VOLATILE_GROUP_INSTANCE_ID
+              value: 'true'
             - name: APP_BROKERS
               value: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
             - name: APP_SCHEMA_REGISTRY_URL
