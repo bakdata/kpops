@@ -1,27 +1,28 @@
 import logging
 from functools import cached_property
 
-from pydantic import Field, computed_field
-from typing_extensions import override
+from pydantic import Field, ValidationError, computed_field
+from typing_extensions import deprecated, override
 
-from kpops.components.base_components.kafka_app import KafkaAppCleaner
+from kpops.components.base_components.kafka_app import (
+    KafkaAppCleaner,
+)
 from kpops.components.common.app_type import AppType
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
 )
-from kpops.components.streams_bootstrap_v3.base import (
-    StreamsBootstrapV3,
-)
-from kpops.components.streams_bootstrap_v3.producer.model import ProducerAppValues
+from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
+from kpops.components.streams_bootstrap_v2.producer.model import ProducerAppV2Values
+from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
 from kpops.utils.docstring import describe_attr
 
-log = logging.getLogger("ProducerAppV3")
+log = logging.getLogger("ProducerAppV2")
 
 
-class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrapV3):
-    values: ProducerAppValues
+class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrapV2):
+    values: ProducerAppV2Values
 
     @property
     @override
@@ -31,7 +32,8 @@ class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrapV3):
         )
 
 
-class ProducerAppV3(StreamsBootstrapV3):
+@deprecated("ProducerAppV2 component is deprecated, use ProducerApp instead.")
+class ProducerAppV2(StreamsBootstrapV2):
     """Producer component.
 
     This producer holds configuration to use as values for the streams-bootstrap
@@ -43,7 +45,7 @@ class ProducerAppV3(StreamsBootstrapV3):
     :param from_: Producer doesn't support FromSection, defaults to None
     """
 
-    values: ProducerAppValues = Field(
+    values: ProducerAppV2Values = Field(
         description=describe_attr("values", __doc__),
     )
     from_: None = Field(
@@ -72,20 +74,20 @@ class ProducerAppV3(StreamsBootstrapV3):
     @property
     @override
     def output_topic(self) -> KafkaTopic | None:
-        return self.values.kafka.output_topic
+        return self.values.streams.output_topic
 
     @property
     @override
     def extra_output_topics(self) -> dict[str, KafkaTopic]:
-        return self.values.kafka.labeled_output_topics
+        return self.values.streams.extra_output_topics
 
     @override
     def set_output_topic(self, topic: KafkaTopic) -> None:
-        self.values.kafka.output_topic = topic
+        self.values.streams.output_topic = topic
 
     @override
     def add_extra_output_topic(self, topic: KafkaTopic, label: str) -> None:
-        self.values.kafka.labeled_output_topics[label] = topic
+        self.values.streams.extra_output_topics[label] = topic
 
     @property
     @override
@@ -104,8 +106,16 @@ class ProducerAppV3(StreamsBootstrapV3):
         if cluster_values:
             log.debug("Fetched Helm chart values from cluster")
             name_override = self._cleaner.helm_name_override
-            self._cleaner.values = self.values.model_validate(cluster_values)
-            self._cleaner.values.name_override = name_override
+            try:
+                self._cleaner.values = self.values.model_validate(cluster_values)
+                self._cleaner.values.name_override = name_override
+            except ValidationError as validation_error:
+                warning_msg = f"The values in the cluster are invalid with the current model. Falling back to the enriched values of {PIPELINE_YAML} and {DEFAULTS_YAML}"
+                log.warning(warning_msg)
+                debug_msg = f"Cluster values: {cluster_values}"
+                log.debug(debug_msg)
+                debug_msg = f"Validation error: {validation_error}"
+                log.debug(debug_msg)
 
         await super().destroy(dry_run)
 

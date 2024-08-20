@@ -11,7 +11,7 @@ from pydantic import Field
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
 from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp
-from kpops.components.streams_bootstrap_v3.model import StreamsBootstrapV3Values
+from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 from kpops.utils.docstring import describe_attr
 
 if TYPE_CHECKING:
@@ -25,15 +25,14 @@ STREAMS_BOOTSTRAP_HELM_REPO = HelmRepoConfig(
     url="https://bakdata.github.io/streams-bootstrap/",
 )
 
-# TODO: Update this with the latest stable version release
-STREAMS_BOOTSTRAP_VERSION = "3.0.0"
+STREAMS_BOOTSTRAP_VERSION = "3.0.1"
 STREAMS_BOOTSTRAP_VERSION_PATTERN = r"^(\d+)\.(\d+)\.(\d+)(-[a-zA-Z]+(\.[a-zA-Z]+)?)?$"
 COMPILED_VERSION_PATTERN = re.compile(STREAMS_BOOTSTRAP_VERSION_PATTERN)
 
-log = logging.getLogger("StreamsBootstrapV3")
+log = logging.getLogger("StreamsBootstrap")
 
 
-class StreamsBootstrapV3(KafkaApp, HelmApp, ABC):
+class StreamsBootstrap(KafkaApp, HelmApp, ABC):
     """Base for components with a streams-bootstrap Helm chart.
 
     :param values: streams-bootstrap Helm values
@@ -42,7 +41,7 @@ class StreamsBootstrapV3(KafkaApp, HelmApp, ABC):
     :param version: Helm chart version, defaults to "3.0.0"
     """
 
-    values: StreamsBootstrapV3Values = Field(
+    values: StreamsBootstrapValues = Field(
         description=describe_attr("values", __doc__),
     )
 
@@ -70,7 +69,7 @@ class StreamsBootstrapV3(KafkaApp, HelmApp, ABC):
         major = int(major)
 
         if major != 3:
-            msg = f"When using the streams-bootstrap v3 component your version ('{version}') must be at least 3.0.0."
+            msg = f"When using the streams-bootstrap component your version ('{version}') must be at least 3.0.1."
             raise ValueError(msg)
 
         return version

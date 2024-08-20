@@ -6,8 +6,10 @@ from typing import TYPE_CHECKING, Any
 
 import pydantic
 from pydantic import AliasChoices, ConfigDict, Field
+from typing_extensions import deprecated
 
 from kpops.component_handlers.helm_wrapper.model import HelmRepoConfig
+from kpops.components.base_components import KafkaApp
 from kpops.components.base_components.helm_app import HelmApp, HelmAppValues
 from kpops.components.common.topic import KafkaTopic, KafkaTopicStr
 from kpops.utils.docstring import describe_attr
@@ -94,10 +96,10 @@ class KafkaStreamsConfig(CamelCaseConfigModel, DescConfigModel):
         )
 
 
-class StreamsBootstrapValues(HelmAppValues):
-    """Base value class for all streams bootstrap related components.
+class StreamsBootstrapV2Values(HelmAppValues):
+    """Base value class for all streams bootstrap v2 related components.
 
-    :param image_tag: Docker image tag of the streams-bootstrap app.
+    :param image_tag: Docker image tag of the streams-bootstrap-v2 app.
     """
 
     image_tag: str = Field(
@@ -111,16 +113,17 @@ class StreamsBootstrapValues(HelmAppValues):
     )
 
 
-class StreamsBootstrap(HelmApp, ABC):
-    """Base for components with a streams-bootstrap Helm chart.
+@deprecated("StreamsBootstrapV2 component is deprecated, use StreamsBootstrap instead.")
+class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
+    """Base for components with a streams-bootstrap-v2 Helm chart.
 
-    :param values: streams-bootstrap Helm values
+    :param values: streams-bootstrap-v2 Helm values
     :param repo_config: Configuration of the Helm chart repo to be used for
         deploying the component, defaults to streams-bootstrap Helm repo
     :param version: Helm chart version, defaults to "2.9.0"
     """
 
-    values: StreamsBootstrapValues = Field(
+    values: StreamsBootstrapV2Values = Field(
         description=describe_attr("values", __doc__),
     )
 
@@ -140,3 +143,11 @@ class StreamsBootstrap(HelmApp, ABC):
                 f"The image tag for component '{self.name}' is set or defaulted to 'latest'. Please, consider providing a stable image tag."
             )
         return self
+
+    @pydantic.model_validator(mode="before")
+    @classmethod
+    def deprecation_warning(cls, model: Any) -> Any:
+        log.warning(
+            "StreamsBootstrapV2 is deprecated, consider migrating to StreamsBootstrap."
+        )
+        return model

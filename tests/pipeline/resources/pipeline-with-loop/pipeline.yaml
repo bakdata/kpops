@@ -1,4 +1,4 @@
-- type: producer-app
+- type: producer-app-v2
   name: app1
   values:
     image: producer-image
@@ -7,7 +7,7 @@
       my-output-topic:
         type: output
 
-- type: streams-app
+- type: streams-app-v2
   name: app2
   values:
     image: app2-image
@@ -20,7 +20,7 @@
       my-app2-topic:
         type: output
 
-- type: streams-app
+- type: streams-app-v2
   name: app3
   values:
     image: app3-image

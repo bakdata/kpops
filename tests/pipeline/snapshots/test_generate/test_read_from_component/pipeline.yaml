@@ -30,7 +30,7 @@
       resources-read-from-component-producer1:
         configs: {}
         type: output
-  type: producer-app
+  type: producer-app-v2
   values:
     imageTag: latest
     streams:
@@ -70,7 +70,7 @@
       resources-read-from-component-producer2:
         configs: {}
         type: output
-  type: producer-app
+  type: producer-app-v2
   values:
     imageTag: latest
     streams:
@@ -256,7 +256,7 @@
         partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app
+  type: streams-app-v2
   values:
     imageTag: latest
     persistence:
@@ -450,7 +450,7 @@
         partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app
+  type: streams-app-v2
   values:
     imageTag: latest
     persistence:
@@ -517,7 +517,7 @@
         partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app
+  type: streams-app-v2
   values:
     imageTag: latest
     persistence:
@@ -583,7 +583,7 @@
         partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app
+  type: streams-app-v2
   values:
     imageTag: latest
     persistence:
@@ -649,7 +649,7 @@
         partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app
+  type: streams-app-v2
   values:
     imageTag: latest
     persistence:
@@ -712,7 +712,7 @@
         partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app
+  type: streams-app-v2
   values:
     imageTag: latest
     persistence:
@@ -774,7 +774,7 @@
         partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app
+  type: streams-app-v2
   values:
     imageTag: latest
     persistence:

@@ -36,7 +36,7 @@
         configs: {}
         partitions_count: 3
         type: output
-  type: producer-app
+  type: producer-app-v2
   values:
     imageTag: latest
     resources:
@@ -99,7 +99,7 @@
         configs: {}
         partitions_count: 3
         type: output
-  type: streams-app
+  type: streams-app-v2
   values:
     image: some-image
     imageTag: latest

@@ -33,7 +33,7 @@ class KafkaAppCleaner(Cleaner, ABC):
         log.info(f"Uninstall old cleanup job for {self.helm_release_name}")
         await self.destroy(dry_run)
 
-        log.info(f"Init cleanup job for {self.helm_release_name}")
+        log.info(f"Deploy cleanup job for {self.helm_release_name}")
         await self.deploy(dry_run)
 
         if not get_config().retain_clean_jobs:
