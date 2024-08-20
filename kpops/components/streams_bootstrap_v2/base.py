@@ -147,5 +147,7 @@ class StreamsBootstrapV2(KafkaApp, HelmApp, ABC):
     @pydantic.model_validator(mode="before")
     @classmethod
     def deprecation_warning(cls, model: Any) -> Any:
-        log.warning("StreamsBootstrapV2 is deprecated, use StreamsBootstrap instead.")
+        log.warning(
+            "StreamsBootstrapV2 is deprecated, consider migrating to StreamsBootstrap."
+        )
         return model
