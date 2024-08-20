@@ -30,7 +30,7 @@
       username: masked
     repository_name: masked
     url: masked
-  type: producer-app
+  type: producer-app-v2
   values:
     imageTag: latest
     streams:

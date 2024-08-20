@@ -1,5 +1,5 @@
 # Parse Connector topics from previous component output topic
-- type: streams-app
+- type: streams-app-v2
   from:
     topics:
       example-topic:

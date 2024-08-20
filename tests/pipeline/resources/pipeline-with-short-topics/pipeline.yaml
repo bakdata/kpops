@@ -1,16 +1,16 @@
-- type: producer-app
+- type: producer-app-v2
   name: component-input
 
-- type: producer-app
+- type: producer-app-v2
   name: component-extra
 
-- type: producer-app
+- type: producer-app-v2
   name: component-input-pattern
 
-- type: producer-app
+- type: producer-app-v2
   name: component-extra-pattern
 
-- type: streams-app
+- type: streams-app-v2
   name: simple-app
   from:
     components:

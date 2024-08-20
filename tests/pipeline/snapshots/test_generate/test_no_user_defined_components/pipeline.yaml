@@ -1,5 +1,5 @@
 - _cleaner:
-    name: streams-app
+    name: streams-app-v2
     namespace: example-namespace
     prefix: resources-no-user-defined-components-
     repo_config:
@@ -19,7 +19,7 @@
         brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
         config:
           large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-        errorTopic: resources-no-user-defined-components-streams-app-error
+        errorTopic: resources-no-user-defined-components-streams-app-v2-error
         inputTopics:
         - example-topic
         outputTopic: example-output
@@ -30,7 +30,7 @@
     topics:
       example-topic:
         type: input
-  name: streams-app
+  name: streams-app-v2
   namespace: example-namespace
   prefix: resources-no-user-defined-components-
   repo_config:
@@ -44,13 +44,13 @@
       example-output:
         configs: {}
         type: output
-      resources-no-user-defined-components-streams-app-error:
+      resources-no-user-defined-components-streams-app-v2-error:
         configs:
           cleanup.policy: compact,delete
         partitions_count: 1
         type: error
         value_schema: com.bakdata.kafka.DeadLetter
-  type: streams-app
+  type: streams-app-v2
   values:
     image: fake-image
     imageTag: latest
@@ -61,7 +61,7 @@
       brokers: http://k8kafka-cp-kafka-headless.kpops.svc.cluster.local:9092
       config:
         large.message.id.generator: com.bakdata.kafka.MurmurHashIdGenerator
-      errorTopic: resources-no-user-defined-components-streams-app-error
+      errorTopic: resources-no-user-defined-components-streams-app-v2-error
       inputTopics:
       - example-topic
       outputTopic: example-output

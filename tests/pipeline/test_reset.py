@@ -7,9 +7,11 @@ from typer.testing import CliRunner
 
 from kpops.cli.main import app
 from kpops.components.base_components import HelmApp
-from kpops.components.streams_bootstrap import ProducerApp, StreamsApp
-from kpops.components.streams_bootstrap.producer.producer_app import ProducerAppCleaner
-from kpops.components.streams_bootstrap.streams.streams_app import StreamsAppCleaner
+from kpops.components.streams_bootstrap_v2 import ProducerAppV2, StreamsAppV2
+from kpops.components.streams_bootstrap_v2.producer.producer_app import (
+    ProducerAppCleaner,
+)
+from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppCleaner
 
 runner = CliRunner()
 
@@ -27,8 +29,8 @@ class TestReset:
 
     def test_order(self, mocker: MockerFixture):
         # destroy
-        producer_app_mock_destroy = mocker.patch.object(ProducerApp, "destroy")
-        streams_app_mock_destroy = mocker.patch.object(StreamsApp, "destroy")
+        producer_app_mock_destroy = mocker.patch.object(ProducerAppV2, "destroy")
+        streams_app_mock_destroy = mocker.patch.object(StreamsAppV2, "destroy")
         helm_app_mock_destroy = mocker.patch.object(HelmApp, "destroy")
 
         # reset

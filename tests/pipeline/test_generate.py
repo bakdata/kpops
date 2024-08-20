@@ -870,12 +870,12 @@ class TestGenerate:
             == "override-default-image-tag"
         )
 
-    def test_streams_bootstrap_v3(self, snapshot: Snapshot):
+    def test_streams_bootstrap(self, snapshot: Snapshot):
         result = runner.invoke(
             app,
             [
                 "generate",
-                str(RESOURCE_PATH / "streams-bootstrap-v3" / PIPELINE_YAML),
+                str(RESOURCE_PATH / "streams-bootstrap" / PIPELINE_YAML),
             ],
             catch_exceptions=False,
         )

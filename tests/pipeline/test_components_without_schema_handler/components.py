@@ -4,17 +4,17 @@ from kpops.component_handlers.kafka_connect.model import KafkaConnectorConfig
 from kpops.components.base_components.kafka_connector import KafkaSinkConnector
 from kpops.components.base_components.pipeline_component import PipelineComponent
 from kpops.components.common.topic import OutputTopicTypes
-from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
-from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
+from kpops.components.streams_bootstrap_v2.producer.producer_app import ProducerAppV2
+from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
 
 
-class ScheduledProducer(ProducerApp): ...
+class ScheduledProducer(ProducerAppV2): ...
 
 
-class Converter(StreamsApp): ...
+class Converter(StreamsAppV2): ...
 
 
-class ShouldInflate(StreamsApp):
+class ShouldInflate(StreamsAppV2):
     @override
     def inflate(self) -> list[PipelineComponent]:
         inflate_steps = super().inflate()

@@ -6,10 +6,12 @@ from typing_extensions import override
 
 from kpops.component_handlers.kubernetes.pvc_handler import PVCHandler
 from kpops.components.base_components.helm_app import HelmApp
-from kpops.components.base_components.kafka_app import KafkaApp, KafkaAppCleaner
+from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
-from kpops.components.common.streams_bootstrap import StreamsBootstrap
 from kpops.components.common.topic import KafkaTopic
+from kpops.components.streams_bootstrap.base import (
+    StreamsBootstrap,
+)
 from kpops.components.streams_bootstrap.streams.model import (
     StreamsAppValues,
 )
@@ -31,12 +33,12 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
 
     @override
     async def reset(self, dry_run: bool) -> None:
-        self.values.streams.delete_output = False
+        self.values.kafka.delete_output = False
         await super().clean(dry_run)
 
     @override
     async def clean(self, dry_run: bool) -> None:
-        self.values.streams.delete_output = True
+        self.values.kafka.delete_output = True
         await super().clean(dry_run)
 
         if self.values.stateful_set and self.values.persistence.enabled:
@@ -48,7 +50,7 @@ class StreamsAppCleaner(KafkaAppCleaner, StreamsBootstrap):
         await pvc_handler.delete_pvcs(dry_run)
 
 
-class StreamsApp(KafkaApp, StreamsBootstrap):
+class StreamsApp(StreamsBootstrap):
     """StreamsApp component that configures a streams-bootstrap app.
 
     :param values: streams-bootstrap Helm values
@@ -68,50 +70,50 @@ class StreamsApp(KafkaApp, StreamsBootstrap):
     @property
     @override
     def input_topics(self) -> list[KafkaTopic]:
-        return self.values.streams.input_topics
+        return self.values.kafka.input_topics
 
     @property
     @override
     def extra_input_topics(self) -> dict[str, list[KafkaTopic]]:
-        return self.values.streams.extra_input_topics
+        return self.values.kafka.labeled_input_topics
 
     @property
     @override
     def output_topic(self) -> KafkaTopic | None:
-        return self.values.streams.output_topic
+        return self.values.kafka.output_topic
 
     @property
     @override
     def extra_output_topics(self) -> dict[str, KafkaTopic]:
-        return self.values.streams.extra_output_topics
+        return self.values.kafka.labeled_output_topics
 
     @override
     def add_input_topics(self, topics: list[KafkaTopic]) -> None:
-        self.values.streams.add_input_topics(topics)
+        self.values.kafka.add_input_topics(topics)
 
     @override
     def add_extra_input_topics(self, label: str, topics: list[KafkaTopic]) -> None:
-        self.values.streams.add_extra_input_topics(label, topics)
+        self.values.kafka.add_labeled_input_topics(label, topics)
 
     @override
     def set_input_pattern(self, name: str) -> None:
-        self.values.streams.input_pattern = name
+        self.values.kafka.input_pattern = name
 
     @override
     def add_extra_input_pattern(self, label: str, topic: str) -> None:
-        self.values.streams.extra_input_patterns[label] = topic
+        self.values.kafka.labeled_input_patterns[label] = topic
 
     @override
     def set_output_topic(self, topic: KafkaTopic) -> None:
-        self.values.streams.output_topic = topic
+        self.values.kafka.output_topic = topic
 
     @override
     def set_error_topic(self, topic: KafkaTopic) -> None:
-        self.values.streams.error_topic = topic
+        self.values.kafka.error_topic = topic
 
     @override
     def add_extra_output_topic(self, topic: KafkaTopic, label: str) -> None:
-        self.values.streams.extra_output_topics[label] = topic
+        self.values.kafka.labeled_output_topics[label] = topic
 
     @property
     @override

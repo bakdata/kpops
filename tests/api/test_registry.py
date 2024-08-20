@@ -18,14 +18,14 @@ from kpops.components.base_components.kafka_connector import (
 )
 from kpops.components.base_components.kubernetes_app import KubernetesApp
 from kpops.components.base_components.pipeline_component import PipelineComponent
-from kpops.components.common.streams_bootstrap import StreamsBootstrap
-from kpops.components.streams_bootstrap.producer.producer_app import ProducerApp
-from kpops.components.streams_bootstrap.streams.streams_app import StreamsApp
-from kpops.components.streams_bootstrap_v3 import (
-    ProducerAppV3,
-    StreamsAppV3,
-    StreamsBootstrapV3,
+from kpops.components.streams_bootstrap import (
+    ProducerApp,
+    StreamsApp,
+    StreamsBootstrap,
 )
+from kpops.components.streams_bootstrap_v2 import StreamsBootstrapV2
+from kpops.components.streams_bootstrap_v2.producer.producer_app import ProducerAppV2
+from kpops.components.streams_bootstrap_v2.streams.streams_app import StreamsAppV2
 from tests.cli.resources.custom_module import CustomSchemaProvider
 
 
@@ -55,7 +55,7 @@ def test_iter_namespace():
         "kpops.components.base_components",
         "kpops.components.common",
         "kpops.components.streams_bootstrap",
-        "kpops.components.streams_bootstrap_v3",
+        "kpops.components.streams_bootstrap_v2",
         "kpops.components.test_components",
     ]
 
@@ -67,7 +67,7 @@ def test_iter_component_modules():
         "kpops.components.base_components",
         "kpops.components.common",
         "kpops.components.streams_bootstrap",
-        "kpops.components.streams_bootstrap_v3",
+        "kpops.components.streams_bootstrap_v2",
         "kpops.components.test_components",
     ]
 
@@ -105,13 +105,12 @@ def test_registry():
         "kafka-source-connector": KafkaSourceConnector,
         "kubernetes-app": KubernetesApp,
         "pipeline-component": PipelineComponent,
-        # TODO: change the old sterams bootstrap to -v2  and remove -v3
+        "producer-app-v2": ProducerAppV2,
         "producer-app": ProducerApp,
-        "producer-app-v3": ProducerAppV3,
+        "streams-app-v2": StreamsAppV2,
         "streams-app": StreamsApp,
-        "streams-app-v3": StreamsAppV3,
+        "streams-bootstrap-v2": StreamsBootstrapV2,
         "streams-bootstrap": StreamsBootstrap,
-        "streams-bootstrap-v3": StreamsBootstrapV3,
     }
     for _type, _class in registry._classes.items():
         assert registry[_type] is _class

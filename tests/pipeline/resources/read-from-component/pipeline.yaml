@@ -1,11 +1,11 @@
-- type: producer-app
+- type: producer-app-v2
   name: producer1
   to:
     topics:
       ${output_topic_name}:
         type: output
 
-- type: producer-app
+- type: producer-app-v2
   name: producer2
   prefix: ""
   to:
@@ -20,7 +20,7 @@
   name: inflate-step-without-prefix
   prefix: ""
 
-- type: streams-app
+- type: streams-app-v2
   name: consumer1
   from:
     components:
@@ -31,7 +31,7 @@
       ${output_topic_name}:
         type: output
 
-- type: streams-app
+- type: streams-app-v2
   name: consumer2
   from:
     components:
@@ -40,7 +40,7 @@
       consumer1:
         type: input
 
-- type: streams-app
+- type: streams-app-v2
   name: consumer3
   from:
     topics:
@@ -50,14 +50,14 @@
       producer2:
         type: input
 
-- type: streams-app
+- type: streams-app-v2
   name: consumer4
   from:
     components:
       inflate-step:
         type: input
 
-- type: streams-app
+- type: streams-app-v2
   name: consumer5
   from:
     components:

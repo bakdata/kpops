@@ -1,4 +1,4 @@
-- type: streams-app
+- type: streams-app-v2
   name: my-streams-app
   prefix: my-fake-prefix-
   from:

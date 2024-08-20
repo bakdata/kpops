@@ -43,10 +43,10 @@ class TestProducerApp:
         return ProducerApp(
             name=PRODUCER_APP_NAME,
             **{
-                "version": "2.4.2",
+                "version": "3.2.1",
                 "namespace": "test-namespace",
                 "values": {
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "clean_schemas": True,
                 "to": {
@@ -90,7 +90,7 @@ class TestProducerApp:
                 "namespace": "test-namespace",
                 "values": {
                     "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
                     "topics": {
@@ -106,10 +106,10 @@ class TestProducerApp:
             },
         )
 
-        assert producer_app.values.streams.output_topic == KafkaTopic(
+        assert producer_app.values.kafka.output_topic == KafkaTopic(
             name="producer-app-output-topic"
         )
-        assert producer_app.values.streams.extra_output_topics == {
+        assert producer_app.values.kafka.labeled_output_topics == {
             "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
 
@@ -145,8 +145,8 @@ class TestProducerApp:
                 "test-namespace",
                 {
                     "nameOverride": PRODUCER_APP_HELM_NAME_OVERRIDE,
-                    "streams": {
-                        "brokers": "fake-broker:9092",
+                    "kafka": {
+                        "bootstrapServers": "fake-broker:9092",
                         "outputTopic": "producer-app-output-topic",
                     },
                 },
@@ -157,7 +157,7 @@ class TestProducerApp:
                     ca_file=None,
                     insecure_skip_tls_verify=False,
                     timeout="5m0s",
-                    version="2.4.2",
+                    version="3.2.1",
                     wait=True,
                     wait_for_jobs=False,
                 ),
@@ -232,13 +232,13 @@ class TestProducerApp:
                     "test-namespace",
                     {
                         "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
-                        "streams": {
-                            "brokers": "fake-broker:9092",
+                        "kafka": {
+                            "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="2.4.2", wait=True, wait_for_jobs=True
+                        version="3.2.1", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.print_helm_diff(
@@ -306,13 +306,13 @@ class TestProducerApp:
                     "test-namespace",
                     {
                         "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
-                        "streams": {
-                            "brokers": "fake-broker:9092",
+                        "kafka": {
+                            "bootstrapServers": "fake-broker:9092",
                             "outputTopic": "producer-app-output-topic",
                         },
                     },
                     HelmUpgradeInstallFlags(
-                        version="2.4.2", wait=True, wait_for_jobs=True
+                        version="3.2.1", wait=True, wait_for_jobs=True
                     ),
                 ),
                 mocker.call.helm_uninstall(
@@ -332,7 +332,7 @@ class TestProducerApp:
                 "namespace": "test-namespace",
                 "values": {
                     "namespace": "test-namespace",
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
                     "topics": {
@@ -347,10 +347,10 @@ class TestProducerApp:
                 },
             },
         )
-        assert producer_app.values.streams.output_topic == KafkaTopic(
+        assert producer_app.values.kafka.output_topic == KafkaTopic(
             name="producer-app-output-topic"
         )
-        assert producer_app.values.streams.extra_output_topics == {
+        assert producer_app.values.kafka.labeled_output_topics == {
             "first-extra-topic": KafkaTopic(name="extra-topic-1")
         }
         assert producer_app.input_topics == []
@@ -371,8 +371,8 @@ class TestProducerApp:
                 "imageTag": image_tag_in_cluster,
                 "nameOverride": PRODUCER_APP_NAME,
                 "replicaCount": 1,
-                "streams": {
-                    "brokers": "fake-broker:9092",
+                "kafka": {
+                    "bootstrapServers": "fake-broker:9092",
                     "outputTopic": "test-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
@@ -384,7 +384,7 @@ class TestProducerApp:
                 "namespace": "test-namespace",
                 "values": {
                     "imageTag": "2.2.2",
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
                     "topics": {
@@ -421,8 +421,8 @@ class TestProducerApp:
                 "imageTag": image_tag_in_cluster,
                 "nameOverride": PRODUCER_APP_NAME,
                 "replicaCount": 1,
-                "streams": {
-                    "brokers": "fake-broker:9092",
+                "kafka": {
+                    "bootstrapServers": "fake-broker:9092",
                     "outputTopic": "test-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
@@ -434,7 +434,7 @@ class TestProducerApp:
                 "namespace": "test-namespace",
                 "values": {
                     "imageTag": "2.2.2",
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
                     "topics": {
@@ -464,13 +464,13 @@ class TestProducerApp:
                 "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
                 "imageTag": image_tag_in_cluster,
                 "replicaCount": 1,
-                "streams": {
-                    "brokers": "fake-broker:9092",
+                "kafka": {
+                    "bootstrapServers": "fake-broker:9092",
                     "outputTopic": "test-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
             },
-            HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
+            HelmUpgradeInstallFlags(version="3.0.1", wait=True, wait_for_jobs=True),
         )
 
     @pytest.mark.asyncio()
@@ -487,8 +487,8 @@ class TestProducerApp:
                 "image": "registry/producer-app",
                 "imageTag": "1.1.1",
                 "nameOverride": PRODUCER_APP_NAME,
-                "kafka": {
-                    "boostrapServers": "fake-broker:9092",
+                "streams": {
+                    "brokers": "fake-broker:9092",
                     "outputTopic": "test-output-topic",
                     "schemaRegistryUrl": "http://localhost:8081",
                 },
@@ -503,7 +503,7 @@ class TestProducerApp:
                 "values": {
                     "image": "registry/producer-app",
                     "imageTag": "2.2.2",
-                    "streams": {"brokers": "fake-broker:9092"},
+                    "kafka": {"bootstrapServers": "fake-broker:9092"},
                 },
                 "to": {
                     "topics": {
@@ -536,10 +536,10 @@ class TestProducerApp:
                 "image": "registry/producer-app",
                 "imageTag": "2.2.2",
                 "nameOverride": PRODUCER_APP_CLEAN_HELM_NAMEOVERRIDE,
-                "streams": {
-                    "brokers": "fake-broker:9092",
+                "kafka": {
+                    "bootstrapServers": "fake-broker:9092",
                     "outputTopic": "test-output-topic",
                 },
             },
-            HelmUpgradeInstallFlags(version="2.9.0", wait=True, wait_for_jobs=True),
+            HelmUpgradeInstallFlags(version="3.0.1", wait=True, wait_for_jobs=True),
         )

@@ -9,10 +9,8 @@ from kpops.component_handlers.helm_wrapper.model import (
     HelmUpgradeInstallFlags,
 )
 from kpops.component_handlers.helm_wrapper.utils import create_helm_release_name
-from kpops.components.common.streams_bootstrap import (
-    StreamsBootstrap,
-    StreamsBootstrapValues,
-)
+from kpops.components.streams_bootstrap.base import StreamsBootstrap
+from kpops.components.streams_bootstrap.model import StreamsBootstrapValues
 
 
 @pytest.mark.usefixtures("mock_env")
@@ -23,8 +21,8 @@ class TestStreamsBootstrap:
             **{
                 "namespace": "test-namespace",
                 "values": {
-                    "streams": {
-                        "brokers": "localhost:9092",
+                    "kafka": {
+                        "bootstrapServers": "localhost:9092",
                     }
                 },
             },
@@ -33,7 +31,7 @@ class TestStreamsBootstrap:
             repository_name="bakdata-streams-bootstrap",
             url="https://bakdata.github.io/streams-bootstrap/",
         )
-        assert streams_bootstrap.version == "2.9.0"
+        assert streams_bootstrap.version == "3.0.1"
         assert streams_bootstrap.namespace == "test-namespace"
         assert streams_bootstrap.values.image_tag == "latest"
 
@@ -45,12 +43,12 @@ class TestStreamsBootstrap:
                 "namespace": "test-namespace",
                 "values": {
                     "imageTag": "1.0.0",
-                    "streams": {
+                    "kafka": {
                         "outputTopic": "test",
-                        "brokers": "fake-broker:9092",
+                        "bootstrapServers": "fake-broker:9092",
                     },
                 },
-                "version": "1.2.3",
+                "version": "3.2.1",
             },
         )
         helm_upgrade_install = mocker.patch.object(
@@ -77,12 +75,12 @@ class TestStreamsBootstrap:
             {
                 "nameOverride": "${pipeline.name}-example-name",
                 "imageTag": "1.0.0",
-                "streams": {
-                    "brokers": "fake-broker:9092",
+                "kafka": {
+                    "bootstrapServers": "fake-broker:9092",
                     "outputTopic": "test",
                 },
             },
-            HelmUpgradeInstallFlags(version="1.2.3"),
+            HelmUpgradeInstallFlags(version="3.2.1"),
         )
 
     @pytest.mark.asyncio()
@@ -96,8 +94,31 @@ class TestStreamsBootstrap:
             StreamsBootstrapValues(
                 **{
                     "imageTag": "invalid image tag!",
-                    "streams": {
-                        "brokers": "localhost:9092",
+                    "kafka": {
+                        "bootstrapServers": "fake-broker:9092",
                     },
                 }
+            )
+
+    @pytest.mark.asyncio()
+    async def test_should_raise_validation_error_for_invalid_helm_chart_version(self):
+        with pytest.raises(
+            ValueError,
+            match=re.escape(
+                "When using the streams-bootstrap component your version ('2.1.0') must be at least 3.0.1."
+            ),
+        ):
+            StreamsBootstrap(
+                name="example-name",
+                **{
+                    "namespace": "test-namespace",
+                    "values": {
+                        "imageTag": "1.0.0",
+                        "kafka": {
+                            "outputTopic": "test",
+                            "bootstrapServers": "fake-broker:9092",
+                        },
+                    },
+                    "version": "2.1.0",
+                },
             )

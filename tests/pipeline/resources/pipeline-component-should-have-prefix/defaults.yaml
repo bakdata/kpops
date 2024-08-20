@@ -4,7 +4,7 @@ pipeline-component:
 kubernetes-app:
   namespace: ${NAMESPACE}
 
-kafka-app:
+streams-bootstrap-v2:
   version: 2.9.0
   values:
     streams:
