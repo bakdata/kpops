@@ -339,7 +339,7 @@
       resources-pipeline-with-inflate-should-inflate-should-inflate-inflated-streams-app:
         configs: {}
         type: output
-  type: streams-app
+  type: streams-app-v2
   values:
     imageTag: latest
     persistence:

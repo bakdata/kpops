@@ -4,16 +4,15 @@ from functools import cached_property
 from pydantic import Field, ValidationError, computed_field
 from typing_extensions import override
 
-from kpops.components.base_components.kafka_app import (
-    KafkaApp,
-    KafkaAppCleaner,
-)
+from kpops.components.base_components.kafka_app import KafkaAppCleaner
 from kpops.components.common.app_type import AppType
-from kpops.components.common.streams_bootstrap import StreamsBootstrap
 from kpops.components.common.topic import (
     KafkaTopic,
     OutputTopicTypes,
     TopicConfig,
+)
+from kpops.components.streams_bootstrap.base import (
+    StreamsBootstrap,
 )
 from kpops.components.streams_bootstrap.producer.model import ProducerAppValues
 from kpops.const.file_type import DEFAULTS_YAML, PIPELINE_YAML
@@ -33,7 +32,7 @@ class ProducerAppCleaner(KafkaAppCleaner, StreamsBootstrap):
         )
 
 
-class ProducerApp(KafkaApp, StreamsBootstrap):
+class ProducerApp(StreamsBootstrap):
     """Producer component.
 
     This producer holds configuration to use as values for the streams-bootstrap
@@ -74,20 +73,20 @@ class ProducerApp(KafkaApp, StreamsBootstrap):
     @property
     @override
     def output_topic(self) -> KafkaTopic | None:
-        return self.values.streams.output_topic
+        return self.values.kafka.output_topic
 
     @property
     @override
     def extra_output_topics(self) -> dict[str, KafkaTopic]:
-        return self.values.streams.extra_output_topics
+        return self.values.kafka.labeled_output_topics
 
     @override
     def set_output_topic(self, topic: KafkaTopic) -> None:
-        self.values.streams.output_topic = topic
+        self.values.kafka.output_topic = topic
 
     @override
     def add_extra_output_topic(self, topic: KafkaTopic, label: str) -> None:
-        self.values.streams.extra_output_topics[label] = topic
+        self.values.kafka.labeled_output_topics[label] = topic
 
     @property
     @override

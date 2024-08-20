@@ -1,4 +1,4 @@
-- type: streams-app
+- type: streams-app-v2
   from:
     topics:
       example-topic:

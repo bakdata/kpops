@@ -1,4 +1,4 @@
-- type: streams-app
+- type: streams-app-v2
   name: app1
   from:
     topics:
@@ -16,7 +16,7 @@
     topics:
       example-output:
         type: output
-- type: streams-app
+- type: streams-app-v2
   name: app2
   to:
     topics:

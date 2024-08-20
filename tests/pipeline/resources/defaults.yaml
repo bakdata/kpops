@@ -4,16 +4,16 @@ pipeline-component:
 kubernetes-app:
   namespace: example-namespace
 
-streams-bootstrap:
+streams-bootstrap-v2:
   values:
     streams:
       brokers: ${config.kafka_brokers}
       schemaRegistryUrl: ${config.schema_registry.url}
   version: "2.4.2"
 
-producer-app: {} # inherits from kafka-app
+producer-app-v2: {} # inherits from streams-bootstrap-v2
 
-streams-app: # inherits from kafka-app
+streams-app-v2: # inherits from streams-bootstrap-v2
   values:
     streams:
       config:

@@ -2,21 +2,21 @@ kubernetes-app:
   name: "${component_type}"
   namespace: example-namespace
 
-kafka-app:
+streams-bootstrap-v2:
   values:
     streams:
       brokers: "${config.kafka_brokers}"
       schema_registry_url: "${config.schema_registry.url}"
   version: "2.4.2"
 
-producer-app:
+producer-app-v2:
   to:
     topics:
       ${output_topic_name}:
         partitions_count: 3
 
 
-streams-app: # inherits from kafka-app
+streams-app-v2: # inherits from streams-bootstrap-v2
   values:
     streams:
       brokers: test

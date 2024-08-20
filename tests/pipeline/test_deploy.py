@@ -6,6 +6,8 @@ from pytest_mock import MockerFixture
 from typer.testing import CliRunner
 
 from kpops.cli.main import app
+from kpops.components.base_components import HelmApp
+from kpops.components.streams_bootstrap_v2 import ProducerAppV2, StreamsAppV2
 
 runner = CliRunner()
 
@@ -22,15 +24,9 @@ class TestDeploy:
         ).return_value
 
     def test_order(self, mocker: MockerFixture):
-        producer_app_mock_deploy = mocker.patch(
-            "kpops.components.streams_bootstrap.producer.producer_app.ProducerApp.deploy",
-        )
-        streams_app_mock_deploy = mocker.patch(
-            "kpops.components.streams_bootstrap.streams.streams_app.StreamsApp.deploy",
-        )
-        helm_app_mock_deploy = mocker.patch(
-            "kpops.components.base_components.helm_app.HelmApp.deploy",
-        )
+        producer_app_mock_deploy = mocker.patch.object(ProducerAppV2, "deploy")
+        streams_app_mock_deploy = mocker.patch.object(StreamsAppV2, "deploy")
+        helm_app_mock_deploy = mocker.patch.object(HelmApp, "deploy")
         mock_deploy = mocker.AsyncMock()
         mock_deploy.attach_mock(producer_app_mock_deploy, "producer_app_mock_deploy")
         mock_deploy.attach_mock(streams_app_mock_deploy, "streams_app_mock_deploy")

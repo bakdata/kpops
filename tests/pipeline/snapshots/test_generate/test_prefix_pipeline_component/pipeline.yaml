@@ -31,7 +31,7 @@
       insecure_skip_tls_verify: false
     repository_name: bakdata-streams-bootstrap
     url: https://bakdata.github.io/streams-bootstrap/
-  type: producer-app
+  type: producer-app-v2
   values:
     debug: true
     image: ${DOCKER_REGISTRY}/atm-demo-accountproducer
