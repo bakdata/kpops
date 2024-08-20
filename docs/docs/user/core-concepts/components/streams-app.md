@@ -1,6 +1,6 @@
 # StreamsApp
 
-Subclass of [_KafkaApp_](kafka-app.md) and [_StreamsBootstrap_](streams-bootstrap.md).
+Subclass of and [_StreamsBootstrap_](streams-bootstrap.md).
 
 ### Usage
 
