@@ -220,7 +220,7 @@
         },
         "KafkaApp": {
             "additionalProperties": true,
-            "description": "Base component for Kafka-based components.\nProducer or streaming apps should inherit from this class.",
+            "description": "Base component for Kafka-based components.",
             "properties": {
                 "from": {
                     "anyOf": [

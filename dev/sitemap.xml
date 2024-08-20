@@ -86,11 +86,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://bakdata.github.io/kpops/dev/user/core-concepts/components/kafka-app/</loc>
-         <lastmod>2024-08-20</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://bakdata.github.io/kpops/dev/user/core-concepts/components/kafka-connector/</loc>
          <lastmod>2024-08-20</lastmod>
          <changefreq>daily</changefreq>
