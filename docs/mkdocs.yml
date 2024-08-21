@@ -112,7 +112,6 @@ nav:
               - KubernetesApp: user/core-concepts/components/kubernetes-app.md
               - HelmApp: user/core-concepts/components/helm-app.md
               - StreamsBootstrap: user/core-concepts/components/streams-bootstrap.md
-              - KafkaApp: user/core-concepts/components/kafka-app.md
               - StreamsApp: user/core-concepts/components/streams-app.md
               - ProducerApp: user/core-concepts/components/producer-app.md
               - KafkaConnector: user/core-concepts/components/kafka-connector.md
@@ -131,6 +130,7 @@ nav:
               - Migrate from v4 to v5: user/migration-guide/v4-v5.md
               - Migrate from v5 to v6: user/migration-guide/v5-v6.md
               - Migrate from v6 to v7: user/migration-guide/v6-v7.md
+              - Migrate from v7 to v8: user/migration-guide/v7-v8.md
           - CLI usage: user/references/cli-commands.md
           - Editor integration: user/references/editor-integration.md
           - CI integration:

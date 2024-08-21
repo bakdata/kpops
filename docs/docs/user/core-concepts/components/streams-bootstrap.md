@@ -1,10 +1,12 @@
-# StreamsApp
+# Streams Bootstrap
 
 Subclass of [_HelmApp_](helm-app.md).
 
 ### Usage
 
-Configures a Helm app with [streams-bootstrap Helm charts](https://github.com/bakdata/streams-bootstrap){target=_blank}.
+- Defines a [streams-bootstrap](https://github.com/bakdata/streams-bootstrap){target=_blank} component
+
+- Often used in `defaults.yaml`
 
 ### Operations
 
