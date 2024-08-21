@@ -14,7 +14,7 @@
         <link rel="prev" href="../helm-app/">
       
       
-        <link rel="next" href="../kafka-app/">
+        <link rel="next" href="../streams-app/">
       
       
       <link rel="icon" href="../../../../assets/images/favicon.png">
@@ -82,7 +82,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#streamsapp" class="md-skip">
+        <a href="#streams-bootstrap" class="md-skip">
           Skip to content
         </a>
       
@@ -724,8 +724,6 @@
       
         
       
-        
-      
     
     
     
@@ -919,26 +917,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../kafka-app/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    KafkaApp
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -1259,6 +1237,8 @@
       
         
       
+        
+      
     
     
     
@@ -1400,6 +1380,26 @@
   
   <span class="md-ellipsis">
     Migrate from v6 to v7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../migration-guide/v7-v8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v7 to v8
   </span>
   
 
@@ -1819,10 +1819,17 @@
   
 
 
-<h1 id="streamsapp">StreamsApp<a class="headerlink" href="#streamsapp" title="Permanent link">&para;</a></h1>
+<h1 id="streams-bootstrap">Streams Bootstrap<a class="headerlink" href="#streams-bootstrap" title="Permanent link">&para;</a></h1>
 <p>Subclass of <a href="../helm-app/"><em>HelmApp</em></a>.</p>
 <h3 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h3>
-<p>Configures a Helm app with <a href="https://github.com/bakdata/streams-bootstrap" target="_blank">streams-bootstrap Helm charts</a>.</p>
+<ul>
+<li>
+<p>Defines a <a href="https://github.com/bakdata/streams-bootstrap" target="_blank">streams-bootstrap</a> component</p>
+</li>
+<li>
+<p>Often used in <code>defaults.yaml</code></p>
+</li>
+</ul>
 <h3 id="operations">Operations<a class="headerlink" href="#operations" title="Permanent link">&para;</a></h3>
 <h4 id="deploy">deploy<a class="headerlink" href="#deploy" title="Permanent link">&para;</a></h4>
 <p>Deploy using Helm.</p>

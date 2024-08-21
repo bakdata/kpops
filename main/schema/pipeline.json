@@ -30,7 +30,7 @@
             "additionalProperties": false,
             "description": "Input topic.",
             "properties": {
-                "role": {
+                "label": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -41,7 +41,7 @@
                     ],
                     "default": null,
                     "description": "Custom identifier belonging to a topic; define only if `type` is `pattern` or `None`",
-                    "title": "Role"
+                    "title": "Label"
                 },
                 "type": {
                     "anyOf": [
@@ -562,6 +562,92 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
+                    "default": "3.0.1",
+                    "description": "Helm chart version",
+                    "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "namespace",
+                "values",
+                "type"
+            ],
+            "title": "ProducerApp",
+            "type": "object"
+        },
+        "ProducerAppV2": {
+            "additionalProperties": true,
+            "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
+            "properties": {
+                "from": {
+                    "default": null,
+                    "description": "Producer doesn't support FromSection",
+                    "title": "From",
+                    "type": "null"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Kubernetes namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline.name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "repo_config": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/HelmRepoConfig"
+                        }
+                    ],
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "cert_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-streams-bootstrap",
+                        "url": "https://bakdata.github.io/streams-bootstrap/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "to": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
+                },
+                "type": {
+                    "const": "producer-app-v2",
+                    "title": "Type"
+                },
+                "values": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ProducerAppV2Values"
+                        }
+                    ],
+                    "description": "streams-bootstrap Helm values"
+                },
+                "version": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -581,16 +667,16 @@
                 "values",
                 "type"
             ],
-            "title": "ProducerApp",
+            "title": "ProducerAppV2",
             "type": "object"
         },
-        "ProducerAppValues": {
+        "ProducerAppV2Values": {
             "additionalProperties": true,
             "description": "Settings specific to producers.",
             "properties": {
                 "imageTag": {
                     "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "description": "Docker image tag of the streams-bootstrap-v2 app.",
                     "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
                     "title": "Imagetag",
                     "type": "string"
@@ -621,7 +707,97 @@
             "required": [
                 "streams"
             ],
+            "title": "ProducerAppV2Values",
+            "type": "object"
+        },
+        "ProducerAppValues": {
+            "additionalProperties": true,
+            "description": "Settings specific to producers.",
+            "properties": {
+                "imageTag": {
+                    "default": "latest",
+                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
+                "kafka": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ProducerConfig"
+                        }
+                    ],
+                    "description": "Kafka Streams settings"
+                },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "Nameoverride"
+                }
+            },
+            "required": [
+                "kafka"
+            ],
             "title": "ProducerAppValues",
+            "type": "object"
+        },
+        "ProducerConfig": {
+            "additionalProperties": true,
+            "description": "Kafka Streams settings specific to Producer.",
+            "properties": {
+                "bootstrapServers": {
+                    "description": "Brokers",
+                    "title": "Bootstrapservers",
+                    "type": "string"
+                },
+                "labeledOutputTopics": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra output topics",
+                    "title": "Labeledoutputtopics",
+                    "type": "object"
+                },
+                "outputTopic": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Output topic"
+                },
+                "schema_registry_url": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "URL of the schema registry",
+                    "title": "Schema Registry Url"
+                }
+            },
+            "required": [
+                "bootstrapServers"
+            ],
+            "title": "ProducerConfig",
             "type": "object"
         },
         "ProducerStreamsConfig": {
@@ -818,6 +994,99 @@
                     "description": "streams-bootstrap Helm values"
                 },
                 "version": {
+                    "default": "3.0.1",
+                    "description": "Helm chart version",
+                    "pattern": "^(\\d+)\\.(\\d+)\\.(\\d+)(-[a-zA-Z]+(\\.[a-zA-Z]+)?)?$",
+                    "title": "Version",
+                    "type": "string"
+                }
+            },
+            "required": [
+                "name",
+                "namespace",
+                "values",
+                "type"
+            ],
+            "title": "StreamsApp",
+            "type": "object"
+        },
+        "StreamsAppV2": {
+            "additionalProperties": true,
+            "description": "StreamsAppV2 component that configures a streams-bootstrap-v2 app.",
+            "properties": {
+                "from": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/FromSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Topic(s) and/or components from which the component will read input",
+                    "title": "From"
+                },
+                "name": {
+                    "description": "Component name",
+                    "title": "Name",
+                    "type": "string"
+                },
+                "namespace": {
+                    "description": "Kubernetes namespace in which the component shall be deployed",
+                    "title": "Namespace",
+                    "type": "string"
+                },
+                "prefix": {
+                    "default": "${pipeline.name}-",
+                    "description": "Pipeline prefix that will prefix every component name. If you wish to not have any prefix you can specify an empty string.",
+                    "title": "Prefix",
+                    "type": "string"
+                },
+                "repo_config": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/HelmRepoConfig"
+                        }
+                    ],
+                    "default": {
+                        "repo_auth_flags": {
+                            "ca_file": null,
+                            "cert_file": null,
+                            "insecure_skip_tls_verify": false,
+                            "password": null,
+                            "username": null
+                        },
+                        "repository_name": "bakdata-streams-bootstrap",
+                        "url": "https://bakdata.github.io/streams-bootstrap/"
+                    },
+                    "description": "Configuration of the Helm chart repo to be used for deploying the component"
+                },
+                "to": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/ToSection"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Topic(s) into which the component will write output"
+                },
+                "type": {
+                    "const": "streams-app-v2",
+                    "title": "Type"
+                },
+                "values": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/StreamsAppV2Values"
+                        }
+                    ],
+                    "description": "streams-bootstrap-v2 Helm values"
+                },
+                "version": {
                     "anyOf": [
                         {
                             "type": "string"
@@ -837,10 +1106,514 @@
                 "values",
                 "type"
             ],
-            "title": "StreamsApp",
+            "title": "StreamsAppV2",
             "type": "object"
         },
-        "StreamsAppAutoScaling": {
+        "StreamsAppV2Values": {
+            "additionalProperties": true,
+            "description": "streams-bootstrap-v2 app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "properties": {
+                "autoscaling": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__StreamsAppAutoScaling"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Kubernetes event-driven autoscaling config"
+                },
+                "imageTag": {
+                    "default": "latest",
+                    "description": "Docker image tag of the streams-bootstrap-v2 app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "Nameoverride"
+                },
+                "persistence": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/PersistenceConfig"
+                        }
+                    ],
+                    "default": {
+                        "enabled": false,
+                        "size": null,
+                        "storage_class": null
+                    },
+                    "description": ""
+                },
+                "statefulSet": {
+                    "default": false,
+                    "description": "Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
+                    "title": "Statefulset",
+                    "type": "boolean"
+                },
+                "streams": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap_v2__streams__model__StreamsConfig"
+                        }
+                    ],
+                    "description": "streams-bootstrap-v2 streams section"
+                }
+            },
+            "required": [
+                "streams"
+            ],
+            "title": "StreamsAppV2Values",
+            "type": "object"
+        },
+        "StreamsAppValues": {
+            "additionalProperties": true,
+            "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
+            "properties": {
+                "autoscaling": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Kubernetes event-driven autoscaling config"
+                },
+                "imageTag": {
+                    "default": "latest",
+                    "description": "Docker image tag of the streams-bootstrap app.",
+                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
+                    "title": "Imagetag",
+                    "type": "string"
+                },
+                "kafka": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/kpops__components__streams_bootstrap__streams__model__StreamsConfig"
+                        }
+                    ],
+                    "description": "streams-bootstrap kafka section"
+                },
+                "nameOverride": {
+                    "anyOf": [
+                        {
+                            "maxLength": 63,
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Helm chart name override, assigned automatically",
+                    "title": "Nameoverride"
+                },
+                "persistence": {
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/PersistenceConfig"
+                        }
+                    ],
+                    "default": {
+                        "enabled": false,
+                        "size": null,
+                        "storage_class": null
+                    },
+                    "description": ""
+                },
+                "statefulSet": {
+                    "default": false,
+                    "description": "Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
+                    "title": "Statefulset",
+                    "type": "boolean"
+                }
+            },
+            "required": [
+                "kafka"
+            ],
+            "title": "StreamsAppValues",
+            "type": "object"
+        },
+        "ToSection": {
+            "additionalProperties": false,
+            "description": "Holds multiple output topics.",
+            "properties": {
+                "models": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Data models",
+                    "title": "Models",
+                    "type": "object"
+                },
+                "topics": {
+                    "additionalProperties": {
+                        "$ref": "#/$defs/TopicConfig"
+                    },
+                    "default": {},
+                    "description": "Output topics",
+                    "title": "Topics",
+                    "type": "object"
+                }
+            },
+            "title": "ToSection",
+            "type": "object"
+        },
+        "TopicConfig": {
+            "additionalProperties": false,
+            "description": "Configure an output topic.",
+            "properties": {
+                "configs": {
+                    "additionalProperties": {
+                        "anyOf": [
+                            {
+                                "type": "string"
+                            },
+                            {
+                                "type": "integer"
+                            }
+                        ]
+                    },
+                    "default": {},
+                    "description": "Topic configs",
+                    "title": "Configs",
+                    "type": "object"
+                },
+                "key_schema": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Key schema class name",
+                    "title": "Key schema"
+                },
+                "label": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
+                    "title": "Label"
+                },
+                "partitions_count": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Number of partitions into which the topic is divided",
+                    "title": "Partitions count"
+                },
+                "replication_factor": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Replication factor of the topic",
+                    "title": "Replication factor"
+                },
+                "type": {
+                    "anyOf": [
+                        {
+                            "$ref": "#/$defs/OutputTopicTypes"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Topic type",
+                    "title": "Topic type"
+                },
+                "value_schema": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Value schema class name",
+                    "title": "Value schema"
+                }
+            },
+            "title": "TopicConfig",
+            "type": "object"
+        },
+        "kpops__components__streams_bootstrap__streams__model__StreamsAppAutoScaling": {
+            "additionalProperties": true,
+            "description": "Kubernetes Event-driven Autoscaling config.",
+            "properties": {
+                "additionalTriggers": {
+                    "default": [],
+                    "description": "List of additional KEDA triggers, see https://keda.sh/docs/latest/scalers/",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Additionaltriggers",
+                    "type": "array"
+                },
+                "cooldownPeriod": {
+                    "default": 300,
+                    "description": "The period to wait after the last trigger reported active before scaling the resource back to 0. https://keda.sh/docs/2.9/concepts/scaling-deployments/#cooldownperiod",
+                    "title": "Cooldown period",
+                    "type": "integer"
+                },
+                "enabled": {
+                    "default": false,
+                    "description": "Whether to enable auto-scaling using KEDA.",
+                    "title": "Enabled",
+                    "type": "boolean"
+                },
+                "idleReplicas": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "If this property is set, KEDA will scale the resource down to this number of replicas. https://keda.sh/docs/2.9/concepts/scaling-deployments/#idlereplicacount",
+                    "title": "Idle replica count"
+                },
+                "internalTopics": {
+                    "default": [],
+                    "description": "List of auto-generated Kafka Streams topics used by the streams app",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Internaltopics",
+                    "type": "array"
+                },
+                "lagThreshold": {
+                    "anyOf": [
+                        {
+                            "type": "integer"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Average target value to trigger scaling actions. Mandatory to set when auto-scaling is enabled.",
+                    "title": "Lag threshold"
+                },
+                "maxReplicas": {
+                    "default": 1,
+                    "description": "This setting is passed to the HPA definition that KEDA will create for a given resource and holds the maximum number of replicas of the target resouce. https://keda.sh/docs/2.9/concepts/scaling-deployments/#maxreplicacount",
+                    "title": "Max replica count",
+                    "type": "integer"
+                },
+                "minReplicas": {
+                    "default": 0,
+                    "description": "Minimum number of replicas KEDA will scale the resource down to. \"https://keda.sh/docs/2.9/concepts/scaling-deployments/#minreplicacount\"",
+                    "title": "Min replica count",
+                    "type": "integer"
+                },
+                "offsetResetPolicy": {
+                    "default": "earliest",
+                    "description": "The offset reset policy for the consumer if the consumer group is not yet subscribed to a partition.",
+                    "title": "Offset reset policy",
+                    "type": "string"
+                },
+                "pollingInterval": {
+                    "default": 30,
+                    "description": "This is the interval to check each trigger on. https://keda.sh/docs/2.9/concepts/scaling-deployments/#pollinginterval",
+                    "title": "Polling interval",
+                    "type": "integer"
+                },
+                "topics": {
+                    "default": [],
+                    "description": "List of topics used by the streams app",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Topics",
+                    "type": "array"
+                }
+            },
+            "title": "StreamsAppAutoScaling",
+            "type": "object"
+        },
+        "kpops__components__streams_bootstrap__streams__model__StreamsConfig": {
+            "additionalProperties": true,
+            "description": "Streams Bootstrap kafka section.",
+            "properties": {
+                "applicationId": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Unique application ID for Kafka Streams. Required for auto-scaling",
+                    "title": "Unique application ID"
+                },
+                "bootstrapServers": {
+                    "description": "Brokers",
+                    "title": "Bootstrapservers",
+                    "type": "string"
+                },
+                "config": {
+                    "default": {},
+                    "description": "Configuration",
+                    "title": "Config",
+                    "type": "object"
+                },
+                "deleteOutput": {
+                    "anyOf": [
+                        {
+                            "type": "boolean"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Whether the output topics with their associated schemas and the consumer group should be deleted during the cleanup",
+                    "title": "Deleteoutput"
+                },
+                "errorTopic": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Error topic"
+                },
+                "inputPattern": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Input pattern",
+                    "title": "Inputpattern"
+                },
+                "inputTopics": {
+                    "default": [],
+                    "description": "Input topics",
+                    "items": {
+                        "type": "string"
+                    },
+                    "title": "Inputtopics",
+                    "type": "array"
+                },
+                "labeledInputPatterns": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra input patterns",
+                    "title": "Labeledinputpatterns",
+                    "type": "object"
+                },
+                "labeledInputTopics": {
+                    "additionalProperties": {
+                        "items": {
+                            "type": "string"
+                        },
+                        "type": "array"
+                    },
+                    "default": {},
+                    "description": "Extra input topics",
+                    "title": "Labeledinputtopics",
+                    "type": "object"
+                },
+                "labeledOutputTopics": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "default": {},
+                    "description": "Extra output topics",
+                    "title": "Labeledoutputtopics",
+                    "type": "object"
+                },
+                "outputTopic": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "Output topic"
+                },
+                "schema_registry_url": {
+                    "anyOf": [
+                        {
+                            "type": "string"
+                        },
+                        {
+                            "type": "null"
+                        }
+                    ],
+                    "default": null,
+                    "description": "URL of the schema registry",
+                    "title": "Schema Registry Url"
+                }
+            },
+            "required": [
+                "bootstrapServers"
+            ],
+            "title": "StreamsConfig",
+            "type": "object"
+        },
+        "kpops__components__streams_bootstrap_v2__streams__model__StreamsAppAutoScaling": {
             "additionalProperties": true,
             "description": "Kubernetes Event-driven Autoscaling config.",
             "properties": {
@@ -932,78 +1705,7 @@
             "title": "StreamsAppAutoScaling",
             "type": "object"
         },
-        "StreamsAppValues": {
-            "additionalProperties": true,
-            "description": "streams-bootstrap app configurations.\nThe attributes correspond to keys and values that are used as values for the streams bootstrap helm chart.",
-            "properties": {
-                "autoscaling": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/StreamsAppAutoScaling"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Kubernetes event-driven autoscaling config"
-                },
-                "imageTag": {
-                    "default": "latest",
-                    "description": "Docker image tag of the streams-bootstrap app.",
-                    "pattern": "^[a-zA-Z0-9_][a-zA-Z0-9._-]{0,127}$",
-                    "title": "Imagetag",
-                    "type": "string"
-                },
-                "nameOverride": {
-                    "anyOf": [
-                        {
-                            "maxLength": 63,
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Helm chart name override, assigned automatically",
-                    "title": "Nameoverride"
-                },
-                "persistence": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/PersistenceConfig"
-                        }
-                    ],
-                    "default": {
-                        "enabled": false,
-                        "size": null,
-                        "storage_class": null
-                    },
-                    "description": ""
-                },
-                "statefulSet": {
-                    "default": false,
-                    "description": "Whether to use a Statefulset instead of a Deployment to deploy the streams app.",
-                    "title": "Statefulset",
-                    "type": "boolean"
-                },
-                "streams": {
-                    "allOf": [
-                        {
-                            "$ref": "#/$defs/StreamsConfig"
-                        }
-                    ],
-                    "description": "streams-bootstrap streams section"
-                }
-            },
-            "required": [
-                "streams"
-            ],
-            "title": "StreamsAppValues",
-            "type": "object"
-        },
-        "StreamsConfig": {
+        "kpops__components__streams_bootstrap_v2__streams__model__StreamsConfig": {
             "additionalProperties": true,
             "description": "Streams Bootstrap streams section.",
             "properties": {
@@ -1126,134 +1828,6 @@
             ],
             "title": "StreamsConfig",
             "type": "object"
-        },
-        "ToSection": {
-            "additionalProperties": false,
-            "description": "Holds multiple output topics.",
-            "properties": {
-                "models": {
-                    "additionalProperties": {
-                        "type": "string"
-                    },
-                    "default": {},
-                    "description": "Data models",
-                    "title": "Models",
-                    "type": "object"
-                },
-                "topics": {
-                    "additionalProperties": {
-                        "$ref": "#/$defs/TopicConfig"
-                    },
-                    "default": {},
-                    "description": "Output topics",
-                    "title": "Topics",
-                    "type": "object"
-                }
-            },
-            "title": "ToSection",
-            "type": "object"
-        },
-        "TopicConfig": {
-            "additionalProperties": false,
-            "description": "Configure an output topic.",
-            "properties": {
-                "configs": {
-                    "additionalProperties": {
-                        "anyOf": [
-                            {
-                                "type": "string"
-                            },
-                            {
-                                "type": "integer"
-                            }
-                        ]
-                    },
-                    "default": {},
-                    "description": "Topic configs",
-                    "title": "Configs",
-                    "type": "object"
-                },
-                "key_schema": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Key schema class name",
-                    "title": "Key schema"
-                },
-                "partitions_count": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Number of partitions into which the topic is divided",
-                    "title": "Partitions count"
-                },
-                "replication_factor": {
-                    "anyOf": [
-                        {
-                            "type": "integer"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Replication factor of the topic",
-                    "title": "Replication factor"
-                },
-                "role": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Custom identifier belonging to one or multiple topics, provide only if `type` is `extra`",
-                    "title": "Role"
-                },
-                "type": {
-                    "anyOf": [
-                        {
-                            "$ref": "#/$defs/OutputTopicTypes"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Topic type",
-                    "title": "Topic type"
-                },
-                "value_schema": {
-                    "anyOf": [
-                        {
-                            "type": "string"
-                        },
-                        {
-                            "type": "null"
-                        }
-                    ],
-                    "default": null,
-                    "description": "Value schema class name",
-                    "title": "Value schema"
-                }
-            },
-            "title": "TopicConfig",
-            "type": "object"
         }
     },
     "items": {
@@ -1263,7 +1837,9 @@
                 "kafka-sink-connector": "#/$defs/KafkaSinkConnector",
                 "kafka-source-connector": "#/$defs/KafkaSourceConnector",
                 "producer-app": "#/$defs/ProducerApp",
-                "streams-app": "#/$defs/StreamsApp"
+                "producer-app-v2": "#/$defs/ProducerAppV2",
+                "streams-app": "#/$defs/StreamsApp",
+                "streams-app-v2": "#/$defs/StreamsAppV2"
             },
             "propertyName": "type"
         },
@@ -1282,6 +1858,12 @@
             },
             {
                 "$ref": "#/$defs/StreamsApp"
+            },
+            {
+                "$ref": "#/$defs/ProducerAppV2"
+            },
+            {
+                "$ref": "#/$defs/StreamsAppV2"
             }
         ]
     },

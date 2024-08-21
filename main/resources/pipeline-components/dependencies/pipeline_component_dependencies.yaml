@@ -10,7 +10,6 @@ kafka-app.yaml:
 - prefix.yaml
 - from_.yaml
 - to.yaml
-- values-kafka-app.yaml
 kafka-connector.yaml:
 - prefix.yaml
 - from_.yaml

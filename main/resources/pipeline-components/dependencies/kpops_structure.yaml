@@ -13,7 +13,6 @@ kpops_components_fields:
   - prefix
   - from_
   - to
-  - values
   kafka-connector:
   - name
   - prefix
@@ -60,6 +59,15 @@ kpops_components_fields:
   - values
   - repo_config
   - version
+  producer-app-v2:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - version
   streams-app:
   - name
   - prefix
@@ -69,7 +77,25 @@ kpops_components_fields:
   - values
   - repo_config
   - version
+  streams-app-v2:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - version
   streams-bootstrap:
+  - name
+  - prefix
+  - from_
+  - to
+  - namespace
+  - values
+  - repo_config
+  - version
+  streams-bootstrap-v2:
   - name
   - prefix
   - from_
@@ -124,30 +150,60 @@ kpops_components_inheritance_ref:
     - base-defaults-component
   producer-app:
     bases:
-    - kafka-app
     - streams-bootstrap
     parents:
-    - kafka-app
     - streams-bootstrap
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  producer-app-v2:
+    bases:
+    - streams-bootstrap-v2
+    parents:
+    - streams-bootstrap-v2
+    - kafka-app
     - helm-app
     - kubernetes-app
     - pipeline-component
     - base-defaults-component
   streams-app:
     bases:
-    - kafka-app
     - streams-bootstrap
     parents:
-    - kafka-app
     - streams-bootstrap
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  streams-app-v2:
+    bases:
+    - streams-bootstrap-v2
+    parents:
+    - streams-bootstrap-v2
+    - kafka-app
     - helm-app
     - kubernetes-app
     - pipeline-component
     - base-defaults-component
   streams-bootstrap:
     bases:
+    - kafka-app
     - helm-app
     parents:
+    - kafka-app
+    - helm-app
+    - kubernetes-app
+    - pipeline-component
+    - base-defaults-component
+  streams-bootstrap-v2:
+    bases:
+    - kafka-app
+    - helm-app
+    parents:
+    - kafka-app
     - helm-app
     - kubernetes-app
     - pipeline-component

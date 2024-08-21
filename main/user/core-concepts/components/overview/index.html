@@ -724,8 +724,6 @@
       
         
       
-        
-      
     
     
     
@@ -837,26 +835,6 @@
   
   <span class="md-ellipsis">
     StreamsBootstrap
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../kafka-app/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    KafkaApp
   </span>
   
 
@@ -1181,6 +1159,8 @@
       
         
       
+        
+      
     
     
     
@@ -1322,6 +1302,26 @@
   
   <span class="md-ellipsis">
     Migrate from v6 to v7
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../migration-guide/v7-v8/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Migrate from v7 to v8
   </span>
   
 
@@ -1690,12 +1690,9 @@
 definition <a href="../../../../resources/pipeline-components/pipeline/"><code>pipeline.yaml</code></a>.</p>
 <pre class="mermaid"><code>flowchart BT
     KubernetesApp --&gt; PipelineComponent
-    KafkaApp --&gt; PipelineComponent
     HelmApp --&gt; KubernetesApp
     StreamsBootstrap --&gt; HelmApp
-    StreamsApp --&gt; KafkaApp
     StreamsApp --&gt; StreamsBootstrap
-    ProducerApp --&gt; KafkaApp
     ProducerApp --&gt; StreamsBootstrap
     KafkaConnector --&gt; PipelineComponent
     KafkaSourceConnector --&gt; KafkaConnector
@@ -1703,7 +1700,6 @@ definition <a href="../../../../resources/pipeline-components/pipeline/"><code>p
 
     click KubernetesApp "./../kubernetes-app"
     click HelmApp "./../helm-app"
-    click KafkaApp "./../kafka-app"
     click StreamsBootstrap "./../streams-bootstrap"
     click StreamsApp "./../streams-app"
     click ProducerApp "./../producer-app"
