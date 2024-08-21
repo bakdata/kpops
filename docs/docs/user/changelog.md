@@ -1,4 +1,15 @@
 # Changelog
+## [8.0.0](https://github.com/bakdata/kpops/releases/tag/8.0.0) - Release Date: [2024-08-21]
+
+### 🌀 Miscellaneous
+
+- KPOps `8.0.0` - [#531](https://github.com/bakdata/kpops/pull/531)
+
+
+
+
+
+
 ## [7.1.0](https://github.com/bakdata/kpops/releases/tag/7.1.0) - Release Date: [2024-08-15]
 
 ### 🧪 Dependencies
