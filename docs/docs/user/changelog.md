@@ -1,4 +1,15 @@
 # Changelog
+## [8.0.1](https://github.com/bakdata/kpops/releases/tag/8.0.1) - Release Date: [2024-08-22]
+
+### 📝 Documentation
+
+- Fix changelog in docs - [#532](https://github.com/bakdata/kpops/pull/532)
+
+
+
+
+
+
 ## [8.0.0](https://github.com/bakdata/kpops/releases/tag/8.0.0) - Release Date: [2024-08-21]
 
 ### 🏗️ Breaking changes
