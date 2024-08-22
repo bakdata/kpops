@@ -118,7 +118,11 @@
                 },
                 "type": {
                     "const": "helm-app",
-                    "title": "Type"
+                    "enum": [
+                        "helm-app"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
                     "allOf": [
@@ -338,7 +342,11 @@
                 },
                 "type": {
                     "const": "kafka-sink-connector",
-                    "title": "Type"
+                    "enum": [
+                        "kafka-sink-connector"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 }
             },
             "required": [
@@ -433,7 +441,11 @@
                 },
                 "type": {
                     "const": "kafka-source-connector",
-                    "title": "Type"
+                    "enum": [
+                        "kafka-source-connector"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 }
             },
             "required": [
@@ -551,7 +563,11 @@
                 },
                 "type": {
                     "const": "producer-app",
-                    "title": "Type"
+                    "enum": [
+                        "producer-app"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
                     "allOf": [
@@ -580,6 +596,7 @@
         },
         "ProducerAppV2": {
             "additionalProperties": true,
+            "deprecated": true,
             "description": "Producer component.\nThis producer holds configuration to use as values for the streams-bootstrap producer Helm chart. Note that the producer does not support error topics.",
             "properties": {
                 "from": {
@@ -637,7 +654,11 @@
                 },
                 "type": {
                     "const": "producer-app-v2",
-                    "title": "Type"
+                    "enum": [
+                        "producer-app-v2"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
                     "allOf": [
@@ -983,7 +1004,11 @@
                 },
                 "type": {
                     "const": "streams-app",
-                    "title": "Type"
+                    "enum": [
+                        "streams-app"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
                     "allOf": [
@@ -1012,6 +1037,7 @@
         },
         "StreamsAppV2": {
             "additionalProperties": true,
+            "deprecated": true,
             "description": "StreamsAppV2 component that configures a streams-bootstrap-v2 app.",
             "properties": {
                 "from": {
@@ -1076,7 +1102,11 @@
                 },
                 "type": {
                     "const": "streams-app-v2",
-                    "title": "Type"
+                    "enum": [
+                        "streams-app-v2"
+                    ],
+                    "title": "Type",
+                    "type": "string"
                 },
                 "values": {
                     "allOf": [

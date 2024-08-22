@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Optional
 
 import typer
 
@@ -27,7 +26,7 @@ from kpops.utils.yaml import print_yaml
 
 app = typer.Typer(pretty_exceptions_enable=False)
 
-DOTENV_PATH_OPTION: Optional[list[Path]] = typer.Option(
+DOTENV_PATH_OPTION: list[Path] | None = typer.Option(
     default=None,
     exists=True,
     dir_okay=False,
@@ -74,7 +73,7 @@ CONFIG_INCLUDE_OPTIONAL: bool = typer.Option(
     help="Whether to include non-required settings in the generated 'config.yaml'",
 )
 
-PIPELINE_STEPS: Optional[str] = typer.Option(
+PIPELINE_STEPS: str | None = typer.Option(
     default=None,
     envvar=f"{ENV_PREFIX}PIPELINE_STEPS",
     help="Comma separated list of steps to apply the command on",
@@ -100,8 +99,8 @@ FILTER_TYPE: FilterType = typer.Option(
     help="Whether the --steps option should include/exclude the steps",
 )
 
-OUTPUT_OPTION = typer.Option(True, help="Enable output printing")
-VERBOSE_OPTION = typer.Option(False, help="Enable verbose printing")
+OUTPUT_OPTION: bool = typer.Option(True, help="Enable output printing")
+VERBOSE_OPTION: bool = typer.Option(False, help="Enable verbose printing")
 
 ENVIRONMENT: str | None = typer.Option(
     default=None,
@@ -161,11 +160,11 @@ def schema(
 )
 def generate(
     pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
-    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
+    dotenv: list[Path] | None = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    steps: Optional[str] = PIPELINE_STEPS,
+    steps: str | None = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
-    environment: Optional[str] = ENVIRONMENT,
+    environment: str | None = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
 ):
     for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
@@ -187,11 +186,11 @@ def generate(
 )
 def manifest(
     pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
-    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
+    dotenv: list[Path] | None = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    steps: Optional[str] = PIPELINE_STEPS,
+    steps: str | None = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
-    environment: Optional[str] = ENVIRONMENT,
+    environment: str | None = ENVIRONMENT,
     verbose: bool = VERBOSE_OPTION,
 ):
     for pipeline_file_path in collect_pipeline_paths(pipeline_paths):
@@ -212,11 +211,11 @@ def manifest(
 @app.command(help="Deploy pipeline steps")
 def deploy(
     pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
-    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
+    dotenv: list[Path] | None = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    steps: Optional[str] = PIPELINE_STEPS,
+    steps: str | None = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
-    environment: Optional[str] = ENVIRONMENT,
+    environment: str | None = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
@@ -238,11 +237,11 @@ def deploy(
 @app.command(help="Destroy pipeline steps")
 def destroy(
     pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
-    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
+    dotenv: list[Path] | None = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    steps: Optional[str] = PIPELINE_STEPS,
+    steps: str | None = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
-    environment: Optional[str] = ENVIRONMENT,
+    environment: str | None = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
@@ -264,11 +263,11 @@ def destroy(
 @app.command(help="Reset pipeline steps")
 def reset(
     pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
-    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
+    dotenv: list[Path] | None = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    steps: Optional[str] = PIPELINE_STEPS,
+    steps: str | None = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
-    environment: Optional[str] = ENVIRONMENT,
+    environment: str | None = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
@@ -290,11 +289,11 @@ def reset(
 @app.command(help="Clean pipeline steps")
 def clean(
     pipeline_paths: list[Path] = PIPELINE_PATHS_ARG,
-    dotenv: Optional[list[Path]] = DOTENV_PATH_OPTION,
+    dotenv: list[Path] | None = DOTENV_PATH_OPTION,
     config: Path = CONFIG_PATH_OPTION,
-    steps: Optional[str] = PIPELINE_STEPS,
+    steps: str | None = PIPELINE_STEPS,
     filter_type: FilterType = FILTER_TYPE,
-    environment: Optional[str] = ENVIRONMENT,
+    environment: str | None = ENVIRONMENT,
     dry_run: bool = DRY_RUN,
     verbose: bool = VERBOSE_OPTION,
     parallel: bool = PARALLEL,
