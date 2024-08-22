@@ -1,9 +1,18 @@
 # Changelog
 ## [8.0.0](https://github.com/bakdata/kpops/releases/tag/8.0.0) - Release Date: [2024-08-21]
 
-### 🌀 Miscellaneous
+### 🏗️ Breaking changes
+- Make KafkaApp responsible for deploying/cleaning streams bootstrap components - https://github.com/bakdata/kpops/pull/522
+- Rename role to label - https://github.com/bakdata/kpops/pull/525
+- Fix Pyright warning about type override without default value - https://github.com/bakdata/kpops/pull/524
+- Remove -v3 suffix and suffix old streams bootstrap with -v2 - https://github.com/bakdata/kpops/pull/526
 
-- KPOps `8.0.0` - [#531](https://github.com/bakdata/kpops/pull/531)
+### 🚀 Features
+- Add support for streams-bootstrap v3 - https://github.com/bakdata/kpops/pull/519
+
+### 🏭 Refactor
+- Rename role to label - https://github.com/bakdata/kpops/pull/525
+- Fix Pyright warning about type override without default value - https://github.com/bakdata/kpops/pull/524
 
 
 
