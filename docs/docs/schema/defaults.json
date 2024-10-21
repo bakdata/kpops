@@ -1213,6 +1213,22 @@
                     "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
                 },
+                "podAnnotations": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Map of custom annotations to attach to the pod spec.",
+                    "title": "Podannotations",
+                    "type": "object"
+                },
+                "podLabels": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Map of custom labels to attach to the pod spec.",
+                    "title": "Podlabels",
+                    "type": "object"
+                },
                 "ports": {
                     "description": "",
                     "items": {
@@ -2013,6 +2029,22 @@
                     },
                     "description": ""
                 },
+                "podAnnotations": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Map of custom annotations to attach to the pod spec.",
+                    "title": "Podannotations",
+                    "type": "object"
+                },
+                "podLabels": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Map of custom labels to attach to the pod spec.",
+                    "title": "Podlabels",
+                    "type": "object"
+                },
                 "ports": {
                     "description": "",
                     "items": {
@@ -2396,6 +2428,22 @@
                     "default": null,
                     "description": "Helm chart name override, assigned automatically",
                     "title": "Nameoverride"
+                },
+                "podAnnotations": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Map of custom annotations to attach to the pod spec.",
+                    "title": "Podannotations",
+                    "type": "object"
+                },
+                "podLabels": {
+                    "additionalProperties": {
+                        "type": "string"
+                    },
+                    "description": "Map of custom labels to attach to the pod spec.",
+                    "title": "Podlabels",
+                    "type": "object"
                 },
                 "ports": {
                     "description": "",

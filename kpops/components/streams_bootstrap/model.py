@@ -108,6 +108,8 @@ class StreamsBootstrapValues(HelmAppValues):
     :param secret_refs: Inject existing secrets as environment variables. Map key is used as environment variable name. Value consists of secret name and key.
     :param secret_files_refs: Mount existing secrets as volumes
     :param files: Map of files to mount for the app. File will be mounted as $value.mountPath/$key. $value.content denotes file content (recommended to be used with --set-file).
+    :param pod_annotations: Map of custom annotations to attach to the pod spec.
+    :param pod_labels: Map of custom labels to attach to the pod spec.
     """
 
     image: str = Field(
@@ -185,6 +187,16 @@ class StreamsBootstrapValues(HelmAppValues):
     java_options: JavaOptions = Field(
         default_factory=JavaOptions,
         description=describe_attr("java_options", __doc__),
+    )
+
+    pod_annotations: dict[str, str] = Field(
+        default_factory=dict,
+        description=describe_attr("pod_annotations", __doc__),
+    )
+
+    pod_labels: dict[str, str] = Field(
+        default_factory=dict,
+        description=describe_attr("pod_labels", __doc__),
     )
 
 
