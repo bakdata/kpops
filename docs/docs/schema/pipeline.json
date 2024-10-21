@@ -1190,13 +1190,16 @@
             "type": "object"
         },
         "ResourceLimits": {
+            "description": "Model representing the 'limits' section of Kubernetes resource specifications.\n\n:param cpu: The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').\n:param memory: The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
             "properties": {
                 "cpu": {
+                    "description": "The maximum amount of CPU a container can use, expressed in milli CPUs (e.g., '300m').",
                     "pattern": "^\\d+m$",
                     "title": "Cpu",
                     "type": "string"
                 },
                 "memory": {
+                    "description": "The maximum amount of memory a container can use, with valid units such as 'Mi' or 'Gi' (e.g., '2G').",
                     "pattern": "^\\d+[KMGi]+$",
                     "title": "Memory",
                     "type": "string"
@@ -1210,13 +1213,16 @@
             "type": "object"
         },
         "ResourceRequests": {
+            "description": "Model representing the 'requests' section of Kubernetes resource specifications.\n\n:param cpu: The minimum amount of CPU requested for the container, expressed in milli CPUs (e.g., '100m').\n:param memory: The minimum amount of memory requested for the container, with valid units such as 'Mi' or 'Gi' (e.g., '500Mi').",
             "properties": {
                 "cpu": {
+                    "description": "The minimum amount of CPU requested for the container, expressed in milli CPUs (e.g., '100m').",
                     "pattern": "^\\d+m$",
                     "title": "Cpu",
                     "type": "string"
                 },
                 "memory": {
+                    "description": "The minimum amount of memory requested for the container, with valid units such as 'Mi' or 'Gi' (e.g., '500Mi').",
                     "pattern": "^\\d+[KMGi]+$",
                     "title": "Memory",
                     "type": "string"
@@ -1230,12 +1236,23 @@
             "type": "object"
         },
         "Resources": {
+            "description": "Model representing the resource specifications for a Kubernetes container.\n\n:param requests: The minimum resource requirements for the container.\n:param limits: The maximum resource limits for the container.",
             "properties": {
                 "limits": {
-                    "$ref": "#/$defs/ResourceLimits"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ResourceLimits"
+                        }
+                    ],
+                    "description": "The maximum resource limits for the container."
                 },
                 "requests": {
-                    "$ref": "#/$defs/ResourceRequests"
+                    "allOf": [
+                        {
+                            "$ref": "#/$defs/ResourceRequests"
+                        }
+                    ],
+                    "description": "The minimum resource requirements for the container."
                 }
             },
             "required": [
